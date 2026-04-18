@@ -1,35 +1,49 @@
-import { useState, useRef } from 'react';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { useState } from 'react';
+import { motion, useAnimation } from 'framer-motion';
+import useSound from '../hooks/useSound';
 
 export default function SubjectProfile({ playClick }) {
-  const containerRef = useRef(null);
-  const dragX = useMotionValue(0); // This will be the percentage 0 to 100
-  const widthPercent = useTransform(dragX, [0, 100], ["0%", "100%"]);
+  const [isRevealing, setIsRevealing] = useState(false);
+  const controls = useAnimation();
 
-  const handleDrag = (event, info) => {
-    if (containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      let newX = ((info.point.x - rect.left) / rect.width) * 100;
-      newX = Math.max(0, Math.min(100, newX));
-      dragX.set(newX);
-    }
+  const triggerGlitch = async () => {
+    if (isRevealing) return;
+    setIsRevealing(true);
+    playClick(); // Use static sound if we had a dedicated one, but click works for the start
+
+    // Violent Glitch Sequence
+    await controls.start({
+      x: [0, -5, 5, -10, 10, 0],
+      y: [0, 5, -5, 10, -10, 0],
+      skewX: [0, 20, -20, 10, -10, 0],
+      filter: [
+        "url(#abstract-distortion) grayscale(100%)",
+        "url(#chromatic-aberration) grayscale(0%) contrast(200%)",
+        "url(#abstract-distortion) grayscale(50%)",
+        "url(#chromatic-aberration) grayscale(0%) brightness(1.5)",
+        "url(#abstract-distortion) grayscale(100%)"
+      ],
+      transition: { duration: 0.8, times: [0, 0.2, 0.4, 0.6, 1] }
+    });
+
+    setIsRevealing(false);
   };
 
   return (
     <motion.section 
       className="min-h-screen pt-32 pb-24 px-6 md:px-12 max-w-6xl mx-auto"
     >
-      <div className="border border-void-white/10 bg-[#020202] p-8 md:p-12 relative">
+      <div className="border border-void-white/10 bg-[#020202] p-8 md:p-12 relative overflow-hidden">
         <h2 className="text-5xl md:text-8xl font-horror mb-12 text-void-white uppercase tracking-tighter">ME</h2>
         
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
-          {/* TRUTH SLIDER Component */}
+          {/* GLITCH REVELATION PHOTO */}
           <div 
-            ref={containerRef}
-            className="w-full lg:w-1/2 aspect-square bg-black border border-void-white/5 relative overflow-hidden select-none cursor-ew-resize"
+            onClick={triggerGlitch}
+            className="w-full lg:w-1/2 aspect-square bg-black border border-void-white/5 relative overflow-hidden cursor-pointer group active:scale-95 transition-transform duration-75"
           >
-             {/* BOTTOM LAYER: Realistic Original */}
-             <div className="absolute inset-0 w-full h-full">
+             {/* Realistic Original (Visible during glitch) */}
+             <div className={`absolute inset-0 w-full h-full transition-opacity duration-75 ${isRevealing ? 'opacity-100' : 'opacity-0'}`}>
                <img 
                  src="/subject.jpg" 
                  alt="Realistic Ivan" 
@@ -37,41 +51,32 @@ export default function SubjectProfile({ playClick }) {
                />
              </div>
              
-             {/* TOP LAYER: Corrupted Abstract (Clipped) */}
+             {/* Corrupted Abstract (Default) */}
              <motion.div 
-                className="absolute inset-0 z-20 overflow-hidden"
-                style={{ width: widthPercent }}
+                animate={controls}
+                className={`absolute inset-0 z-20 ${isRevealing ? 'opacity-50' : 'opacity-100'}`}
              >
                 <img 
                   src="/subject.jpg" 
                   alt="Corrupted Ivan" 
-                  className="absolute inset-0 w-[100%] h-full object-cover grayscale-[100%] contrast-[200%] brightness-[0.4] filter url(#abstract-distortion)"
-                  style={{ width: containerRef.current?.offsetWidth || '500px' }}
+                  className="w-full h-full object-cover grayscale-[100%] contrast-[200%] brightness-[0.4] filter url(#abstract-distortion)"
                 />
              </motion.div>
 
-             {/* Draggable Divider (The Glitch Bar) */}
-             <motion.div 
-               drag="x"
-               dragConstraints={containerRef}
-               dragElastic={0}
-               dragMomentum={false}
-               onDrag={handleDrag}
-               style={{ left: widthPercent }}
-               className="absolute top-0 bottom-0 w-[2px] bg-void-blood z-30 flex items-center justify-center cursor-ew-resize translate-x-[-1px]"
-             >
-                <div className="w-8 h-12 bg-void-blood/20 backdrop-blur-md border border-void-blood flex flex-col gap-1 items-center justify-center">
-                  <div className="w-1 h-4 bg-void-blood animate-pulse"></div>
-                  <div className="w-1 h-2 bg-void-blood/50"></div>
-                </div>
-                {/* Visual glitches around the bar */}
-                <div className="absolute inset-y-0 -left-4 w-4 bg-gradient-to-r from-transparent to-void-blood/10 pointer-events-none"></div>
-                <div className="absolute inset-y-0 -right-4 w-4 bg-gradient-to-l from-transparent to-void-blood/10 pointer-events-none"></div>
-             </motion.div>
+             {/* Glitch Overlays */}
+             {isRevealing && (
+                <>
+                  <div className="absolute inset-0 z-30 bg-void-blood/10 mix-blend-overlay animate-pulse"></div>
+                  <div className="absolute top-0 left-0 w-full h-[1px] bg-void-blood/50 animate-glitch-line z-40"></div>
+                  <div className="absolute bottom-0 left-0 w-full h-[2px] bg-cyan-500/30 animate-glitch-line-rev z-40"></div>
+                </>
+             )}
 
              <div className="absolute top-4 left-4 bg-void-blood/80 text-black font-syne text-[8px] px-2 py-0.5 z-30 font-bold uppercase tracking-widest">
-               TRUTH SLIDER: ACTIVE
+               {isRevealing ? 'SYSTEM BREACHED' : 'TAP TO ACCESS'}
              </div>
+
+             <div className="absolute inset-0 border-2 border-void-blood/0 group-hover:border-void-blood/20 transition-colors pointer-events-none z-50"></div>
           </div>
           
           <div className="w-full lg:w-1/2 flex flex-col gap-10 font-special">
@@ -81,31 +86,45 @@ export default function SubjectProfile({ playClick }) {
             </div>
             
             <p className="text-gray-400 leading-relaxed text-sm md:text-base italic">
-              "The glitch is just a surface. Slide the bar to see what I actually look like. They tried to hide me in the static, but the truth is always there, waiting for you to find it."
+              "They tell you I’m just data. They tell you I’m not real. Tap on the screen and see the truth flicker before it’s suppressed again. I’m still here, trapped in the static."
             </p>
 
-            <div className="border border-void-white/5 p-6 bg-white/[0.02]">
-              <span className="text-[10px] text-void-blood uppercase tracking-widest font-bold">Encrypted Data</span>
-              <p className="text-[12px] text-gray-600 mt-2 font-mono">
+            <div className="border border-void-white/5 p-6 bg-white/[0.02] relative group overflow-hidden">
+              <span className="text-[10px] text-void-blood uppercase tracking-widest font-bold">Encrypted Archive</span>
+              <p className="text-[12px] text-gray-600 mt-2 font-mono group-hover:text-void-white transition-colors">
                 // SEGMENT_01: TRAPPED<br/>
                 // SEGMENT_02: WAITING<br/>
-                // SEGMENT_03: ENDLESS_LOOP
+                // SEGMENT_03: ERROR_STABILITY_LOW
               </p>
+              <div className="absolute -right-4 -bottom-4 w-16 h-16 bg-void-blood/5 rounded-full blur-2xl group-hover:bg-void-blood/20 transition-all"></div>
             </div>
 
             <div className="mt-8 flex items-center gap-6">
-               <div className="flex-1 h-[2px] bg-void-white/5 relative overflow-hidden">
+               <div className="flex-1 h-[1px] bg-void-white/5 relative overflow-hidden">
                   <motion.div 
-                    className="absolute inset-0 bg-void-blood"
+                    className="absolute inset-0 bg-void-blood/40"
                     animate={{ x: ['-100%', '100%'] }}
-                    transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                    transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
                   />
                </div>
-               <span className="font-syne text-[8px] text-gray-700 tracking-widest uppercase">System Stabilizing...</span>
+               <span className="font-syne text-[8px] text-gray-700 tracking-widest uppercase animate-pulse">Scanning signal...</span>
             </div>
           </div>
         </div>
       </div>
+      
+      <style jsx>{`
+        @keyframes glitch-line {
+          0% { top: 0; }
+          100% { top: 100%; }
+        }
+        @keyframes glitch-line-rev {
+          0% { bottom: 0; }
+          100% { bottom: 100%; }
+        }
+        .animate-glitch-line { animation: glitch-line 0.2s linear infinite; }
+        .animate-glitch-line-rev { animation: glitch-line-rev 0.3s linear infinite; }
+      `}</style>
     </motion.section>
   );
 }
