@@ -4,7 +4,6 @@ export default function useSound(isMuted = false) {
   const audioCtx = useRef(null);
   const droneOscs = useRef([]); 
   const isDronePlaying = useRef(false);
-  const gamelanIntervals = useRef([]);
 
   const initAudioCtx = () => {
     if (!audioCtx.current) {
@@ -15,33 +14,8 @@ export default function useSound(isMuted = false) {
     }
   };
 
-  // SCARY GAMELAN ORCHESTRA SYNTHESIS
-  // Simulating multiple metallophones (Saron/Gender) in a dissonant Slendro scale
-  const playGamelanNote = useCallback((freq, vol = 0.5, decay = 4) => {
-    if (isMuted || !audioCtx.current) return;
-    const t = audioCtx.current.currentTime;
-
-    const osc = audioCtx.current.createOscillator();
-    const gain = audioCtx.current.createGain();
-    
-    // Complex tone: sine + triangle for metallic resonance
-    osc.type = Math.random() > 0.5 ? 'triangle' : 'sine';
-    osc.frequency.setValueAtTime(freq, t);
-    
-    // Detuning for that "haunted" feel
-    osc.detune.setValueAtTime(Math.random() * 20 - 10, t);
-
-    gain.gain.setValueAtTime(0, t);
-    gain.gain.linearRampToValueAtTime(vol, t + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + decay);
-
-    osc.connect(gain);
-    gain.connect(audioCtx.current.destination);
-
-    osc.start(t);
-    osc.stop(t + decay + 0.5);
-  }, [isMuted]);
-
+  // GOTHIC CATHEDRAL ORGAN SYNTHESIS
+  // Layers multiple oscillators to simulate pipe organ harmonics
   const startBackgroundDrone = useCallback(() => {
     if (isMuted || isDronePlaying.current) return;
     initAudioCtx();
@@ -49,74 +23,56 @@ export default function useSound(isMuted = false) {
     isDronePlaying.current = true;
     const t = audioCtx.current.currentTime;
 
-    // The Foundation Drone
-    const drone1 = audioCtx.current.createOscillator();
-    drone1.type = 'sine';
-    drone1.frequency.setValueAtTime(32.7, t); 
-    const drone2 = audioCtx.current.createOscillator();
-    drone2.type = 'triangle';
-    drone2.frequency.setValueAtTime(48.9, t); 
-    
-    const gainNode = audioCtx.current.createGain();
-    gainNode.gain.setValueAtTime(0, t);
-    gainNode.gain.linearRampToValueAtTime(0.3, t + 4);
+    const createPipe = (freq, type = 'triangle', vol = 0.1) => {
+      const osc = audioCtx.current.createOscillator();
+      const gain = audioCtx.current.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, t);
+      // Ominous slow vibrato
+      const lfo = audioCtx.current.createOscillator();
+      const lfoGain = audioCtx.current.createGain();
+      lfo.frequency.setValueAtTime(3, t);
+      lfoGain.gain.setValueAtTime(2, t);
+      lfo.connect(lfoGain);
+      lfoGain.connect(osc.frequency);
+      lfo.start();
 
-    drone1.connect(gainNode);
-    drone2.connect(gainNode);
-    gainNode.connect(audioCtx.current.destination);
-    drone1.start(t);
-    drone2.start(t);
-
-    droneOscs.current = [drone1, drone2, gainNode];
-
-    // THE ORCHESTRA SCHEDULER
-    const slendro = [130.8, 146.8, 164.8, 196, 220, 261.6, 293.7]; // C3 to D4 Slendro-ish
-    
-    const runOrchestra = () => {
-        if (!isDronePlaying.current || isMuted) return;
-        
-        // Randomly pick a note and volume
-        const freq = slendro[Math.floor(Math.random() * slendro.length)];
-        const vol = Math.random() * 0.4 + 0.1;
-        playGamelanNote(freq, vol, 3);
-
-        // Schedule next random hit (fast bersahutan)
-        const nextHit = Math.random() * 800 + 200; 
-        const timeout = setTimeout(runOrchestra, nextHit);
-        gamelanIntervals.current.push(timeout);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(vol, t + 4);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.current.destination);
+      osc.start(t);
+      return { osc, gain, lfo };
     };
 
-    // Periodically hit the big Gong
-    const runGong = () => {
-        if (!isDronePlaying.current || isMuted) return;
-        playGothicGong();
-        const timeout = setTimeout(runGong, Math.random() * 10000 + 5000);
-        gamelanIntervals.current.push(timeout);
-    }
-    
-    runOrchestra();
-    runGong();
+    // Cathedral Chord: C1, C2, G2, E3 (Ominous Major-ish but detuned)
+    const pipes = [
+      createPipe(32.7, 'sawtooth', 0.15), // Deep rumble
+      createPipe(65.4, 'triangle', 0.12), // Fundamental
+      createPipe(98, 'sine', 0.1),     // Perfect fifth
+      createPipe(164.8, 'triangle', 0.08) // Major third (tension)
+    ];
 
-  }, [isMuted, playGamelanNote]);
+    droneOscs.current = pipes;
+
+  }, [isMuted]);
 
   const stopBackgroundDrone = useCallback(() => {
     if (!isDronePlaying.current) return;
     const t = audioCtx.current.currentTime;
     
-    gamelanIntervals.current.forEach(clearTimeout);
-    gamelanIntervals.current = [];
-
-    if (droneOscs.current.length > 0) {
-      const g = droneOscs.current[2];
-      g.gain.cancelScheduledValues(t);
-      g.gain.linearRampToValueAtTime(0, t + 2);
+    droneOscs.current.forEach(pipe => {
+      pipe.gain.gain.cancelScheduledValues(t);
+      pipe.gain.gain.linearRampToValueAtTime(0, t + 2);
       setTimeout(() => {
-        droneOscs.current[0].stop();
-        droneOscs.current[1].stop();
-        droneOscs.current = [];
-        isDronePlaying.current = false;
+        pipe.osc.stop();
+        pipe.lfo.stop();
       }, 2100);
-    }
+    });
+    
+    droneOscs.current = [];
+    isDronePlaying.current = false;
   }, []);
 
   const playClick = useCallback(() => {
@@ -124,27 +80,27 @@ export default function useSound(isMuted = false) {
     initAudioCtx();
     const t = audioCtx.current.currentTime;
     
-    // Brutal Horrific Click
+    // Low Cathedral Bell / Heavy Thud
     const osc = audioCtx.current.createOscillator();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(50, t);
-    osc.frequency.linearRampToValueAtTime(5, t + 0.2);
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(40, t);
+    osc.frequency.exponentialRampToValueAtTime(0.01, t + 0.4);
     
-    const noise = audioCtx.current.createGain();
-    noise.gain.setValueAtTime(0.4, t);
-    noise.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+    const gain = audioCtx.current.createGain();
+    gain.gain.setValueAtTime(0.5, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
     
-    osc.connect(noise);
-    noise.connect(audioCtx.current.destination);
+    osc.connect(gain);
+    gain.connect(audioCtx.current.destination);
     osc.start();
-    osc.stop(t + 0.2);
+    osc.stop(t + 0.4);
   }, [isMuted]);
 
   const playThunderCrash = useCallback(() => {
     if (isMuted) return;
     initAudioCtx();
     const t = audioCtx.current.currentTime;
-    const bufferSize = audioCtx.current.sampleRate * 3; 
+    const bufferSize = audioCtx.current.sampleRate * 4; 
     const buffer = audioCtx.current.createBuffer(1, bufferSize, audioCtx.current.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
@@ -153,11 +109,11 @@ export default function useSound(isMuted = false) {
     noise.buffer = buffer;
     const filter = audioCtx.current.createBiquadFilter();
     filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(400, t);
+    filter.frequency.setValueAtTime(300, t);
     const gain = audioCtx.current.createGain();
     gain.gain.setValueAtTime(0, t);
-    gain.gain.linearRampToValueAtTime(2.0, t + 0.05); 
-    gain.gain.exponentialRampToValueAtTime(0.01, t + 3);
+    gain.gain.linearRampToValueAtTime(1.5, t + 0.1); 
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 4);
     noise.connect(filter);
     filter.connect(gain);
     gain.connect(audioCtx.current.destination);
@@ -169,22 +125,30 @@ export default function useSound(isMuted = false) {
     initAudioCtx();
     const t = audioCtx.current.currentTime;
     const osc1 = audioCtx.current.createOscillator();
-    osc1.frequency.setValueAtTime(55, t); 
+    osc1.frequency.setValueAtTime(45, t); 
     const osc2 = audioCtx.current.createOscillator();
-    osc2.type = 'triangle';
-    osc2.frequency.setValueAtTime(110, t); 
+    osc2.type = 'sawtooth';
+    osc2.frequency.setValueAtTime(90, t); 
     const gain = audioCtx.current.createGain();
     gain.gain.setValueAtTime(0, t);
-    gain.gain.linearRampToValueAtTime(2.5, t + 0.05); // LOUDER
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 10);
+    gain.gain.linearRampToValueAtTime(1.8, t + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 8);
     osc1.connect(gain);
     osc2.connect(gain);
     gain.connect(audioCtx.current.destination);
     osc1.start(t);
     osc2.start(t);
-    osc1.stop(t + 10.5);
-    osc2.stop(t + 10.5);
+    osc1.stop(t + 8);
+    osc2.stop(t + 8);
   }, [isMuted]);
+
+  useEffect(() => {
+    return () => {
+      if (isDronePlaying.current) {
+        stopBackgroundDrone();
+      }
+    };
+  }, [stopBackgroundDrone]);
 
   return { playClick, playThunderCrash, playGothicGong, startBackgroundDrone, stopBackgroundDrone };
 }

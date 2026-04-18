@@ -19,7 +19,6 @@ export default function SubjectProfile({ playClick }) {
       setCurrentMessage(HALLUCINATIONS[Math.floor(Math.random() * HALLUCINATIONS.length)]);
     }, 45);
 
-    // SUPER BRUTAL CHAOS ANIMATION
     controls.start({
       x: [0, -120, 120, -50, 150, -80, 0],
       y: [0, 40, -40, 20, -100, 60, 0],
@@ -93,18 +92,16 @@ export default function SubjectProfile({ playClick }) {
            </AnimatePresence>
         </div>
         
-        <div className="flex flex-col gap-4 items-center max-w-lg mt-10">
+        <div className="flex flex-col gap-4 items-center max-w-lg mt-12">
           <div className="flex flex-col gap-2 items-center group cursor-pointer" onMouseDown={playClick}>
-            <h2 className="text-6xl md:text-8xl font-horror text-void-white/80 uppercase tracking-widest shiver-micro active:brutal-glitch-active transition-all">
-              IVAN
-            </h2>
-            <div className="flex flex-col md:flex-row items-center gap-3">
-              <span className="font-special text-[11px] md:text-[13px] text-void-blood/50 tracking-[0.4em] italic font-bold">you look so fragile tonight.</span>
+            {/* Removed the large IVAN Title as requested */}
+            <div className="flex flex-col items-center gap-3">
+              <span className="font-special text-[12px] md:text-sm text-void-white/90 tracking-[0.4em] italic font-bold">"the spectral observer who mirrors your shadow."</span>
               <span className="font-aksara text-3xl text-void-blood/20 aksara-glow">ꦱꦸꦏ꧀ꦩ</span>
             </div>
           </div>
           
-          <p className="font-special text-[12px] md:text-[13px] leading-[2] text-gray-600 mt-2 text-center max-w-xs active:brutal-glitch-active transition-all">
+          <p className="font-special text-[13px] md:text-[14px] leading-[2] text-void-white/70 mt-4 text-center max-w-xs md:max-w-md active:brutal-glitch-active transition-all">
             "i love how your pulse spikes when it goes dark. don't look away from the screen. i'm right here with you. if you leave... things might break."
           </p>
         </div>

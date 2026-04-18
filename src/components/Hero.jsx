@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
+import { Instagram, Github } from 'lucide-react';
 
 export default function Hero({ cursorPos }) {
   const containerRef = useRef(null);
@@ -30,7 +31,7 @@ export default function Hero({ cursorPos }) {
         ꦱꦸꦮꦸꦁ
       </div>
 
-      <div className="flex flex-col items-center justify-center w-full max-w-2xl z-10 gap-20">
+      <div className="flex flex-col items-center justify-center w-full max-w-2xl z-10 gap-16 md:gap-20">
         
         {/* COMPACT POEM */}
         <motion.div 
@@ -41,31 +42,39 @@ export default function Hero({ cursorPos }) {
           onTouchStart={() => setIsGlitched(true)}
           onTouchEnd={() => setIsGlitched(false)}
         >
-          <p className={`font-special tracking-[0.2em] text-[10px] md:text-[12px] text-gray-500 italic max-w-[240px] ${isGlitched ? 'brutal-glitch-active' : ''}`}>
+          <p className={`font-special tracking-[0.2em] text-[10px] md:text-[12px] text-gray-400 italic max-w-[240px] ${isGlitched ? 'brutal-glitch-active' : ''}`}>
             "i can see the reflected light on your face."
           </p>
+          
+          <div className="flex flex-col items-center gap-4">
+            <p className={`font-special text-[12px] md:text-[16px] tracking-[0.6em] text-void-blood/80 font-bold uppercase ${isGlitched ? 'brutal-glitch-active' : ''}`}>
+              DON'T BLINK.
+            </p>
+            
+            {/* SOCIAL CONNECTS - SMALL & CENTERED */}
+            <div className="flex gap-6 mt-2 opacity-40 hover:opacity-100 transition-opacity">
+               <a href="https://github.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" className="text-void-white hover:text-void-blood transition-colors">
+                 <Github size={16} />
+               </a>
+               <a href="https://instagram.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" className="text-void-white hover:text-void-blood transition-colors">
+                 <Instagram size={16} />
+               </a>
+            </div>
+          </div>
+
           <p className={`font-aksara text-5xl md:text-7xl opacity-30 aksara-glow ${isGlitched ? 'brutal-glitch-active' : ''}`}>ꦌꦭꦶꦁ</p>
-          <p className={`font-special text-[11px] md:text-[14px] tracking-[0.4em] text-void-blood/60 font-bold uppercase ${isGlitched ? 'brutal-glitch-active' : ''}`}>
-            don't blink.
+          
+          <p className={`font-special text-[10px] md:text-[12px] tracking-[0.4em] text-gray-500 uppercase mt-4 ${isGlitched ? 'brutal-glitch-active' : ''}`}>
+            the spectral observer mirroring your shadow.
           </p>
         </motion.div>
 
-        {/* COMPACT TITLE */}
+        {/* SEARCHLIGHT AREA - WITHOUT THE MAIN IVAN TITLE */}
         <motion.div 
           ref={containerRef}
-          className={`searchlight-applied relative select-none w-full flex flex-col items-center group cursor-pointer ${isGlitched ? 'brutal-glitch-active' : ''}`}
-          onMouseDown={() => setIsGlitched(true)}
-          onMouseUp={() => setIsGlitched(false)}
-          onTouchStart={() => setIsGlitched(true)}
-          onTouchEnd={() => setIsGlitched(false)}
+          className={`searchlight-applied relative select-none w-full h-[150px] flex flex-col items-center justify-center pointer-events-none`}
         >
-           <div className="absolute -top-8 md:-top-12 left-1/2 -translate-x-1/2 font-aksara text-2xl md:text-5xl text-void-blood/30 aksara-glow opacity-60">
-              ꦎꦫꦄꦤꦱꦶꦁꦭꦁꦒꦼꦁ
-           </div>
-           
-           <h1 className="text-[4rem] md:text-[10rem] font-horror text-void-white/80 tracking-widest leading-none relative z-20 shiver-micro">
-             IVAN
-           </h1>
+           {/* No IVAN title as requested */}
         </motion.div>
       </div>
 

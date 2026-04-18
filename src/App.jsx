@@ -6,7 +6,7 @@ import Journal from './components/Journal';
 import SubjectProfile from './components/SubjectProfile';
 import Ticker from './components/Ticker';
 import useSound from './hooks/useSound';
-import { Volume2, VolumeX, Flashlight } from 'lucide-react';
+import { Volume2, VolumeX, Flame } from 'lucide-react';
 
 function App() {
   const [activeTab, setActiveTab] = useState('hero');
@@ -23,10 +23,9 @@ function App() {
   const handleBoot = () => {
     setIsBooted(true);
     playClick();
-    startBackgroundDrone(); // Start continuous background music after user interaction
+    startBackgroundDrone(); 
   };
 
-  // Subliminal Flicker Engine
   useEffect(() => {
     if (!isBooted) return;
     const triggerFlicker = () => {
@@ -41,7 +40,6 @@ function App() {
     return () => clearTimeout(timer);
   }, [isBooted]);
 
-  // Rare Lightning & Thunder Effect
   useEffect(() => {
     if (!isBooted) return;
     const triggerLightning = () => {
@@ -64,11 +62,11 @@ function App() {
     return () => window.removeEventListener('mousemove', track);
   }, []);
 
-  // Theme Trigger
+  // Inferno Red Theme Trigger
   useEffect(() => {
     if (isStaring) {
       document.body.classList.add('stare-active');
-      playGothicGong(); // Hit the gong explicitly when turning the theme on
+      playGothicGong(); // Cathedral Gong
     } else {
       document.body.classList.remove('stare-active');
     }
@@ -132,7 +130,7 @@ function App() {
         </AnimatePresence>
 
         <nav className="fixed top-0 left-0 w-full p-6 md:p-10 flex flex-col md:flex-row justify-between items-center md:items-start gap-6 md:gap-0 z-[70] mix-blend-difference pointer-events-none">
-           <div className="font-horror text-2xl md:text-3xl tracking-tighter cursor-pointer hover:text-void-blood transition-all shiver-micro pointer-events-auto text-void-white/80" onClick={() => handleTabChange('hero')}>
+           <div className="font-horror text-2xl md:text-3xl tracking-tighter cursor-pointer hover:text-void-blood transition-all shiver-micro pointer-events-auto text-void-white/90" onClick={() => handleTabChange('hero')}>
              IVAN
            </div>
            
@@ -140,10 +138,10 @@ function App() {
               
               <button 
                 onClick={toggleStare} 
-                className={`flex items-center gap-2 p-1 transition-colors ${isStaring ? 'text-void-blood drop-shadow-[0_0_15px_rgba(255,0,0,1)] scale-110' : 'text-void-white/40 hover:text-void-white/80'}`}
-                title="Change Theme"
+                className={`flex items-center gap-2 p-1 transition-colors ${isStaring ? 'text-void-blood drop-shadow-[0_0_20px_rgba(255,0,0,1)] scale-110' : 'text-void-white/40 hover:text-void-white/80'}`}
+                title="Inferno Mode"
               >
-                <Flashlight size={16} className={isStaring ? 'shiver-micro' : ''} />
+                <Flame size={18} className={isStaring ? 'shiver-micro text-void-blood' : 'text-void-white/40'} />
               </button>
 
               <button 
@@ -167,7 +165,7 @@ function App() {
                     <li key={item.id}>
                       <button 
                         onClick={() => handleTabChange(item.id)}
-                        className={`micro-label transition-all ${activeTab === item.id ? 'text-void-blood opacity-100' : 'hover:text-void-white/80 opacity-60'}`}
+                        className={`micro-label transition-all ${activeTab === item.id ? 'text-void-white opacity-100 font-black' : 'hover:text-void-white/80 opacity-60'}`}
                       >
                         {item.label}
                       </button>
