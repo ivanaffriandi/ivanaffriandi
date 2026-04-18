@@ -30,83 +30,62 @@
 .font-syne { font-family: var(--font-syne); }
 .font-aksara { font-family: var(--font-aksara); }
 
-/* Shivering Text Animation */
-@keyframes shiver {
+/* Shivering Text Animation (Intensified for small text) */
+@keyframes shiver-micro {
   0% { transform: translate(0, 0); }
-  25% { transform: translate(-0.8px, 0.8px); text-shadow: 1px 0 #FF0000, -1px 0 #00FFFF; }
-  50% { transform: translate(0.8px, -0.8px); text-shadow: -1.5px 0 #FF0000, 1.5px 0 #00FFFF; }
-  75% { transform: translate(-0.8px, -0.8px); }
+  25% { transform: translate(-0.4px, 0.4px); text-shadow: 0.5px 0 #FF0000, -0.5px 0 #00FFFF; }
+  50% { transform: translate(0.4px, -0.4px); text-shadow: -0.8px 0 #FF0000, 0.8px 0 #00FFFF; }
   100% { transform: translate(0, 0); }
 }
 
-.shiver {
-  animation: shiver 0.15s infinite linear;
+.shiver-micro {
+  animation: shiver-micro 0.12s infinite linear;
 }
 
-/* Aksara Ritual Glow */
+/* Subliminal Flicker Animation */
+@keyframes subliminal-flash {
+  0%, 95% { opacity: 0; transform: scale(0.8) rotate(5deg); }
+  98% { opacity: 0.08; transform: scale(1.1) rotate(-3deg); }
+  100% { opacity: 0; }
+}
+
+.flicker-active {
+  animation: subliminal-flash 0.08s ease-in-out forwards;
+}
+
+/* Micro-Label Style */
+.micro-label {
+  @apply font-syne text-[9px] md:text-[11px] tracking-[0.5em] font-bold uppercase;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Aksara Ritual Glow (Sharper for Minimalism) */
 .aksara-glow {
-  text-shadow: 0 0 10px rgba(255, 0, 0, 0.6), 0 0 20px rgba(255, 0, 0, 0.3);
-  filter: blur(0.3px);
-  will-change: text-shadow, filter;
+  text-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
+  filter: blur(0.2px);
 }
 
-/* Lightning Strike Flash */
-@keyframes lightning-flash {
-  0% { filter: brightness(1) invert(0); background: transparent; }
-  5% { filter: brightness(3) invert(1); background: white; }
-  10% { filter: brightness(1) invert(0); background: transparent; }
-  12% { filter: brightness(4) invert(1); background: #FF0000; }
-  20% { filter: brightness(1) invert(0); background: transparent; }
-}
-
-.lightning-active {
-  animation: lightning-flash 0.5s ease-out forwards;
-}
-
-/* Organic Drift Animation */
+/* Organic UI Drift */
 @keyframes drift {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  25% { transform: translate(5px, -5px) rotate(0.5deg); }
-  50% { transform: translate(-5px, 5px) rotate(-0.5deg); }
-  75% { transform: translate(5px, 5px) rotate(0.2deg); }
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(3px, -3px); }
 }
 
-.drift-ui {
-  animation: drift 10s ease-in-out infinite;
+.drift-minimal {
+  animation: drift 15s ease-in-out infinite;
 }
 
-/* Chromatic Distortion Shadow */
-.chromatic-text {
-  text-shadow: 2px 0 rgba(255,0,0,0.4), -2px 0 rgba(0,255,255,0.4);
-}
-
-/* Vignette Effect */
+/* Vignette Effect (Deeper for Minimalism) */
 body::after {
   content: "";
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   pointer-events: none;
-  background: radial-gradient(circle at center, transparent 15%, rgba(0,0,0,0.95) 100%);
+  background: radial-gradient(circle at center, transparent 10%, rgba(0,0,0,0.98) 100%);
   z-index: 45;
 }
 
-/* Grainy Noise */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  pointer-events: none;
-  background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
-  opacity: 0.18;
-  z-index: 50;
-}
-
-/* SEARCHLIGHT Utility (Localized for Headlines) */
-.searchlight-applied {
-  position: relative;
-  overflow: hidden;
-}
-
+/* SEARCHLIGHT Utility (Sharper Leak) */
 .searchlight-applied::after {
   content: "";
   position: absolute;
@@ -115,26 +94,18 @@ body::before {
   width: 100%; 
   height: 100%;
   pointer-events: none;
-  background: radial-gradient(circle 160px at var(--lx, 50%) var(--ly, 50%), transparent 0%, rgba(0,0,0,0.99) 90%);
+  background: radial-gradient(circle 120px at var(--lx, 50%) var(--ly, 50%), transparent 0%, rgba(0,0,0,0.995) 95%);
   mix-blend-mode: multiply;
   z-index: 10;
-  will-change: background;
 }
 
-/* Abstract Horror Photo Class */
-.abstract-img {
-  filter: grayscale(100%) contrast(150%) brightness(0.8) url(#abstract-distortion);
-  transition: filter 0.2s ease;
-}
-
-/* Watermark Aksara */
+/* Watermark Aksara (Faded into the void) */
 .watermark-aksara {
   position: absolute;
   font-family: var(--font-aksara);
-  color: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.015);
   z-index: -1;
   pointer-events: none;
-  font-size: 25rem;
+  font-size: 15rem;
   line-height: 1;
-  white-space: nowrap;
 }
