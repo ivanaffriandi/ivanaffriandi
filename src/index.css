@@ -5,9 +5,17 @@
 @layer base {
   body {
     @apply bg-void-black text-void-white font-special antialiased selection:bg-void-blood/40;
-    cursor: none;
     overflow-x: hidden;
     overflow-y: auto;
+    touch-action: pan-y; /* Priority on vertical scrolling for mobile */
+    min-height: 100vh;
+  }
+
+  /* Only hide cursor on mouse-enabled devices */
+  @media (hover: hover) {
+    body {
+      cursor: none;
+    }
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -67,6 +75,8 @@ body::before {
   pointer-events: none;
   z-index: 40;
   will-change: mask-image, -webkit-mask-image;
+  /* Prevent interaction interception */
+  touch-action: pan-y;
 }
 
 /* Abstract Horror Photo Class */

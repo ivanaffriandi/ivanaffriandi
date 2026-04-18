@@ -108,7 +108,7 @@ function App() {
   return (
     <CustomCursor>
       <motion.main 
-        className="relative text-void-white z-0 min-h-screen pb-20 overflow-hidden transform-gpu"
+        className="relative text-void-white z-0 min-h-screen pb-20 overflow-x-hidden transform-gpu"
         animate={isIdle ? {
           x: [(shake % 2 === 0 ? 2 : -2), 0],
           y: [(shake % 3 === 0 ? 1 : -1), 0],
