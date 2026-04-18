@@ -6,8 +6,8 @@
   body {
     @apply bg-void-black text-void-white font-special antialiased selection:bg-void-blood/40;
     cursor: none;
-    touch-action: none;
     overflow-x: hidden;
+    overflow-y: auto;
   }
 
   h1, h2, h3, h4, h5, h6 {

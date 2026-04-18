@@ -31,7 +31,7 @@ export default function SubjectProfile({ playClick }) {
              <img 
                src="/subject.jpg" 
                alt="Realistic Ivan" 
-               className="absolute inset-0 w-full h-h object-cover opacity-100 transition-opacity duration-300"
+               className="absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity duration-300"
                onError={(e) => {
                  e.target.style.display = 'none';
                  e.target.nextSibling.classList.remove('hidden');
