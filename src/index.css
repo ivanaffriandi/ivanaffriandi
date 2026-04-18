@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-void-black text-void-white font-special antialiased selection:bg-void-blood/40;
+    cursor: none;
+    touch-action: none;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-horror tracking-tighter;
+    will-change: transform, opacity;
+  }
+}
+
+/* Base Fonts */
+:root {
+  --font-horror: 'Rubik Glitch', system-ui;
+  --font-special: 'Special Elite', monospace;
+  --font-syne: 'Syne', sans-serif;
+}
+
+.font-horror { font-family: var(--font-horror); }
+.font-special { font-family: var(--font-special); }
+.font-syne { font-family: var(--font-syne); }
+
+/* Primary Navigation Styles */
+.nav-btn {
+  @apply font-syne text-[10px] tracking-[0.2em] font-bold uppercase transition-all duration-75 relative overflow-hidden;
+  will-change: color, transform;
+}
+
+.nav-btn:hover {
+  @apply text-void-blood;
+}
+
+/* Vignette Effect */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  background: radial-gradient(circle at center, transparent 20%, rgba(0,0,0,0.95) 100%);
+  z-index: 45;
+  will-change: opacity;
+}
+
+/* Grainy Noise */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  pointer-events: none;
+  background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+  opacity: 0.12;
+  z-index: 50;
+  will-change: opacity;
+}
+
+/* Flashlight Mask - GPU Accelerated */
+.flashlight-mask {
+  mask-image: radial-gradient(circle 300px at var(--x, 50%) var(--y, 50%), transparent 0%, black 95%);
+  -webkit-mask-image: radial-gradient(circle 300px at var(--x, 50%) var(--y, 50%), transparent 0%, black 95%);
+  pointer-events: none;
+  z-index: 40;
+  will-change: mask-image, -webkit-mask-image;
+}
+
+/* Abstract Horror Photo Class */
+.abstract-img {
+  filter: url(#blood-duotone) url(#abstract-distortion) contrast(150%);
+  transition: filter 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: filter, transform, opacity;
+}
+
+.abstract-img:hover {
+  filter: grayscale(100%) contrast(300%) brightness(1.2) url(#chromatic-aberration);
+}
+
+/* Glitch Typography - GPU Accelerated */
+.glitch-text {
+  position: relative;
+  display: inline-block;
+  will-change: transform;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  will-change: clip-path;
+}
+
+.glitch-text::before {
+  left: 2px;
+  text-shadow: -1px 0 #FF0000;
+  clip: rect(24px, 550px, 90px, 0);
+  animation: glitch-anim-2 0.1s infinite steps(2) alternate-reverse;
+}
+
+.glitch-text::after {
+  left: -2px;
+  text-shadow: -1px 0 #00FFFF;
+  clip: rect(85px, 550px, 140px, 0);
+  animation: glitch-anim 0.15s infinite steps(2) alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0%, 100% { clip: rect(10px, 9999px, 30px, 0); transform: translateX(0); }
+  50% { clip: rect(40px, 9999px, 80px, 0); transform: translateX(-1px); }
+}
+
+@keyframes glitch-anim-2 {
+  0%, 100% { clip: rect(60px, 9999px, 70px, 0); transform: translateX(0); }
+  50% { clip: rect(10px, 9999px, 30px, 0); transform: translateX(1px); }
+}
+
+.entry-card {
+  @apply border-l border-void-white/10 p-6 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-75;
+  will-change: background-color, border-color, transform;
+}
