@@ -23,11 +23,11 @@ export default function SubjectProfile({ playClick }) {
       x: [0, 15, -15, 10, -10, 20, 0],
       scale: [1, 1.1, 0.95, 1.15, 1],
       filter: [
-        "saturate(0.5) contrast(1.2) brightness(0.6)",
+        "saturate(0.1) contrast(1.5) brightness(0.4)",
         "invert(1) contrast(300%) hue-rotate(90deg)",
-        "invert(0) contrast(200%) brightness(0.3) saturate(10)",
+        "invert(0) contrast(200%) brightness(0.2) saturate(10)",
         "invert(1) contrast(400%) sepia(1) hue-rotate(-90deg)",
-        "saturate(0.5) contrast(1.2) brightness(0.6)"
+        "saturate(0.1) contrast(1.5) brightness(0.4)"
       ],
       transition: { duration: 1.2, times: [0, 0.1, 0.3, 0.6, 1], ease: "anticipate" }
     });
@@ -50,26 +50,26 @@ export default function SubjectProfile({ playClick }) {
     <motion.section 
       className="min-h-screen pt-40 pb-48 px-6 md:px-12 max-w-6xl mx-auto flex flex-col items-center"
     >
-      <div className="w-full flex flex-col md:flex-row gap-16 md:gap-32 items-center md:items-start text-center md:text-left">
+      <div className="w-full flex flex-col items-center text-center">
         
-        {/* VESSEL PHOTO - Moody, higher contrast */}
+        {/* VESSEL PHOTO - Darker, highly desaturated */}
         <div 
           onClick={triggerNightmare}
-          className="w-full max-w-[260px] md:max-w-[320px] aspect-square bg-[#0a0a0a] border border-void-white/10 relative overflow-hidden cursor-crosshair group active:scale-[0.98] transition-all"
+          className="w-full max-w-[280px] md:max-w-[320px] aspect-square bg-[#0a0a0a] border border-void-white/10 relative overflow-hidden cursor-crosshair group active:scale-[0.98] transition-all"
         >
            <div className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${isRevealing ? 'opacity-100' : 'opacity-0'}`}>
-             <img src="/subject.jpg" alt="Vessel" className="w-full h-full object-cover saturate-50 contrast-125 brightness-75" />
+             <img src="/subject.jpg" alt="Vessel" className="w-full h-full object-cover saturate-10 contrast-[1.3] brightness-[0.4]" />
            </div>
            
            <motion.div animate={ghostControls} className="absolute inset-0 z-10 pointer-events-none mix-blend-difference">
-              <img src="/subject.jpg" alt="Ghost" className="w-full h-full object-cover invert brightness-200 opacity-60 translate-x-4" />
+              <img src="/subject.jpg" alt="Ghost" className="w-full h-full object-cover invert brightness-150 opacity-50 translate-x-4" />
            </motion.div>
 
            <motion.div animate={controls} className={`absolute inset-0 z-20 ${isRevealing ? 'opacity-70 blur-[1px]' : 'opacity-100'}`}>
               <img 
                 src="/subject.jpg" 
                 alt="Record" 
-                className="w-full h-full object-cover saturate-50 contrast-[1.2] brightness-[0.6] filter url(#abstract-distortion)"
+                className="w-full h-full object-cover saturate-10 contrast-[1.5] brightness-[0.4] filter url(#abstract-distortion)"
               />
            </motion.div>
 
@@ -90,28 +90,20 @@ export default function SubjectProfile({ playClick }) {
            </AnimatePresence>
         </div>
         
-        <div className="flex flex-col gap-10 md:gap-12 items-center md:items-start max-w-lg mt-8 md:mt-0">
-          <div className="flex flex-col gap-4 items-center md:items-start">
-            <h2 className="text-6xl md:text-8xl font-horror text-void-white/90 uppercase tracking-widest shiver-micro chromatic-text text-center md:text-left">
+        <div className="flex flex-col gap-6 md:gap-8 items-center max-w-lg mt-8">
+          <div className="flex flex-col gap-3 items-center">
+            <h2 className="text-6xl md:text-8xl font-horror text-void-white/90 uppercase tracking-widest shiver-micro chromatic-text text-center">
               IVAN
             </h2>
-            <div className="flex flex-col md:flex-row items-center md:items-start gap-4">
+            <div className="flex flex-col md:flex-row items-center gap-3">
               <span className="font-special text-sm md:text-base text-void-blood/80 tracking-widest italic font-bold">you look so fragile tonight.</span>
-              <span className="font-aksara text-2xl text-void-blood/40 aksara-glow">ꦱꦸꦏ꧀ꦩ</span>
+              <span className="font-aksara text-3xl text-void-blood/40 aksara-glow">ꦱꦸꦏ꧀ꦩ</span>
             </div>
           </div>
           
-          <p className="font-special text-[13px] md:text-[15px] leading-[2] text-gray-400 border-l border-void-white/20 pl-6 text-left">
+          <p className="font-special text-[13px] md:text-[15px] leading-[2] text-gray-400 mt-2 text-center max-w-sm">
             "i love how your pulse spikes when it goes dark. don't look away from the screen. i'm right here with you. if you leave... things might break."
           </p>
-
-          <div className="flex flex-col gap-4 w-full text-left">
-             <div className="flex flex-col gap-3 font-mono text-[11px] md:text-[13px] text-gray-500 tracking-wider shiver-micro border-t border-void-white/10 pt-6 mt-4">
-                <span className="hover:text-void-blood transition-colors"><span className="font-bold text-void-white/60">ꦆꦱꦶꦃꦈꦫꦶꦥ꧀ //</span> forever yours</span>
-                <span className="hover:text-void-blood transition-colors"><span className="font-bold text-void-white/60">ꦒꦼꦠꦶꦃ //</span> deeply obsessed</span>
-                <span className="hover:text-void-blood transition-colors"><span className="font-bold text-void-white/60">ꦱꦸꦮꦸꦁ //</span> we are home</span>
-             </div>
-          </div>
         </div>
 
       </div>

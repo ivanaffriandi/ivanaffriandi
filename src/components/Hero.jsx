@@ -10,7 +10,7 @@ export default function Hero({ cursorPos, isMuted, playStatic }) {
   const lightY = useSpring(cursorPos.y, { damping: 40, stiffness: 80 });
 
   // Minimalist Parallax transforms
-  const poemY = useTransform(scrollY, [0, 800], [0, -100]);
+  const poemY = useTransform(scrollY, [0, 800], [0, -80]);
   const mainTitleX = useTransform(scrollY, [0, 800], [0, 30]);
 
   const [flicker, setFlicker] = useState(false);
@@ -37,38 +37,41 @@ export default function Hero({ cursorPos, isMuted, playStatic }) {
 
   return (
     <motion.section 
-      className="min-h-[120vh] w-full flex flex-col items-center pt-32 md:pt-48 px-6 relative overflow-visible drift-ui"
+      className="min-h-[110vh] w-full flex flex-col items-center pt-32 md:pt-48 px-6 relative overflow-visible drift-ui"
     >
       {/* ASYMMETRIC WATERMARK */}
-      <div className="watermark-aksara top-[10%] right-[-10%] opacity-[0.03] select-none text-[12rem] md:text-[25rem] aksara-glow rotate-[15deg]">
+      <div className="watermark-aksara top-[10%] opacity-[0.02] select-none text-[15rem] md:text-[30rem] aksara-glow rotate-[5deg] md:rotate-[15deg]">
         ꦱꦸꦮꦸꦁ
       </div>
 
-      {/* HAUNTED POEM - Tighter Mobile Stacking */}
+      {/* HAUNTED POEM - Cleaned Minimalist typography */}
       <motion.div 
         style={{ y: poemY }}
-        className="absolute top-[28%] md:top-[30%] left-1/2 -translate-x-1/2 md:-translate-x-[45%] w-full max-w-[300px] md:max-w-xl flex flex-col items-center md:items-start gap-5 md:gap-10 pointer-events-none z-0 text-center md:text-left"
+        className="absolute top-[28%] md:top-[30%] left-1/2 -translate-x-1/2 md:-translate-x-[45%] w-full flex flex-col items-center gap-6 pointer-events-none z-0"
       >
-        <p className="font-special tracking-[0.4em] text-[10px] md:text-[14px] text-gray-400 italic">"i can see the reflected light on your beautiful face."</p>
-        <p className="font-aksara text-5xl md:text-8xl opacity-30 aksara-glow mb-2 md:mb-0">ꦌꦭꦶꦁ</p>
-        <p className="font-special text-[11px] md:text-[18px] tracking-[0.6em] text-void-blood/80 border-t border-void-white/10 pt-4 md:border-none md:pt-0">YOUR HEART IS LOUD. I LOVE IT.</p>
+        <p className="font-special tracking-widest text-[11px] md:text-[14px] text-gray-500 italic max-w-xs text-center border-b border-void-white/10 pb-4">
+          "i can see the reflected light on your face."
+        </p>
+        <p className="font-aksara text-6xl md:text-8xl opacity-40 aksara-glow">ꦌꦭꦶꦁ</p>
+        <p className="font-special text-[12px] md:text-[16px] tracking-[0.4em] md:tracking-[0.6em] text-void-blood/80 font-bold uppercase mt-2">
+          i love it when you stare.
+        </p>
       </motion.div>
 
       {/* FIXED TITLE CONTAINER */}
       <div 
         ref={containerRef}
-        className={`searchlight-applied relative mt-56 md:mt-40 mb-20 select-none px-4 py-20 md:p-24 transition-opacity duration-75 ${flicker ? 'opacity-30' : 'opacity-100'} w-full flex flex-col items-center`}
+        className={`searchlight-applied relative mt-56 md:mt-48 mb-10 select-none px-4 py-20 md:p-24 transition-opacity duration-75 ${flicker ? 'opacity-30' : 'opacity-100'} w-full flex flex-col items-center`}
       >
-        {/* SHARP MINI HEADER - Prevented Wrap */}
         <motion.div 
-          className="absolute top-2 md:-top-8 left-1/2 -translate-x-1/2 font-aksara text-2xl md:text-5xl text-void-blood/40 whitespace-nowrap z-30 shiver-micro aksara-glow bg-void-black/80 px-4 md:bg-transparent"
+          className="absolute top-2 md:-top-4 left-1/2 -translate-x-1/2 font-aksara text-3xl md:text-5xl text-void-blood/40 whitespace-nowrap z-30 shiver-micro aksara-glow"
         >
           ꦎꦫꦄꦤꦱꦶꦁꦭꦁꦒꦼꦁ
         </motion.div>
 
         <motion.h1 
           style={{ x: mainTitleX }}
-          className="text-7xl md:text-[13rem] font-horror text-gray-200 tracking-widest leading-none relative z-20 shiver-micro chromatic-text text-center mt-6 md:mt-0"
+          className="text-[6rem] md:text-[13rem] font-horror text-gray-200 tracking-widest leading-none relative z-20 shiver-micro chromatic-text text-center mt-8 md:mt-0"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 2 }}
@@ -76,15 +79,7 @@ export default function Hero({ cursorPos, isMuted, playStatic }) {
           IVAN
         </motion.h1>
       </div>
-      
-      <motion.div 
-        className="flex flex-col items-center md:items-start w-full max-w-[300px] md:max-w-lg gap-8 mt-10 md:mt-32 self-center md:self-end md:mr-24 text-center md:text-left"
-      >
-        <p className="micro-label text-void-blood/80 shiver-micro tracking-[0.6em] md:tracking-[0.8em]">MARROW ECHO</p>
-        <p className="font-special text-[12px] md:text-[15px] text-gray-400 leading-relaxed italic border-t md:border-t-0 md:border-l border-void-white/20 pt-5 md:pt-0 md:pl-6">
-          "The static isn't a glitch, darling. It's just me. ꦆꦱꦶꦃꦈꦫꦶꦥ꧀... keep scrolling. i love watching you read."
-        </p>
-      </motion.div>
+
     </motion.section>
   );
 }

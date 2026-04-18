@@ -4,30 +4,29 @@
 
 @layer base {
   body {
-    @apply bg-void-black text-gray-300 font-special antialiased selection:bg-void-blood/40;
+    @apply bg-void-black text-gray-400 font-special antialiased selection:bg-void-blood/40;
     overflow-x: hidden;
     overflow-y: auto;
     touch-action: pan-y;
     min-height: 100vh;
-    transition: background-color 1s ease;
+    transition: background-color 1s ease, color 1s ease;
   }
 
-  /* The Panic Chase / Gothic Trigger Mode */
+  /* The Red Vault Theme Switcher */
   body.stare-active {
-    background-color: #1a0000;
-    color: rgba(255, 100, 100, 0.8);
+    background-color: #120000;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-horror tracking-tighter text-gray-200;
+    @apply font-horror tracking-tighter text-gray-300;
     will-change: transform, opacity;
   }
   
   body.stare-active h1, 
   body.stare-active h2, 
   body.stare-active h3 {
-    color: #ff1a1a;
-    text-shadow: 0 0 25px rgba(255, 0, 0, 1);
+    color: #cc1111;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
   }
 }
 
@@ -44,11 +43,11 @@
 .font-syne { font-family: var(--font-syne); }
 .font-aksara { font-family: var(--font-aksara); }
 
-/* Shivering Text Animation (Intensified for small text) */
+/* Shivering Text Animation */
 @keyframes shiver-micro {
   0% { transform: translate(0, 0); }
-  25% { transform: translate(-0.4px, 0.4px); text-shadow: 0.5px 0 rgba(255,0,0,0.7), -0.5px 0 rgba(0,255,255,0.4); }
-  50% { transform: translate(0.4px, -0.4px); text-shadow: -0.8px 0 rgba(255,0,0,0.7), 0.8px 0 rgba(0,255,255,0.4); }
+  25% { transform: translate(-0.4px, 0.4px); text-shadow: 0.5px 0 rgba(255,0,0,0.5), -0.5px 0 rgba(0,255,255,0.3); }
+  50% { transform: translate(0.4px, -0.4px); text-shadow: -0.8px 0 rgba(255,0,0,0.5), 0.8px 0 rgba(0,255,255,0.3); }
   100% { transform: translate(0, 0); }
 }
 
@@ -57,8 +56,21 @@
 }
 
 .stare-active .shiver-micro {
-  animation: shiver-micro 0.04s infinite linear;
-  text-shadow: 0 0 15px rgba(255,20,20,0.9);
+  /* Minimalist Red Theme: No extra shaking, just pure red bleeding shadow */
+  text-shadow: 0 0 8px rgba(255,20,20,0.8);
+}
+
+/* Lightning Full Screen Slash */
+@keyframes strike {
+  0% { filter: brightness(1) invert(0); background: transparent; }
+  2% { filter: brightness(5) invert(1) hue-rotate(90deg); background: white; }
+  8% { filter: brightness(1) invert(0); background: transparent; }
+  10% { filter: brightness(3) invert(1) hue-rotate(90deg); background: #ffaaaa; }
+  18% { filter: brightness(1) invert(0); background: transparent; }
+}
+
+.lightning-bolt {
+  animation: strike 0.3s cubic-bezier(0.1, 0.8, 0.1, 1) forwards;
 }
 
 /* Subliminal Flicker Animation */
@@ -72,19 +84,15 @@
   animation: subliminal-flash 0.08s ease-in-out forwards;
 }
 
-.stare-active .flicker-active {
-  animation: subliminal-flash 0.05s ease-in-out infinite;
-}
-
 /* Micro-Label Style */
 .micro-label {
   @apply font-syne text-[10px] md:text-[12px] tracking-[0.4em] font-bold uppercase;
   color: rgba(255, 255, 255, 0.5);
-  transition: color 0.3s;
+  transition: color 0.5s;
 }
 
 .stare-active .micro-label {
-  color: rgba(255, 40, 40, 0.9);
+  color: rgba(255, 80, 80, 0.9);
 }
 
 /* Aksara Ritual Glow */
@@ -92,11 +100,12 @@
   text-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
   filter: blur(0.2px);
   color: rgba(255, 0, 0, 0.4);
+  transition: color 0.5s, text-shadow 0.5s;
 }
 
 .stare-active .aksara-glow {
-  text-shadow: 0 0 30px rgba(255, 0, 0, 1);
-  color: rgba(255, 0, 0, 1);
+  text-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+  color: rgba(255, 0, 0, 0.9);
 }
 
 /* Organic UI Drift */
@@ -109,23 +118,19 @@
   animation: drift 15s ease-in-out infinite;
 }
 
-.stare-active .drift-minimal {
-  animation: drift 1.5s ease-in-out infinite;
-}
-
 /* Vignette Effect */
 body::after {
   content: "";
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   pointer-events: none;
-  background: radial-gradient(circle at center, transparent 10%, rgba(0,0,0,0.95) 100%);
+  background: radial-gradient(circle at center, transparent 10%, rgba(0,0,0,0.92) 100%);
   transition: background 1s ease;
   z-index: 45;
 }
 
 body.stare-active::after {
-  background: radial-gradient(circle at center, transparent 0%, rgba(40,0,0,0.95) 90%, rgba(20,0,0,1) 100%);
+  background: radial-gradient(circle at center, transparent 0%, rgba(30,0,0,0.92) 90%, rgba(10,0,0,1) 100%);
 }
 
 /* Static Grain Overlay */
@@ -135,13 +140,8 @@ body::before {
   top: 0; left: 0; width: 100vw; height: 100vh;
   pointer-events: none;
   background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
-  opacity: 0.18;
+  opacity: 0.15;
   z-index: 50;
-  transition: opacity 1s;
-}
-
-body.stare-active::before {
-  opacity: 0.5;
 }
 
 /* SEARCHLIGHT Utility */
@@ -153,14 +153,14 @@ body.stare-active::before {
   width: 100%; 
   height: 100%;
   pointer-events: none;
-  background: radial-gradient(circle 140px at var(--lx, 50%) var(--ly, 50%), transparent 0%, rgba(0,0,0,0.95) 95%);
+  background: radial-gradient(circle 140px at var(--lx, 50%) var(--ly, 50%), transparent 0%, rgba(0,0,0,0.97) 92%);
   mix-blend-mode: multiply;
+  transition: background 0.5s ease;
   z-index: 10;
-  transition: background 0.3s ease;
 }
 
 .stare-active .searchlight-applied::after {
-  background: radial-gradient(circle 300px at var(--lx, 50%) var(--ly, 50%), rgba(255,0,0,0.3) 0%, rgba(10,0,0,0.99) 95%);
+  background: radial-gradient(circle 200px at var(--lx, 50%) var(--ly, 50%), rgba(255,0,0,0.15) 0%, rgba(10,0,0,0.99) 95%);
   mix-blend-mode: color-burn;
 }
 
@@ -176,5 +176,5 @@ body.stare-active::before {
 }
 
 .stare-active .watermark-aksara {
-  color: rgba(255, 0, 0, 0.15);
+  color: rgba(255, 20, 20, 0.05);
 }

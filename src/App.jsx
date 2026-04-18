@@ -14,10 +14,11 @@ function App() {
   const [isMuted, setIsMuted] = useState(false);
   const [flickerPos, setFlickerPos] = useState({ x: 0, y: 0 });
   const [isFlickering, setIsFlickering] = useState(false);
+  const [isLightning, setIsLightning] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isStaring, setIsStaring] = useState(false);
   
-  const { playClick, playStatic, playGothicGong } = useSound(isMuted);
+  const { playClick, playThunderCrash, playGothicGong } = useSound(isMuted);
 
   // Subliminal Flicker Engine (Peripheral Jumpscares)
   useEffect(() => {
@@ -34,6 +35,22 @@ function App() {
     return () => clearTimeout(timer);
   }, [isBooted]);
 
+  // Rare Lightning & Thunder Effect
+  useEffect(() => {
+    if (!isBooted) return;
+    const triggerLightning = () => {
+      // Small chance to trigger lightning so it's not annoying
+      if (Math.random() > 0.6) {
+        setIsLightning(true);
+        playThunderCrash();
+        setTimeout(() => setIsLightning(false), 300); // the animation takes 0.3s
+      }
+      setTimeout(triggerLightning, Math.random() * 30000 + 20000); // 20s-50s
+    };
+    const timer = setTimeout(triggerLightning, 25000);
+    return () => clearTimeout(timer);
+  }, [isBooted, playThunderCrash]);
+
   useEffect(() => {
     const track = (e) => {
       setCursorPos({ x: e.clientX, y: e.clientY });
@@ -47,7 +64,6 @@ function App() {
     let gongInterval;
     if (isStaring) {
       document.body.classList.add('stare-active');
-      playStatic(); 
       playGothicGong();
       gongInterval = setInterval(playGothicGong, 10000); // 10 second slow loop
     } else {
@@ -57,7 +73,7 @@ function App() {
       document.body.classList.remove('stare-active');
       clearInterval(gongInterval);
     };
-  }, [isStaring, playStatic, playGothicGong]);
+  }, [isStaring, playGothicGong]);
 
   const handleTabChange = (tab) => {
     playClick();
@@ -99,7 +115,7 @@ function App() {
 
   return (
     <CustomCursor>
-      <motion.main className="relative z-0 min-h-screen pb-20 overflow-x-hidden transform-gpu flex flex-col items-center">
+      <motion.main className={`relative z-0 min-h-screen pb-20 overflow-x-hidden transform-gpu flex flex-col items-center ${isLightning ? 'lightning-bolt' : ''}`}>
         
         {/* SUBLIMINAL FLICKER */}
         <AnimatePresence>
@@ -127,7 +143,7 @@ function App() {
               <button 
                 onClick={toggleStare} 
                 className={`flex items-center gap-2 p-1 transition-colors ${isStaring ? 'text-void-blood drop-shadow-[0_0_15px_rgba(255,0,0,1)] scale-110' : 'text-void-white/40 hover:text-void-white/80'}`}
-                title="Trigger Horror Theme"
+                title="Change Theme"
               >
                 <Flashlight size={16} className={isStaring ? 'shiver-micro' : ''} />
               </button>
@@ -168,7 +184,7 @@ function App() {
             transition={{ duration: 0.5 }}
             className="drift-minimal w-full flex justify-center"
           >
-            {activeTab === 'hero' && <Hero cursorPos={cursorPos} isMuted={isMuted} playStatic={playStatic} />}
+            {activeTab === 'hero' && <Hero cursorPos={cursorPos} isMuted={isMuted} />}
             {activeTab === 'logs' && <Journal />}
             {activeTab === 'me' && <SubjectProfile playClick={playClick} />}
             {activeTab === 'void' && (
