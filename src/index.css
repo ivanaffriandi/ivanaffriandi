@@ -33,14 +33,46 @@
 /* Shivering Text Animation */
 @keyframes shiver {
   0% { transform: translate(0, 0); }
-  25% { transform: translate(-0.5px, 0.5px); text-shadow: 1px 0 red, -1px 0 cyan; }
-  50% { transform: translate(0.5px, -0.5px); text-shadow: -1px 0 red, 1px 0 cyan; }
-  75% { transform: translate(-0.5px, -0.5px); }
+  25% { transform: translate(-0.8px, 0.8px); text-shadow: 1px 0 #FF0000, -1px 0 #00FFFF; }
+  50% { transform: translate(0.8px, -0.8px); text-shadow: -1.5px 0 #FF0000, 1.5px 0 #00FFFF; }
+  75% { transform: translate(-0.8px, -0.8px); }
   100% { transform: translate(0, 0); }
 }
 
 .shiver {
-  animation: shiver 0.2s infinite linear;
+  animation: shiver 0.15s infinite linear;
+}
+
+/* Aksara Ritual Glow */
+.aksara-glow {
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.6), 0 0 20px rgba(255, 0, 0, 0.3);
+  filter: blur(0.3px);
+  will-change: text-shadow, filter;
+}
+
+/* Lightning Strike Flash */
+@keyframes lightning-flash {
+  0% { filter: brightness(1) invert(0); background: transparent; }
+  5% { filter: brightness(3) invert(1); background: white; }
+  10% { filter: brightness(1) invert(0); background: transparent; }
+  12% { filter: brightness(4) invert(1); background: #FF0000; }
+  20% { filter: brightness(1) invert(0); background: transparent; }
+}
+
+.lightning-active {
+  animation: lightning-flash 0.5s ease-out forwards;
+}
+
+/* Organic Drift Animation */
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(5px, -5px) rotate(0.5deg); }
+  50% { transform: translate(-5px, 5px) rotate(-0.5deg); }
+  75% { transform: translate(5px, 5px) rotate(0.2deg); }
+}
+
+.drift-ui {
+  animation: drift 10s ease-in-out infinite;
 }
 
 /* Chromatic Distortion Shadow */
@@ -54,7 +86,7 @@ body::after {
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   pointer-events: none;
-  background: radial-gradient(circle at center, transparent 20%, rgba(0,0,0,0.92) 100%);
+  background: radial-gradient(circle at center, transparent 15%, rgba(0,0,0,0.95) 100%);
   z-index: 45;
 }
 
@@ -65,7 +97,7 @@ body::before {
   top: 0; left: 0; width: 100vw; height: 100vh;
   pointer-events: none;
   background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
-  opacity: 0.15;
+  opacity: 0.18;
   z-index: 50;
 }
 
@@ -83,7 +115,7 @@ body::before {
   width: 100%; 
   height: 100%;
   pointer-events: none;
-  background: radial-gradient(circle 140px at var(--lx, 50%) var(--ly, 50%), transparent 0%, rgba(0,0,0,0.98) 85%);
+  background: radial-gradient(circle 160px at var(--lx, 50%) var(--ly, 50%), transparent 0%, rgba(0,0,0,0.99) 90%);
   mix-blend-mode: multiply;
   z-index: 10;
   will-change: background;
@@ -99,10 +131,10 @@ body::before {
 .watermark-aksara {
   position: absolute;
   font-family: var(--font-aksara);
-  color: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.02);
   z-index: -1;
   pointer-events: none;
-  font-size: 20rem;
+  font-size: 25rem;
   line-height: 1;
   white-space: nowrap;
 }
