@@ -43,8 +43,6 @@ export default function CustomCursor({ children }) {
 
   return (
     <>
-      <div className="fixed inset-0 pointer-events-none flashlight-mask bg-black z-40 touch-none"></div>
-      
       {/* Primary Dot (Zero-Lag) - Hidden on mobile via hover media query in CSS */}
       <div 
         ref={cursorRef}
