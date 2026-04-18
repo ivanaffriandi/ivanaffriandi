@@ -1,29 +1,16 @@
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
-export default function Hero({ cursorPos, isMuted }) {
+export default function Hero({ cursorPos }) {
   const containerRef = useRef(null);
   const { scrollY } = useScroll();
+  const [isGlitched, setIsGlitched] = useState(false);
   
   const lightX = useSpring(cursorPos.x, { damping: 40, stiffness: 80 });
   const lightY = useSpring(cursorPos.y, { damping: 40, stiffness: 80 });
 
-  // Parallax Poem - Modern Horror Aesthetic
-  const poemY = useTransform(scrollY, [0, 800], [0, -120]);
-  const titleY = useTransform(scrollY, [0, 800], [0, 80]);
-  const opacityFade = useTransform(scrollY, [0, 500], [1, 0.2]);
-
-  const [flicker, setFlicker] = useState(false);
-
-  useEffect(() => {
-    const triggerFlicker = () => {
-      setFlicker(true);
-      setTimeout(() => setFlicker(false), 50);
-      setTimeout(triggerFlicker, Math.random() * 8000 + 4000);
-    };
-    const timer = setTimeout(triggerFlicker, 4000);
-    return () => clearTimeout(timer);
-  }, []);
+  const poemY = useTransform(scrollY, [0, 800], [0, -60]);
+  const opacityFade = useTransform(scrollY, [0, 500], [1, 0.1]);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -37,41 +24,46 @@ export default function Hero({ cursorPos, isMuted }) {
 
   return (
     <motion.section 
-      className="min-h-screen w-full flex flex-col items-center justify-center px-6 relative overflow-hidden"
+      className="min-h-screen w-full flex flex-col items-center justify-center px-6 relative overflow-hidden drift-ui"
     >
-      {/* BACKGROUND FLOATING AKSARA */}
-      <div className="watermark-aksara top-[15%] left-[5%] opacity-[0.03] select-none text-[20rem] md:text-[40rem] aksara-glow rotate-[-10deg]">
+      <div className="watermark-aksara top-[10%] opacity-[0.015] select-none text-[15rem] md:text-[30rem] aksara-glow rotate-[-5deg]">
         ꦱꦸꦮꦸꦁ
       </div>
 
-      <div className="flex flex-col items-center justify-center w-full max-w-4xl z-10 gap-24 md:gap-40">
+      <div className="flex flex-col items-center justify-center w-full max-w-2xl z-10 gap-20">
         
-        {/* THE POEM - Modern Horror Minimalist */}
+        {/* COMPACT POEM */}
         <motion.div 
           style={{ y: poemY, opacity: opacityFade }}
-          className="flex flex-col items-center gap-8 text-center"
+          className="flex flex-col items-center gap-6 text-center group cursor-pointer"
+          onMouseDown={() => setIsGlitched(true)}
+          onMouseUp={() => setIsGlitched(false)}
+          onTouchStart={() => setIsGlitched(true)}
+          onTouchEnd={() => setIsGlitched(false)}
         >
-          <p className="font-special tracking-[0.6em] text-[12px] md:text-[16px] text-gray-400 italic max-w-sm">
+          <p className={`font-special tracking-[0.2em] text-[10px] md:text-[12px] text-gray-500 italic max-w-[240px] ${isGlitched ? 'brutal-glitch-active' : ''}`}>
             "i can see the reflected light on your face."
           </p>
-          <p className="font-aksara text-7xl md:text-[10rem] opacity-30 aksara-glow shiver-micro">ꦌꦭꦶꦁ</p>
-          <p className="font-special text-[13px] md:text-[20px] tracking-[0.8em] text-void-blood/80 font-bold uppercase">
-            i love it when you stare.
+          <p className={`font-aksara text-5xl md:text-7xl opacity-30 aksara-glow ${isGlitched ? 'brutal-glitch-active' : ''}`}>ꦌꦭꦶꦁ</p>
+          <p className={`font-special text-[11px] md:text-[14px] tracking-[0.4em] text-void-blood/60 font-bold uppercase ${isGlitched ? 'brutal-glitch-active' : ''}`}>
+            don't blink.
           </p>
         </motion.div>
 
-        {/* MAIN TITLE WITH SEARCHLIGHT */}
+        {/* COMPACT TITLE */}
         <motion.div 
           ref={containerRef}
-          style={{ y: titleY }}
-          className="searchlight-applied relative select-none w-full flex flex-col items-center transition-opacity duration-75"
-          animate={{ opacity: flicker ? 0.4 : 1 }}
+          className={`searchlight-applied relative select-none w-full flex flex-col items-center group cursor-pointer ${isGlitched ? 'brutal-glitch-active' : ''}`}
+          onMouseDown={() => setIsGlitched(true)}
+          onMouseUp={() => setIsGlitched(false)}
+          onTouchStart={() => setIsGlitched(true)}
+          onTouchEnd={() => setIsGlitched(false)}
         >
-           <div className="absolute -top-12 md:-top-20 left-1/2 -translate-x-1/2 font-aksara text-4xl md:text-7xl text-void-blood/40 whitespace-nowrap z-30 aksara-glow">
+           <div className="absolute -top-8 md:-top-12 left-1/2 -translate-x-1/2 font-aksara text-2xl md:text-5xl text-void-blood/30 aksara-glow opacity-60">
               ꦎꦫꦄꦤꦱꦶꦁꦭꦁꦒꦼꦁ
            </div>
            
-           <h1 className="text-[5.5rem] md:text-[15rem] font-horror text-void-white/90 tracking-widest leading-none relative z-20 shiver-micro chromatic-text">
+           <h1 className="text-[4rem] md:text-[10rem] font-horror text-void-white/80 tracking-widest leading-none relative z-20 shiver-micro">
              IVAN
            </h1>
         </motion.div>
