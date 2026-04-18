@@ -2,7 +2,7 @@ import { useCallback, useRef, useEffect } from 'react';
 
 export default function useSound(isMuted = false) {
   const audioCtx = useRef(null);
-  const droneOscs = useRef([]); // Hold drone oscillators to stop them later
+  const droneOscs = useRef([]); 
   const isDronePlaying = useRef(false);
 
   const initAudioCtx = () => {
@@ -14,7 +14,6 @@ export default function useSound(isMuted = false) {
     }
   };
 
-  // Start continuous background drone (Gothic Pad)
   const startBackgroundDrone = useCallback(() => {
     if (isMuted || isDronePlaying.current) return;
     initAudioCtx();
@@ -22,25 +21,24 @@ export default function useSound(isMuted = false) {
     isDronePlaying.current = true;
     const t = audioCtx.current.currentTime;
 
-    // Dark sweeping drone base
+    // Deep Dark Drone frequencies
     const drone1 = audioCtx.current.createOscillator();
     drone1.type = 'triangle';
-    drone1.frequency.setValueAtTime(32.7, t); // C1
+    drone1.frequency.setValueAtTime(32.7, t); 
 
     const drone2 = audioCtx.current.createOscillator();
     drone2.type = 'sine';
-    drone2.frequency.setValueAtTime(65.4, t); // C2
+    drone2.frequency.setValueAtTime(48.9, t); // G1 (lower harmony)
 
-    // Eerie high harmony
     const drone3 = audioCtx.current.createOscillator();
     drone3.type = 'sine';
-    drone3.frequency.setValueAtTime(196, t); // G3
+    drone3.frequency.setValueAtTime(65.4, t); 
 
     const gainNode = audioCtx.current.createGain();
     
-    // Smooth slow fade in for the drone
+    // BOOSTED VOLUME: 0.08 -> 0.25 for better mobile presence
     gainNode.gain.setValueAtTime(0, t);
-    gainNode.gain.linearRampToValueAtTime(0.08, t + 4);
+    gainNode.gain.linearRampToValueAtTime(0.25, t + 3);
 
     drone1.connect(gainNode);
     drone2.connect(gainNode);
@@ -53,25 +51,24 @@ export default function useSound(isMuted = false) {
 
     droneOscs.current = [drone1, drone2, drone3, gainNode];
 
-    // Gothic Gamelan random hits loop inside the drone
+    // Gothic Gamelan hits faster and louder
     const loopGong = () => {
       if (!isDronePlaying.current || isMuted) return;
       playGothicGong();
-      setTimeout(loopGong, Math.random() * 15000 + 10000); // Hit randomly every 10-25s
+      setTimeout(loopGong, Math.random() * 12000 + 8000); 
     };
     
-    setTimeout(loopGong, 3000);
+    setTimeout(loopGong, 1000);
 
   }, [isMuted]);
 
   const stopBackgroundDrone = useCallback(() => {
     if (!isDronePlaying.current) return;
     const t = audioCtx.current.currentTime;
-    // Fade out drone
     if (droneOscs.current.length > 0) {
       const gainNode = droneOscs.current[3];
       gainNode.gain.cancelScheduledValues(t);
-      gainNode.gain.linearRampToValueAtTime(0, t + 2);
+      gainNode.gain.linearRampToValueAtTime(0, t + 1.5);
       
       setTimeout(() => {
         droneOscs.current[0].stop();
@@ -79,7 +76,7 @@ export default function useSound(isMuted = false) {
         droneOscs.current[2].stop();
         droneOscs.current = [];
         isDronePlaying.current = false;
-      }, 2100);
+      }, 1600);
     }
   }, []);
 
@@ -91,18 +88,18 @@ export default function useSound(isMuted = false) {
     const oscillator = audioCtx.current.createOscillator();
     const gainNode = audioCtx.current.createGain();
 
-    oscillator.type = Math.random() > 0.5 ? 'square' : 'sawtooth';
-    oscillator.frequency.setValueAtTime(Math.random() * 80 + 30, t);
-    oscillator.frequency.exponentialRampToValueAtTime(0.01, t + 0.08);
+    oscillator.type = 'sawtooth';
+    oscillator.frequency.setValueAtTime(40, t);
+    oscillator.frequency.exponentialRampToValueAtTime(0.01, t + 0.1);
 
-    gainNode.gain.setValueAtTime(0.08, t);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+    gainNode.gain.setValueAtTime(0.1, t);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
 
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.current.destination);
 
     oscillator.start(t);
-    oscillator.stop(t + 0.08);
+    oscillator.stop(t + 0.1);
   }, [isMuted]);
 
   const playThunderCrash = useCallback(() => {
@@ -110,7 +107,7 @@ export default function useSound(isMuted = false) {
     initAudioCtx();
     
     const t = audioCtx.current.currentTime;
-    const bufferSize = audioCtx.current.sampleRate * 2.5; 
+    const bufferSize = audioCtx.current.sampleRate * 3; 
     const buffer = audioCtx.current.createBuffer(1, bufferSize, audioCtx.current.sampleRate);
     const data = buffer.getChannelData(0);
 
@@ -126,7 +123,7 @@ export default function useSound(isMuted = false) {
         b4 = 0.55000 * b4 + white * 0.5329522;
         b5 = -0.7616 * b5 - white * 0.0168980;
         data[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
-        data[i] *= 0.11; 
+        data[i] *= 0.15; 
         b6 = white * 0.115926;
     }
 
@@ -135,14 +132,13 @@ export default function useSound(isMuted = false) {
     
     const filter = audioCtx.current.createBiquadFilter();
     filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(400, t);
-    filter.frequency.linearRampToValueAtTime(100, t + 2);
+    filter.frequency.setValueAtTime(300, t);
 
     const gain = audioCtx.current.createGain();
     
     gain.gain.setValueAtTime(0, t);
-    gain.gain.linearRampToValueAtTime(1.5, t + 0.1);
-    gain.gain.exponentialRampToValueAtTime(0.01, t + 2.5);
+    gain.gain.linearRampToValueAtTime(2.0, t + 0.05); // Brighter strike
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 3);
 
     noise.connect(filter);
     filter.connect(gain);
@@ -158,56 +154,31 @@ export default function useSound(isMuted = false) {
     const t = audioCtx.current.currentTime;
 
     const osc1 = audioCtx.current.createOscillator();
-    osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(65, t); 
-
+    osc1.frequency.setValueAtTime(60, t); 
     const osc2 = audioCtx.current.createOscillator();
     osc2.type = 'triangle';
-    osc2.frequency.setValueAtTime(130, t); 
-
-    const osc3 = audioCtx.current.createOscillator();
-    osc3.type = 'triangle';
-    osc3.frequency.setValueAtTime(260, t);
-
+    osc2.frequency.setValueAtTime(120, t); 
+    
     const gainNode1 = audioCtx.current.createGain();
-    const gainNode2 = audioCtx.current.createGain();
-    const gainNode3 = audioCtx.current.createGain();
     const masterGain = audioCtx.current.createGain();
 
     gainNode1.gain.setValueAtTime(0, t);
-    gainNode1.gain.linearRampToValueAtTime(1.0, t + 0.05);
-    gainNode1.gain.exponentialRampToValueAtTime(0.001, t + 6);
-
-    gainNode2.gain.setValueAtTime(0, t);
-    gainNode2.gain.linearRampToValueAtTime(0.6, t + 0.03);
-    gainNode2.gain.exponentialRampToValueAtTime(0.001, t + 4);
-
-    gainNode3.gain.setValueAtTime(0, t);
-    gainNode3.gain.linearRampToValueAtTime(0.3, t + 0.01);
-    gainNode3.gain.exponentialRampToValueAtTime(0.001, t + 3);
+    gainNode1.gain.linearRampToValueAtTime(1.5, t + 0.05);
+    gainNode1.gain.exponentialRampToValueAtTime(0.001, t + 8);
     
-    masterGain.gain.setValueAtTime(1.8, t); // Boost volume significantly for mobile visibility
+    masterGain.gain.setValueAtTime(2.0, t); 
 
     osc1.connect(gainNode1);
-    osc2.connect(gainNode2);
-    osc3.connect(gainNode3);
-
+    osc2.connect(gainNode1);
     gainNode1.connect(masterGain);
-    gainNode2.connect(masterGain);
-    gainNode3.connect(masterGain);
-    
     masterGain.connect(audioCtx.current.destination);
 
     osc1.start(t);
     osc2.start(t);
-    osc3.start(t);
-
-    osc1.stop(t + 6.5);
-    osc2.stop(t + 6.5);
-    osc3.stop(t + 6.5);
+    osc1.stop(t + 8);
+    osc2.stop(t + 8);
   }, [isMuted]);
 
-  // Clean up sounds on unmount
   useEffect(() => {
     return () => {
       if (isDronePlaying.current) {
