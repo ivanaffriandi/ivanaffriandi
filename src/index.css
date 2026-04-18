@@ -7,15 +7,8 @@
     @apply bg-void-black text-void-white font-special antialiased selection:bg-void-blood/40;
     overflow-x: hidden;
     overflow-y: auto;
-    touch-action: pan-y; /* Priority on vertical scrolling for mobile */
+    touch-action: pan-y;
     min-height: 100vh;
-  }
-
-  /* Only hide cursor on mouse-enabled devices */
-  @media (hover: hover) {
-    body {
-      cursor: none;
-    }
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -35,25 +28,14 @@
 .font-special { font-family: var(--font-special); }
 .font-syne { font-family: var(--font-syne); }
 
-/* Primary Navigation Styles */
-.nav-btn {
-  @apply font-syne text-[10px] tracking-[0.2em] font-bold uppercase transition-all duration-75 relative overflow-hidden;
-  will-change: color, transform;
-}
-
-.nav-btn:hover {
-  @apply text-void-blood;
-}
-
 /* Vignette Effect */
 body::after {
   content: "";
   position: fixed;
   top: 0; left: 0; width: 100%; height: 100%;
   pointer-events: none;
-  background: radial-gradient(circle at center, transparent 20%, rgba(0,0,0,0.95) 100%);
+  background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.85) 100%);
   z-index: 45;
-  will-change: opacity;
 }
 
 /* Grainy Noise */
@@ -65,32 +47,37 @@ body::before {
   background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
   opacity: 0.12;
   z-index: 50;
-  will-change: opacity;
 }
 
-/* Flashlight Mask - GPU Accelerated */
-.flashlight-mask {
-  mask-image: radial-gradient(circle 250px at var(--x, 50%) var(--y, 50%), transparent 0%, black 100%);
-  -webkit-mask-image: radial-gradient(circle 250px at var(--x, 50%) var(--y, 50%), transparent 0%, black 100%);
-  will-change: mask-image, -webkit-mask-image;
+/* SEARCHLIGHT Utility (Localized for Headlines) */
+.searchlight-applied {
+  position: relative;
+  overflow: hidden;
+}
+
+.searchlight-applied::after {
+  content: "";
+  position: absolute;
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%;
+  pointer-events: none;
+  background: radial-gradient(circle 120px at var(--lx, 50%) var(--ly, 50%), transparent 10%, rgba(0,0,0,0.95) 80%);
+  mix-blend-mode: multiply;
+  z-index: 10;
 }
 
 /* Abstract Horror Photo Class */
 .abstract-img {
-  filter: url(#blood-duotone) url(#abstract-distortion) contrast(150%);
-  transition: filter 0.1s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: filter, transform, opacity;
+  filter: grayscale(100%) contrast(150%) brightness(0.8) url(#abstract-distortion);
+  transition: filter 0.2s ease;
 }
 
-.abstract-img:hover {
-  filter: grayscale(100%) contrast(300%) brightness(1.2) url(#chromatic-aberration);
-}
-
-/* Glitch Typography - GPU Accelerated */
+/* Glitch Typography */
 .glitch-text {
   position: relative;
   display: inline-block;
-  will-change: transform;
 }
 
 .glitch-text::before,
@@ -98,7 +85,6 @@ body::before {
   content: attr(data-text);
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
-  will-change: clip-path;
 }
 
 .glitch-text::before {
@@ -127,5 +113,4 @@ body::before {
 
 .entry-card {
   @apply border-l border-void-white/10 p-6 bg-white/[0.01] hover:bg-white/[0.03] transition-all duration-75;
-  will-change: background-color, border-color, transform;
 }
