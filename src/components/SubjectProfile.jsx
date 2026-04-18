@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import useSound from '../hooks/useSound';
 
-const HALLUCINATIONS = ["ꦆꦥ꦳ꦤ꧀", "ꦒꦼꦠꦶꦃ", "ꦱꦸꦮꦸꦁ", "I SEE YOU", "ꦌꦭꦶꦁ", "STAY", "ꦱꦏ꧀ꦱꦶ"];
+const HALLUCINATIONS = ["ꦆꦥ꦳ꦤ꧀", "ꦒꦼꦠꦶꦃ", "ꦱꦸꦮꦸꦁ", "I SEE YOU", "ꦌꦭꦶꦁ", "RUN", "ꦱꦏ꧀ꦱꦶ"];
 
 export default function SubjectProfile({ playClick }) {
   const [isRevealing, setIsRevealing] = useState(false);
@@ -17,59 +17,59 @@ export default function SubjectProfile({ playClick }) {
 
     const msgInterval = setInterval(() => {
       setCurrentMessage(HALLUCINATIONS[Math.floor(Math.random() * HALLUCINATIONS.length)]);
-    }, 85);
+    }, 60);
 
     controls.start({
-      x: [0, 10, -10, 5, -5, 10, 0],
-      scale: [1, 1.05, 0.98, 1.1, 1],
+      x: [0, 15, -15, 10, -10, 20, 0],
+      scale: [1, 1.1, 0.95, 1.15, 1],
       filter: [
-        "invert(0) contrast(100%)",
+        "saturate(0.5) contrast(1.2) brightness(0.6)",
         "invert(1) contrast(300%) hue-rotate(90deg)",
-        "invert(0) contrast(150%) brightness(0.5)",
-        "invert(1) contrast(500%) sepia(1)",
-        "invert(0) contrast(100%)"
+        "invert(0) contrast(200%) brightness(0.3) saturate(10)",
+        "invert(1) contrast(400%) sepia(1) hue-rotate(-90deg)",
+        "saturate(0.5) contrast(1.2) brightness(0.6)"
       ],
-      transition: { duration: 1, times: [0, 0.1, 0.3, 0.6, 1], ease: "anticipate" }
+      transition: { duration: 1.2, times: [0, 0.1, 0.3, 0.6, 1], ease: "anticipate" }
     });
 
     ghostControls.start({
-      opacity: [0, 0.8, 0.2, 0.6, 0.9, 0],
-      x: [0, -20, 20, 0],
-      scale: [1, 1.1, 1.2, 1],
-      transition: { duration: 1 }
+      opacity: [0, 0.9, 0.2, 0.8, 1, 0],
+      x: [0, -30, 30, 0],
+      scale: [1, 1.15, 1.25, 1],
+      transition: { duration: 1.2 }
     });
 
     setTimeout(() => {
       clearInterval(msgInterval);
       setCurrentMessage("");
       setIsRevealing(false);
-    }, 1000);
+    }, 1200);
   };
 
   return (
     <motion.section 
-      className="min-h-screen pt-40 pb-64 px-6 md:px-12 max-w-6xl mx-auto flex flex-col items-center"
+      className="min-h-screen pt-40 pb-48 px-6 md:px-12 max-w-6xl mx-auto flex flex-col items-center"
     >
-      <div className="w-full flex flex-col md:flex-row gap-20 md:gap-32 items-center md:items-start text-center md:text-left">
+      <div className="w-full flex flex-col md:flex-row gap-16 md:gap-32 items-center md:items-start text-center md:text-left">
         
-        {/* VESSEL PHOTO - Minimalist Box */}
+        {/* VESSEL PHOTO - Moody, higher contrast */}
         <div 
           onClick={triggerNightmare}
-          className="w-full max-w-[280px] md:max-w-sm aspect-square bg-black border border-void-white/5 relative overflow-hidden cursor-crosshair group active:scale-[0.98] transition-all"
+          className="w-full max-w-[260px] md:max-w-[320px] aspect-square bg-[#0a0a0a] border border-void-white/10 relative overflow-hidden cursor-crosshair group active:scale-[0.98] transition-all"
         >
-           <div className={`absolute inset-0 w-full h-full transition-opacity duration-150 ${isRevealing ? 'opacity-100' : 'opacity-0'}`}>
-             <img src="/subject.jpg" alt="Vessel" className="w-full h-full object-cover grayscale-[20%]" />
+           <div className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${isRevealing ? 'opacity-100' : 'opacity-0'}`}>
+             <img src="/subject.jpg" alt="Vessel" className="w-full h-full object-cover saturate-50 contrast-125 brightness-75" />
            </div>
            
            <motion.div animate={ghostControls} className="absolute inset-0 z-10 pointer-events-none mix-blend-difference">
-              <img src="/subject.jpg" alt="Ghost" className="w-full h-full object-cover invert brightness-150 opacity-40 translate-x-4" />
+              <img src="/subject.jpg" alt="Ghost" className="w-full h-full object-cover invert brightness-200 opacity-60 translate-x-4" />
            </motion.div>
 
-           <motion.div animate={controls} className={`absolute inset-0 z-20 ${isRevealing ? 'opacity-70' : 'opacity-100'}`}>
+           <motion.div animate={controls} className={`absolute inset-0 z-20 ${isRevealing ? 'opacity-70 blur-[1px]' : 'opacity-100'}`}>
               <img 
                 src="/subject.jpg" 
                 alt="Record" 
-                className="w-full h-full object-cover grayscale-[100%] contrast-[180%] brightness-[0.3] filter url(#abstract-distortion)"
+                className="w-full h-full object-cover saturate-50 contrast-[1.2] brightness-[0.6] filter url(#abstract-distortion)"
               />
            </motion.div>
 
@@ -82,49 +82,39 @@ export default function SubjectProfile({ playClick }) {
                  exit={{ opacity: 0 }}
                  className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none"
                >
-                  <span className="font-horror text-void-blood text-4xl md:text-7xl drop-shadow-[0_0_15px_rgba(255,0,0,1)] tracking-widest bg-black/50 px-6 shiver-micro">
+                  <span className="font-horror text-void-blood text-5xl md:text-8xl drop-shadow-[0_0_20px_rgba(255,0,0,1)] tracking-widest bg-black/50 px-6 shiver-micro">
                     {currentMessage}
                   </span>
                </motion.div>
              )}
            </AnimatePresence>
-
-           <div className="absolute top-4 left-4 bg-void-blood text-black font-aksara text-sm px-2 py-1 z-50 font-bold uppercase tracking-[0.2em] shadow-[0_0_10px_rgba(255,0,0,0.8)]">
-             {isRevealing ? 'ꦱꦸꦏ꧀ꦩꦩꦼꦭꦼꦏ꧀' : 'ꦱꦼꦤ꧀ꦠꦸꦃꦄꦏꦸ'}
-           </div>
         </div>
         
-        <div className="flex flex-col gap-10 md:gap-16 items-center md:items-start max-w-lg">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-5xl md:text-7xl font-horror text-void-white uppercase tracking-widest shiver-micro chromatic-text">SAJEN</h2>
-            <div className="flex items-center gap-4">
-              <span className="micro-label text-void-blood">OFFERING_TYPE: SOUL</span>
-              <span className="font-aksara text-2xl text-void-blood/30 aksara-glow">ꦱꦸꦏ꧀ꦩ</span>
+        <div className="flex flex-col gap-10 md:gap-12 items-center md:items-start max-w-lg mt-8 md:mt-0">
+          <div className="flex flex-col gap-4 items-center md:items-start">
+            <h2 className="text-6xl md:text-8xl font-horror text-void-white/90 uppercase tracking-widest shiver-micro chromatic-text text-center md:text-left">
+              SAJEN
+            </h2>
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-4">
+              <span className="font-special text-sm md:text-base text-void-blood/80 tracking-widest italic font-bold">i'm ivan. and you are here.</span>
+              <span className="font-aksara text-2xl text-void-blood/40 aksara-glow">ꦱꦸꦏ꧀ꦩ</span>
             </div>
           </div>
           
-          <p className="font-special text-[12px] md:text-[14px] leading-loose text-gray-500 italic border-l border-void-white/10 pl-6">
-            "You keep looking for a person. But there is no Ivan here. Only the echo of your shadow. ꦌꦭꦶꦁ... stay and watch the static."
+          <p className="font-special text-[13px] md:text-[15px] leading-[2] text-gray-400 border-l border-void-white/20 pl-6 text-left">
+            "You keep staring, waiting for a person to appear. But I am not Ivan anymore. I am the shadow in your peripheral. I like how you read this. Don't look behind you."
           </p>
 
-          <div className="flex flex-col gap-4 w-full">
-            <p className="micro-label opacity-40 text-left">REMNANTS:</p>
-             <div className="flex flex-col gap-2 font-mono text-[10px] md:text-[12px] text-gray-700 tracking-widest shiver-micro">
-                <span className="hover:text-void-blood transition-colors ring-1 ring-void-white/5 p-2 bg-white/[0.01]">ꦆꦱꦶꦃꦈꦫꦶꦥ꧀ // STILL BREATHING</span>
-                <span className="hover:text-void-blood transition-colors ring-1 ring-void-white/5 p-2 bg-white/[0.01]">ꦒꦼꦠꦶꦃ // THE STATIC IS BLEEDING</span>
-                <span className="hover:text-void-blood transition-colors ring-1 ring-void-white/5 p-2 bg-white/[0.01]">ꦱꦸꦮꦸꦁ // WELCOME HOME</span>
+          <div className="flex flex-col gap-4 w-full text-left">
+             <div className="flex flex-col gap-3 font-mono text-[11px] md:text-[13px] text-gray-500 tracking-wider shiver-micro border-t border-void-white/10 pt-6">
+                <span className="hover:text-void-blood transition-colors"><span className="font-bold text-void-white/60">ꦆꦱꦶꦃꦈꦫꦶꦥ꧀ //</span> i can hear you breathing</span>
+                <span className="hover:text-void-blood transition-colors"><span className="font-bold text-void-white/60">ꦒꦼꦠꦶꦃ //</span> the screen is bleeding</span>
+                <span className="hover:text-void-blood transition-colors"><span className="font-bold text-void-white/60">ꦱꦸꦮꦸꦁ //</span> we are home</span>
              </div>
           </div>
         </div>
 
       </div>
-
-      <div className="mt-32 md:mt-48 flex items-center gap-8 opacity-10">
-         <div className="flex-1 h-[1px] bg-void-white/10"></div>
-         <span className="font-aksara text-xl text-gray-700 aksara-glow">ꦱꦩ꧀ꦥꦸꦤ꧀ꦫꦩ꧀ꦥꦸꦁ?</span>
-         <div className="flex-1 h-[1px] bg-void-white/10"></div>
-      </div>
-
     </motion.section>
   );
 }

@@ -6,7 +6,7 @@ import Journal from './components/Journal';
 import SubjectProfile from './components/SubjectProfile';
 import Ticker from './components/Ticker';
 import useSound from './hooks/useSound';
-import { Volume2, VolumeX } from 'lucide-react';
+import { Volume2, VolumeX, Flashlight } from 'lucide-react';
 
 function App() {
   const [activeTab, setActiveTab] = useState('hero');
@@ -15,6 +15,8 @@ function App() {
   const [flickerPos, setFlickerPos] = useState({ x: 0, y: 0 });
   const [isFlickering, setIsFlickering] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const [isStaring, setIsStaring] = useState(false);
+  
   const { playClick, playStatic } = useSound(isMuted);
 
   // Subliminal Flicker Engine (Peripheral Jumpscares)
@@ -40,34 +42,49 @@ function App() {
     return () => window.removeEventListener('mousemove', track);
   }, []);
 
+  useEffect(() => {
+    if (isStaring) {
+      document.body.classList.add('stare-active');
+      playStatic(); // Play a glitch sound when state shifts to panic
+    } else {
+      document.body.classList.remove('stare-active');
+    }
+    return () => document.body.classList.remove('stare-active');
+  }, [isStaring, playStatic]);
+
   const handleTabChange = (tab) => {
     playClick();
     setActiveTab(tab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const toggleStare = () => {
+    playClick();
+    setIsStaring(!isStaring);
+  };
+
   if (!isBooted) {
     return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 gap-12 overflow-hidden">
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 gap-8 overflow-hidden">
         <motion.div 
-          className="font-aksara text-2xl text-void-blood/20 aksara-glow shiver-micro"
-          animate={{ opacity: [0.1, 0.3, 0.1] }}
-          transition={{ repeat: Infinity, duration: 8 }}
+          className="font-aksara text-2xl md:text-3xl text-void-blood/40 aksara-glow shiver-micro"
+          animate={{ opacity: [0.1, 0.4, 0.1] }}
+          transition={{ repeat: Infinity, duration: 6 }}
         >
           ꦩꦼꦭꦼꦏ꧀
         </motion.div>
         
         <div className="text-center">
-          <p className="micro-label mb-2">IVAN AFFRIANDI</p>
-          <p className="font-special text-void-blood/60 text-[10px] tracking-[0.4em] italic uppercase">The ritual of witnessing.</p>
+          <p className="micro-label mb-2 text-void-white/80">IVAN AFFRIANDI</p>
+          <p className="font-special text-void-blood/80 text-[12px] tracking-[0.2em] italic">i have been waiting entirely too long.</p>
         </div>
 
         <motion.button
           onClick={() => { setIsBooted(true); playClick(); }}
-          className="micro-label border border-void-white/10 px-12 py-4 hover:border-void-blood hover:text-void-blood transition-all duration-300 tracking-[1em]"
+          className="micro-label border border-void-white/20 text-void-white/80 px-10 py-4 mt-4 hover:border-void-blood hover:text-void-blood transition-all duration-300 tracking-[0.8em]"
           whileTap={{ scale: 0.98 }}
         >
-          AWAKEN
+          WAKE UP
         </motion.button>
       </div>
     );
@@ -75,35 +92,48 @@ function App() {
 
   return (
     <CustomCursor>
-      <motion.main className="relative text-void-white z-0 min-h-screen pb-20 overflow-x-hidden transform-gpu flex flex-col items-center">
+      <motion.main className="relative z-0 min-h-screen pb-20 overflow-x-hidden transform-gpu flex flex-col items-center">
         
         {/* SUBLIMINAL FLICKER */}
         <AnimatePresence>
           {isFlickering && (
             <motion.div 
               initial={{ opacity: 0 }}
-              animate={{ opacity: 0.1 }}
+              animate={{ opacity: 0.15 }}
               exit={{ opacity: 0 }}
               style={{ left: flickerPos.x, top: flickerPos.y }}
               className="fixed pointer-events-none z-[100] flicker-active"
             >
-               <div className="w-16 h-16 md:w-32 md:h-32 bg-white blur-[30px] rounded-full scale-y-150 opacity-40"></div>
-               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-aksara text-void-blood text-4xl opacity-40">ꦱꦏ꧀ꦱꦶ</div>
+               <div className="w-20 h-20 md:w-32 md:h-32 bg-white blur-[20px] rounded-full scale-y-[2] opacity-50"></div>
+               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-aksara text-void-blood text-5xl opacity-60">ꦱꦏ꧀ꦱꦶ</div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        <nav className="fixed top-0 left-0 w-full p-8 md:p-12 flex justify-between items-center z-[70] mix-blend-difference pointer-events-none">
-           <div className="font-horror text-2xl md:text-3xl tracking-tighter cursor-pointer hover:text-void-blood transition-all shiver-micro pointer-events-auto" onClick={() => handleTabChange('hero')}>
+        <nav className="fixed top-0 left-0 w-full p-6 md:p-10 flex flex-col md:flex-row justify-between items-center md:items-start gap-6 md:gap-0 z-[70] mix-blend-difference pointer-events-none">
+           <div className="font-horror text-2xl md:text-3xl tracking-tighter cursor-pointer hover:text-void-blood transition-all shiver-micro pointer-events-auto text-void-white/80" onClick={() => handleTabChange('hero')}>
              IVAN
            </div>
            
-           <div className="flex items-center gap-8 pointer-events-auto">
-              <button onClick={() => setIsMuted(!isMuted)} className="p-1 text-void-white/20 hover:text-void-blood">
-                {isMuted ? <VolumeX size={12} /> : <Volume2 size={12} />}
+           <div className="flex items-center gap-6 md:gap-8 pointer-events-auto">
+              
+              <button 
+                onClick={toggleStare} 
+                className={`flex items-center gap-2 p-1 transition-colors ${isStaring ? 'text-void-blood drop-shadow-[0_0_8px_rgba(255,0,0,0.8)]' : 'text-void-white/40 hover:text-void-white/80'}`}
+                title="Illuminate"
+              >
+                <Flashlight size={14} className="shiver-micro" />
               </button>
 
-              <ul className="flex gap-6 md:gap-10">
+              <button 
+                onClick={() => setIsMuted(!isMuted)} 
+                className="p-1 text-void-white/40 hover:text-void-white/80 transition-colors"
+                title="Sound Toggle"
+              >
+                {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+              </button>
+
+              <ul className="flex gap-4 md:gap-10">
                 {[
                   { id: 'logs', label: 'DHIWUK' },
                   { id: 'me', label: 'SAJEN' },
@@ -112,7 +142,7 @@ function App() {
                     <li key={item.id}>
                       <button 
                         onClick={() => handleTabChange(item.id)}
-                        className={`micro-label transition-all ${activeTab === item.id ? 'text-void-blood' : 'hover:text-void-white'}`}
+                        className={`micro-label transition-all ${activeTab === item.id ? 'text-void-blood opacity-100' : 'hover:text-void-white/80 opacity-60'}`}
                       >
                         {item.label}
                       </button>
@@ -129,15 +159,15 @@ function App() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="drift-minimal w-full"
+            className="drift-minimal w-full flex justify-center"
           >
             {activeTab === 'hero' && <Hero cursorPos={cursorPos} isMuted={isMuted} playStatic={playStatic} />}
             {activeTab === 'logs' && <Journal />}
             {activeTab === 'me' && <SubjectProfile playClick={playClick} />}
             {activeTab === 'void' && (
-               <section className="min-h-screen flex flex-col justify-center items-center py-20 px-6 text-center gap-8">
-                 <h2 className="text-4xl md:text-6xl text-void-blood font-aksara shiver-micro aksara-glow opacity-30">ꦱꦸꦮꦸꦁ</h2>
-                 <p className="micro-label tracking-[0.8em] text-gray-700 italic">The breathing has stopped.</p>
+               <section className="min-h-screen flex flex-col justify-center items-center py-20 px-6 text-center gap-8 w-full">
+                 <h2 className="text-5xl md:text-8xl text-void-blood font-aksara shiver-micro aksara-glow opacity-60">ꦱꦸꦮꦸꦁ</h2>
+                 <p className="font-special text-[12px] md:text-[14px] text-gray-500 italic tracking-widest">i think you broke it. let's stay here.</p>
                </section>
             )}
           </motion.div>
