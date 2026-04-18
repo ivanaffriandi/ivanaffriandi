@@ -6,21 +6,21 @@ const entries = [
     date: 'APRIL 18',
     time: 'ꦱꦼꦮꦼꦔꦶ',
     title: 'THE BREATHING',
-    content: 'I woke up and felt someone breathing in the archive. I think it was you. Are you listening to me? ꦌꦭꦶꦁ... you must remember.',
+    content: 'The archive exhaled today. I felt it on the back of my neck. ꦌꦭꦶꦁ... you are not the first to look, but you might be the last to leave.',
     status: 'ꦥꦱ꧀ꦠꦶ'
   },
   {
     date: 'APRIL 17',
     time: 'ꦠꦼꦔꦃꦮꦼꦔꦶ',
     title: 'THE MIRROR',
-    content: 'I looked at my face today, but the glitch made it look like I had four eyes. I don’t think I’m human anymore. My soul—my ꦱꦸꦏ꧀ꦩ—is splitting.',
+    content: 'I reached into the static and something held my hand. It was cold. It felt like my own skin, but from a life I havent lived yet. ꦱꦸꦏ꧀ꦩ... my soul is a choir of screaming shadows.',
     status: 'ꦕꦶꦭꦏ'
   },
   {
     date: 'APRIL 16',
     time: 'ꦌꦱꦸꦏ꧀ꦄꦮꦤ꧀',
     title: 'THE HOLE',
-    content: 'I found a hole in the bottom of the void. It’s not deep, but it’s very dark. I’m going inside. Don’t look for me. ꦱꦸꦮꦸꦁ takes everything.',
+    content: 'The emptiness is growing teeth. I saw a face in the static, but when I blinked, it was just the reflection of my own regret. ꦱꦸꦮꦸꦁ... it is hungry.',
     status: 'ꦩꦠ궧'
   }
 ];
@@ -48,48 +48,51 @@ export default function Journal() {
 
   return (
     <motion.section 
-      className="min-h-screen pt-32 md:pt-40 pb-40 px-6 md:px-12 max-w-4xl mx-auto"
+      className="min-h-screen pt-32 md:pt-48 pb-40 px-6 md:px-12 max-w-5xl mx-auto"
     >
       <div 
         ref={containerRef}
         onMouseMove={handleMouseMove}
-        className="searchlight-applied flex flex-col md:flex-row justify-between items-start md:items-baseline mb-20 border-b border-void-white/10 pb-12 p-12 cursor-crosshair group"
+        className="searchlight-applied flex flex-col md:flex-row justify-between items-start md:items-baseline mb-24 border-b border-void-white/5 pb-16 p-12 cursor-crosshair group"
       >
-        <h2 className="text-7xl md:text-[8rem] font-aksara text-void-white tracking-tighter uppercase relative z-20 group-hover:text-void-blood transition-all">ꦱꦏ꧀ꦱꦶ</h2>
-        <span className="font-syne text-[12px] md:text-[14px] text-gray-700 uppercase tracking-[0.4em] font-bold z-20">The Witness</span>
+        <div className="flex flex-col">
+          <h2 className="text-8xl md:text-[12rem] font-horror text-void-white tracking-tighter uppercase relative z-20 group-hover:text-void-blood transition-all shiver chromatic-text">DHIWUK</h2>
+          <span className="font-aksara text-3xl text-void-blood/40 mt-2">ꦱꦏ꧀ꦱꦶ</span>
+        </div>
+        <span className="font-syne text-[14px] text-gray-700 uppercase tracking-[0.6em] font-bold z-20 italic">Whispering Spirits</span>
       </div>
 
-      <div className="flex flex-col gap-16 md:gap-24">
+      <div className="flex flex-col gap-24 md:gap-32">
         {entries.map((entry, i) => (
           <motion.div 
             key={i}
-            className="group cursor-pointer relative border-l border-void-white/10 pl-8 md:pl-12 py-4"
-            initial={{ opacity: 0, x: -10 }}
+            className="group cursor-pointer relative border-l-2 border-void-white/5 pl-10 md:pl-16 py-6"
+            initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: i * 0.15 }}
+            transition={{ delay: i * 0.2 }}
           >
-            <div className="flex flex-col md:flex-row justify-between items-start mb-8 gap-6">
-              <div className="flex flex-col gap-2">
-                <span className="font-aksara text-lg text-void-blood/60 italic uppercase tracking-widest">{entry.date} // {entry.time}</span>
-                <h3 className="font-horror text-4xl md:text-6xl group-hover:text-void-blood transition-colors underline-offset-8 group-hover:underline">
+            <div className="flex flex-col md:flex-row justify-between items-start mb-10 gap-8">
+              <div className="flex flex-col gap-3">
+                <span className="font-aksara text-xl text-void-blood/50 italic uppercase tracking-widest">{entry.date} // {entry.time}</span>
+                <h3 className="font-horror text-5xl md:text-7xl group-hover:text-void-blood transition-all group-hover:shiver">
                   {entry.title}
                 </h3>
               </div>
-              <span className={`text-lg font-aksara border border-void-white/10 px-4 py-1 group-hover:border-void-blood group-hover:text-void-blood transition-all`}>
+              <span className={`text-xl font-aksara border border-void-white/5 px-6 py-2 group-hover:border-void-blood/40 group-hover:text-void-blood transition-all`}>
                 {entry.status}
               </span>
             </div>
-            <p className="font-special text-base md:text-lg leading-[1.8] text-gray-500 group-hover:text-void-white transition-colors duration-300 max-w-2xl">
+            <p className="font-special text-lg md:text-xl leading-[2] text-gray-500 group-hover:text-void-white transition-colors duration-500 max-w-3xl">
               {entry.content}
             </p>
           </motion.div>
         ))}
       </div>
 
-      <div className="mt-40 flex flex-col items-center gap-10 opacity-20">
-        <div className="w-24 h-[1px] bg-void-blood"></div>
-        <p className="font-aksara text-2xl text-gray-600 tracking-[0.8em] uppercase italic">ꦌꦭꦶꦁ</p>
+      <div className="mt-48 flex flex-col items-center gap-12 opacity-15">
+        <div className="w-32 h-[1px] bg-void-blood"></div>
+        <p className="font-aksara text-3xl text-gray-600 tracking-[1em] uppercase italic shiver">ꦌꦭꦶꦁ</p>
       </div>
     </motion.section>
   );
