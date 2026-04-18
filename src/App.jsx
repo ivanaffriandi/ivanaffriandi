@@ -18,9 +18,15 @@ function App() {
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isStaring, setIsStaring] = useState(false);
   
-  const { playClick, playThunderCrash, playGothicGong } = useSound(isMuted);
+  const { playClick, playThunderCrash, playGothicGong, startBackgroundDrone, stopBackgroundDrone } = useSound(isMuted);
 
-  // Subliminal Flicker Engine (Peripheral Jumpscares)
+  const handleBoot = () => {
+    setIsBooted(true);
+    playClick();
+    startBackgroundDrone(); // Start continuous background music after user interaction
+  };
+
+  // Subliminal Flicker Engine
   useEffect(() => {
     if (!isBooted) return;
     const triggerFlicker = () => {
@@ -39,13 +45,12 @@ function App() {
   useEffect(() => {
     if (!isBooted) return;
     const triggerLightning = () => {
-      // Small chance to trigger lightning so it's not annoying
       if (Math.random() > 0.6) {
         setIsLightning(true);
         playThunderCrash();
-        setTimeout(() => setIsLightning(false), 300); // the animation takes 0.3s
+        setTimeout(() => setIsLightning(false), 300);
       }
-      setTimeout(triggerLightning, Math.random() * 30000 + 20000); // 20s-50s
+      setTimeout(triggerLightning, Math.random() * 30000 + 20000); 
     };
     const timer = setTimeout(triggerLightning, 25000);
     return () => clearTimeout(timer);
@@ -59,20 +64,14 @@ function App() {
     return () => window.removeEventListener('mousemove', track);
   }, []);
 
-  // The Gothic Trigger (Dark Crimson Stare Mode)
+  // Theme Trigger
   useEffect(() => {
-    let gongInterval;
     if (isStaring) {
       document.body.classList.add('stare-active');
-      playGothicGong();
-      gongInterval = setInterval(playGothicGong, 10000); // 10 second slow loop
+      playGothicGong(); // Hit the gong explicitly when turning the theme on
     } else {
       document.body.classList.remove('stare-active');
     }
-    return () => {
-      document.body.classList.remove('stare-active');
-      clearInterval(gongInterval);
-    };
   }, [isStaring, playGothicGong]);
 
   const handleTabChange = (tab) => {
@@ -103,7 +102,7 @@ function App() {
         </div>
 
         <motion.button
-          onClick={() => { setIsBooted(true); playClick(); }}
+          onClick={handleBoot}
           className="micro-label border border-void-white/20 text-void-white/80 px-10 py-4 mt-4 hover:border-void-blood hover:text-void-blood transition-all duration-300 tracking-[0.8em]"
           whileTap={{ scale: 0.98 }}
         >
@@ -117,7 +116,6 @@ function App() {
     <CustomCursor>
       <motion.main className={`relative z-0 min-h-screen pb-20 overflow-x-hidden transform-gpu flex flex-col items-center ${isLightning ? 'lightning-bolt' : ''}`}>
         
-        {/* SUBLIMINAL FLICKER */}
         <AnimatePresence>
           {isFlickering && (
             <motion.div 
@@ -149,7 +147,11 @@ function App() {
               </button>
 
               <button 
-                onClick={() => setIsMuted(!isMuted)} 
+                onClick={() => {
+                  setIsMuted(!isMuted);
+                  if (isMuted) startBackgroundDrone();
+                  else stopBackgroundDrone();
+                }} 
                 className="p-1 text-void-white/40 hover:text-void-white/80 transition-colors"
                 title="Sound Toggle"
               >
