@@ -10,29 +10,35 @@ import { Volume2, VolumeX } from 'lucide-react';
 
 function App() {
   const [activeTab, setActiveTab] = useState('hero');
-  const [isIdle, setIsIdle] = useState(false);
   const [isBooted, setIsBooted] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [hallucination, setHallucination] = useState(null);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const { playClick, playStatic } = useSound(isMuted);
 
-  // Conversational Hallucinations
+  // Ominous Hallucinations (English mixed with Jawa Kuno)
   useEffect(() => {
     if (!isBooted) return;
-    const messages = ["I see you.", "Wait.", "Looking for me?", "Not yet."];
+    const messages = [
+      "Eling, I see you.",
+      "Suwung takes everything.",
+      "Are you the witness?",
+      "Ora bisa mlayu.",
+      "You are drowning in the static.",
+      "Mati is not the end."
+    ];
     const trigger = () => {
-      if (Math.random() > 0.9) {
+      if (Math.random() > 0.85) {
         setHallucination({
           text: messages[Math.floor(Math.random() * messages.length)],
-          x: cursorPos.x + (Math.random() * 100 - 50),
-          y: cursorPos.y + (Math.random() * 100 - 50)
+          x: cursorPos.x + (Math.random() * 200 - 100),
+          y: cursorPos.y + (Math.random() * 200 - 100)
         });
         setTimeout(() => setHallucination(null), 150);
       }
-      setTimeout(trigger, Math.random() * 8000 + 4000);
+      setTimeout(trigger, Math.random() * 7000 + 3000);
     };
-    const timer = setTimeout(trigger, 5000);
+    const timer = setTimeout(trigger, 4000);
     return () => clearTimeout(timer);
   }, [isBooted, cursorPos]);
 
@@ -52,13 +58,20 @@ function App() {
 
   if (!isBooted) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center font-horror p-6">
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center font-horror p-6">
+        <motion.div 
+          className="text-void-blood/50 text-[10px] tracking-[0.6em] mb-12 uppercase"
+          animate={{ opacity: [0.2, 0.5, 0.2] }}
+          transition={{ repeat: Infinity, duration: 3 }}
+        >
+          Isih ono sing nunggu
+        </motion.div>
         <motion.button
           onClick={() => { setIsBooted(true); playClick(); }}
-          className="px-10 py-6 border border-void-white/10 text-void-white text-2xl md:text-4xl hover:border-void-blood hover:text-void-blood transition-all duration-75 tracking-[0.4em] uppercase"
-          whileTap={{ scale: 0.98 }}
+          className="px-12 py-8 border border-void-white/5 text-void-white text-3xl md:text-5xl hover:border-void-blood hover:text-void-blood transition-all duration-75 tracking-[0.5em] uppercase hover:bg-void-blood/5"
+          whileTap={{ scale: 0.95 }}
         >
-          CONNECT
+          AWAKEN
         </motion.button>
       </div>
     );
@@ -70,11 +83,11 @@ function App() {
         <AnimatePresence>
           {hallucination && (
             <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.4 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 0.5, scale: 1.1 }}
               exit={{ opacity: 0 }}
               style={{ left: hallucination.x, top: hallucination.y }}
-              className="fixed pointer-events-none z-[100] blur-[1px] font-horror text-void-blood text-2xl md:text-4xl whitespace-nowrap"
+              className="fixed pointer-events-none z-[100] blur-[1px] font-horror text-void-blood text-2xl md:text-5xl whitespace-nowrap"
             >
               {hallucination.text}
             </motion.div>
@@ -82,26 +95,30 @@ function App() {
         </AnimatePresence>
 
         <nav className="fixed top-0 left-0 w-full p-8 flex justify-between items-start z-[70] mix-blend-difference">
-           <div className="font-horror text-2xl md:text-3xl tracking-tighter cursor-pointer hover:text-void-blood transition-colors" onClick={() => handleTabChange('hero')}>
+           <div className="font-horror text-2xl md:text-4xl tracking-tighter cursor-pointer hover:text-void-blood transition-colors" onClick={() => handleTabChange('hero')}>
              IVAN
            </div>
            
-           <div className="flex items-center gap-6">
+           <div className="flex items-center gap-8">
               <button 
                 onClick={() => setIsMuted(!isMuted)}
-                className="p-2 text-void-white/40 hover:text-void-blood"
+                className="p-2 text-void-white/30 hover:text-void-blood"
               >
-                {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
               </button>
 
-              <ul className="flex gap-4 font-syne font-bold text-[10px] md:text-[12px] tracking-[0.2em]">
-                {['LOGS', 'ME', 'VOID'].map((tab) => (
-                    <li key={tab}>
+              <ul className="flex gap-6 font-syne font-bold text-[10px] md:text-[11px] tracking-[0.3em]">
+                {[
+                  { id: 'logs', label: 'WHISPERS' },
+                  { id: 'me', label: 'SUKMA' },
+                  { id: 'void', label: 'MATI' }
+                ].map((item) => (
+                    <li key={item.id}>
                       <button 
-                        onClick={() => handleTabChange(tab.toLowerCase())}
-                        className={`hover:text-void-blood transition-colors uppercase ${activeTab === tab.toLowerCase() ? 'text-void-blood' : 'text-void-white/50'}`}
+                        onClick={() => handleTabChange(item.id)}
+                        className={`hover:text-void-blood transition-colors uppercase ${activeTab === item.id ? 'text-void-blood' : 'text-void-white/40'}`}
                       >
-                        {tab}
+                        {item.label}
                       </button>
                     </li>
                 ))}
@@ -112,18 +129,18 @@ function App() {
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.15 }}
+            initial={{ opacity: 0, scale: 0.99 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.01 }}
+            transition={{ duration: 0.2 }}
           >
             {activeTab === 'hero' && <Hero cursorPos={cursorPos} isMuted={isMuted} playStatic={playStatic} />}
             {activeTab === 'logs' && <Journal />}
             {activeTab === 'me' && <SubjectProfile playClick={playClick} />}
             {activeTab === 'void' && (
                <section className="min-h-screen flex flex-col justify-center items-center py-20 px-6 text-center">
-                 <h2 className="text-6xl md:text-9xl text-void-blood font-horror mb-4">ALONE</h2>
-                 <p className="font-special text-[12px] tracking-[0.6em] text-gray-500 uppercase italic">Connection severed.</p>
+                 <h2 className="text-7xl md:text-[10rem] text-void-blood font-horror mb-8">MATI</h2>
+                 <p className="font-special text-[14px] tracking-[0.5em] text-gray-500 uppercase italic">Sampun rampung. Extinguish the light.</p>
                </section>
             )}
           </motion.div>

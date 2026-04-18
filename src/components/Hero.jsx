@@ -20,38 +20,42 @@ export default function Hero({ cursorPos, isMuted, playStatic }) {
     >
       <div 
         ref={containerRef}
-        className="searchlight-applied relative mb-10 text-center select-none p-20"
+        className="searchlight-applied relative mb-12 text-center select-none p-24"
       >
         <motion.h1 
-          className="text-8xl sm:text-[14rem] lg:text-[18rem] font-horror text-void-white tracking-tighter leading-none relative z-20"
+          className="text-9xl sm:text-[16rem] lg:text-[20rem] font-horror text-void-white tracking-tighter leading-none relative z-20"
           data-text="IVAN"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         >
           IVAN
         </motion.h1>
         
-        {/* Subtle background flicker */}
         <motion.div 
-          className="absolute inset-0 bg-void-blood/5 mix-blend-overlay opacity-0 pointer-events-none"
-          animate={{ opacity: [0, 0.1, 0] }}
-          transition={{ repeat: Infinity, duration: 4, times: [0, 0.5, 1] }}
-        />
+          className="absolute -top-4 left-1/2 -translate-x-1/2 font-syne text-[10px] tracking-[0.8em] text-void-blood/40 uppercase whitespace-nowrap z-30"
+          animate={{ opacity: [0.3, 0.6, 0.3] }}
+          transition={{ repeat: Infinity, duration: 4 }}
+        >
+          Ora ana sing langgeng
+        </motion.div>
       </div>
       
       <motion.div 
-        className="font-special text-lg md:text-2xl tracking-[0.4em] text-void-blood max-w-2xl text-center uppercase"
+        className="font-special text-xl md:text-3xl tracking-[0.4em] text-void-blood max-w-3xl text-center uppercase"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
       >
-        I AM WATCHING YOU
+        DO YOU HEAR ME BREATHING?
         <br/><br/>
         <motion.div 
-          className="text-[12px] md:text-[14px] text-gray-400 mt-6 leading-relaxed normal-case tracking-[0.1em] font-special max-w-md mx-auto italic"
+          className="text-[14px] md:text-[16px] text-gray-500 mt-8 leading-relaxed normal-case tracking-[0.1em] font-special max-w-lg mx-auto italic"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 2.5 }}
         >
-          Look for the truth in the light.
+          "I am the whisper in the static. The one who watched you walk through the door. Kowe ora dewekan... you are not alone."
         </motion.div>
       </motion.div>
     </motion.section>
