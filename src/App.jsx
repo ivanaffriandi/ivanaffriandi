@@ -17,7 +17,7 @@ function App() {
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [isStaring, setIsStaring] = useState(false);
   
-  const { playClick, playStatic } = useSound(isMuted);
+  const { playClick, playStatic, playGothicGong } = useSound(isMuted);
 
   // Subliminal Flicker Engine (Peripheral Jumpscares)
   useEffect(() => {
@@ -42,15 +42,22 @@ function App() {
     return () => window.removeEventListener('mousemove', track);
   }, []);
 
+  // The Gothic Trigger (Dark Crimson Stare Mode)
   useEffect(() => {
+    let gongInterval;
     if (isStaring) {
       document.body.classList.add('stare-active');
-      playStatic(); // Play a glitch sound when state shifts to panic
+      playStatic(); 
+      playGothicGong();
+      gongInterval = setInterval(playGothicGong, 10000); // 10 second slow loop
     } else {
       document.body.classList.remove('stare-active');
     }
-    return () => document.body.classList.remove('stare-active');
-  }, [isStaring, playStatic]);
+    return () => {
+      document.body.classList.remove('stare-active');
+      clearInterval(gongInterval);
+    };
+  }, [isStaring, playStatic, playGothicGong]);
 
   const handleTabChange = (tab) => {
     playClick();
@@ -76,7 +83,7 @@ function App() {
         
         <div className="text-center">
           <p className="micro-label mb-2 text-void-white/80">IVAN AFFRIANDI</p>
-          <p className="font-special text-void-blood/80 text-[12px] tracking-[0.2em] italic">i have been waiting entirely too long.</p>
+          <p className="font-special text-void-blood/80 text-[12px] tracking-[0.2em] italic">i know you're alone right now.</p>
         </div>
 
         <motion.button
@@ -84,7 +91,7 @@ function App() {
           className="micro-label border border-void-white/20 text-void-white/80 px-10 py-4 mt-4 hover:border-void-blood hover:text-void-blood transition-all duration-300 tracking-[0.8em]"
           whileTap={{ scale: 0.98 }}
         >
-          WAKE UP
+          DO NOT RUN
         </motion.button>
       </div>
     );
@@ -119,10 +126,10 @@ function App() {
               
               <button 
                 onClick={toggleStare} 
-                className={`flex items-center gap-2 p-1 transition-colors ${isStaring ? 'text-void-blood drop-shadow-[0_0_8px_rgba(255,0,0,0.8)]' : 'text-void-white/40 hover:text-void-white/80'}`}
-                title="Illuminate"
+                className={`flex items-center gap-2 p-1 transition-colors ${isStaring ? 'text-void-blood drop-shadow-[0_0_15px_rgba(255,0,0,1)] scale-110' : 'text-void-white/40 hover:text-void-white/80'}`}
+                title="Trigger Horror Theme"
               >
-                <Flashlight size={14} className="shiver-micro" />
+                <Flashlight size={16} className={isStaring ? 'shiver-micro' : ''} />
               </button>
 
               <button 
@@ -166,8 +173,10 @@ function App() {
             {activeTab === 'me' && <SubjectProfile playClick={playClick} />}
             {activeTab === 'void' && (
                <section className="min-h-screen flex flex-col justify-center items-center py-20 px-6 text-center gap-8 w-full">
-                 <h2 className="text-5xl md:text-8xl text-void-blood font-aksara shiver-micro aksara-glow opacity-60">ꦱꦸꦮꦸꦁ</h2>
-                 <p className="font-special text-[12px] md:text-[14px] text-gray-500 italic tracking-widest">i think you broke it. let's stay here.</p>
+                 <h2 className="text-5xl md:text-8xl text-void-blood font-aksara shiver-micro aksara-glow opacity-80">ꦱꦸꦮꦸꦁ</h2>
+                 <p className="font-special text-[12px] md:text-[14px] text-gray-500 italic tracking-widest leading-loose">
+                   "i locked the door. you can stay here forever."
+                 </p>
                </section>
             )}
           </motion.div>

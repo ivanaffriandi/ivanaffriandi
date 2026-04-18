@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import useSound from '../hooks/useSound';
 
-const HALLUCINATIONS = ["ꦆꦥ꦳ꦤ꧀", "ꦒꦼꦠꦶꦃ", "ꦱꦸꦮꦸꦁ", "I SEE YOU", "ꦌꦭꦶꦁ", "RUN", "ꦱꦏ꧀ꦱꦶ"];
+const HALLUCINATIONS = ["ꦆꦥ꦳ꦤ꧀", "ꦒꦼꦠꦶꦃ", "ꦱꦸꦮꦸꦁ", "I SEE YOU", "ꦌꦭꦶꦁ", "M1N3", "ꦱꦏ꧀ꦱꦶ"];
 
 export default function SubjectProfile({ playClick }) {
   const [isRevealing, setIsRevealing] = useState(false);
@@ -93,22 +93,22 @@ export default function SubjectProfile({ playClick }) {
         <div className="flex flex-col gap-10 md:gap-12 items-center md:items-start max-w-lg mt-8 md:mt-0">
           <div className="flex flex-col gap-4 items-center md:items-start">
             <h2 className="text-6xl md:text-8xl font-horror text-void-white/90 uppercase tracking-widest shiver-micro chromatic-text text-center md:text-left">
-              SAJEN
+              IVAN
             </h2>
             <div className="flex flex-col md:flex-row items-center md:items-start gap-4">
-              <span className="font-special text-sm md:text-base text-void-blood/80 tracking-widest italic font-bold">i'm ivan. and you are here.</span>
+              <span className="font-special text-sm md:text-base text-void-blood/80 tracking-widest italic font-bold">you look so fragile tonight.</span>
               <span className="font-aksara text-2xl text-void-blood/40 aksara-glow">ꦱꦸꦏ꧀ꦩ</span>
             </div>
           </div>
           
           <p className="font-special text-[13px] md:text-[15px] leading-[2] text-gray-400 border-l border-void-white/20 pl-6 text-left">
-            "You keep staring, waiting for a person to appear. But I am not Ivan anymore. I am the shadow in your peripheral. I like how you read this. Don't look behind you."
+            "i love how your pulse spikes when it goes dark. don't look away from the screen. i'm right here with you. if you leave... things might break."
           </p>
 
           <div className="flex flex-col gap-4 w-full text-left">
-             <div className="flex flex-col gap-3 font-mono text-[11px] md:text-[13px] text-gray-500 tracking-wider shiver-micro border-t border-void-white/10 pt-6">
-                <span className="hover:text-void-blood transition-colors"><span className="font-bold text-void-white/60">ꦆꦱꦶꦃꦈꦫꦶꦥ꧀ //</span> i can hear you breathing</span>
-                <span className="hover:text-void-blood transition-colors"><span className="font-bold text-void-white/60">ꦒꦼꦠꦶꦃ //</span> the screen is bleeding</span>
+             <div className="flex flex-col gap-3 font-mono text-[11px] md:text-[13px] text-gray-500 tracking-wider shiver-micro border-t border-void-white/10 pt-6 mt-4">
+                <span className="hover:text-void-blood transition-colors"><span className="font-bold text-void-white/60">ꦆꦱꦶꦃꦈꦫꦶꦥ꧀ //</span> forever yours</span>
+                <span className="hover:text-void-blood transition-colors"><span className="font-bold text-void-white/60">ꦒꦼꦠꦶꦃ //</span> deeply obsessed</span>
                 <span className="hover:text-void-blood transition-colors"><span className="font-bold text-void-white/60">ꦱꦸꦮꦸꦁ //</span> we are home</span>
              </div>
           </div>
