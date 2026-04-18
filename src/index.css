@@ -22,11 +22,13 @@
   --font-horror: 'Rubik Glitch', system-ui;
   --font-special: 'Special Elite', monospace;
   --font-syne: 'Syne', sans-serif;
+  --font-aksara: 'Noto Sans Javanese', serif;
 }
 
 .font-horror { font-family: var(--font-horror); }
 .font-special { font-family: var(--font-special); }
 .font-syne { font-family: var(--font-syne); }
+.font-aksara { font-family: var(--font-aksara); }
 
 /* Vignette Effect */
 body::after {

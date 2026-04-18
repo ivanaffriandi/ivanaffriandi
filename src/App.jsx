@@ -16,16 +16,15 @@ function App() {
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const { playClick, playStatic } = useSound(isMuted);
 
-  // Ominous Hallucinations (English mixed with Jawa Kuno)
+  // Aksara Jawa Scriptures
   useEffect(() => {
     if (!isBooted) return;
     const messages = [
-      "Eling, I see you.",
-      "Suwung takes everything.",
-      "Are you the witness?",
-      "Ora bisa mlayu.",
-      "You are drowning in the static.",
-      "Mati is not the end."
+      "ꦌꦭꦶꦁ (Remember)",
+      "ꦱꦸꦮꦸꦁ (Emptiness)",
+      "ꦱꦏ꧀ꦱꦶ (Witness)",
+      "ꦎꦫꦄꦤꦱꦶꦁꦭꦁꦒꦼꦁ",
+      "ꦩꦠ궧 (The End)"
     ];
     const trigger = () => {
       if (Math.random() > 0.85) {
@@ -36,7 +35,7 @@ function App() {
         });
         setTimeout(() => setHallucination(null), 150);
       }
-      setTimeout(trigger, Math.random() * 7000 + 3000);
+      setTimeout(trigger, Math.random() * 6000 + 3000);
     };
     const timer = setTimeout(trigger, 4000);
     return () => clearTimeout(timer);
@@ -53,22 +52,22 @@ function App() {
   const handleTabChange = (tab) => {
     playClick();
     setActiveTab(tab);
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (!isBooted) {
     return (
       <div className="min-h-screen bg-black flex flex-col items-center justify-center font-horror p-6">
         <motion.div 
-          className="text-void-blood/50 text-[10px] tracking-[0.6em] mb-12 uppercase"
+          className="text-void-blood/50 text-2xl font-aksara mb-12"
           animate={{ opacity: [0.2, 0.5, 0.2] }}
-          transition={{ repeat: Infinity, duration: 3 }}
+          transition={{ repeat: Infinity, duration: 4 }}
         >
-          Isih ono sing nunggu
+          ꦩꦼꦭꦼꦏ꧀
         </motion.div>
         <motion.button
           onClick={() => { setIsBooted(true); playClick(); }}
-          className="px-12 py-8 border border-void-white/5 text-void-white text-3xl md:text-5xl hover:border-void-blood hover:text-void-blood transition-all duration-75 tracking-[0.5em] uppercase hover:bg-void-blood/5"
+          className="px-12 py-8 border border-void-white/5 text-void-white text-3xl md:text-5xl hover:border-void-blood hover:text-void-blood transition-all duration-75 tracking-[0.5em] uppercase"
           whileTap={{ scale: 0.95 }}
         >
           AWAKEN
@@ -84,10 +83,10 @@ function App() {
           {hallucination && (
             <motion.div 
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 0.5, scale: 1.1 }}
+              animate={{ opacity: 0.6, scale: 1.1 }}
               exit={{ opacity: 0 }}
               style={{ left: hallucination.x, top: hallucination.y }}
-              className="fixed pointer-events-none z-[100] blur-[1px] font-horror text-void-blood text-2xl md:text-5xl whitespace-nowrap"
+              className="fixed pointer-events-none z-[100] blur-[1px] font-aksara text-void-blood text-2xl md:text-5xl whitespace-nowrap"
             >
               {hallucination.text}
             </motion.div>
@@ -109,16 +108,19 @@ function App() {
 
               <ul className="flex gap-6 font-syne font-bold text-[10px] md:text-[11px] tracking-[0.3em]">
                 {[
-                  { id: 'logs', label: 'WHISPERS' },
-                  { id: 'me', label: 'SUKMA' },
-                  { id: 'void', label: 'MATI' }
+                  { id: 'logs', label: 'WHISPERS', aksara: 'ꦱꦏ꧀ꦱꦶ' },
+                  { id: 'me', label: 'SUKMA', aksara: 'ꦱꦸꦏ꧀ꦩ' },
+                  { id: 'void', label: 'MATI', aksara: 'ꦩꦠ궧' }
                 ].map((item) => (
-                    <li key={item.id}>
+                    <li key={item.id} className="relative group">
                       <button 
                         onClick={() => handleTabChange(item.id)}
                         className={`hover:text-void-blood transition-colors uppercase ${activeTab === item.id ? 'text-void-blood' : 'text-void-white/40'}`}
                       >
                         {item.label}
+                        <span className="absolute -bottom-4 left-0 w-full text-center text-[10px] font-aksara opacity-0 group-hover:opacity-100 transition-opacity">
+                          {item.aksara}
+                        </span>
                       </button>
                     </li>
                 ))}
@@ -129,9 +131,9 @@ function App() {
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, scale: 0.99 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.01 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
             {activeTab === 'hero' && <Hero cursorPos={cursorPos} isMuted={isMuted} playStatic={playStatic} />}
@@ -139,8 +141,8 @@ function App() {
             {activeTab === 'me' && <SubjectProfile playClick={playClick} />}
             {activeTab === 'void' && (
                <section className="min-h-screen flex flex-col justify-center items-center py-20 px-6 text-center">
-                 <h2 className="text-7xl md:text-[10rem] text-void-blood font-horror mb-8">MATI</h2>
-                 <p className="font-special text-[14px] tracking-[0.5em] text-gray-500 uppercase italic">Sampun rampung. Extinguish the light.</p>
+                 <h2 className="text-7xl md:text-[8rem] text-void-blood font-aksara mb-8">ꦩꦠ궧</h2>
+                 <p className="font-special text-[14px] tracking-[0.5em] text-gray-500 uppercase italic">The cycle ends here.</p>
                </section>
             )}
           </motion.div>

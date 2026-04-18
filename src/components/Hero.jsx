@@ -27,17 +27,17 @@ export default function Hero({ cursorPos, isMuted, playStatic }) {
           data-text="IVAN"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ duration: 0.8 }}
         >
           IVAN
         </motion.h1>
         
         <motion.div 
-          className="absolute -top-4 left-1/2 -translate-x-1/2 font-syne text-[10px] tracking-[0.8em] text-void-blood/40 uppercase whitespace-nowrap z-30"
-          animate={{ opacity: [0.3, 0.6, 0.3] }}
+          className="absolute -top-10 left-1/2 -translate-x-1/2 font-aksara text-2xl md:text-4xl text-void-blood/50 whitespace-nowrap z-30 tracking-widest"
+          animate={{ opacity: [0.3, 0.7, 0.3] }}
           transition={{ repeat: Infinity, duration: 4 }}
         >
-          Ora ana sing langgeng
+          ꦎꦫꦄꦤꦱꦶꦁꦭꦁꦒꦼꦁ
         </motion.div>
       </div>
       
@@ -47,7 +47,7 @@ export default function Hero({ cursorPos, isMuted, playStatic }) {
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
       >
-        DO YOU HEAR ME BREATHING?
+        I AM THE ECHO IN THE VOID
         <br/><br/>
         <motion.div 
           className="text-[14px] md:text-[16px] text-gray-500 mt-8 leading-relaxed normal-case tracking-[0.1em] font-special max-w-lg mx-auto italic"
@@ -55,7 +55,7 @@ export default function Hero({ cursorPos, isMuted, playStatic }) {
           animate={{ opacity: 1 }}
           transition={{ delay: 2.5 }}
         >
-          "I am the whisper in the static. The one who watched you walk through the door. Kowe ora dewekan... you are not alone."
+          "Kowe ora dewekan... you are not alone. The static is my mother, and the silence is my father. Do you hear the whispers?"
         </motion.div>
       </motion.div>
     </motion.section>
