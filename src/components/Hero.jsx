@@ -51,7 +51,6 @@ export default function Hero({ cursorPos, isMuted }) {
           style={{ y: poemY, opacity: opacityFade }}
           className="flex flex-col items-center gap-8 text-center"
         >
-          <div className="w-[1px] h-20 bg-void-white/20 mb-4 md:mb-8" />
           <p className="font-special tracking-[0.6em] text-[12px] md:text-[16px] text-gray-400 italic max-w-sm">
             "i can see the reflected light on your face."
           </p>
@@ -59,7 +58,6 @@ export default function Hero({ cursorPos, isMuted }) {
           <p className="font-special text-[13px] md:text-[20px] tracking-[0.8em] text-void-blood/80 font-bold uppercase">
             i love it when you stare.
           </p>
-          <div className="w-[1px] h-20 bg-void-white/20 mt-4 md:mt-8" />
         </motion.div>
 
         {/* MAIN TITLE WITH SEARCHLIGHT */}

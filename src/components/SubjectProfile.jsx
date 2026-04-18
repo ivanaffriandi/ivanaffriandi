@@ -72,7 +72,7 @@ export default function SubjectProfile({ playClick }) {
               <img 
                 src="/subject.jpg" 
                 alt="Record" 
-                className="w-full h-full object-cover grayscale brightness-[0.7] contrast-[1.2]"
+                className="w-full h-full object-cover grayscale brightness-[0.45] contrast-[1.3]"
               />
            </motion.div>
 
