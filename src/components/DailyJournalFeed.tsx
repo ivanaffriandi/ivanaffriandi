@@ -1124,11 +1124,11 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                           color: "var(--text-primary)",
                           fontFamily: "var(--font-sans)",
                           letterSpacing: "-0.01em",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis"
+                          lineHeight: "1.3"
                         }}>
-                          {post.title}
+                          {post.title && post.title.length > 45 
+                            ? post.title.split(' ').slice(0, 4).join(' ') + '...' 
+                            : post.title}
                         </h3>
                         <p style={{ 
                           fontSize: "0.76rem", 
