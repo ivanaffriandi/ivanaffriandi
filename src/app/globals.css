@@ -1,0 +1,1487 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+:root {
+  --bg-color: #FDFBF7; /* Beautiful warm Munken book paper */
+  --bg-color-rgba: rgba(253, 251, 247, 0.75);
+  --text-primary: #181715; /* Elegant charcoal ink */
+  --text-secondary: #6B6862; /* Soft sepia secondary text */
+  --border-color: #E6E1D8; /* Warm book binder grid line */
+  --grid-line: #E6E1D8;
+  
+  /* Modern Raised "Timbul Ke Luar" Neumorphism Shadow */
+  --shadow-raised: 8px 8px 24px rgba(180, 165, 150, 0.12), -8px -8px 24px rgba(255, 255, 255, 0.95), 0 12px 32px rgba(0, 0, 0, 0.04);
+  
+  /* Pressed Pocket Neumorphism Shadow */
+  --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.04), inset 0 -1px 0 rgba(255, 255, 255, 0.65);
+  
+  /* Dynamic Card Colors */
+  --card-bg-1: rgba(144, 164, 174, 0.06);
+  --card-bg-2: rgba(161, 136, 127, 0.06);
+  --card-bg-3: rgba(129, 199, 132, 0.06);
+  --card-bg-4: rgba(255, 183, 77, 0.06);
+  
+  --card-border-1: rgba(144, 164, 174, 0.2);
+  --card-border-2: rgba(161, 136, 127, 0.2);
+  --card-border-3: rgba(129, 199, 132, 0.2);
+  --card-border-4: rgba(255, 183, 77, 0.2);
+
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: 'Lora', Georgia, serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #141312; /* Volcanic bookplate base */
+    --bg-color-rgba: rgba(20, 19, 18, 0.75);
+    --text-primary: #EBE6DC; /* Warm paper text */
+    --text-secondary: #9B968E;
+    --border-color: #2F2E2C;
+    --grid-line: #2F2E2C;
+    
+    /* Dark Mode Neumorphism Raised Shadows */
+    --shadow-raised: 8px 8px 24px rgba(0, 0, 0, 0.35), -8px -8px 24px rgba(255, 255, 255, 0.02), 0 12px 32px rgba(0, 0, 0, 0.25);
+    
+    /* Dark Mode Pressed Inset Shadows */
+    --shadow-inset: inset 0 1.5px 3px rgba(0, 0, 0, 0.4), inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+
+    /* Dark Mode Card Colors */
+    --card-bg-1: rgba(144, 164, 174, 0.12);
+    --card-bg-2: rgba(161, 136, 127, 0.12);
+    --card-bg-3: rgba(129, 199, 132, 0.12);
+    --card-bg-4: rgba(255, 183, 77, 0.12);
+  
+    --card-border-1: rgba(144, 164, 174, 0.3);
+    --card-border-2: rgba(161, 136, 127, 0.3);
+    --card-border-3: rgba(129, 199, 132, 0.3);
+    --card-border-4: rgba(255, 183, 77, 0.3);
+  }
+}
+
+/* Beautiful Literary Drop Cap */
+.book-prologue::first-letter {
+  font-family: var(--font-serif);
+  font-size: 3.5rem;
+  float: left;
+  line-height: 0.8;
+  margin-right: 0.65rem;
+  margin-top: 0.15rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  font-style: italic;
+}
+
+/* Force hide Next.js Dev overlays that might cause black sidebars */
+nextjs-portal, 
+#__next-build-watcher, 
+[data-nextjs-toast] {
+  display: none !important;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  border: none !important;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip; /* Prevent horizontal scroll without breaking position: sticky */
+  width: 100%;
+  scroll-behavior: smooth;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: -0.04em;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+p {
+  margin: 0;
+}
+
+/* Background Grid Lines (4 Columns) */
+.bg-grid-lines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px);
+  background-position: 
+    0% 0,
+    33.333% 0,
+    66.666% 0,
+    100% 0;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+@media (min-width: 768px) {
+  .bg-grid-lines {
+    background-image: 
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px);
+    background-position: 
+      0% 0,
+      25% 0,
+      50% 0,
+      75% 0,
+      100% 0;
+  }
+}
+
+.layout-wrapper {
+  padding: 1rem 4vw;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header & Menu Button */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 0;
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.menu-btn {
+  background: none;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  line-height: 1;
+}
+
+.menu-icon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 24px;
+}
+
+.menu-icon span {
+  display: block;
+  height: 1px;
+  background-color: var(--text-primary);
+  width: 100%;
+}
+
+.menu-btn:hover {
+  opacity: 0.6;
+}
+
+/* Massive Title */
+.hero-title-container {
+  position: relative;
+  margin-bottom: 4rem;
+}
+
+.hero-title {
+  font-size: clamp(3.5rem, 15vw, 12rem); /* Slightly smaller base for tiny phones */
+  line-height: 0.85;
+  letter-spacing: -0.06em;
+  margin-left: -0.05em; /* Optical alignment */
+}
+
+.hero-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Swiss Grid Row */
+.swiss-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  border-top: 1px solid var(--grid-line);
+  padding: 2rem 0;
+}
+
+@media (max-width: 768px) {
+  .swiss-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+.swiss-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.swiss-desc {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  min-width: 0; /* Prevent grid overflow */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Colored Article List (Integrated into Swiss Grid) */
+.article-list-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.article-item {
+  display: grid;
+  grid-template-columns: 1fr 180px 80px;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  background-color: var(--item-bg, transparent);
+  border: none;
+  position: relative;
+  transition: transform 0.4s ease;
+  gap: 2rem;
+  margin-bottom: 2px;
+}
+
+.article-item:hover {
+  transform: translateX(0.5rem);
+}
+
+.article-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--item-text, var(--text-primary));
+}
+
+.meta-row {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.15rem 0;
+}
+
+.meta-label {
+  color: var(--item-meta, var(--text-secondary));
+}
+
+.meta-value {
+  color: var(--item-text, var(--text-primary));
+}
+
+.article-number {
+  font-size: 2.5rem;
+  line-height: 1;
+  font-weight: 300;
+  letter-spacing: -0.05em;
+  color: var(--item-text, var(--text-primary));
+  opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .article-item {
+    grid-template-columns: 1fr 80px;
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+}
+
+/* Big Image Block */
+.hero-image-block {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background-color: var(--text-primary);
+  margin-top: 2rem;
+}
+
+/* Footer */
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding-top: 4rem;
+  margin-top: 8rem;
+  border-top: 1px solid var(--grid-line);
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-color);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem 5vw;
+}
+
+
+
+.menu-links {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.menu-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: clamp(2.5rem, 8vw, 5.5rem);
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--grid-line);
+  width: 100%;
+  transition: border-color 0.3s ease;
+}
+
+.menu-link:hover {
+  border-color: var(--text-primary);
+}
+
+.menu-text {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.menu-link:hover .menu-text {
+  transform: translateX(1.5rem);
+}
+
+.menu-arrow {
+  font-size: clamp(2rem, 6vw, 4rem);
+  opacity: 0;
+  transform: translateX(-2rem);
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.menu-link:hover .menu-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Timeline Feed Layout - Ultra Compact CSS Grid */
+.timeline-container {
+  position: relative;
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* The vertical dashed line, perfectly centered on the 80px badge column */
+.timeline-line {
+  position: absolute;
+  left: 40px; 
+  top: 0.5rem;
+  bottom: 0.5rem;
+  width: 1px;
+  border-left: 1px dashed var(--grid-line);
+  z-index: 1;
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+  position: relative;
+  margin-bottom: 1.75rem; /* Tighter compact margins */
+}
+
+/* The oval timestamp badge - centered inside Column 1 */
+.timeline-badge {
+  justify-self: center;
+  align-self: start;
+  margin-top: 0.2rem; /* Align perfectly with the first line of text */
+  background-color: var(--bg-color);
+  border: 1px solid var(--grid-line);
+  border-radius: 99px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.6rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+/* The content body inside Column 2 */
+.timeline-content {
+  max-width: 600px;
+  min-width: 0; /* Prevent grid blowout on long text */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.timeline-text {
+  font-size: 0.95rem; /* More compact */
+  line-height: 1.4;
+  color: var(--text-primary);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Timeline Card for Blogger Posts */
+.timeline-card {
+  background-color: var(--bg-color);
+  border: 1px solid var(--grid-line);
+  padding: 0.85rem 1.25rem; /* Highly compact padding */
+  border-radius: 12px; /* Smaller radius for compact look */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+  width: 100%;
+  min-width: 0; /* FIX FLEX BLOWOUT */
+  gap: 1rem;
+}
+
+.timeline-card:hover {
+  transform: translateY(-1px);
+  border-color: var(--text-primary);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
+}
+
+.timeline-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0; /* FIX FLEX BLOWOUT */
+}
+
+.timeline-card-title {
+  font-size: 1.1rem; /* More compact */
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.timeline-card-meta {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.timeline-card-arrow {
+  font-size: 1.25rem;
+  color: #6366F1;
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+
+.timeline-card:hover .timeline-card-arrow {
+  transform: translate(2px, -2px);
+}
+
+/* Todo list styling */
+.todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* Halved from 1.5rem */
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.todo-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.todo-checkbox {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--grid-line);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.15rem;
+  background-color: var(--bg-color);
+  flex-shrink: 0;
+}
+
+.todo-checkbox.checked {
+  background-color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+.todo-checkbox.checked::after {
+  content: '✓';
+  color: var(--bg-color);
+  font-size: 0.55rem;
+  font-weight: bold;
+}
+
+.todo-content-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem; /* Tighter spacing */
+}
+
+.todo-text {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--text-primary);
+}
+
+.todo-text.checked {
+  text-decoration: line-through;
+  opacity: 0.4;
+}
+
+.todo-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.badge-black {
+  background-color: var(--text-primary);
+  color: var(--bg-color);
+  font-size: 0.55rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  border-radius: 99px;
+  text-transform: uppercase;
+}
+
+.badge-outline {
+  border: 1px solid var(--grid-line);
+  color: var(--text-secondary);
+  font-size: 0.55rem;
+  font-weight: 500;
+  padding: 0.1rem 0.4rem;
+  border-radius: 99px;
+  text-transform: uppercase;
+}
+
+.badge-grey {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--text-secondary);
+  font-size: 0.55rem;
+  font-weight: 500;
+  padding: 0.1rem 0.4rem;
+  border-radius: 99px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .timeline-item {
+    grid-template-columns: 70px 1fr;
+    gap: 0.75rem;
+  }
+  .timeline-line {
+    left: 35px;
+  }
+}
+
+/* Brutalist Minimalist Date Ruler Style */
+.calendar-widget {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: transparent;
+  border-top: 1px solid var(--grid-line);
+  border-bottom: 1px solid var(--text-primary);
+  padding: 0.75rem 0;
+  margin-bottom: 1rem;
+  user-select: none;
+  gap: 1rem;
+  min-width: 0;
+  width: 100%;
+}
+
+.calendar-arrow {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+  font-family: monospace;
+}
+
+.calendar-arrow:hover {
+  opacity: 0.5;
+}
+
+.calendar-days-container {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scrollbar-width: none; /* Hide scrollbar Firefox */
+  padding: 0.2rem 0;
+  flex-grow: 1;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.calendar-days-container::-webkit-scrollbar {
+  display: none; /* Hide scrollbar Chrome/Safari */
+}
+
+.calendar-day-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0.15rem;
+  transition: color 0.2s;
+  min-width: 32px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.calendar-day-name {
+  font-size: 0.55rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+  text-transform: lowercase;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.calendar-day-num {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1;
+  font-family: var(--font-sans);
+}
+
+/* Active / Selected calendar day (Sleek bottom underline) */
+.calendar-day-btn.active::before {
+  content: '';
+  position: absolute;
+  bottom: -0.85rem;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--text-primary);
+}
+
+/* Indication that a day has a blog post logged (Solid black/white dot above date) */
+.calendar-day-btn.has-post::after {
+  content: '';
+  position: absolute;
+  top: -0.15rem;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--text-primary);
+}
+
+/* ==========================================================================
+   COMPREHENSIVE MOBILE RESPONSIVE REFINEMENTS
+   ========================================================================== */
+
+/* Medium Mobile / Tablets (max-width: 768px) */
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .hero-title-container {
+    margin-bottom: 3rem;
+  }
+
+  header {
+    margin-bottom: 4rem;
+  }
+}
+
+/* Small Mobile / Compact Phones (max-width: 480px) */
+@media (max-width: 480px) {
+  .layout-wrapper {
+    padding: 1.5rem 1rem;
+  }
+
+  header {
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-title-container {
+    margin-bottom: 2rem;
+  }
+
+  .swiss-row {
+    gap: 0.75rem;
+    padding: 1.5rem 0;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-top: 5rem;
+    padding-top: 3rem;
+  }
+
+  .calendar-widget {
+    padding: 0.5rem 0;
+    gap: 0.5rem;
+    border-radius: 0;
+  }
+
+  .calendar-day-btn {
+    padding: 0.2rem 0.1rem;
+    min-width: 28px;
+  }
+
+  .calendar-day-name {
+    font-size: 0.5rem;
+  }
+
+  .calendar-day-num {
+    font-size: 0.95rem;
+  }
+
+  .timeline-item {
+    grid-template-columns: 60px 1fr;
+    gap: 0.6rem;
+  }
+
+  .timeline-line {
+    left: 30px;
+  }
+
+  .timeline-badge {
+    font-size: 0.55rem;
+    padding: 0.15rem 0.35rem;
+  }
+
+  .timeline-card {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Extra Small Phones (max-width: 375px - iPhone SE / Fold) */
+@media (max-width: 375px) {
+  .timeline-item {
+    grid-template-columns: 50px 1fr;
+    gap: 0.5rem;
+  }
+  
+  .timeline-line {
+    left: 25px;
+  }
+
+  .timeline-badge {
+    font-size: 0.5rem;
+    padding: 0.1rem 0.25rem;
+  }
+
+  .calendar-days-container {
+    gap: 0.4rem;
+  }
+
+  .calendar-arrow {
+    padding: 0.25rem;
+  }
+}
+
+/* ==========================================================================
+   YUNOX MOBILE RESPONSIVE UTILITIES
+   ========================================================================== */
+
+.yunox-split-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--grid-line);
+  min-height: 50vh;
+}
+
+.yunox-hero-left {
+  padding: 4rem 2rem 4rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-right: 1px solid var(--grid-line);
+}
+
+.yunox-hero-right {
+  padding: 4rem 0 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.yunox-feed-item {
+  border-bottom: 1px solid var(--grid-line);
+  padding: 4rem 0;
+}
+
+.yunox-footer {
+  padding: 6rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.yunox-footer-links {
+  border-top: 1px solid var(--grid-line);
+  padding-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .yunox-split-hero {
+    grid-template-columns: 1fr;
+  }
+  .yunox-hero-left {
+    padding: 2rem 0;
+    border-right: none;
+    border-bottom: 1px solid var(--grid-line);
+  }
+  .yunox-hero-right {
+    padding: 2rem 0;
+  }
+  .yunox-feed-item {
+    padding: 2rem 0;
+  }
+  .yunox-footer {
+    padding: 3rem 0;
+  }
+  .yunox-footer-links {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   YUNOX CONCEPTUAL TIMELINE (NO VERTICAL LINE)
+   ========================================================================== */
+.yunox-timeline {
+  position: relative;
+}
+
+.yunox-timeline-item {
+  position: relative;
+  padding-bottom: 5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.yunox-timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.yunox-timeline-date {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.yunox-timeline-date span {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-family: monospace;
+}
+
+@media (max-width: 768px) {
+  .yunox-timeline-item {
+    padding-bottom: 3rem;
+  }
+}
+
+/* ==========================================================================
+   MINIMALIST SINGLE LINE FOOTER RESPONSIVENESS
+   ========================================================================== */
+.footer-email-desktop {
+  display: inline;
+}
+
+.footer-email-mobile {
+  display: none;
+}
+
+@media (max-width: 500px) {
+  .footer-email-desktop {
+    display: none !important;
+  }
+  .footer-email-mobile {
+    display: inline !important;
+  }
+  .yunox-single-footer {
+    gap: 0.5rem !important;
+    font-size: 0.75rem !important;
+  }
+}
+
+/* ==========================================================================
+   VERTICAL CONNECTING TIMELINE TRACK & HOVER EFFECTS
+   ========================================================================== */
+.timeline-container-v2 {
+  position: relative;
+}
+
+.timeline-track-line {
+  position: absolute;
+  left: 6.5px; /* Centers with the 14px dot (-3rem offset alignment) */
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background-color: var(--grid-line);
+  z-index: 1;
+}
+
+.timeline-item-v2 {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-node-dot {
+  position: absolute;
+  left: -3rem; /* Perfectly matches paddingLeft: 3rem of container */
+  top: 7px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--text-primary);
+  z-index: 2;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;
+}
+
+.timeline-item-v2:hover .timeline-node-dot {
+  transform: scale(1.35);
+  background-color: var(--text-primary);
+}
+
+.timeline-item-v2:hover .timeline-title-v2 {
+  text-decoration: underline;
+}
+
+.timeline-item-v2:hover .timeline-image-v2 {
+  transform: scale(1.02);
+}
+
+@media (max-width: 768px) {
+  .timeline-container-v2 {
+    padding-left: 2rem !important; /* Slightly smaller gap on narrow mobile screens */
+  }
+  .timeline-track-line {
+    left: 5.5px !important;
+  }
+  .timeline-node-dot {
+    left: -2rem !important;
+    width: 12px !important;
+    height: 12px !important;
+  }
+  .about-contact-grid {
+    grid-template-columns: 1fr !important;
+    gap: 3rem !important;
+  }
+  .feed-header-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+    margin-bottom: 2.5rem !important;
+  }
+}
+
+/* Profile Photo & Icon Hovers */
+.icon-link {
+  transition: color 0.25s ease !important;
+}
+
+.icon-link:hover {
+  color: var(--text-primary) !important;
+}
+
+@media (max-width: 768px) {
+  .about-contact-wrapper {
+    flex-direction: column !important;
+    gap: 2rem !important;
+  }
+  .about-contact-wrapper > div:first-child {
+    width: 100px !important;
+    height: 100px !important;
+  }
+}
+
+/* Minimalist Contact Links */
+.minimal-link {
+  transition: all 0.25s ease;
+  border-bottom-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+@media (prefers-color-scheme: light) {
+  .minimal-link {
+    border-bottom-color: rgba(0, 0, 0, 0.15) !important;
+  }
+}
+
+.minimal-link:hover {
+  border-bottom-color: var(--text-primary) !important;
+}
+
+/* ==========================================================================
+   KINDLE-STYLE BOOK READER STYLING
+   ========================================================================== */
+/* Breathtaking Google Serif Fonts for Authentic Editorial Feeling */
+.book-prose,
+.book-prose * {
+  font-family: 'Lora', 'Merriweather', 'Georgia', serif !important;
+}
+
+.book-chapter {
+  font-family: 'Lora', 'Georgia', serif !important;
+  font-weight: 500 !important;
+}
+
+.book-title {
+  font-family: 'Playfair Display', 'Georgia', serif !important;
+  font-weight: 700 !important;
+}
+
+.book-prose p {
+  margin-bottom: 1.75rem !important;
+  text-indent: 1.5rem;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+/* No indent on the very first paragraph */
+.book-prose p:first-of-type {
+  text-indent: 0 !important;
+}
+
+/* Beautiful Classical Drop-cap */
+.book-prose p:first-of-type::first-letter {
+  font-family: 'Playfair Display', 'Georgia', serif !important;
+  font-size: 4rem;
+  font-weight: 700 !important;
+  float: left;
+  line-height: 0.85;
+  margin-right: 0.65rem;
+  margin-top: 0.15rem;
+}
+
+/* Dock Icon Button Hovers */
+.dock-icon-btn {
+  transition: all 0.2s ease-in-out !important;
+}
+
+.dock-icon-btn:hover {
+  background-color: rgba(255, 255, 255, 0.16) !important;
+  transform: scale(1.05);
+}
+
+.dock-icon-btn:active {
+  transform: scale(0.95);
+}
+
+/* Pulsing Indicator for TTS Listening Mode */
+@keyframes ttsPulse {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0.5; }
+}
+
+.tts-pulse-indicator {
+  animation: ttsPulse 1.4s infinite ease-in-out;
+}
+
+/* Remove default link hover overrides in book view to keep it neat */
+.book-reader-container a {
+  transition: opacity 0.2s ease;
+}
+
+.book-reader-container a:hover {
+  opacity: 0.75;
+}
+
+/* Dynamic High Contrast Overrides for Book Reader Themes */
+html.book-mode-active,
+html.book-mode-active body {
+  transition: background-color 0.4s ease, color 0.4s ease !important;
+}
+
+
+
+html.book-theme-paper,
+html.book-theme-paper body {
+  background-color: #f4f1ea !important;
+  color: #2c2a27 !important;
+  --bg-color: #f4f1ea !important;
+  --text-primary: #2c2a27 !important;
+  --text-secondary: #6a655f !important;
+  --grid-line: rgba(44, 42, 39, 0.15) !important;
+}
+
+html.book-theme-light,
+html.book-theme-light body {
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  --bg-color: #ffffff !important;
+  --text-primary: #111111 !important;
+  --text-secondary: #666666 !important;
+  --grid-line: rgba(0, 0, 0, 0.1) !important;
+}
+
+html.book-theme-dark,
+html.book-theme-dark body {
+  background-color: #151413 !important;
+  color: #e4e1db !important;
+  --bg-color: #151413 !important;
+  --text-primary: #e4e1db !important;
+  --text-secondary: #9e9a93 !important;
+  --grid-line: rgba(228, 225, 219, 0.15) !important;
+}
+
+/* Ensure Logo and Buttons Transition Smoothly */
+.logo, .menu-btn, .icon-link, .yunox-single-footer span {
+  transition: color 0.4s ease, border-color 0.4s ease !important;
+}
+
+/* Private Library Catalog Drawer Styling */
+.catalog-row:hover {
+  background-color: var(--grid-line) !important;
+  padding-left: 1.25rem !important;
+}
+
+.catalog-row:hover .catalog-title {
+  color: var(--text-primary) !important;
+}
+
+@media (max-width: 768px) {
+  .catalog-row {
+    padding: 1rem 0.25rem !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* Gallery & Cabinet Hover Transitions */
+.hero-gallery-link:hover .grid-item-img {
+  transform: scale(1.06) !important;
+}
+
+.hero-gallery-link:hover .grid-item-overlay {
+  opacity: 1 !important;
+}
+
+/* Instagram Square Hover Animations */
+.gallery-square-card:hover .gallery-square-image {
+  transform: scale(1.06) !important;
+}
+
+.gallery-square-card:hover .instagram-hover-overlay {
+  opacity: 1 !important;
+}
+
+@media (max-width: 768px) {
+  .gallery-grid-instagram {
+    gap: 3px !important;
+  }
+}
+
+/* Right Column Hero Card Styling */
+.yunox-hero-right-card {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 280px;
+  margin-left: auto;
+}
+
+@media (max-width: 768px) {
+  .yunox-hero-right-card {
+    max-width: 100% !important;
+    margin-left: 0 !important;
+  }
+}
+
+/* Minimalist Book Spine Stack Styling */
+.book-spine-minimal {
+  background-color: transparent !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: 1px solid var(--grid-line) !important;
+  border-left: 3px solid var(--text-primary) !important;
+  box-shadow: none !important;
+}
+
+.book-spine-minimal:hover {
+  transform: translateX(6px) !important;
+  background-color: rgba(0, 0, 0, 0.02) !important;
+  border-left-color: var(--accent-color, #d4af37) !important; /* Elegant gold/accent spine on hover! */
+}
+
+.book-theme-dark .book-spine-minimal:hover {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* ==========================================================================
+   AUTHENTIC PHYSICAL BOOK READABILITY & TYPESETTING RULES
+   ========================================================================== */
+.book-prose {
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+/* ==========================================================================
+   BRUTE FORCE TYPOGRAPHY OVERRIDES FOR BLOGGER INLINE HTML
+   ========================================================================== */
+.prose-style-sans, .prose-style-sans * {
+  font-family: var(--font-sans) !important;
+}
+
+.prose-style-serif, .prose-style-serif * {
+  font-family: var(--font-serif, 'Lora', Georgia, serif) !important;
+}
+
+.prose-style-mono, .prose-style-mono * {
+  font-family: monospace, Courier New !important;
+}
+
+.book-prose p {
+  text-align: left;
+  line-height: 1.65;
+  margin-top: 0;
+  margin-bottom: 1.6rem;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+/* Bullet and list styling matching the screenshot */
+.book-prose ul, .book-prose ol {
+  padding-left: 1.25rem;
+  margin-bottom: 1.6rem;
+}
+
+.book-prose li {
+  line-height: 1.6;
+  margin-bottom: 0.6rem;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+/* Premium Rounded Editorial Journal Image Plates */
+.book-prose img {
+  display: block !important;
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 2rem auto !important;
+  padding: 0 !important;
+  border-radius: 24px !important; /* Beautiful rounded corners matching the screenshot! */
+  border: none !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04) !important;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.book-prose img:hover {
+  transform: scale(1.01) !important;
+}
+
+/* Bounding boxes for iframes and other embeds */
+.book-prose iframe {
+  display: block;
+  margin: 2rem auto;
+  max-width: 100%;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+}
+
+/* ==========================================================================
+   HOMEPAGE HOVER EFFECTS
+   ========================================================================== */
+.catalog-row:hover {
+  opacity: 0.5;
+}
+
+.gallery-hover-plate:hover {
+  filter: grayscale(0%) !important;
+  transform: scale(1.05);
+}
+
+/* ==========================================================================
+   iOS ANIMATION SYSTEM
+   ========================================================================== */
+
+/* iOS spring easing curve used everywhere */
+:root {
+  --ease-ios-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-ios-spring: cubic-bezier(0.34, 1.56, 0.64, 1);  /* slight overshoot */
+  --ease-ios-in:  cubic-bezier(0.55, 0, 1, 0.45);
+}
+
+/* Tap / press feedback — applied to any interactive element */
+/* Usage: add class "ios-tap" */
+.ios-tap {
+  cursor: pointer;
+  transition:
+    transform 0.18s var(--ease-ios-out),
+    opacity   0.18s var(--ease-ios-out);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.ios-tap:active {
+  transform: scale(0.95) !important;
+  opacity: 0.72 !important;
+}
+
+/* Hover lift — very subtle, like iOS springboard icons */
+.ios-lift {
+  transition:
+    transform 0.28s var(--ease-ios-spring),
+    box-shadow 0.28s var(--ease-ios-out);
+}
+.ios-lift:hover {
+  transform: translateY(-2px) scale(1.015);
+}
+.ios-lift:active {
+  transform: scale(0.97) !important;
+}
+
+/* Gallery grid cells — apply press-in feel when clicking */
+.gallery-cell {
+  transition:
+    transform 0.22s var(--ease-ios-out),
+    opacity   0.22s var(--ease-ios-out);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.gallery-cell:active {
+  transform: scale(0.94) !important;
+  opacity: 0.75 !important;
+}
+
+/* Link tap highlight — replaces browser blue flash */
+a, button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Post / journal card hover */
+.journal-post-card {
+  transition:
+    transform 0.3s var(--ease-ios-spring),
+    opacity   0.22s var(--ease-ios-out),
+    box-shadow 0.3s var(--ease-ios-out);
+}
+.journal-post-card:hover {
+  transform: translateY(-1px) scale(1.008);
+}
+.journal-post-card:active {
+  transform: scale(0.97) !important;
+  opacity: 0.8 !important;
+}
+
+/* Social icon links — spring scale */
+.social-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.22s var(--ease-ios-spring),
+    opacity   0.18s var(--ease-ios-out);
+  -webkit-tap-highlight-color: transparent;
+}
+.social-icon-link:hover {
+  transform: scale(1.18);
+  opacity: 0.85;
+}
+.social-icon-link:active {
+  transform: scale(0.9) !important;
+  opacity: 0.6 !important;
+}
+
+/* Dock buttons in BookReader — existing .dock-icon-btn */
+.dock-icon-btn {
+  transition:
+    transform 0.2s var(--ease-ios-spring),
+    background-color 0.18s var(--ease-ios-out),
+    opacity   0.18s var(--ease-ios-out) !important;
+}
+.dock-icon-btn:hover {
+  transform: scale(1.1) !important;
+}
+.dock-icon-btn:active {
+  transform: scale(0.9) !important;
+  opacity: 0.65 !important;
+}
+
+/* Scroll — iOS-feel momentum */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}

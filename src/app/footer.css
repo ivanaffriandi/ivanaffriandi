@@ -1,0 +1,9 @@
+.social-icon-link {
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+.social-icon-link:hover {
+  color: var(--text-primary);
+}
