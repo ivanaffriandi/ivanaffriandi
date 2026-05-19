@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 // Replaced Server Actions with robust API routes to prevent proxy crashes
 import { getAllCommentsForAdmin, approveComment, deleteComment, CommentItem } from "@/lib/comments";
 import { getAllQuestionsForAdmin, answerQuestion, deleteQuestion, QuestionItem } from "@/lib/questions";
-import { getAllMoments, addMoment, deleteMoment, uploadMomentPhoto, MomentItem } from "@/lib/moments";
+import { getAllMoments, addMoment, deleteMoment, updateMoment, uploadMomentPhoto, MomentItem } from "@/lib/moments";
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -28,6 +28,41 @@ export default function AdminPage() {
 
   const [answeringQuestionId, setAnsweringQuestionId] = useState<string | null>(null);
   const [answerText, setAnswerText] = useState("");
+
+  // Custom Confirmation Dialog state
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    confirmText?: string;
+    cancelText?: string;
+    onConfirm: () => void | Promise<void>;
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    confirmText: "Delete",
+    cancelText: "Cancel",
+    onConfirm: () => {}
+  });
+
+  const triggerConfirm = (title: string, message: string, onConfirm: () => void | Promise<void>, confirmText = "Delete") => {
+    setConfirmModal({
+      isOpen: true,
+      title,
+      message,
+      confirmText,
+      cancelText: "Cancel",
+      onConfirm: async () => {
+        try {
+          await onConfirm();
+        } catch (e) {
+          console.error(e);
+        }
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+      }
+    });
+  };
 
   useEffect(() => {
     // Bulletproof try-catch-finally block to absolutely prevent loading spinner hang!
@@ -156,12 +191,16 @@ export default function AdminPage() {
 
   // Delete Question Action
   const handleDeleteQuestion = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this question forever? This action cannot be undone.")) {
-      const success = await deleteQuestion(id);
-      if (success) {
-        setAdminQuestions(prev => prev.filter(q => q.id !== id));
+    triggerConfirm(
+      "Delete Question",
+      "Are you sure you want to delete this question forever? This action cannot be undone.",
+      async () => {
+        const success = await deleteQuestion(id);
+        if (success) {
+          setAdminQuestions(prev => prev.filter(q => q.id !== id));
+        }
       }
-    }
+    );
   };
 
   // Approve Comment Action
@@ -174,12 +213,16 @@ export default function AdminPage() {
 
   // Delete Comment Action
   const handleDeleteComment = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this comment from the database?")) {
-      const success = await deleteComment(id);
-      if (success) {
-        setAdminComments(prev => prev.filter(c => c.id !== id));
+    triggerConfirm(
+      "Delete Comment",
+      "Are you sure you want to delete this comment from the database?",
+      async () => {
+        const success = await deleteComment(id);
+        if (success) {
+          setAdminComments(prev => prev.filter(c => c.id !== id));
+        }
       }
-    }
+    );
   };
 
   // Upload Moment Action
@@ -222,11 +265,37 @@ export default function AdminPage() {
 
   // Delete Moment Action
   const handleDeleteMoment = async (id: string, storagePath?: string) => {
-    if (window.confirm("Are you sure you want to permanently delete this photo?")) {
-      const success = await deleteMoment(id, storagePath);
-      if (success) {
-        setAdminMoments(prev => prev.filter(m => m.id !== id));
+    triggerConfirm(
+      "Delete Photo",
+      "Are you sure you want to permanently delete this photo from your Moments gallery?",
+      async () => {
+        const success = await deleteMoment(id, storagePath);
+        if (success) {
+          setAdminMoments(prev => prev.filter(m => m.id !== id));
+        }
       }
+    );
+  };
+
+  // Set Homepage Slot Action
+  const handleSetHomepageSlot = async (momentId: string, slotStr: string) => {
+    const slotVal = slotStr === "none" ? 0 : parseInt(slotStr);
+    
+    // Optimistic UI update
+    setAdminMoments(prev => prev.map(m => 
+      m.id === momentId 
+        ? { ...m, showOnHomepage: slotVal !== 0, homepageOrder: slotVal !== 0 ? slotVal : undefined } 
+        : m
+    ));
+
+    try {
+      await updateMoment(momentId, {
+        showOnHomepage: slotVal !== 0,
+        homepageOrder: slotVal !== 0 ? slotVal : undefined
+      });
+    } catch (err) {
+      console.error("Failed to update homepage slot:", err);
+      alert("Failed to update homepage slot selection.");
     }
   };
 
@@ -319,41 +388,44 @@ export default function AdminPage() {
 
   // --- DASHBOARD VIEW (COMPACT NEAT LAYOUT) ---
   return (
-    <div className="admin-panel-container" style={{ minHeight: "100vh", padding: "1.5rem 1.5rem", maxWidth: "800px", margin: "0 auto", fontFamily: "var(--font-sans)", backgroundColor: "var(--bg-color)" }}>
+    <div className="admin-panel-container" style={{ minHeight: "100vh", padding: "2rem 1.5rem", maxWidth: "800px", margin: "0 auto", fontFamily: "var(--font-sans)", backgroundColor: "var(--bg-color)" }}>
       <style>{`
-        .admin-tabs-container {
-          display: flex;
-          gap: 0.4rem;
-          margin-bottom: 1.25rem;
-          overflow-x: auto;
-          scrollbar-width: none;
-          -ms-overflow-style: none;
-          padding-bottom: 4px;
-          -webkit-overflow-scrolling: touch;
-        }
-        .admin-tabs-container::-webkit-scrollbar {
-          display: none;
-        }
-        .admin-tabs-container button {
-          white-space: nowrap;
-          flex-shrink: 0;
+        .admin-tabs-container button:active {
+          transform: scale(0.97);
         }
         
         .moments-grid-container {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 10px;
+          gap: 12px;
         }
         
         .moments-form-row {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 10px;
+          gap: 12px;
+        }
+
+        .admin-form-input {
+          padding: 10px 14px;
+          border-radius: 12px;
+          border: 1px solid rgba(150,150,150,0.18);
+          background-color: rgba(150,150,150,0.02);
+          color: var(--text-primary);
+          font-size: 0.78rem;
+          font-family: var(--font-sans);
+          outline: none;
+          transition: all 0.2s ease;
+        }
+
+        .admin-form-input:focus {
+          border-color: var(--text-primary);
+          background-color: rgba(150,150,150,0.04);
         }
 
         @media (max-width: 600px) {
           .admin-panel-container {
-            padding: 1.25rem 1rem !important;
+            padding: 1.5rem 1rem !important;
           }
           .moments-form-row {
             grid-template-columns: 1fr;
@@ -363,60 +435,86 @@ export default function AdminPage() {
           }
         }
       `}</style>
-      {/* Compact Header */}
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", paddingBottom: "1rem", borderBottom: "1px solid rgba(150,150,150,0.1)" }}>
-        <h1 style={{ fontSize: "1.1rem", fontWeight: "700", margin: 0, letterSpacing: "-0.01em", color: "var(--text-primary)" }}>Admin Panel</h1>
-        <button onClick={handleLogout} style={{ padding: "6px 10px", backgroundColor: "transparent", border: "1px solid rgba(150,150,150,0.2)", borderRadius: "6px", color: "var(--text-secondary)", fontSize: "0.7rem", fontWeight: "600", cursor: "pointer", transition: "all 0.2s" }} onMouseOver={(e) => { e.currentTarget.style.borderColor = "var(--text-primary)"; e.currentTarget.style.color = "var(--text-primary)"; }} onMouseOut={(e) => { e.currentTarget.style.borderColor = "rgba(150,150,150,0.2)"; e.currentTarget.style.color = "var(--text-secondary)"; }}>
+
+      {/* Compact Frosted Header */}
+      <header style={{ 
+        display: "flex", 
+        justifyContent: "space-between", 
+        alignItems: "center", 
+        marginBottom: "1.5rem", 
+        padding: "12px 20px", 
+        backgroundColor: "rgba(150, 150, 150, 0.03)", 
+        border: "1px solid rgba(150, 150, 150, 0.08)", 
+        borderRadius: "18px", 
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)"
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <span style={{ fontSize: "1.1rem" }}>🎛️</span>
+          <h1 style={{ fontSize: "1.05rem", fontWeight: "800", margin: 0, letterSpacing: "-0.02em", color: "var(--text-primary)" }}>Studio Dashboard</h1>
+        </div>
+        <button onClick={handleLogout} style={{ padding: "6px 12px", backgroundColor: "rgba(239, 68, 68, 0.08)", border: "1px solid rgba(239, 68, 68, 0.15)", borderRadius: "30px", color: "#ef4444", fontSize: "0.68rem", fontWeight: "700", cursor: "pointer", transition: "all 0.2s" }} onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#ef4444"; e.currentTarget.style.color = "#ffffff"; }} onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.08)"; e.currentTarget.style.color = "#ef4444"; }}>
           Logout
         </button>
       </header>
 
-      {/* Compact Tabs */}
-      <div className="admin-tabs-container">
-        <button onClick={() => setActiveTab("inbox")} style={{ padding: "6px 14px", borderRadius: "6px", fontSize: "0.75rem", fontWeight: "600", cursor: "pointer", transition: "all 0.2s", backgroundColor: activeTab === "inbox" ? "var(--text-primary)" : "transparent", color: activeTab === "inbox" ? "var(--bg-color)" : "var(--text-secondary)", border: activeTab === "inbox" ? "none" : "1px solid rgba(150,150,150,0.15)" }}>
-          Inbox
-        </button>
-        <button onClick={() => setActiveTab("calendar")} style={{ padding: "6px 14px", borderRadius: "6px", fontSize: "0.75rem", fontWeight: "600", cursor: "pointer", transition: "all 0.2s", backgroundColor: activeTab === "calendar" ? "var(--text-primary)" : "transparent", color: activeTab === "calendar" ? "var(--bg-color)" : "var(--text-secondary)", border: activeTab === "calendar" ? "none" : "1px solid rgba(150,150,150,0.15)" }}>
-          Calendar
-        </button>
-        <button onClick={() => setActiveTab("comments")} style={{ padding: "6px 14px", borderRadius: "6px", fontSize: "0.75rem", fontWeight: "600", cursor: "pointer", transition: "all 0.2s", backgroundColor: activeTab === "comments" ? "var(--text-primary)" : "transparent", color: activeTab === "comments" ? "var(--bg-color)" : "var(--text-secondary)", border: activeTab === "comments" ? "none" : "1px solid rgba(150,150,150,0.15)" }}>
-          Comments
-        </button>
-        <button onClick={() => setActiveTab("moments")} style={{ padding: "6px 14px", borderRadius: "6px", fontSize: "0.75rem", fontWeight: "600", cursor: "pointer", transition: "all 0.2s", backgroundColor: activeTab === "moments" ? "var(--text-primary)" : "transparent", color: activeTab === "moments" ? "var(--bg-color)" : "var(--text-secondary)", border: activeTab === "moments" ? "none" : "1px solid rgba(150,150,150,0.15)" }}>
-          Moments
-        </button>
+      {/* Compact Capsule Tabs Pillbar */}
+      <div className="admin-tabs-container" style={{ display: "flex", gap: "0.25rem", padding: "4px", backgroundColor: "rgba(150, 150, 150, 0.05)", border: "1px solid rgba(150, 150, 150, 0.08)", borderRadius: "30px", marginBottom: "1.5rem", overflowX: "auto" }}>
+        {(["inbox", "calendar", "comments", "moments"] as const).map(tab => (
+          <button 
+            key={tab} 
+            onClick={() => setActiveTab(tab)} 
+            style={{ 
+              flex: 1,
+              textAlign: "center",
+              padding: "8px 14px", 
+              borderRadius: "20px", 
+              fontSize: "0.72rem", 
+              fontWeight: "750", 
+              cursor: "pointer", 
+              transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)", 
+              backgroundColor: activeTab === tab ? "var(--text-primary)" : "transparent", 
+              color: activeTab === tab ? "var(--bg-color)" : "var(--text-secondary)", 
+              border: "none",
+              textTransform: "uppercase",
+              letterSpacing: "0.02em"
+            }}
+          >
+            {tab}
+          </button>
+        ))}
       </div>
 
-      {/* Content */}
+      {/* Content Panels */}
       <AnimatePresence mode="wait">
         {activeTab === "inbox" && (
-          <motion.div key="inbox" initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.15 }}>
+          <motion.div key="inbox" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-              <h2 style={{ fontSize: "0.85rem", fontWeight: "600", margin: 0, color: "var(--text-primary)" }}>Anonymous Inbox</h2>
+              <h2 style={{ fontSize: "0.85rem", fontWeight: "700", margin: 0, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.03em" }}>Anonymous Inbox</h2>
             </div>
             
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               {adminQuestions.length > 0 ? (
                 adminQuestions.map(q => (
                   <motion.div 
                     key={q.id} 
-                    initial={{ opacity: 0, y: 8 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     style={{ 
-                      padding: "14px 16px", 
+                      padding: "16px 18px", 
                       backgroundColor: "rgba(255, 255, 255, 0.45)", 
                       backdropFilter: "blur(12px)", 
                       WebkitBackdropFilter: "blur(12px)",
                       border: "1px solid rgba(150, 150, 150, 0.12)", 
-                      borderRadius: "16px",
-                      boxShadow: "0 6px 20px rgba(0, 0, 0, 0.015), inset 0 1px 1px rgba(255, 255, 255, 0.8)",
+                      borderRadius: "20px",
+                      boxShadow: "0 8px 30px rgba(0, 0, 0, 0.015), inset 0 1px 1px rgba(255, 255, 255, 0.8)",
                       position: "relative",
                       transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <span style={{ fontSize: "0.62rem", color: "#B47A3E", fontWeight: "600", fontFamily: "monospace" }}>
+                        <span style={{ fontSize: "0.62rem", color: "#B47A3E", fontWeight: "650", fontFamily: "monospace" }}>
                           {new Date(q.published).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                         </span>
                         <span style={{ 
@@ -453,19 +551,19 @@ export default function AdminPage() {
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                       </motion.button>
                     </div>
-
-                    <p style={{ margin: "0 0 10px 0", fontSize: "0.85rem", color: "var(--text-primary)", lineHeight: "1.45", fontWeight: "500", letterSpacing: "-0.01em" }}>
+ 
+                    <p style={{ margin: "0 0 10px 0", fontSize: "0.85rem", color: "var(--text-primary)", lineHeight: "1.45", fontWeight: "600", letterSpacing: "-0.01em" }}>
                       "{q.content}"
                     </p>
-
+ 
                     {q.answered && q.answer && (
                       <div style={{ 
                         padding: "12px 14px", 
                         backgroundColor: "rgba(150, 150, 150, 0.03)", 
-                        borderRadius: "12px", 
+                        borderRadius: "14px", 
                         border: "1px solid rgba(150, 150, 150, 0.08)", 
                         marginTop: "10px",
-                        boxShadow: "inset 1px 1.5px 3px rgba(0,0,0,0.02)"
+                        boxShadow: "inset 1px 1.5px 3px rgba(0,0,0,0.01)"
                       }}>
                         <span style={{ 
                           fontSize: "0.58rem", 
@@ -482,7 +580,6 @@ export default function AdminPage() {
                         </span>
                         <p style={{ margin: "0 0 8px 0", fontSize: "0.76rem", color: "var(--text-secondary)", lineHeight: "1.45" }}>{q.answer}</p>
                         
-                        {/* Elegant edit trigger button to update your response anytime */}
                         {answeringQuestionId !== q.id && (
                           <motion.button 
                             whileHover={{ scale: 1.03, backgroundColor: "rgba(150,150,150,0.05)" }}
@@ -495,10 +592,10 @@ export default function AdminPage() {
                               padding: "4px 10px", 
                               backgroundColor: "transparent", 
                               border: "1px solid rgba(150,150,150,0.18)", 
-                              borderRadius: "10px", 
+                              borderRadius: "20px", 
                               color: "var(--text-primary)", 
                               fontSize: "0.65rem", 
-                              fontWeight: "600", 
+                              fontWeight: "700", 
                               cursor: "pointer",
                               transition: "all 0.15s ease" 
                             }}
@@ -508,7 +605,7 @@ export default function AdminPage() {
                         )}
                       </div>
                     )}
-
+ 
                     {!q.answered && answeringQuestionId !== q.id && (
                       <motion.button 
                         whileHover={{ scale: 1.02, backgroundColor: "rgba(150,150,150,0.08)" }}
@@ -518,14 +615,14 @@ export default function AdminPage() {
                           setAnswerText("");
                         }}
                         style={{ 
-                          padding: "5px 12px", 
+                          padding: "6px 14px", 
                           marginTop: "6px", 
                           backgroundColor: "rgba(150,150,150,0.04)", 
                           border: "1px solid rgba(150,150,150,0.08)", 
-                          borderRadius: "12px", 
+                          borderRadius: "30px", 
                           color: "var(--text-primary)", 
                           fontSize: "0.68rem", 
-                          fontWeight: "600", 
+                          fontWeight: "700", 
                           cursor: "pointer", 
                           transition: "all 0.2s" 
                         }}
@@ -533,7 +630,7 @@ export default function AdminPage() {
                         Reply anonymously
                       </motion.button>
                     )}
-
+ 
                     {answeringQuestionId === q.id && (
                       <div style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "8px" }}>
                         <textarea
@@ -542,27 +639,24 @@ export default function AdminPage() {
                           onChange={(e) => setAnswerText(e.target.value)}
                           onFocus={(e) => {
                             e.target.style.borderColor = "var(--text-primary)";
-                            e.target.style.boxShadow = "inset 1px 1.5px 3px rgba(0,0,0,0.04), 0 0 0 2px rgba(0,0,0,0.03)";
                           }}
                           onBlur={(e) => {
-                            e.target.style.borderColor = "rgba(150, 150, 150, 0.1)";
-                            e.target.style.boxShadow = "inset 1px 1.5px 3px rgba(0,0,0,0.04)";
+                            e.target.style.borderColor = "rgba(150, 150, 150, 0.15)";
                           }}
                           style={{
                             width: "100%",
                             minHeight: "90px",
                             padding: "10px 12px",
-                            borderRadius: "12px",
-                            border: "1.5px solid rgba(150, 150, 150, 0.1)",
-                            backgroundColor: "rgba(150, 150, 150, 0.03)",
-                            boxShadow: "inset 1px 1.5px 3px rgba(0,0,0,0.04)",
+                            borderRadius: "14px",
+                            border: "1.5px solid rgba(150, 150, 150, 0.15)",
+                            backgroundColor: "rgba(150, 150, 150, 0.02)",
                             color: "var(--text-primary)",
                             fontFamily: "var(--font-sans)",
                             fontSize: "0.76rem",
                             lineHeight: "1.45",
                             outline: "none",
                             resize: "none",
-                            transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)"
+                            transition: "all 0.25s"
                           }}
                         />
                         <div style={{ display: "flex", gap: "6px" }}>
@@ -572,13 +666,13 @@ export default function AdminPage() {
                             onClick={() => handleAnswerQuestion(q.id)}
                             disabled={!answerText.trim()}
                             style={{ 
-                              padding: "5px 12px", 
+                              padding: "6px 14px", 
                               backgroundColor: "var(--text-primary)", 
                               color: "var(--bg-color)", 
                               border: "none", 
-                              borderRadius: "14px", 
+                              borderRadius: "30px", 
                               fontSize: "0.68rem", 
-                              fontWeight: "600", 
+                              fontWeight: "700", 
                               cursor: answerText.trim() ? "pointer" : "not-allowed", 
                               opacity: answerText.trim() ? 1 : 0.5,
                               boxShadow: "0 2px 6px rgba(0, 0, 0, 0.08)",
@@ -592,13 +686,13 @@ export default function AdminPage() {
                             whileTap={{ scale: 0.97 }}
                             onClick={() => setAnsweringQuestionId(null)}
                             style={{ 
-                              padding: "5px 12px", 
+                              padding: "6px 14px", 
                               backgroundColor: "rgba(150, 150, 150, 0.06)", 
                               border: "1px solid rgba(150, 150, 150, 0.12)", 
-                              borderRadius: "14px", 
+                              borderRadius: "30px", 
                               color: "var(--text-secondary)", 
                               fontSize: "0.68rem", 
-                              fontWeight: "600", 
+                              fontWeight: "700", 
                               cursor: "pointer" 
                             }}
                           >
@@ -610,74 +704,77 @@ export default function AdminPage() {
                   </motion.div>
                 ))
               ) : (
-                <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)", border: "1px dashed rgba(150,150,150,0.15)", borderRadius: "12px" }}>
-                  <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "500", color: "var(--text-primary)" }}>Your inbox is empty.</p>
+                <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)", border: "1px dashed rgba(150,150,150,0.15)", borderRadius: "20px" }}>
+                  <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "700", color: "var(--text-primary)" }}>Your inbox is empty.</p>
                   <p style={{ margin: "4px 0 0 0", fontSize: "0.68rem", color: "var(--text-secondary)" }}>Anonymous questions will show up here.</p>
                 </div>
               )}
             </div>
           </motion.div>
         )}
-
+ 
         {activeTab === "calendar" && (
-          <motion.div key="calendar" initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.15 }}>
+          <motion.div key="calendar" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-              <h2 style={{ fontSize: "0.85rem", fontWeight: "600", margin: 0, color: "var(--text-primary)" }}>Manage Schedule</h2>
-              <button style={{ padding: "6px 10px", backgroundColor: "var(--text-primary)", color: "var(--bg-color)", borderRadius: "6px", border: "none", fontSize: "0.7rem", fontWeight: "600", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}>
+              <h2 style={{ fontSize: "0.85rem", fontWeight: "700", margin: 0, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.03em" }}>Manage Schedule</h2>
+              <button style={{ padding: "6px 12px", backgroundColor: "var(--text-primary)", color: "var(--bg-color)", borderRadius: "30px", border: "none", fontSize: "0.7rem", fontWeight: "750", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Add
               </button>
             </div>
             
-            <div style={{ backgroundColor: "rgba(150,150,150,0.02)", border: "1px solid rgba(150,150,150,0.1)", borderRadius: "8px", overflow: "hidden" }}>
+            <div style={{ backgroundColor: "rgba(150,150,150,0.02)", border: "1px solid rgba(150,150,150,0.1)", borderRadius: "20px", overflow: "hidden" }}>
               {/* Ivan's Birthday Event */}
-              <div style={{ display: "flex", alignItems: "center", padding: "0.75rem", borderBottom: "1px solid rgba(150,150,150,0.1)" }}>
-                <div style={{ width: "28px", height: "28px", backgroundColor: "rgba(230,183,65,0.15)", borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.9rem", marginRight: "0.75rem" }}>
+              <div style={{ display: "flex", alignItems: "center", padding: "12px 16px", borderBottom: "1px solid rgba(150,150,150,0.08)" }}>
+                <div style={{ width: "32px", height: "32px", backgroundColor: "rgba(230,183,65,0.12)", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.95rem", marginRight: "0.75rem" }}>
                   🎂
                 </div>
                 <div style={{ flex: 1 }}>
-                  <h3 style={{ margin: "0 0 0.1rem 0", fontSize: "0.75rem", fontWeight: "600", color: "var(--text-primary)" }}>Ivan's Birthday</h3>
+                  <h3 style={{ margin: "0 0 0.1rem 0", fontSize: "0.78rem", fontWeight: "700", color: "var(--text-primary)" }}>Ivan's Birthday</h3>
                   <p style={{ margin: 0, fontSize: "0.65rem", color: "var(--text-secondary)" }}>Active every August 3rd.</p>
                 </div>
-                <div style={{ fontSize: "0.6rem", fontWeight: "600", backgroundColor: "rgba(150,150,150,0.08)", padding: "2px 6px", borderRadius: "4px", color: "var(--text-secondary)" }}>
-                  Locked
+                <div style={{ fontSize: "0.58rem", fontWeight: "750", backgroundColor: "rgba(150,150,150,0.06)", padding: "3px 8px", borderRadius: "6px", color: "var(--text-secondary)", letterSpacing: "0.03em" }}>
+                  LOCKED
                 </div>
               </div>
               
-              <div style={{ padding: "2rem 1rem", textAlign: "center", color: "var(--text-secondary)" }}>
-                <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "500", color: "var(--text-primary)" }}>No other schedules yet.</p>
+              <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)" }}>
+                <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "600", color: "var(--text-primary)" }}>No other schedules yet.</p>
               </div>
             </div>
           </motion.div>
         )}
-
+ 
         {activeTab === "comments" && (
-          <motion.div key="comments" initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.15 }}>
+          <motion.div key="comments" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-              <h2 style={{ fontSize: "0.85rem", fontWeight: "600", margin: 0, color: "var(--text-primary)" }}>Comment Moderation</h2>
+              <h2 style={{ fontSize: "0.85rem", fontWeight: "700", margin: 0, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.03em" }}>Comment Moderation</h2>
             </div>
             
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {adminComments.length > 0 ? (
                 adminComments.map(comment => (
                   <div 
                      key={comment.id} 
                      style={{ 
-                       padding: "10px 12px", 
-                       backgroundColor: "rgba(150,150,150,0.01)", 
-                       border: "1px solid rgba(150,150,150,0.08)", 
-                       borderRadius: "10px", 
+                       padding: "14px 16px", 
+                       backgroundColor: "rgba(255, 255, 255, 0.45)", 
+                       backdropFilter: "blur(12px)", 
+                       WebkitBackdropFilter: "blur(12px)",
+                       border: "1px solid rgba(150, 150, 150, 0.12)", 
+                       borderRadius: "20px", 
                        display: "flex", 
                        justifyContent: "space-between", 
                        gap: "12px", 
-                       alignItems: "flex-start" 
+                       alignItems: "flex-start",
+                       boxShadow: "0 8px 30px rgba(0, 0, 0, 0.015)"
                      }}
                   >
                     <div style={{ flex: 1 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px", flexWrap: "wrap" }}>
-                        <span style={{ fontSize: "0.75rem", fontWeight: "700", color: "var(--text-primary)" }}>{comment.author.displayName}</span>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "6px", flexWrap: "wrap" }}>
+                        <span style={{ fontSize: "0.75rem", fontWeight: "750", color: "var(--text-primary)" }}>{comment.author.displayName}</span>
                         <span style={{ fontSize: "0.65rem", color: "var(--text-secondary)", opacity: 0.7 }}>{comment.author.email}</span>
-                        <span style={{ fontSize: "0.65rem", color: "#B47A3E", fontWeight: "600" }}>{new Date(comment.published).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+                        <span style={{ fontSize: "0.62rem", color: "#B47A3E", fontWeight: "650", fontFamily: "monospace" }}>{new Date(comment.published).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
                         <span style={{ fontSize: "0.65rem", color: "var(--text-secondary)", opacity: 0.5 }}>•</span>
                         <a 
                           href={`/blog/${comment.postId}`} 
@@ -696,24 +793,28 @@ export default function AdminPage() {
                           on post: {comment.postId.length > 10 ? `${comment.postId.substring(0, 10)}...` : comment.postId}
                         </a>
                         {!comment.approved && (
-                          <span style={{ fontSize: "0.55rem", fontWeight: "700", backgroundColor: "rgba(180, 122, 62, 0.08)", color: "#B47A3E", padding: "1px 4px", borderRadius: "4px", letterSpacing: "0.03em" }}>PENDING</span>
+                          <span style={{ fontSize: "0.55rem", fontWeight: "750", backgroundColor: "rgba(180, 122, 62, 0.08)", color: "#B47A3E", padding: "2px 6px", borderRadius: "6px", letterSpacing: "0.03em" }}>PENDING</span>
                         )}
                       </div>
                       <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: "1.45" }}>{comment.content}</p>
                     </div>
                     
-                    <div style={{ display: "flex", gap: "4px" }}>
+                    <div style={{ display: "flex", gap: "6px" }}>
                       {!comment.approved && (
                         <button 
                           onClick={() => handleApproveComment(comment.id)} 
-                          style={{ padding: "4px 8px", backgroundColor: "rgba(180, 122, 62, 0.1)", border: "none", borderRadius: "5px", color: "#B47A3E", fontSize: "0.65rem", fontWeight: "600", cursor: "pointer" }}
+                          style={{ padding: "6px 12px", backgroundColor: "rgba(16, 185, 129, 0.1)", border: "none", borderRadius: "20px", color: "#10b981", fontSize: "0.65rem", fontWeight: "700", cursor: "pointer", transition: "all 0.2s" }}
+                          onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(16, 185, 129, 0.15)"}
+                          onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(16, 185, 129, 0.1)"}
                         >
                           Approve
                         </button>
                       )}
                       <button 
                         onClick={() => handleDeleteComment(comment.id)} 
-                        style={{ padding: "4px 8px", backgroundColor: "rgba(239,68,68,0.1)", border: "none", borderRadius: "5px", color: "#ef4444", fontSize: "0.65rem", fontWeight: "600", cursor: "pointer" }}
+                        style={{ padding: "6px 12px", backgroundColor: "rgba(239, 68, 68, 0.1)", border: "none", borderRadius: "20px", color: "#ef4444", fontSize: "0.65rem", fontWeight: "700", cursor: "pointer", transition: "all 0.2s" }}
+                        onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.15)"}
+                        onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.1)"}
                       >
                         Delete
                       </button>
@@ -721,58 +822,207 @@ export default function AdminPage() {
                   </div>
                 ))
               ) : (
-                <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)", border: "1px dashed rgba(150,150,150,0.15)", borderRadius: "10px" }}>
-                  <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "500", color: "var(--text-primary)" }}>No comments submitted yet.</p>
+                <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)", border: "1px dashed rgba(150,150,150,0.15)", borderRadius: "20px" }}>
+                  <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "700", color: "var(--text-primary)" }}>No comments submitted yet.</p>
                 </div>
               )}
             </div>
           </motion.div>
         )}
-
+ 
         {activeTab === "moments" && (
-          <motion.div key="moments" initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.15 }}>
+          <motion.div key="moments" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-              <h2 style={{ fontSize: "0.85rem", fontWeight: "600", margin: 0, color: "var(--text-primary)" }}>Manage Moments Gallery</h2>
+              <h2 style={{ fontSize: "0.85rem", fontWeight: "700", margin: 0, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.03em" }}>Manage Moments Gallery</h2>
             </div>
             
-            {/* Upload Form */}
-            <div style={{ backgroundColor: "rgba(150,150,150,0.02)", border: "1px solid rgba(150,150,150,0.1)", borderRadius: "10px", padding: "16px", marginBottom: "20px" }}>
-              <form onSubmit={handleUploadMoment} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                <input id="momentFileInput" type="file" accept="image/*" onChange={(e) => setMomentFile(e.target.files?.[0] || null)} style={{ fontSize: "0.75rem", color: "var(--text-primary)" }} required />
-                <div className="moments-form-row">
-                  <input type="text" placeholder="Title (Optional)" value={momentTitle} onChange={(e) => setMomentTitle(e.target.value)} style={{ padding: "8px", borderRadius: "8px", border: "1px solid rgba(150,150,150,0.2)", backgroundColor: "rgba(150,150,150,0.02)", color: "var(--text-primary)", fontSize: "0.75rem" }} />
-                  <input type="text" placeholder="Location (e.g., Tokyo, Japan)" value={momentLocation} onChange={(e) => setMomentLocation(e.target.value)} style={{ padding: "8px", borderRadius: "8px", border: "1px solid rgba(150,150,150,0.2)", backgroundColor: "rgba(150,150,150,0.02)", color: "var(--text-primary)", fontSize: "0.75rem" }} required />
+            {/* Elegant Form */}
+            <div style={{ backgroundColor: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: "1px solid rgba(150,150,150,0.15)", borderRadius: "20px", padding: "20px", marginBottom: "24px" }}>
+              <form onSubmit={handleUploadMoment} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  <label htmlFor="momentFileInput" style={{ fontSize: "0.62rem", fontWeight: "750", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.03em" }}>Upload Photo</label>
+                  <input id="momentFileInput" type="file" accept="image/*" onChange={(e) => setMomentFile(e.target.files?.[0] || null)} style={{ fontSize: "0.75rem", color: "var(--text-primary)" }} required />
                 </div>
-                <input type="text" placeholder="Date (e.g., Aug 2023)" value={momentDate} onChange={(e) => setMomentDate(e.target.value)} style={{ padding: "8px", borderRadius: "8px", border: "1px solid rgba(150,150,150,0.2)", backgroundColor: "rgba(150,150,150,0.02)", color: "var(--text-primary)", fontSize: "0.75rem" }} required />
-                <textarea placeholder="Story or description (Optional)" value={momentStory} onChange={(e) => setMomentStory(e.target.value)} style={{ padding: "8px", borderRadius: "8px", border: "1px solid rgba(150,150,150,0.2)", backgroundColor: "rgba(150,150,150,0.02)", color: "var(--text-primary)", fontSize: "0.75rem", minHeight: "60px", resize: "none", outline: "none" }} />
                 
-                <button type="submit" disabled={isUploadingMoment || !momentFile || !momentLocation || !momentDate} style={{ padding: "10px", backgroundColor: "var(--text-primary)", color: "var(--bg-color)", border: "none", borderRadius: "8px", fontSize: "0.75rem", fontWeight: "600", cursor: (isUploadingMoment || !momentFile || !momentLocation || !momentDate) ? "not-allowed" : "pointer", opacity: (isUploadingMoment || !momentFile || !momentLocation || !momentDate) ? 0.5 : 1 }}>
+                <div className="moments-form-row">
+                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <label style={{ fontSize: "0.62rem", fontWeight: "750", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.03em" }}>Title</label>
+                    <input className="admin-form-input" type="text" placeholder="Title (Optional)" value={momentTitle} onChange={(e) => setMomentTitle(e.target.value)} />
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <label style={{ fontSize: "0.62rem", fontWeight: "750", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.03em" }}>Location</label>
+                    <input className="admin-form-input" type="text" placeholder="e.g., Tokyo, Japan" value={momentLocation} onChange={(e) => setMomentLocation(e.target.value)} required />
+                  </div>
+                </div>
+                
+                <div className="moments-form-row">
+                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <label style={{ fontSize: "0.62rem", fontWeight: "750", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.03em" }}>Date</label>
+                    <input className="admin-form-input" type="text" placeholder="e.g., Aug 2023" value={momentDate} onChange={(e) => setMomentDate(e.target.value)} required />
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                  <label style={{ fontSize: "0.62rem", fontWeight: "750", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.03em" }}>Story or description</label>
+                  <textarea className="admin-form-input" placeholder="Write the story behind this moment..." value={momentStory} onChange={(e) => setMomentStory(e.target.value)} style={{ minHeight: "80px", resize: "none" }} />
+                </div>
+                
+                <button type="submit" disabled={isUploadingMoment || !momentFile || !momentLocation || !momentDate} style={{ padding: "12px", backgroundColor: "var(--text-primary)", color: "var(--bg-color)", border: "none", borderRadius: "30px", fontSize: "0.75rem", fontWeight: "750", cursor: (isUploadingMoment || !momentFile || !momentLocation || !momentDate) ? "not-allowed" : "pointer", opacity: (isUploadingMoment || !momentFile || !momentLocation || !momentDate) ? 0.5 : 1, transition: "opacity 0.2s" }}>
                   {isUploadingMoment ? "Uploading to Cloud..." : "Publish Moment"}
                 </button>
               </form>
             </div>
-
+ 
             {/* List of Moments */}
             <div className="moments-grid-container">
               {adminMoments.map(moment => (
-                <div key={moment.id} style={{ display: "flex", gap: "10px", padding: "10px", backgroundColor: "rgba(150,150,150,0.01)", border: "1px solid rgba(150,150,150,0.08)", borderRadius: "10px", alignItems: "center" }}>
-                  <img src={moment.url} alt="thumbnail" style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "6px" }} />
+                <div key={moment.id} style={{ display: "flex", gap: "10px", padding: "12px", backgroundColor: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", border: "1px solid rgba(150,150,150,0.12)", borderRadius: "20px", alignItems: "center", boxShadow: "0 8px 30px rgba(0, 0, 0, 0.015)" }}>
+                  <img src={moment.url} alt="thumbnail" style={{ width: "60px", height: "60px", objectFit: "cover", borderRadius: "12px" }} />
                   <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "2px" }}>
-                    <span style={{ fontSize: "0.75rem", fontWeight: "600", color: "var(--text-primary)" }}>📍 {moment.location}</span>
-                    <span style={{ fontSize: "0.65rem", color: "var(--text-secondary)" }}>{moment.date}</span>
+                    <span style={{ fontSize: "0.75rem", fontWeight: "700", color: "var(--text-primary)" }}>📍 {moment.location}</span>
+                    <span style={{ fontSize: "0.65rem", color: "var(--text-secondary)", fontWeight: "500" }}>{moment.date}</span>
                   </div>
-                  <button onClick={() => handleDeleteMoment(moment.id, moment.storagePath)} style={{ padding: "6px", backgroundColor: "rgba(239,68,68,0.1)", border: "none", borderRadius: "6px", color: "#ef4444", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }} title="Delete Photo">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                  
+                  {/* Home Slot Selector Pill */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "3px", marginRight: "10px" }}>
+                    <span style={{ fontSize: "0.58rem", fontWeight: "750", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.03em" }}>Home Slot</span>
+                    <select 
+                      value={moment.homepageOrder !== undefined ? String(moment.homepageOrder) : "none"}
+                      onChange={(e) => handleSetHomepageSlot(moment.id, e.target.value)}
+                      style={{ 
+                        padding: "4px 8px", 
+                        borderRadius: "8px", 
+                        border: "1px solid rgba(150,150,150,0.25)", 
+                        backgroundColor: moment.homepageOrder !== undefined ? "var(--text-primary)" : "rgba(150,150,150,0.04)", 
+                        color: moment.homepageOrder !== undefined ? "var(--bg-color)" : "var(--text-primary)", 
+                        fontSize: "0.68rem", 
+                        fontWeight: "750",
+                        outline: "none",
+                        cursor: "pointer",
+                        transition: "all 0.2s"
+                      }}
+                    >
+                      <option value="none">None</option>
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
+                        <option key={num} value={String(num)}>Slot {num}</option>
+                      ))}
+                    </select>
+                  </div>
+ 
+                  <button onClick={() => handleDeleteMoment(moment.id, moment.storagePath)} style={{ padding: "8px", backgroundColor: "rgba(239,68,68,0.1)", border: "none", borderRadius: "50%", color: "#ef4444", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", width: "28px", height: "28px", transition: "all 0.2s" }} title="Delete Photo">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                   </button>
                 </div>
               ))}
               {adminMoments.length === 0 && (
-                <div style={{ gridColumn: "1 / -1", padding: "2rem", textAlign: "center", color: "var(--text-secondary)", border: "1px dashed rgba(150,150,150,0.15)", borderRadius: "10px", fontSize: "0.75rem" }}>
+                <div style={{ gridColumn: "1 / -1", padding: "2rem", textAlign: "center", color: "var(--text-secondary)", border: "1px dashed rgba(150,150,150,0.15)", borderRadius: "20px", fontSize: "0.75rem", fontWeight: "600" }}>
                   No moments published yet.
                 </div>
               )}
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Custom Confirmation Modal Overlay */}
+      <AnimatePresence>
+        {confirmModal.isOpen && (
+          <div style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 100000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "1.25rem",
+          }}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+              style={{
+                position: "absolute",
+                inset: 0,
+                backgroundColor: "rgba(0, 0, 0, 0.4)",
+                backdropFilter: "blur(8px)"
+              }}
+            />
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94, y: 10 }}
+              transition={{ type: "spring", damping: 25, stiffness: 350 }}
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "340px",
+                backgroundColor: "var(--bg-color)",
+                border: "1px solid rgba(150, 150, 150, 0.15)",
+                borderRadius: "22px",
+                padding: "1.5rem",
+                boxShadow: "0 20px 40px rgba(0, 0, 0, 0.15)",
+                zIndex: 1,
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem"
+              }}
+            >
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                <h3 style={{ fontSize: "1.02rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "-0.02em", margin: 0 }}>
+                  {confirmModal.title}
+                </h3>
+                <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", lineHeight: "1.45", margin: 0, fontWeight: "500" }}>
+                  {confirmModal.message}
+                </p>
+              </div>
+
+              <div style={{ display: "flex", gap: "10px", marginTop: "4px" }}>
+                <button
+                  onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+                  style={{
+                    flex: 1,
+                    padding: "10px",
+                    borderRadius: "30px",
+                    border: "1px solid rgba(150, 150, 150, 0.2)",
+                    backgroundColor: "rgba(150, 150, 150, 0.04)",
+                    color: "var(--text-primary)",
+                    fontSize: "0.82rem",
+                    fontWeight: "700",
+                    cursor: "pointer",
+                    outline: "none",
+                    transition: "background 0.2s"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(150, 150, 150, 0.08)"}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(150, 150, 150, 0.04)"}
+                >
+                  {confirmModal.cancelText}
+                </button>
+                <button
+                  onClick={confirmModal.onConfirm}
+                  style={{
+                    flex: 1,
+                    padding: "10px",
+                    borderRadius: "30px",
+                    border: "none",
+                    backgroundColor: "#ef4444",
+                    color: "#ffffff",
+                    fontSize: "0.82rem",
+                    fontWeight: "700",
+                    cursor: "pointer",
+                    outline: "none",
+                    boxShadow: "0 4px 12px rgba(239, 68, 68, 0.2)",
+                    transition: "opacity 0.2s"
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.opacity = "0.9"}
+                  onMouseOut={(e) => e.currentTarget.style.opacity = "1"}
+                >
+                  {confirmModal.confirmText}
+                </button>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

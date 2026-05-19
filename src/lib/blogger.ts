@@ -21,6 +21,16 @@ const BLOG_ID = process.env.BLOGGER_BLOG_ID;
 const API_KEY = process.env.BLOGGER_API_KEY;
 const API_URL = `https://www.googleapis.com/blogger/v3/blogs`;
 
+// Persistent Global Cache to survive hot-reloads and rate-limiting!
+declare global {
+  var _cachedPosts: BlogPost[] | undefined;
+  var _cachedPostMap: Record<string, BlogPost> | undefined;
+  var _cachedCommentsMap: Record<string, BlogComment[]> | undefined;
+}
+
+if (!global._cachedPostMap) global._cachedPostMap = {};
+if (!global._cachedCommentsMap) global._cachedCommentsMap = {};
+
 export async function getPosts(): Promise<BlogPost[]> {
   if (!BLOG_ID || !API_KEY) {
     console.warn("Blogger API credentials are not set. Returning mock data.");
@@ -47,12 +57,12 @@ export async function getPosts(): Promise<BlogPost[]> {
   try {
     const res = await fetch(
       `${API_URL}/${BLOG_ID}/posts?key=${API_KEY}&fetchImages=true`,
-      { next: { revalidate: 0 } }
+      { next: { revalidate: 60 } } // Cache for 60 seconds to avoid hitting Blogger rate limits!
     );
-    if (!res.ok) throw new Error("Failed to fetch posts");
+    if (!res.ok) throw new Error(`Blogger API returned error: ${res.statusText}`);
     
     const data = await res.json();
-    return (data.items || []).map((item: any) => ({
+    const posts = (data.items || []).map((item: any) => ({
       id: item.id,
       title: item.title,
       content: item.content,
@@ -60,27 +70,39 @@ export async function getPosts(): Promise<BlogPost[]> {
       url: item.url,
       labels: item.labels || [],
     }));
+
+    // Update global persistent cache
+    global._cachedPosts = posts;
+    posts.forEach((p: any) => {
+      if (global._cachedPostMap) global._cachedPostMap[p.id] = p;
+    });
+
+    return posts;
   } catch (error) {
     console.error("Error fetching Blogger posts:", error);
+    // Serve cached fallback instead of returning an empty array to prevent flickering!
+    if (global._cachedPosts && global._cachedPosts.length > 0) {
+      console.log("Serving cached fallback list for Blogger posts.");
+      return global._cachedPosts;
+    }
     return [];
   }
 }
 
 export async function getPost(id: string): Promise<BlogPost | null> {
   if (!BLOG_ID || !API_KEY) {
-    // Mock return for local dev
     const posts = await getPosts();
     return posts.find((p) => p.id === id) || null;
   }
 
   try {
     const res = await fetch(`${API_URL}/${BLOG_ID}/posts/${id}?key=${API_KEY}`, {
-      next: { revalidate: 0 },
+      next: { revalidate: 60 },
     });
-    if (!res.ok) return null;
+    if (!res.ok) throw new Error(`Blogger API returned error: ${res.statusText}`);
 
     const item = await res.json();
-    return {
+    const post = {
       id: item.id,
       title: item.title,
       content: item.content,
@@ -88,8 +110,23 @@ export async function getPost(id: string): Promise<BlogPost | null> {
       url: item.url,
       labels: item.labels || [],
     };
+
+    // Cache single post
+    if (global._cachedPostMap) global._cachedPostMap[id] = post;
+
+    return post;
   } catch (error) {
     console.error("Error fetching post:", error);
+    // Serve cached fallback for post if available
+    if (global._cachedPostMap && global._cachedPostMap[id]) {
+      console.log(`Serving cached fallback for post ID: ${id}`);
+      return global._cachedPostMap[id];
+    }
+    // Fall back to getPosts cached array
+    if (global._cachedPosts) {
+      const found = global._cachedPosts.find((p) => p.id === id);
+      if (found) return found;
+    }
     return null;
   }
 }
@@ -101,12 +138,12 @@ export async function getPostComments(postId: string): Promise<BlogComment[]> {
 
   try {
     const res = await fetch(`${API_URL}/${BLOG_ID}/posts/${postId}/comments?key=${API_KEY}`, {
-      next: { revalidate: 0 }, // Fetch fresh comments in real time
+      next: { revalidate: 30 }, // 30 seconds caching for comments
     });
-    if (!res.ok) return [];
+    if (!res.ok) throw new Error(`Blogger API returned error: ${res.statusText}`);
 
     const data = await res.json();
-    return (data.items || []).map((item: any) => ({
+    const comments = (data.items || []).map((item: any) => ({
       id: item.id,
       published: item.published,
       content: item.content,
@@ -115,8 +152,16 @@ export async function getPostComments(postId: string): Promise<BlogComment[]> {
         image: item.author?.image,
       },
     }));
+
+    if (global._cachedCommentsMap) global._cachedCommentsMap[postId] = comments;
+    return comments;
   } catch (error) {
     console.error("Error fetching comments:", error);
+    // Serve cached comments fallback on error
+    if (global._cachedCommentsMap && global._cachedCommentsMap[postId]) {
+      console.log(`Serving cached fallback comments for post ID: ${postId}`);
+      return global._cachedCommentsMap[postId];
+    }
     return [];
   }
 }

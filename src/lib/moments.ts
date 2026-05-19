@@ -20,6 +20,8 @@ export interface MomentItem {
   location: string;
   published: string;
   storagePath?: string; // Tracks the location in Firebase Storage for deletion
+  showOnHomepage?: boolean;
+  homepageOrder?: number;
 }
 
 // Fallback logic for LocalStorage Base64 URLs if Firebase API Keys are missing locally
@@ -38,12 +40,18 @@ export async function uploadMomentPhoto(file: File, path: string): Promise<{ url
   if (hasFirebaseKeys) {
     try {
       const storageRef = ref(storage, path);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
+      // Run storage upload & url fetching with a 3.5s race timeout
+      const url = await Promise.race([
+        (async () => {
+          await uploadBytes(storageRef, file);
+          return await getDownloadURL(storageRef);
+        })(),
+        new Promise<string>((_, reject) => setTimeout(() => reject(new Error("Firebase Storage timeout")), 3500))
+      ]);
       return { url, storagePath: path };
     } catch (e) {
-      console.error("Firebase Storage error:", e);
-      throw e;
+      console.warn("Firebase Storage failed or timed out, falling back to Local Base64:", e);
+      // Fallback seamlessly to Base64 convert below
     }
   }
   
@@ -64,10 +72,15 @@ export async function addMoment(momentData: Omit<MomentItem, "id" | "published">
 
   if (hasFirebaseKeys) {
     try {
-      const docRef = await addDoc(collection(db, "moments"), newItem);
+      // Run firestore addDoc with a 3.5s race timeout
+      const docRef = await Promise.race([
+        addDoc(collection(db, "moments"), newItem),
+        new Promise<any>((_, reject) => setTimeout(() => reject(new Error("Firestore timeout")), 3500))
+      ]);
       return { id: docRef.id, ...newItem };
     } catch (e) {
-      console.error("Firebase Firestore error:", e);
+      console.warn("Firebase Firestore failed or timed out, falling back to LocalStorage:", e);
+      // Fallback seamlessly to LocalStorage below
     }
   }
 
@@ -107,13 +120,19 @@ export async function deleteMoment(id: string, storagePath?: string): Promise<bo
     try {
       if (storagePath) {
         const storageRef = ref(storage, storagePath);
-        await deleteObject(storageRef).catch(e => console.warn("Failed to delete storage file (maybe already deleted?):", e));
+        await Promise.race([
+          deleteObject(storageRef),
+          new Promise<void>((_, reject) => setTimeout(() => reject(new Error("Storage delete timeout")), 3500))
+        ]).catch(e => console.warn("Failed or timed out deleting storage file:", e));
       }
       const docRef = doc(db, "moments", id);
-      await deleteDoc(docRef);
+      await Promise.race([
+        deleteDoc(docRef),
+        new Promise<void>((_, reject) => setTimeout(() => reject(new Error("Firestore delete timeout")), 3500))
+      ]);
       return true;
     } catch (e) {
-      console.error("Firebase delete error:", e);
+      console.error("Firebase delete error, using local fallback:", e);
     }
   }
 

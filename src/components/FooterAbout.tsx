@@ -6,7 +6,19 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function FooterAbout() {
   const [isOpen, setIsOpen] = useState(false);
   const [slide, setSlide] = useState(0);
+  const [isDark, setIsDark] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Sync system dark mode preference
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      setIsDark(media.matches);
+      const listener = (e: MediaQueryListEvent) => setIsDark(e.matches);
+      media.addEventListener("change", listener);
+      return () => media.removeEventListener("change", listener);
+    }
+  }, []);
 
   const SLIDES = [
     {
@@ -52,28 +64,33 @@ export default function FooterAbout() {
     <div style={{ position: "relative" }} ref={containerRef}>
       <motion.button 
         onClick={() => setIsOpen(!isOpen)}
-        whileTap={{ scale: 0.92, opacity: 0.75 }}
+        whileHover={{ 
+          backgroundColor: isOpen ? "var(--text-primary)" : "rgba(150, 150, 150, 0.12)",
+          borderColor: isOpen ? "transparent" : "rgba(150, 150, 150, 0.25)"
+        }}
+        whileTap={{ scale: 0.94 }}
         transition={{ type: "spring", stiffness: 400, damping: 28 }}
         style={{ 
           background: "none", 
-          border: "none", 
-          color: "var(--text-primary)", 
+          border: isOpen ? "1px solid transparent" : "1px solid rgba(150, 150, 150, 0.16)", 
+          color: isOpen ? "var(--bg-color)" : "var(--text-primary)", 
           fontWeight: "600", 
           cursor: "pointer", 
-          padding: "4px 10px",
-          backgroundColor: isOpen ? "rgba(150,150,150,0.1)" : "transparent",
-          borderRadius: "14px",
+          padding: "6px 14.5px",
+          backgroundColor: isOpen ? "var(--text-primary)" : "rgba(150, 150, 150, 0.05)",
+          borderRadius: "30px",
           fontFamily: "var(--font-sans)",
-          fontSize: "0.78rem",
+          fontSize: "0.76rem",
           display: "flex",
           alignItems: "center",
-          gap: "5px",
-          transition: "background-color 0.2s var(--ease-ios-out, ease)"
+          gap: "6px",
+          boxShadow: "0 1px 2px rgba(0,0,0,0.02)",
+          transition: "background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease"
         }}
       >
         About
         <motion.svg 
-          width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+          width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ type: "spring", stiffness: 380, damping: 28 }}
         >
@@ -100,11 +117,15 @@ export default function FooterAbout() {
               left: "50%",
               width: "310px",
               maxWidth: "calc(100vw - 32px)",
-              backgroundColor: "var(--bg-color)",
+              backgroundColor: isDark ? "rgba(22, 21, 20, 0.95)" : "rgba(255, 255, 255, 0.96)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
               borderRadius: "22px",
               padding: "1.15rem",
-              boxShadow: "var(--shadow-raised)",
-              border: "1px solid var(--border-color)",
+              boxShadow: isDark 
+                ? "0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)" 
+                : "0 20px 45px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06)",
+              border: isDark ? "1px solid rgba(255, 255, 255, 0.15)" : "1px solid rgba(0, 0, 0, 0.1)",
               zIndex: 300,
               display: "flex",
               flexDirection: "column",
@@ -313,10 +334,10 @@ export default function FooterAbout() {
               onMouseOver={(e) => e.currentTarget.style.opacity = "0.8"}
               onMouseOut={(e) => e.currentTarget.style.opacity = "1"}
               >
-                Contact
+                Send Email
               </a>
               <a href="https://instagram.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" style={{ 
-                padding: "8px 12px", 
+                padding: "8px 10px", 
                 backgroundColor: "rgba(150,150,150,0.08)", 
                 color: "var(--text-primary)", 
                 borderRadius: "10px", 
@@ -332,6 +353,24 @@ export default function FooterAbout() {
                   <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
                   <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
                   <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                </svg>
+              </a>
+              <a href="https://x.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" style={{ 
+                padding: "8px 10px", 
+                backgroundColor: "rgba(150,150,150,0.08)", 
+                color: "var(--text-primary)", 
+                borderRadius: "10px", 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center",
+                transition: "background-color 0.2s ease"
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(150,150,150,0.15)"}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(150,150,150,0.08)"}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 4l11.733 16h4.267l-11.733 -16z" />
+                  <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />
                 </svg>
               </a>
             </div>

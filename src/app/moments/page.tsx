@@ -128,12 +128,7 @@ export default function MomentsPage() {
         {viewMode === "list" ? (
           /* List View: Premium vertical timeline cards */
           <div style={{ display: "flex", flexDirection: "column", gap: "2.5rem", marginTop: "0.5rem" }}>
-            {loading ? (
-              <div style={{ padding: "4rem", textAlign: "center", color: "var(--text-secondary)" }}>
-                <div style={{ width: "24px", height: "24px", margin: "0 auto", borderRadius: "50%", border: "2px solid rgba(150,150,150,0.2)", borderTopColor: "var(--text-primary)", animation: "spin 0.8s linear infinite" }} />
-                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-              </div>
-            ) : displayMoments.length === 0 ? (
+            {loading ? null : displayMoments.length === 0 ? (
                <div style={{ padding: "4rem", textAlign: "center", color: "var(--text-secondary)", fontSize: "0.85rem" }}>
                  No moments have been published yet.
                </div>
@@ -228,11 +223,7 @@ export default function MomentsPage() {
             overflow: "hidden",
             border: "1px solid rgba(150,150,150,0.1)"
           }}>
-            {loading ? (
-              <div style={{ gridColumn: "1 / -1", padding: "4rem", textAlign: "center" }}>
-                <div style={{ width: "24px", height: "24px", margin: "0 auto", borderRadius: "50%", border: "2px solid rgba(150,150,150,0.2)", borderTopColor: "var(--text-primary)", animation: "spin 0.8s linear infinite" }} />
-              </div>
-            ) : displayMoments.map((moment, idx) => {
+            {loading ? null : displayMoments.map((moment, idx) => {
               return (
                 <motion.div
                   key={moment.id}
@@ -275,8 +266,8 @@ export default function MomentsPage() {
       {/* LIGHTBOX MODAL: FINE-ART PRINT "SHOT ON IPHONE" */}
       {mounted && typeof window !== "undefined" && createPortal(
         <AnimatePresence>
-          {activePhoto !== null && moments[activePhoto] && (() => {
-            const activeData = moments[activePhoto];
+          {activePhoto !== null && displayMoments[activePhoto] && (() => {
+            const activeData = displayMoments[activePhoto];
             return (
               <motion.div
                 key="moments-lightbox"

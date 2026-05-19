@@ -782,14 +782,14 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 display: "flex",
                 alignItems: "center",
                 gap: "0.6rem",
-                backgroundColor: "rgba(18, 17, 16, 0.95)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
+                backgroundColor: theme === "dark" ? "rgba(15, 15, 15, 0.65)" : "rgba(255, 255, 255, 0.6)",
+                backdropFilter: "blur(20px) saturate(190%)",
+                WebkitBackdropFilter: "blur(20px) saturate(190%)",
+                border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.06)",
                 borderRadius: "32px",
                 padding: "6px 10px",
-                color: "#ffffff",
-                boxShadow: "0 10px 35px rgba(0, 0, 0, 0.4)",
+                color: theme === "dark" ? "#ffffff" : "#111111",
+                boxShadow: theme === "dark" ? "0 10px 35px rgba(0, 0, 0, 0.3)" : "0 10px 30px rgba(0, 0, 0, 0.06)",
                 width: "max-content",
                 maxWidth: "92vw",
                 overflow: "hidden"
@@ -821,8 +821,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     width: "38px", 
                     height: "38px", 
                     borderRadius: "50%", 
-                    backgroundColor: "rgba(255, 255, 255, 0.08)", 
-                    color: "#ffffff", 
+                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)", 
+                    color: theme === "dark" ? "#ffffff" : "#111111", 
                     border: "none",
                     cursor: "pointer",
                     transition: "all 0.2s ease"
@@ -846,14 +846,14 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   style={{
                     height: "38px",
                     boxSizing: "border-box",
-                    backgroundColor: "rgba(0, 0, 0, 0.4)",
-                    border: "1px solid rgba(255, 255, 255, 0.12)",
+                    backgroundColor: theme === "dark" ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.04)",
+                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
                     borderRadius: "20px",
                     padding: "0 16px",
-                    color: "#ffffff",
+                    color: theme === "dark" ? "#ffffff" : "#111111",
                     fontSize: "0.85rem",
                     fontWeight: "500",
-                    width: "300px",
+                    width: "380px",
                     outline: "none",
                     fontFamily: "var(--font-sans)"
                   }}
@@ -877,8 +877,12 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     width: "38px", 
                     height: "38px", 
                     borderRadius: "50%", 
-                    backgroundColor: commentText.trim() ? "#ffffff" : "rgba(255, 255, 255, 0.04)", 
-                    color: commentText.trim() ? "#000000" : "rgba(255, 255, 255, 0.2)", 
+                    backgroundColor: commentText.trim() 
+                      ? (theme === "dark" ? "#ffffff" : "#111111") 
+                      : (theme === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)"), 
+                    color: commentText.trim() 
+                      ? (theme === "dark" ? "#000000" : "#ffffff") 
+                      : (theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.15)"), 
                     border: "none",
                     cursor: commentText.trim() ? "pointer" : "default",
                     transition: "all 0.2s ease"
@@ -910,8 +914,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     width: "38px", 
                     height: "38px", 
                     borderRadius: "50%", 
-                    backgroundColor: "rgba(255, 255, 255, 0.08)", 
-                    color: "#ffffff", 
+                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)", 
+                    color: theme === "dark" ? "#ffffff" : "#111111", 
                     transition: "all 0.2s ease",
                     textDecoration: "none"
                   }}
@@ -927,10 +931,10 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 <div 
                   style={{ 
                     display: "flex", 
-                    backgroundColor: "rgba(0, 0, 0, 0.6)", 
+                    backgroundColor: theme === "dark" ? "rgba(0, 0, 0, 0.6)" : "rgba(0, 0, 0, 0.04)", 
                     borderRadius: "24px", 
                     padding: "2px",
-                    border: "1px solid rgba(255, 255, 255, 0.08)"
+                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.05)"
                   }}
                 >
                   <button 
@@ -939,8 +943,12 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       padding: "6px 14px",
                       borderRadius: "22px",
                       border: "none",
-                      backgroundColor: mode === "read" ? "#ffffff" : "transparent",
-                      color: mode === "read" ? "#000000" : "#999999",
+                      backgroundColor: mode === "read" 
+                        ? (theme === "dark" ? "#ffffff" : "#111111") 
+                        : "transparent",
+                      color: mode === "read" 
+                        ? (theme === "dark" ? "#000000" : "#ffffff") 
+                        : (theme === "dark" ? "#999999" : "#666666"),
                       fontSize: "0.85rem",
                       fontWeight: "600",
                       cursor: "pointer",
@@ -955,8 +963,12 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       padding: "6px 14px",
                       borderRadius: "22px",
                       border: "none",
-                      backgroundColor: mode === "listen" ? "#ffffff" : "transparent",
-                      color: mode === "listen" ? "#000000" : "#999999",
+                      backgroundColor: mode === "listen" 
+                        ? (theme === "dark" ? "#ffffff" : "#111111") 
+                        : "transparent",
+                      color: mode === "listen" 
+                        ? (theme === "dark" ? "#000000" : "#ffffff") 
+                        : (theme === "dark" ? "#999999" : "#666666"),
                       fontSize: "0.85rem",
                       fontWeight: "600",
                       cursor: "pointer",
@@ -981,14 +993,14 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     width: "38px",
                     height: "38px",
                     borderRadius: "50%",
-                    backgroundColor: "rgba(255, 255, 255, 0.08)",
-                    color: "#ffffff",
+                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)",
+                    color: theme === "dark" ? "#ffffff" : "#111111",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     cursor: "pointer",
                     transition: "all 0.2s ease",
-                    border: "1px solid rgba(255, 255, 255, 0.1)"
+                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.06)"
                   }}
                   className="dock-icon-btn"
                   title="Add a comment"

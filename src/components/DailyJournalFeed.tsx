@@ -29,33 +29,46 @@ const iosCardVariants = {
 };
 
 const INDONESIAN_HOLIDAYS: Record<string, string[]> = {
+  // January 2026
   "01-01": ["New Year's Day"],
-  "02-08": ["Isra Mi'raj"],
-  "02-09": ["Lunar New Year (Joint Holiday)"],
-  "02-10": ["Lunar New Year"],
-  "03-11": ["Nyepi (Day of Silence)"],
-  "03-12": ["Nyepi (Joint Holiday)"],
-  "03-29": ["Good Friday"],
-  "03-31": ["Easter Sunday"],
-  "04-08": ["Eid al-Fitr (Joint Holiday)"],
-  "04-09": ["Eid al-Fitr (Joint Holiday)"],
-  "04-10": ["Eid al-Fitr"],
-  "04-11": ["Eid al-Fitr"],
-  "04-12": ["Eid al-Fitr (Joint Holiday)"],
-  "04-15": ["Eid al-Fitr (Joint Holiday)"],
+  "01-16": ["Isra Mi'raj"],
+  
+  // February 2026
+  "02-16": ["Lunar New Year (Joint Holiday)"],
+  "02-17": ["Lunar New Year"],
+  
+  // March 2026
+  "03-18": ["Nyepi (Joint Holiday)"],
+  "03-19": ["Nyepi (Day of Silence)"],
+  "03-20": ["Eid al-Fitr (Joint Holiday)"],
+  "03-21": ["Eid al-Fitr"],
+  "03-22": ["Eid al-Fitr"],
+  "03-23": ["Eid al-Fitr (Joint Holiday)"],
+  "03-24": ["Eid al-Fitr (Joint Holiday)"],
+  
+  // April 2026
+  "04-03": ["Good Friday"],
+  "04-05": ["Easter Sunday"],
+  
+  // May 2026 (Hari Libur Resmi & Cuti Bersama 2026)
   "05-01": ["Labor Day"],
-  "05-09": ["Ascension Day"],
-  "05-10": ["Ascension Day (Joint Holiday)"],
-  "05-23": ["Waisak Day"],
-  "05-24": ["Waisak Day (Joint Holiday)"],
+  "05-14": ["Ascension Day"],
+  "05-15": ["Ascension Day (Joint Holiday)"],
+  "05-27": ["Eid al-Adha"],
+  "05-28": ["Eid al-Adha (Joint Holiday)"],
+  "05-31": ["Waisak Day"],
+  
+  // June 2026
   "06-01": ["Pancasila Day"],
-  "06-17": ["Eid al-Adha"],
-  "06-18": ["Eid al-Adha (Joint Holiday)"],
-  "07-07": ["Islamic New Year"],
+  "06-16": ["Islamic New Year"],
+  
+  // August 2026
   "08-17": ["Independence Day"],
-  "09-16": ["Prophet Muhammad's Birthday"],
-  "12-25": ["Christmas Day"],
-  "12-26": ["Christmas (Joint Holiday)"]
+  "08-25": ["Prophet Muhammad's Birthday"],
+  
+  // December 2026
+  "12-24": ["Christmas (Joint Holiday)"],
+  "12-25": ["Christmas Day"]
 };
 
 const getBirthdayTheme = (date: Date) => {
@@ -107,23 +120,756 @@ const getBirthdayTheme = (date: Date) => {
     };
   } else if (isMale) {
     const namesText = males.map(n => n === "Ivan" ? "Ivan Affriandi" : n).join(" & ");
+    const isIvan = males.includes("Ivan");
     return {
-      type: "male",
+      type: isIvan ? "ivan" : "male",
       primary: "#007aff", // Blue
       bgLight: "#F0F6FF",
       bgDark: "#0B1528",
       bgUnselected: "rgba(0, 122, 255, 0.12)",
       borderUnselected: "1px solid rgba(0, 122, 255, 0.22)",
-      emoji: "🎂",
+      emoji: "👑🎂",
       text: `${namesText}'s Birthday! ✨💙`
     };
   }
   return null;
 };
 
+const getSelectedTheme = (date: Date) => {
+  // 1. Check Birthdays first (highest priority)
+  const birthdayTheme = getBirthdayTheme(date);
+  if (birthdayTheme) return birthdayTheme;
+
+  // 2. Check Indonesian Holidays (from static date mapping)
+  const month = date.getMonth();
+  const day = date.getDate();
+  const dateKey = `${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+  if (INDONESIAN_HOLIDAYS[dateKey]) {
+    const holidayName = INDONESIAN_HOLIDAYS[dateKey][0];
+    
+    // Idul Fitri Theme (Emerald Green)
+    if (holidayName.includes("Eid al-Fitr")) {
+      return {
+        type: "idul_fitri",
+        primary: "#10b981", // Islamic Emerald Green
+        bgLight: "#F0FDF4",
+        bgDark: "#061F12",
+        bgUnselected: "rgba(16, 185, 129, 0.12)",
+        borderUnselected: "1px solid rgba(16, 185, 129, 0.22)",
+        emoji: "🌙",
+        text: "Hari Raya Idul Fitri"
+      };
+    }
+
+    // Idul Adha Theme (Emerald Green)
+    if (holidayName.includes("Eid al-Adha")) {
+      return {
+        type: "idul_adha",
+        primary: "#10b981", // Islamic Emerald Green
+        bgLight: "#F0FDF4",
+        bgDark: "#061F12",
+        bgUnselected: "rgba(16, 185, 129, 0.12)",
+        borderUnselected: "1px solid rgba(16, 185, 129, 0.22)",
+        emoji: "🌙",
+        text: "Hari Raya Idul Adha"
+      };
+    }
+
+    // Isra Mi'raj Theme (Emerald Green)
+    if (holidayName.includes("Isra Mi'raj")) {
+      return {
+        type: "isra_miraj",
+        primary: "#10b981", // Islamic Emerald Green
+        bgLight: "#F0FDF4",
+        bgDark: "#061F12",
+        bgUnselected: "rgba(16, 185, 129, 0.12)",
+        borderUnselected: "1px solid rgba(16, 185, 129, 0.22)",
+        emoji: "🌙",
+        text: "Isra Mi'raj"
+      };
+    }
+
+    // Islamic New Year Theme (Tahun Baru Islam) (Emerald Green)
+    if (holidayName.includes("Islamic New Year")) {
+      return {
+        type: "islamic_new_year",
+        primary: "#10b981", // Islamic Emerald Green
+        bgLight: "#F0FDF4",
+        bgDark: "#061F12",
+        bgUnselected: "rgba(16, 185, 129, 0.12)",
+        borderUnselected: "1px solid rgba(16, 185, 129, 0.22)",
+        emoji: "🌙",
+        text: "Tahun Baru Islam"
+      };
+    }
+
+    // Prophet Muhammad's Birthday (Maulid Nabi) Theme (Emerald Green)
+    if (holidayName.includes("Prophet Muhammad's Birthday")) {
+      return {
+        type: "maulid_nabi",
+        primary: "#10b981", // Islamic Emerald Green
+        bgLight: "#F0FDF4",
+        bgDark: "#061F12",
+        bgUnselected: "rgba(16, 185, 129, 0.12)",
+        borderUnselected: "1px solid rgba(16, 185, 129, 0.22)",
+        emoji: "🌙",
+        text: "Maulid Nabi Muhammad SAW"
+      };
+    }
+
+    // Christmas Day Theme (Red with Snow animation trigger)
+    if (holidayName.includes("Christmas")) {
+      return {
+        type: "christmas",
+        primary: "#ef4444", // Christmas Festive Red
+        bgLight: "#FEF2F2",
+        bgDark: "#270808",
+        bgUnselected: "rgba(239, 68, 68, 0.12)",
+        borderUnselected: "1px solid rgba(239, 68, 68, 0.22)",
+        emoji: "🎄",
+        text: "Hari Raya Natal"
+      };
+    }
+
+    // Independence Day Theme (Red & White Flag Theme)
+    if (holidayName.includes("Independence Day")) {
+      return {
+        type: "independence",
+        primary: "#ff0000", // Flag Red
+        bgLight: "#FFF5F5",
+        bgDark: "#260606",
+        bgUnselected: "rgba(255, 0, 0, 0.12)",
+        borderUnselected: "1px solid rgba(255, 0, 0, 0.22)",
+        emoji: "🇮🇩",
+        text: "Hari Kemerdekaan Republik Indonesia"
+      };
+    }
+
+    // Waisak Day Theme (Golden/Saffron Buddhist Theme)
+    if (holidayName.includes("Waisak")) {
+      return {
+        type: "waisak",
+        primary: "#f59e0b", // Saffron Gold
+        bgLight: "#FEF3C7",
+        bgDark: "#241305",
+        bgUnselected: "rgba(245, 158, 11, 0.12)",
+        borderUnselected: "1px solid rgba(245, 158, 11, 0.22)",
+        emoji: "🪷",
+        text: "Hari Raya Waisak"
+      };
+    }
+
+    // Nyepi Theme (Deep Charcoal Mystic Purple)
+    if (holidayName.includes("Nyepi")) {
+      return {
+        type: "nyepi",
+        primary: "#6366f1", // Deep Royal Indigo/Night Sky
+        bgLight: "#EEF2FF",
+        bgDark: "#0B0C1E",
+        bgUnselected: "rgba(99, 102, 241, 0.12)",
+        borderUnselected: "1px solid rgba(99, 102, 241, 0.22)",
+        emoji: "🌌",
+        text: "Hari Raya Nyepi"
+      };
+    }
+
+    // Lunar New Year (Lunar Red/Gold)
+    if (holidayName.includes("Lunar New Year")) {
+      return {
+        type: "lunar_new_year",
+        primary: "#f43f5e", // Crimson Gold
+        bgLight: "#FFF1F2",
+        bgDark: "#200408",
+        bgUnselected: "rgba(244, 63, 94, 0.12)",
+        borderUnselected: "1px solid rgba(244, 63, 94, 0.22)",
+        emoji: "🧧",
+        text: "Tahun Baru Imlek"
+      };
+    }
+
+    // General Holiday Theme (Warm Coral Red)
+    return {
+      type: "general_holiday",
+      primary: "#f97316", // Coral Orange
+      bgLight: "#FFF7ED",
+      bgDark: "#240E05",
+      bgUnselected: "rgba(249, 115, 22, 0.12)",
+      borderUnselected: "1px solid rgba(249, 115, 22, 0.22)",
+      emoji: "📍",
+      text: holidayName
+    };
+  }
+
+  return null;
+};
+
+const SnowEffect = () => {
+  return (
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
+      {Array.from({ length: 60 }).map((_, idx) => {
+        const left = Math.random() * 100;
+        const delay = Math.random() * 8;
+        const duration = 5 + Math.random() * 6;
+        const size = 3 + Math.random() * 4;
+        const opacity = 0.3 + Math.random() * 0.5;
+        return (
+          <div
+            key={idx}
+            style={{
+              position: "absolute",
+              top: "-10px",
+              left: `${left}%`,
+              width: `${size}px`,
+              height: `${size}px`,
+              backgroundColor: "#ffffff",
+              borderRadius: "50%",
+              opacity: opacity,
+              willChange: "transform, opacity",
+              animation: `fall ${duration}s linear infinite`,
+              animationDelay: `${delay}s`
+            }}
+          />
+        );
+      })}
+      <style>{`
+        @keyframes fall {
+          0% {
+            transform: translate3d(0, 0, 0) rotate(0deg);
+          }
+          50% {
+            transform: translate3d(20px, 50vh, 0) rotate(180deg);
+          }
+          100% {
+            transform: translate3d(-10px, 100vh, 0) rotate(360deg);
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+const IndoIndependenceEffect = () => {
+  return (
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
+      {Array.from({ length: 30 }).map((_, idx) => {
+        const left = Math.random() * 100;
+        const delay = Math.random() * 6;
+        const duration = 4 + Math.random() * 5;
+        const size = 6 + Math.random() * 6;
+        const isRed = idx % 2 === 0;
+        const opacity = 0.5 + Math.random() * 0.4;
+        return (
+          <div
+            key={idx}
+            style={{
+              position: "absolute",
+              top: "-15px",
+              left: `${left}%`,
+              width: isRed ? `${size * 1.4}px` : `${size}px`,
+              height: `${size}px`,
+              backgroundColor: isRed ? "#ff0000" : "#ffffff",
+              borderRadius: isRed ? "1px" : "50%",
+              opacity: opacity,
+              willChange: "transform, opacity",
+              animation: `float-confetti ${duration}s ease-in-out infinite`,
+              animationDelay: `${delay}s`
+            }}
+          />
+        );
+      })}
+      <style>{`
+        @keyframes float-confetti {
+          0% {
+            transform: translate3d(0, 0, 0) rotate(0deg) scale(0.85);
+          }
+          50% {
+            transform: translate3d(15px, 50vh, 0) rotate(180deg) scale(1.05);
+          }
+          100% {
+            transform: translate3d(-10px, 100vh, 0) rotate(360deg) scale(0.85);
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+const EidFitriEffect = () => {
+  return (
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
+      {Array.from({ length: 18 }).map((_, idx) => {
+        const left = Math.random() * 100;
+        const top = Math.random() * 100;
+        const delay = Math.random() * 4;
+        const duration = 3.5 + Math.random() * 3.5;
+        const size = 8 + Math.random() * 10;
+        return (
+          <div
+            key={idx}
+            style={{
+              position: "absolute",
+              top: `${top}%`,
+              left: `${left}%`,
+              width: `${size}px`,
+              height: `${size}px`,
+              opacity: 0,
+              color: "#fbbf24",
+              willChange: "transform, opacity",
+              animation: `pulse-star ${duration}s ease-in-out infinite`,
+              animationDelay: `${delay}s`
+            }}
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%">
+              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+            </svg>
+          </div>
+        );
+      })}
+      <style>{`
+        @keyframes pulse-star {
+          0%, 100% {
+            transform: translate3d(0, 0, 0) scale(0.2) rotate(0deg);
+            opacity: 0;
+          }
+          50% {
+            transform: translate3d(0, 0, 0) scale(1.05) rotate(180deg);
+            opacity: 0.75;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+const WaisakEffect = () => {
+  return (
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
+      {Array.from({ length: 10 }).map((_, idx) => {
+        const left = Math.random() * 100;
+        const delay = Math.random() * 8;
+        const duration = 8 + Math.random() * 8;
+        const size = 16 + Math.random() * 14;
+        const opacity = 0.4 + Math.random() * 0.4;
+        return (
+          <div
+            key={idx}
+            style={{
+              position: "absolute",
+              bottom: "-40px",
+              left: `${left}%`,
+              width: `${size}px`,
+              height: `${size}px`,
+              opacity: 0,
+              color: "#fbbf24", // Golden Saffron
+              willChange: "transform, opacity",
+              animation: `waisak-rise ${duration}s ease-in-out infinite`,
+              animationDelay: `${delay}s`
+            }}
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%">
+              <path d="M12 21.5c-1.35-1.15-4-3.5-4-6.5 0-2.5 1.5-4.5 4-6.5 2.5 2 4 4 4 6.5 0 3-2.65 5.35-4 6.5zm-5-8.5c-.75-.65-1.5-1.5-1.5-3 0-1.5 1-2.5 2.5-3.5 1.5 1 2 2 2 3.5 0 1.5-.75 2.35-3 3zm10 0c-2.25-.65-3-1.5-3-3 0-1.5.5-2.5 2-3.5 1.5 1 2.5 2 2.5 3.5 0 1.5-.75 2.35-1.5 3z" />
+            </svg>
+          </div>
+        );
+      })}
+      <style>{`
+        @keyframes waisak-rise {
+          0% {
+            transform: translate3d(0, 0, 0) scale(0.6) rotate(-5deg);
+            opacity: 0;
+          }
+          10% {
+            opacity: 0.8;
+          }
+          90% {
+            opacity: 0.8;
+          }
+          100% {
+            transform: translate3d(0, -110vh, 0) scale(1.1) rotate(5deg);
+            opacity: 0;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+const NyepiEffect = () => {
+  return (
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
+      {Array.from({ length: 28 }).map((_, idx) => {
+        const left = Math.random() * 100;
+        const top = Math.random() * 100;
+        const delay = Math.random() * 6;
+        const duration = 3 + Math.random() * 5;
+        const size = 1.5 + Math.random() * 2;
+        const isShootingStar = idx === 0 || idx === 10;
+        
+        if (isShootingStar) {
+          const shootingDelay = Math.random() * 12;
+          const shootingDuration = 1.5 + Math.random() * 1.5;
+          return (
+            <div
+              key={idx}
+              style={{
+                position: "absolute",
+                top: `${Math.random() * 40}%`,
+                left: `${Math.random() * 60}%`,
+                width: "60px",
+                height: "1px",
+                background: "linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.8))",
+                transform: "rotate(-35deg)",
+                opacity: 0,
+                willChange: "transform, opacity",
+                animation: `shooting-star ${shootingDuration}s linear infinite`,
+                animationDelay: `${shootingDelay}s`
+              }}
+            />
+          );
+        }
+
+        return (
+          <div
+            key={idx}
+            style={{
+              position: "absolute",
+              top: `${top}%`,
+              left: `${left}%`,
+              width: `${size}px`,
+              height: `${size}px`,
+              backgroundColor: "#ffffff",
+              borderRadius: "50%",
+              opacity: 0,
+              willChange: "transform, opacity",
+              animation: `nyepi-twinkle ${duration}s ease-in-out infinite`,
+              animationDelay: `${delay}s`
+            }}
+          />
+        );
+      })}
+      <style>{`
+        @keyframes nyepi-twinkle {
+          0%, 100% {
+            opacity: 0;
+            transform: translate3d(0, 0, 0) scale(0.6);
+          }
+          50% {
+            opacity: 0.8;
+            transform: translate3d(0, 0, 0) scale(1.1);
+          }
+        }
+        @keyframes shooting-star {
+          0% {
+            transform: translate3d(0, 0, 0) rotate(-35deg) scaleX(0);
+            opacity: 0;
+          }
+          10% {
+            opacity: 0.95;
+          }
+          30% {
+            transform: translate3d(200px, 140px, 0) rotate(-35deg) scaleX(1);
+            opacity: 0;
+          }
+          100% {
+            transform: translate3d(200px, 140px, 0) rotate(-35deg) scaleX(1);
+            opacity: 0;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+const LunarNewYearEffect = () => {
+  return (
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
+      {Array.from({ length: 12 }).map((_, idx) => {
+        const left = Math.random() * 100;
+        const delay = Math.random() * 6;
+        const duration = 6 + Math.random() * 6;
+        const size = 12 + Math.random() * 12;
+        const isLantern = idx % 2 === 0;
+        
+        return (
+          <div
+            key={idx}
+            style={{
+              position: "absolute",
+              bottom: "-40px",
+              left: `${left}%`,
+              width: `${size}px`,
+              height: `${size}px`,
+              opacity: 0,
+              color: isLantern ? "#f43f5e" : "#eab308", // Lantern Red or Gold Coin
+              willChange: "transform, opacity",
+              animation: `lunar-float ${duration}s ease-in-out infinite`,
+              animationDelay: `${delay}s`
+            }}
+          >
+            {isLantern ? (
+              <svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 3.31 2.69 6 6 6v3h-3v4h10v-4h-3v-3c3.31 0 6-2.69 6-6 0-3.87-3.13-7-7-7zm0 11c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1" fill="none" />
+                <rect x="9" y="9" width="6" height="6" fill="var(--bg-color)" />
+              </svg>
+            )}
+          </div>
+        );
+      })}
+      <style>{`
+        @keyframes lunar-float {
+          0% {
+            transform: translate3d(0, 0, 0) rotate(0deg);
+            opacity: 0;
+          }
+          15% {
+            opacity: 0.85;
+          }
+          85% {
+            opacity: 0.85;
+          }
+          100% {
+            transform: translate3d(30px, -110vh, 0) rotate(15deg);
+            opacity: 0;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+const HolyLightEffect = () => {
+  return (
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
+      {Array.from({ length: 10 }).map((_, idx) => {
+        const left = Math.random() * 100;
+        const delay = Math.random() * 8;
+        const duration = 6 + Math.random() * 6;
+        const size = 30 + Math.random() * 40;
+        return (
+          <div
+            key={idx}
+            style={{
+              position: "absolute",
+              top: `${Math.random() * 80}%`,
+              left: `${left}%`,
+              width: `${size}px`,
+              height: `${size}px`,
+              background: "radial-gradient(circle, rgba(251, 191, 36, 0.4) 0%, rgba(251, 191, 36, 0) 70%)",
+              borderRadius: "50%",
+              opacity: 0,
+              willChange: "transform, opacity",
+              animation: `holy-glow ${duration}s ease-in-out infinite`,
+              animationDelay: `${delay}s`
+            }}
+          />
+        );
+      })}
+      <style>{`
+        @keyframes holy-glow {
+          0%, 100% {
+            transform: translate3d(0, 0, 0) scale(0.8);
+            opacity: 0;
+          }
+          50% {
+            transform: translate3d(0, -50px, 0) scale(1.15);
+            opacity: 0.85;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+const BirthdayConfettiEffect = ({ type }: { type: string }) => {
+  const isIvan = type === "ivan";
+  
+  const colors = isIvan
+    ? ["#007aff", "#3b82f6", "#ef4444", "#f43f5e", "#10b981", "#fbbf24", "#a855f7", "#ec4899"] // Fully rich colorful rainbow for Ivan's royal birthday!
+    : type === "female" 
+    ? ["#ff5c9d", "#f472b6", "#ec4899", "#f43f5e", "#fcd34d"] // Pink & gold
+    : type === "male"
+    ? ["#007aff", "#60a5fa", "#3b82f6", "#1d4ed8", "#fcd34d"] // Blue & gold
+    : ["#a855f7", "#c084fc", "#ff5c9d", "#007aff", "#fcd34d"]; // Purple, pink, blue & gold
+
+  // Initial burst counts (plays once for everyone!)
+  const confettiCount = isIvan ? 50 : 35;
+  const burstBalloonCount = isIvan ? 12 : 6;
+  
+  // Continuous gentle floating (Ivan only - loops infinitely!)
+  const continuousBalloonCount = isIvan ? 3 : 0;
+
+  return (
+    <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
+      {/* 1. Confetti Rain (Initial burst - plays once) */}
+      {Array.from({ length: confettiCount }).map((_, idx) => {
+        const left = Math.random() * 100;
+        const delay = Math.random() * 1.5;
+        const duration = isIvan ? 3.0 + Math.random() * 2.0 : 2.0 + Math.random() * 1.5;
+        const size = 5 + Math.random() * 6;
+        const color = colors[idx % colors.length];
+        return (
+          <div
+            key={`c-${idx}`}
+            style={{
+              position: "absolute",
+              top: "-20px",
+              left: `${left}%`,
+              width: `${size}px`,
+              height: `${size * 1.5}px`,
+              backgroundColor: color,
+              borderRadius: "1.5px",
+              opacity: 0.85,
+              willChange: "transform, opacity",
+              animation: `confetti-rain ${duration}s ease-out forwards`,
+              animationDelay: `${delay}s`
+            }}
+          />
+        );
+      })}
+
+      {/* 2. Initial Burst Balloons (Plays once, then clears) */}
+      {Array.from({ length: burstBalloonCount }).map((_, idx) => {
+        const left = 10 + Math.random() * 80;
+        const delay = Math.random() * 1.0;
+        const duration = 3.0 + Math.random() * 1.5;
+        const size = isIvan ? 24 + Math.random() * 22 : 28 + Math.random() * 14;
+        const color = colors[idx % colors.length];
+        return (
+          <div
+            key={`b-burst-${idx}`}
+            style={{
+              position: "absolute",
+              bottom: "-80px",
+              left: `${left}%`,
+              width: `${size}px`,
+              height: `${size * 1.25}px`,
+              backgroundColor: color,
+              borderRadius: "50% 50% 50% 50% / 40% 40% 60% 60%",
+              boxShadow: "inset -4px -4px 8px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.06)",
+              opacity: 0.85,
+              willChange: "transform, opacity",
+              animation: `balloon-rise ${duration}s ease-in-out forwards`,
+              animationDelay: `${delay}s`
+            }}
+          />
+        );
+      })}
+
+      {/* 3. Continuous Gentle Floating Balloons (Loop infinitely - Ivan only!) */}
+      {isIvan && Array.from({ length: continuousBalloonCount }).map((_, idx) => {
+        const left = 15 + Math.random() * 70;
+        const delay = 3.0 + idx * 3.5; // Stagger after the main burst starts clearing
+        const duration = 8.0 + Math.random() * 3.0; // Slow, lazy, beautiful float
+        const size = 26 + Math.random() * 10;
+        const color = colors[(idx + 4) % colors.length];
+        return (
+          <div
+            key={`b-loop-${idx}`}
+            style={{
+              position: "absolute",
+              bottom: "-80px",
+              left: `${left}%`,
+              width: `${size}px`,
+              height: `${size * 1.25}px`,
+              backgroundColor: color,
+              borderRadius: "50% 50% 50% 50% / 40% 40% 60% 60%",
+              boxShadow: "inset -4px -4px 8px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.06)",
+              opacity: 0.75,
+              willChange: "transform, opacity",
+              animation: `balloon-rise ${duration}s ease-in-out infinite`,
+              animationDelay: `${delay}s`
+            }}
+          />
+        );
+      })}
+
+      <style>{`
+        @keyframes confetti-rain {
+          0% {
+            transform: translate3d(0, 0, 0) rotate(0deg);
+            opacity: 1;
+          }
+          100% {
+            transform: translate3d(0, 105vh, 0) rotate(360deg);
+            opacity: 0;
+          }
+        }
+        @keyframes balloon-rise {
+          0% {
+            transform: translate3d(0, 0, 0) scale(0.8) rotate(-5deg);
+            opacity: 0;
+          }
+          15% {
+            opacity: 0.85;
+          }
+          85% {
+            opacity: 0.85;
+          }
+          100% {
+            transform: translate3d(0, -120vh, 0) scale(1.15) rotate(5deg);
+            opacity: 0;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
 export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[], moments?: any[] }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const selectedTheme = getBirthdayTheme(selectedDate);
+  const selectedTheme = getSelectedTheme(selectedDate);
+
+  // Curate homepage 3x3 grid (9 slots) based on user slot assignment
+  // 1. Get moments explicitly pinned to slots (1 to 9)
+  const curatedMoments = moments
+    .filter((m: any) => m.showOnHomepage && m.homepageOrder !== undefined)
+    .sort((a: any, b: any) => (a.homepageOrder || 0) - (b.homepageOrder || 0));
+
+  // 2. Get other moments that are not pinned, sorted by published date descending
+  const uncuratedMoments = moments
+    .filter((m: any) => !m.showOnHomepage)
+    .sort((a: any, b: any) => new Date(b.published).getTime() - new Date(a.published).getTime());
+
+  // 3. Build a sparse array of size 9 representing the 9 homepage slots (1-indexed, so slots 1 to 9)
+  const slots: any[] = Array.from({ length: 9 }).map(() => null);
+
+  // Place curated moments into their designated slots
+  curatedMoments.forEach((m: any) => {
+    const slotIdx = (m.homepageOrder || 1) - 1;
+    if (slotIdx >= 0 && slotIdx < 9) {
+      slots[slotIdx] = m;
+    }
+  });
+
+  // Fill the empty slots with uncurated moments sequentially
+  let uncuratedIdx = 0;
+  for (let i = 0; i < 9; i++) {
+    if (slots[i] === null) {
+      // Find the next uncurated moment that hasn't been placed in any slot yet
+      while (uncuratedIdx < uncuratedMoments.length) {
+        const candidate = uncuratedMoments[uncuratedIdx++];
+        if (!slots.some((s: any) => s && s.id === candidate.id)) {
+          slots[i] = candidate;
+          break;
+        }
+      }
+    }
+  }
+
+  // 4. If there are still empty slots, fill them with aesthetic placeholders
+  const finalHomepageMoments = slots.map((moment: any, idx: number) => {
+    if (moment) return moment;
+    return {
+      id: `placeholder-${idx}`,
+      url: `https://picsum.photos/seed/${idx + 10}/300/300`,
+      title: `Moment ${idx + 1}`
+    };
+  });
 
   // Holiday and Sunday indicators computed globally
   const selectedKey = `${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
@@ -145,6 +891,26 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
   }, [selectedDate]);
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [showBirthdayConfetti, setShowBirthdayConfetti] = useState(false);
+
+  // Confetti trigger timer for birthday page load and switch
+  useEffect(() => {
+    const theme = getSelectedTheme(selectedDate);
+    if (theme && (theme.type === "male" || theme.type === "female" || theme.type === "both" || theme.type === "ivan")) {
+      if (theme.type === "ivan") {
+        // Ivan's birthday celebration stays indefinitely!
+        setShowBirthdayConfetti(true);
+      } else {
+        setShowBirthdayConfetti(true);
+        const timer = setTimeout(() => {
+          setShowBirthdayConfetti(false);
+        }, 4500); // 4.5 seconds celebratory burst
+        return () => clearTimeout(timer);
+      }
+    } else {
+      setShowBirthdayConfetti(false);
+    }
+  }, [selectedDate]);
   const [calendarViewDate, setCalendarViewDate] = useState(new Date());
   const calendarRef = useRef<HTMLDivElement>(null);
   const stripContainerRef = useRef<HTMLDivElement>(null);
@@ -339,7 +1105,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
       const isSelected = isSameDay(date, selectedDate);
       const isToday = isSameDay(date, today);
       const hasPost = hasPostOnDate(date);
-      const cellTheme = getBirthdayTheme(date);
+      const cellTheme = getSelectedTheme(date);
       
       days.push(
         <div 
@@ -382,7 +1148,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
           }}
         >
           {/* Bold, gorgeous hand-drawn scrapbook check-off cross 'X' overlay! */}
-          {hasPost && !cellTheme && (
+          {hasPost && (
             <div style={{
               position: "absolute",
               inset: 0,
@@ -400,7 +1166,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
           )}
 
           <span style={{ position: "relative", zIndex: 2 }}>
-            {cellTheme ? "🎂" : i}
+            {cellTheme && cellTheme.emoji.includes("🎂") ? "🎂" : i}
           </span>
         </div>
       );
@@ -419,6 +1185,17 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
         color: "var(--text-primary)"
       }}
     >
+      {/* Dynamic Seasonal Holiday Animations */}
+      {selectedTheme?.type === "christmas" && <SnowEffect />}
+      {selectedTheme?.type === "independence" && <IndoIndependenceEffect />}
+      {(selectedTheme?.type === "idul_fitri" || selectedTheme?.type === "idul_adha" || selectedTheme?.type === "isra_miraj" || selectedTheme?.type === "islamic_new_year" || selectedTheme?.type === "maulid_nabi") && <EidFitriEffect />}
+      {selectedTheme?.type === "waisak" && <WaisakEffect />}
+      {selectedTheme?.type === "nyepi" && <NyepiEffect />}
+      {selectedTheme?.type === "lunar_new_year" && <LunarNewYearEffect />}
+      {selectedTheme?.type === "general_holiday" && <HolyLightEffect />}
+      {showBirthdayConfetti && selectedTheme && (
+        <BirthdayConfettiEffect type={selectedTheme.type} />
+      )}
       {selectedTheme && (
         <style>{`
           :root {
@@ -692,50 +1469,56 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
               </button>
             
             {/* CUSTOM CALENDAR POPUP */}
-            {isCalendarOpen && (
-              <div 
-                className="custom-calendar-popup"
-                style={{
-                  position: "absolute",
-                  top: "calc(100% + 8px)",
-                  right: 0,
-                  width: "240px", 
-                  backgroundColor: "var(--bg-color)",
-                  border: selectedTheme ? `1px solid ${selectedTheme.primary}40` : "1px solid rgba(150,150,150,0.15)",
-                  borderRadius: "20px",
-                  boxShadow: selectedTheme ? `0 8px 30px ${selectedTheme.primary}0a` : "0 8px 30px rgba(0,0,0,0.08)",
-                  padding: "1rem", 
-                  zIndex: 100,
-                }}
-              >
-                {/* Calendar Header: Month Year + Chevrons */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.85rem" }}>
-                  <button onClick={() => changeMonth(-1)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-primary)", padding: "2px" }}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                  </button>
-                  <div style={{ fontWeight: "750", fontSize: "0.90rem", fontFamily: "var(--font-sans)", letterSpacing: "0.01em", color: "var(--text-primary)" }}>
-                    {calendarViewDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-                  </div>
-                  <button onClick={() => changeMonth(1)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-primary)", padding: "2px" }}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                  </button>
-                </div>
-
-                {/* Day Labels */}
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "3px", marginBottom: "0.5rem" }}>
-                  {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(day => (
-                    <div key={day} className="calendar-day-label" style={{ textAlign: "center", fontSize: "0.68rem", fontWeight: "700", color: "var(--text-secondary)" }}>
-                      {day}
+            <AnimatePresence>
+              {isCalendarOpen && (
+                <motion.div 
+                  className="custom-calendar-popup"
+                  initial={{ opacity: 0, scale: 0.94, y: -8, originX: 0.9, originY: 0 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96, y: -4 }}
+                  transition={{ type: "spring", damping: 25, stiffness: 320 }}
+                  style={{
+                    position: "absolute",
+                    top: "calc(100% + 8px)",
+                    right: 0,
+                    width: "240px", 
+                    backgroundColor: "var(--bg-color)",
+                    border: selectedTheme ? `1px solid ${selectedTheme.primary}40` : "1px solid rgba(150,150,150,0.15)",
+                    borderRadius: "20px",
+                    boxShadow: selectedTheme ? `0 8px 30px ${selectedTheme.primary}0a` : "0 8px 30px rgba(0,0,0,0.08)",
+                    padding: "1rem", 
+                    zIndex: 100,
+                  }}
+                >
+                  {/* Calendar Header: Month Year + Chevrons */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.85rem" }}>
+                    <button onClick={() => changeMonth(-1)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-primary)", padding: "2px" }}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <div style={{ fontWeight: "750", fontSize: "0.90rem", fontFamily: "var(--font-sans)", letterSpacing: "0.01em", color: "var(--text-primary)" }}>
+                      {calendarViewDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
                     </div>
-                  ))}
-                </div>
+                    <button onClick={() => changeMonth(1)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-primary)", padding: "2px" }}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                  </div>
 
-                {/* Days Grid */}
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "3px", rowGap: "5px" }}>
-                  {renderCalendarDays()}
-                </div>
-              </div>
-            )}
+                  {/* Day Labels */}
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "3px", marginBottom: "0.5rem" }}>
+                    {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(day => (
+                      <div key={day} className="calendar-day-label" style={{ textAlign: "center", fontSize: "0.68rem", fontWeight: "700", color: "var(--text-secondary)" }}>
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Days Grid */}
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "3px", rowGap: "5px" }}>
+                    {renderCalendarDays()}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
@@ -762,7 +1545,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             const isSelected = isSameDay(d, selectedDate);
             const isToday = isSameDay(d, today);
             const hasPost = hasPostOnDate(d);
-            const pillTheme = getBirthdayTheme(d);
+            const pillTheme = getSelectedTheme(d);
             
             const isSunday = d.getDay() === 0;
             const dKey = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -863,7 +1646,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                 </div>
                 
                 {/* Birthday cake replaces date numbers directly */}
-                {pillTheme ? (
+                {pillTheme && pillTheme.emoji && pillTheme.emoji.includes("🎂") ? (
                   <span 
                     className="date-pill-day-num"
                     style={{ 
@@ -1120,16 +1903,20 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                         <h3 style={{ 
                           fontSize: "0.92rem", 
                           fontWeight: "600", 
-                          margin: "0 0 0.3rem 0",
+                          margin: "0 0 0.4rem 0",
                           color: "var(--text-primary)",
                           fontFamily: "var(--font-sans)",
                           letterSpacing: "-0.01em",
                           lineHeight: "1.3"
                         }}>
-                          {post.title && post.title.length > 45 
-                            ? post.title.split(' ').slice(0, 4).join(' ') + '...' 
-                            : post.title}
+                          {post.title}
                         </h3>
+                        <div style={{ 
+                          height: "1px", 
+                          backgroundColor: "var(--text-secondary)", 
+                          opacity: 0.12, 
+                          margin: "0.4rem 0 0.45rem 0" 
+                        }} />
                         <p style={{ 
                           fontSize: "0.76rem", 
                           color: "var(--text-secondary)", 
@@ -1230,7 +2017,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
               border: "1px solid rgba(150,150,150,0.08)"
             }}
           >
-            {(moments.length > 0 ? moments.slice(0, 9) : Array.from({ length: 9 }).map((_, idx) => ({ id: String(idx), url: `https://picsum.photos/seed/${idx + 10}/300/300`, title: `Moment ${idx + 1}` }))).map((moment, idx) => (
+            {finalHomepageMoments.map((moment, idx) => (
               <Link href="/moments" key={moment.id || idx} style={{ 
                 aspectRatio: "1/1", 
                 backgroundColor: "rgba(150,150,150,0.04)",
