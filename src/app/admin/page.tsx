@@ -59,18 +59,18 @@ export default function AdminPage() {
     isOpen: false,
     title: "",
     message: "",
-    confirmText: "Delete",
-    cancelText: "Cancel",
+    confirmText: "delete",
+    cancelText: "cancel",
     onConfirm: () => {}
   });
 
-  const triggerConfirm = (title: string, message: string, onConfirm: () => void | Promise<void>, confirmText = "Delete") => {
+  const triggerConfirm = (title: string, message: string, onConfirm: () => void | Promise<void>, confirmText = "delete") => {
     setConfirmModal({
       isOpen: true,
       title,
       message,
       confirmText,
-      cancelText: "Cancel",
+      cancelText: "cancel",
       onConfirm: async () => {
         try {
           await onConfirm();
@@ -181,11 +181,11 @@ export default function AdminPage() {
         const sorted = list.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
         setAdminQuestions(sorted);
       } else {
-        setLoginError("Access denied. Incorrect password.");
+        setLoginError("access denied. incorrect password.");
       }
     } catch (error) {
       console.error("Login action failed with error:", error);
-      setLoginError("System error: " + (error instanceof Error ? error.message : String(error)));
+      setLoginError("system error: " + (error instanceof Error ? error.message : String(error)));
     } finally {
       setLoading(false);
     }
@@ -216,8 +216,8 @@ export default function AdminPage() {
 
   const handleDeleteQuestion = async (id: string) => {
     triggerConfirm(
-      "Delete Question",
-      "Are you sure you want to delete this question forever? This action cannot be undone.",
+      "delete question",
+      "are you sure you want to delete this question forever? this action cannot be undone.",
       async () => {
         const success = await deleteQuestion(id);
         if (success) {
@@ -236,8 +236,8 @@ export default function AdminPage() {
 
   const handleDeleteComment = async (id: string) => {
     triggerConfirm(
-      "Delete Comment",
-      "Are you sure you want to delete this comment from the database?",
+      "delete comment",
+      "are you sure you want to delete this comment from the database?",
       async () => {
         const success = await deleteComment(id);
         if (success) {
@@ -259,7 +259,7 @@ export default function AdminPage() {
       const newMoment = await addMoment({
         url,
         storagePath,
-        title: momentTitle || "Untitled",
+        title: momentTitle || "untitled",
         location: momentLocation,
         date: momentDate,
         story: momentStory
@@ -283,8 +283,8 @@ export default function AdminPage() {
 
   const handleDeleteMoment = async (id: string, storagePath?: string) => {
     triggerConfirm(
-      "Delete Photo",
-      "Are you sure you want to permanently delete this photo from your Moments gallery?",
+      "delete photo",
+      "are you sure you want to permanently delete this photo from your moments gallery?",
       async () => {
         const success = await deleteMoment(id, storagePath);
         if (success) {
@@ -390,16 +390,16 @@ export default function AdminPage() {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
           <h1 style={{ fontFamily: "var(--font-sans)", fontSize: "1.1rem", fontWeight: "800", margin: "0 0 0.2rem 0", letterSpacing: "-0.02em", color: "var(--text-primary)" }}>
-            Studio Vault
+            studio vault
           </h1>
           <p style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginBottom: "1.2rem", fontWeight: "500", lineHeight: "1.35" }}>
-            Authenticate to manage calendar, moments, comments, and replies.
+            authenticate to manage calendar, moments, comments, and replies.
           </p>
           
           <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             <input 
               type="password" 
-              placeholder="Enter passcode..." 
+              placeholder="enter passcode..." 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={{
@@ -452,7 +452,7 @@ export default function AdminPage() {
                 transition: "all 0.15s ease"
               }}
             >
-              Verify
+              verify
             </motion.button>
           </form>
         </motion.div>
@@ -476,7 +476,6 @@ export default function AdminPage() {
           cursor: pointer; 
           border: none;
           background: transparent;
-          text-transform: uppercase;
           letter-spacing: 0.04em;
           transition: color 0.15s ease;
         }
@@ -532,7 +531,7 @@ export default function AdminPage() {
       >
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <span style={{ fontSize: "1rem" }}>🎛️</span>
-          <h1 style={{ fontSize: "0.85rem", fontWeight: "800", margin: 0, letterSpacing: "-0.02em", color: "var(--text-primary)", textTransform: "uppercase" }}>Control</h1>
+          <h1 style={{ fontSize: "0.85rem", fontWeight: "800", margin: 0, letterSpacing: "-0.02em", color: "var(--text-primary)" }}>control</h1>
         </div>
         <button 
           onClick={handleLogout} 
@@ -546,13 +545,12 @@ export default function AdminPage() {
             fontWeight: "750", 
             cursor: "pointer", 
             transition: "all 0.2s ease",
-            textTransform: "uppercase",
             letterSpacing: "0.02em"
           }} 
           onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#ef4444"; e.currentTarget.style.color = "#ffffff"; }} 
           onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.06)"; e.currentTarget.style.color = "#ef4444"; }}
         >
-          Logout
+          logout
         </button>
       </motion.header>
 
@@ -608,7 +606,7 @@ export default function AdminPage() {
           <motion.div key="inbox" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
             
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", gap: "8px" }}>
-              <h2 style={{ fontSize: "0.78rem", fontWeight: "800", margin: 0, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Anonymous Q&A</h2>
+              <h2 style={{ fontSize: "0.78rem", fontWeight: "800", margin: 0, color: "var(--text-primary)", letterSpacing: "0.04em" }}>anonymous q&a</h2>
               
               <div style={{ display: "flex", gap: "2px", backgroundColor: "rgba(150,150,150,0.05)", border: "1px solid rgba(150,150,150,0.06)", padding: "2px", borderRadius: "10px" }}>
                 {(["pending", "answered", "all"] as const).map(filter => (
@@ -622,7 +620,6 @@ export default function AdminPage() {
                       borderRadius: "7px",
                       border: "none",
                       cursor: "pointer",
-                      textTransform: "uppercase",
                       letterSpacing: "0.01em",
                       backgroundColor: inboxFilter === filter ? "var(--text-primary)" : "transparent",
                       color: inboxFilter === filter ? "var(--bg-color)" : "var(--text-secondary)",
@@ -673,7 +670,7 @@ export default function AdminPage() {
                           borderRadius: "6px", 
                           letterSpacing: "0.03em" 
                         }}>
-                          {q.answered ? "ANSWERED" : "NEW"}
+                          {q.answered ? "answered" : "new"}
                         </span>
                       </div>
                       
@@ -718,10 +715,9 @@ export default function AdminPage() {
                             fontSize: "0.55rem", 
                             fontWeight: "800", 
                             color: "#10b981", 
-                            letterSpacing: "0.03em",
-                            textTransform: "uppercase"
+                            letterSpacing: "0.03em"
                           }}>
-                            Reply from Ivan
+                            reply from ivan
                           </span>
                         </div>
                         <p style={{ margin: "0 0 8px 0", fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: "1.4", fontWeight: "500" }}>{q.answer}</p>
@@ -743,11 +739,10 @@ export default function AdminPage() {
                               fontSize: "0.62rem", 
                               fontWeight: "750", 
                               cursor: "pointer",
-                              textTransform: "uppercase",
                               letterSpacing: "0.01em"
                             }}
                           >
-                            Edit Reply
+                            edit reply
                           </motion.button>
                         )}
                       </div>
@@ -773,7 +768,7 @@ export default function AdminPage() {
                           cursor: "pointer"
                         }}
                       >
-                        Reply anonymously
+                        reply anonymously
                       </motion.button>
                     )}
  
@@ -791,7 +786,7 @@ export default function AdminPage() {
                           boxShadow: "inset 0 1.5px 3px rgba(0,0,0,0.04)"
                         }}>
                           <textarea
-                            placeholder="Type your response to publish..."
+                            placeholder="type your response to publish..."
                             value={answerText}
                             onChange={(e) => setAnswerText(e.target.value)}
                             style={{
@@ -828,7 +823,7 @@ export default function AdminPage() {
                               transition: "opacity 0.2s" 
                             }}
                           >
-                            Publish Reply
+                            publish reply
                           </motion.button>
                           <motion.button 
                             whileHover={{ scale: 1.02 }}
@@ -845,7 +840,7 @@ export default function AdminPage() {
                               cursor: "pointer" 
                             }}
                           >
-                            Cancel
+                            cancel
                           </motion.button>
                         </div>
                       </motion.div>
@@ -854,9 +849,9 @@ export default function AdminPage() {
                 ))
               ) : (
                 <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)", border: "1px dashed rgba(150,150,150,0.12)", borderRadius: "16px" }}>
-                  <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "750", color: "var(--text-primary)" }}>Empty Inbox</p>
+                  <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "750", color: "var(--text-primary)" }}>empty inbox</p>
                   <p style={{ margin: "2px 0 0 0", fontSize: "0.68rem", color: "var(--text-secondary)" }}>
-                    {inboxFilter === "pending" ? "All questions have been answered!" : "No items found in this inbox queue."}
+                    {inboxFilter === "pending" ? "all questions have been answered!" : "no items found in this inbox queue."}
                   </p>
                 </div>
               )}
@@ -868,7 +863,7 @@ export default function AdminPage() {
         {activeTab === "calendar" && (
           <motion.div key="calendar" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-              <h2 style={{ fontSize: "0.78rem", fontWeight: "800", margin: 0, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Schedule</h2>
+              <h2 style={{ fontSize: "0.78rem", fontWeight: "800", margin: 0, color: "var(--text-primary)", letterSpacing: "0.04em" }}>schedule</h2>
             </div>
             
             <div style={{ backgroundColor: "rgba(255, 255, 255, 0.4)", border: "1px solid rgba(150,150,150,0.1)", borderRadius: "16px", overflow: "hidden" }}>
@@ -878,18 +873,18 @@ export default function AdminPage() {
                   🎂
                 </div>
                 <div style={{ flex: 1 }}>
-                  <h3 style={{ margin: "0", fontSize: "0.76rem", fontWeight: "750", color: "var(--text-primary)" }}>Ivan's Birthday</h3>
-                  <p style={{ margin: 0, fontSize: "0.62rem", color: "var(--text-secondary)", fontWeight: "500" }}>Active every August 3rd.</p>
+                  <h3 style={{ margin: "0", fontSize: "0.76rem", fontWeight: "750", color: "var(--text-primary)" }}>ivan's birthday</h3>
+                  <p style={{ margin: 0, fontSize: "0.62rem", color: "var(--text-secondary)", fontWeight: "500" }}>active every august 3rd.</p>
                 </div>
-                <div style={{ fontSize: "0.55rem", fontWeight: "800", backgroundColor: "rgba(150,150,150,0.06)", padding: "2px 8px", borderRadius: "6px", color: "var(--text-secondary)", textTransform: "uppercase" }}>
-                  Locked
+                <div style={{ fontSize: "0.55rem", fontWeight: "800", backgroundColor: "rgba(150,150,150,0.06)", padding: "2px 8px", borderRadius: "6px", color: "var(--text-secondary)" }}>
+                  locked
                 </div>
               </div>
               
               <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)" }}>
-                <p style={{ margin: 0, fontSize: "0.74rem", fontWeight: "700", color: "var(--text-primary)" }}>Archival Seasonal System</p>
+                <p style={{ margin: 0, fontSize: "0.74rem", fontWeight: "700", color: "var(--text-primary)" }}>archival seasonal system</p>
                 <p style={{ margin: "2px 0 0 0", fontSize: "0.65rem", color: "var(--text-secondary)", fontWeight: "500", maxWidth: "260px", marginInline: "auto", lineHeight: "1.35" }}>
-                  Holiday animations (Idul Fitri, Christmas, Lunar New Year) are controlled dynamically using strict calendar timelines.
+                  holiday animations (idul fitri, christmas, lunar new year) are controlled dynamically using strict calendar timelines.
                 </p>
               </div>
             </div>
@@ -900,7 +895,7 @@ export default function AdminPage() {
         {activeTab === "comments" && (
           <motion.div key="comments" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-              <h2 style={{ fontSize: "0.78rem", fontWeight: "800", margin: 0, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Comments Moderation</h2>
+              <h2 style={{ fontSize: "0.78rem", fontWeight: "800", margin: 0, color: "var(--text-primary)", letterSpacing: "0.04em" }}>comments moderation</h2>
             </div>
             
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -945,15 +940,15 @@ export default function AdminPage() {
                               fontWeight: "700"
                             }}
                           >
-                            Post: {comment.postId.length > 10 ? `${comment.postId.substring(0, 10)}...` : comment.postId}
+                            post: {comment.postId.length > 10 ? `${comment.postId.substring(0, 10)}...` : comment.postId}
                           </a>
                         </div>
                       </div>
 
                       {!comment.approved ? (
-                        <span style={{ fontSize: "0.5rem", fontWeight: "800", backgroundColor: "rgba(180, 122, 62, 0.06)", color: "#B47A3E", border: "1px solid rgba(180, 122, 62, 0.12)", padding: "1px 6px", borderRadius: "6px", textTransform: "uppercase" }}>PENDING</span>
+                        <span style={{ fontSize: "0.5rem", fontWeight: "800", backgroundColor: "rgba(180, 122, 62, 0.06)", color: "#B47A3E", border: "1px solid rgba(180, 122, 62, 0.12)", padding: "1px 6px", borderRadius: "6px" }}>pending</span>
                       ) : (
-                        <span style={{ fontSize: "0.5rem", fontWeight: "800", backgroundColor: "rgba(16, 185, 129, 0.06)", color: "#10b981", border: "1px solid rgba(16, 185, 129, 0.12)", padding: "1px 6px", borderRadius: "6px", textTransform: "uppercase" }}>APPROVED</span>
+                        <span style={{ fontSize: "0.5rem", fontWeight: "800", backgroundColor: "rgba(16, 185, 129, 0.06)", color: "#10b981", border: "1px solid rgba(16, 185, 129, 0.12)", padding: "1px 6px", borderRadius: "6px" }}>approved</span>
                       )}
                     </div>
 
@@ -976,7 +971,7 @@ export default function AdminPage() {
                           onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#10b981"; e.currentTarget.style.color = "#ffffff"; }}
                           onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "rgba(16, 185, 129, 0.06)"; e.currentTarget.style.color = "#10b981"; }}
                         >
-                          Approve
+                          approve
                         </motion.button>
                       )}
                       <motion.button 
@@ -987,15 +982,15 @@ export default function AdminPage() {
                         onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#ef4444"; e.currentTarget.style.color = "#ffffff"; }}
                         onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.06)"; e.currentTarget.style.color = "#ef4444"; }}
                       >
-                        Delete
+                        delete
                       </motion.button>
                     </div>
                   </motion.div>
                 ))
               ) : (
                 <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)", border: "1px dashed rgba(150,150,150,0.12)", borderRadius: "16px" }}>
-                  <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "750", color: "var(--text-primary)" }}>No Comments</p>
-                  <p style={{ margin: "2px 0 0 0", fontSize: "0.68rem", color: "var(--text-secondary)" }}>Reader comments will show up here.</p>
+                  <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "750", color: "var(--text-primary)" }}>no comments</p>
+                  <p style={{ margin: "2px 0 0 0", fontSize: "0.68rem", color: "var(--text-secondary)" }}>reader comments will show up here.</p>
                 </div>
               )}
             </div>
@@ -1006,18 +1001,18 @@ export default function AdminPage() {
         {activeTab === "moments" && (
           <motion.div key="moments" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-              <h2 style={{ fontSize: "0.78rem", fontWeight: "800", margin: 0, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Moments Curation</h2>
+              <h2 style={{ fontSize: "0.78rem", fontWeight: "800", margin: 0, color: "var(--text-primary)", letterSpacing: "0.04em" }}>moments curation</h2>
             </div>
             
             {/* Compact Form */}
             <div style={{ backgroundColor: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(150, 150, 150, 0.1)", borderRadius: "16px", padding: "14px", marginBottom: "1.5rem", boxShadow: "0 4px 20px rgba(0, 0, 0, 0.01), inset 0 1px 0 rgba(255,255,255,0.7)" }}>
               
-              <h3 style={{ fontSize: "0.72rem", fontWeight: "800", color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.02em", margin: "0 0 8px 0" }}>Upload New Moment</h3>
+              <h3 style={{ fontSize: "0.72rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "0.02em", margin: "0 0 8px 0" }}>upload new moment</h3>
 
               <form onSubmit={handleUploadMoment} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <span style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.02em" }}>Upload Photo</span>
+                  <span style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>upload photo</span>
                   
                   <input 
                     type="file" 
@@ -1061,7 +1056,7 @@ export default function AdminPage() {
                         <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
                           <span style={{ fontSize: "0.68rem", fontWeight: "700", color: "var(--text-primary)" }}>{momentFile?.name}</span>
                           <span style={{ fontSize: "0.58rem", color: "var(--text-secondary)", fontWeight: "500" }}>
-                            {momentFile ? `${(momentFile.size / (1024 * 1024)).toFixed(2)} MB` : ""}
+                            {momentFile ? `${(momentFile.size / (1024 * 1024)).toFixed(2)} mb` : ""}
                           </span>
                         </div>
                         <motion.button
@@ -1079,11 +1074,10 @@ export default function AdminPage() {
                             fontSize: "0.58rem",
                             fontWeight: "750",
                             cursor: "pointer",
-                            textTransform: "uppercase",
                             letterSpacing: "0.01em"
                           }}
                         >
-                          Change
+                          change
                         </motion.button>
                       </div>
                     ) : (
@@ -1091,7 +1085,7 @@ export default function AdminPage() {
                         <div style={{ fontSize: "1.2rem", filter: "grayscale(100%)", opacity: 0.8 }}>📸</div>
                         <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
                           <span style={{ fontSize: "0.72rem", fontWeight: "750", color: "var(--text-primary)" }}>
-                            Drag & drop photo here
+                            drag & drop photo here
                           </span>
                           <span style={{ fontSize: "0.62rem", color: "var(--text-secondary)", fontWeight: "500" }}>
                             or tap to browse
@@ -1103,23 +1097,23 @@ export default function AdminPage() {
                 </div>
                 
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.02em" }}>Title (Optional)</label>
+                  <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>title (optional)</label>
                   <input className="admin-form-input" type="text" placeholder="e.g., Autumn Foliage" value={momentTitle} onChange={(e) => setMomentTitle(e.target.value)} />
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.02em" }}>Location</label>
+                  <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>location</label>
                   <input className="admin-form-input" type="text" placeholder="e.g., Tokyo, Japan" value={momentLocation} onChange={(e) => setMomentLocation(e.target.value)} required />
                 </div>
                 
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.02em" }}>Date Label</label>
+                  <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>date label</label>
                   <input className="admin-form-input" type="text" placeholder="e.g., Aug 2023 or Spring 2025" value={momentDate} onChange={(e) => setMomentDate(e.target.value)} required />
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.02em" }}>Story Snippet</label>
-                  <textarea className="admin-form-input" placeholder="Cozy memory or story description..." value={momentStory} onChange={(e) => setMomentStory(e.target.value)} style={{ minHeight: "65px", resize: "none" }} />
+                  <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>story snippet</label>
+                  <textarea className="admin-form-input" placeholder="cozy memory or story description..." value={momentStory} onChange={(e) => setMomentStory(e.target.value)} style={{ minHeight: "65px", resize: "none" }} />
                 </div>
                 
                 <motion.button 
@@ -1138,18 +1132,17 @@ export default function AdminPage() {
                     cursor: (isUploadingMoment || !momentFile || !momentLocation || !momentDate) ? "not-allowed" : "pointer", 
                     opacity: (isUploadingMoment || !momentFile || !momentLocation || !momentDate) ? 0.4 : 1, 
                     transition: "opacity 0.2s ease",
-                    textTransform: "uppercase",
                     letterSpacing: "0.02em"
                   }}
                 >
-                  {isUploadingMoment ? "Uploading..." : "Publish to gallery"}
+                  {isUploadingMoment ? "uploading..." : "publish to gallery"}
                 </motion.button>
               </form>
             </div>
  
             {/* Tightly Stacked Moments List */}
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <h3 style={{ fontSize: "0.72rem", fontWeight: "800", color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.02em", margin: "0 0 2px 0" }}>Gallery List</h3>
+              <h3 style={{ fontSize: "0.72rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "0.02em", margin: "0 0 2px 0" }}>gallery list</h3>
               
               {adminMoments.length > 0 ? (
                 adminMoments.map(moment => (
@@ -1186,7 +1179,7 @@ export default function AdminPage() {
                         style={{ 
                           padding: "4px 6px", 
                           borderRadius: "8px", 
-                          border: "1px solid rgba(150,150,150,0.18)", 
+                          border: "1px solid rgba(150, 150, 150, 0.18)", 
                           backgroundColor: moment.homepageOrder !== undefined ? "var(--text-primary)" : "rgba(150,150,150,0.04)", 
                           color: moment.homepageOrder !== undefined ? "var(--bg-color)" : "var(--text-primary)", 
                           fontSize: "0.62rem", 
@@ -1195,9 +1188,9 @@ export default function AdminPage() {
                           cursor: "pointer"
                         }}
                       >
-                        <option value="none">Off Home</option>
+                        <option value="none">off home</option>
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
-                          <option key={num} value={String(num)}>Slot {num}</option>
+                          <option key={num} value={String(num)}>slot {num}</option>
                         ))}
                       </select>
                     </div>
@@ -1228,7 +1221,7 @@ export default function AdminPage() {
                 ))
               ) : (
                 <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)", border: "1px dashed rgba(150,150,150,0.12)", borderRadius: "16px" }}>
-                  <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "750", color: "var(--text-primary)" }}>No moments published yet</p>
+                  <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "750", color: "var(--text-primary)" }}>no moments published yet</p>
                 </div>
               )}
             </div>
