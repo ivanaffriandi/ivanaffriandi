@@ -15,8 +15,22 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ivanaffriandi.com"),
   title: "Ivan Affriandi",
   description: "Swiss Grid Layout",
+  openGraph: {
+    title: "Ivan Affriandi",
+    description: "Swiss Grid Layout",
+    url: "https://ivanaffriandi.com",
+    siteName: "Ivan Affriandi",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ivan Affriandi",
+    description: "Swiss Grid Layout",
+  }
 };
 
 export default function RootLayout({

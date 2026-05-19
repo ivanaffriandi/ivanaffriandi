@@ -42,11 +42,11 @@ export default async function Image() {
           borderRadius: '40px',
           boxShadow: '0 40px 80px rgba(0,0,0,0.15)'
         }}>
-          <h1 style={{ fontSize: 85, margin: 0, fontWeight: 800, letterSpacing: '-0.04em', color: '#ffffff' }}>
-            Ask Ivan
+          <h1 style={{ fontSize: 80, margin: 0, fontWeight: 800, letterSpacing: '-0.04em', color: '#ffffff' }}>
+            Ask Ivan Affriandi
           </h1>
           <p style={{ fontSize: 36, margin: '24px 0 0 0', fontWeight: 500, color: '#a1a1aa', letterSpacing: '-0.01em' }}>
-            Send Ivan an anonymous message ✨
+            Ask me anything anonymously ✨
           </p>
           
           <div style={{ 
