@@ -60,7 +60,13 @@ export async function getAllQuestionsForAdmin(): Promise<QuestionItem[]> {
   if (hasFirebaseKeys) {
     try {
       const q = query(collection(db, "questions"), orderBy("published", "desc"));
-      const querySnapshot = await getDocs(q);
+      
+      // Enforce a strict 3-second timeout to prevent UI hangs
+      const querySnapshot = await Promise.race([
+        getDocs(q),
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Firestore timeout")), 3000))
+      ]);
+
       const items: QuestionItem[] = [];
       querySnapshot.forEach((doc) => {
         items.push({ id: doc.id, ...doc.data() } as QuestionItem);
@@ -122,7 +128,13 @@ export async function getAnsweredQuestions(): Promise<QuestionItem[]> {
         where("answered", "==", true),
         orderBy("published", "desc")
       );
-      const querySnapshot = await getDocs(q);
+      
+      // Enforce a strict 3-second timeout to prevent UI hangs
+      const querySnapshot = await Promise.race([
+        getDocs(q),
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Firestore timeout")), 3000))
+      ]);
+
       const items: QuestionItem[] = [];
       querySnapshot.forEach((doc) => {
         items.push({ id: doc.id, ...doc.data() } as QuestionItem);

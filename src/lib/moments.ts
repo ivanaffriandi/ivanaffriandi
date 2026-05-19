@@ -82,7 +82,13 @@ export async function getAllMoments(): Promise<MomentItem[]> {
   if (hasFirebaseKeys) {
     try {
       const q = query(collection(db, "moments"), orderBy("published", "desc"));
-      const querySnapshot = await getDocs(q);
+      
+      // Enforce a strict 3-second timeout to prevent UI hangs
+      const querySnapshot = await Promise.race([
+        getDocs(q),
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Firestore timeout")), 3000))
+      ]);
+
       const items: MomentItem[] = [];
       querySnapshot.forEach((doc) => {
         items.push({ id: doc.id, ...doc.data() } as MomentItem);
