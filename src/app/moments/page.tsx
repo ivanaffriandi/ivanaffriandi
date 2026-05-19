@@ -27,14 +27,16 @@ export default function MomentsPage() {
     };
     fetchMoments();
   }, []);
-  const displayMoments = moments.length > 0 
+  const displayMoments: MomentItem[] = moments.length > 0 
     ? moments 
     : Array.from({ length: 18 }).map((_, idx) => ({ 
         id: String(idx), 
         url: `https://picsum.photos/seed/${idx + 15}/800/800`, 
         title: `Aesthetic Placeholder ${idx + 1}`,
-        description: `This is a temporary aesthetic placeholder generated to maintain the layout while the gallery is being populated with your uploaded moments.`,
-        date: new Date().toISOString()
+        story: `This is a temporary aesthetic placeholder generated to maintain the layout while the gallery is being populated with your uploaded moments.`,
+        date: new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
+        location: "Nature Sanctuary",
+        published: new Date().toISOString()
       }));
 
   return (
