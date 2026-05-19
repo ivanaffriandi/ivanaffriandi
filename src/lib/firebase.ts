@@ -3,16 +3,16 @@ import { getAuth, GoogleAuthProvider, signInWithPopup as firebaseSignIn, signOut
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Cek apakah User sudah mengisi API Key di .env.local
-const hasFirebaseKeys = !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+// Enforced real production keys directly to allow standard public browser connections to Firestore
+const hasFirebaseKeys = true;
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "mock-api-key",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "mock-domain.firebaseapp.com",
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "mock-project",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "mock-bucket.appspot.com",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "0000000000",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:0000000:web:0000000"
+  apiKey: "AIzaSyBVRIwhZ3CXTJLdbp4ma15XMXYfhWa_iPw",
+  authDomain: "ivan-affriandi.firebaseapp.com",
+  projectId: "ivan-affriandi",
+  storageBucket: "ivan-affriandi.firebasestorage.app",
+  messagingSenderId: "19364784137",
+  appId: "1:19364784137:web:2dc1ec676be324484ce9eb"
 };
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
