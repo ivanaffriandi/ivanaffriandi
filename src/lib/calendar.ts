@@ -52,30 +52,55 @@ const saveLocalEvents = (events: CalendarEvent[]) => {
 
 // 1. Fetch All Events
 export async function getAllCalendarEvents(): Promise<CalendarEvent[]> {
+  let items: CalendarEvent[] = [];
+  let fetchedSuccessful = false;
+
   if (hasFirebaseKeys) {
     try {
       const q = collection(db, "calendar");
       const querySnapshot = await getDocs(q);
-      const items: CalendarEvent[] = [];
       querySnapshot.forEach((doc) => {
         items.push({ id: doc.id, ...doc.data() } as CalendarEvent);
       });
-      
-      // If Firestore is empty, seed defaults to Firestore dynamically
-      if (items.length === 0) {
-        const seeded: CalendarEvent[] = [];
-        for (const e of DEFAULT_EVENTS) {
-          const docRef = await addDoc(collection(db, "calendar"), e);
-          seeded.push({ id: docRef.id, ...e });
-        }
-        return seeded;
-      }
-      return items;
+      fetchedSuccessful = true;
     } catch (e) {
       console.error("Firebase calendar read error, fallback to localStorage:", e);
     }
   }
-  return getLocalEvents();
+
+  if (!fetchedSuccessful) {
+    items = getLocalEvents();
+  }
+
+  // Merge default static seeded events so that any newly added birthdays or events
+  // in the codebase are ALWAYS present and never lost due to stale local/remote data.
+  // Proactively save/add them to Firestore/localStorage if missing!
+  const merged: CalendarEvent[] = [...items];
+  const missingDefaults = DEFAULT_EVENTS.filter(
+    def => !items.some(item => item.dateKey === def.dateKey && item.name.toLowerCase() === def.name.toLowerCase())
+  );
+
+  if (missingDefaults.length > 0) {
+    for (const e of missingDefaults) {
+      if (hasFirebaseKeys && fetchedSuccessful) {
+        try {
+          const docRef = await addDoc(collection(db, "calendar"), e);
+          merged.push({ id: docRef.id, ...e });
+        } catch (err) {
+          console.error("Failed to seed missing default event to Firebase:", err);
+          merged.push({ id: `seed-${Date.now()}-${Math.random()}`, ...e });
+        }
+      } else {
+        merged.push({ id: `seed-${Date.now()}-${Math.random()}`, ...e });
+      }
+    }
+    // Update local storage if we fall back to it
+    if (!hasFirebaseKeys || !fetchedSuccessful) {
+      saveLocalEvents(merged);
+    }
+  }
+
+  return merged;
 }
 
 // 2. Add Event

@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import Navigation from "@/components/Navigation";
 import FooterAbout from "@/components/FooterAbout";
 import BirthdayCelebration from "@/components/BirthdayCelebration";
+import KonamiEasterEgg from "@/components/KonamiEasterEgg";
 import PageTransition from "@/components/PageTransition";
 import "./globals.css";
 import "./footer.css";
@@ -13,6 +14,13 @@ const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, // Prevents all mobile auto-zoom issues completely!
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ivanaffriandi.com"),
@@ -46,6 +54,7 @@ export default function RootLayout({
     <html lang="en" className={inter.variable}>
       <body>
         <BirthdayCelebration />
+        <KonamiEasterEgg />
         <div className="layout-wrapper" style={{ padding: "0 4vw" }}>
           <Navigation />
           

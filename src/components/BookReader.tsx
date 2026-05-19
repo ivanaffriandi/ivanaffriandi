@@ -38,6 +38,28 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
   
   const commentsSectionRef = useRef<HTMLDivElement>(null);
 
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Monitor Scroll Progress
+  useEffect(() => {
+    if (typeof window === "undefined" || !mounted) return;
+
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight <= 0) {
+        setScrollProgress(0);
+        return;
+      }
+      const progress = (window.scrollY / totalHeight) * 100;
+      setScrollProgress(Math.min(100, Math.max(0, progress)));
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [mounted]);
+
   // Fetch comments on mount and support local pending items
   useEffect(() => {
     const loadComments = async () => {
@@ -65,27 +87,14 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
   }, [post.id]);
 
   // Extract images from post HTML and strip them from prose content
-  const { extractedImages, cleanContent } = useMemo(() => {
-    if (typeof window === "undefined") {
-      return { extractedImages: [] as string[], cleanContent: post.content };
-    }
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(post.content, "text/html");
-    const imgs = Array.from(doc.querySelectorAll("img")).map((img) => img.src).filter(Boolean);
-    // Remove all img tags (and their wrapping <a> if only child) from prose
-    doc.querySelectorAll("img").forEach((img) => {
-      const parent = img.parentElement;
-      if (parent && parent.tagName === "A" && parent.children.length === 1) {
-        parent.remove();
-      } else {
-        img.remove();
-      }
-    });
-    // Also remove empty <p> / <div> left behind
-    doc.querySelectorAll("p, div").forEach((el) => {
-      if (!el.textContent?.trim() && el.children.length === 0) el.remove();
-    });
-    return { extractedImages: imgs, cleanContent: doc.body.innerHTML };
+  const [cleanContent, setCleanContent] = useState(post.content);
+  const [extractedImages, setExtractedImages] = useState<string[]>([]);
+
+  // Calculate dynamic reading time based on total words (approx 200 words per minute)
+  const readingTime = useMemo(() => {
+    const textWithoutTags = post.content.replace(/<[^>]*>/g, " ");
+    const words = textWithoutTags.trim().split(/\s+/).filter(Boolean).length;
+    return Math.max(1, Math.ceil(words / 200));
   }, [post.content]);
 
   // Randomised-but-stable EXIF-style metadata per image
@@ -158,6 +167,33 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     const interval = setInterval(updateTime, 60000);
     return () => clearInterval(interval);
   }, []);
+
+  // Client-Side parsing (Hydration Safe & Bulletproof)
+  useEffect(() => {
+    if (!mounted) return;
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(post.content, "text/html");
+    const imgs = Array.from(doc.querySelectorAll("img")).map((img) => img.src).filter(Boolean);
+    
+    // Remove img tags (and their wrapping <a> if only child) from prose
+    doc.querySelectorAll("img").forEach((img) => {
+      const parent = img.parentElement;
+      if (parent && parent.tagName === "A" && parent.children.length === 1) {
+        parent.remove();
+      } else {
+        img.remove();
+      }
+    });
+
+    // Also remove empty <p> / <div> left behind
+    doc.querySelectorAll("p, div").forEach((el) => {
+      if (!el.textContent?.trim() && el.children.length === 0) el.remove();
+    });
+
+    setExtractedImages(imgs);
+    setCleanContent(doc.body.innerHTML);
+  }, [mounted, post.content]);
 
   // Text-To-Speech Controller
   useEffect(() => {
@@ -297,6 +333,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     >
       {/* Global CSS for book content media to prevent overflowing and hide footer on post details */}
       <style dangerouslySetInnerHTML={{__html: `
+        /* Cinematic Scroll Reveal Styles removed for absolute visual stability */
+
         .book-prose img, .book-prose iframe, .book-prose video {
           max-width: 100% !important;
           height: auto !important;
@@ -428,6 +466,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         document.body
       )}
 
+
+
       {/* Book Core Content Area */}
       <article className="book-core-article" style={{ maxWidth: "650px", margin: "0 auto" }}>
         
@@ -502,7 +542,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           )}
 
 
-          {/* Gold Date Indicator */}
+          {/* Gold Date Indicator & Reading Time */}
           <div 
             className="journal-date"
             style={{ 
@@ -510,19 +550,31 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               fontSize: "0.95rem", 
               fontWeight: "600",
               color: "#B47A3E",
-              marginBottom: "0.6rem"
+              marginBottom: "0.6rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.5rem",
+              flexWrap: "wrap"
             }}
           >
-            {(() => {
-              const parts = post.published.substring(0, 10).split("-");
-              const dateObj = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-              return dateObj.toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric"
-              });
-            })()}
-          </div>
+              <span>
+                {(() => {
+                  const parts = post.published.substring(0, 10).split("-");
+                  const dateObj = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                  return dateObj.toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric"
+                  });
+                })()}
+              </span>
+              <span style={{ opacity: 0.4 }}>•</span>
+              <span style={{ fontSize: "0.85rem", opacity: 0.8, fontWeight: "500" }}>
+                {readingTime} min read
+              </span>
+            </div>
+          )}
 
           {/* Bold Centered Title */}
           <h1 
@@ -599,6 +651,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             fontSize: "17px",
             lineHeight: "1.75",
             letterSpacing: fontStyle === "mono" ? "0" : "-0.01em",
+            fontFamily: fontStyle === "serif" ? "var(--font-serif)" : fontStyle === "mono" ? "monospace" : "var(--font-sans)",
             wordBreak: "break-word"
           }}
           className={`book-prose prose-style-${fontStyle}`}
@@ -818,14 +871,16 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 display: "flex",
                 alignItems: "center",
                 gap: "0.6rem",
-                backgroundColor: theme === "dark" ? "rgba(15, 15, 15, 0.65)" : "rgba(255, 255, 255, 0.6)",
-                backdropFilter: "blur(20px) saturate(190%)",
-                WebkitBackdropFilter: "blur(20px) saturate(190%)",
-                border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.06)",
+                backgroundColor: theme === "dark" ? "rgba(18, 18, 18, 0.85)" : "rgba(255, 255, 255, 0.88)",
+                backdropFilter: "blur(24px) saturate(190%)",
+                WebkitBackdropFilter: "blur(24px) saturate(190%)",
+                border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
                 borderRadius: "32px",
                 padding: "6px 10px",
                 color: theme === "dark" ? "#ffffff" : "#111111",
-                boxShadow: theme === "dark" ? "0 10px 35px rgba(0, 0, 0, 0.3)" : "0 10px 30px rgba(0, 0, 0, 0.06)",
+                boxShadow: theme === "dark" 
+                  ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
+                  : "0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
                 width: "max-content",
                 maxWidth: "92vw",
                 overflow: "hidden"
@@ -854,12 +909,14 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     display: "flex", 
                     alignItems: "center", 
                     justifyContent: "center", 
-                    width: "38px", 
-                    height: "38px", 
+                    width: "34px", 
+                    height: "34px", 
+                    boxSizing: "border-box",
                     borderRadius: "50%", 
-                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)", 
+                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "#ffffff", 
                     color: theme === "dark" ? "#ffffff" : "#111111", 
-                    border: "none",
+                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.06)",
+                    boxShadow: theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff",
                     cursor: "pointer",
                     transition: "all 0.2s ease"
                   }}
@@ -872,26 +929,28 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   </svg>
                 </button>
 
-                {/* Metamorphosis Input Field aligned perfectly to 38px height */}
+                {/* Metamorphosis Input Field aligned perfectly to 34px height */}
                 <input 
                   type="text"
                   className="floating-island-input"
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="Add a reply..."
+                  placeholder="Add a reply"
                   style={{
-                    height: "38px",
+                    height: "34px",
+                    lineHeight: "34px",
                     boxSizing: "border-box",
                     backgroundColor: theme === "dark" ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.04)",
                     border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
-                    borderRadius: "20px",
+                    borderRadius: "17px",
                     padding: "0 16px",
                     color: theme === "dark" ? "#ffffff" : "#111111",
                     fontSize: "0.85rem",
                     fontWeight: "500",
                     width: "380px",
                     outline: "none",
-                    fontFamily: "var(--font-sans)"
+                    fontFamily: "var(--font-sans)",
+                    boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.06)"
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -910,8 +969,9 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     display: "flex", 
                     alignItems: "center", 
                     justifyContent: "center", 
-                    width: "38px", 
-                    height: "38px", 
+                    width: "34px", 
+                    height: "34px", 
+                    boxSizing: "border-box",
                     borderRadius: "50%", 
                     backgroundColor: commentText.trim() 
                       ? (theme === "dark" ? "#ffffff" : "#111111") 
@@ -919,7 +979,10 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     color: commentText.trim() 
                       ? (theme === "dark" ? "#000000" : "#ffffff") 
                       : (theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.15)"), 
-                    border: "none",
+                    border: commentText.trim() ? "none" : (theme === "dark" ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.05)"),
+                    boxShadow: commentText.trim()
+                      ? (theme === "dark" ? "0 4px 12px rgba(255, 255, 255, 0.15)" : "0 4px 12px rgba(0, 0, 0, 0.15)")
+                      : "none",
                     cursor: commentText.trim() ? "pointer" : "default",
                     transition: "all 0.2s ease"
                   }}
@@ -947,13 +1010,17 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     display: "flex", 
                     alignItems: "center", 
                     justifyContent: "center", 
-                    width: "38px", 
-                    height: "38px", 
+                    width: "34px", 
+                    height: "34px", 
+                    boxSizing: "border-box",
                     borderRadius: "50%", 
-                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)", 
+                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "#ffffff", 
                     color: theme === "dark" ? "#ffffff" : "#111111", 
+                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
+                    boxShadow: theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff",
                     transition: "all 0.2s ease",
-                    textDecoration: "none"
+                    textDecoration: "none",
+                    flexShrink: 0
                   }}
                   className="dock-icon-btn"
                   title="Back to Journal"
@@ -967,24 +1034,33 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 <div 
                   style={{ 
                     display: "flex", 
-                    backgroundColor: theme === "dark" ? "rgba(0, 0, 0, 0.6)" : "rgba(0, 0, 0, 0.04)", 
-                    borderRadius: "24px", 
+                    alignItems: "center",
+                    height: "34px",
+                    boxSizing: "border-box",
+                    backgroundColor: theme === "dark" ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.04)", 
+                    borderRadius: "17px", 
                     padding: "2px",
-                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.05)"
+                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(0, 0, 0, 0.04)",
+                    boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.06)"
                   }}
                 >
                   <button 
                     onClick={() => setMode("read")}
                     style={{
-                      padding: "6px 14px",
-                      borderRadius: "22px",
+                      height: "30px",
+                      lineHeight: "30px",
+                      padding: "0 14px",
+                      borderRadius: "15px",
                       border: "none",
                       backgroundColor: mode === "read" 
                         ? (theme === "dark" ? "#ffffff" : "#111111") 
                         : "transparent",
                       color: mode === "read" 
                         ? (theme === "dark" ? "#000000" : "#ffffff") 
-                        : (theme === "dark" ? "#999999" : "#666666"),
+                        : (theme === "dark" ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"),
+                      boxShadow: mode === "read"
+                        ? (theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.2)")
+                        : "none",
                       fontSize: "0.85rem",
                       fontWeight: "600",
                       cursor: "pointer",
@@ -996,15 +1072,20 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   <button 
                     onClick={() => setMode("listen")}
                     style={{
-                      padding: "6px 14px",
-                      borderRadius: "22px",
+                      height: "30px",
+                      lineHeight: "30px",
+                      padding: "0 14px",
+                      borderRadius: "15px",
                       border: "none",
                       backgroundColor: mode === "listen" 
                         ? (theme === "dark" ? "#ffffff" : "#111111") 
                         : "transparent",
                       color: mode === "listen" 
                         ? (theme === "dark" ? "#000000" : "#ffffff") 
-                        : (theme === "dark" ? "#999999" : "#666666"),
+                        : (theme === "dark" ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"),
+                      boxShadow: mode === "listen"
+                        ? (theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.2)")
+                        : "none",
                       fontSize: "0.85rem",
                       fontWeight: "600",
                       cursor: "pointer",
@@ -1026,17 +1107,19 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 <button 
                   onClick={() => setIsCommenting(true)}
                   style={{
-                    width: "38px",
-                    height: "38px",
+                    width: "34px",
+                    height: "34px",
+                    boxSizing: "border-box",
                     borderRadius: "50%",
-                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)",
+                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "#ffffff",
                     color: theme === "dark" ? "#ffffff" : "#111111",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     cursor: "pointer",
                     transition: "all 0.2s ease",
-                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.06)"
+                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
+                    boxShadow: theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff"
                   }}
                   className="dock-icon-btn"
                   title="Add a comment"

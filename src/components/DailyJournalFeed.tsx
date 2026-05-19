@@ -683,6 +683,18 @@ const BirthdayConfettiEffect = ({ type }: { type: string }) => {
 
 export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[], moments?: any[] }) {
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(STATIC_SEEDED_EVENTS);
+  const [isDark, setIsDark] = useState(false);
+
+  // Sync system dark mode preference
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      setIsDark(media.matches);
+      const listener = (e: MediaQueryListEvent) => setIsDark(e.matches);
+      media.addEventListener("change", listener);
+      return () => media.removeEventListener("change", listener);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchCalendar = async () => {
@@ -767,7 +779,26 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
   }, [selectedDate]);
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isWheelPickerOpen, setIsWheelPickerOpen] = useState(false);
+  const [tempMonth, setTempMonth] = useState(new Date().getMonth());
+  const [tempYear, setTempYear] = useState(new Date().getFullYear());
+  const [yearPageStart, setYearPageStart] = useState(() => {
+    const currentYear = new Date().getFullYear();
+    return currentYear - (currentYear % 8);
+  });
   const [showBirthdayConfetti, setShowBirthdayConfetti] = useState(false);
+
+  const MONTH_NAMES = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  const SHORT_MONTHS = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+
+  const YEARS_LIST = Array.from({ length: 8 }, (_, i) => yearPageStart + i);
 
   // Confetti trigger timer for birthday page load and switch
   useEffect(() => {
@@ -1005,8 +1036,10 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             backgroundColor: isSelected 
               ? (selectedTheme ? selectedTheme.primary : (hasPost ? "#B47A3E" : "var(--text-primary)")) 
               : (cellTheme 
-                  ? cellTheme.bgUnselected 
-                  : (hasPost ? "rgba(180, 122, 62, 0.08)" : "transparent")),
+                  ? (isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(255, 255, 255, 0.95)") 
+                  : (hasPost 
+                      ? (isDark ? "rgba(180, 122, 62, 0.12)" : "#ffffff") 
+                      : "transparent")),
             color: isSelected 
               ? "var(--bg-color)" 
               : (isToday 
@@ -1017,30 +1050,25 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             border: isSelected
               ? "none"
               : (cellTheme 
-                  ? cellTheme.borderUnselected 
+                  ? `1px solid ${cellTheme.primary}45` 
                   : (hasPost && !isSelected ? "1px solid rgba(180, 122, 62, 0.45)" : "none")),
+            boxShadow: isSelected
+              ? (isDark 
+                  ? "0 4px 10px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2)" 
+                  : "0 4px 12px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.5)")
+              : (hasPost
+                  ? (isDark 
+                      ? "4px 4px 12px rgba(0, 0, 0, 0.5), -2px -2px 8px rgba(255, 255, 255, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.06)" 
+                      : "4px 4px 10px rgba(180, 165, 150, 0.28), -3px -3px 8px #ffffff, inset 0 1px 0 #ffffff")
+                  : (cellTheme
+                      ? (isDark 
+                          ? "0 3px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)" 
+                          : "0 3px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9)")
+                      : "none")),
             transition: "all 0.2s ease",
             position: "relative"
           }}
         >
-          {/* Bold, gorgeous hand-drawn scrapbook check-off cross 'X' overlay! */}
-          {hasPost && (
-            <div style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              pointerEvents: "none",
-              zIndex: 1
-            }}>
-              <svg width="100%" height="100%" viewBox="0 0 32 32" style={{ position: "absolute", opacity: isSelected ? 0.35 : 0.6, color: isSelected ? "var(--bg-color)" : "#B47A3E" }}>
-                <line x1="8" y1="8" x2="24" y2="24" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-                <line x1="24" y1="8" x2="8" y2="24" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-              </svg>
-            </div>
-          )}
-
           <span style={{ position: "relative", zIndex: 2 }}>
             {cellTheme && cellTheme.emoji.includes("🎂") ? "🎂" : i}
           </span>
@@ -1107,6 +1135,55 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
         }
         .moments-grid a:nth-child(9) {
           display: none !important;
+        }
+        .today-btn, .month-picker-btn {
+          transition: transform 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.18s ease, box-shadow 0.18s ease !important;
+        }
+        .today-btn:hover, .month-picker-btn:hover {
+          transform: translateY(-2.5px) scale(1.04) !important;
+          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.05), inset 0 1.5px 0 #ffffff, inset 0 -2px 0 rgba(0, 0, 0, 0.08) !important;
+          background-color: var(--bg-color) !important;
+        }
+        @media (prefers-color-scheme: dark) {
+          .today-btn:hover, .month-picker-btn:hover {
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -2px 0 rgba(0, 0, 0, 0.6) !important;
+            background-color: rgba(255, 255, 255, 0.12) !important;
+          }
+        }
+        .today-btn:active, .month-picker-btn:active {
+          transform: translateY(0.5px) scale(0.96) !important;
+        }
+        .date-pill {
+          transition: transform 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease !important;
+        }
+        .date-pill:hover {
+          transform: translateY(-6px) scale(1.03) !important;
+          box-shadow: 0 14px 30px -4px rgba(0, 0, 0, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+          z-index: 5;
+        }
+        @media (prefers-color-scheme: dark) {
+          .date-pill:hover {
+            box-shadow: 0 14px 30px -4px rgba(0, 0, 0, 0.45), 0 4px 10px -2px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+          }
+        }
+        .date-pill:active {
+          transform: translateY(0px) scale(0.96) !important;
+        }
+        .calendar-day-cell {
+          transition: transform 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.18s ease, box-shadow 0.18s ease !important;
+        }
+        .calendar-day-cell:hover {
+          transform: scale(1.18) translateY(-1.5px) !important;
+          box-shadow: 0 6px 14px -2px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+          z-index: 5;
+        }
+        @media (prefers-color-scheme: dark) {
+          .calendar-day-cell:hover {
+            box-shadow: 0 6px 14px -2px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+          }
+        }
+        .calendar-day-cell:active {
+          transform: scale(0.93) translateY(0.5px) !important;
         }
 
         /* High-Density Mobile Overrides */
@@ -1286,24 +1363,16 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                 style={{
                   padding: "6px 12px", 
                   borderRadius: "16px",
-                  backgroundColor: selectedTheme ? selectedTheme.bgUnselected : "rgba(150,150,150,0.06)",
-                  border: selectedTheme ? selectedTheme.borderUnselected : "none",
+                  backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
+                  border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                  boxShadow: isDark 
+                    ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(0, 0, 0, 0.6)" 
+                    : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2px 0 rgba(0, 0, 0, 0.08)",
                   cursor: "pointer",
                   fontSize: "0.76rem", 
                   fontWeight: "600",
                   color: selectedTheme ? selectedTheme.primary : "var(--text-primary)",
-                  transition: "all 0.2s ease",
                   fontFamily: "var(--font-sans)"
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = selectedTheme 
-                    ? `rgba(${selectedTheme.type === "both" ? "168, 85, 247" : selectedTheme.type === "male" ? "0, 122, 255" : "255, 92, 157"}, 0.2)` 
-                    : "rgba(150,150,150,0.12)";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = selectedTheme 
-                    ? selectedTheme.bgUnselected 
-                    : "rgba(150,150,150,0.06)";
                 }}
               >
                 Today
@@ -1322,13 +1391,14 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                   color: selectedTheme ? selectedTheme.primary : "var(--text-primary)", 
                   cursor: "pointer",
                   padding: "6px 12px", 
-                  backgroundColor: selectedTheme 
-                    ? selectedTheme.bgUnselected 
-                    : (isCalendarOpen ? "rgba(150,150,150,0.12)" : "rgba(150,150,150,0.05)"),
-                  border: selectedTheme ? selectedTheme.borderUnselected : "none",
+                  backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
+                  border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                  boxShadow: isDark 
+                    ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(0, 0, 0, 0.6)" 
+                    : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2px 0 rgba(0, 0, 0, 0.08)",
                   outline: "none",
                   borderRadius: "16px",
-                  transition: "background-color 0.2s ease"
+                  fontFamily: "var(--font-sans)"
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
@@ -1359,39 +1429,369 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                     right: 0,
                     width: "240px", 
                     backgroundColor: "var(--bg-color)",
-                    border: selectedTheme ? `1px solid ${selectedTheme.primary}40` : "1px solid rgba(150,150,150,0.15)",
-                    borderRadius: "20px",
-                    boxShadow: selectedTheme ? `0 8px 30px ${selectedTheme.primary}0a` : "0 8px 30px rgba(0,0,0,0.08)",
-                    padding: "1rem", 
+                    backdropFilter: "blur(24px)",
+                    WebkitBackdropFilter: "blur(24px)",
+                    border: selectedTheme 
+                      ? (isDark ? `1px solid rgba(255, 255, 255, 0.15)` : `1px solid rgba(180, 122, 62, 0.22)`)
+                      : (isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)"),
+                    borderRadius: "22px",
+                    boxShadow: isDark 
+                      ? "0 24px 60px -8px rgba(0, 0, 0, 0.7), 0 8px 24px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)" 
+                      : (selectedTheme 
+                          ? "0 20px 48px -8px rgba(0, 0, 0, 0.12), 0 8px 20px -4px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)"
+                          : "0 20px 48px -8px rgba(0, 0, 0, 0.1), 0 8px 20px -4px rgba(0, 0, 0, 0.05), inset 0 1px 0 #ffffff"),
+                    padding: "1.1rem", 
                     zIndex: 100,
                   }}
                 >
                   {/* Calendar Header: Month Year + Chevrons */}
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.85rem" }}>
-                    <button onClick={() => changeMonth(-1)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-primary)", padding: "2px" }}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    <button 
+                      onClick={() => {
+                        if (isWheelPickerOpen) {
+                          setIsWheelPickerOpen(false);
+                        } else {
+                          changeMonth(-1);
+                        }
+                      }} 
+                      style={{ 
+                        background: "rgba(150,150,150,0.06)", 
+                        border: "1px solid rgba(150,150,150,0.1)", 
+                        cursor: isWheelPickerOpen ? "default" : "pointer", 
+                        color: "var(--text-primary)", 
+                        padding: "4px",
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        transition: "all 0.15s ease",
+                        opacity: isWheelPickerOpen ? 0.25 : 1
+                      }}
+                      disabled={isWheelPickerOpen}
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                     </button>
-                    <div style={{ fontWeight: "750", fontSize: "0.90rem", fontFamily: "var(--font-sans)", letterSpacing: "0.01em", color: "var(--text-primary)" }}>
-                      {calendarViewDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                    
+                    <div 
+                      onClick={() => {
+                        if (!isWheelPickerOpen) {
+                          const viewYear = calendarViewDate.getFullYear();
+                          setTempMonth(calendarViewDate.getMonth());
+                          setTempYear(viewYear);
+                          setYearPageStart(viewYear - (viewYear % 8));
+                        }
+                        setIsWheelPickerOpen(!isWheelPickerOpen);
+                      }}
+                      style={{ 
+                        fontWeight: "750", 
+                        fontSize: "0.90rem", 
+                        fontFamily: "var(--font-sans)", 
+                        letterSpacing: "0.01em", 
+                        color: "var(--text-primary)",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        padding: "2px 8px",
+                        borderRadius: "8px",
+                        backgroundColor: isWheelPickerOpen ? "rgba(150, 150, 150, 0.08)" : "transparent",
+                        transition: "all 0.2s ease"
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(150, 150, 150, 0.12)"}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = isWheelPickerOpen ? "rgba(150, 150, 150, 0.08)" : "transparent"}
+                    >
+                      {isWheelPickerOpen 
+                        ? `${MONTH_NAMES[tempMonth]} ${tempYear}`
+                        : calendarViewDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isWheelPickerOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s ease", opacity: 0.6 }}>
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
                     </div>
-                    <button onClick={() => changeMonth(1)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-primary)", padding: "2px" }}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+
+                    <button 
+                      onClick={() => {
+                        if (isWheelPickerOpen) {
+                          setIsWheelPickerOpen(false);
+                        } else {
+                          changeMonth(1);
+                        }
+                      }} 
+                      style={{ 
+                        background: "rgba(150,150,150,0.06)", 
+                        border: "1px solid rgba(150,150,150,0.1)", 
+                        cursor: isWheelPickerOpen ? "default" : "pointer", 
+                        color: "var(--text-primary)", 
+                        padding: "4px",
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        transition: "all 0.15s ease",
+                        opacity: isWheelPickerOpen ? 0.25 : 1
+                      }}
+                      disabled={isWheelPickerOpen}
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </button>
                   </div>
 
-                  {/* Day Labels */}
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "3px", marginBottom: "0.5rem" }}>
-                    {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(day => (
-                      <div key={day} className="calendar-day-label" style={{ textAlign: "center", fontSize: "0.68rem", fontWeight: "700", color: "var(--text-secondary)" }}>
-                        {day}
-                      </div>
-                    ))}
-                  </div>
+                  {isWheelPickerOpen ? (
+                    /* TACTILE KEYCAP GRID DASHBOARD SELECTOR */
+                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      <div style={{ display: "flex", gap: "10px", width: "100%" }}>
+                        {/* Month Picker Column */}
+                        <div style={{ flex: 1.2, display: "flex", flexDirection: "column", gap: "4px" }}>
+                          <span style={{ fontSize: "0.62rem", fontWeight: "750", color: "var(--text-secondary)", opacity: 0.7, textTransform: "uppercase", letterSpacing: "0.03em", fontFamily: "var(--font-sans)", paddingLeft: "2px" }}>
+                            Month
+                          </span>
+                          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" }}>
+                            {SHORT_MONTHS.map((m, idx) => {
+                              const isSelected = tempMonth === idx;
+                              return (
+                                <button
+                                  key={m}
+                                  onClick={() => {
+                                    setTempMonth(idx);
+                                    if (navigator.vibrate) navigator.vibrate(10);
+                                  }}
+                                  style={{
+                                    padding: "5px 0",
+                                    borderRadius: "8px",
+                                    fontSize: "0.68rem",
+                                    fontWeight: "700",
+                                    fontFamily: "var(--font-sans)",
+                                    textAlign: "center",
+                                    cursor: "pointer",
+                                    border: isSelected 
+                                      ? "1px solid transparent" 
+                                      : (isDark ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.06)"),
+                                    backgroundColor: isSelected 
+                                      ? (selectedTheme ? selectedTheme.primary : "var(--text-primary)")
+                                      : (isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff"),
+                                    color: isSelected 
+                                      ? (selectedTheme ? "#ffffff" : "var(--bg-color)")
+                                      : "var(--text-primary)",
+                                    boxShadow: isSelected
+                                      ? (isDark 
+                                          ? "0 3px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -2px 0 rgba(0,0,0,0.4)" 
+                                          : "0 3px 8px rgba(0,0,0,0.12), inset 0 1.5px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)")
+                                      : (isDark 
+                                          ? "0 2px 4px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1.5px 0 rgba(0,0,0,0.3)" 
+                                          : "0 2px 4px rgba(0,0,0,0.03), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0,0,0,0.06)"),
+                                    transition: "all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    if (!isSelected) {
+                                      e.currentTarget.style.transform = "translateY(-1px) scale(1.05)";
+                                      e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.1)" : "#f5f5f7";
+                                    }
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    if (!isSelected) {
+                                      e.currentTarget.style.transform = "none";
+                                      e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff";
+                                    }
+                                  }}
+                                  onMouseDown={(e) => {
+                                    e.currentTarget.style.transform = "scale(0.94)";
+                                  }}
+                                  onMouseUp={(e) => {
+                                    if (!isSelected) {
+                                      e.currentTarget.style.transform = "translateY(-1px) scale(1.05)";
+                                    } else {
+                                      e.currentTarget.style.transform = "none";
+                                    }
+                                  }}
+                                >
+                                  {m}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
 
-                  {/* Days Grid */}
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "3px", rowGap: "5px" }}>
-                    {renderCalendarDays()}
-                  </div>
+                        {/* Year Picker Column */}
+                        <div style={{ flex: 0.8, display: "flex", flexDirection: "column", gap: "4px" }}>
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", paddingRight: "4px" }}>
+                            <span style={{ fontSize: "0.62rem", fontWeight: "750", color: "var(--text-secondary)", opacity: 0.7, textTransform: "uppercase", letterSpacing: "0.03em", fontFamily: "var(--font-sans)", paddingLeft: "2px" }}>
+                              Year
+                            </span>
+                            <div style={{ display: "flex", gap: "2px", alignItems: "center" }}>
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setYearPageStart(prev => prev - 8);
+                                }}
+                                style={{ 
+                                  background: "none", 
+                                  border: "none", 
+                                  cursor: "pointer", 
+                                  color: "var(--text-primary)", 
+                                  opacity: 0.6,
+                                  padding: "0 2px", 
+                                  display: "flex", 
+                                  alignItems: "center" 
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
+                                onMouseLeave={(e) => e.currentTarget.style.opacity = "0.6"}
+                              >
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                              </button>
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setYearPageStart(prev => prev + 8);
+                                }}
+                                style={{ 
+                                  background: "none", 
+                                  border: "none", 
+                                  cursor: "pointer", 
+                                  color: "var(--text-primary)", 
+                                  opacity: 0.6,
+                                  padding: "0 2px", 
+                                  display: "flex", 
+                                  alignItems: "center" 
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
+                                onMouseLeave={(e) => e.currentTarget.style.opacity = "0.6"}
+                              >
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                              </button>
+                            </div>
+                          </div>
+                          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "4px" }}>
+                            {YEARS_LIST.map((y) => {
+                              const isSelected = tempYear === y;
+                              return (
+                                <button
+                                  key={y}
+                                  onClick={() => {
+                                    setTempYear(y);
+                                    if (navigator.vibrate) navigator.vibrate(10);
+                                  }}
+                                  style={{
+                                    padding: "5px 0",
+                                    borderRadius: "8px",
+                                    fontSize: "0.66rem",
+                                    fontWeight: "700",
+                                    letterSpacing: "-0.01em",
+                                    fontFamily: "var(--font-sans)",
+                                    textAlign: "center",
+                                    cursor: "pointer",
+                                    border: isSelected 
+                                      ? "1px solid transparent" 
+                                      : (isDark ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.06)"),
+                                    backgroundColor: isSelected 
+                                      ? (selectedTheme ? selectedTheme.primary : "var(--text-primary)")
+                                      : (isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff"),
+                                    color: isSelected 
+                                      ? (selectedTheme ? "#ffffff" : "var(--bg-color)")
+                                      : "var(--text-primary)",
+                                    boxShadow: isSelected
+                                      ? (isDark 
+                                          ? "0 3px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -2px 0 rgba(0,0,0,0.4)" 
+                                          : "0 3px 8px rgba(0,0,0,0.12), inset 0 1.5px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)")
+                                      : (isDark 
+                                          ? "0 2px 4px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1.5px 0 rgba(0,0,0,0.3)" 
+                                          : "0 2px 4px rgba(0,0,0,0.03), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0,0,0,0.06)"),
+                                    transition: "all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    if (!isSelected) {
+                                      e.currentTarget.style.transform = "translateY(-1px) scale(1.05)";
+                                      e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.1)" : "#f5f5f7";
+                                    }
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    if (!isSelected) {
+                                      e.currentTarget.style.transform = "none";
+                                      e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff";
+                                    }
+                                  }}
+                                  onMouseDown={(e) => {
+                                    e.currentTarget.style.transform = "scale(0.94)";
+                                  }}
+                                  onMouseUp={(e) => {
+                                    if (!isSelected) {
+                                      e.currentTarget.style.transform = "translateY(-1px) scale(1.05)";
+                                    } else {
+                                      e.currentTarget.style.transform = "none";
+                                    }
+                                  }}
+                                >
+                                  {y}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Apply Done Button */}
+                      <button
+                        onClick={() => {
+                          const newDate = new Date(calendarViewDate);
+                          newDate.setMonth(tempMonth);
+                          newDate.setFullYear(tempYear);
+                          setCalendarViewDate(newDate);
+                          setIsWheelPickerOpen(false);
+                        }}
+                        style={{
+                          width: "100%",
+                          padding: "8px 12px",
+                          marginTop: "2px",
+                          backgroundColor: "var(--text-primary)",
+                          color: "var(--bg-color)",
+                          border: isDark ? "1px solid rgba(255, 255, 255, 0.15)" : "1px solid rgba(0, 0, 0, 0.12)",
+                          borderRadius: "12px",
+                          fontSize: "0.78rem",
+                          fontWeight: "700",
+                          fontFamily: "var(--font-sans)",
+                          cursor: "pointer",
+                          boxShadow: isDark
+                            ? "0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(255, 255, 255, 0.1)"
+                            : "0 4px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -2px 0 rgba(0, 0, 0, 0.1)",
+                          transition: "all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = "translateY(-1.5px)";
+                          e.currentTarget.style.boxShadow = isDark
+                            ? "0 6px 14px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25)"
+                            : "0 6px 12px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = "none";
+                          e.currentTarget.style.boxShadow = isDark
+                            ? "0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(255, 255, 255, 0.1)"
+                            : "0 4px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -2px 0 rgba(0, 0, 0, 0.1)";
+                        }}
+                        onMouseDown={(e) => {
+                          e.currentTarget.style.transform = "translateY(0.5px) scale(0.98)";
+                        }}
+                        onMouseUp={(e) => {
+                          e.currentTarget.style.transform = "translateY(-1.5px)";
+                        }}
+                      >
+                        Apply
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Day Labels */}
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "3px", marginBottom: "0.5rem" }}>
+                        {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(day => (
+                          <div key={day} className="calendar-day-label" style={{ textAlign: "center", fontSize: "0.68rem", fontWeight: "700", color: "var(--text-secondary)" }}>
+                            {day}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Days Grid */}
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "3px", rowGap: "5px" }}>
+                        {renderCalendarDays()}
+                      </div>
+                    </>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -1407,10 +1807,10 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
           style={{ 
             display: "flex", 
             gap: "0.22rem",
-            alignItems: "center",
+            alignItems: "flex-end", // Ground the pills to the bottom baseline so floating looks natural
             marginBottom: "0.85rem",
             borderBottom: "1px solid rgba(150, 150, 150, 0.12)",
-            padding: "0 0 1.1rem 0",
+            padding: "12px 0 1.1rem 0", // Give 12px breathing room at the top to prevent clipping during hover/active rises
             overflowX: "auto",
             scrollBehavior: "smooth",
             WebkitOverflowScrolling: "touch",
@@ -1489,14 +1889,19 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                   WebkitFontSmoothing: "subpixel-antialiased",
                   transformOrigin: "center center",
                   scrollSnapAlign: "center",
+                  transform: isSelected ? "translateY(-4px)" : "translateY(0)",
                   boxShadow: isSelected 
-                    ? `0 6px 16px rgba(${isSelected && activeColor.startsWith("#") ? "0,0,0" : "0,0,0"}, 0.14)` 
-                    : "none",
-                  transition: "background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1)"
+                    ? (isDark 
+                        ? "0 12px 28px -4px rgba(0, 0, 0, 0.45), 0 4px 10px -2px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)" 
+                        : `0 12px 28px -4px rgba(0, 0, 0, 0.14), 0 4px 10px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.45)`)
+                    : (isDark 
+                        ? "0 2px 6px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05)" 
+                        : "0 2px 6px rgba(0, 0, 0, 0.03), inset 0 1px 0 #ffffff"),
+                  transition: "transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease"
                 }}
               >
                 {/* Hanging ribbon bookmark for dates with posts */}
-                {hasPost && !pillTheme && (
+                {hasPost && (
                   <div 
                     title="Contains journal entries"
                     style={{
@@ -1505,7 +1910,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                       left: "11px",
                       width: "8px",
                       height: "15px",
-                      backgroundColor: isSelected ? "var(--bg-color)" : "#B47A3E",
+                      backgroundColor: isSelected ? "var(--bg-color)" : (pillTheme ? pillTheme.primary : "#B47A3E"),
                       clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%)",
                       opacity: 0.95,
                       transition: "all 0.2s ease",

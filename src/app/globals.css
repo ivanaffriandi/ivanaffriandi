@@ -3,6 +3,7 @@
 :root {
   --bg-color: #FDFBF7; /* Beautiful warm Munken book paper */
   --bg-color-rgba: rgba(253, 251, 247, 0.75);
+  --bg-glass: rgba(253, 251, 247, 0.45);
   --text-primary: #181715; /* Elegant charcoal ink */
   --text-secondary: #6B6862; /* Soft sepia secondary text */
   --border-color: #E6E1D8; /* Warm book binder grid line */
@@ -33,6 +34,7 @@
   :root {
     --bg-color: #141312; /* Volcanic bookplate base */
     --bg-color-rgba: rgba(20, 19, 18, 0.75);
+    --bg-glass: rgba(20, 19, 18, 0.45);
     --text-primary: #EBE6DC; /* Warm paper text */
     --text-secondary: #9B968E;
     --border-color: #2F2E2C;
@@ -94,6 +96,10 @@ html, body {
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent !important;
+}
+*:focus {
+  outline: none !important;
 }
 
 a {

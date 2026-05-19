@@ -43,10 +43,11 @@ interface QACardProps {
   qa: QuestionItem;
   index: number;
   isExpanded: boolean;
+  isLast: boolean;
   onToggle: () => void;
 }
 
-const QACard = ({ qa, index, isExpanded, onToggle }: QACardProps) => {
+const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Bulletproof dark mode detector (System preference + Class Fallback)
@@ -92,6 +93,20 @@ const QACard = ({ qa, index, isExpanded, onToggle }: QACardProps) => {
           flexShrink: 0, 
           position: "relative" 
         }}>
+          {/* Dynamic Spine Line connecting to the next QA card */}
+          {!isLast && (
+            <div style={{ 
+              position: "absolute",
+              top: "12px", 
+              bottom: "-32px", 
+              left: "7.25px", 
+              width: "1.5px", 
+              backgroundColor: "var(--border-color)",
+              opacity: 0.35,
+              zIndex: 1
+            }} />
+          )}
+
           {/* Timeline Dot dynamically colored to match its card background */}
           <motion.div
             animate={{
@@ -412,18 +427,6 @@ export default function AskPage() {
         ) : (
           <div style={{ position: "relative", width: "100%" }}>
             
-            {/* Absolute continuous guide line - LOCKED EXACTLY at 8px (center of 16px dot column) */}
-            <div style={{
-              position: "absolute",
-              left: "8px", 
-              top: "24px",
-              bottom: "36px",
-              width: "1.5px",
-              backgroundColor: "var(--border-color)",
-              opacity: 0.5,
-              zIndex: 0
-            }} />
-
             {/* Main timeline stream */}
             <motion.div 
               variants={staggerContainer}
@@ -446,6 +449,7 @@ export default function AskPage() {
                       qa={qa} 
                       index={index} 
                       isExpanded={expandedId === qa.id}
+                      isLast={index === sortedQuestions.length - 1}
                       onToggle={() => setExpandedId(expandedId === qa.id ? null : qa.id)}
                     />
                   );
@@ -503,10 +507,10 @@ export default function AskPage() {
               borderRadius: isMaximized ? "24px" : "22px",
               // HIGHLY DEFINED borders for supreme visual clarity
               border: isFocused 
-                ? "2px solid var(--text-primary)" 
-                : (isDarkMode ? "1.5px solid rgba(255,255,255,0.18)" : "1.5px solid rgba(0,0,0,0.16)"),
-              // Solid frosted base (opacity 0.94) to ground it clearly over card overlaps
-              backgroundColor: isDarkMode ? "rgba(25, 26, 30, 0.94)" : "rgba(231, 229, 219, 0.94)",
+                ? "1.5px solid var(--text-primary)" 
+                : "1px solid var(--border-color)",
+              // Solid frosted base (opacity 0.96) to ground it clearly over card overlaps
+              backgroundColor: isDarkMode ? "rgba(20, 19, 18, 0.96)" : "rgba(253, 251, 247, 0.96)",
               // Thick, premium frosted backdrop filter
               backdropFilter: "blur(20px)",
               WebkitBackdropFilter: "blur(20px)",

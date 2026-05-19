@@ -6,8 +6,8 @@ export default function LofiPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Mellow, dreamy ambient track (SoundHelix Song 8)
-  const TRACK_URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3";
+  // Premium Bossa Nova ambient track (Loaded locally from public/bossa-nova.mp3)
+  const TRACK_URL = "/bossa-nova.mp3";
 
   useEffect(() => {
     // Avoid SSR issues by instantiating inside useEffect

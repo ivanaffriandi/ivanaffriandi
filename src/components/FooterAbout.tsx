@@ -65,27 +65,42 @@ export default function FooterAbout() {
       <motion.button 
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ 
-          backgroundColor: isOpen ? "var(--text-primary)" : "rgba(150, 150, 150, 0.12)",
-          borderColor: isOpen ? "transparent" : "rgba(150, 150, 150, 0.25)"
+          y: -2.5,
+          scale: 1.04,
+          backgroundColor: isOpen ? "var(--text-primary)" : (isDark ? "rgba(255, 255, 255, 0.1)" : "#ffffff"),
+          borderColor: isOpen ? "transparent" : (isDark ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.12)"),
+          boxShadow: isOpen 
+            ? "none" 
+            : (isDark 
+                ? "0 12px 24px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -2px 0 rgba(0, 0, 0, 0.6)" 
+                : "0 12px 24px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.05), inset 0 1.5px 0 #ffffff, inset 0 -2px 0 rgba(0, 0, 0, 0.08)")
         }}
-        whileTap={{ scale: 0.94 }}
+        whileTap={{ scale: 0.94, y: 0.5 }}
         transition={{ type: "spring", stiffness: 400, damping: 28 }}
         style={{ 
           background: "none", 
-          border: isOpen ? "1px solid transparent" : "1px solid rgba(150, 150, 150, 0.16)", 
+          border: isOpen 
+            ? "1px solid transparent" 
+            : (isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)"), 
           color: isOpen ? "var(--bg-color)" : "var(--text-primary)", 
           fontWeight: "600", 
           cursor: "pointer", 
           padding: "6px 14.5px",
-          backgroundColor: isOpen ? "var(--text-primary)" : "rgba(150, 150, 150, 0.05)",
+          backgroundColor: isOpen 
+            ? "var(--text-primary)" 
+            : (isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff"),
           borderRadius: "30px",
           fontFamily: "var(--font-sans)",
           fontSize: "0.76rem",
           display: "flex",
           alignItems: "center",
           gap: "6px",
-          boxShadow: "0 1px 2px rgba(0,0,0,0.02)",
-          transition: "background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease"
+          boxShadow: isOpen
+            ? "none"
+            : (isDark 
+                ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(0, 0, 0, 0.6)" 
+                : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2px 0 rgba(0, 0, 0, 0.08)"),
+          transition: "background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease"
         }}
       >
         About
@@ -123,8 +138,8 @@ export default function FooterAbout() {
               borderRadius: "22px",
               padding: "1.15rem",
               boxShadow: isDark 
-                ? "0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)" 
-                : "0 20px 45px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06)",
+                ? "0 24px 60px -8px rgba(0,0,0,0.7), 0 8px 24px -4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12)" 
+                : "0 20px 48px -6px rgba(0,0,0,0.15), 0 6px 18px -2px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9)",
               border: isDark ? "1px solid rgba(255, 255, 255, 0.15)" : "1px solid rgba(0, 0, 0, 0.1)",
               zIndex: 300,
               display: "flex",
@@ -261,26 +276,38 @@ export default function FooterAbout() {
                 ].map((work) => (
                   <a key={work.label} href={work.url} target="_blank" rel="noopener noreferrer" style={{
                     fontSize: "0.68rem",
-                    fontWeight: "500",
-                    backgroundColor: "rgba(150,150,150,0.04)",
-                    border: "1px solid rgba(150,150,150,0.1)",
-                    borderRadius: "8px",
-                    padding: "3px 8px",
+                    fontWeight: "600",
+                    backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
+                    border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                    borderRadius: "10px",
+                    padding: "4px 10px",
                     display: "inline-flex",
                     alignItems: "center",
                     fontFamily: "var(--font-sans)",
                     color: "var(--text-primary)",
                     textDecoration: "none",
-                    boxShadow: "var(--shadow-inset)",
-                    transition: "all 0.2s ease"
+                    boxShadow: isDark 
+                      ? "0 4px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1.5px 0 rgba(0, 0, 0, 0.5)" 
+                      : "0 4px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0, 0, 0, 0.06)",
+                    transition: "all 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
                   }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(150,150,150,0.08)";
-                    e.currentTarget.style.borderColor = "rgba(150,150,150,0.2)";
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-1.5px) scale(1.03)";
+                    e.currentTarget.style.boxShadow = isDark
+                      ? "0 6px 14px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1.5px 0 rgba(0, 0, 0, 0.5)"
+                      : "0 6px 12px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0, 0, 0, 0.06)";
                   }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(150,150,150,0.04)";
-                    e.currentTarget.style.borderColor = "rgba(150,150,150,0.1)";
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "none";
+                    e.currentTarget.style.boxShadow = isDark
+                      ? "0 4px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1.5px 0 rgba(0, 0, 0, 0.5)"
+                      : "0 4px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0, 0, 0, 0.06)";
+                  }}
+                  onMouseDown={(e) => {
+                    e.currentTarget.style.transform = "translateY(0.5px) scale(0.97)";
+                  }}
+                  onMouseUp={(e) => {
+                    e.currentTarget.style.transform = "translateY(-1.5px) scale(1.03)";
                   }}
                   >
                     {work.label}
@@ -298,16 +325,18 @@ export default function FooterAbout() {
                 {["Minimal Design", "Vintage Layout", "Mushroom Hunting", "Nature Photo"].map((interest) => (
                   <span key={interest} style={{
                     fontSize: "0.68rem",
-                    fontWeight: "500",
-                    backgroundColor: "rgba(150,150,150,0.04)",
-                    border: "1px solid rgba(150,150,150,0.1)",
-                    borderRadius: "8px",
-                    padding: "3px 8px",
+                    fontWeight: "600",
+                    backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
+                    border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                    borderRadius: "10px",
+                    padding: "4px 10px",
                     display: "inline-flex",
                     alignItems: "center",
                     fontFamily: "var(--font-sans)",
                     color: "var(--text-primary)",
-                    boxShadow: "var(--shadow-inset)"
+                    boxShadow: isDark 
+                      ? "0 4px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1.5px 0 rgba(0, 0, 0, 0.5)" 
+                      : "0 4px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0, 0, 0, 0.06)"
                   }}>
                     {interest}
                   </span>
@@ -323,31 +352,75 @@ export default function FooterAbout() {
                 backgroundColor: "var(--text-primary)", 
                 color: "var(--bg-color)", 
                 textAlign: "center", 
-                borderRadius: "10px", 
+                borderRadius: "12px", 
                 textDecoration: "none", 
                 fontSize: "0.76rem", 
                 fontWeight: "600", 
                 fontFamily: "var(--font-sans)",
-                transition: "opacity 0.2s ease",
-                boxShadow: "0 2px 6px rgba(0,0,0,0.06)"
+                transition: "all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                boxShadow: isDark 
+                  ? "0 8px 20px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -2.5px 0 rgba(255, 255, 255, 0.15)" 
+                  : "0 8px 20px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -2.5px 0 rgba(0, 0, 0, 0.45)",
+                border: isDark ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.12)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
               }}
-              onMouseOver={(e) => e.currentTarget.style.opacity = "0.8"}
-              onMouseOut={(e) => e.currentTarget.style.opacity = "1"}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-2.5px) scale(1.02)";
+                e.currentTarget.style.boxShadow = isDark
+                  ? "0 12px 24px rgba(0, 0, 0, 0.7), 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1.5px 0 rgba(255, 255, 255, 0.25), inset 0 -2.5px 0 rgba(255, 255, 255, 0.15)"
+                  : "0 12px 24px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.1), inset 0 1.5px 0 rgba(255, 255, 255, 0.45), inset 0 -2.5px 0 rgba(0, 0, 0, 0.45)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "none";
+                e.currentTarget.style.boxShadow = isDark
+                  ? "0 8px 20px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -2.5px 0 rgba(255, 255, 255, 0.15)"
+                  : "0 8px 20px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -2.5px 0 rgba(0, 0, 0, 0.45)";
+              }}
+              onMouseDown={(e) => {
+                e.currentTarget.style.transform = "translateY(0.5px) scale(0.98)";
+              }}
+              onMouseUp={(e) => {
+                e.currentTarget.style.transform = "translateY(-2.5px) scale(1.02)";
+              }}
               >
                 Send Email
               </a>
               <a href="https://instagram.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" style={{ 
                 padding: "8px 10px", 
-                backgroundColor: "rgba(150,150,150,0.08)", 
+                backgroundColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#ffffff", 
                 color: "var(--text-primary)", 
-                borderRadius: "10px", 
+                borderRadius: "12px", 
                 display: "flex", 
                 alignItems: "center", 
                 justifyContent: "center",
-                transition: "background-color 0.2s ease"
+                border: isDark ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
+                boxShadow: isDark 
+                  ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)" 
+                  : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)",
+                transition: "all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(150,150,150,0.15)"}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(150,150,150,0.08)"}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-2.5px) scale(1.05)";
+                e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.12)" : "#ffffff";
+                e.currentTarget.style.boxShadow = isDark
+                  ? "0 12px 24px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)"
+                  : "0 12px 24px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.05), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "none";
+                e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.08)" : "#ffffff";
+                e.currentTarget.style.boxShadow = isDark 
+                  ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)" 
+                  : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)";
+              }}
+              onMouseDown={(e) => {
+                e.currentTarget.style.transform = "translateY(0.5px) scale(0.96)";
+              }}
+              onMouseUp={(e) => {
+                e.currentTarget.style.transform = "translateY(-2.5px) scale(1.05)";
+              }}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
@@ -357,16 +430,38 @@ export default function FooterAbout() {
               </a>
               <a href="https://x.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" style={{ 
                 padding: "8px 10px", 
-                backgroundColor: "rgba(150,150,150,0.08)", 
+                backgroundColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#ffffff", 
                 color: "var(--text-primary)", 
-                borderRadius: "10px", 
+                borderRadius: "12px", 
                 display: "flex", 
                 alignItems: "center", 
                 justifyContent: "center",
-                transition: "background-color 0.2s ease"
+                border: isDark ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
+                boxShadow: isDark 
+                  ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)" 
+                  : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)",
+                transition: "all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(150,150,150,0.15)"}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = "rgba(150,150,150,0.08)"}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-2.5px) scale(1.05)";
+                e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.12)" : "#ffffff";
+                e.currentTarget.style.boxShadow = isDark
+                  ? "0 12px 24px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)"
+                  : "0 12px 24px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.05), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "none";
+                e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.08)" : "#ffffff";
+                e.currentTarget.style.boxShadow = isDark 
+                  ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)" 
+                  : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)";
+              }}
+              onMouseDown={(e) => {
+                e.currentTarget.style.transform = "translateY(0.5px) scale(0.96)";
+              }}
+              onMouseUp={(e) => {
+                e.currentTarget.style.transform = "translateY(-2.5px) scale(1.05)";
+              }}
               >
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M4 4l11.733 16h4.267l-11.733 -16z" />
