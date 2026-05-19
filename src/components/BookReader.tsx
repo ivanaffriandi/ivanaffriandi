@@ -864,19 +864,22 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               className="floating-island-dock"
               style={{
                 display: "flex",
-                alignItems: "center",
+                flexDirection: isCommenting ? "column" : "row",
+                alignItems: isCommenting ? "stretch" : "center",
                 gap: "0.6rem",
-                backgroundColor: theme === "dark" ? "rgba(18, 18, 18, 0.85)" : "rgba(255, 255, 255, 0.88)",
+                backgroundColor: theme === "dark" 
+                  ? (isCommenting ? "rgba(20, 20, 19, 0.95)" : "rgba(18, 18, 18, 0.85)") 
+                  : (isCommenting ? "rgba(255, 255, 255, 0.98)" : "rgba(255, 255, 255, 0.88)"),
                 backdropFilter: "blur(24px) saturate(190%)",
                 WebkitBackdropFilter: "blur(24px) saturate(190%)",
                 border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
-                borderRadius: "32px",
-                padding: "6px 10px",
+                borderRadius: isCommenting ? "24px" : "32px",
+                padding: isCommenting ? "16px" : "6px 10px",
                 color: theme === "dark" ? "#ffffff" : "#111111",
                 boxShadow: theme === "dark" 
                   ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
                   : "0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
-                width: "max-content",
+                width: isCommenting ? "360px" : "max-content",
                 maxWidth: "92vw",
                 overflow: "hidden"
               }}
@@ -891,177 +894,164 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             {isCommenting ? (
               <motion.div 
                 key="commenting"
-                initial={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: 15 }}
-                animate={{ opacity: 1, scale: 1, filter: "blur(0px)", x: 0 }}
-                exit={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: -15 }}
-                transition={{ type: "spring", stiffness: 550, damping: 26 }}
-                style={{ display: "flex", alignItems: "center", gap: "0.5rem", width: "100%" }}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 15 }}
+                transition={{ type: "spring", stiffness: 500, damping: 28 }}
+                style={{ 
+                  display: "flex", 
+                  flexDirection: "column", 
+                  gap: "12px", 
+                  width: "100%" 
+                }}
               >
-                {/* Close/Cancel Button (X Icon) to restore normal dock */}
-                <button 
-                  onClick={() => setIsCommenting(false)}
-                  style={{
-                    display: "flex", 
-                    alignItems: "center", 
-                    justifyContent: "center", 
-                    width: "34px", 
-                    height: "34px", 
-                    boxSizing: "border-box",
-                    borderRadius: "50%", 
-                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "#ffffff", 
-                    color: theme === "dark" ? "#ffffff" : "#111111", 
-                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.06)",
-                    boxShadow: theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease"
-                  }}
-                  className="dock-icon-btn"
-                  title="Cancel reply"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
-
-                {/* Symmetrical Integrated 3-in-1 Commenting Capsule */}
-                <div 
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    height: "34px",
-                    boxSizing: "border-box",
-                    backgroundColor: theme === "dark" ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.04)",
-                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
-                    borderRadius: "17px",
-                    padding: "0 8px 0 12px",
-                    width: "410px", // perfect width matching
-                    maxWidth: "calc(100vw - 110px)", // responsive auto-shrink on mobile
-                    boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.06)",
-                    gap: "6px"
-                  }}
-                >
-                  {/* Name Input */}
-                  <input 
-                    type="text"
-                    value={tempName}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setTempName(val);
-                      if (typeof window !== "undefined") {
-                        localStorage.setItem("ivan_comment_author_name", val);
-                      }
-                    }}
-                    placeholder="Name"
+                {/* Top Row: Title & Close Button */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                  <span style={{ 
+                    fontSize: "0.8rem", 
+                    fontWeight: "700", 
+                    color: colors.textSecondary,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05em",
+                    fontFamily: "var(--font-sans)"
+                  }}>
+                    Write a Reply
+                  </span>
+                  <button 
+                    onClick={() => setIsCommenting(false)}
                     style={{
-                      width: "70px",
-                      minWidth: "40px",
-                      flexShrink: 1,
-                      height: "100%",
                       background: "transparent",
                       border: "none",
-                      outline: "none",
-                      color: theme === "dark" ? "#ffffff" : "#111111",
-                      fontSize: "0.78rem",
-                      fontWeight: "600",
-                      fontFamily: "var(--font-sans)"
+                      color: colors.textSecondary,
+                      cursor: "pointer",
+                      padding: "4px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      opacity: 0.7,
+                      transition: "opacity 0.2s ease"
                     }}
-                  />
-
-                  {/* Vertical Divider */}
-                  <div style={{ width: "1px", height: "14px", backgroundColor: theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)", flexShrink: 0 }} />
-
-                  {/* Email Input */}
-                  <input 
-                    type="email"
-                    value={tempEmail}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setTempEmail(val);
-                      if (typeof window !== "undefined") {
-                        localStorage.setItem("ivan_comment_author_email", val);
-                      }
-                    }}
-                    placeholder="Email"
-                    style={{
-                      width: "110px",
-                      minWidth: "60px",
-                      flexShrink: 1,
-                      height: "100%",
-                      background: "transparent",
-                      border: "none",
-                      outline: "none",
-                      color: theme === "dark" ? "#ffffff" : "#111111",
-                      fontSize: "0.78rem",
-                      fontWeight: "600",
-                      fontFamily: "var(--font-sans)"
-                    }}
-                  />
-
-                  {/* Vertical Divider */}
-                  <div style={{ width: "1px", height: "14px", backgroundColor: theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)", flexShrink: 0 }} />
-
-                  {/* Reply Input */}
-                  <input 
-                    type="text"
-                    className="floating-island-input"
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    placeholder="Add a reply..."
-                    style={{
-                      flexGrow: 1,
-                      minWidth: "80px",
-                      height: "100%",
-                      background: "transparent",
-                      border: "none",
-                      outline: "none",
-                      color: theme === "dark" ? "#ffffff" : "#111111",
-                      fontSize: "0.82rem",
-                      fontWeight: "500",
-                      padding: "0 4px",
-                      fontFamily: "var(--font-sans)"
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleSendComment();
-                      }
-                    }}
-                    autoFocus
-                  />
+                    onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
+                    onMouseLeave={(e) => e.currentTarget.style.opacity = "0.7"}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
                 </div>
 
-                {/* Send paper-airplane Button */}
+                {/* Name Input */}
+                <input 
+                  type="text"
+                  value={tempName}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setTempName(val);
+                    if (typeof window !== "undefined") {
+                      localStorage.setItem("ivan_comment_author_name", val);
+                    }
+                  }}
+                  placeholder="Your Name (Optional)"
+                  style={{
+                    height: "36px",
+                    boxSizing: "border-box",
+                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)",
+                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                    borderRadius: "12px",
+                    padding: "0 12px",
+                    color: theme === "dark" ? "#ffffff" : "#111111",
+                    fontSize: "0.82rem",
+                    fontWeight: "500",
+                    width: "100%",
+                    outline: "none",
+                    fontFamily: "var(--font-sans)"
+                  }}
+                />
+
+                {/* Email Input */}
+                <input 
+                  type="email"
+                  value={tempEmail}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setTempEmail(val);
+                    if (typeof window !== "undefined") {
+                      localStorage.setItem("ivan_comment_author_email", val);
+                    }
+                  }}
+                  placeholder="Your Email (Optional)"
+                  style={{
+                    height: "36px",
+                    boxSizing: "border-box",
+                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)",
+                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                    borderRadius: "12px",
+                    padding: "0 12px",
+                    color: theme === "dark" ? "#ffffff" : "#111111",
+                    fontSize: "0.82rem",
+                    fontWeight: "500",
+                    width: "100%",
+                    outline: "none",
+                    fontFamily: "var(--font-sans)"
+                  }}
+                />
+
+                {/* Reply Message Input */}
+                <textarea 
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="Write your thoughts..."
+                  style={{
+                    height: "80px",
+                    boxSizing: "border-box",
+                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)",
+                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                    borderRadius: "12px",
+                    padding: "10px 12px",
+                    color: theme === "dark" ? "#ffffff" : "#111111",
+                    fontSize: "0.82rem",
+                    fontWeight: "500",
+                    width: "100%",
+                    outline: "none",
+                    fontFamily: "var(--font-sans)",
+                    resize: "none"
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendComment();
+                    }
+                  }}
+                  autoFocus
+                />
+
+                {/* Send button */}
                 <button 
                   onClick={handleSendComment}
                   disabled={!commentText.trim()}
-                  className="dock-icon-btn"
                   style={{
                     display: "flex", 
                     alignItems: "center", 
                     justifyContent: "center", 
-                    width: "34px", 
-                    height: "34px", 
-                    boxSizing: "border-box",
-                    borderRadius: "50%", 
+                    height: "36px",
+                    borderRadius: "12px", 
                     backgroundColor: commentText.trim() 
                       ? (theme === "dark" ? "#ffffff" : "#111111") 
                       : (theme === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)"), 
                     color: commentText.trim() 
                       ? (theme === "dark" ? "#000000" : "#ffffff") 
                       : (theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.15)"), 
-                    border: commentText.trim() ? "none" : (theme === "dark" ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.05)"),
-                    boxShadow: commentText.trim()
-                      ? (theme === "dark" ? "0 4px 12px rgba(255, 255, 255, 0.15)" : "0 4px 12px rgba(0, 0, 0, 0.15)")
-                      : "none",
+                    border: "none",
+                    fontSize: "0.82rem",
+                    fontWeight: "600",
                     cursor: commentText.trim() ? "pointer" : "default",
-                    transition: "all 0.2s ease"
+                    transition: "all 0.2s ease",
+                    fontFamily: "var(--font-sans)",
+                    boxShadow: commentText.trim() ? "0 4px 12px rgba(0,0,0,0.1)" : "none"
                   }}
-                  title="Send reply"
                 >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "rotate(45deg) translate(-1px, 1px)" }}>
-                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                  </svg>
+                  Send Reply
                 </button>
               </motion.div>
             ) : (
