@@ -1230,7 +1230,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
               border: "1px solid rgba(150,150,150,0.08)"
             }}
           >
-            {moments.slice(0, 9).map((moment, idx) => (
+            {(moments.length > 0 ? moments.slice(0, 9) : Array.from({ length: 9 }).map((_, idx) => ({ id: String(idx), url: `https://picsum.photos/seed/${idx + 10}/300/300`, title: `Moment ${idx + 1}` }))).map((moment, idx) => (
               <Link href="/moments" key={moment.id || idx} style={{ 
                 aspectRatio: "1/1", 
                 backgroundColor: "rgba(150,150,150,0.04)",

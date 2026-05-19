@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { loginWithPassword, logout, checkAuthStatus } from "@/app/actions/auth";
+// Replaced Server Actions with robust API routes to prevent proxy crashes
 import { getAllCommentsForAdmin, approveComment, deleteComment, CommentItem } from "@/lib/comments";
 import { getAllQuestionsForAdmin, answerQuestion, deleteQuestion, QuestionItem } from "@/lib/questions";
 import { getAllMoments, addMoment, deleteMoment, uploadMomentPhoto, MomentItem } from "@/lib/moments";
@@ -33,8 +33,13 @@ export default function AdminPage() {
     // Bulletproof try-catch-finally block to absolutely prevent loading spinner hang!
     const verifyAuth = async () => {
       try {
-        const status = await checkAuthStatus();
-        setIsAuthenticated(status);
+        const res = await fetch("/api/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "check" })
+        });
+        const data = await res.json();
+        setIsAuthenticated(data.authenticated === true);
       } catch (err) {
         console.error("Auth status verification failed:", err);
         setIsAuthenticated(false);
@@ -100,8 +105,14 @@ export default function AdminPage() {
     setLoginError("");
     
     try {
-      const res = await loginWithPassword(password);
-      if (res.success) {
+      const res = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "login", password })
+      });
+      const data = await res.json();
+      
+      if (data.success) {
         setIsAuthenticated(true);
         setPassword("");
         // Instantly load and sort active tab questions newest-first
@@ -120,8 +131,16 @@ export default function AdminPage() {
   };
 
   const handleLogout = async () => {
-    await logout();
-    setIsAuthenticated(false);
+    try {
+      await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "logout" })
+      });
+      setIsAuthenticated(false);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // Answer or Edit Question Action

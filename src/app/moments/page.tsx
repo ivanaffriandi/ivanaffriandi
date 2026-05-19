@@ -27,6 +27,16 @@ export default function MomentsPage() {
     };
     fetchMoments();
   }, []);
+  const displayMoments = moments.length > 0 
+    ? moments 
+    : Array.from({ length: 18 }).map((_, idx) => ({ 
+        id: String(idx), 
+        url: `https://picsum.photos/seed/${idx + 15}/800/800`, 
+        title: `Aesthetic Placeholder ${idx + 1}`,
+        description: `This is a temporary aesthetic placeholder generated to maintain the layout while the gallery is being populated with your uploaded moments.`,
+        date: new Date().toISOString()
+      }));
+
   return (
     <div style={{ minHeight: "auto", paddingBottom: "4rem", paddingTop: "0.5rem", backgroundColor: "var(--bg-color)" }}>
       <div style={{ 
@@ -121,11 +131,11 @@ export default function MomentsPage() {
                 <div style={{ width: "24px", height: "24px", margin: "0 auto", borderRadius: "50%", border: "2px solid rgba(150,150,150,0.2)", borderTopColor: "var(--text-primary)", animation: "spin 0.8s linear infinite" }} />
                 <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
               </div>
-            ) : moments.length === 0 ? (
+            ) : displayMoments.length === 0 ? (
                <div style={{ padding: "4rem", textAlign: "center", color: "var(--text-secondary)", fontSize: "0.85rem" }}>
                  No moments have been published yet.
                </div>
-            ) : moments.map((moment, idx) => {
+            ) : displayMoments.map((moment, idx) => {
               return (
                 <motion.div
                   key={moment.id}
@@ -220,7 +230,7 @@ export default function MomentsPage() {
               <div style={{ gridColumn: "1 / -1", padding: "4rem", textAlign: "center" }}>
                 <div style={{ width: "24px", height: "24px", margin: "0 auto", borderRadius: "50%", border: "2px solid rgba(150,150,150,0.2)", borderTopColor: "var(--text-primary)", animation: "spin 0.8s linear infinite" }} />
               </div>
-            ) : moments.map((moment, idx) => {
+            ) : displayMoments.map((moment, idx) => {
               return (
                 <motion.div
                   key={moment.id}
