@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getAllCommentsForAdmin, approveComment, deleteComment, CommentItem } from "@/lib/comments";
+import { getAllCommentsForAdmin, approveComment, deleteComment, replyComment, CommentItem } from "@/lib/comments";
 import { getAllQuestionsForAdmin, answerQuestion, deleteQuestion, QuestionItem } from "@/lib/questions";
 import { getAllMoments, addMoment, deleteMoment, updateMoment, uploadMomentPhoto, MomentItem } from "@/lib/moments";
+import { getAllCalendarEvents, addCalendarEvent, updateCalendarEvent, deleteCalendarEvent, CalendarEvent } from "@/lib/calendar";
 
 const iosSpring = { type: "spring" as const, stiffness: 420, damping: 32 };
 const staggerContainer = {
@@ -33,6 +34,20 @@ export default function AdminPage() {
   const [adminQuestions, setAdminQuestions] = useState<QuestionItem[]>([]);
   const [adminComments, setAdminComments] = useState<CommentItem[]>([]);
   const [adminMoments, setAdminMoments] = useState<MomentItem[]>([]);
+  const [adminCalendarEvents, setAdminCalendarEvents] = useState<CalendarEvent[]>([]);
+
+  // Comment Reply States
+  const [replyingCommentId, setReplyingCommentId] = useState<string | null>(null);
+  const [commentReplyText, setCommentReplyText] = useState("");
+
+  // Calendar Form States
+  const [editingEventId, setEditingEventId] = useState<string | null>(null);
+  const [calendarMonth, setCalendarMonth] = useState("08");
+  const [calendarDay, setCalendarDay] = useState("03");
+  const [calendarName, setCalendarName] = useState("");
+  const [calendarEmoji, setCalendarEmoji] = useState("🎂");
+  const [calendarType, setCalendarType] = useState<CalendarEvent["type"]>("ivan");
+  const [isSubmittingCalendar, setIsSubmittingCalendar] = useState(false);
   
   // Moment Form States
   const [isUploadingMoment, setIsUploadingMoment] = useState(false);
@@ -150,6 +165,22 @@ export default function AdminPage() {
     }
   }, [isAuthenticated, activeTab]);
 
+  // Fetch calendar events
+  useEffect(() => {
+    if (isAuthenticated && activeTab === "calendar") {
+      const loadEvents = async () => {
+        try {
+          const list = await getAllCalendarEvents();
+          const sorted = list.sort((a, b) => a.dateKey.localeCompare(b.dateKey));
+          setAdminCalendarEvents(sorted);
+        } catch (err) {
+          console.error("Failed to load calendar events:", err);
+        }
+      };
+      loadEvents();
+    }
+  }, [isAuthenticated, activeTab]);
+
   // File Preview generator
   useEffect(() => {
     if (!momentFile) {
@@ -160,6 +191,67 @@ export default function AdminPage() {
     setMomentPreviewUrl(objectUrl);
     return () => URL.revokeObjectURL(objectUrl);
   }, [momentFile]);
+
+  // Comment Reply Handlers
+  const handleReplyComment = async (id: string) => {
+    if (!commentReplyText.trim()) return;
+    const success = await replyComment(id, commentReplyText.trim());
+    if (success) {
+      setAdminComments(prev => prev.map(c => c.id === id ? { ...c, reply: commentReplyText.trim() } : c));
+      setReplyingCommentId(null);
+      setCommentReplyText("");
+    }
+  };
+
+  // Calendar Event Handlers
+  const handleSaveCalendarEvent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!calendarName.trim() || !calendarEmoji.trim()) return;
+
+    const dateKey = `${calendarMonth.padStart(2, '0')}-${calendarDay.padStart(2, '0')}`;
+    const eventPayload: Omit<CalendarEvent, "id"> = {
+      dateKey,
+      name: calendarName.trim(),
+      emoji: calendarEmoji.trim(),
+      type: calendarType
+    };
+
+    setIsSubmittingCalendar(true);
+    try {
+      if (editingEventId) {
+        // Edit Mode
+        const success = await updateCalendarEvent(editingEventId, eventPayload);
+        if (success) {
+          setAdminCalendarEvents(prev => prev.map(ev => ev.id === editingEventId ? { ...ev, ...eventPayload } : ev).sort((a, b) => a.dateKey.localeCompare(b.dateKey)));
+          setEditingEventId(null);
+          setCalendarName("");
+        }
+      } else {
+        // Add Mode
+        const newEvent = await addCalendarEvent(eventPayload);
+        setAdminCalendarEvents(prev => [...prev, newEvent].sort((a, b) => a.dateKey.localeCompare(b.dateKey)));
+        setCalendarName("");
+      }
+    } catch (err) {
+      console.error("Failed to save calendar event:", err);
+      alert("Failed to save calendar event.");
+    } finally {
+      setIsSubmittingCalendar(false);
+    }
+  };
+
+  const handleDeleteCalendarEvent = async (id: string) => {
+    triggerConfirm(
+      "Delete Event",
+      "Are you sure you want to permanently delete this calendar event? The theme animation for this day will be disabled.",
+      async () => {
+        const success = await deleteCalendarEvent(id);
+        if (success) {
+          setAdminCalendarEvents(prev => prev.filter(ev => ev.id !== id));
+        }
+      }
+    );
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -879,30 +971,284 @@ export default function AdminPage() {
         {activeTab === "calendar" && (
           <motion.div key="calendar" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-              <h2 style={{ fontSize: "0.78rem", fontWeight: "800", margin: 0, color: "var(--text-primary)", letterSpacing: "0.04em" }}>Schedule</h2>
+              <h2 style={{ fontSize: "0.78rem", fontWeight: "800", margin: 0, color: "var(--text-primary)", letterSpacing: "0.04em" }}>Schedule Manager</h2>
             </div>
             
-            <div style={{ backgroundColor: "rgba(255, 255, 255, 0.4)", border: "1px solid rgba(150,150,150,0.1)", borderRadius: "16px", overflow: "hidden" }}>
+            {/* Dynamic Calendar Form */}
+            <div style={{ backgroundColor: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(150, 150, 150, 0.1)", borderRadius: "16px", padding: "14px", marginBottom: "1.2rem", boxShadow: "0 4px 20px rgba(0, 0, 0, 0.01), inset 0 1px 0 rgba(255,255,255,0.7)" }}>
+              <h3 style={{ fontSize: "0.72rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "0.02em", margin: "0 0 8px 0" }}>
+                {editingEventId ? `Edit Event: ${calendarName}` : "Add New Calendar Event"}
+              </h3>
               
-              <div style={{ display: "flex", alignItems: "center", padding: "12px 14px", borderBottom: "1px solid rgba(150,150,150,0.06)", backgroundColor: "rgba(255, 255, 255, 0.15)" }}>
-                <div style={{ width: "30px", height: "30px", backgroundColor: "rgba(230,183,65,0.1)", border: "1px solid rgba(230,183,65,0.15)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.95rem", marginRight: "0.65rem" }}>
-                  🎂
+              <form onSubmit={handleSaveCalendarEvent} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Month</label>
+                    <select 
+                      value={calendarMonth} 
+                      onChange={(e) => setCalendarMonth(e.target.value)}
+                      className="admin-form-input custom-select"
+                      style={{ padding: "8px 24px 8px 12px" }}
+                    >
+                      {Array.from({ length: 12 }).map((_, i) => {
+                        const mVal = String(i + 1).padStart(2, '0');
+                        const mLabel = new Date(2026, i, 1).toLocaleDateString("en-US", { month: "long" });
+                        return <option key={mVal} value={mVal}>{mLabel}</option>;
+                      })}
+                    </select>
+                  </div>
+                  
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Day</label>
+                    <select 
+                      value={calendarDay} 
+                      onChange={(e) => setCalendarDay(e.target.value)}
+                      className="admin-form-input custom-select"
+                      style={{ padding: "8px 24px 8px 12px" }}
+                    >
+                      {Array.from({ length: 31 }).map((_, i) => {
+                        const dVal = String(i + 1).padStart(2, '0');
+                        return <option key={dVal} value={dVal}>{i + 1}</option>;
+                      })}
+                    </select>
+                  </div>
                 </div>
-                <div style={{ flex: 1 }}>
-                  <h3 style={{ margin: "0", fontSize: "0.76rem", fontWeight: "750", color: "var(--text-primary)" }}>Ivan's Birthday</h3>
-                  <p style={{ margin: 0, fontSize: "0.62rem", color: "var(--text-secondary)", fontWeight: "500" }}>Active every August 3rd.</p>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                  <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Event Title</label>
+                  <input 
+                    className="admin-form-input" 
+                    type="text" 
+                    placeholder="e.g. Vera's Birthday or Christmas Day" 
+                    value={calendarName} 
+                    onChange={(e) => setCalendarName(e.target.value)} 
+                    required 
+                  />
                 </div>
-                <div style={{ fontSize: "0.55rem", fontWeight: "800", backgroundColor: "rgba(150,150,150,0.06)", padding: "2px 8px", borderRadius: "6px", color: "var(--text-secondary)" }}>
-                  Locked
+
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Theme Style</label>
+                    <select 
+                      value={calendarType} 
+                      onChange={(e) => setCalendarType(e.target.value as any)}
+                      className="admin-form-input custom-select"
+                      style={{ padding: "8px 24px 8px 12px" }}
+                    >
+                      <option value="ivan">👑 Ivan's Birthday</option>
+                      <option value="female">🌸 Pink (Female Birthday)</option>
+                      <option value="male">🔹 Blue (Male Birthday)</option>
+                      <option value="both">🟣 Purple (Joint Birthday)</option>
+                      <option value="idul_fitri">🌙 Emerald (Idul Fitri)</option>
+                      <option value="idul_adha">🐏 Emerald (Idul Adha)</option>
+                      <option value="christmas">🎄 Festive Red (Christmas)</option>
+                      <option value="chinese_new_year">🏮 Crimson (Lunar New Year)</option>
+                      <option value="nyepi">🌌 Indigo (Nyepi Day)</option>
+                      <option value="waisak">🪷 Saffron (Waisak Day)</option>
+                      <option value="general_holiday">🔸 Warm Orange (General)</option>
+                    </select>
+                  </div>
+                  
+                  <div style={{ width: "90px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Emoji</label>
+                    <input 
+                      className="admin-form-input" 
+                      type="text" 
+                      value={calendarEmoji} 
+                      onChange={(e) => setCalendarEmoji(e.target.value)} 
+                      style={{ textAlign: "center" }}
+                      required 
+                    />
+                  </div>
                 </div>
-              </div>
-              
-              <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)" }}>
-                <p style={{ margin: 0, fontSize: "0.74rem", fontWeight: "700", color: "var(--text-primary)" }}>Archival Seasonal System</p>
-                <p style={{ margin: "2px 0 0 0", fontSize: "0.65rem", color: "var(--text-secondary)", fontWeight: "500", maxWidth: "260px", marginInline: "auto", lineHeight: "1.35" }}>
-                  Holiday animations (Idul Fitri, Christmas, Lunar New Year) are controlled dynamically using strict calendar timelines.
-                </p>
-              </div>
+
+                {/* Quick Emoji Suggestion Chips */}
+                <div style={{ display: "flex", gap: "4px", flexWrap: "wrap", margin: "2px 0" }}>
+                  {["🎂", "👑", "🎄", "🌙", "🏮", "🧘", "🎉", "🇮🇩", "🪷", "🌸", "💙", "💖"].map(emoji => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      onClick={() => setCalendarEmoji(emoji)}
+                      style={{
+                        padding: "4px 8px",
+                        fontSize: "0.65rem",
+                        backgroundColor: calendarEmoji === emoji ? "rgba(150,150,150,0.12)" : "rgba(150,150,150,0.03)",
+                        border: calendarEmoji === emoji ? "1px solid rgba(150,150,150,0.22)" : "1px solid rgba(150,150,150,0.06)",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        fontFamily: iosFontStack,
+                        transition: "all 0.15s ease"
+                      }}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+
+                <div style={{ display: "flex", gap: "6px", marginTop: "2px" }}>
+                  <motion.button 
+                    type="submit" 
+                    disabled={isSubmittingCalendar || !calendarName.trim()} 
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    style={{ 
+                      flex: 1,
+                      padding: "9px", 
+                      backgroundColor: "var(--text-primary)", 
+                      color: "var(--bg-color)", 
+                      border: "none", 
+                      borderRadius: "30px", 
+                      fontSize: "0.74rem", 
+                      fontWeight: "800", 
+                      cursor: "pointer",
+                      fontFamily: iosFontStack
+                    }}
+                  >
+                    {isSubmittingCalendar ? "Saving..." : (editingEventId ? "Save Updates" : "Add Event")}
+                  </motion.button>
+
+                  {editingEventId && (
+                    <motion.button 
+                      type="button" 
+                      onClick={() => {
+                        setEditingEventId(null);
+                        setCalendarName("");
+                        setCalendarEmoji("🎂");
+                        setCalendarType("ivan");
+                      }}
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                      style={{ 
+                        padding: "9px 16px", 
+                        backgroundColor: "rgba(150,150,150,0.05)", 
+                        border: "1px solid rgba(150,150,150,0.1)", 
+                        borderRadius: "30px", 
+                        color: "var(--text-secondary)",
+                        fontSize: "0.74rem", 
+                        fontWeight: "750", 
+                        cursor: "pointer",
+                        fontFamily: iosFontStack
+                      }}
+                    >
+                      Cancel
+                    </motion.button>
+                  )}
+                </div>
+              </form>
+            </div>
+
+            {/* List of dynamic calendar events */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {adminCalendarEvents.length > 0 ? (
+                adminCalendarEvents.map(event => {
+                  const monthName = new Date(2026, parseInt(event.dateKey.split("-")[0]) - 1, 1).toLocaleDateString("en-US", { month: "short" });
+                  const dayNum = parseInt(event.dateKey.split("-")[1]);
+                  
+                  // Color bubble selector
+                  const bubbleBg = event.type === "female" ? "rgba(255,92,157,0.08)" : (event.type === "ivan" ? "rgba(0,122,255,0.08)" : (event.type === "both" ? "rgba(168,85,247,0.08)" : "rgba(180,122,62,0.08)"));
+                  const bubbleBorder = event.type === "female" ? "rgba(255,92,157,0.15)" : (event.type === "ivan" ? "rgba(0,122,255,0.15)" : (event.type === "both" ? "rgba(168,85,247,0.15)" : "rgba(180,122,62,0.15)"));
+
+                  return (
+                    <motion.div 
+                      key={event.id}
+                      layoutId={`evcard-${event.id}`}
+                      style={{ 
+                        display: "flex", 
+                        alignItems: "center", 
+                        padding: "10px 12px", 
+                        backgroundColor: "rgba(255, 255, 255, 0.4)", 
+                        backdropFilter: "blur(20px)",
+                        WebkitBackdropFilter: "blur(20px)",
+                        border: "1px solid rgba(150, 150, 150, 0.1)", 
+                        borderRadius: "16px",
+                        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.01), inset 0 1px 0 rgba(255,255,255,0.7)"
+                      }}
+                    >
+                      <div style={{ 
+                        width: "32px", 
+                        height: "32px", 
+                        backgroundColor: bubbleBg, 
+                        border: `1px solid ${bubbleBorder}`, 
+                        borderRadius: "10px", 
+                        display: "flex", 
+                        alignItems: "center", 
+                        justifyContent: "center", 
+                        fontSize: "1rem", 
+                        marginRight: "0.65rem",
+                        flexShrink: 0
+                      }}>
+                        {event.emoji}
+                      </div>
+                      
+                      <div style={{ flex: 1, minWidth: "0" }}>
+                        <h3 style={{ margin: "0", fontSize: "0.78rem", fontWeight: "750", color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {event.name}
+                        </h3>
+                        <p style={{ margin: 0, fontSize: "0.62rem", color: "var(--text-secondary)", fontWeight: "500" }}>
+                          Active every {monthName} {dayNum}.
+                        </p>
+                      </div>
+
+                      <div style={{ display: "flex", gap: "4px", alignItems: "center", flexShrink: 0, marginLeft: "4px" }}>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            setEditingEventId(event.id);
+                            const parts = event.dateKey.split("-");
+                            setCalendarMonth(parts[0]);
+                            setCalendarDay(parts[1]);
+                            setCalendarName(event.name);
+                            setCalendarEmoji(event.emoji);
+                            setCalendarType(event.type);
+                          }}
+                          style={{
+                            width: "24px",
+                            height: "24px",
+                            backgroundColor: "rgba(150,150,150,0.03)",
+                            border: "1px solid rgba(150,150,150,0.08)",
+                            borderRadius: "50%",
+                            color: "var(--text-primary)",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                          }}
+                          title="Edit Event"
+                        >
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        </motion.button>
+
+                        <motion.button
+                          whileHover={{ scale: 1.05, color: "#ef4444" }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => handleDeleteCalendarEvent(event.id)}
+                          style={{
+                            width: "24px",
+                            height: "24px",
+                            backgroundColor: "rgba(239,68,68,0.03)",
+                            border: "none",
+                            borderRadius: "50%",
+                            color: "#ef4444",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                          }}
+                          title="Delete Event"
+                        >
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  );
+                })
+              ) : (
+                <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)", border: "1px dashed rgba(150,150,150,0.12)", borderRadius: "16px" }}>
+                  <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "750", color: "var(--text-primary)" }}>Empty Schedule</p>
+                  <p style={{ margin: "2px 0 0 0", fontSize: "0.68rem", color: "var(--text-secondary)" }}>Add custom dates and themes above.</p>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -976,8 +1322,49 @@ export default function AdminPage() {
                     }}>
                       <p style={{ margin: 0, fontSize: "0.75rem", color: "var(--text-primary)", lineHeight: "1.4", fontWeight: "500" }}>{comment.content}</p>
                     </div>
+
+                    {comment.reply && (
+                      <div style={{ 
+                        padding: "8px 10px", 
+                        backgroundColor: "rgba(180, 122, 62, 0.04)", 
+                        border: "1px solid rgba(180, 122, 62, 0.08)", 
+                        borderRadius: "10px",
+                        marginTop: "2px"
+                      }}>
+                        <span style={{ fontSize: "0.55rem", fontWeight: "800", color: "#B47A3E", letterSpacing: "0.03em", display: "block", marginBottom: "2px" }}>Reply from Ivan</span>
+                        <p style={{ margin: 0, fontSize: "0.74rem", color: "var(--text-secondary)", lineHeight: "1.4" }}>{comment.reply}</p>
+                      </div>
+                    )}
                     
-                    <div style={{ display: "flex", gap: "4px", alignSelf: "flex-end", marginTop: "2px" }}>
+                    <div style={{ display: "flex", gap: "4px", alignSelf: "flex-end", marginTop: "2px", width: "100%", justifyContent: "flex-end", flexWrap: "wrap" }}>
+                      {comment.approved && !comment.reply && replyingCommentId !== comment.id && (
+                        <motion.button 
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => {
+                            setReplyingCommentId(comment.id);
+                            setCommentReplyText("");
+                          }}
+                          style={{ padding: "4px 10px", backgroundColor: "rgba(150, 150, 150, 0.05)", border: "1px solid rgba(150, 150, 150, 0.12)", borderRadius: "20px", color: "var(--text-primary)", fontSize: "0.62rem", fontWeight: "750", cursor: "pointer", transition: "all 0.15s ease", fontFamily: iosFontStack }}
+                        >
+                          Reply
+                        </motion.button>
+                      )}
+
+                      {comment.approved && comment.reply && replyingCommentId !== comment.id && (
+                        <motion.button 
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => {
+                            setReplyingCommentId(comment.id);
+                            setCommentReplyText(comment.reply || "");
+                          }}
+                          style={{ padding: "4px 10px", backgroundColor: "rgba(150, 150, 150, 0.05)", border: "1px solid rgba(150, 150, 150, 0.12)", borderRadius: "20px", color: "var(--text-primary)", fontSize: "0.62rem", fontWeight: "750", cursor: "pointer", transition: "all 0.15s ease", fontFamily: iosFontStack }}
+                        >
+                          Edit Reply
+                        </motion.button>
+                      )}
+
                       {!comment.approved && (
                         <motion.button 
                           whileHover={{ scale: 1.02 }}
@@ -990,6 +1377,7 @@ export default function AdminPage() {
                           Approve
                         </motion.button>
                       )}
+                      
                       <motion.button 
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
@@ -1001,6 +1389,81 @@ export default function AdminPage() {
                         Delete
                       </motion.button>
                     </div>
+
+                    {replyingCommentId === comment.id && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        style={{ width: "100%", marginTop: "4px", display: "flex", flexDirection: "column", gap: "6px", overflow: "hidden" }}
+                      >
+                        <div style={{
+                          backgroundColor: "rgba(0, 0, 0, 0.03)",
+                          borderRadius: "12px",
+                          padding: "8px 12px",
+                          border: "1px solid rgba(150,150,150,0.08)",
+                          boxShadow: "inset 0 1.5px 3px rgba(0,0,0,0.04)"
+                        }}>
+                          <textarea
+                            placeholder="Type your reply to comment..."
+                            value={commentReplyText}
+                            onChange={(e) => setCommentReplyText(e.target.value)}
+                            style={{
+                              width: "100%",
+                              minHeight: "65px",
+                              border: "none",
+                              backgroundColor: "transparent",
+                              color: "var(--text-primary)",
+                              fontFamily: iosFontStack,
+                              fontSize: "0.78rem",
+                              lineHeight: "1.45",
+                              outline: "none",
+                              resize: "none",
+                              fontWeight: "550"
+                            }}
+                          />
+                        </div>
+                        <div style={{ display: "flex", gap: "4px" }}>
+                          <motion.button 
+                            whileHover={commentReplyText.trim() ? { scale: 1.02 } : {}}
+                            whileTap={commentReplyText.trim() ? { scale: 0.98 } : {}}
+                            onClick={() => handleReplyComment(comment.id)}
+                            disabled={!commentReplyText.trim()}
+                            style={{ 
+                              padding: "5px 12px", 
+                              backgroundColor: "var(--text-primary)", 
+                              color: "var(--bg-color)", 
+                              border: "none", 
+                              borderRadius: "20px", 
+                              fontSize: "0.65rem", 
+                              fontWeight: "750", 
+                              cursor: commentReplyText.trim() ? "pointer" : "not-allowed", 
+                              opacity: commentReplyText.trim() ? 1 : 0.4,
+                              fontFamily: iosFontStack
+                            }}
+                          >
+                            Publish Reply
+                          </motion.button>
+                          <motion.button 
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => setReplyingCommentId(null)}
+                            style={{ 
+                              padding: "5px 12px", 
+                              backgroundColor: "rgba(150, 150, 150, 0.05)", 
+                              border: "1px solid rgba(150, 150, 150, 0.1)", 
+                              borderRadius: "20px", 
+                              color: "var(--text-secondary)", 
+                              fontSize: "0.65rem", 
+                              fontWeight: "750", 
+                              cursor: "pointer",
+                              fontFamily: iosFontStack
+                            }}
+                          >
+                            Cancel
+                          </motion.button>
+                        </div>
+                      </motion.div>
+                    )}
                   </motion.div>
                 ))
               ) : (

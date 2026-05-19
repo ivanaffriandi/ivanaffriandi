@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import FadeIn from "./FadeIn";
 import { motion, AnimatePresence } from "framer-motion";
+import { getAllCalendarEvents, CalendarEvent } from "@/lib/calendar";
 
 // iOS stagger spring config
 const iosCardVariants = {
@@ -28,276 +29,136 @@ const iosCardVariants = {
   },
 };
 
-const INDONESIAN_HOLIDAYS: Record<string, string[]> = {
-  // January 2026
-  "01-01": ["New Year's Day"],
-  "01-16": ["Isra Mi'raj"],
-  
-  // February 2026
-  "02-16": ["Lunar New Year (Joint Holiday)"],
-  "02-17": ["Lunar New Year"],
-  
-  // March 2026
-  "03-18": ["Nyepi (Joint Holiday)"],
-  "03-19": ["Nyepi (Day of Silence)"],
-  "03-20": ["Eid al-Fitr (Joint Holiday)"],
-  "03-21": ["Eid al-Fitr"],
-  "03-22": ["Eid al-Fitr"],
-  "03-23": ["Eid al-Fitr (Joint Holiday)"],
-  "03-24": ["Eid al-Fitr (Joint Holiday)"],
-  
-  // April 2026
-  "04-03": ["Good Friday"],
-  "04-05": ["Easter Sunday"],
-  
-  // May 2026 (Hari Libur Resmi & Cuti Bersama 2026)
-  "05-01": ["Labor Day"],
-  "05-14": ["Ascension Day"],
-  "05-15": ["Ascension Day (Joint Holiday)"],
-  "05-27": ["Eid al-Adha"],
-  "05-28": ["Eid al-Adha (Joint Holiday)"],
-  "05-31": ["Waisak Day"],
-  
-  // June 2026
-  "06-01": ["Pancasila Day"],
-  "06-16": ["Islamic New Year"],
-  
-  // August 2026
-  "08-17": ["Independence Day"],
-  "08-25": ["Prophet Muhammad's Birthday"],
-  
-  // December 2026
-  "12-24": ["Christmas (Joint Holiday)"],
-  "12-25": ["Christmas Day"]
-};
+const STATIC_SEEDED_EVENTS: CalendarEvent[] = [
+  { id: "s-0", dateKey: "08-03", name: "Ivan's Birthday", type: "ivan", emoji: "👑🎂" },
+  { id: "s-1", dateKey: "05-19", name: "Naveena's Birthday", type: "female", emoji: "🎂" },
+  { id: "s-2", dateKey: "08-31", name: "Vera's Birthday", type: "female", emoji: "🎂" },
+  { id: "s-3", dateKey: "01-15", name: "Dhiffa's Birthday", type: "female", emoji: "🎂" },
+  { id: "s-4", dateKey: "10-05", name: "Aluna's Birthday", type: "female", emoji: "🎂" },
+  { id: "s-5", dateKey: "01-01", name: "New Year's Day", type: "general_holiday", emoji: "🎉" },
+  { id: "s-6", dateKey: "01-16", name: "Isra Mi'raj", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-7", dateKey: "02-17", name: "Lunar New Year", type: "chinese_new_year", emoji: "🏮" },
+  { id: "s-8", dateKey: "03-19", name: "Nyepi (Day of Silence)", type: "nyepi", emoji: "🧘" },
+  { id: "s-9", dateKey: "03-21", name: "Eid al-Fitr", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-10", dateKey: "05-27", name: "Eid al-Adha", type: "idul_adha", emoji: "🌙" },
+  { id: "s-11", dateKey: "08-17", name: "Independence Day", type: "general_holiday", emoji: "🇮🇩" },
+  { id: "s-12", dateKey: "12-25", name: "Christmas Day", type: "christmas", emoji: "🎄" }
+];
 
-const getBirthdayTheme = (date: Date) => {
-  const month = date.getMonth();
-  const day = date.getDate();
-  
-  const females: string[] = [];
-  const males: string[] = [];
-  
-  // Female Birthdays
-  if (month === 4 && day === 19) females.push("Naveena");
-  if (month === 7 && day === 31) females.push("Vera");
-  if (month === 0 && day === 15) females.push("Dhiffa");
-  if (month === 9 && day === 5) females.push("Aluna");
-  
-  // Male Birthdays
-  if (month === 7 && day === 3) males.push("Ivan");
-  
-  const isFemale = females.length > 0;
-  const isMale = males.length > 0;
-  
-  if (isFemale && isMale) {
-    const allNames = [
-      ...females,
-      ...males.map(n => n === "Ivan" ? "Ivan" : n)
-    ].join(" & ");
-    
-    return {
-      type: "both",
-      primary: "#a855f7", // Purple
-      bgLight: "#FAF5FF",
-      bgDark: "#1E112A",
-      bgUnselected: "rgba(168, 85, 247, 0.1)",
-      borderUnselected: "1px solid rgba(168, 85, 247, 0.2)",
-      emoji: "🎂💜",
-      text: `${allNames}'s Birthday! ✨💖`
-    };
-  } else if (isFemale) {
-    const names = females.join(" & ");
-    return {
-      type: "female",
-      primary: "#ff5c9d", // Pink
-      bgLight: "#FFF5F7",
-      bgDark: "#1A0F11",
-      bgUnselected: "rgba(255, 192, 203, 0.18)",
-      borderUnselected: "1px solid rgba(255, 105, 180, 0.3)",
-      emoji: "🎂",
-      text: `${names}'s Birthday! ✨💖`
-    };
-  } else if (isMale) {
-    const namesText = males.map(n => n === "Ivan" ? "Ivan Affriandi" : n).join(" & ");
-    const isIvan = males.includes("Ivan");
-    return {
-      type: isIvan ? "ivan" : "male",
-      primary: "#007aff", // Blue
-      bgLight: "#F0F6FF",
-      bgDark: "#0B1528",
-      bgUnselected: "rgba(0, 122, 255, 0.12)",
-      borderUnselected: "1px solid rgba(0, 122, 255, 0.22)",
-      emoji: "👑🎂",
-      text: `${namesText}'s Birthday! ✨💙`
-    };
-  }
-  return null;
-};
-
-const getSelectedTheme = (date: Date) => {
-  // 1. Check Birthdays first (highest priority)
-  const birthdayTheme = getBirthdayTheme(date);
-  if (birthdayTheme) return birthdayTheme;
-
-  // 2. Check Indonesian Holidays (from static date mapping)
+const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
   const month = date.getMonth();
   const day = date.getDate();
   const dateKey = `${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
-  if (INDONESIAN_HOLIDAYS[dateKey]) {
-    const holidayName = INDONESIAN_HOLIDAYS[dateKey][0];
-    
-    // Idul Fitri Theme (Emerald Green)
-    if (holidayName.includes("Eid al-Fitr")) {
+  const matchingEvent = calendarEvents.find(e => e.dateKey === dateKey);
+  if (matchingEvent) {
+    if (matchingEvent.type === "ivan" || matchingEvent.type === "male" || matchingEvent.type === "female" || matchingEvent.type === "both") {
+      const namesText = matchingEvent.name.includes("'s Birthday") ? matchingEvent.name.split("'s Birthday")[0] : matchingEvent.name;
+      const primaryColor = matchingEvent.type === "female" ? "#ff5c9d" : (matchingEvent.type === "ivan" ? "#007aff" : (matchingEvent.type === "both" ? "#a855f7" : "#007aff"));
+      const bgLight = matchingEvent.type === "female" ? "#FFF5F7" : (matchingEvent.type === "ivan" ? "#F0F6FF" : (matchingEvent.type === "both" ? "#FAF5FF" : "#F0F6FF"));
+      const bgDark = matchingEvent.type === "female" ? "#1A0F11" : (matchingEvent.type === "ivan" ? "#0B1528" : (matchingEvent.type === "both" ? "#1E112A" : "#0B1528"));
+      const bgUnselected = matchingEvent.type === "female" ? "rgba(255, 192, 203, 0.18)" : (matchingEvent.type === "ivan" ? "rgba(0, 122, 255, 0.12)" : (matchingEvent.type === "both" ? "rgba(168, 85, 247, 0.1)" : "rgba(0, 122, 255, 0.12)"));
+      const borderUnselected = matchingEvent.type === "female" ? "1px solid rgba(255, 105, 180, 0.3)" : (matchingEvent.type === "ivan" ? "1px solid rgba(0, 122, 255, 0.22)" : (matchingEvent.type === "both" ? "1px solid rgba(168, 85, 247, 0.2)" : "1px solid rgba(0, 122, 255, 0.22)"));
+
+      return {
+        type: matchingEvent.type,
+        primary: primaryColor,
+        bgLight,
+        bgDark,
+        bgUnselected,
+        borderUnselected,
+        emoji: matchingEvent.emoji,
+        text: `${namesText}'s Birthday! ${matchingEvent.emoji}`
+      };
+    }
+
+    if (matchingEvent.type === "idul_fitri") {
       return {
         type: "idul_fitri",
-        primary: "#10b981", // Islamic Emerald Green
+        primary: "#10b981",
         bgLight: "#F0FDF4",
         bgDark: "#061F12",
         bgUnselected: "rgba(16, 185, 129, 0.12)",
         borderUnselected: "1px solid rgba(16, 185, 129, 0.22)",
-        emoji: "🌙",
-        text: "Hari Raya Idul Fitri"
+        emoji: matchingEvent.emoji,
+        text: matchingEvent.name
       };
     }
 
-    // Idul Adha Theme (Emerald Green)
-    if (holidayName.includes("Eid al-Adha")) {
+    if (matchingEvent.type === "idul_adha") {
       return {
         type: "idul_adha",
-        primary: "#10b981", // Islamic Emerald Green
+        primary: "#10b981",
         bgLight: "#F0FDF4",
         bgDark: "#061F12",
         bgUnselected: "rgba(16, 185, 129, 0.12)",
         borderUnselected: "1px solid rgba(16, 185, 129, 0.22)",
-        emoji: "🌙",
-        text: "Hari Raya Idul Adha"
+        emoji: matchingEvent.emoji,
+        text: matchingEvent.name
       };
     }
 
-    // Isra Mi'raj Theme (Emerald Green)
-    if (holidayName.includes("Isra Mi'raj")) {
-      return {
-        type: "isra_miraj",
-        primary: "#10b981", // Islamic Emerald Green
-        bgLight: "#F0FDF4",
-        bgDark: "#061F12",
-        bgUnselected: "rgba(16, 185, 129, 0.12)",
-        borderUnselected: "1px solid rgba(16, 185, 129, 0.22)",
-        emoji: "🌙",
-        text: "Isra Mi'raj"
-      };
-    }
-
-    // Islamic New Year Theme (Tahun Baru Islam) (Emerald Green)
-    if (holidayName.includes("Islamic New Year")) {
-      return {
-        type: "islamic_new_year",
-        primary: "#10b981", // Islamic Emerald Green
-        bgLight: "#F0FDF4",
-        bgDark: "#061F12",
-        bgUnselected: "rgba(16, 185, 129, 0.12)",
-        borderUnselected: "1px solid rgba(16, 185, 129, 0.22)",
-        emoji: "🌙",
-        text: "Tahun Baru Islam"
-      };
-    }
-
-    // Prophet Muhammad's Birthday (Maulid Nabi) Theme (Emerald Green)
-    if (holidayName.includes("Prophet Muhammad's Birthday")) {
-      return {
-        type: "maulid_nabi",
-        primary: "#10b981", // Islamic Emerald Green
-        bgLight: "#F0FDF4",
-        bgDark: "#061F12",
-        bgUnselected: "rgba(16, 185, 129, 0.12)",
-        borderUnselected: "1px solid rgba(16, 185, 129, 0.22)",
-        emoji: "🌙",
-        text: "Maulid Nabi Muhammad SAW"
-      };
-    }
-
-    // Christmas Day Theme (Red with Snow animation trigger)
-    if (holidayName.includes("Christmas")) {
+    if (matchingEvent.type === "christmas") {
       return {
         type: "christmas",
-        primary: "#ef4444", // Christmas Festive Red
+        primary: "#ef4444",
         bgLight: "#FEF2F2",
         bgDark: "#270808",
         bgUnselected: "rgba(239, 68, 68, 0.12)",
         borderUnselected: "1px solid rgba(239, 68, 68, 0.22)",
-        emoji: "🎄",
-        text: "Hari Raya Natal"
+        emoji: matchingEvent.emoji,
+        text: matchingEvent.name
       };
     }
 
-    // Independence Day Theme (Red & White Flag Theme)
-    if (holidayName.includes("Independence Day")) {
-      return {
-        type: "independence",
-        primary: "#ff0000", // Flag Red
-        bgLight: "#FFF5F5",
-        bgDark: "#260606",
-        bgUnselected: "rgba(255, 0, 0, 0.12)",
-        borderUnselected: "1px solid rgba(255, 0, 0, 0.22)",
-        emoji: "🇮🇩",
-        text: "Hari Kemerdekaan Republik Indonesia"
-      };
-    }
-
-    // Waisak Day Theme (Golden/Saffron Buddhist Theme)
-    if (holidayName.includes("Waisak")) {
+    if (matchingEvent.type === "waisak") {
       return {
         type: "waisak",
-        primary: "#f59e0b", // Saffron Gold
+        primary: "#f59e0b",
         bgLight: "#FEF3C7",
         bgDark: "#241305",
         bgUnselected: "rgba(245, 158, 11, 0.12)",
         borderUnselected: "1px solid rgba(245, 158, 11, 0.22)",
-        emoji: "🪷",
-        text: "Hari Raya Waisak"
+        emoji: matchingEvent.emoji,
+        text: matchingEvent.name
       };
     }
 
-    // Nyepi Theme (Deep Charcoal Mystic Purple)
-    if (holidayName.includes("Nyepi")) {
+    if (matchingEvent.type === "nyepi") {
       return {
         type: "nyepi",
-        primary: "#6366f1", // Deep Royal Indigo/Night Sky
+        primary: "#6366f1",
         bgLight: "#EEF2FF",
         bgDark: "#0B0C1E",
         bgUnselected: "rgba(99, 102, 241, 0.12)",
         borderUnselected: "1px solid rgba(99, 102, 241, 0.22)",
-        emoji: "🌌",
-        text: "Hari Raya Nyepi"
+        emoji: matchingEvent.emoji,
+        text: matchingEvent.name
       };
     }
 
-    // Lunar New Year (Lunar Red/Gold)
-    if (holidayName.includes("Lunar New Year")) {
+    if (matchingEvent.type === "chinese_new_year") {
       return {
         type: "lunar_new_year",
-        primary: "#f43f5e", // Crimson Gold
+        primary: "#f43f5e",
         bgLight: "#FFF1F2",
         bgDark: "#200408",
         bgUnselected: "rgba(244, 63, 94, 0.12)",
         borderUnselected: "1px solid rgba(244, 63, 94, 0.22)",
-        emoji: "🧧",
-        text: "Tahun Baru Imlek"
+        emoji: matchingEvent.emoji,
+        text: matchingEvent.name
       };
     }
 
-    // General Holiday Theme (Warm Coral Red)
     return {
       type: "general_holiday",
-      primary: "#f97316", // Coral Orange
+      primary: "#f97316",
       bgLight: "#FFF7ED",
       bgDark: "#240E05",
       bgUnselected: "rgba(249, 115, 22, 0.12)",
       borderUnselected: "1px solid rgba(249, 115, 22, 0.22)",
-      emoji: "📍",
-      text: holidayName
+      emoji: matchingEvent.emoji,
+      text: matchingEvent.name
     };
   }
 
@@ -821,8 +682,22 @@ const BirthdayConfettiEffect = ({ type }: { type: string }) => {
 };
 
 export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[], moments?: any[] }) {
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(STATIC_SEEDED_EVENTS);
+
+  useEffect(() => {
+    const fetchCalendar = async () => {
+      try {
+        const events = await getAllCalendarEvents();
+        setCalendarEvents(events);
+      } catch (err) {
+        console.error("Failed to fetch calendar events:", err);
+      }
+    };
+    fetchCalendar();
+  }, []);
+
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const selectedTheme = getSelectedTheme(selectedDate);
+  const selectedTheme = getSelectedTheme(selectedDate, calendarEvents);
 
   // Curate homepage 3x3 grid (9 slots) based on user slot assignment
   // 1. Get moments explicitly pinned to slots (1 to 9)
@@ -873,7 +748,8 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
 
   // Holiday and Sunday indicators computed globally
   const selectedKey = `${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
-  const selectedHoliday = INDONESIAN_HOLIDAYS[selectedKey]?.[0];
+  const matchingEvent = calendarEvents.find(e => e.dateKey === selectedKey);
+  const selectedHoliday = matchingEvent ? matchingEvent.name : undefined;
   const isSelectedSunday = selectedDate.getDay() === 0;
   const themeColor = isSelectedSunday ? "#ff3b30" : "#ff726f";
 
@@ -895,7 +771,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
 
   // Confetti trigger timer for birthday page load and switch
   useEffect(() => {
-    const theme = getSelectedTheme(selectedDate);
+    const theme = getSelectedTheme(selectedDate, calendarEvents);
     if (theme && (theme.type === "male" || theme.type === "female" || theme.type === "both" || theme.type === "ivan")) {
       if (theme.type === "ivan") {
         // Ivan's birthday celebration stays indefinitely!
@@ -1105,7 +981,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
       const isSelected = isSameDay(date, selectedDate);
       const isToday = isSameDay(date, today);
       const hasPost = hasPostOnDate(date);
-      const cellTheme = getSelectedTheme(date);
+      const cellTheme = getSelectedTheme(date, calendarEvents);
       
       days.push(
         <div 
@@ -1545,11 +1421,11 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             const isSelected = isSameDay(d, selectedDate);
             const isToday = isSameDay(d, today);
             const hasPost = hasPostOnDate(d);
-            const pillTheme = getSelectedTheme(d);
+            const pillTheme = getSelectedTheme(d, calendarEvents);
             
             const isSunday = d.getDay() === 0;
             const dKey = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-            const isHoliday = !!INDONESIAN_HOLIDAYS[dKey];
+            const isHoliday = calendarEvents.some(e => e.dateKey === dKey && e.type !== "ivan" && e.type !== "female" && e.type !== "male" && e.type !== "both");
             
             // Color Hierarchy
             const sundayColor = "#ff3b30";

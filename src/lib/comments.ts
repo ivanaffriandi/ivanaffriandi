@@ -17,6 +17,7 @@ export interface CommentItem {
   published: string;
   content: string;
   approved: boolean;
+  reply?: string;
   author: {
     displayName: string;
     email: string;
@@ -154,3 +155,23 @@ export async function deleteComment(commentId: string): Promise<boolean> {
   saveLocalComments(filtered);
   return true;
 }
+
+// 6. Admin membalas Komentar (Reply)
+export async function replyComment(commentId: string, replyText: string): Promise<boolean> {
+  if (hasFirebaseKeys) {
+    try {
+      const docRef = doc(db, "comments", commentId);
+      await updateDoc(docRef, { reply: replyText });
+      return true;
+    } catch (e) {
+      console.error("Firebase update error, using localStorage fallback:", e);
+    }
+  }
+
+  // Fallback Local
+  const localComments = getLocalComments();
+  const updated = localComments.map(c => c.id === commentId ? { ...c, reply: replyText } : c);
+  saveLocalComments(updated);
+  return true;
+}
+

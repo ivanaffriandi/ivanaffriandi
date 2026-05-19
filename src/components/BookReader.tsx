@@ -720,6 +720,42 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         }}
                         dangerouslySetInnerHTML={{ __html: comment.content }}
                       />
+
+                      {comment.reply && (
+                        <div style={{
+                          display: "flex",
+                          gap: "0.6rem",
+                          marginTop: "0.6rem",
+                          padding: "0.6rem 0.8rem",
+                          backgroundColor: theme === "dark" ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.015)",
+                          borderRadius: "10px",
+                          borderLeft: "2.5px solid #B47A3E"
+                        }}>
+                          <div style={{
+                            width: "22px",
+                            height: "22px",
+                            borderRadius: "50%",
+                            backgroundColor: "#B47A3E",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: "0.65rem",
+                            color: "#fff",
+                            flexShrink: 0
+                          }}>
+                            👑
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "0.1rem" }}>
+                              <span style={{ fontFamily: "var(--font-sans)", fontWeight: "600", fontSize: "0.75rem", color: colors.text }}>Ivan</span>
+                              <span style={{ fontSize: "0.55rem", fontWeight: "800", backgroundColor: "rgba(180, 122, 62, 0.1)", color: "#B47A3E", padding: "1px 4px", borderRadius: "4px" }}>Admin</span>
+                            </div>
+                            <p style={{ margin: 0, fontSize: "0.76rem", lineHeight: "1.45", color: colors.textSecondary, opacity: 0.9 }}>
+                              {comment.reply}
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
