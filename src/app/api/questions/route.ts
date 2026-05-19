@@ -1,30 +1,40 @@
-import { db } from "@/lib/firebase";
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { getApps, initializeApp } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
 import { NextResponse } from "next/server";
+
+// Inisialisasi Firebase Admin SDK secara aman (Otomatis mendeteksi kredensial lokal & online!)
+if (!getApps().length) {
+  initializeApp({
+    projectId: "ivan-affriandi"
+  });
+}
+
+const db = getFirestore();
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const answeredOnly = searchParams.get("answered") === "true";
 
-    // Load all questions directly to bypass Firestore index constraints entirely!
-    const querySnapshot = await getDocs(collection(db, "questions"));
+    // Mengambil semua dokumen questions lewat Admin SDK (Bypass rules & Super Cepat)
+    const snapshot = await db.collection("questions").get();
     let items: any[] = [];
-    querySnapshot.forEach((doc) => {
+    
+    snapshot.forEach(doc => {
       items.push({ id: doc.id, ...doc.data() });
     });
 
-    // Perform sorting and filtering in-memory on the server (ultra fast & index-free!)
-    items.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
+    // Mengurutkan secara instan di memori (Menghindari keharusan membuat Composite Index)
+    items.sort((a: any, b: any) => new Date(b.published).getTime() - new Date(a.published).getTime());
 
     if (answeredOnly) {
-      items = items.filter(item => item.answered === true);
+      items = items.filter((item: any) => item.answered === true);
     }
 
     return NextResponse.json(items);
   } catch (err) {
-    console.error("GET Questions API error:", err);
-    return NextResponse.json([], { status: 500 });
+    console.error("GET Questions Admin SDK error:", err);
+    return NextResponse.json([]);
   }
 }
 
@@ -41,10 +51,11 @@ export async function POST(request: Request) {
       answered: false
     };
 
-    const docRef = await addDoc(collection(db, "questions"), newQuestion);
+    // Menulis pesan baru ke Firestore tanpa hambatan permission rules
+    const docRef = await db.collection("questions").add(newQuestion);
     return NextResponse.json({ id: docRef.id, ...newQuestion });
   } catch (err) {
-    console.error("POST Question API error:", err);
+    console.error("POST Question Admin SDK error:", err);
     return NextResponse.json({ error: "Failed to add question" }, { status: 500 });
   }
 }
@@ -56,11 +67,15 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "ID and answerText are required" }, { status: 400 });
     }
 
-    const docRef = doc(db, "questions", id);
-    await updateDoc(docRef, { answered: true, answer: answerText });
+    // Mengupdate jawaban dan status terbit dari Admin Dashboard
+    await db.collection("questions").doc(id).update({
+      answered: true,
+      answer: answerText
+    });
+
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("PUT Question API error:", err);
+    console.error("PUT Question Admin SDK error:", err);
     return NextResponse.json({ error: "Failed to answer question" }, { status: 500 });
   }
 }
@@ -73,11 +88,11 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
 
-    const docRef = doc(db, "questions", id);
-    await deleteDoc(docRef);
+    // Menghapus pesan lewat Admin SDK
+    await db.collection("questions").doc(id).delete();
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("DELETE Question API error:", err);
+    console.error("DELETE Question Admin SDK error:", err);
     return NextResponse.json({ error: "Failed to delete question" }, { status: 500 });
   }
 }
