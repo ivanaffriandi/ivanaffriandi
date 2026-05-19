@@ -15,7 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Ivan — Portfolio",
+  title: "Ivan Affriandi",
   description: "Swiss Grid Layout",
 };
 

@@ -300,6 +300,7 @@ export default function AskPage() {
   // Load live answered Q&As & track mounting (purged MOCK_QUESTIONS strictly for live visitor interactions)
   useEffect(() => {
     setMounted(true);
+    document.title = "Ask Ivan";
     const loadQAs = async () => {
       try {
         const data = await getAnsweredQuestions();
@@ -378,7 +379,7 @@ export default function AskPage() {
       {/* Cozy, highly curated single-column container */}
       <div style={{ maxWidth: "420px", margin: "0 auto" }}>
         
-        {/* Header Block — Warm, Inviting "Ask Me" Swiss Header */}
+        {/* Header Block — Warm, Inviting "Ask Ivan" Swiss Header */}
         <div style={{ marginBottom: "1.8rem" }}>
           <h1 style={{ 
             fontFamily: "var(--font-sans)",
@@ -389,7 +390,7 @@ export default function AskPage() {
             lineHeight: "1.1", 
             color: "var(--text-primary)" 
           }}>
-            Ask Me
+            Ask Ivan
           </h1>
           <p style={{ 
             fontSize: "0.85rem", 
