@@ -574,7 +574,6 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 {readingTime} min read
               </span>
             </div>
-          )}
 
           {/* Bold Centered Title */}
           <h1 
