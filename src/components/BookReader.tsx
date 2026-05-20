@@ -970,28 +970,32 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   }} />
 
                   {/* Row 2: Message Field (Auto-growing Textarea) */}
-                  <div style={{ display: "grid", flex: 1, minHeight: "18px", maxHeight: "120px", overflowY: "auto" }}>
+                  <div style={{ position: "relative", width: "100%", minHeight: "18px", maxHeight: "100px", overflowY: "auto" }}>
                     {/* Hidden div to calculate height naturally */}
                     <div style={{ 
                       visibility: "hidden", 
                       whiteSpace: "pre-wrap", 
                       wordBreak: "break-word", 
-                      gridArea: "1 / 1", 
                       padding: "0 2px", 
+                      margin: 0,
                       fontFamily: "var(--font-sans)", 
                       fontSize: "0.90rem", 
-                      lineHeight: "18px"
+                      lineHeight: "18px",
+                      minHeight: "18px"
                     }}>
                       {commentText + " "}
                     </div>
                     {/* The actual text area */}
                     <textarea 
+                      rows={1}
                       value={commentText}
                       maxLength={300}
                       onChange={(e) => setCommentText(e.target.value)}
                       placeholder="Add a reply..."
                       style={{
-                        gridArea: "1 / 1",
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
                         resize: "none",
                         backgroundColor: "transparent",
                         border: "none",
@@ -1003,9 +1007,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         height: "100%",
                         boxSizing: "border-box",
                         padding: "0 2px",
+                        margin: 0,
                         fontFamily: "var(--font-sans)",
                         overflow: "hidden",
-                        lineHeight: "18px"
+                        lineHeight: "18px",
+                        WebkitAppearance: "none"
                       }}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
