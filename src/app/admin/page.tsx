@@ -23,6 +23,23 @@ const fadeRise = {
 const iosFontStack = '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
 
 export default function AdminPage() {
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+  
+  useEffect(() => {
+    const isDark = document.documentElement.classList.contains("dark") || 
+                   document.documentElement.getAttribute("data-theme") === "dark";
+    setTheme(isDark ? "dark" : "light");
+    
+    const observer = new MutationObserver(() => {
+      const currentDark = document.documentElement.classList.contains("dark") || 
+                          document.documentElement.getAttribute("data-theme") === "dark";
+      setTheme(currentDark ? "dark" : "light");
+    });
+    
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-theme"] });
+    return () => observer.disconnect();
+  }, []);
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   const [password, setPassword] = useState("");
@@ -195,9 +212,20 @@ export default function AdminPage() {
   // Comment Reply Handlers
   const handleReplyComment = async (id: string) => {
     if (!commentReplyText.trim()) return;
+    
+    // Auto-approve if currently pending
+    const targetComment = adminComments.find(c => c.id === id);
+    if (targetComment && !targetComment.approved) {
+      await approveComment(id);
+    }
+    
     const success = await replyComment(id, commentReplyText.trim());
     if (success) {
-      setAdminComments(prev => prev.map(c => c.id === id ? { ...c, reply: commentReplyText.trim() } : c));
+      setAdminComments(prev => prev.map(c => 
+        c.id === id 
+          ? { ...c, approved: true, reply: commentReplyText.trim() } 
+          : c
+      ));
       setReplyingCommentId(null);
       setCommentReplyText("");
     }
@@ -555,6 +583,9 @@ export default function AdminPage() {
     );
   }
 
+  const pendingQuestionsCount = adminQuestions.filter(q => !q.answered).length;
+  const pendingCommentsCount = adminComments.filter(c => !c.approved).length;
+
   // --- DASHBOARD VIEW (MAX-WIDTH: 420PX STICKY APP PORTRAIT) ---
   return (
     <div className="admin-panel-container" style={{ minHeight: "100vh", padding: "1.5rem 1rem 7rem 1rem", maxWidth: "420px", margin: "0 auto", fontFamily: iosFontStack, backgroundColor: "var(--bg-color)", position: "relative" }}>
@@ -720,7 +751,48 @@ export default function AdminPage() {
         }}
       >
         {(["inbox", "calendar", "comments", "moments"] as const).map(tab => {
-          const tabLabels = { inbox: "Inbox", calendar: "Calendar", comments: "Comments", moments: "Moments" };
+          const tabLabels = { 
+            inbox: (
+              <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
+                Inbox
+                {pendingQuestionsCount > 0 && (
+                  <span style={{
+                    fontSize: "0.55rem",
+                    fontWeight: "800",
+                    background: theme === "dark" ? "rgba(255, 149, 0, 0.22)" : "rgba(255, 149, 0, 0.14)",
+                    color: "#FF9500",
+                    border: `0.5px solid ${theme === "dark" ? "rgba(255, 149, 0, 0.3)" : "rgba(255, 149, 0, 0.2)"}`,
+                    padding: "1px 4px",
+                    borderRadius: "5px",
+                    lineHeight: "1"
+                  }}>
+                    {pendingQuestionsCount}
+                  </span>
+                )}
+              </span>
+            ), 
+            calendar: "Calendar", 
+            comments: (
+              <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
+                Comments
+                {pendingCommentsCount > 0 && (
+                  <span style={{
+                    fontSize: "0.55rem",
+                    fontWeight: "800",
+                    background: theme === "dark" ? "rgba(180, 122, 62, 0.22)" : "rgba(180, 122, 62, 0.14)",
+                    color: "#B47A3E",
+                    border: `0.5px solid ${theme === "dark" ? "rgba(180, 122, 62, 0.3)" : "rgba(180, 122, 62, 0.2)"}`,
+                    padding: "1px 4px",
+                    borderRadius: "5px",
+                    lineHeight: "1"
+                  }}>
+                    {pendingCommentsCount}
+                  </span>
+                )}
+              </span>
+            ), 
+            moments: "Moments" 
+          };
           return (
             <button 
               key={tab} 
@@ -742,9 +814,11 @@ export default function AdminPage() {
                   style={{
                     position: "absolute",
                     inset: 0,
-                    backgroundColor: "rgba(255, 255, 255, 0.95)",
-                    border: "0.5px solid rgba(0, 0, 0, 0.04)",
-                    boxShadow: "0 3px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.02)",
+                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.12)" : "rgba(255, 255, 255, 0.95)",
+                    border: `0.5px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.04)"}`,
+                    boxShadow: theme === "dark"
+                      ? "0 3px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08)"
+                      : "0 3px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.02)",
                     borderRadius: "20px",
                     zIndex: 1
                   }}
@@ -806,13 +880,17 @@ export default function AdminPage() {
                     variants={fadeRise}
                     layoutId={`qcard-${q.id}`}
                     style={{ 
-                      padding: "16px", 
-                      backgroundColor: "rgba(255, 255, 255, 0.65)", 
-                      backdropFilter: "blur(30px)", 
-                      WebkitBackdropFilter: "blur(30px)",
-                      border: "0.5px solid rgba(150, 150, 150, 0.15)", 
-                      borderRadius: "20px",
-                      boxShadow: "0 8px 30px rgba(0, 0, 0, 0.015), inset 0 1px 0 rgba(255, 255, 255, 0.8)",
+                      padding: "12px 14px", 
+                      background: theme === "dark" 
+                        ? "linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%)" 
+                        : "linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.52) 100%)",
+                      backdropFilter: "blur(24px) saturate(190%)", 
+                      WebkitBackdropFilter: "blur(24px) saturate(190%)",
+                      border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.18)" : "rgba(0, 0, 0, 0.11)"}`, 
+                      borderRadius: "16px",
+                      boxShadow: theme === "dark" 
+                        ? "inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -1px 0 rgba(255, 255, 255, 0.05), 0 8px 32px -4px rgba(0, 0, 0, 0.35)" 
+                        : "inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(0, 0, 0, 0.02), 0 6px 20px -2px rgba(0, 0, 0, 0.04)",
                       position: "relative"
                     }}
                   >
@@ -1032,7 +1110,20 @@ export default function AdminPage() {
             </div>
             
             {/* Dynamic Calendar Form */}
-            <div style={{ backgroundColor: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(150, 150, 150, 0.1)", borderRadius: "16px", padding: "14px", marginBottom: "1.2rem", boxShadow: "0 4px 20px rgba(0, 0, 0, 0.01), inset 0 1px 0 rgba(255,255,255,0.7)" }}>
+            <div style={{ 
+              padding: "12px 14px", 
+              background: theme === "dark" 
+                ? "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)" 
+                : "linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.45) 100%)",
+              backdropFilter: "blur(24px) saturate(190%)", 
+              WebkitBackdropFilter: "blur(24px) saturate(190%)", 
+              border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.14)" : "rgba(0, 0, 0, 0.09)"}`, 
+              borderRadius: "16px", 
+              marginBottom: "1.2rem", 
+              boxShadow: theme === "dark"
+                ? "inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(255, 255, 255, 0.02), 0 8px 32px -4px rgba(0, 0, 0, 0.35)"
+                : "inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(0, 0, 0, 0.01), 0 6px 20px -2px rgba(0, 0, 0, 0.04)"
+            }}>
               <h3 style={{ fontSize: "0.72rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "0.02em", margin: "0 0 8px 0" }}>
                 {editingEventId ? `Edit Event: ${calendarName}` : "Add New Calendar Event"}
               </h3>
@@ -1213,12 +1304,16 @@ export default function AdminPage() {
                         display: "flex", 
                         alignItems: "center", 
                         padding: "10px 12px", 
-                        backgroundColor: "rgba(255, 255, 255, 0.4)", 
-                        backdropFilter: "blur(20px)",
-                        WebkitBackdropFilter: "blur(20px)",
-                        border: "1px solid rgba(150, 150, 150, 0.1)", 
+                        background: theme === "dark" 
+                          ? "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)" 
+                          : "linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.45) 100%)",
+                        backdropFilter: "blur(24px) saturate(190%)",
+                        WebkitBackdropFilter: "blur(24px) saturate(190%)",
+                        border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.14)" : "rgba(0, 0, 0, 0.09)"}`, 
                         borderRadius: "16px",
-                        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.01), inset 0 1px 0 rgba(255,255,255,0.7)"
+                        boxShadow: theme === "dark"
+                          ? "inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(255, 255, 255, 0.02), 0 8px 32px -4px rgba(0, 0, 0, 0.35)"
+                          : "inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(0, 0, 0, 0.01), 0 6px 20px -2px rgba(0, 0, 0, 0.04)"
                       }}
                     >
                       <div style={{ 
@@ -1325,15 +1420,19 @@ export default function AdminPage() {
                      layoutId={`ccard-${comment.id}`}
                      style={{ 
                        padding: "12px 14px", 
-                       backgroundColor: "rgba(255, 255, 255, 0.4)", 
-                       backdropFilter: "blur(20px)", 
-                       WebkitBackdropFilter: "blur(20px)",
-                       border: "1px solid rgba(150, 150, 150, 0.1)", 
+                       background: theme === "dark" 
+                         ? "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)" 
+                         : "linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.45) 100%)",
+                       backdropFilter: "blur(24px) saturate(190%)", 
+                       WebkitBackdropFilter: "blur(24px) saturate(190%)",
+                       border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.14)" : "rgba(0, 0, 0, 0.09)"}`, 
                        borderRadius: "16px", 
                        display: "flex", 
                        flexDirection: "column",
                        gap: "8px", 
-                       boxShadow: "0 4px 20px rgba(0, 0, 0, 0.01), inset 0 1px 0 rgba(255,255,255,0.6)"
+                       boxShadow: theme === "dark"
+                         ? "inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(255, 255, 255, 0.02), 0 8px 32px -4px rgba(0, 0, 0, 0.35)"
+                         : "inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(0, 0, 0, 0.01), 0 6px 20px -2px rgba(0, 0, 0, 0.04)"
                      }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px", width: "100%" }}>
@@ -1405,7 +1504,7 @@ export default function AdminPage() {
                     )}
                     
                     <div style={{ display: "flex", gap: "4px", alignSelf: "flex-end", marginTop: "2px", width: "100%", justifyContent: "flex-end", flexWrap: "wrap" }}>
-                      {comment.approved && !comment.reply && replyingCommentId !== comment.id && (
+                      {!comment.reply && replyingCommentId !== comment.id && (
                         <motion.button 
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
@@ -1419,7 +1518,7 @@ export default function AdminPage() {
                         </motion.button>
                       )}
 
-                      {comment.approved && comment.reply && replyingCommentId !== comment.id && (
+                      {comment.reply && replyingCommentId !== comment.id && (
                         <motion.button 
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
@@ -1552,7 +1651,20 @@ export default function AdminPage() {
             </div>
             
             {/* Compact Form */}
-            <div style={{ backgroundColor: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(150, 150, 150, 0.1)", borderRadius: "16px", padding: "14px", marginBottom: "1.5rem", boxShadow: "0 4px 20px rgba(0, 0, 0, 0.01), inset 0 1px 0 rgba(255,255,255,0.7)" }}>
+            <div style={{ 
+              padding: "12px 14px", 
+              background: theme === "dark" 
+                ? "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)" 
+                : "linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.45) 100%)",
+              backdropFilter: "blur(24px) saturate(190%)", 
+              WebkitBackdropFilter: "blur(24px) saturate(190%)", 
+              border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.14)" : "rgba(0, 0, 0, 0.09)"}`, 
+              borderRadius: "16px", 
+              marginBottom: "1.5rem", 
+              boxShadow: theme === "dark"
+                ? "inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(255, 255, 255, 0.02), 0 8px 32px -4px rgba(0, 0, 0, 0.35)"
+                : "inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(0, 0, 0, 0.01), 0 6px 20px -2px rgba(0, 0, 0, 0.04)"
+            }}>
               
               <h3 style={{ fontSize: "0.72rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "0.02em", margin: "0 0 8px 0" }}>Upload New Moment</h3>
 
@@ -1702,16 +1814,33 @@ export default function AdminPage() {
                       display: "flex", 
                       gap: "10px", 
                       padding: "10px", 
-                      backgroundColor: "rgba(255, 255, 255, 0.4)", 
-                      backdropFilter: "blur(20px)", 
-                      WebkitBackdropFilter: "blur(20px)", 
-                      border: "1px solid rgba(150, 150, 150, 0.1)", 
+                      background: theme === "dark" 
+                        ? "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)" 
+                        : "linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.45) 100%)",
+                      backdropFilter: "blur(24px) saturate(190%)", 
+                      WebkitBackdropFilter: "blur(24px) saturate(190%)", 
+                      border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.14)" : "rgba(0, 0, 0, 0.09)"}`, 
                       borderRadius: "16px", 
                       alignItems: "center", 
-                      boxShadow: "0 4px 20px rgba(0, 0, 0, 0.01), inset 0 1px 0 rgba(255,255,255,0.6)"
+                      boxShadow: theme === "dark"
+                        ? "inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(255, 255, 255, 0.02), 0 8px 32px -4px rgba(0, 0, 0, 0.35)"
+                        : "inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(0, 0, 0, 0.01), 0 6px 20px -2px rgba(0, 0, 0, 0.04)"
                     }}
                   >
-                    <div style={{ position: "relative", width: "50px", height: "50px", borderRadius: "8px", overflow: "hidden", border: "1px solid rgba(150,150,150,0.12)", flexShrink: 0 }}>
+                    <div style={{ 
+                      position: "relative", 
+                      width: "50px", 
+                      height: "50px", 
+                      borderRadius: "8px", 
+                      overflow: "hidden", 
+                      border: moment.homepageOrder !== undefined
+                        ? "1.5px solid #B47A3E"
+                        : `1px solid ${theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(150,150,150,0.12)"}`,
+                      boxShadow: moment.homepageOrder !== undefined
+                        ? "0 0 8px rgba(180, 122, 98, 0.3)"
+                        : "none",
+                      flexShrink: 0 
+                    }}>
                       <img src={moment.url} alt="moment thumbnail" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                     </div>
                     <div style={{ flex: 1, minWidth: "0", display: "flex", flexDirection: "column", gap: "1px" }}>
