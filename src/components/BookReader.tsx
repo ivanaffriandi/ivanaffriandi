@@ -726,29 +726,29 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             borderTop: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}`
           }}
         >
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: "2rem" }}>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.5rem" }}>
             <div style={{ 
               display: "inline-flex", 
               alignItems: "center", 
               gap: "8px", 
-              height: "36px",
-              padding: "0 16px",
+              height: "34px",
+              padding: "0 14px",
               background: theme === "dark" 
                 ? "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%)" 
                 : "linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.65) 100%)",
               backdropFilter: "blur(20px) saturate(190%)",
               WebkitBackdropFilter: "blur(20px) saturate(190%)",
               border: theme === "dark" 
-                ? "1px solid rgba(255, 255, 255, 0.18)" 
-                : "1px solid rgba(0, 0, 0, 0.12)",
-              borderRadius: "18px",
+                ? "1px solid rgba(255, 255, 255, 0.2)" 
+                : "1px solid rgba(0, 0, 0, 0.14)",
+              borderRadius: "17px",
               boxShadow: theme === "dark" 
-                ? "inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 6px 20px rgba(0, 0, 0, 0.3)" 
-                : "inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 6px 16px rgba(0, 0, 0, 0.04)"
+                ? "inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(255, 255, 255, 0.05), 0 6px 20px -4px rgba(0, 0, 0, 0.4)" 
+                : "inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(0, 0, 0, 0.02), 0 4px 16px -2px rgba(0, 0, 0, 0.05)"
             }}>
               <span style={{ 
                 fontFamily: "var(--font-sans)", 
-                fontSize: "0.74rem", 
+                fontSize: "0.72rem", 
                 fontWeight: "700",
                 color: theme === "dark" ? "rgba(255, 255, 255, 0.9)" : "rgba(17, 17, 17, 0.85)",
                 letterSpacing: "0.08em",
@@ -758,11 +758,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               </span>
               <span style={{
                 fontFamily: "var(--font-sans)",
-                fontSize: "0.7rem",
+                fontSize: "0.68rem",
                 fontWeight: "600",
                 backgroundColor: theme === "dark" ? "rgba(180, 122, 62, 0.25)" : "rgba(180, 122, 62, 0.08)",
                 color: "#B47A3E",
-                padding: "2px 7px",
+                padding: "1px 6px",
                 borderRadius: "100px",
                 letterSpacing: "0.02em"
               }}>
@@ -780,25 +780,25 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   <div 
                     key={comment.id} 
                     style={{ 
-                      padding: "0.95rem 1.15rem",
+                      padding: "0.85rem 1.05rem",
                       background: theme === "dark" 
-                        ? "linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%)" 
-                        : "linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.45) 100%)",
+                        ? "linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%)" 
+                        : "linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.52) 100%)",
                       backdropFilter: "blur(24px) saturate(190%)",
                       WebkitBackdropFilter: "blur(24px) saturate(190%)",
-                      border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.14)" : "rgba(0, 0, 0, 0.08)"}`,
-                      borderRadius: "14px",
-                      marginBottom: "0.85rem",
+                      border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.18)" : "rgba(0, 0, 0, 0.11)"}`,
+                      borderRadius: "12px",
+                      marginBottom: "0.75rem",
                       opacity: comment.approved ? 1 : 0.65,
                       boxShadow: theme === "dark" 
-                        ? "inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 8px 32px -4px rgba(0, 0, 0, 0.3)" 
-                        : "inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 8px 32px -4px rgba(0, 0, 0, 0.04)",
+                        ? "inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -1px 0 rgba(255, 255, 255, 0.05), 0 8px 32px -4px rgba(0, 0, 0, 0.35)" 
+                        : "inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(0, 0, 0, 0.02), 0 6px 20px -2px rgba(0, 0, 0, 0.04)",
                       transition: "all 0.2s ease"
                     }}
                   >
                     {/* Comment Body */}
                     <div style={{ flex: 1 }}>
-                      <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "7px", marginBottom: "0.3rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "7px", marginBottom: "0.25rem" }}>
                         <span style={{ 
                           fontFamily: "var(--font-sans)", 
                           fontWeight: "600", 
@@ -835,8 +835,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       <div 
                         style={{ 
                           fontSize: "0.84rem", 
-                          lineHeight: "1.5",
-                          color: theme === "dark" ? "rgba(255, 255, 255, 0.85)" : "rgba(0, 0, 0, 0.75)",
+                          lineHeight: "1.48",
+                          color: theme === "dark" ? "rgba(255, 255, 255, 0.92)" : "rgba(17, 17, 17, 0.88)",
                           fontFamily: "var(--font-sans)",
                           margin: 0,
                           letterSpacing: "-0.01em",
@@ -849,20 +849,20 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         <div style={{
                           display: "flex",
                           gap: "0.6rem",
-                          marginTop: "0.75rem",
-                          marginLeft: "0.85rem",
-                          padding: "0.6rem 0.85rem",
+                          marginTop: "0.7rem",
+                          marginLeft: "0.8rem",
+                          padding: "0.55rem 0.8rem",
                           background: theme === "dark" 
-                            ? "linear-gradient(135deg, rgba(180, 122, 62, 0.12) 0%, rgba(180, 122, 62, 0.04) 100%)" 
-                            : "linear-gradient(135deg, rgba(180, 122, 62, 0.09) 0%, rgba(180, 122, 62, 0.03) 100%)",
+                            ? "linear-gradient(135deg, rgba(180, 122, 62, 0.14) 0%, rgba(180, 122, 62, 0.05) 100%)" 
+                            : "linear-gradient(135deg, rgba(180, 122, 62, 0.1) 0%, rgba(180, 122, 62, 0.04) 100%)",
                           backdropFilter: "blur(12px)",
                           WebkitBackdropFilter: "blur(12px)",
                           borderRadius: "10px",
-                          border: `1px solid ${theme === "dark" ? "rgba(180, 122, 62, 0.28)" : "rgba(180, 122, 62, 0.18)"}`,
+                          border: `1px solid ${theme === "dark" ? "rgba(180, 122, 62, 0.32)" : "rgba(180, 122, 62, 0.22)"}`,
                           borderLeft: "3px solid #B47A3E",
                           boxShadow: theme === "dark"
-                            ? "inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 4px 16px rgba(0, 0, 0, 0.15)"
-                            : "inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 4px 12px rgba(180, 122, 62, 0.02)"
+                            ? "inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(255, 255, 255, 0.02), 0 4px 16px -2px rgba(0, 0, 0, 0.2)"
+                            : "inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -1px 0 rgba(0, 0, 0, 0.01), 0 4px 12px -2px rgba(180, 122, 62, 0.03)"
                         }}>
                           <div style={{
                             width: "22px",
