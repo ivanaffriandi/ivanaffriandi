@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
-import { usePathname } from "next/navigation";
+import { useEffect, useState, useCallback } from "react";
+import { motion, useScroll, useSpring } from "framer-motion";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import LofiPlayer from "./LofiPlayer";
 
@@ -40,22 +40,87 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   );
 }
 
+// Sign out icon button — only shows on /admin
+function SignOutButton() {
+  const [pressed, setPressed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleSignOut = useCallback(async () => {
+    setLoading(true);
+    try {
+      await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "logout" }),
+      });
+      router.push("/");
+      router.refresh();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [router]);
+
+  return (
+    <motion.button
+      animate={{ scale: pressed ? 0.9 : 1, opacity: loading ? 0.5 : 1 }}
+      transition={iosSpring}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      onMouseLeave={() => setPressed(false)}
+      onTouchStart={() => setPressed(true)}
+      onTouchEnd={() => setPressed(false)}
+      onClick={handleSignOut}
+      title="Sign out"
+      disabled={loading}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "30px",
+        height: "30px",
+        borderRadius: "50%",
+        border: "1px solid rgba(255, 59, 48, 0.18)",
+        backgroundColor: "rgba(255, 59, 48, 0.06)",
+        color: "#FF3B30",
+        cursor: loading ? "not-allowed" : "pointer",
+        flexShrink: 0,
+      }}
+    >
+      {/* Power/Sign-out icon */}
+      <svg
+        width="13"
+        height="13"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+        <polyline points="16 17 21 12 16 7" />
+        <line x1="21" y1="12" x2="9" y2="12" />
+      </svg>
+    </motion.button>
+  );
+}
+
 export default function Navigation() {
   const { scrollYProgress } = useScroll();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
 
+  const isAdminPage = pathname === "/admin";
+
   // Smooth scroll listener for glassmorphism trigger
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 15) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 15);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
-    // Check initial scroll position on mount
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -128,7 +193,7 @@ export default function Navigation() {
             backgroundColor: "var(--text-primary)",
             transformOrigin: "0%",
             scaleX,
-            zIndex: 1
+            zIndex: 1,
           }}
         />
 
@@ -139,12 +204,12 @@ export default function Navigation() {
             style={{
               position: "absolute",
               left: `${percent}%`,
-              top: "-2px", // perfectly centers a 5px tick over the 1px line
+              top: "-2px",
               width: "1px",
               height: "5px",
               backgroundColor: "var(--border-color)",
               zIndex: 2,
-              opacity: 0.7
+              opacity: 0.7,
             }}
           />
         ))}
@@ -152,9 +217,13 @@ export default function Navigation() {
 
       <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
         <LofiPlayer />
-        <NavLink href={pathname === "/ask" ? "/" : "/ask"}>
-          {pathname === "/ask" ? "Home" : "Ask"}
-        </NavLink>
+        {isAdminPage ? (
+          <SignOutButton />
+        ) : (
+          <NavLink href={pathname === "/ask" ? "/" : "/ask"}>
+            {pathname === "/ask" ? "Home" : "Ask"}
+          </NavLink>
+        )}
       </div>
     </header>
   );

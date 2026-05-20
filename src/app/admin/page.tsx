@@ -736,28 +736,8 @@ export default function AdminPage() {
             : "inset 0 1px 0 rgba(255,255,255,0.95), 0 4px 16px rgba(0,0,0,0.015)"
         }}
       >
-        <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", gap: "8px" }}>
-          <h1 style={{ fontSize: "0.82rem", fontWeight: "800", margin: 0, letterSpacing: "-0.02em", color: "var(--text-primary)", whiteSpace: "nowrap" }}>Studio</h1>
-          <button 
-            onClick={handleLogout} 
-            style={{ 
-              padding: "3px 9px", 
-              backgroundColor: "rgba(255, 59, 48, 0.08)", 
-              border: "0.5px solid rgba(255, 59, 48, 0.15)", 
-              borderRadius: "30px", 
-              color: "#FF3B30", 
-              fontSize: "0.62rem", 
-              fontWeight: "700", 
-              cursor: "pointer", 
-              transition: "all 0.2s ease",
-              letterSpacing: "-0.01em",
-              fontFamily: iosFontStack
-            }} 
-            onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#FF3B30"; e.currentTarget.style.color = "#ffffff"; }} 
-            onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "rgba(255, 59, 48, 0.08)"; e.currentTarget.style.color = "#FF3B30"; }}
-          >
-            Sign out
-          </button>
+        <div style={{ marginBottom: "8px" }}>
+          <h1 style={{ fontSize: "0.82rem", fontWeight: "800", margin: 0, letterSpacing: "-0.02em", color: "var(--text-primary)" }}>Studio</h1>
         </div>
 
         {/* Live Stats Row */}
