@@ -726,11 +726,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             borderTop: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}`
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem", paddingBottom: "0.75rem", borderBottom: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)"}` }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem", paddingBottom: "0.5rem", borderBottom: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)"}` }}>
             <h3 style={{ 
               margin: 0, 
               fontFamily: "var(--font-sans)", 
-              fontSize: "0.78rem", 
+              fontSize: "0.75rem", 
               fontWeight: "700",
               color: colors.text,
               letterSpacing: "0.08em",
@@ -741,11 +741,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             </h3>
             <span style={{
               fontFamily: "var(--font-sans)",
-              fontSize: "0.75rem",
+              fontSize: "0.7rem",
               fontWeight: "600",
               backgroundColor: theme === "dark" ? "rgba(180, 122, 62, 0.15)" : "rgba(180, 122, 62, 0.08)",
               color: "#B47A3E",
-              padding: "2px 8px",
+              padding: "1px 6px",
               borderRadius: "100px",
               letterSpacing: "0.02em"
             }}>
@@ -762,11 +762,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   <div 
                     key={comment.id} 
                     style={{ 
-                      padding: "1.1rem 1.25rem",
+                      padding: "0.8rem 1rem",
                       backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.012)",
                       border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.03)"}`,
-                      borderRadius: "16px",
-                      marginBottom: "1rem",
+                      borderRadius: "12px",
+                      marginBottom: "0.75rem",
                       opacity: comment.approved ? 1 : 0.65,
                       boxShadow: theme === "dark" 
                         ? "0 4px 20px -2px rgba(0, 0, 0, 0.2)" 
@@ -776,20 +776,20 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   >
                     {/* Comment Body */}
                     <div style={{ flex: 1 }}>
-                      <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "8px", marginBottom: "0.4rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "6px", marginBottom: "0.25rem" }}>
                         <span style={{ 
                           fontFamily: "var(--font-sans)", 
                           fontWeight: "600", 
-                          fontSize: "0.86rem",
+                          fontSize: "0.82rem",
                           color: colors.text,
                           letterSpacing: "-0.01em"
                         }}>
                           {displayName}
                         </span>
-                        <span style={{ fontSize: "0.6rem", color: colors.textSecondary, opacity: 0.35 }}>·</span>
+                        <span style={{ fontSize: "0.55rem", color: colors.textSecondary, opacity: 0.35 }}>·</span>
                         <span style={{ 
                           fontFamily: "var(--font-sans)", 
-                          fontSize: "0.75rem", 
+                          fontSize: "0.7rem", 
                           color: colors.textSecondary,
                           opacity: 0.45
                         }}>
@@ -797,11 +797,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         </span>
                         {!comment.approved && (
                           <span style={{
-                            fontSize: "0.6rem",
+                            fontSize: "0.55rem",
                             fontWeight: "600",
                             backgroundColor: "rgba(180, 122, 62, 0.08)",
                             color: "#B47A3E",
-                            padding: "1px 5px",
+                            padding: "1px 4px",
                             borderRadius: "4px",
                             fontFamily: "var(--font-sans)",
                             letterSpacing: "0.02em"
@@ -812,8 +812,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       </div>
                       <div 
                         style={{ 
-                          fontSize: "0.86rem", 
-                          lineHeight: "1.55",
+                          fontSize: "0.82rem", 
+                          lineHeight: "1.45",
                           color: theme === "dark" ? "rgba(255, 255, 255, 0.85)" : "rgba(0, 0, 0, 0.75)",
                           fontFamily: "var(--font-sans)",
                           margin: 0,
@@ -826,19 +826,19 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       {comment.reply && (
                         <div style={{
                           display: "flex",
-                          gap: "0.75rem",
-                          marginTop: "0.85rem",
-                          marginLeft: "1rem",
-                          padding: "0.75rem 0.9rem",
+                          gap: "0.5rem",
+                          marginTop: "0.6rem",
+                          marginLeft: "0.75rem",
+                          padding: "0.5rem 0.75rem",
                           backgroundColor: theme === "dark" ? "rgba(180, 122, 62, 0.06)" : "rgba(180, 122, 62, 0.03)",
-                          borderRadius: "12px",
+                          borderRadius: "8px",
                           border: `1px solid ${theme === "dark" ? "rgba(180, 122, 62, 0.15)" : "rgba(180, 122, 62, 0.08)"}`,
-                          borderLeft: "3px solid #B47A3E",
+                          borderLeft: "2.5px solid #B47A3E",
                           boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.02)"
                         }}>
                           <div style={{
-                            width: "24px",
-                            height: "24px",
+                            width: "20px",
+                            height: "20px",
                             borderRadius: "50%",
                             backgroundImage: "url(/profile.jpg), url(/profile.png)",
                             backgroundSize: "cover",
@@ -847,22 +847,22 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                             flexShrink: 0
                           }} />
                           <div style={{ flex: 1 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "0.2rem" }}>
-                              <span style={{ fontFamily: "var(--font-sans)", fontWeight: "600", fontSize: "0.82rem", color: colors.text }}>Ivan</span>
+                            <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "0.15rem" }}>
+                              <span style={{ fontFamily: "var(--font-sans)", fontWeight: "600", fontSize: "0.78rem", color: colors.text }}>Ivan</span>
                               <span style={{ 
-                                fontSize: "0.62rem", 
+                                fontSize: "0.58rem", 
                                 fontWeight: "700", 
                                 textTransform: "uppercase",
                                 letterSpacing: "0.04em",
                                 backgroundColor: theme === "dark" ? "rgba(180, 122, 62, 0.2)" : "rgba(180, 122, 62, 0.1)", 
                                 color: "#B47A3E", 
-                                padding: "2px 6px", 
+                                padding: "1px 5px", 
                                 borderRadius: "100px" 
                               }}>
                                 Writer
                               </span>
                             </div>
-                            <p style={{ margin: 0, fontSize: "0.82rem", lineHeight: "1.5", color: theme === "dark" ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.7)", opacity: 0.95 }}>
+                            <p style={{ margin: 0, fontSize: "0.78rem", lineHeight: "1.4", color: theme === "dark" ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.7)", opacity: 0.95 }}>
                               {comment.reply}
                             </p>
                           </div>
