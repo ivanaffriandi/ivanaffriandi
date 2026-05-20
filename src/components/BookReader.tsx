@@ -87,24 +87,40 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     return () => window.removeEventListener("scroll", handleScroll);
   }, [mounted]);
 
-  // Fetch comments on mount and support local pending items
+  // Fetch comments on mount — scoped strictly to this post's ID
   useEffect(() => {
     const loadComments = async () => {
       try {
+        // 1. Fetch approved comments from Firebase for THIS post only
         const approved = await getApprovedComments(post.id);
-        
-        // Load local comments to display pending comments immediately for the author
-        const stored = typeof window !== "undefined" ? localStorage.getItem("ivan_journal_comments") : null;
+
+        // 2. Load any optimistic pending comments from localStorage for THIS post only
+        const stored = typeof window !== "undefined"
+          ? localStorage.getItem("ivan_journal_comments")
+          : null;
         let pendingLocal: CommentItem[] = [];
         if (stored) {
-          const parsed = JSON.parse(stored);
-          pendingLocal = parsed.filter((c: any) => c.postId === post.id && !c.approved);
+          const parsed: CommentItem[] = JSON.parse(stored);
+          // Strict postId match AND not yet in approved list (avoid duplicates)
+          const approvedIds = new Set(approved.map(c => c.id));
+          pendingLocal = parsed.filter(
+            (c) => c.postId === post.id && !c.approved && !approvedIds.has(c.id)
+          );
+
+          // Clean up any localStorage entries that are now approved (cleanup)
+          const stillPending = parsed.filter(
+            (c) => !(c.postId === post.id && c.approved)
+          );
+          if (stillPending.length !== parsed.length) {
+            localStorage.setItem("ivan_journal_comments", JSON.stringify(stillPending));
+          }
         }
-        
-        // Merge and sort by date descending
-        const merged = [...approved, ...pendingLocal].sort(
-          (a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()
-        );
+
+        // 3. Merge: approved first (newest first), then pending below
+        const merged = [
+          ...approved.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()),
+          ...pendingLocal.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()),
+        ];
         setComments(merged);
       } catch (err) {
         console.error("Failed to load comments:", err);
@@ -281,22 +297,57 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     const text = commentText.trim();
     if (!text) return;
 
-    // Instant UI feedback: close the dock and clear input immediately!
+    // Create optimistic comment object for instant rendering
+    const optimisticId = `local-opt-${Date.now()}`;
+    const optimisticComment: CommentItem = {
+      id: optimisticId,
+      postId: post.id,
+      published: new Date().toISOString(),
+      content: text,
+      approved: false,
+      author: {
+        displayName: name,
+        email: email,
+        image: { url: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=E2DDD5&color=333` }
+      }
+    };
+
+    // Persist optimistic comment to localStorage so it survives page refresh
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("ivan_journal_comments");
+      const existing: CommentItem[] = stored ? JSON.parse(stored) : [];
+      existing.push(optimisticComment);
+      localStorage.setItem("ivan_journal_comments", JSON.stringify(existing));
+    }
+
+    // Instant UI feedback: inject to UI, close dock, and clear input immediately!
+    setComments((prev) => [optimisticComment, ...prev]);
     setCommentText("");
     setIsCommenting(false);
 
-    try {
-      const newComment = await addComment(post.id, name, email, text);
-      
-      // Prepend to UI state for instant local preview
-      setComments((prev) => [newComment, ...prev]);
+    // Smooth scroll down to comment replies area instantly
+    setTimeout(() => {
+      if (commentsSectionRef.current) {
+        commentsSectionRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
 
-      // Smooth scroll down to comment replies area
-      setTimeout(() => {
-        if (commentsSectionRef.current) {
-          commentsSectionRef.current.scrollIntoView({ behavior: "smooth" });
+    try {
+      // Execute backend save silently
+      const actualComment = await addComment(post.id, name, email, text);
+      
+      // Quietly swap the optimistic ID with the real database ID in UI
+      setComments((prev) => prev.map(c => c.id === optimisticId ? actualComment : c));
+
+      // Also clean up the optimistic entry from localStorage (replace with actual)
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("ivan_journal_comments");
+        if (stored) {
+          const existing: CommentItem[] = JSON.parse(stored);
+          const cleaned = existing.filter(c => c.id !== optimisticId);
+          localStorage.setItem("ivan_journal_comments", JSON.stringify(cleaned));
         }
-      }, 100);
+      }
     } catch (err) {
       console.error("Error adding comment:", err);
     }
