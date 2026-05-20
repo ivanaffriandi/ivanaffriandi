@@ -889,23 +889,23 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               className="floating-island-dock"
               style={{
                 display: "flex",
-                alignItems: "center",
-                gap: isCommenting ? "8px" : "0.6rem",
+                alignItems: isCommenting ? "flex-end" : "center",
+                gap: isCommenting ? "10px" : "0.6rem",
                 backgroundColor: theme === "dark" 
                   ? "rgba(18, 18, 18, 0.85)" 
                   : "rgba(255, 255, 255, 0.88)",
                 backdropFilter: "blur(24px) saturate(190%)",
                 WebkitBackdropFilter: "blur(24px) saturate(190%)",
                 border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
-                borderRadius: isCommenting ? "18px" : "32px",
-                padding: isCommenting ? "8px 8px 8px 18px" : "6px 10px",
+                borderRadius: isCommenting ? "20px" : "32px",
+                padding: isCommenting ? "10px 10px 10px 14px" : "6px 10px",
                 color: theme === "dark" ? "#ffffff" : "#111111",
                 boxShadow: theme === "dark" 
                   ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
                   : "0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
                 width: isCommenting ? "380px" : "max-content",
                 maxWidth: "92vw",
-                height: isCommenting ? "58px" : "46px",
+                height: isCommenting ? "auto" : "46px",
                 boxSizing: "border-box",
                 overflow: "hidden"
               }}
@@ -924,43 +924,53 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 animate={{ opacity: 1, scale: 1, filter: "blur(0px)", x: 0 }}
                 exit={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: -15 }}
                 transition={{ type: "spring", stiffness: 550, damping: 26 }}
-                style={{ display: "flex", alignItems: "center", gap: "8px", flex: 1, height: "100%", minWidth: 0 }}
+                style={{ display: "flex", alignItems: "flex-end", gap: "10px", flex: 1, height: "100%", minWidth: 0 }}
               >
                 {/* Left Side: Staggered Inputs */}
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: "1px", minWidth: 0 }}>
-                  {/* Row 1: Name Field (Bold Subject style) */}
-                  <input 
-                    type="text"
-                    value={tempName}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setTempName(val);
-                      if (typeof window !== "undefined") {
-                        localStorage.setItem("ivan_comment_author_name", val);
-                      }
-                    }}
-                    placeholder="Name (Optional)"
-                    style={{
-                      height: "18px",
-                      lineHeight: "18px",
-                      backgroundColor: "transparent",
-                      border: "none",
-                      outline: "none",
-                      color: colors.text,
-                      fontSize: "0.82rem",
-                      fontWeight: "600",
-                      width: "100%",
-                      padding: 0,
-                      fontFamily: "var(--font-sans)"
-                    }}
-                  />
-                  
-                  {/* Subtle Separator */}
-                  <div style={{ 
-                    height: "1px", 
-                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)",
-                    margin: "1px 0"
-                  }} />
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "6px", minWidth: 0 }}>
+                  {/* Row 1: Name Field styled as a premium iOS blue pill! */}
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{
+                      display: "flex",
+                      alignItems: "center",
+                      backgroundColor: theme === "dark" ? "rgba(0, 122, 255, 0.15)" : "rgba(0, 122, 255, 0.08)",
+                      border: theme === "dark" ? "1px solid rgba(0, 122, 255, 0.3)" : "1px solid rgba(0, 122, 255, 0.15)",
+                      borderRadius: "99px",
+                      padding: "3px 8px",
+                      color: "#007aff",
+                      maxWidth: "fit-content"
+                    }}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ marginRight: "4px", flexShrink: 0 }}>
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                      <input 
+                        type="text"
+                        value={tempName}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setTempName(val);
+                          if (typeof window !== "undefined") {
+                            localStorage.setItem("ivan_comment_author_name", val);
+                          }
+                        }}
+                        placeholder="Name (Optional)"
+                        style={{
+                          height: "16px",
+                          lineHeight: "16px",
+                          backgroundColor: "transparent",
+                          border: "none",
+                          outline: "none",
+                          color: "#007aff",
+                          fontSize: "0.75rem",
+                          fontWeight: "600",
+                          width: "110px",
+                          padding: 0,
+                          fontFamily: "var(--font-sans)"
+                        }}
+                      />
+                    </div>
+                  </div>
 
                   {/* Row 2: Message Field */}
                   <input 
@@ -969,13 +979,13 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     onChange={(e) => setCommentText(e.target.value)}
                     placeholder="Add a reply..."
                     style={{
-                      height: "20px",
-                      lineHeight: "20px",
+                      height: "22px",
+                      lineHeight: "22px",
                       backgroundColor: "transparent",
                       border: "none",
                       outline: "none",
                       color: colors.text,
-                      fontSize: "0.88rem",
+                      fontSize: "0.90rem",
                       fontWeight: "400",
                       width: "100%",
                       padding: 0,
@@ -1011,7 +1021,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     border: "none",
                     cursor: commentText.trim() ? "pointer" : "default",
                     transition: "all 0.2s ease",
-                    flexShrink: 0
+                    flexShrink: 0,
+                    marginBottom: "2px"
                   }}
                   title="Send reply"
                 >
