@@ -258,9 +258,9 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
 
   // Handle submitting a comment
   const handleSendComment = () => {
-    if (!commentText.trim()) return;
+    if (!commentText.trim() || !tempName.trim()) return;
 
-    const finalName = tempName.trim() || "Anonymous";
+    const finalName = tempName.trim();
     
     // Auto-generate anonymous email if not saved before
     const savedEmail = typeof window !== "undefined" ? localStorage.getItem("ivan_comment_author_email") : "";
@@ -1026,7 +1026,9 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
                           e.preventDefault();
-                          handleSendComment();
+                          if (tempName.trim() && commentText.trim()) {
+                            handleSendComment();
+                          }
                         }
                       }}
                       autoFocus
@@ -1036,9 +1038,18 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
 
                 {/* Right Side: Circular Send Button inside the capsule! */}
                 <button 
-                  onPointerDown={(e) => e.preventDefault()}
-                  onClick={handleSendComment}
-                  disabled={!commentText.trim()}
+                  onPointerDown={(e) => {
+                    e.preventDefault(); // Prevent input blur / keyboard close on iOS
+                    if (commentText.trim() && tempName.trim()) {
+                      handleSendComment();
+                    }
+                  }}
+                  onClick={(e) => {
+                    if (commentText.trim() && tempName.trim()) {
+                      handleSendComment();
+                    }
+                  }}
+                  disabled={!commentText.trim() || !tempName.trim()}
                   style={{
                     display: "flex", 
                     alignItems: "center", 
@@ -1047,14 +1058,14 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     height: "30px", 
                     boxSizing: "border-box",
                     borderRadius: "50%", 
-                    backgroundColor: commentText.trim() 
+                    backgroundColor: (commentText.trim() && tempName.trim()) 
                       ? "#007aff" 
                       : (theme === "dark" ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"), 
-                    color: commentText.trim() 
+                    color: (commentText.trim() && tempName.trim()) 
                       ? "#ffffff" 
                       : (theme === "dark" ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.3)"), 
                     border: "none",
-                    cursor: commentText.trim() ? "pointer" : "default",
+                    cursor: (commentText.trim() && tempName.trim()) ? "pointer" : "default",
                     transition: "all 0.2s ease",
                     flexShrink: 0,
                     marginBottom: "1px"
