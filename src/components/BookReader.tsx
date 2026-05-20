@@ -939,7 +939,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 style={{ display: "flex", alignItems: "flex-end", gap: "10px", flex: 1, minWidth: 0 }}
               >
                 {/* Left Side: Staggered Inputs */}
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0px", minWidth: 0 }}>
+                <motion.div layout style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0px", minWidth: 0 }}>
                   {/* Row 1: Name Field (iOS Subject Line Style) */}
                   <input 
                     type="text"
@@ -969,28 +969,31 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   />
 
                   {/* Faint Separator Line */}
-                  <div style={{ 
+                  <motion.div layout style={{ 
                     height: "1px", 
                     backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)",
                     margin: "4px 0"
                   }} />
 
                   {/* Row 2: Message Field (Auto-growing Textarea) */}
-                  <div style={{ position: "relative", width: "100%", minHeight: "17px" }}>
+                  <motion.div layout style={{ position: "relative", width: "100%", minHeight: "17px" }}>
                     {/* Hidden div to calculate height naturally */}
-                    <div style={{ 
-                      visibility: "hidden", 
-                      whiteSpace: "pre-wrap", 
-                      wordBreak: "break-word", 
-                      padding: "0 2px", 
-                      margin: 0,
-                      fontFamily: "var(--font-sans)", 
-                      fontSize: "0.85rem", 
-                      lineHeight: "17px",
-                      minHeight: "17px"
-                    }}>
+                    <motion.div 
+                      layout
+                      style={{ 
+                        visibility: "hidden", 
+                        whiteSpace: "pre-wrap", 
+                        wordBreak: "break-word", 
+                        padding: "0 2px", 
+                        margin: 0,
+                        fontFamily: "var(--font-sans)", 
+                        fontSize: "0.85rem", 
+                        lineHeight: "17px",
+                        minHeight: "17px"
+                      }}
+                    >
                       {commentText + " "}
-                    </div>
+                    </motion.div>
                     {/* The actual text area */}
                     <textarea 
                       className="hide-scrollbar"
@@ -1030,8 +1033,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       }}
                       autoFocus
                     />
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
 
                 {/* Right Side: Circular Send Button inside the capsule! */}
                 <button 
