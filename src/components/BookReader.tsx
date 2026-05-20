@@ -1036,6 +1036,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
 
                 {/* Right Side: Circular Send Button inside the capsule! */}
                 <button 
+                  onPointerDown={(e) => e.preventDefault()}
                   onClick={handleSendComment}
                   disabled={!commentText.trim()}
                   style={{
