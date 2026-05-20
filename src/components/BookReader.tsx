@@ -405,9 +405,15 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             line-height: 1.65 !important;
           }
 
-          .floating-island-dock {
+          .floating-island-dock:not(.is-commenting) {
             padding: 4px 6px !important; /* Tighten floating dock island paddings */
             gap: 0.35rem !important;
+          }
+
+          .floating-island-dock.is-commenting {
+            padding: 14px 14px 14px 22px !important; /* Spacious native iOS padding for mobile */
+            border-radius: 24px !important;
+            width: calc(100vw - 2.5rem) !important;
           }
           
           .floating-island-input {
@@ -886,7 +892,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             <motion.div 
               ref={dockRef}
               layout
-              className="floating-island-dock"
+              className={`floating-island-dock ${isCommenting ? 'is-commenting' : ''}`}
               style={{
                 display: "flex",
                 alignItems: isCommenting ? "flex-end" : "center",
