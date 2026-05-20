@@ -585,10 +585,20 @@ export default function AdminPage() {
 
   const pendingQuestionsCount = adminQuestions.filter(q => !q.answered).length;
   const pendingCommentsCount = adminComments.filter(c => !c.approved).length;
+  const totalQuestions = adminQuestions.length;
+  const totalComments = adminComments.length;
+  const totalMoments = adminMoments.length;
+
+  const tabMeta = {
+    inbox: { label: "Inbox", emoji: "💬", count: pendingQuestionsCount > 0 ? pendingQuestionsCount : null, dotColor: "#FF9500" },
+    calendar: { label: "Schedule", emoji: "📅", count: null, dotColor: null },
+    comments: { label: "Comments", emoji: "✍️", count: pendingCommentsCount > 0 ? pendingCommentsCount : null, dotColor: "#B47A3E" },
+    moments: { label: "Gallery", emoji: "🖼️", count: null, dotColor: null },
+  } as const;
 
   // --- DASHBOARD VIEW (MAX-WIDTH: 420PX STICKY APP PORTRAIT) ---
   return (
-    <div className="admin-panel-container" style={{ minHeight: "100vh", padding: "1.5rem 1rem 7rem 1rem", maxWidth: "420px", margin: "0 auto", fontFamily: iosFontStack, backgroundColor: "var(--bg-color)", position: "relative" }}>
+    <div className="admin-panel-container" style={{ minHeight: "100vh", padding: "1.2rem 1rem 7rem 1rem", maxWidth: "420px", margin: "0 auto", fontFamily: iosFontStack, backgroundColor: "var(--bg-color)", position: "relative" }}>
       <style>{`
         /* iOS Mock Phone Shell Frame */
         @media (min-width: 480px) {
@@ -624,9 +634,9 @@ export default function AdminPage() {
           position: relative;
           flex: 1;
           text-align: center;
-          padding: 8px 4px; 
-          border-radius: 20px; 
-          font-size: 0.7rem; 
+          padding: 6px 2px;
+          border-radius: 18px; 
+          font-size: 0.62rem; 
           font-weight: 600; 
           cursor: pointer; 
           border: none;
@@ -634,16 +644,17 @@ export default function AdminPage() {
           letter-spacing: -0.01em;
           transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
           font-family: ${iosFontStack};
+          line-height: 1.2;
         }
 
         /* Form Inputs */
         .admin-form-input {
-          padding: 10px 14px;
-          border-radius: 12px;
+          padding: 8px 12px;
+          border-radius: 10px;
           border: 0.5px solid rgba(150, 150, 150, 0.15);
           background-color: rgba(255, 255, 255, 0.5);
           color: var(--text-primary);
-          font-size: 0.8rem;
+          font-size: 0.79rem;
           font-weight: 500;
           font-family: ${iosFontStack};
           outline: none;
@@ -654,8 +665,22 @@ export default function AdminPage() {
 
         .admin-form-input:focus {
           border-color: #007AFF;
-          background-color: #ffffff;
-          box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15), inset 0 1px 1px rgba(0,0,0,0.01);
+          background-color: rgba(255, 255, 255, 0.95);
+          box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.14), inset 0 1px 1px rgba(0,0,0,0.01);
+        }
+
+        [data-theme="dark"] .admin-form-input,
+        .dark .admin-form-input {
+          background-color: rgba(255, 255, 255, 0.06);
+          border-color: rgba(255, 255, 255, 0.1);
+          color: rgba(255, 255, 255, 0.92);
+        }
+
+        [data-theme="dark"] .admin-form-input:focus,
+        .dark .admin-form-input:focus {
+          background-color: rgba(255, 255, 255, 0.1);
+          border-color: rgba(0, 122, 255, 0.7);
+          box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
         }
 
         .custom-select {
@@ -665,6 +690,15 @@ export default function AdminPage() {
           background-position: right 10px center;
           background-size: 10px;
           padding-right: 26px !important;
+        }
+
+        /* Auto-resize textarea */
+        .admin-auto-textarea {
+          field-sizing: content;
+          min-height: 60px;
+          max-height: 160px;
+          resize: none;
+          overflow-y: auto;
         }
       `}</style>
 
@@ -689,49 +723,87 @@ export default function AdminPage() {
         </div>
       </div>
 
-      {/* Cozy Header */}
+      {/* Header with Live Stats */}
       <motion.header 
         initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={iosSpring}
         style={{ 
-          display: "flex", 
-          justifyContent: "space-between", 
-          alignItems: "center", 
-          marginBottom: "1.2rem", 
-          padding: "8px 12px", 
-          backgroundColor: "rgba(255, 255, 255, 0.55)", 
-          border: "0.5px solid rgba(150, 150, 150, 0.15)", 
+          marginBottom: "1rem", 
+          padding: "10px 12px", 
+          background: theme === "dark"
+            ? "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)"
+            : "linear-gradient(135deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.6) 100%)",
+          border: `0.5px solid ${theme === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.07)"}`, 
           borderRadius: "18px", 
           backdropFilter: "blur(30px)",
           WebkitBackdropFilter: "blur(30px)",
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.01), inset 0 1px 0 rgba(255,255,255,0.8)"
+          boxShadow: theme === "dark"
+            ? "inset 0 1px 0 rgba(255,255,255,0.12), 0 6px 20px rgba(0,0,0,0.2)"
+            : "inset 0 1px 0 rgba(255,255,255,0.95), 0 4px 16px rgba(0,0,0,0.015)"
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <span style={{ fontSize: "1rem" }}>🎛️</span>
-          <h1 style={{ fontSize: "0.85rem", fontWeight: "800", margin: 0, letterSpacing: "-0.02em", color: "var(--text-primary)" }}>Control Panel</h1>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <span style={{ fontSize: "0.9rem" }}>🎛️</span>
+            <h1 style={{ fontSize: "0.82rem", fontWeight: "800", margin: 0, letterSpacing: "-0.02em", color: "var(--text-primary)" }}>Studio Panel</h1>
+          </div>
+          <button 
+            onClick={handleLogout} 
+            style={{ 
+              padding: "3px 9px", 
+              backgroundColor: "rgba(255, 59, 48, 0.08)", 
+              border: "0.5px solid rgba(255, 59, 48, 0.15)", 
+              borderRadius: "30px", 
+              color: "#FF3B30", 
+              fontSize: "0.62rem", 
+              fontWeight: "700", 
+              cursor: "pointer", 
+              transition: "all 0.2s ease",
+              letterSpacing: "-0.01em",
+              fontFamily: iosFontStack
+            }} 
+            onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#FF3B30"; e.currentTarget.style.color = "#ffffff"; }} 
+            onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "rgba(255, 59, 48, 0.08)"; e.currentTarget.style.color = "#FF3B30"; }}
+          >
+            Sign out
+          </button>
         </div>
-        <button 
-          onClick={handleLogout} 
-          style={{ 
-            padding: "4px 10px", 
-            backgroundColor: "rgba(255, 59, 48, 0.08)", 
-            border: "0.5px solid rgba(255, 59, 48, 0.15)", 
-            borderRadius: "30px", 
-            color: "#FF3B30", 
-            fontSize: "0.65rem", 
-            fontWeight: "700", 
-            cursor: "pointer", 
-            transition: "all 0.2s ease",
-            letterSpacing: "-0.01em",
-            fontFamily: iosFontStack
-          }} 
-          onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#FF3B30"; e.currentTarget.style.color = "#ffffff"; }} 
-          onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "rgba(255, 59, 48, 0.08)"; e.currentTarget.style.color = "#FF3B30"; }}
-        >
-          Logout
-        </button>
+
+        {/* Live Stats Row */}
+        <div style={{ display: "flex", gap: "6px" }}>
+          {[
+            { label: "Questions", val: activeTab === "inbox" ? totalQuestions : adminQuestions.length > 0 ? totalQuestions : "—", pending: pendingQuestionsCount, color: "#FF9500" },
+            { label: "Comments", val: activeTab === "comments" ? totalComments : adminComments.length > 0 ? totalComments : "—", pending: pendingCommentsCount, color: "#B47A3E" },
+            { label: "Moments", val: activeTab === "moments" ? totalMoments : adminMoments.length > 0 ? totalMoments : "—", pending: 0, color: "#10b981" },
+            { label: "Events", val: activeTab === "calendar" ? adminCalendarEvents.length : adminCalendarEvents.length > 0 ? adminCalendarEvents.length : "—", pending: 0, color: "#007AFF" },
+          ].map(stat => (
+            <div key={stat.label} style={{
+              flex: 1,
+              padding: "5px 6px",
+              borderRadius: "10px",
+              background: theme === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.025)",
+              border: `0.5px solid ${theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}`,
+              textAlign: "center",
+              position: "relative"
+            }}>
+              <div style={{ fontSize: "0.78rem", fontWeight: "800", color: "var(--text-primary)", lineHeight: "1" }}>{stat.val}</div>
+              <div style={{ fontSize: "0.5rem", fontWeight: "600", color: "var(--text-secondary)", letterSpacing: "0.01em", marginTop: "2px" }}>{stat.label}</div>
+              {stat.pending > 0 && (
+                <div style={{
+                  position: "absolute",
+                  top: "3px",
+                  right: "3px",
+                  width: "5px",
+                  height: "5px",
+                  borderRadius: "50%",
+                  backgroundColor: stat.color,
+                  boxShadow: `0 0 4px ${stat.color}`
+                }} />
+              )}
+            </div>
+          ))}
+        </div>
       </motion.header>
 
       {/* Segmented iOS Tabs Bar */}
@@ -743,56 +815,15 @@ export default function AdminPage() {
           display: "flex", 
           gap: "2px", 
           padding: "3px", 
-          backgroundColor: "rgba(150, 150, 150, 0.08)", 
-          border: "0.5px solid rgba(150, 150, 150, 0.12)", 
-          borderRadius: "24px", 
-          marginBottom: "1.5rem",
+          backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.05)" : "rgba(150, 150, 150, 0.07)", 
+          border: `0.5px solid ${theme === "dark" ? "rgba(255,255,255,0.1)" : "rgba(150, 150, 150, 0.12)"}`, 
+          borderRadius: "22px", 
+          marginBottom: "1.2rem",
           position: "relative"
         }}
       >
         {(["inbox", "calendar", "comments", "moments"] as const).map(tab => {
-          const tabLabels = { 
-            inbox: (
-              <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
-                Inbox
-                {pendingQuestionsCount > 0 && (
-                  <span style={{
-                    fontSize: "0.55rem",
-                    fontWeight: "800",
-                    background: theme === "dark" ? "rgba(255, 149, 0, 0.22)" : "rgba(255, 149, 0, 0.14)",
-                    color: "#FF9500",
-                    border: `0.5px solid ${theme === "dark" ? "rgba(255, 149, 0, 0.3)" : "rgba(255, 149, 0, 0.2)"}`,
-                    padding: "1px 4px",
-                    borderRadius: "5px",
-                    lineHeight: "1"
-                  }}>
-                    {pendingQuestionsCount}
-                  </span>
-                )}
-              </span>
-            ), 
-            calendar: "Calendar", 
-            comments: (
-              <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
-                Comments
-                {pendingCommentsCount > 0 && (
-                  <span style={{
-                    fontSize: "0.55rem",
-                    fontWeight: "800",
-                    background: theme === "dark" ? "rgba(180, 122, 62, 0.22)" : "rgba(180, 122, 62, 0.14)",
-                    color: "#B47A3E",
-                    border: `0.5px solid ${theme === "dark" ? "rgba(180, 122, 62, 0.3)" : "rgba(180, 122, 62, 0.2)"}`,
-                    padding: "1px 4px",
-                    borderRadius: "5px",
-                    lineHeight: "1"
-                  }}>
-                    {pendingCommentsCount}
-                  </span>
-                )}
-              </span>
-            ), 
-            moments: "Moments" 
-          };
+          const meta = tabMeta[tab];
           return (
             <button 
               key={tab} 
@@ -800,13 +831,36 @@ export default function AdminPage() {
               onClick={() => setActiveTab(tab)} 
               style={{ 
                 color: activeTab === tab ? "var(--text-primary)" : "var(--text-secondary)",
-                padding: "8px 4px",
-                borderRadius: "20px",
+                padding: "6px 2px",
+                borderRadius: "18px",
                 zIndex: 2,
                 transition: "color 0.2s cubic-bezier(0.16, 1, 0.3, 1)"
               }}
             >
-              <span style={{ position: "relative", zIndex: 3, fontWeight: activeTab === tab ? "700" : "550" }}>{tabLabels[tab]}</span>
+              <span style={{ position: "relative", zIndex: 3, display: "inline-flex", flexDirection: "column", alignItems: "center", gap: "1px" }}>
+                <span style={{ fontSize: "0.9rem", lineHeight: "1" }}>{meta.emoji}</span>
+                <span style={{ fontWeight: activeTab === tab ? "700" : "550", fontSize: "0.6rem", letterSpacing: "-0.01em" }}>
+                  {meta.label}
+                </span>
+                {meta.count !== null && meta.count > 0 && (
+                  <span style={{
+                    position: "absolute",
+                    top: "-2px",
+                    right: "-5px",
+                    fontSize: "0.48rem",
+                    fontWeight: "800",
+                    background: meta.dotColor,
+                    color: "#fff",
+                    padding: "1px 3px",
+                    borderRadius: "4px",
+                    lineHeight: "1.2",
+                    minWidth: "10px",
+                    textAlign: "center"
+                  }}>
+                    {meta.count}
+                  </span>
+                )}
+              </span>
               {activeTab === tab && (
                 <motion.div
                   layoutId="activeTabHighlight"
@@ -819,7 +873,7 @@ export default function AdminPage() {
                     boxShadow: theme === "dark"
                       ? "0 3px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08)"
                       : "0 3px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.02)",
-                    borderRadius: "20px",
+                    borderRadius: "18px",
                     zIndex: 1
                   }}
                 />
@@ -1020,19 +1074,25 @@ export default function AdminPage() {
                         style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "6px", overflow: "hidden" }}
                       >
                         <div style={{
-                          backgroundColor: "rgba(0, 0, 0, 0.03)",
+                          backgroundColor: theme === "dark" ? "rgba(255,255,255,0.03)" : "rgba(0, 0, 0, 0.03)",
                           borderRadius: "12px",
                           padding: "8px 12px",
-                          border: "1px solid rgba(150,150,150,0.08)",
+                          border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(150,150,150,0.08)"}`,
                           boxShadow: "inset 0 1.5px 3px rgba(0,0,0,0.04)"
                         }}>
                           <textarea
-                            placeholder="Type your response to publish..."
+                            placeholder="Write your answer… (⌘↵ to publish)"
                             value={answerText}
                             onChange={(e) => setAnswerText(e.target.value)}
+                            onKeyDown={(e) => {
+                              if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+                                e.preventDefault();
+                                if (answerText.trim()) handleAnswerQuestion(q.id);
+                              }
+                            }}
+                            className="admin-auto-textarea"
                             style={{
                               width: "100%",
-                              minHeight: "75px",
                               border: "none",
                               backgroundColor: "transparent",
                               color: "var(--text-primary)",
@@ -1040,8 +1100,7 @@ export default function AdminPage() {
                               fontSize: "0.78rem",
                               lineHeight: "1.45",
                               outline: "none",
-                              resize: "none",
-                              fontWeight: "550"
+                              fontWeight: "500"
                             }}
                           />
                         </div>
@@ -1564,19 +1623,25 @@ export default function AdminPage() {
                         style={{ width: "100%", marginTop: "4px", display: "flex", flexDirection: "column", gap: "6px", overflow: "hidden" }}
                       >
                         <div style={{
-                          backgroundColor: "rgba(0, 0, 0, 0.03)",
+                          backgroundColor: theme === "dark" ? "rgba(255,255,255,0.03)" : "rgba(0, 0, 0, 0.03)",
                           borderRadius: "12px",
                           padding: "8px 12px",
-                          border: "1px solid rgba(150,150,150,0.08)",
+                          border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(150,150,150,0.08)"}`,
                           boxShadow: "inset 0 1.5px 3px rgba(0,0,0,0.04)"
                         }}>
                           <textarea
-                            placeholder="Type your reply to comment..."
+                            placeholder="Write your reply… (⌘↵ to publish)"
                             value={commentReplyText}
                             onChange={(e) => setCommentReplyText(e.target.value)}
+                            onKeyDown={(e) => {
+                              if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+                                e.preventDefault();
+                                if (commentReplyText.trim()) handleReplyComment(comment.id);
+                              }
+                            }}
+                            className="admin-auto-textarea"
                             style={{
                               width: "100%",
-                              minHeight: "65px",
                               border: "none",
                               backgroundColor: "transparent",
                               color: "var(--text-primary)",
@@ -1584,8 +1649,7 @@ export default function AdminPage() {
                               fontSize: "0.78rem",
                               lineHeight: "1.45",
                               outline: "none",
-                              resize: "none",
-                              fontWeight: "550"
+                              fontWeight: "500"
                             }}
                           />
                         </div>

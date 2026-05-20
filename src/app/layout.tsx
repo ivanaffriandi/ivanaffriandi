@@ -24,20 +24,20 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ivanaffriandi.com"),
-  title: "Ivan Affriandi",
-  description: "Swiss Grid Layout",
+  title: "Hello, Ivan!",
+  description: "Personal space of Ivan Affriandi — writing, moments, and thoughts.",
   openGraph: {
-    title: "Ivan Affriandi",
-    description: "Swiss Grid Layout",
+    title: "Hello, Ivan!",
+    description: "Personal space of Ivan Affriandi — writing, moments, and thoughts.",
     url: "https://ivanaffriandi.com",
-    siteName: "Ivan Affriandi",
+    siteName: "Hello, Ivan!",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ivan Affriandi",
-    description: "Swiss Grid Layout",
+    title: "Hello, Ivan!",
+    description: "Personal space of Ivan Affriandi — writing, moments, and thoughts.",
   }
 };
 
