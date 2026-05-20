@@ -922,9 +922,9 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               }}
               transition={{
                 type: "spring",
-                stiffness: 550,
-                damping: 24,
-                mass: 0.65
+                stiffness: 320,
+                damping: 20,
+                mass: 0.5
               }}
             >
           <AnimatePresence mode="popLayout" initial={false}>
@@ -1037,7 +1037,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 </motion.div>
 
                 {/* Right Side: Circular Send Button inside the capsule! */}
-                <button 
+                <motion.button 
+                  layoutId="pillbar-action-button"
                   type="button"
                   onPointerDown={(e) => {
                     e.preventDefault(); // Prevent input blur / keyboard close on iOS
@@ -1078,7 +1079,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     <line x1="12" y1="19" x2="12" y2="5"></line>
                     <polyline points="5 12 12 5 19 12"></polyline>
                   </svg>
-                </button>
+                </motion.button>
               </motion.div>
             ) : (
               <motion.div 
@@ -1189,9 +1190,9 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   </button>
                 </div>
 
-                {/* 3. Theme Toggle Button Removed (Auto matches system preference) */}
-                {/* 4. Morphing Comments Anchor Button with highly rounded conversation bubble icon */}
-                <button 
+                {/* 4. Morphing Comments Anchor Button */}
+                <motion.button 
+                  layoutId="pillbar-action-button"
                   onClick={() => setIsCommenting(true)}
                   style={{
                     width: "34px",
@@ -1214,7 +1215,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 21a9 9 0 1 0-9-9c0 1.48.36 2.89 1 4.15L3 21l4.85-1c1.26.64 2.67 1 4.15 1z"/>
                   </svg>
-                </button>
+                </motion.button>
               </motion.div>
             )}
           </AnimatePresence>
