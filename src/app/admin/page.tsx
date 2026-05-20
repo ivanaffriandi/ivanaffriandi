@@ -1283,11 +1283,10 @@ export default function AdminPage() {
                       <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
                           <span style={{ fontSize: "0.76rem", fontWeight: "800", color: "var(--text-primary)" }}>{comment.author.displayName}</span>
-                          <span style={{ fontSize: "0.62rem", color: "var(--text-secondary)", fontWeight: "500" }}>({comment.author.email})</span>
                         </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "2px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "2px", flexWrap: "wrap" }}>
                           <span style={{ fontSize: "0.58rem", color: "#B47A3E", fontWeight: "700" }}>
-                            {new Date(comment.published).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                            commented {new Date(comment.published).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                           </span>
                           <span style={{ fontSize: "0.58rem", color: "var(--text-secondary)" }}>•</span>
                           <a 
@@ -1302,8 +1301,20 @@ export default function AdminPage() {
                               fontWeight: "700"
                             }}
                           >
-                            Post: {comment.postId.length > 10 ? `${comment.postId.substring(0, 10)}...` : comment.postId}
+                            {(comment as any).postTitle
+                              ? (comment as any).postTitle.length > 40
+                                ? `${(comment as any).postTitle.substring(0, 40)}…`
+                                : (comment as any).postTitle
+                              : `Post: ${comment.postId.substring(0, 10)}…`}
                           </a>
+                          {(comment as any).postPublished && (
+                            <>
+                              <span style={{ fontSize: "0.58rem", color: "var(--text-secondary)" }}>·</span>
+                              <span style={{ fontSize: "0.58rem", color: "var(--text-secondary)", fontWeight: "500" }}>
+                                {new Date((comment as any).postPublished).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                              </span>
+                            </>
+                          )}
                         </div>
                       </div>
 

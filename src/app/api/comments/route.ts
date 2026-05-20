@@ -45,7 +45,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { postId, authorName, authorEmail, content } = body;
+    const { postId, postTitle, postPublished, authorName, content } = body;
 
     if (!postId || !authorName || !content) {
       return NextResponse.json({ error: "postId, authorName and content are required" }, { status: 400 });
@@ -53,12 +53,13 @@ export async function POST(request: Request) {
 
     const newComment = {
       postId,
+      postTitle: postTitle || "",
+      postPublished: postPublished || "",
       published: new Date().toISOString(),
       content,
       approved: false,
       author: {
         displayName: authorName,
-        email: authorEmail || "anonymous@example.com",
         image: {
           url: `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=E2DDD5&color=333`
         }

@@ -4,13 +4,14 @@
 export interface CommentItem {
   id: string;
   postId: string;
-  published: string;
+  postTitle?: string;      // Human-readable post title for admin display
+  postPublished?: string;  // Post's publish date for admin display
+  published: string;       // When the comment was submitted
   content: string;
   approved: boolean;
   reply?: string;
   author: {
     displayName: string;
-    email: string;
     image: { url: string };
   };
 }
@@ -18,14 +19,15 @@ export interface CommentItem {
 // 1. Add a new comment (via server-side API route)
 export async function addComment(
   postId: string,
+  postTitle: string,
+  postPublished: string,
   authorName: string,
-  authorEmail: string,
   content: string
 ): Promise<CommentItem> {
   const res = await fetch("/api/comments", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ postId, authorName, authorEmail, content })
+    body: JSON.stringify({ postId, postTitle, postPublished, authorName, content })
   });
 
   if (!res.ok) {

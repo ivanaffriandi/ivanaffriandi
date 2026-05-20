@@ -249,22 +249,15 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
 
     const finalName = tempName.trim();
     
-    // Auto-generate anonymous email if not saved before
-    const savedEmail = typeof window !== "undefined" ? localStorage.getItem("ivan_comment_author_email") : "";
-    const finalEmail = savedEmail || "anonymous@example.com";
-
-    // Save Name and Email (if auto-generated) for subsequent sessions
+    // Save name for next time
     if (typeof window !== "undefined") {
       localStorage.setItem("ivan_comment_author_name", finalName);
-      if (!savedEmail) {
-        localStorage.setItem("ivan_comment_author_email", finalEmail);
-      }
     }
 
-    submitCommentToDb(finalName, finalEmail);
+    submitCommentToDb(finalName);
   };
 
-  const submitCommentToDb = async (name: string, email: string) => {
+  const submitCommentToDb = async (name: string) => {
     const text = commentText.trim();
     if (!text) return;
 
@@ -273,12 +266,13 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     const optimisticComment: CommentItem = {
       id: optimisticId,
       postId: post.id,
+      postTitle: post.title,
+      postPublished: post.published,
       published: new Date().toISOString(),
       content: text,
       approved: false,
       author: {
         displayName: name,
-        email: email,
         image: { url: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=E2DDD5&color=333` }
       }
     };
@@ -297,7 +291,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
 
     try {
       // Save to Firebase via API route (server-side, no auth issues)
-      const actualComment = await addComment(post.id, name, email, text);
+      const actualComment = await addComment(post.id, post.title, post.published, name, text);
       // Swap optimistic entry with real DB entry
       setComments((prev) => prev.map(c => c.id === optimisticId ? actualComment : c));
     } catch (err) {
