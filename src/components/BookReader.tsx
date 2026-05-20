@@ -377,6 +377,15 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         }
 
         /* Responsive Mobile Overrides for BookReader */
+        /* Hide scrollbars globally for custom UI components */
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+        }
+
         @media (max-width: 768px) {
           .book-reader-container {
             padding: 5.5rem 1.25rem 9rem 1.25rem !important; /* Snugger padding on mobile */
@@ -970,7 +979,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   }} />
 
                   {/* Row 2: Message Field (Auto-growing Textarea) */}
-                  <div style={{ position: "relative", width: "100%", minHeight: "18px", maxHeight: "100px", overflowY: "auto" }}>
+                  <div className="hide-scrollbar" style={{ position: "relative", width: "100%", minHeight: "18px", maxHeight: "100px", overflowY: "auto" }}>
                     {/* Hidden div to calculate height naturally */}
                     <div style={{ 
                       visibility: "hidden", 
@@ -987,6 +996,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     </div>
                     {/* The actual text area */}
                     <textarea 
+                      className="hide-scrollbar"
                       rows={1}
                       value={commentText}
                       maxLength={300}
