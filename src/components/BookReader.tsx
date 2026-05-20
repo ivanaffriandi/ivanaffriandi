@@ -959,174 +959,117 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           <AnimatePresence mode="popLayout" initial={false}>
             {isCommenting ? (
               <motion.div 
-                key="commenting"
+                key="commenting-inputs"
                 layout
-                initial={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: 15 }}
+                initial={{ opacity: 0, scale: 0.95, filter: "blur(4px)", x: 8 }}
                 animate={{ opacity: 1, scale: 1, filter: "blur(0px)", x: 0 }}
-                exit={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: -15 }}
+                exit={{ opacity: 0, scale: 0.95, filter: "blur(4px)", x: -8 }}
                 transition={{ type: "spring", stiffness: 550, damping: 26 }}
-                style={{ display: "flex", alignItems: "flex-end", gap: "10px", flex: 1, minWidth: 0 }}
+                style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0px", minWidth: 0 }}
               >
                 {/* Left Side: Staggered Inputs */}
-                <motion.div layout style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0px", minWidth: 0 }}>
-                  {/* Row 1: Name Field (iOS Subject Line Style) */}
-                  <input 
-                    type="text"
-                    value={tempName}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setTempName(val);
-                      if (typeof window !== "undefined") {
-                        localStorage.setItem("ivan_comment_author_name", val);
-                      }
+                {/* Row 1: Name Field (iOS Subject Line Style) */}
+                <input 
+                  type="text"
+                  value={tempName}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setTempName(val);
+                    if (typeof window !== "undefined") {
+                      localStorage.setItem("ivan_comment_author_name", val);
+                    }
+                  }}
+                  placeholder="Name"
+                  style={{
+                    height: "19px",
+                    lineHeight: "19px",
+                    backgroundColor: "transparent",
+                    border: "none",
+                    outline: "none",
+                    color: colors.text,
+                    fontSize: "0.92rem",
+                    fontWeight: "600",
+                    width: "100%",
+                    boxSizing: "border-box",
+                    padding: "0 2px",
+                    fontFamily: "var(--font-sans)"
+                  }}
+                />
+
+                {/* Faint Separator Line */}
+                <motion.div layout style={{ 
+                  height: "1px", 
+                  backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)",
+                  margin: "5px 0"
+                }} />
+
+                {/* Row 2: Message Field (Auto-growing Textarea) */}
+                <motion.div layout style={{ position: "relative", width: "100%", minHeight: "18px" }}>
+                  {/* Hidden div to calculate height naturally */}
+                  <motion.div 
+                    layout
+                    style={{ 
+                      visibility: "hidden", 
+                      whiteSpace: "pre-wrap", 
+                      wordBreak: "break-word", 
+                      padding: "0 2px", 
+                      margin: 0,
+                      fontFamily: "var(--font-sans)", 
+                      fontSize: "0.90rem", 
+                      lineHeight: "18px",
+                      minHeight: "18px"
                     }}
-                    placeholder="Name"
+                  >
+                    {commentText + " "}
+                  </motion.div>
+                  {/* The actual text area */}
+                  <textarea 
+                    className="hide-scrollbar"
+                    rows={1}
+                    value={commentText}
+                    maxLength={300}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="Add a reply"
                     style={{
-                      height: "19px",
-                      lineHeight: "19px",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      resize: "none",
                       backgroundColor: "transparent",
                       border: "none",
                       outline: "none",
                       color: colors.text,
-                      fontSize: "0.92rem",
-                      fontWeight: "600",
+                      fontSize: "0.90rem",
+                      fontWeight: "400",
                       width: "100%",
+                      height: "100%",
                       boxSizing: "border-box",
                       padding: "0 2px",
-                      fontFamily: "var(--font-sans)"
+                      margin: 0,
+                      fontFamily: "var(--font-sans)",
+                      overflow: "hidden",
+                      lineHeight: "18px",
+                      WebkitAppearance: "none"
                     }}
-                  />
-
-                  {/* Faint Separator Line */}
-                  <motion.div layout style={{ 
-                    height: "1px", 
-                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)",
-                    margin: "5px 0"
-                  }} />
-
-                  {/* Row 2: Message Field (Auto-growing Textarea) */}
-                  <motion.div layout style={{ position: "relative", width: "100%", minHeight: "18px" }}>
-                    {/* Hidden div to calculate height naturally */}
-                    <motion.div 
-                      layout
-                      style={{ 
-                        visibility: "hidden", 
-                        whiteSpace: "pre-wrap", 
-                        wordBreak: "break-word", 
-                        padding: "0 2px", 
-                        margin: 0,
-                        fontFamily: "var(--font-sans)", 
-                        fontSize: "0.90rem", 
-                        lineHeight: "18px",
-                        minHeight: "18px"
-                      }}
-                    >
-                      {commentText + " "}
-                    </motion.div>
-                    {/* The actual text area */}
-                    <textarea 
-                      className="hide-scrollbar"
-                      rows={1}
-                      value={commentText}
-                      maxLength={300}
-                      onChange={(e) => setCommentText(e.target.value)}
-                      placeholder="Add a reply"
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        resize: "none",
-                        backgroundColor: "transparent",
-                        border: "none",
-                        outline: "none",
-                        color: colors.text,
-                        fontSize: "0.90rem",
-                        fontWeight: "400",
-                        width: "100%",
-                        height: "100%",
-                        boxSizing: "border-box",
-                        padding: "0 2px",
-                        margin: 0,
-                        fontFamily: "var(--font-sans)",
-                        overflow: "hidden",
-                        lineHeight: "18px",
-                        WebkitAppearance: "none"
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          if (tempName.trim() && commentText.trim()) {
-                            handleSendComment();
-                          }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        if (tempName.trim() && commentText.trim()) {
+                          handleSendComment();
                         }
-                      }}
-                      autoFocus
-                    />
-                  </motion.div>
+                      }
+                    }}
+                    autoFocus
+                  />
                 </motion.div>
-
-                {/* Right Side: Circular Send Button inside the capsule! */}
-                <motion.button 
-                  layoutId="pillbar-action-button"
-                  type="button"
-                  onPointerDown={(e) => {
-                    e.preventDefault(); // Prevent input blur / keyboard close on iOS
-                    if (commentText.trim() && tempName.trim()) {
-                      handleSendComment();
-                    }
-                  }}
-                  onClick={(e) => {
-                    if (commentText.trim() && tempName.trim()) {
-                      handleSendComment();
-                    }
-                  }}
-                  disabled={!commentText.trim() || !tempName.trim()}
-                  animate={{
-                    backgroundColor: (commentText.trim() && tempName.trim()) 
-                      ? "#007aff" 
-                      : (theme === "dark" ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.06)"),
-                    color: (commentText.trim() && tempName.trim()) 
-                      ? "#ffffff" 
-                      : (theme === "dark" ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.45)")
-                  }}
-                  transition={{
-                    layout: {
-                      type: "spring",
-                      stiffness: 320,
-                      damping: 20,
-                      mass: 0.5
-                    },
-                    default: { duration: 0.15 }
-                  }}
-                  style={{
-                    display: "flex", 
-                    alignItems: "center", 
-                    justifyContent: "center", 
-                    width: "30px", 
-                    height: "30px", 
-                    boxSizing: "border-box",
-                    borderRadius: "50%", 
-                    border: "none",
-                    cursor: (commentText.trim() && tempName.trim()) ? "pointer" : "default",
-                    flexShrink: 0,
-                    marginBottom: "1px"
-                  }}
-                  title="Send reply"
-                >
-                  {/* Native iOS styled up-pointing arrow! */}
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "translateY(-1px)" }}>
-                    <line x1="12" y1="19" x2="12" y2="5"></line>
-                    <polyline points="5 12 12 5 19 12"></polyline>
-                  </svg>
-                </motion.button>
               </motion.div>
             ) : (
               <motion.div 
-                key="normal"
+                key="normal-controls"
                 layout
-                initial={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: -15 }}
+                initial={{ opacity: 0, scale: 0.95, filter: "blur(4px)", x: -8 }}
                 animate={{ opacity: 1, scale: 1, filter: "blur(0px)", x: 0 }}
-                exit={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: 15 }}
+                exit={{ opacity: 0, scale: 0.95, filter: "blur(4px)", x: 8 }}
                 transition={{ type: "spring", stiffness: 550, damping: 26 }}
                 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
               >
@@ -1228,43 +1171,101 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     )}
                   </button>
                 </div>
-
-                {/* 4. Morphing Comments Anchor Button */}
-                <motion.button 
-                  layoutId="pillbar-action-button"
-                  onClick={() => setIsCommenting(true)}
-                  transition={{
-                    layout: {
-                      type: "spring",
-                      stiffness: 320,
-                      damping: 20,
-                      mass: 0.5
-                    }
-                  }}
-                  style={{
-                    width: "34px",
-                    height: "34px",
-                    boxSizing: "border-box",
-                    borderRadius: "50%",
-                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "#ffffff",
-                    color: theme === "dark" ? "#ffffff" : "#111111",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer",
-                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
-                    boxShadow: theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff"
-                  }}
-                  className="dock-icon-btn"
-                  title="Add a comment"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 21a9 9 0 1 0-9-9c0 1.48.36 2.89 1 4.15L3 21l4.85-1c1.26.64 2.67 1 4.15 1z"/>
-                  </svg>
-                </motion.button>
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Symmetrical, Single-Node Dynamic Morphing Button! Lives outside AnimatePresence to guarantee zero latency and absolute physical continuity! */}
+          <motion.button 
+            layout
+            type="button"
+            onPointerDown={(e) => {
+              if (isCommenting) {
+                e.preventDefault(); // Prevent input blur / keyboard close on iOS
+                if (commentText.trim() && tempName.trim()) {
+                  handleSendComment();
+                }
+              }
+            }}
+            onClick={(e) => {
+              if (!isCommenting) {
+                setIsCommenting(true);
+              } else {
+                if (commentText.trim() && tempName.trim()) {
+                  handleSendComment();
+                }
+              }
+            }}
+            disabled={isCommenting && (!commentText.trim() || !tempName.trim())}
+            animate={{
+              width: isCommenting ? "30px" : "34px",
+              height: isCommenting ? "30px" : "34px",
+              backgroundColor: isCommenting 
+                ? ((commentText.trim() && tempName.trim()) 
+                    ? "#007aff" 
+                    : (theme === "dark" ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.06)"))
+                : (theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "#ffffff"),
+              color: isCommenting
+                ? ((commentText.trim() && tempName.trim()) 
+                    ? "#ffffff" 
+                    : (theme === "dark" ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.45)"))
+                : (theme === "dark" ? "#ffffff" : "#111111"),
+              border: isCommenting 
+                ? "none" 
+                : (theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)"),
+              boxShadow: isCommenting 
+                ? "none" 
+                : (theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff")
+            }}
+            transition={{
+              layout: {
+                type: "spring",
+                stiffness: 320,
+                damping: 20,
+                mass: 0.5
+              },
+              default: { duration: 0.15 }
+            }}
+            style={{
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: "center", 
+              boxSizing: "border-box",
+              borderRadius: "50%", 
+              cursor: (isCommenting && (!commentText.trim() || !tempName.trim())) ? "default" : "pointer",
+              flexShrink: 0,
+              marginBottom: isCommenting ? "1px" : "0px"
+            }}
+            className={!isCommenting ? "dock-icon-btn" : ""}
+            title={isCommenting ? "Send reply" : "Add a comment"}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {isCommenting ? (
+                <motion.svg 
+                  key="send-icon"
+                  initial={{ opacity: 0, rotate: -45, scale: 0.6 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: 45, scale: 0.6 }}
+                  transition={{ duration: 0.12 }}
+                  width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "translateY(-1px)" }}
+                >
+                  <line x1="12" y1="19" x2="12" y2="5"></line>
+                  <polyline points="5 12 12 5 19 12"></polyline>
+                </motion.svg>
+              ) : (
+                <motion.svg 
+                  key="comment-icon"
+                  initial={{ opacity: 0, rotate: 45, scale: 0.6 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: -45, scale: 0.6 }}
+                  transition={{ duration: 0.12 }}
+                  width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                >
+                  <path d="M12 21a9 9 0 1 0-9-9c0 1.48.36 2.89 1 4.15L3 21l4.85-1c1.26.64 2.67 1 4.15 1z"/>
+                </motion.svg>
+              )}
+            </AnimatePresence>
+          </motion.button>
             </motion.div>
           </motion.div>
         </div>,
