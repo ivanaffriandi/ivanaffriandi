@@ -930,7 +930,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 animate={{ opacity: 1, scale: 1, filter: "blur(0px)", x: 0 }}
                 exit={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: -15 }}
                 transition={{ type: "spring", stiffness: 550, damping: 26 }}
-                style={{ display: "flex", alignItems: "flex-end", gap: "10px", flex: 1, height: "100%", minWidth: 0 }}
+                style={{ display: "flex", alignItems: "flex-end", gap: "10px", flex: 1, minWidth: 0 }}
               >
                 {/* Left Side: Staggered Inputs */}
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0px", minWidth: 0 }}>
@@ -969,33 +969,53 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     margin: "5px 0"
                   }} />
 
-                  {/* Row 2: Message Field */}
-                  <input 
-                    type="text"
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    placeholder="Add a reply..."
-                    style={{
-                      height: "18px",
-                      lineHeight: "18px",
-                      backgroundColor: "transparent",
-                      border: "none",
-                      outline: "none",
-                      color: colors.text,
-                      fontSize: "0.90rem",
-                      fontWeight: "400",
-                      width: "100%",
-                      boxSizing: "border-box",
-                      padding: "0 2px",
-                      fontFamily: "var(--font-sans)"
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleSendComment();
-                      }
-                    }}
-                    autoFocus
-                  />
+                  {/* Row 2: Message Field (Auto-growing Textarea) */}
+                  <div style={{ display: "grid", flex: 1, minHeight: "18px", maxHeight: "120px", overflowY: "auto" }}>
+                    {/* Hidden div to calculate height naturally */}
+                    <div style={{ 
+                      visibility: "hidden", 
+                      whiteSpace: "pre-wrap", 
+                      wordBreak: "break-word", 
+                      gridArea: "1 / 1", 
+                      padding: "0 2px", 
+                      fontFamily: "var(--font-sans)", 
+                      fontSize: "0.90rem", 
+                      lineHeight: "18px"
+                    }}>
+                      {commentText + " "}
+                    </div>
+                    {/* The actual text area */}
+                    <textarea 
+                      value={commentText}
+                      maxLength={300}
+                      onChange={(e) => setCommentText(e.target.value)}
+                      placeholder="Add a reply..."
+                      style={{
+                        gridArea: "1 / 1",
+                        resize: "none",
+                        backgroundColor: "transparent",
+                        border: "none",
+                        outline: "none",
+                        color: colors.text,
+                        fontSize: "0.90rem",
+                        fontWeight: "400",
+                        width: "100%",
+                        height: "100%",
+                        boxSizing: "border-box",
+                        padding: "0 2px",
+                        fontFamily: "var(--font-sans)",
+                        overflow: "hidden",
+                        lineHeight: "18px"
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSendComment();
+                        }
+                      }}
+                      autoFocus
+                    />
+                  </div>
                 </div>
 
                 {/* Right Side: Circular Send Button inside the capsule! */}
