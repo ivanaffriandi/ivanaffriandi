@@ -31,11 +31,19 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     setMounted(true);
   }, []);
   
-  // Identity modal states
-  const [showIdentityModal, setShowIdentityModal] = useState(false);
+  // Identity and Comment states
   const [tempName, setTempName] = useState("");
   const [tempEmail, setTempEmail] = useState("");
   
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedName = localStorage.getItem("ivan_comment_author_name") || "";
+      const savedEmail = localStorage.getItem("ivan_comment_author_email") || "";
+      setTempName(savedName);
+      setTempEmail(savedEmail);
+    }
+  }, [mounted]);
+
   const commentsSectionRef = useRef<HTMLDivElement>(null);
 
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -233,17 +241,21 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
   const handleSendComment = () => {
     if (!commentText.trim()) return;
 
-    const savedName = typeof window !== "undefined" ? localStorage.getItem("ivan_comment_author_name") : "";
+    const finalName = tempName.trim() || "Anonymous";
+    
+    // Auto-generate anonymous email if not saved before
     const savedEmail = typeof window !== "undefined" ? localStorage.getItem("ivan_comment_author_email") : "";
+    const finalEmail = savedEmail || "anonymous@example.com";
 
-    if (!savedName || !savedEmail) {
-      setTempName(savedName || "");
-      setTempEmail(savedEmail || "");
-      setShowIdentityModal(true);
-      return;
+    // Save Name and Email (if auto-generated) for subsequent sessions
+    if (typeof window !== "undefined") {
+      localStorage.setItem("ivan_comment_author_name", finalName);
+      if (!savedEmail) {
+        localStorage.setItem("ivan_comment_author_email", finalEmail);
+      }
     }
 
-    submitCommentToDb(savedName, savedEmail);
+    submitCommentToDb(finalName, finalEmail);
   };
 
   const submitCommentToDb = async (name: string, email: string) => {
@@ -269,17 +281,6 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     }
   };
 
-  const handleSaveIdentityAndSend = () => {
-    if (!tempName.trim() || !tempEmail.trim()) return;
-    
-    if (typeof window !== "undefined") {
-      localStorage.setItem("ivan_comment_author_name", tempName.trim());
-      localStorage.setItem("ivan_comment_author_email", tempEmail.trim());
-    }
-    
-    setShowIdentityModal(false);
-    submitCommentToDb(tempName.trim(), tempEmail.trim());
-  };
 
   // Rotate font style: sans -> serif -> mono -> sans
   const cycleFontStyle = () => {
@@ -870,17 +871,19 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 display: "flex",
                 alignItems: "center",
                 gap: "0.6rem",
-                backgroundColor: theme === "dark" ? "rgba(18, 18, 18, 0.85)" : "rgba(255, 255, 255, 0.88)",
+                backgroundColor: theme === "dark" 
+                  ? "rgba(18, 18, 18, 0.85)" 
+                  : "rgba(255, 255, 255, 0.88)",
                 backdropFilter: "blur(24px) saturate(190%)",
                 WebkitBackdropFilter: "blur(24px) saturate(190%)",
                 border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
-                borderRadius: "32px",
-                padding: "6px 10px",
+                borderRadius: isCommenting ? "24px" : "32px",
+                padding: isCommenting ? "8px 10px" : "6px 10px",
                 color: theme === "dark" ? "#ffffff" : "#111111",
                 boxShadow: theme === "dark" 
                   ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
                   : "0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
-                width: "max-content",
+                width: isCommenting ? "480px" : "max-content",
                 maxWidth: "92vw",
                 overflow: "hidden"
               }}
@@ -928,36 +931,86 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   </svg>
                 </button>
 
-                {/* Metamorphosis Input Field aligned perfectly to 34px height */}
-                <input 
-                  type="text"
-                  className="floating-island-input"
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="Add a reply"
+                {/* Metamorphosis iMessage-Style Double-Field Bubble aligned perfectly to 68px height */}
+                <div 
+                  className="floating-island-input-wrapper"
                   style={{
-                    height: "34px",
-                    lineHeight: "34px",
+                    height: "68px",
                     boxSizing: "border-box",
                     backgroundColor: theme === "dark" ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.04)",
                     border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
-                    borderRadius: "17px",
-                    padding: "0 16px",
-                    color: theme === "dark" ? "#ffffff" : "#111111",
-                    fontSize: "0.85rem",
-                    fontWeight: "500",
+                    borderRadius: "18px",
+                    padding: "6px 14px",
                     width: "380px",
-                    outline: "none",
-                    fontFamily: "var(--font-sans)",
-                    boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.06)"
+                    maxWidth: "64vw",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.06)",
+                    gap: "2px"
                   }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleSendComment();
-                    }
-                  }}
-                  autoFocus
-                />
+                >
+                  {/* Row 1: Name Field (Bold Subject style) */}
+                  <input 
+                    type="text"
+                    value={tempName}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setTempName(val);
+                      if (typeof window !== "undefined") {
+                        localStorage.setItem("ivan_comment_author_name", val);
+                      }
+                    }}
+                    placeholder="Your Name (Optional)"
+                    style={{
+                      height: "22px",
+                      lineHeight: "22px",
+                      backgroundColor: "transparent",
+                      border: "none",
+                      outline: "none",
+                      color: colors.text,
+                      fontSize: "0.78rem",
+                      fontWeight: "700",
+                      width: "100%",
+                      padding: 0,
+                      fontFamily: "var(--font-sans)"
+                    }}
+                  />
+                  
+                  {/* Subtle Separator */}
+                  <div style={{ 
+                    height: "1px", 
+                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)",
+                    margin: "1px 0"
+                  }} />
+
+                  {/* Row 2: Message Field */}
+                  <input 
+                    type="text"
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="Add a reply..."
+                    style={{
+                      height: "24px",
+                      lineHeight: "24px",
+                      backgroundColor: "transparent",
+                      border: "none",
+                      outline: "none",
+                      color: colors.text,
+                      fontSize: "0.85rem",
+                      fontWeight: "500",
+                      width: "100%",
+                      padding: 0,
+                      fontFamily: "var(--font-sans)"
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSendComment();
+                      }
+                    }}
+                    autoFocus
+                  />
+                </div>
 
                 {/* Send paper-airplane Button */}
                 <button 
@@ -1136,89 +1189,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         document.body
       )}
 
-      {/* Centered Identity Modal */}
-      <AnimatePresence>
-        {showIdentityModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{
-              position: "fixed", inset: 0, zIndex: 10000,
-              backgroundColor: "rgba(0,0,0,0.6)",
-              backdropFilter: "blur(10px)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              padding: "1rem"
-            }}
-          >
-            <motion.div
-              initial={{ scale: 0.95, y: 15 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: 15 }}
-              transition={{ type: "spring", stiffness: 350, damping: 25 }}
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                backgroundColor: colors.bg,
-                border: `1px solid ${colors.border}`,
-                borderRadius: "24px",
-                padding: "1.75rem",
-                maxWidth: "320px", width: "100%",
-                boxShadow: "0 25px 60px rgba(0,0,0,0.3)",
-                fontFamily: "var(--font-sans)",
-                color: colors.text
-              }}
-            >
-              <h4 style={{ margin: "0 0 6px 0", fontSize: "0.95rem", fontWeight: "700", letterSpacing: "-0.01em" }}>Introduce Yourself</h4>
-              <p style={{ margin: "0 0 1.25rem 0", fontSize: "0.75rem", color: colors.textSecondary, lineHeight: "1.4" }}>Your reply requires authorization. Please set your name and email to publish.</p>
-              
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                <input 
-                  type="text" 
-                  placeholder="Your Name" 
-                  value={tempName}
-                  onChange={(e) => setTempName(e.target.value)}
-                  style={{
-                    padding: "10px 14px", borderRadius: "12px",
-                    border: `1px solid ${colors.border}`,
-                    backgroundColor: theme === "dark" ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
-                    color: colors.text, fontSize: "0.8rem", outline: "none",
-                    fontFamily: "var(--font-sans)"
-                  }}
-                />
-                <input 
-                  type="email" 
-                  placeholder="your.email@example.com" 
-                  value={tempEmail}
-                  onChange={(e) => setTempEmail(e.target.value)}
-                  style={{
-                    padding: "10px 14px", borderRadius: "12px",
-                    border: `1px solid ${colors.border}`,
-                    backgroundColor: theme === "dark" ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
-                    color: colors.text, fontSize: "0.8rem", outline: "none",
-                    fontFamily: "var(--font-sans)"
-                  }}
-                />
-                
-                <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
-                  <button 
-                    onClick={() => setShowIdentityModal(false)}
-                    style={{ flex: 1, padding: "10px", border: "none", borderRadius: "12px", backgroundColor: theme === "dark" ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)", color: colors.text, fontSize: "0.75rem", fontWeight: "600", cursor: "pointer", fontFamily: "var(--font-sans)" }}
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    onClick={handleSaveIdentityAndSend}
-                    disabled={!tempName.trim() || !tempEmail.trim()}
-                    style={{ flex: 1, padding: "10px", border: "none", borderRadius: "12px", backgroundColor: "#B47A3E", color: "#fff", fontSize: "0.75rem", fontWeight: "600", cursor: "pointer", opacity: (!tempName.trim() || !tempEmail.trim()) ? 0.5 : 1, fontFamily: "var(--font-sans)" }}
-                  >
-                    Send Reply
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Identity Modal removed per clean design rules */}
     </div>
   );
 }
