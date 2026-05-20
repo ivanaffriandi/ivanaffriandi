@@ -897,13 +897,13 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 backdropFilter: "blur(24px) saturate(190%)",
                 WebkitBackdropFilter: "blur(24px) saturate(190%)",
                 border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
-                borderRadius: isCommenting ? "20px" : "32px",
-                padding: isCommenting ? "16px 12px 14px 20px" : "6px 10px",
+                borderRadius: isCommenting ? "24px" : "32px",
+                padding: isCommenting ? "18px 16px 18px 28px" : "6px 10px",
                 color: theme === "dark" ? "#ffffff" : "#111111",
                 boxShadow: theme === "dark" 
                   ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
                   : "0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
-                width: isCommenting ? "380px" : "max-content",
+                width: isCommenting ? "400px" : "max-content",
                 maxWidth: "92vw",
                 height: isCommenting ? "auto" : "46px",
                 boxSizing: "border-box",
@@ -940,7 +940,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       alignItems: "center",
                       backgroundColor: theme === "dark" ? "rgba(0, 122, 255, 0.25)" : "#EAF3FF",
                       borderRadius: "12px",
-                      padding: "4px 14px 4px 10px",
+                      padding: "4px 16px 4px 12px",
                       color: "#007aff",
                       maxWidth: "fit-content"
                     }}>
@@ -969,7 +969,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                           color: "#007aff",
                           fontSize: "0.78rem",
                           fontWeight: "600",
-                          width: tempName ? `${Math.max(tempName.length * 7.5, 45)}px` : "110px",
+                          width: tempName ? `${Math.max(tempName.length * 7.5, 48)}px` : "124px",
                           padding: 0,
                           fontFamily: "var(--font-sans)"
                         }}
