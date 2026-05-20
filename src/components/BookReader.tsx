@@ -898,7 +898,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 WebkitBackdropFilter: "blur(24px) saturate(190%)",
                 border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
                 borderRadius: isCommenting ? "24px" : "32px",
-                padding: isCommenting ? "16px 16px 16px 24px" : "6px 10px",
+                padding: isCommenting ? "16px 16px 16px 36px" : "6px 10px",
                 color: theme === "dark" ? "#ffffff" : "#111111",
                 boxShadow: theme === "dark" 
                   ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
@@ -941,8 +941,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     }}
                     placeholder="Name (Optional)"
                     style={{
-                      height: "22px",
-                      lineHeight: "22px",
+                      height: "24px",
+                      lineHeight: "24px",
                       backgroundColor: "transparent",
                       border: "none",
                       outline: "none",
@@ -950,7 +950,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       fontSize: "0.92rem",
                       fontWeight: "600",
                       width: "100%",
-                      padding: 0,
+                      boxSizing: "border-box",
+                      padding: "0 2px",
                       fontFamily: "var(--font-sans)"
                     }}
                   />
@@ -969,8 +970,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     onChange={(e) => setCommentText(e.target.value)}
                     placeholder="Add a reply..."
                     style={{
-                      height: "22px",
-                      lineHeight: "22px",
+                      height: "24px",
+                      lineHeight: "24px",
                       backgroundColor: "transparent",
                       border: "none",
                       outline: "none",
@@ -978,7 +979,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       fontSize: "0.90rem",
                       fontWeight: "400",
                       width: "100%",
-                      padding: 0,
+                      boxSizing: "border-box",
+                      padding: "0 2px",
                       fontFamily: "var(--font-sans)"
                     }}
                     onKeyDown={(e) => {
