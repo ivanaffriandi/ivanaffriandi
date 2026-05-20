@@ -87,41 +87,12 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     return () => window.removeEventListener("scroll", handleScroll);
   }, [mounted]);
 
-  // Fetch comments on mount — scoped strictly to this post's ID
+  // Fetch approved comments for this specific post
   useEffect(() => {
     const loadComments = async () => {
       try {
-        // 1. Fetch approved comments from Firebase for THIS post only
         const approved = await getApprovedComments(post.id);
-
-        // 2. Load any optimistic pending comments from localStorage for THIS post only
-        const stored = typeof window !== "undefined"
-          ? localStorage.getItem("ivan_journal_comments")
-          : null;
-        let pendingLocal: CommentItem[] = [];
-        if (stored) {
-          const parsed: CommentItem[] = JSON.parse(stored);
-          // Strict postId match AND not yet in approved list (avoid duplicates)
-          const approvedIds = new Set(approved.map(c => c.id));
-          pendingLocal = parsed.filter(
-            (c) => c.postId === post.id && !c.approved && !approvedIds.has(c.id)
-          );
-
-          // Clean up any localStorage entries that are now approved (cleanup)
-          const stillPending = parsed.filter(
-            (c) => !(c.postId === post.id && c.approved)
-          );
-          if (stillPending.length !== parsed.length) {
-            localStorage.setItem("ivan_journal_comments", JSON.stringify(stillPending));
-          }
-        }
-
-        // 3. Merge: approved first (newest first), then pending below
-        const merged = [
-          ...approved.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()),
-          ...pendingLocal.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()),
-        ];
-        setComments(merged);
+        setComments(approved);
       } catch (err) {
         console.error("Failed to load comments:", err);
       }
@@ -297,8 +268,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     const text = commentText.trim();
     if (!text) return;
 
-    // Create optimistic comment object for instant rendering
-    const optimisticId = `local-opt-${Date.now()}`;
+    // Create optimistic comment for instant UI feedback
+    const optimisticId = `opt-${Date.now()}`;
     const optimisticComment: CommentItem = {
       id: optimisticId,
       postId: post.id,
@@ -312,20 +283,12 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
       }
     };
 
-    // Persist optimistic comment to localStorage so it survives page refresh
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("ivan_journal_comments");
-      const existing: CommentItem[] = stored ? JSON.parse(stored) : [];
-      existing.push(optimisticComment);
-      localStorage.setItem("ivan_journal_comments", JSON.stringify(existing));
-    }
-
-    // Instant UI feedback: inject to UI, close dock, and clear input immediately!
+    // Show instantly, close dock, clear input
     setComments((prev) => [optimisticComment, ...prev]);
     setCommentText("");
     setIsCommenting(false);
 
-    // Smooth scroll down to comment replies area instantly
+    // Scroll to comments section
     setTimeout(() => {
       if (commentsSectionRef.current) {
         commentsSectionRef.current.scrollIntoView({ behavior: "smooth" });
@@ -333,23 +296,14 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     }, 100);
 
     try {
-      // Execute backend save silently
+      // Save to Firebase via API route (server-side, no auth issues)
       const actualComment = await addComment(post.id, name, email, text);
-      
-      // Quietly swap the optimistic ID with the real database ID in UI
+      // Swap optimistic entry with real DB entry
       setComments((prev) => prev.map(c => c.id === optimisticId ? actualComment : c));
-
-      // Also clean up the optimistic entry from localStorage (replace with actual)
-      if (typeof window !== "undefined") {
-        const stored = localStorage.getItem("ivan_journal_comments");
-        if (stored) {
-          const existing: CommentItem[] = JSON.parse(stored);
-          const cleaned = existing.filter(c => c.id !== optimisticId);
-          localStorage.setItem("ivan_journal_comments", JSON.stringify(cleaned));
-        }
-      }
     } catch (err) {
       console.error("Error adding comment:", err);
+      // On error, remove the optimistic entry to avoid ghost comments
+      setComments((prev) => prev.filter(c => c.id !== optimisticId));
     }
   };
 
