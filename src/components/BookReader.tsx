@@ -900,7 +900,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               className={`floating-island-dock ${isCommenting ? 'is-commenting' : ''}`}
               style={{
                 display: "flex",
-                alignItems: isCommenting ? "flex-end" : "center",
+                alignItems: "center",
                 gap: isCommenting ? "10px" : "0.6rem",
                 backgroundColor: theme === "dark" 
                   ? "rgba(18, 18, 18, 0.85)" 
@@ -936,7 +936,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 animate={{ opacity: 1, scale: 1, filter: "blur(0px)", x: 0 }}
                 exit={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: -15 }}
                 transition={{ type: "spring", stiffness: 550, damping: 26 }}
-                style={{ display: "flex", alignItems: "flex-end", gap: "10px", flex: 1, minWidth: 0 }}
+                style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1, minWidth: 0 }}
               >
                 {/* Left Side: Staggered Inputs */}
                 <motion.div layout style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0px", minWidth: 0 }}>
@@ -953,13 +953,13 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     }}
                     placeholder="Name"
                     style={{
-                      height: "17px",
-                      lineHeight: "17px",
+                      height: "19px",
+                      lineHeight: "19px",
                       backgroundColor: "transparent",
                       border: "none",
                       outline: "none",
                       color: colors.text,
-                      fontSize: "0.85rem",
+                      fontSize: "0.92rem",
                       fontWeight: "600",
                       width: "100%",
                       boxSizing: "border-box",
@@ -972,11 +972,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   <motion.div layout style={{ 
                     height: "1px", 
                     backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)",
-                    margin: "4px 0"
+                    margin: "5px 0"
                   }} />
 
                   {/* Row 2: Message Field (Auto-growing Textarea) */}
-                  <motion.div layout style={{ position: "relative", width: "100%", minHeight: "17px" }}>
+                  <motion.div layout style={{ position: "relative", width: "100%", minHeight: "18px" }}>
                     {/* Hidden div to calculate height naturally */}
                     <motion.div 
                       layout
@@ -987,9 +987,9 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         padding: "0 2px", 
                         margin: 0,
                         fontFamily: "var(--font-sans)", 
-                        fontSize: "0.85rem", 
-                        lineHeight: "17px",
-                        minHeight: "17px"
+                        fontSize: "0.90rem", 
+                        lineHeight: "18px",
+                        minHeight: "18px"
                       }}
                     >
                       {commentText + " "}
@@ -1011,7 +1011,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         border: "none",
                         outline: "none",
                         color: colors.text,
-                        fontSize: "0.85rem",
+                        fontSize: "0.90rem",
                         fontWeight: "400",
                         width: "100%",
                         height: "100%",
@@ -1020,7 +1020,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         margin: 0,
                         fontFamily: "var(--font-sans)",
                         overflow: "hidden",
-                        lineHeight: "17px",
+                        lineHeight: "18px",
                         WebkitAppearance: "none"
                       }}
                       onKeyDown={(e) => {
@@ -1214,10 +1214,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   title="Add a comment"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-                    <circle cx="9" cy="12" r="1" fill="currentColor"/>
-                    <circle cx="13" cy="12" r="1" fill="currentColor"/>
-                    <circle cx="17" cy="12" r="1" fill="currentColor"/>
+                    <path d="M12 21a9 9 0 1 0-9-9c0 1.48.36 2.89 1 4.15L3 21l4.85-1c1.26.64 2.67 1 4.15 1z"/>
                   </svg>
                 </motion.button>
               </motion.div>
