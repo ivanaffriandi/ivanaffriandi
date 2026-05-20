@@ -979,7 +979,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   }} />
 
                   {/* Row 2: Message Field (Auto-growing Textarea) */}
-                  <div className="hide-scrollbar" style={{ position: "relative", width: "100%", minHeight: "18px", maxHeight: "100px", overflowY: "auto" }}>
+                  <div style={{ position: "relative", width: "100%", minHeight: "18px" }}>
                     {/* Hidden div to calculate height naturally */}
                     <div style={{ 
                       visibility: "hidden", 
