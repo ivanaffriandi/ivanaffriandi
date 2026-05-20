@@ -589,13 +589,6 @@ export default function AdminPage() {
   const totalComments = adminComments.length;
   const totalMoments = adminMoments.length;
 
-  const tabMeta = {
-    inbox: { label: "Inbox", emoji: "💬", count: pendingQuestionsCount > 0 ? pendingQuestionsCount : null, dotColor: "#FF9500" },
-    calendar: { label: "Schedule", emoji: "📅", count: null, dotColor: null },
-    comments: { label: "Comments", emoji: "✍️", count: pendingCommentsCount > 0 ? pendingCommentsCount : null, dotColor: "#B47A3E" },
-    moments: { label: "Gallery", emoji: "🖼️", count: null, dotColor: null },
-  } as const;
-
   // --- DASHBOARD VIEW (MAX-WIDTH: 420PX STICKY APP PORTRAIT) ---
   return (
     <div className="admin-panel-container" style={{ minHeight: "100vh", padding: "1.2rem 1rem 7rem 1rem", maxWidth: "420px", margin: "0 auto", fontFamily: iosFontStack, backgroundColor: "var(--bg-color)", position: "relative" }}>
@@ -743,11 +736,8 @@ export default function AdminPage() {
             : "inset 0 1px 0 rgba(255,255,255,0.95), 0 4px 16px rgba(0,0,0,0.015)"
         }}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <span style={{ fontSize: "0.9rem" }}>🎛️</span>
-            <h1 style={{ fontSize: "0.82rem", fontWeight: "800", margin: 0, letterSpacing: "-0.02em", color: "var(--text-primary)" }}>Studio Panel</h1>
-          </div>
+        <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: "8px", gap: "8px" }}>
+          <h1 style={{ fontSize: "0.82rem", fontWeight: "800", margin: 0, letterSpacing: "-0.02em", color: "var(--text-primary)", whiteSpace: "nowrap" }}>Studio</h1>
           <button 
             onClick={handleLogout} 
             style={{ 
@@ -823,7 +813,25 @@ export default function AdminPage() {
         }}
       >
         {(["inbox", "calendar", "comments", "moments"] as const).map(tab => {
-          const meta = tabMeta[tab];
+          const tabLabels: Record<typeof tab, string> = { 
+            inbox: "Inbox", 
+            calendar: "Calendar", 
+            comments: "Comments", 
+            moments: "Moments" 
+          };
+          const tabCount: Record<typeof tab, number> = {
+            inbox: pendingQuestionsCount,
+            calendar: 0,
+            comments: pendingCommentsCount,
+            moments: 0
+          };
+          const tabCountColor: Record<typeof tab, string> = {
+            inbox: "#FF9500",
+            calendar: "transparent",
+            comments: "#B47A3E",
+            moments: "transparent"
+          };
+          const count = tabCount[tab];
           return (
             <button 
               key={tab} 
@@ -831,33 +839,29 @@ export default function AdminPage() {
               onClick={() => setActiveTab(tab)} 
               style={{ 
                 color: activeTab === tab ? "var(--text-primary)" : "var(--text-secondary)",
-                padding: "6px 2px",
+                padding: "7px 4px",
                 borderRadius: "18px",
                 zIndex: 2,
                 transition: "color 0.2s cubic-bezier(0.16, 1, 0.3, 1)"
               }}
             >
-              <span style={{ position: "relative", zIndex: 3, display: "inline-flex", flexDirection: "column", alignItems: "center", gap: "1px" }}>
-                <span style={{ fontSize: "0.9rem", lineHeight: "1" }}>{meta.emoji}</span>
-                <span style={{ fontWeight: activeTab === tab ? "700" : "550", fontSize: "0.6rem", letterSpacing: "-0.01em" }}>
-                  {meta.label}
+              <span style={{ position: "relative", zIndex: 3, display: "inline-flex", alignItems: "center", gap: "3px" }}>
+                <span style={{ fontWeight: activeTab === tab ? "700" : "550", fontSize: "0.68rem", letterSpacing: "-0.01em" }}>
+                  {tabLabels[tab]}
                 </span>
-                {meta.count !== null && meta.count > 0 && (
+                {count > 0 && (
                   <span style={{
-                    position: "absolute",
-                    top: "-2px",
-                    right: "-5px",
-                    fontSize: "0.48rem",
+                    fontSize: "0.5rem",
                     fontWeight: "800",
-                    background: meta.dotColor,
+                    background: tabCountColor[tab],
                     color: "#fff",
-                    padding: "1px 3px",
+                    padding: "1px 4px",
                     borderRadius: "4px",
-                    lineHeight: "1.2",
-                    minWidth: "10px",
+                    lineHeight: "1.3",
+                    minWidth: "12px",
                     textAlign: "center"
                   }}>
-                    {meta.count}
+                    {count}
                   </span>
                 )}
               </span>
