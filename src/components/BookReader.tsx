@@ -264,7 +264,6 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
       // Prepend to UI state for instant local preview
       setComments((prev) => [newComment, ...prev]);
       setCommentText("");
-      setIsCommenting(false);
 
       // Smooth scroll down to comment replies area
       setTimeout(() => {
@@ -274,6 +273,16 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
       }, 100);
     } catch (err) {
       console.error("Error adding comment:", err);
+    }
+  };
+
+  const scrollToCommentForm = () => {
+    if (commentsSectionRef.current) {
+      commentsSectionRef.current.scrollIntoView({ behavior: "smooth" });
+      setTimeout(() => {
+        const textarea = document.getElementById("static-comment-textarea");
+        if (textarea) textarea.focus();
+      }, 500);
     }
   };
 
@@ -823,6 +832,139 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               </div>
             )}
           </div>
+          
+          {/* Beautiful Static Comment Form */}
+          <div 
+            style={{
+              marginTop: "3rem",
+              padding: "2rem",
+              borderRadius: "20px",
+              backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.015)",
+              border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}`,
+              fontFamily: "var(--font-sans)",
+              color: colors.text
+            }}
+          >
+            <h4 style={{ margin: "0 0 1rem 0", fontSize: "0.9rem", fontWeight: "700", letterSpacing: "-0.01em" }}>
+              Leave a Reply
+            </h4>
+            
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "12px" }}>
+              {/* Name Field */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                <label style={{ fontSize: "0.7rem", fontWeight: "600", opacity: 0.6 }}>Name</label>
+                <input 
+                  type="text"
+                  value={tempName}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setTempName(val);
+                    if (typeof window !== "undefined") {
+                      localStorage.setItem("ivan_comment_author_name", val);
+                    }
+                  }}
+                  placeholder="Ivan Affriandi"
+                  style={{
+                    height: "38px",
+                    boxSizing: "border-box",
+                    backgroundColor: theme === "dark" ? "rgba(255,255,255,0.03)" : "#ffffff",
+                    border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.08)"}`,
+                    borderRadius: "10px",
+                    padding: "0 12px",
+                    color: colors.text,
+                    fontSize: "0.82rem",
+                    fontWeight: "500",
+                    outline: "none",
+                    fontFamily: "var(--font-sans)"
+                  }}
+                />
+              </div>
+
+              {/* Email Field */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                <label style={{ fontSize: "0.7rem", fontWeight: "600", opacity: 0.6 }}>Email</label>
+                <input 
+                  type="email"
+                  value={tempEmail}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setTempEmail(val);
+                    if (typeof window !== "undefined") {
+                      localStorage.setItem("ivan_comment_author_email", val);
+                    }
+                  }}
+                  placeholder="your.email@example.com"
+                  style={{
+                    height: "38px",
+                    boxSizing: "border-box",
+                    backgroundColor: theme === "dark" ? "rgba(255,255,255,0.03)" : "#ffffff",
+                    border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.08)"}`,
+                    borderRadius: "10px",
+                    padding: "0 12px",
+                    color: colors.text,
+                    fontSize: "0.82rem",
+                    fontWeight: "500",
+                    outline: "none",
+                    fontFamily: "var(--font-sans)"
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Message Field */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginBottom: "16px" }}>
+              <label style={{ fontSize: "0.7rem", fontWeight: "600", opacity: 0.6 }}>Message</label>
+              <textarea 
+                id="static-comment-textarea"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Write your thoughts here..."
+                style={{
+                  height: "90px",
+                  boxSizing: "border-box",
+                  backgroundColor: theme === "dark" ? "rgba(255,255,255,0.03)" : "#ffffff",
+                  border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.08)"}`,
+                  borderRadius: "10px",
+                  padding: "10px 12px",
+                  color: colors.text,
+                  fontSize: "0.82rem",
+                  fontWeight: "500",
+                  outline: "none",
+                  fontFamily: "var(--font-sans)",
+                  resize: "none"
+                }}
+              />
+            </div>
+
+            {/* Submit Button */}
+            <button 
+              onClick={handleSendComment}
+              disabled={!commentText.trim()}
+              style={{
+                display: "inline-flex", 
+                alignItems: "center", 
+                justifyContent: "center", 
+                height: "38px",
+                padding: "0 24px",
+                borderRadius: "10px", 
+                backgroundColor: commentText.trim() 
+                  ? (theme === "dark" ? "#ffffff" : "#111111") 
+                  : (theme === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)"), 
+                color: commentText.trim() 
+                  ? (theme === "dark" ? "#000000" : "#ffffff") 
+                  : (theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.15)"), 
+                border: "none",
+                fontSize: "0.82rem",
+                fontWeight: "600",
+                cursor: commentText.trim() ? "pointer" : "default",
+                transition: "all 0.2s ease",
+                fontFamily: "var(--font-sans)",
+                boxShadow: commentText.trim() ? "0 4px 12px rgba(0,0,0,0.1)" : "none"
+              }}
+            >
+              Post Reply
+            </button>
+          </div>
         </div>
 
       </article>
@@ -839,360 +981,154 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             pointerEvents: "none"
           }}
         >
-          {/* Apple Dynamic Island Snappy Scale/Squish Bubble Wrapper */}
-          <motion.div
-            animate={isCommenting ? "commenting" : "normal"}
-            variants={{
-              normal: {
-                scale: [1, 0.82, 1.04, 1]
-              },
-              commenting: {
-                scale: [1, 0.8201, 1.0401, 1]
-              }
-            }}
-            transition={{
-              duration: 0.45,
-              ease: [0.25, 1, 0.5, 1]
-            }}
+          {/* Symmetrical Floating Dock */}
+          <div 
+            className="floating-island-dock"
             style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.6rem",
+              backgroundColor: theme === "dark" ? "rgba(18, 18, 18, 0.85)" : "rgba(255, 255, 255, 0.88)",
+              backdropFilter: "blur(24px) saturate(190%)",
+              WebkitBackdropFilter: "blur(24px) saturate(190%)",
+              border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
+              borderRadius: "32px",
+              padding: "6px 10px",
+              color: theme === "dark" ? "#ffffff" : "#111111",
+              boxShadow: theme === "dark" 
+                ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
+                : "0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
+              width: "max-content",
+              maxWidth: "92vw",
+              overflow: "hidden",
               pointerEvents: "auto"
             }}
           >
-            {/* Kindle-Style Floating Dock with Layout Width morphing */}
-            <motion.div 
-              layout
-              className="floating-island-dock"
-              style={{
-                display: "flex",
-                flexDirection: isCommenting ? "column" : "row",
-                alignItems: isCommenting ? "stretch" : "center",
-                gap: "0.6rem",
-                backgroundColor: theme === "dark" 
-                  ? (isCommenting ? "rgba(20, 20, 19, 0.95)" : "rgba(18, 18, 18, 0.85)") 
-                  : (isCommenting ? "rgba(255, 255, 255, 0.98)" : "rgba(255, 255, 255, 0.88)"),
-                backdropFilter: "blur(24px) saturate(190%)",
-                WebkitBackdropFilter: "blur(24px) saturate(190%)",
-                border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
-                borderRadius: isCommenting ? "24px" : "32px",
-                padding: isCommenting ? "16px" : "6px 10px",
-                color: theme === "dark" ? "#ffffff" : "#111111",
-                boxShadow: theme === "dark" 
-                  ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
-                  : "0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
-                width: isCommenting ? "360px" : "max-content",
-                maxWidth: "92vw",
-                overflow: "hidden"
+            {/* 1. Symmetrical Circular Back Button */}
+            <Link 
+              href="/" 
+              style={{ 
+                display: "flex", 
+                alignItems: "center", 
+                justifyContent: "center", 
+                width: "34px", 
+                height: "34px", 
+                boxSizing: "border-box",
+                borderRadius: "50%", 
+                backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "#ffffff", 
+                color: theme === "dark" ? "#ffffff" : "#111111", 
+                border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
+                boxShadow: theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff",
+                transition: "all 0.2s ease",
+                textDecoration: "none",
+                flexShrink: 0
               }}
-              transition={{
-                type: "spring",
-                stiffness: 550,
-                damping: 24,
-                mass: 0.65
+              className="dock-icon-btn"
+              title="Back to Journal"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+            </Link>
+
+            {/* 2. Read / Listen Capsule */}
+            <div 
+              style={{ 
+                display: "flex", 
+                alignItems: "center",
+                height: "34px",
+                boxSizing: "border-box",
+                backgroundColor: theme === "dark" ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.04)", 
+                borderRadius: "17px", 
+                padding: "2px",
+                border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(0, 0, 0, 0.04)",
+                boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.06)"
               }}
             >
-          <AnimatePresence mode="wait" initial={false}>
-            {isCommenting ? (
-              <motion.div 
-                key="commenting"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 15 }}
-                transition={{ type: "spring", stiffness: 500, damping: 28 }}
-                style={{ 
-                  display: "flex", 
-                  flexDirection: "column", 
-                  gap: "12px", 
-                  width: "100%" 
+              <button 
+                onClick={() => setMode("read")}
+                style={{
+                  height: "30px",
+                  lineHeight: "30px",
+                  padding: "0 14px",
+                  borderRadius: "15px",
+                  border: "none",
+                  backgroundColor: mode === "read" 
+                    ? (theme === "dark" ? "#ffffff" : "#111111") 
+                    : "transparent",
+                  color: mode === "read" 
+                    ? (theme === "dark" ? "#000000" : "#ffffff") 
+                    : (theme === "dark" ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"),
+                  boxShadow: mode === "read"
+                    ? (theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.2)")
+                    : "none",
+                  fontSize: "0.85rem",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease"
                 }}
               >
-                {/* Top Row: Title & Close Button */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-                  <span style={{ 
-                    fontSize: "0.8rem", 
-                    fontWeight: "700", 
-                    color: colors.textSecondary,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    fontFamily: "var(--font-sans)"
-                  }}>
-                    Write a Reply
-                  </span>
-                  <button 
-                    onClick={() => setIsCommenting(false)}
-                    style={{
-                      background: "transparent",
-                      border: "none",
-                      color: colors.textSecondary,
-                      cursor: "pointer",
-                      padding: "4px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      opacity: 0.7,
-                      transition: "opacity 0.2s ease"
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
-                    onMouseLeave={(e) => e.currentTarget.style.opacity = "0.7"}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                  </button>
-                </div>
-
-                {/* Name Input */}
-                <input 
-                  type="text"
-                  value={tempName}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setTempName(val);
-                    if (typeof window !== "undefined") {
-                      localStorage.setItem("ivan_comment_author_name", val);
-                    }
-                  }}
-                  placeholder="Your Name (Optional)"
-                  style={{
-                    height: "36px",
-                    boxSizing: "border-box",
-                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)",
-                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
-                    borderRadius: "12px",
-                    padding: "0 12px",
-                    color: theme === "dark" ? "#ffffff" : "#111111",
-                    fontSize: "0.82rem",
-                    fontWeight: "500",
-                    width: "100%",
-                    outline: "none",
-                    fontFamily: "var(--font-sans)"
-                  }}
-                />
-
-                {/* Email Input */}
-                <input 
-                  type="email"
-                  value={tempEmail}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setTempEmail(val);
-                    if (typeof window !== "undefined") {
-                      localStorage.setItem("ivan_comment_author_email", val);
-                    }
-                  }}
-                  placeholder="Your Email (Optional)"
-                  style={{
-                    height: "36px",
-                    boxSizing: "border-box",
-                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)",
-                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
-                    borderRadius: "12px",
-                    padding: "0 12px",
-                    color: theme === "dark" ? "#ffffff" : "#111111",
-                    fontSize: "0.82rem",
-                    fontWeight: "500",
-                    width: "100%",
-                    outline: "none",
-                    fontFamily: "var(--font-sans)"
-                  }}
-                />
-
-                {/* Reply Message Input */}
-                <textarea 
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="Write your thoughts..."
-                  style={{
-                    height: "80px",
-                    boxSizing: "border-box",
-                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)",
-                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
-                    borderRadius: "12px",
-                    padding: "10px 12px",
-                    color: theme === "dark" ? "#ffffff" : "#111111",
-                    fontSize: "0.82rem",
-                    fontWeight: "500",
-                    width: "100%",
-                    outline: "none",
-                    fontFamily: "var(--font-sans)",
-                    resize: "none"
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSendComment();
-                    }
-                  }}
-                  autoFocus
-                />
-
-                {/* Send button */}
-                <button 
-                  onClick={handleSendComment}
-                  disabled={!commentText.trim()}
-                  style={{
-                    display: "flex", 
-                    alignItems: "center", 
-                    justifyContent: "center", 
-                    height: "36px",
-                    borderRadius: "12px", 
-                    backgroundColor: commentText.trim() 
-                      ? (theme === "dark" ? "#ffffff" : "#111111") 
-                      : (theme === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)"), 
-                    color: commentText.trim() 
-                      ? (theme === "dark" ? "#000000" : "#ffffff") 
-                      : (theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.15)"), 
-                    border: "none",
-                    fontSize: "0.82rem",
-                    fontWeight: "600",
-                    cursor: commentText.trim() ? "pointer" : "default",
-                    transition: "all 0.2s ease",
-                    fontFamily: "var(--font-sans)",
-                    boxShadow: commentText.trim() ? "0 4px 12px rgba(0,0,0,0.1)" : "none"
-                  }}
-                >
-                  Send Reply
-                </button>
-              </motion.div>
-            ) : (
-              <motion.div 
-                key="normal"
-                initial={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: -15 }}
-                animate={{ opacity: 1, scale: 1, filter: "blur(0px)", x: 0 }}
-                exit={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: 15 }}
-                transition={{ type: "spring", stiffness: 550, damping: 26 }}
-                style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+                Read
+              </button>
+              <button 
+                onClick={() => setMode("listen")}
+                style={{
+                  height: "30px",
+                  lineHeight: "30px",
+                  padding: "0 14px",
+                  borderRadius: "15px",
+                  border: "none",
+                  backgroundColor: mode === "listen" 
+                    ? (theme === "dark" ? "#ffffff" : "#111111") 
+                    : "transparent",
+                  color: mode === "listen" 
+                    ? (theme === "dark" ? "#000000" : "#ffffff") 
+                    : (theme === "dark" ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"),
+                  boxShadow: mode === "listen"
+                    ? (theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.2)")
+                    : "none",
+                  fontSize: "0.85rem",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.25rem"
+                }}
               >
-                {/* 1. Symmetrical Circular Back Button */}
-                <Link 
-                  href="/" 
-                  style={{ 
-                    display: "flex", 
-                    alignItems: "center", 
-                    justifyContent: "center", 
-                    width: "34px", 
-                    height: "34px", 
-                    boxSizing: "border-box",
-                    borderRadius: "50%", 
-                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "#ffffff", 
-                    color: theme === "dark" ? "#ffffff" : "#111111", 
-                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
-                    boxShadow: theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff",
-                    transition: "all 0.2s ease",
-                    textDecoration: "none",
-                    flexShrink: 0
-                  }}
-                  className="dock-icon-btn"
-                  title="Back to Journal"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m15 18-6-6 6-6"/>
-                  </svg>
-                </Link>
+                Listen
+                {isPlaying && (
+                  <span className="tts-pulse-indicator" style={{ display: "inline-block", width: "5px", height: "5px", backgroundColor: "#ff3b30", borderRadius: "50%" }}></span>
+                )}
+              </button>
+            </div>
 
-                {/* 2. Read / Listen Capsule */}
-                <div 
-                  style={{ 
-                    display: "flex", 
-                    alignItems: "center",
-                    height: "34px",
-                    boxSizing: "border-box",
-                    backgroundColor: theme === "dark" ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.04)", 
-                    borderRadius: "17px", 
-                    padding: "2px",
-                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(0, 0, 0, 0.04)",
-                    boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.06)"
-                  }}
-                >
-                  <button 
-                    onClick={() => setMode("read")}
-                    style={{
-                      height: "30px",
-                      lineHeight: "30px",
-                      padding: "0 14px",
-                      borderRadius: "15px",
-                      border: "none",
-                      backgroundColor: mode === "read" 
-                        ? (theme === "dark" ? "#ffffff" : "#111111") 
-                        : "transparent",
-                      color: mode === "read" 
-                        ? (theme === "dark" ? "#000000" : "#ffffff") 
-                        : (theme === "dark" ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"),
-                      boxShadow: mode === "read"
-                        ? (theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.2)")
-                        : "none",
-                      fontSize: "0.85rem",
-                      fontWeight: "600",
-                      cursor: "pointer",
-                      transition: "all 0.2s ease"
-                    }}
-                  >
-                    Read
-                  </button>
-                  <button 
-                    onClick={() => setMode("listen")}
-                    style={{
-                      height: "30px",
-                      lineHeight: "30px",
-                      padding: "0 14px",
-                      borderRadius: "15px",
-                      border: "none",
-                      backgroundColor: mode === "listen" 
-                        ? (theme === "dark" ? "#ffffff" : "#111111") 
-                        : "transparent",
-                      color: mode === "listen" 
-                        ? (theme === "dark" ? "#000000" : "#ffffff") 
-                        : (theme === "dark" ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"),
-                      boxShadow: mode === "listen"
-                        ? (theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.2)")
-                        : "none",
-                      fontSize: "0.85rem",
-                      fontWeight: "600",
-                      cursor: "pointer",
-                      transition: "all 0.2s ease",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "0.25rem"
-                    }}
-                  >
-                    Listen
-                    {isPlaying && (
-                      <span className="tts-pulse-indicator" style={{ display: "inline-block", width: "5px", height: "5px", backgroundColor: "#ff3b30", borderRadius: "50%" }}></span>
-                    )}
-                  </button>
-                </div>
-
-                {/* 3. Theme Toggle Button Removed (Auto matches system preference) */}
-                {/* 4. Morphing Comments Anchor Button with highly rounded conversation bubble icon */}
-                <button 
-                  onClick={() => setIsCommenting(true)}
-                  style={{
-                    width: "34px",
-                    height: "34px",
-                    boxSizing: "border-box",
-                    borderRadius: "50%",
-                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "#ffffff",
-                    color: theme === "dark" ? "#ffffff" : "#111111",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
-                    boxShadow: theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff"
-                  }}
-                  className="dock-icon-btn"
-                  title="Add a comment"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 21a9 9 0 1 0-9-9c0 1.48.36 2.89 1 4.15L3 21l4.85-1c1.26.64 2.67 1 4.15 1z"/>
-                  </svg>
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-            </motion.div>
-          </motion.div>
+            {/* 3. Symmetrical Comments Button */}
+            <button 
+              onClick={scrollToCommentForm}
+              style={{
+                width: "34px",
+                height: "34px",
+                boxSizing: "border-box",
+                borderRadius: "50%",
+                backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "#ffffff",
+                color: theme === "dark" ? "#ffffff" : "#111111",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
+                boxShadow: theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff"
+              }}
+              className="dock-icon-btn"
+              title="Write a reply"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 21a9 9 0 1 0-9-9c0 1.48.36 2.89 1 4.15L3 21l4.85-1c1.26.64 2.67 1 4.15 1z"/>
+              </svg>
+            </button>
+          </div>
         </div>,
         document.body
       )}
