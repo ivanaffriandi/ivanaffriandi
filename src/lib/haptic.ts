@@ -21,6 +21,13 @@ function getAudioContext(): AudioContext | null {
  * Tactile soft click (tick) for scroll actions or cylinder wheel rolls
  */
 export function triggerLightClick() {
+  // Physical hardware vibration trigger (supported on Android devices/Chrome)
+  if (typeof navigator !== "undefined" && navigator.vibrate) {
+    try {
+      navigator.vibrate(10); // Short mechanical tick (10ms)
+    } catch (e) {}
+  }
+
   const ctx = getAudioContext();
   if (!ctx) return;
 
@@ -56,6 +63,13 @@ export function triggerLightClick() {
  * Tactile deep click for primary page transitions or form submissions
  */
 export function triggerActionClick() {
+  // Physical hardware vibration trigger (supported on Android devices/Chrome)
+  if (typeof navigator !== "undefined" && navigator.vibrate) {
+    try {
+      navigator.vibrate(22); // Slightly deeper tactile pop (22ms)
+    } catch (e) {}
+  }
+
   const ctx = getAudioContext();
   if (!ctx) return;
 
