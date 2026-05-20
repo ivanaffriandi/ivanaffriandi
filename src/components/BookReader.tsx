@@ -900,7 +900,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               className={`floating-island-dock ${isCommenting ? 'is-commenting' : ''}`}
               style={{
                 display: "flex",
-                alignItems: "center",
+                alignItems: isCommenting ? "flex-end" : "center",
                 gap: isCommenting ? "10px" : "0.6rem",
                 backgroundColor: theme === "dark" 
                   ? "rgba(18, 18, 18, 0.85)" 
@@ -936,7 +936,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 animate={{ opacity: 1, scale: 1, filter: "blur(0px)", x: 0 }}
                 exit={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: -15 }}
                 transition={{ type: "spring", stiffness: 550, damping: 26 }}
-                style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1, minWidth: 0 }}
+                style={{ display: "flex", alignItems: "flex-end", gap: "10px", flex: 1, minWidth: 0 }}
               >
                 {/* Left Side: Staggered Inputs */}
                 <motion.div layout style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0px", minWidth: 0 }}>
