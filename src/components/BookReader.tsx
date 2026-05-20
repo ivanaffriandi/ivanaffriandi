@@ -1052,6 +1052,15 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     }
                   }}
                   disabled={!commentText.trim() || !tempName.trim()}
+                  animate={{
+                    backgroundColor: (commentText.trim() && tempName.trim()) 
+                      ? "#007aff" 
+                      : (theme === "dark" ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"),
+                    color: (commentText.trim() && tempName.trim()) 
+                      ? "#ffffff" 
+                      : (theme === "dark" ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.3)")
+                  }}
+                  transition={{ duration: 0.15 }}
                   style={{
                     display: "flex", 
                     alignItems: "center", 
@@ -1060,22 +1069,15 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     height: "30px", 
                     boxSizing: "border-box",
                     borderRadius: "50%", 
-                    backgroundColor: (commentText.trim() && tempName.trim()) 
-                      ? "#007aff" 
-                      : (theme === "dark" ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"), 
-                    color: (commentText.trim() && tempName.trim()) 
-                      ? "#ffffff" 
-                      : (theme === "dark" ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.3)"), 
                     border: "none",
                     cursor: (commentText.trim() && tempName.trim()) ? "pointer" : "default",
-                    transition: "all 0.2s ease",
                     flexShrink: 0,
                     marginBottom: "1px"
                   }}
                   title="Send reply"
                 >
                   {/* Native iOS styled up-pointing arrow! */}
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "translateY(-1px)" }}>
                     <line x1="12" y1="19" x2="12" y2="5"></line>
                     <polyline points="5 12 12 5 19 12"></polyline>
                   </svg>
@@ -1205,7 +1207,6 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     alignItems: "center",
                     justifyContent: "center",
                     cursor: "pointer",
-                    transition: "all 0.2s ease",
                     border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
                     boxShadow: theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff"
                   }}
@@ -1213,7 +1214,10 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   title="Add a comment"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 21a9 9 0 1 0-9-9c0 1.48.36 2.89 1 4.15L3 21l4.85-1c1.26.64 2.67 1 4.15 1z"/>
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                    <circle cx="9" cy="12" r="1" fill="currentColor"/>
+                    <circle cx="13" cy="12" r="1" fill="currentColor"/>
+                    <circle cx="17" cy="12" r="1" fill="currentColor"/>
                   </svg>
                 </motion.button>
               </motion.div>
