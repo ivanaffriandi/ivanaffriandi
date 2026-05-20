@@ -44,6 +44,49 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     }
   }, [mounted]);
 
+  // Smart vibe tags extraction dynamically from title and body content
+  const computedTags = useMemo(() => {
+    if (post.labels && post.labels.length > 0) {
+      return post.labels;
+    }
+    
+    const fullText = `${post.title} ${post.content}`.toLowerCase();
+    const cleanText = fullText.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ");
+    const matchedTags: string[] = [];
+    
+    // Custom dictionary matching vibes in both Indonesian and English
+    const vibes = [
+      { tag: "Reflective", keys: ["think", "thought", "ponder", "reflect", "maybe", "why", "realize", "mind", "mengingat", "pikir", "renung", "rasa", "feeling"] },
+      { tag: "Calm", keys: ["quiet", "peace", "calm", "slow", "serene", "nature", "morning", "night", "silence", "damai", "tenang", "sunyi", "sore", "pagi", "hening"] },
+      { tag: "Growth", keys: ["learn", "grow", "change", "improve", "better", "build", "future", "goals", "focus", "belajar", "tumbuh", "berubah", "maju", "proses"] },
+      { tag: "Creative", keys: ["create", "design", "art", "code", "write", "music", "draw", "photo", "canvas", "tulis", "buat", "karya", "seni", "desain", "ide"] },
+      { tag: "Nostalgic", keys: ["remember", "past", "old", "childhood", "memories", "back", "time", "dulu", "ingat", "memori", "lampau", "kenangan", "kembali"] },
+      { tag: "Inspired", keys: ["inspire", "motivation", "dream", "hope", "drive", "passion", "spirit", "motive", "semangat", "mimpi", "harapan", "inspirasi"] },
+      { tag: "Deep", keys: ["life", "exist", "world", "death", "soul", "heart", "deep", "truth", "human", "hidup", "jiwa", "hati", "dalam", "kebenaran", "arti"] },
+      { tag: "Raw", keys: ["honest", "sad", "hurt", "mess", "chaos", "hard", "cry", "fail", "lost", "jujur", "sedih", "kacau", "gagal", "kehilangan", "lelah"] },
+      { tag: "Minimal", keys: ["simple", "less", "clean", "minimal", "space", "quiet", "basic", "sederhana", "bersih", "sedikit", "fokus"] },
+      { tag: "Aesthetic", keys: ["beauty", "beautiful", "style", "nice", "color", "visual", "taste", "indah", "cantik", "warna", "selera", "seni"] }
+    ];
+
+    for (const vibe of vibes) {
+      if (vibe.keys.some(key => cleanText.includes(key))) {
+        matchedTags.push(vibe.tag);
+      }
+    }
+
+    const fallbackList = ["Personal", "Calm", "Motivation", "Thoughts", "Life"];
+    const finalTags = Array.from(new Set(matchedTags));
+    
+    for (const fallback of fallbackList) {
+      if (finalTags.length >= 3) break;
+      if (!finalTags.includes(fallback)) {
+        finalTags.push(fallback);
+      }
+    }
+
+    return finalTags.slice(0, 3);
+  }, [post.title, post.content, post.labels]);
+
   const commentsSectionRef = useRef<HTMLDivElement>(null);
   const dockRef = useRef<HTMLDivElement>(null);
 
@@ -637,8 +680,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             flexWrap: "wrap",
             marginBottom: "1.5rem"
           }}>
-            {(post as any).labels && (post as any).labels.length > 0 ? (
-              (post as any).labels.map((label: string) => (
+            {computedTags.map((label) => (
                 <span 
                   key={label} 
                   style={{
@@ -655,27 +697,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 >
                   {label}
                 </span>
-              ))
-            ) : (
-              ["Personal", "Calm", "Motivation"].map((label) => (
-                <span 
-                  key={label} 
-                  style={{
-                    backgroundColor: theme === "dark" ? "rgba(255,255,255,0.06)" : "#ffffff",
-                    border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.12)" : "#E2DDD5"}`,
-                    borderRadius: "20px",
-                    padding: "4px 12px",
-                    fontSize: "0.75rem",
-                    fontWeight: "500",
-                    color: colors.textSecondary,
-                    boxShadow: theme === "dark" ? "none" : "0 2px 6px rgba(0,0,0,0.02)",
-                    fontFamily: "var(--font-sans)"
-                  }}
-                >
-                  {label}
-                </span>
-              ))
-            )}
+              ))}
           </div>
 
         </div>
@@ -731,26 +753,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   <div 
                     key={comment.id} 
                     style={{ 
-                      display: "flex", 
-                      gap: "0.75rem",
                       padding: "1rem 0",
                       borderBottom: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)"}`,
-                      opacity: comment.approved ? 1 : 0.65 // slightly faded if pending approval
+                      opacity: comment.approved ? 1 : 0.65
                     }}
                   >
-                    {/* Compact Avatar with sleek border */}
-                    <div style={{
-                      width: "30px",
-                      height: "30px",
-                      borderRadius: "50%",
-                      backgroundColor: theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.03)",
-                      backgroundImage: `url(${getAvatarUrl(comment.author?.image?.url)})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      flexShrink: 0,
-                      border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.04)"}`
-                    }} />
-                    
                     {/* Comment Body */}
                     <div style={{ flex: 1 }}>
                       <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "6px", marginBottom: "0.2rem" }}>
@@ -762,14 +769,6 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                           letterSpacing: "-0.01em"
                         }}>
                           {displayName}
-                        </span>
-                        <span style={{ 
-                          fontFamily: "var(--font-sans)", 
-                          fontSize: "0.7rem", 
-                          color: colors.textSecondary,
-                          opacity: 0.4
-                        }}>
-                          {handleName}
                         </span>
                         <span style={{ fontSize: "0.6rem", color: colors.textSecondary, opacity: 0.3 }}>·</span>
                         <span style={{ 
@@ -823,20 +822,16 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                             width: "22px",
                             height: "22px",
                             borderRadius: "50%",
-                            backgroundColor: "#B47A3E",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: "0.65rem",
-                            color: "#fff",
+                            backgroundImage: "url(/profile.jpg), url(/profile.png)",
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.06)"}`,
                             flexShrink: 0
-                          }}>
-                            👑
-                          </div>
+                          }} />
                           <div style={{ flex: 1 }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "0.1rem" }}>
                               <span style={{ fontFamily: "var(--font-sans)", fontWeight: "600", fontSize: "0.75rem", color: colors.text }}>Ivan</span>
-                              <span style={{ fontSize: "0.55rem", fontWeight: "800", backgroundColor: "rgba(180, 122, 62, 0.1)", color: "#B47A3E", padding: "1px 4px", borderRadius: "4px" }}>Admin</span>
+                              <span style={{ fontSize: "0.55rem", fontWeight: "800", backgroundColor: "rgba(180, 122, 62, 0.1)", color: "#B47A3E", padding: "1px 4px", borderRadius: "4px" }}>Writer</span>
                             </div>
                             <p style={{ margin: 0, fontSize: "0.76rem", lineHeight: "1.45", color: colors.textSecondary, opacity: 0.9 }}>
                               {comment.reply}
