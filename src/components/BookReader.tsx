@@ -952,13 +952,13 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     }}
                     placeholder="Name"
                     style={{
-                      height: "18px",
-                      lineHeight: "18px",
+                      height: "17px",
+                      lineHeight: "17px",
                       backgroundColor: "transparent",
                       border: "none",
                       outline: "none",
                       color: colors.text,
-                      fontSize: "0.92rem",
+                      fontSize: "0.85rem",
                       fontWeight: "600",
                       width: "100%",
                       boxSizing: "border-box",
@@ -971,11 +971,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   <div style={{ 
                     height: "1px", 
                     backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)",
-                    margin: "5px 0"
+                    margin: "4px 0"
                   }} />
 
                   {/* Row 2: Message Field (Auto-growing Textarea) */}
-                  <div style={{ position: "relative", width: "100%", minHeight: "18px" }}>
+                  <div style={{ position: "relative", width: "100%", minHeight: "17px" }}>
                     {/* Hidden div to calculate height naturally */}
                     <div style={{ 
                       visibility: "hidden", 
@@ -984,9 +984,9 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       padding: "0 2px", 
                       margin: 0,
                       fontFamily: "var(--font-sans)", 
-                      fontSize: "0.90rem", 
-                      lineHeight: "18px",
-                      minHeight: "18px"
+                      fontSize: "0.85rem", 
+                      lineHeight: "17px",
+                      minHeight: "17px"
                     }}>
                       {commentText + " "}
                     </div>
@@ -1007,7 +1007,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         border: "none",
                         outline: "none",
                         color: colors.text,
-                        fontSize: "0.90rem",
+                        fontSize: "0.85rem",
                         fontWeight: "400",
                         width: "100%",
                         height: "100%",
@@ -1016,7 +1016,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         margin: 0,
                         fontFamily: "var(--font-sans)",
                         overflow: "hidden",
-                        lineHeight: "18px",
+                        lineHeight: "17px",
                         WebkitAppearance: "none"
                       }}
                       onKeyDown={(e) => {
