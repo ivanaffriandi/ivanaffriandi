@@ -22,20 +22,25 @@ export default async function Image() {
           overflow: 'hidden',
         }}
       >
-        {/* Large background monogram watermark */}
+        {/* Large "IVAN" background watermark — modern minimalism shadow text */}
         <div style={{
           position: 'absolute',
-          top: '-80px',
-          right: '-60px',
-          fontSize: '520px',
+          top: '-30px',
+          right: '-90px',
+          fontSize: '440px',
           fontWeight: 900,
-          color: 'rgba(0,0,0,0.04)',
-          letterSpacing: '-0.05em',
+          color: 'transparent',
+          letterSpacing: '-0.06em',
           lineHeight: 1,
           userSelect: 'none',
           display: 'flex',
+          // Simulate outline / shadow with a color that contrasts subtly
+          WebkitTextStroke: '2px rgba(0,0,0,0.08)',
+          textShadow: '0 0 0 transparent',
+          // Fallback for environments without WebkitTextStroke
+          opacity: 1,
         }}>
-          IA
+          IVAN
         </div>
 
         {/* Thin top accent bar */}
@@ -52,49 +57,20 @@ export default async function Image() {
         {/* Bottom content block */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', zIndex: 10 }}>
           {/* Eyebrow label */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-          }}>
-            <div style={{
-              width: '32px',
-              height: '3px',
-              background: '#1a1a1a',
-              borderRadius: '2px',
-              display: 'flex',
-            }} />
-            <span style={{
-              fontSize: '20px',
-              fontWeight: 700,
-              color: '#6b6358',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-            }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ width: '32px', height: '3px', background: '#1a1a1a', borderRadius: '2px', display: 'flex' }} />
+            <span style={{ fontSize: '20px', fontWeight: 700, color: '#6b6358', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
               Personal
             </span>
           </div>
 
-          {/* Main name — full, bold, large */}
-          <h1 style={{
-            fontSize: '112px',
-            fontWeight: 900,
-            letterSpacing: '-0.04em',
-            color: '#1a1a1a',
-            margin: 0,
-            lineHeight: 0.95,
-          }}>
+          {/* Main name */}
+          <h1 style={{ fontSize: '112px', fontWeight: 900, letterSpacing: '-0.04em', color: '#1a1a1a', margin: 0, lineHeight: 0.95 }}>
             Ivan Affriandi
           </h1>
 
           {/* Tagline */}
-          <p style={{
-            fontSize: '28px',
-            fontWeight: 500,
-            color: '#6b6358',
-            margin: 0,
-            letterSpacing: '-0.01em',
-          }}>
+          <p style={{ fontSize: '28px', fontWeight: 500, color: '#6b6358', margin: 0, letterSpacing: '-0.01em' }}>
             Writing, moments & thoughts — ivanaffriandi.com
           </p>
         </div>

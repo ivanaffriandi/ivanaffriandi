@@ -22,20 +22,21 @@ export default async function Image() {
           overflow: 'hidden',
         }}
       >
-        {/* Large background question mark watermark */}
+        {/* Large "ASK" outline watermark — modern minimalism */}
         <div style={{
           position: 'absolute',
-          top: '-120px',
-          right: '-40px',
-          fontSize: '600px',
+          top: '-20px',
+          right: '-80px',
+          fontSize: '420px',
           fontWeight: 900,
-          color: 'rgba(255,255,255,0.03)',
-          letterSpacing: '-0.05em',
+          color: 'transparent',
+          letterSpacing: '-0.06em',
           lineHeight: 1,
           userSelect: 'none',
           display: 'flex',
+          WebkitTextStroke: '2px rgba(255,255,255,0.1)',
         }}>
-          ?
+          ASK
         </div>
 
         {/* Thin top accent bar */}
@@ -52,49 +53,20 @@ export default async function Image() {
         {/* Bottom content block */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', zIndex: 10 }}>
           {/* Eyebrow label */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-          }}>
-            <div style={{
-              width: '32px',
-              height: '3px',
-              background: '#e8e4dc',
-              borderRadius: '2px',
-              display: 'flex',
-            }} />
-            <span style={{
-              fontSize: '20px',
-              fontWeight: 700,
-              color: '#a09e9b',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-            }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ width: '32px', height: '3px', background: '#e8e4dc', borderRadius: '2px', display: 'flex' }} />
+            <span style={{ fontSize: '20px', fontWeight: 700, color: '#a09e9b', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
               Anonymous Q&amp;A
             </span>
           </div>
 
-          {/* Main title — full, bold, large */}
-          <h1 style={{
-            fontSize: '120px',
-            fontWeight: 900,
-            letterSpacing: '-0.04em',
-            color: '#f5f3ef',
-            margin: 0,
-            lineHeight: 0.95,
-          }}>
+          {/* Main title */}
+          <h1 style={{ fontSize: '120px', fontWeight: 900, letterSpacing: '-0.04em', color: '#f5f3ef', margin: 0, lineHeight: 0.95 }}>
             Ask Ivan
           </h1>
 
           {/* Tagline */}
-          <p style={{
-            fontSize: '30px',
-            fontWeight: 500,
-            color: '#a09e9b',
-            margin: 0,
-            letterSpacing: '-0.01em',
-          }}>
+          <p style={{ fontSize: '30px', fontWeight: 500, color: '#a09e9b', margin: 0, letterSpacing: '-0.01em' }}>
             Ask me anything anonymously — ivanaffriandi.com/ask
           </p>
         </div>

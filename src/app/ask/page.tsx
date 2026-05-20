@@ -93,17 +93,19 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
           flexShrink: 0, 
           position: "relative" 
         }}>
-          {/* Dynamic Spine Line connecting to the next QA card */}
+          {/* Continuous spine line connecting to the next QA card */}
           {!isLast && (
             <div style={{ 
               position: "absolute",
-              top: "12px", 
-              bottom: "-32px", 
+              top: "12px",
+              // Bridge: 1.1rem gap + next card's marginTop(19px) + half dot(5px) = ~41px + gap
+              bottom: "calc(-1.1rem - 26px)",
               left: "7.25px", 
               width: "1.5px", 
-              backgroundColor: "var(--border-color)",
-              opacity: 0.35,
-              zIndex: 1
+              background: `linear-gradient(to bottom, ${color.border}, var(--border-color))`,
+              opacity: 0.5,
+              zIndex: 1,
+              borderRadius: "1px"
             }} />
           )}
 
@@ -268,8 +270,16 @@ export default function AskPage() {
   const [mounted, setMounted] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   
-  // Single open accordion state
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  // Multi-open accordion: each card independently toggle-able
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  const toggleCard = (id: string) => {
+    setExpandedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) { next.delete(id); } else { next.add(id); }
+      return next;
+    });
+  };
 
   // Question submission form state
   const [content, setContent] = useState("");
@@ -448,9 +458,9 @@ export default function AskPage() {
                       key={qa.id} 
                       qa={qa} 
                       index={index} 
-                      isExpanded={expandedId === qa.id}
+                      isExpanded={expandedIds.has(qa.id)}
                       isLast={index === sortedQuestions.length - 1}
-                      onToggle={() => setExpandedId(expandedId === qa.id ? null : qa.id)}
+                      onToggle={() => toggleCard(qa.id)}
                     />
                   );
                 })
