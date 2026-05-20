@@ -780,15 +780,15 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   <div 
                     key={comment.id} 
                     style={{ 
-                      padding: "0.85rem 1.05rem",
+                      padding: "0.9rem 1.1rem",
                       background: theme === "dark" 
                         ? "linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%)" 
                         : "linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.52) 100%)",
                       backdropFilter: "blur(24px) saturate(190%)",
                       WebkitBackdropFilter: "blur(24px) saturate(190%)",
                       border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.18)" : "rgba(0, 0, 0, 0.11)"}`,
-                      borderRadius: "12px",
-                      marginBottom: "0.75rem",
+                      borderRadius: "16px",
+                      marginBottom: "0.8rem",
                       opacity: comment.approved ? 1 : 0.65,
                       boxShadow: theme === "dark" 
                         ? "inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -1px 0 rgba(255, 255, 255, 0.05), 0 8px 32px -4px rgba(0, 0, 0, 0.35)" 
@@ -849,7 +849,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         <div style={{
                           display: "flex",
                           gap: "0.6rem",
-                          marginTop: "0.7rem",
+                          marginTop: "0.75rem",
                           marginLeft: "0.8rem",
                           padding: "0.55rem 0.8rem",
                           background: theme === "dark" 
@@ -857,7 +857,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                             : "linear-gradient(135deg, rgba(180, 122, 62, 0.1) 0%, rgba(180, 122, 62, 0.04) 100%)",
                           backdropFilter: "blur(12px)",
                           WebkitBackdropFilter: "blur(12px)",
-                          borderRadius: "10px",
+                          borderRadius: "12px",
                           border: `1px solid ${theme === "dark" ? "rgba(180, 122, 62, 0.32)" : "rgba(180, 122, 62, 0.22)"}`,
                           borderLeft: "3px solid #B47A3E",
                           boxShadow: theme === "dark"
