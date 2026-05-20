@@ -559,52 +559,104 @@ export default function AdminPage() {
   return (
     <div className="admin-panel-container" style={{ minHeight: "100vh", padding: "1.5rem 1rem 7rem 1rem", maxWidth: "420px", margin: "0 auto", fontFamily: iosFontStack, backgroundColor: "var(--bg-color)", position: "relative" }}>
       <style>{`
+        /* iOS Mock Phone Shell Frame */
+        @media (min-width: 480px) {
+          .admin-panel-container {
+            margin-top: 2rem !important;
+            margin-bottom: 2rem !important;
+            border-radius: 44px !important;
+            border: 12px solid #1c1c1e !important;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(255,255,255,0.1) !important;
+            height: calc(100vh - 4rem) !important;
+            overflow-y: auto !important;
+            position: relative !important;
+          }
+          
+          .admin-panel-container::-webkit-scrollbar {
+            width: 5px;
+          }
+          .admin-panel-container::-webkit-scrollbar-track {
+            background: transparent;
+          }
+          .admin-panel-container::-webkit-scrollbar-thumb {
+            background: rgba(150, 150, 150, 0.2);
+            border-radius: 10px;
+          }
+          
+          .ios-status-bar {
+            display: flex !important;
+          }
+        }
+
         /* Tab Button */
         .admin-tab-btn {
           position: relative;
           flex: 1;
           text-align: center;
-          padding: 6px 4px; 
-          border-radius: 16px; 
-          font-size: 0.65rem; 
-          font-weight: 750; 
+          padding: 8px 4px; 
+          border-radius: 20px; 
+          font-size: 0.7rem; 
+          font-weight: 600; 
           cursor: pointer; 
           border: none;
           background: transparent;
-          letter-spacing: 0.04em;
-          transition: color 0.15s ease;
+          letter-spacing: -0.01em;
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
           font-family: ${iosFontStack};
         }
 
         /* Form Inputs */
         .admin-form-input {
-          padding: 8px 12px;
-          border-radius: 10px;
-          border: 1px solid rgba(150, 150, 150, 0.12);
-          background-color: rgba(255, 255, 255, 0.35);
+          padding: 10px 14px;
+          border-radius: 12px;
+          border: 0.5px solid rgba(150, 150, 150, 0.15);
+          background-color: rgba(255, 255, 255, 0.5);
           color: var(--text-primary);
-          font-size: 0.78rem;
-          font-weight: 550;
+          font-size: 0.8rem;
+          font-weight: 500;
           font-family: ${iosFontStack};
           outline: none;
           transition: all 0.2s ease;
           width: 100%;
+          box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
         }
 
         .admin-form-input:focus {
-          border-color: var(--text-primary);
-          background-color: rgba(255, 255, 255, 0.95);
+          border-color: #007AFF;
+          background-color: #ffffff;
+          box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15), inset 0 1px 1px rgba(0,0,0,0.01);
         }
 
         .custom-select {
           appearance: none;
-          background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+          background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='%238e8e93' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><polyline points='6 9 12 15 18 9'></polyline></svg>");
           background-repeat: no-repeat;
-          background-position: right 8px center;
-          background-size: 9px;
-          padding-right: 22px !important;
+          background-position: right 10px center;
+          background-size: 10px;
+          padding-right: 26px !important;
         }
       `}</style>
+
+      {/* Simulated iOS Status Bar on desktop */}
+      <div className="ios-status-bar" style={{
+        display: "none",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "4px 8px 10px 8px",
+        fontSize: "0.72rem",
+        fontWeight: "600",
+        color: "var(--text-primary)",
+        opacity: 0.8,
+        letterSpacing: "-0.01em",
+        fontFamily: iosFontStack,
+      }}>
+        <span>9:41</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <span>📶</span>
+          <span>🛜</span>
+          <span>🔋</span>
+        </div>
+      </div>
 
       {/* Cozy Header */}
       <motion.header 
@@ -617,12 +669,12 @@ export default function AdminPage() {
           alignItems: "center", 
           marginBottom: "1.2rem", 
           padding: "8px 12px", 
-          backgroundColor: "rgba(255, 255, 255, 0.4)", 
-          border: "1px solid rgba(150, 150, 150, 0.1)", 
-          borderRadius: "16px", 
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.01), inset 0 1px 0 rgba(255,255,255,0.7)"
+          backgroundColor: "rgba(255, 255, 255, 0.55)", 
+          border: "0.5px solid rgba(150, 150, 150, 0.15)", 
+          borderRadius: "18px", 
+          backdropFilter: "blur(30px)",
+          WebkitBackdropFilter: "blur(30px)",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.01), inset 0 1px 0 rgba(255,255,255,0.8)"
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
@@ -633,19 +685,19 @@ export default function AdminPage() {
           onClick={handleLogout} 
           style={{ 
             padding: "4px 10px", 
-            backgroundColor: "rgba(239, 68, 68, 0.06)", 
-            border: "1px solid rgba(239, 68, 68, 0.1)", 
+            backgroundColor: "rgba(255, 59, 48, 0.08)", 
+            border: "0.5px solid rgba(255, 59, 48, 0.15)", 
             borderRadius: "30px", 
-            color: "#ef4444", 
-            fontSize: "0.62rem", 
-            fontWeight: "750", 
+            color: "#FF3B30", 
+            fontSize: "0.65rem", 
+            fontWeight: "700", 
             cursor: "pointer", 
             transition: "all 0.2s ease",
-            letterSpacing: "0.02em",
+            letterSpacing: "-0.01em",
             fontFamily: iosFontStack
           }} 
-          onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#ef4444"; e.currentTarget.style.color = "#ffffff"; }} 
-          onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.06)"; e.currentTarget.style.color = "#ef4444"; }}
+          onMouseOver={(e) => { e.currentTarget.style.backgroundColor = "#FF3B30"; e.currentTarget.style.color = "#ffffff"; }} 
+          onMouseOut={(e) => { e.currentTarget.style.backgroundColor = "rgba(255, 59, 48, 0.08)"; e.currentTarget.style.color = "#FF3B30"; }}
         >
           Logout
         </button>
@@ -660,10 +712,10 @@ export default function AdminPage() {
           display: "flex", 
           gap: "2px", 
           padding: "3px", 
-          backgroundColor: "rgba(150, 150, 150, 0.04)", 
-          border: "1px solid rgba(150, 150, 150, 0.06)", 
-          borderRadius: "20px", 
-          marginBottom: "1.2rem",
+          backgroundColor: "rgba(150, 150, 150, 0.08)", 
+          border: "0.5px solid rgba(150, 150, 150, 0.12)", 
+          borderRadius: "24px", 
+          marginBottom: "1.5rem",
           position: "relative"
         }}
       >
@@ -675,20 +727,25 @@ export default function AdminPage() {
               className="admin-tab-btn"
               onClick={() => setActiveTab(tab)} 
               style={{ 
-                color: activeTab === tab ? "var(--bg-color)" : "var(--text-secondary)",
-                zIndex: 1
+                color: activeTab === tab ? "var(--text-primary)" : "var(--text-secondary)",
+                padding: "8px 4px",
+                borderRadius: "20px",
+                zIndex: 2,
+                transition: "color 0.2s cubic-bezier(0.16, 1, 0.3, 1)"
               }}
             >
-              <span style={{ position: "relative", zIndex: 2 }}>{tabLabels[tab]}</span>
+              <span style={{ position: "relative", zIndex: 3, fontWeight: activeTab === tab ? "700" : "550" }}>{tabLabels[tab]}</span>
               {activeTab === tab && (
                 <motion.div
                   layoutId="activeTabHighlight"
-                  transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   style={{
                     position: "absolute",
                     inset: 0,
-                    backgroundColor: "var(--text-primary)",
-                    borderRadius: "16px",
+                    backgroundColor: "rgba(255, 255, 255, 0.95)",
+                    border: "0.5px solid rgba(0, 0, 0, 0.04)",
+                    boxShadow: "0 3px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.02)",
+                    borderRadius: "20px",
                     zIndex: 1
                   }}
                 />
@@ -749,30 +806,30 @@ export default function AdminPage() {
                     variants={fadeRise}
                     layoutId={`qcard-${q.id}`}
                     style={{ 
-                      padding: "12px 14px", 
-                      backgroundColor: "rgba(255, 255, 255, 0.4)", 
-                      backdropFilter: "blur(12px)", 
-                      WebkitBackdropFilter: "blur(12px)",
-                      border: "1px solid rgba(150, 150, 150, 0.1)", 
-                      borderRadius: "16px",
-                      boxShadow: "0 4px 20px rgba(0, 0, 0, 0.01), inset 0 1px 0 rgba(255, 255, 255, 0.6)",
+                      padding: "16px", 
+                      backgroundColor: "rgba(255, 255, 255, 0.65)", 
+                      backdropFilter: "blur(30px)", 
+                      WebkitBackdropFilter: "blur(30px)",
+                      border: "0.5px solid rgba(150, 150, 150, 0.15)", 
+                      borderRadius: "20px",
+                      boxShadow: "0 8px 30px rgba(0, 0, 0, 0.015), inset 0 1px 0 rgba(255, 255, 255, 0.8)",
                       position: "relative"
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <span style={{ fontSize: "0.58rem", color: "#B47A3E", fontWeight: "700" }}>
+                        <span style={{ fontSize: "0.6rem", color: "#FF9500", fontWeight: "700" }}>
                           {new Date(q.published).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                         </span>
                         <span style={{ 
-                          fontSize: "0.5rem", 
+                          fontSize: "0.55rem", 
                           fontWeight: "800", 
-                          backgroundColor: q.answered ? "rgba(16,185,129,0.06)" : "rgba(180,122,62,0.06)", 
-                          color: q.answered ? "#10b981" : "#B47A3E", 
-                          border: q.answered ? "1px solid rgba(16,185,129,0.1)" : "1px solid rgba(180,122,62,0.1)",
-                          padding: "1px 6px", 
+                          backgroundColor: q.answered ? "rgba(52,199,89,0.08)" : "rgba(255,149,0,0.08)", 
+                          color: q.answered ? "#34C759" : "#FF9500", 
+                          border: q.answered ? "0.5px solid rgba(52,199,89,0.18)" : "0.5px solid rgba(255,149,0,0.18)",
+                          padding: "2px 6px", 
                           borderRadius: "6px", 
-                          letterSpacing: "0.03em" 
+                          letterSpacing: "-0.01em" 
                         }}>
                           {q.answered ? "Answered" : "New"}
                         </span>
@@ -1752,69 +1809,76 @@ export default function AdminPage() {
               initial={{ opacity: 0, scale: 0.94, y: 12 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94, y: 8 }}
-              transition={{ type: "spring", damping: 28, stiffness: 420 }}
+              transition={{ type: "spring", damping: 30, stiffness: 400 }}
               style={{
                 position: "relative",
                 width: "100%",
-                maxWidth: "300px",
-                backgroundColor: "var(--bg-color)",
-                border: "1px solid rgba(150, 150, 150, 0.15)",
-                borderRadius: "20px",
-                padding: "1.25rem",
-                boxShadow: "0 16px 40px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255,255,255,0.75)",
+                maxWidth: "270px",
+                backgroundColor: "rgba(255, 255, 255, 0.9)",
+                backdropFilter: "blur(40px)",
+                WebkitBackdropFilter: "blur(40px)",
+                border: "0.5px solid rgba(0, 0, 0, 0.15)",
+                borderRadius: "14px",
+                padding: "1.1rem",
+                boxShadow: "0 20px 50px rgba(0, 0, 0, 0.15)",
                 zIndex: 1,
                 display: "flex",
                 flexDirection: "column",
-                gap: "1rem",
+                textAlign: "center",
+                gap: "0.8rem",
                 fontFamily: iosFontStack
               }}
             >
-              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                <h3 style={{ fontSize: "0.95rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "-0.02em", margin: 0 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                <h3 style={{ fontSize: "0.95rem", fontWeight: "700", color: "#000000", letterSpacing: "-0.02em", margin: 0 }}>
                   {confirmModal.title}
                 </h3>
-                <p style={{ fontSize: "0.78rem", color: "var(--text-secondary)", lineHeight: "1.4", margin: 0, fontWeight: "500" }}>
+                <p style={{ fontSize: "0.78rem", color: "#3a3a3c", lineHeight: "1.4", margin: 0, fontWeight: "400" }}>
                   {confirmModal.message}
                 </p>
               </div>
 
-              <div style={{ display: "flex", gap: "8px" }}>
+              <div style={{ display: "flex", gap: "0.5px", borderTop: "0.5px solid rgba(0, 0, 0, 0.15)", margin: "0.5rem -1.1rem -1.1rem -1.1rem", overflow: "hidden" }}>
                 <button
                   onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
                   style={{
                     flex: 1,
-                    padding: "8px",
-                    borderRadius: "20px",
-                    border: "1px solid rgba(150, 150, 150, 0.18)",
-                    backgroundColor: "rgba(150, 150, 150, 0.03)",
-                    color: "var(--text-primary)",
-                    fontSize: "0.78rem",
-                    fontWeight: "750",
+                    padding: "12px 8px",
+                    backgroundColor: "transparent",
+                    border: "none",
+                    borderRight: "0.5px solid rgba(0, 0, 0, 0.15)",
+                    color: "#007AFF",
+                    fontSize: "0.9rem",
+                    fontWeight: "400",
                     cursor: "pointer",
                     outline: "none",
-                    fontFamily: iosFontStack
+                    fontFamily: iosFontStack,
+                    transition: "background-color 0.2s"
                   }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.04)"}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                 >
-                  {confirmModal.cancelText}
+                  Cancel
                 </button>
                 <button
                   onClick={confirmModal.onConfirm}
                   style={{
                     flex: 1,
-                    padding: "8px",
-                    borderRadius: "20px",
+                    padding: "12px 8px",
                     border: "none",
-                    backgroundColor: "#ef4444",
-                    color: "#ffffff",
-                    fontSize: "0.78rem",
-                    fontWeight: "750",
+                    backgroundColor: "transparent",
+                    color: "#FF3B30",
+                    fontSize: "0.9rem",
+                    fontWeight: "600",
                     cursor: "pointer",
                     outline: "none",
-                    boxShadow: "0 4px 12px rgba(239, 68, 68, 0.15)",
-                    fontFamily: iosFontStack
+                    fontFamily: iosFontStack,
+                    transition: "background-color 0.2s"
                   }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = "rgba(0, 0, 0, 0.04)"}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = "transparent"}
                 >
-                  {confirmModal.confirmText}
+                  {confirmModal.confirmText || "Delete"}
                 </button>
               </div>
             </motion.div>
