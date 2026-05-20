@@ -1084,10 +1084,10 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   animate={{
                     backgroundColor: (commentText.trim() && tempName.trim()) 
                       ? "#007aff" 
-                      : (theme === "dark" ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"),
+                      : (theme === "dark" ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.06)"),
                     color: (commentText.trim() && tempName.trim()) 
                       ? "#ffffff" 
-                      : (theme === "dark" ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.3)")
+                      : (theme === "dark" ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.45)")
                   }}
                   transition={{
                     layout: {
@@ -1114,7 +1114,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   title="Send reply"
                 >
                   {/* Native iOS styled up-pointing arrow! */}
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "translateY(-1px)" }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "translateY(-1px)" }}>
                     <line x1="12" y1="19" x2="12" y2="5"></line>
                     <polyline points="5 12 12 5 19 12"></polyline>
                   </svg>
