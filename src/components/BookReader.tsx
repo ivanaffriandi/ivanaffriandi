@@ -916,6 +916,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 mass: 0.65
               }}
             >
+          <style>{`
+            .ios-pill-input::placeholder {
+              color: rgba(0, 122, 255, 0.55) !important;
+            }
+          `}</style>
           <AnimatePresence mode="wait" initial={false}>
             {isCommenting ? (
               <motion.div 
@@ -933,15 +938,14 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     <div style={{
                       display: "flex",
                       alignItems: "center",
-                      backgroundColor: theme === "dark" ? "rgba(0, 122, 255, 0.15)" : "rgba(0, 122, 255, 0.08)",
-                      border: theme === "dark" ? "1px solid rgba(0, 122, 255, 0.3)" : "1px solid rgba(0, 122, 255, 0.15)",
-                      borderRadius: "99px",
-                      padding: "3px 8px",
+                      backgroundColor: theme === "dark" ? "rgba(0, 122, 255, 0.25)" : "#EAF3FF",
+                      borderRadius: "12px",
+                      padding: "4px 10px 4px 8px",
                       color: "#007aff",
                       maxWidth: "fit-content"
                     }}>
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ marginRight: "4px", flexShrink: 0 }}>
-                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="3" style={{ marginRight: "5px", flexShrink: 0 }}>
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                       </svg>
                       <input 
@@ -955,6 +959,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                           }
                         }}
                         placeholder="Name (Optional)"
+                        className="ios-pill-input"
                         style={{
                           height: "16px",
                           lineHeight: "16px",
@@ -962,7 +967,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                           border: "none",
                           outline: "none",
                           color: "#007aff",
-                          fontSize: "0.75rem",
+                          fontSize: "0.78rem",
                           fontWeight: "600",
                           width: "110px",
                           padding: 0,
