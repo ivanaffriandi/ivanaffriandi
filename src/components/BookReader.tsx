@@ -45,6 +45,25 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
   }, [mounted]);
 
   const commentsSectionRef = useRef<HTMLDivElement>(null);
+  const dockRef = useRef<HTMLDivElement>(null);
+
+  // Auto-close comment mode when clicking outside the floating island dock
+  useEffect(() => {
+    if (!isCommenting) return;
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (dockRef.current && !dockRef.current.contains(event.target as Node)) {
+        setIsCommenting(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [isCommenting]);
 
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -865,27 +884,28 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           >
             {/* Kindle-Style Floating Dock with Layout Width/Height morphing */}
             <motion.div 
+              ref={dockRef}
               layout
               className="floating-island-dock"
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "0.6rem",
+                gap: isCommenting ? "8px" : "0.6rem",
                 backgroundColor: theme === "dark" 
                   ? "rgba(18, 18, 18, 0.85)" 
                   : "rgba(255, 255, 255, 0.88)",
                 backdropFilter: "blur(24px) saturate(190%)",
                 WebkitBackdropFilter: "blur(24px) saturate(190%)",
                 border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
-                borderRadius: isCommenting ? "20px" : "32px",
-                padding: isCommenting ? "6px 12px" : "6px 10px",
+                borderRadius: isCommenting ? "18px" : "32px",
+                padding: isCommenting ? "4px 8px 4px 12px" : "6px 10px",
                 color: theme === "dark" ? "#ffffff" : "#111111",
                 boxShadow: theme === "dark" 
                   ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
                   : "0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
-                width: isCommenting ? "430px" : "max-content",
+                width: isCommenting ? "380px" : "max-content",
                 maxWidth: "92vw",
-                height: isCommenting ? "62px" : "46px",
+                height: isCommenting ? "52px" : "46px",
                 boxSizing: "border-box",
                 overflow: "hidden"
               }}
@@ -904,148 +924,103 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 animate={{ opacity: 1, scale: 1, filter: "blur(0px)", x: 0 }}
                 exit={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: -15 }}
                 transition={{ type: "spring", stiffness: 550, damping: 26 }}
-                style={{ display: "flex", alignItems: "center", gap: "0.5rem", width: "100%", height: "100%" }}
+                style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%", height: "100%" }}
               >
-                {/* Close/Cancel Button (X Icon) to restore normal dock */}
+                {/* Left Side: Staggered Inputs */}
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: "1px" }}>
+                  {/* Row 1: Name Field (Bold Subject style) */}
+                  <input 
+                    type="text"
+                    value={tempName}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setTempName(val);
+                      if (typeof window !== "undefined") {
+                        localStorage.setItem("ivan_comment_author_name", val);
+                      }
+                    }}
+                    placeholder="Name (Optional)"
+                    style={{
+                      height: "17px",
+                      lineHeight: "17px",
+                      backgroundColor: "transparent",
+                      border: "none",
+                      outline: "none",
+                      color: colors.text,
+                      fontSize: "0.78rem",
+                      fontWeight: "700",
+                      width: "100%",
+                      padding: 0,
+                      fontFamily: "var(--font-sans)"
+                    }}
+                  />
+                  
+                  {/* Subtle Separator */}
+                  <div style={{ 
+                    height: "1px", 
+                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)",
+                    margin: "1px 0"
+                  }} />
+
+                  {/* Row 2: Message Field */}
+                  <input 
+                    type="text"
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="Add a reply..."
+                    style={{
+                      height: "19px",
+                      lineHeight: "19px",
+                      backgroundColor: "transparent",
+                      border: "none",
+                      outline: "none",
+                      color: colors.text,
+                      fontSize: "0.85rem",
+                      fontWeight: "500",
+                      width: "100%",
+                      padding: 0,
+                      fontFamily: "var(--font-sans)"
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleSendComment();
+                      }
+                    }}
+                    autoFocus
+                  />
+                </div>
+
+                {/* Right Side: Circular Send Button inside the capsule! */}
                 <button 
-                  onClick={() => setIsCommenting(false)}
+                  onClick={handleSendComment}
+                  disabled={!commentText.trim()}
                   style={{
                     display: "flex", 
                     alignItems: "center", 
                     justifyContent: "center", 
-                    width: "34px", 
-                    height: "34px", 
+                    width: "28px", 
+                    height: "28px", 
                     boxSizing: "border-box",
                     borderRadius: "50%", 
-                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "#ffffff", 
-                    color: theme === "dark" ? "#ffffff" : "#111111", 
-                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.06)",
-                    boxShadow: theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff",
-                    cursor: "pointer",
+                    backgroundColor: commentText.trim() 
+                      ? "#007aff" 
+                      : (theme === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)"), 
+                    color: commentText.trim() 
+                      ? "#ffffff" 
+                      : (theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.15)"), 
+                    border: "none",
+                    cursor: commentText.trim() ? "pointer" : "default",
                     transition: "all 0.2s ease",
                     flexShrink: 0
                   }}
-                  className="dock-icon-btn"
-                  title="Cancel reply"
+                  title="Send reply"
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  {/* Native iOS styled up-pointing arrow! */}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="19" x2="12" y2="5"></line>
+                    <polyline points="5 12 12 5 19 12"></polyline>
                   </svg>
                 </button>
-
-                {/* iMessage-Style Capsule Container (Contains inputs and Send button inside!) */}
-                <div 
-                  className="floating-island-input-capsule"
-                  style={{
-                    flex: 1,
-                    display: "flex",
-                    alignItems: "center",
-                    backgroundColor: theme === "dark" ? "rgba(0, 0, 0, 0.3)" : "rgba(0, 0, 0, 0.03)",
-                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.06)",
-                    borderRadius: "18px",
-                    padding: "4px 8px 4px 12px",
-                    gap: "8px",
-                    height: "50px",
-                    boxSizing: "border-box"
-                  }}
-                >
-                  {/* Left Side: Staggered Inputs */}
-                  <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: "1px" }}>
-                    {/* Row 1: Name Field (Bold Subject style) */}
-                    <input 
-                      type="text"
-                      value={tempName}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setTempName(val);
-                        if (typeof window !== "undefined") {
-                          localStorage.setItem("ivan_comment_author_name", val);
-                        }
-                      }}
-                      placeholder="Name (Optional)"
-                      style={{
-                        height: "17px",
-                        lineHeight: "17px",
-                        backgroundColor: "transparent",
-                        border: "none",
-                        outline: "none",
-                        color: colors.text,
-                        fontSize: "0.78rem",
-                        fontWeight: "700",
-                        width: "100%",
-                        padding: 0,
-                        fontFamily: "var(--font-sans)"
-                      }}
-                    />
-                    
-                    {/* Subtle Separator */}
-                    <div style={{ 
-                      height: "1px", 
-                      backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)",
-                      margin: "1px 0"
-                    }} />
-
-                    {/* Row 2: Message Field */}
-                    <input 
-                      type="text"
-                      value={commentText}
-                      onChange={(e) => setCommentText(e.target.value)}
-                      placeholder="Add a reply..."
-                      style={{
-                        height: "19px",
-                        lineHeight: "19px",
-                        backgroundColor: "transparent",
-                        border: "none",
-                        outline: "none",
-                        color: colors.text,
-                        fontSize: "0.85rem",
-                        fontWeight: "500",
-                        width: "100%",
-                        padding: 0,
-                        fontFamily: "var(--font-sans)"
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleSendComment();
-                        }
-                      }}
-                      autoFocus
-                    />
-                  </div>
-
-                  {/* Right Side: Circular Send Button inside the capsule! */}
-                  <button 
-                    onClick={handleSendComment}
-                    disabled={!commentText.trim()}
-                    style={{
-                      display: "flex", 
-                      alignItems: "center", 
-                      justifyContent: "center", 
-                      width: "28px", 
-                      height: "28px", 
-                      boxSizing: "border-box",
-                      borderRadius: "50%", 
-                      backgroundColor: commentText.trim() 
-                        ? "#007aff" 
-                        : (theme === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)"), 
-                      color: commentText.trim() 
-                        ? "#ffffff" 
-                        : (theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.15)"), 
-                      border: "none",
-                      cursor: commentText.trim() ? "pointer" : "default",
-                      transition: "all 0.2s ease",
-                      flexShrink: 0
-                    }}
-                    title="Send reply"
-                  >
-                    {/* Native iOS styled up-pointing arrow! */}
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="12" y1="19" x2="12" y2="5"></line>
-                      <polyline points="5 12 12 5 19 12"></polyline>
-                    </svg>
-                  </button>
-                </div>
               </motion.div>
             ) : (
               <motion.div 
