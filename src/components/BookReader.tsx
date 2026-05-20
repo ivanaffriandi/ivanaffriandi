@@ -927,10 +927,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 mass: 0.65
               }}
             >
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="popLayout" initial={false}>
             {isCommenting ? (
               <motion.div 
                 key="commenting"
+                layout
                 initial={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: 15 }}
                 animate={{ opacity: 1, scale: 1, filter: "blur(0px)", x: 0 }}
                 exit={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: -15 }}
@@ -1079,6 +1080,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             ) : (
               <motion.div 
                 key="normal"
+                layout
                 initial={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: -15 }}
                 animate={{ opacity: 1, scale: 1, filter: "blur(0px)", x: 0 }}
                 exit={{ opacity: 0, scale: 0.75, filter: "blur(6px)", x: 15 }}
