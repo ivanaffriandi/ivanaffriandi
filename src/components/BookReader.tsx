@@ -1089,7 +1089,15 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       ? "#ffffff" 
                       : (theme === "dark" ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.3)")
                   }}
-                  transition={{ duration: 0.15 }}
+                  transition={{
+                    layout: {
+                      type: "spring",
+                      stiffness: 320,
+                      damping: 20,
+                      mass: 0.5
+                    },
+                    default: { duration: 0.15 }
+                  }}
                   style={{
                     display: "flex", 
                     alignItems: "center", 
@@ -1225,6 +1233,14 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 <motion.button 
                   layoutId="pillbar-action-button"
                   onClick={() => setIsCommenting(true)}
+                  transition={{
+                    layout: {
+                      type: "spring",
+                      stiffness: 320,
+                      damping: 20,
+                      mass: 0.5
+                    }
+                  }}
                   style={{
                     width: "34px",
                     height: "34px",
