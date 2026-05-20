@@ -726,31 +726,49 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             borderTop: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}`
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.2rem", paddingBottom: "0.6rem", borderBottom: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)"}` }}>
-            <h3 style={{ 
-              margin: 0, 
-              fontFamily: "var(--font-sans)", 
-              fontSize: "0.76rem", 
-              fontWeight: "700",
-              color: colors.text,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              opacity: 0.85
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: "2rem" }}>
+            <div style={{ 
+              display: "inline-flex", 
+              alignItems: "center", 
+              gap: "8px", 
+              height: "36px",
+              padding: "0 16px",
+              backgroundColor: theme === "dark" 
+                ? "rgba(255, 255, 255, 0.05)" 
+                : "rgba(255, 255, 255, 0.55)",
+              backdropFilter: "blur(20px) saturate(190%)",
+              WebkitBackdropFilter: "blur(20px) saturate(190%)",
+              border: theme === "dark" 
+                ? "1px solid rgba(255, 255, 255, 0.12)" 
+                : "1px solid rgba(0, 0, 0, 0.08)",
+              borderRadius: "18px",
+              boxShadow: theme === "dark" 
+                ? "0 4px 20px rgba(0, 0, 0, 0.3)" 
+                : "0 4px 16px rgba(0, 0, 0, 0.04)"
             }}>
-              Replies
-            </h3>
-            <span style={{
-              fontFamily: "var(--font-sans)",
-              fontSize: "0.72rem",
-              fontWeight: "600",
-              backgroundColor: theme === "dark" ? "rgba(180, 122, 62, 0.15)" : "rgba(180, 122, 62, 0.08)",
-              color: "#B47A3E",
-              padding: "2px 7px",
-              borderRadius: "100px",
-              letterSpacing: "0.02em"
-            }}>
-              {comments.length}
-            </span>
+              <span style={{ 
+                fontFamily: "var(--font-sans)", 
+                fontSize: "0.74rem", 
+                fontWeight: "700",
+                color: theme === "dark" ? "rgba(255, 255, 255, 0.9)" : "rgba(17, 17, 17, 0.85)",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase"
+              }}>
+                Replies
+              </span>
+              <span style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: "0.7rem",
+                fontWeight: "600",
+                backgroundColor: theme === "dark" ? "rgba(180, 122, 62, 0.25)" : "rgba(180, 122, 62, 0.08)",
+                color: "#B47A3E",
+                padding: "2px 7px",
+                borderRadius: "100px",
+                letterSpacing: "0.02em"
+              }}>
+                {comments.length}
+              </span>
+            </div>
           </div>
 
           {/* Comments List: Balanced modern typography */}
@@ -763,14 +781,18 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     key={comment.id} 
                     style={{ 
                       padding: "0.95rem 1.15rem",
-                      backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.012)",
-                      border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.03)"}`,
+                      backgroundColor: theme === "dark" 
+                        ? "rgba(18, 18, 18, 0.45)" 
+                        : "rgba(255, 255, 255, 0.45)",
+                      backdropFilter: "blur(24px) saturate(190%)",
+                      WebkitBackdropFilter: "blur(24px) saturate(190%)",
+                      border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.06)"}`,
                       borderRadius: "14px",
                       marginBottom: "0.85rem",
                       opacity: comment.approved ? 1 : 0.65,
                       boxShadow: theme === "dark" 
-                        ? "0 4px 20px -2px rgba(0, 0, 0, 0.2)" 
-                        : "0 4px 16px -2px rgba(0, 0, 0, 0.02)",
+                        ? "0 8px 32px -4px rgba(0, 0, 0, 0.3)" 
+                        : "0 8px 32px -4px rgba(0, 0, 0, 0.03)",
                       transition: "all 0.2s ease"
                     }}
                   >
@@ -830,9 +852,13 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                           marginTop: "0.75rem",
                           marginLeft: "0.85rem",
                           padding: "0.6rem 0.85rem",
-                          backgroundColor: theme === "dark" ? "rgba(180, 122, 62, 0.06)" : "rgba(180, 122, 62, 0.03)",
+                          backgroundColor: theme === "dark" 
+                            ? "rgba(180, 122, 62, 0.08)" 
+                            : "rgba(180, 122, 62, 0.05)",
+                          backdropFilter: "blur(12px)",
+                          WebkitBackdropFilter: "blur(12px)",
                           borderRadius: "10px",
-                          border: `1px solid ${theme === "dark" ? "rgba(180, 122, 62, 0.15)" : "rgba(180, 122, 62, 0.08)"}`,
+                          border: `1px solid ${theme === "dark" ? "rgba(180, 122, 62, 0.22)" : "rgba(180, 122, 62, 0.12)"}`,
                           borderLeft: "2.5px solid #B47A3E",
                           boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.02)"
                         }}>
