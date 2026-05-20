@@ -281,13 +281,15 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     const text = commentText.trim();
     if (!text) return;
 
+    // Instant UI feedback: close the dock and clear input immediately!
+    setCommentText("");
+    setIsCommenting(false);
+
     try {
       const newComment = await addComment(post.id, name, email, text);
       
       // Prepend to UI state for instant local preview
       setComments((prev) => [newComment, ...prev]);
-      setCommentText("");
-      setIsCommenting(false);
 
       // Smooth scroll down to comment replies area
       setTimeout(() => {
@@ -1038,6 +1040,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
 
                 {/* Right Side: Circular Send Button inside the capsule! */}
                 <button 
+                  type="button"
                   onPointerDown={(e) => {
                     e.preventDefault(); // Prevent input blur / keyboard close on iOS
                     if (commentText.trim() && tempName.trim()) {
