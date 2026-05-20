@@ -78,6 +78,8 @@ export default function AdminPage() {
   const [answeringQuestionId, setAnsweringQuestionId] = useState<string | null>(null);
   const [answerText, setAnswerText] = useState("");
   const [isDragOver, setIsDragOver] = useState(false);
+  const [showCalendarModal, setShowCalendarModal] = useState(false);
+  const [showMomentModal, setShowMomentModal] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -736,17 +738,27 @@ export default function AdminPage() {
             : "inset 0 1px 0 rgba(255,255,255,0.95), 0 4px 16px rgba(0,0,0,0.015)"
         }}
       >
-        <div style={{ marginBottom: "8px" }}>
-          <h1 style={{ fontSize: "0.82rem", fontWeight: "800", margin: 0, letterSpacing: "-0.02em", color: "var(--text-primary)" }}>Studio</h1>
-        </div>
+        {/* Title + Live Stats in one aligned row */}
+        <div style={{ display: "flex", gap: "6px", alignItems: "stretch" }}>
+          {/* Studio label sized to match stat card height */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "0 10px",
+            borderRadius: "10px",
+            background: theme === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.025)",
+            border: `0.5px solid ${theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}`,
+            flexShrink: 0,
+          }}>
+            <h1 style={{ fontSize: "1rem", fontWeight: "800", margin: 0, letterSpacing: "-0.03em", color: "var(--text-primary)", whiteSpace: "nowrap" }}>Studio</h1>
+          </div>
 
-        {/* Live Stats Row */}
-        <div style={{ display: "flex", gap: "6px" }}>
           {[
-            { label: "Questions", val: activeTab === "inbox" ? totalQuestions : adminQuestions.length > 0 ? totalQuestions : "—", pending: pendingQuestionsCount, color: "#FF9500" },
-            { label: "Comments", val: activeTab === "comments" ? totalComments : adminComments.length > 0 ? totalComments : "—", pending: pendingCommentsCount, color: "#B47A3E" },
-            { label: "Moments", val: activeTab === "moments" ? totalMoments : adminMoments.length > 0 ? totalMoments : "—", pending: 0, color: "#10b981" },
-            { label: "Events", val: activeTab === "calendar" ? adminCalendarEvents.length : adminCalendarEvents.length > 0 ? adminCalendarEvents.length : "—", pending: 0, color: "#007AFF" },
+            { label: "Q&A", val: totalQuestions > 0 ? totalQuestions : "—", pending: pendingQuestionsCount, color: "#FF9500" },
+            { label: "Comments", val: totalComments > 0 ? totalComments : "—", pending: pendingCommentsCount, color: "#B47A3E" },
+            { label: "Moments", val: totalMoments > 0 ? totalMoments : "—", pending: 0, color: "#10b981" },
+            { label: "Events", val: adminCalendarEvents.length > 0 ? adminCalendarEvents.length : "—", pending: 0, color: "#007AFF" },
           ].map(stat => (
             <div key={stat.label} style={{
               flex: 1,
@@ -1149,184 +1161,149 @@ export default function AdminPage() {
         {activeTab === "calendar" && (
           <motion.div key="calendar" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-              <h2 style={{ fontSize: "0.78rem", fontWeight: "800", margin: 0, color: "var(--text-primary)", letterSpacing: "0.04em" }}>Schedule Manager</h2>
+              <h2 style={{ fontSize: "0.78rem", fontWeight: "800", margin: 0, color: "var(--text-primary)", letterSpacing: "0.04em" }}>Schedule</h2>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => {
+                  setEditingEventId(null);
+                  setCalendarName("");
+                  setCalendarEmoji("🎂");
+                  setCalendarType("ivan");
+                  setShowCalendarModal(true);
+                }}
+                style={{
+                  padding: "5px 12px",
+                  backgroundColor: "var(--text-primary)",
+                  color: "var(--bg-color)",
+                  border: "none",
+                  borderRadius: "20px",
+                  fontSize: "0.65rem",
+                  fontWeight: "750",
+                  cursor: "pointer",
+                  fontFamily: iosFontStack,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px"
+                }}
+              >
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Event
+              </motion.button>
             </div>
-            
-            {/* Dynamic Calendar Form */}
-            <div style={{ 
-              padding: "12px 14px", 
-              background: theme === "dark" 
-                ? "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)" 
-                : "linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.45) 100%)",
-              backdropFilter: "blur(24px) saturate(190%)", 
-              WebkitBackdropFilter: "blur(24px) saturate(190%)", 
-              border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.14)" : "rgba(0, 0, 0, 0.09)"}`, 
-              borderRadius: "16px", 
-              marginBottom: "1.2rem", 
-              boxShadow: theme === "dark"
-                ? "inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(255, 255, 255, 0.02), 0 8px 32px -4px rgba(0, 0, 0, 0.35)"
-                : "inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(0, 0, 0, 0.01), 0 6px 20px -2px rgba(0, 0, 0, 0.04)"
-            }}>
-              <h3 style={{ fontSize: "0.72rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "0.02em", margin: "0 0 8px 0" }}>
-                {editingEventId ? `Edit Event: ${calendarName}` : "Add New Calendar Event"}
-              </h3>
-              
-              <form onSubmit={handleSaveCalendarEvent} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                <div style={{ display: "flex", gap: "8px" }}>
-                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Month</label>
-                    <select 
-                      value={calendarMonth} 
-                      onChange={(e) => setCalendarMonth(e.target.value)}
-                      className="admin-form-input custom-select"
-                      style={{ padding: "8px 24px 8px 12px" }}
-                    >
-                      {Array.from({ length: 12 }).map((_, i) => {
-                        const mVal = String(i + 1).padStart(2, '0');
-                        const mLabel = new Date(2026, i, 1).toLocaleDateString("en-US", { month: "long" });
-                        return <option key={mVal} value={mVal}>{mLabel}</option>;
-                      })}
-                    </select>
-                  </div>
-                  
-                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Day</label>
-                    <select 
-                      value={calendarDay} 
-                      onChange={(e) => setCalendarDay(e.target.value)}
-                      className="admin-form-input custom-select"
-                      style={{ padding: "8px 24px 8px 12px" }}
-                    >
-                      {Array.from({ length: 31 }).map((_, i) => {
-                        const dVal = String(i + 1).padStart(2, '0');
-                        return <option key={dVal} value={dVal}>{i + 1}</option>;
-                      })}
-                    </select>
-                  </div>
-                </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Event Title</label>
-                  <input 
-                    className="admin-form-input" 
-                    type="text" 
-                    placeholder="e.g. Vera's Birthday or Christmas Day" 
-                    value={calendarName} 
-                    onChange={(e) => setCalendarName(e.target.value)} 
-                    required 
-                  />
-                </div>
-
-                <div style={{ display: "flex", gap: "8px" }}>
-                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Theme Style</label>
-                    <select 
-                      value={calendarType} 
-                      onChange={(e) => setCalendarType(e.target.value as any)}
-                      className="admin-form-input custom-select"
-                      style={{ padding: "8px 24px 8px 12px" }}
-                    >
-                      <option value="ivan">👑 Ivan's Birthday</option>
-                      <option value="female">🌸 Pink (Female Birthday)</option>
-                      <option value="male">🔹 Blue (Male Birthday)</option>
-                      <option value="both">🟣 Purple (Joint Birthday)</option>
-                      <option value="idul_fitri">🌙 Emerald (Idul Fitri)</option>
-                      <option value="idul_adha">🐏 Emerald (Idul Adha)</option>
-                      <option value="christmas">🎄 Festive Red (Christmas)</option>
-                      <option value="chinese_new_year">🏮 Crimson (Lunar New Year)</option>
-                      <option value="nyepi">🌌 Indigo (Nyepi Day)</option>
-                      <option value="waisak">🪷 Saffron (Waisak Day)</option>
-                      <option value="general_holiday">🔸 Warm Orange (General)</option>
-                    </select>
-                  </div>
-                  
-                  <div style={{ width: "90px", display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Emoji</label>
-                    <input 
-                      className="admin-form-input" 
-                      type="text" 
-                      value={calendarEmoji} 
-                      onChange={(e) => setCalendarEmoji(e.target.value)} 
-                      style={{ textAlign: "center" }}
-                      required 
-                    />
-                  </div>
-                </div>
-
-                {/* Quick Emoji Suggestion Chips */}
-                <div style={{ display: "flex", gap: "4px", flexWrap: "wrap", margin: "2px 0" }}>
-                  {["🎂", "👑", "🎄", "🌙", "🏮", "🧘", "🎉", "🇮🇩", "🪷", "🌸", "💙", "💖"].map(emoji => (
+            {/* Floating Calendar Modal */}
+            {(showCalendarModal || editingEventId) && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.97, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.97, y: 8 }}
+                transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                style={{
+                  position: "fixed",
+                  inset: 0,
+                  zIndex: 500,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "1rem",
+                  backgroundColor: theme === "dark" ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.25)",
+                  backdropFilter: "blur(6px)",
+                  WebkitBackdropFilter: "blur(6px)",
+                }}
+                onClick={(e) => { if (e.target === e.currentTarget) { setShowCalendarModal(false); setEditingEventId(null); } }}
+              >
+                <div style={{
+                  width: "100%",
+                  maxWidth: "360px",
+                  padding: "16px",
+                  background: theme === "dark"
+                    ? "linear-gradient(135deg, rgba(30,30,30,0.98) 0%, rgba(20,20,20,0.98) 100%)"
+                    : "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,248,248,0.98) 100%)",
+                  backdropFilter: "blur(40px) saturate(200%)",
+                  WebkitBackdropFilter: "blur(40px) saturate(200%)",
+                  border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)"}`,
+                  borderRadius: "22px",
+                  boxShadow: theme === "dark"
+                    ? "0 24px 60px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1)"
+                    : "0 24px 60px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,1)",
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                    <h3 style={{ fontSize: "0.78rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "-0.01em", margin: 0 }}>
+                      {editingEventId ? "Edit Event" : "New Calendar Event"}
+                    </h3>
                     <button
-                      key={emoji}
-                      type="button"
-                      onClick={() => setCalendarEmoji(emoji)}
-                      style={{
-                        padding: "4px 8px",
-                        fontSize: "0.65rem",
-                        backgroundColor: calendarEmoji === emoji ? "rgba(150,150,150,0.12)" : "rgba(150,150,150,0.03)",
-                        border: calendarEmoji === emoji ? "1px solid rgba(150,150,150,0.22)" : "1px solid rgba(150,150,150,0.06)",
-                        borderRadius: "8px",
-                        cursor: "pointer",
-                        fontFamily: iosFontStack,
-                        transition: "all 0.15s ease"
-                      }}
+                      onClick={() => { setShowCalendarModal(false); setEditingEventId(null); }}
+                      style={{ width: "22px", height: "22px", borderRadius: "50%", border: "none", background: "rgba(150,150,150,0.1)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-secondary)" }}
                     >
-                      {emoji}
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </button>
-                  ))}
-                </div>
+                  </div>
 
-                <div style={{ display: "flex", gap: "6px", marginTop: "2px" }}>
-                  <motion.button 
-                    type="submit" 
-                    disabled={isSubmittingCalendar || !calendarName.trim()} 
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    style={{ 
-                      flex: 1,
-                      padding: "9px", 
-                      backgroundColor: "var(--text-primary)", 
-                      color: "var(--bg-color)", 
-                      border: "none", 
-                      borderRadius: "30px", 
-                      fontSize: "0.74rem", 
-                      fontWeight: "800", 
-                      cursor: "pointer",
-                      fontFamily: iosFontStack
-                    }}
-                  >
-                    {isSubmittingCalendar ? "Saving..." : (editingEventId ? "Save Updates" : "Add Event")}
-                  </motion.button>
+                  <form onSubmit={async (e) => { await handleSaveCalendarEvent(e); setShowCalendarModal(false); setEditingEventId(null); }} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Month</label>
+                        <select value={calendarMonth} onChange={(e) => setCalendarMonth(e.target.value)} className="admin-form-input custom-select" style={{ padding: "8px 24px 8px 12px" }}>
+                          {Array.from({ length: 12 }).map((_, i) => {
+                            const mVal = String(i + 1).padStart(2, '0');
+                            const mLabel = new Date(2026, i, 1).toLocaleDateString("en-US", { month: "long" });
+                            return <option key={mVal} value={mVal}>{mLabel}</option>;
+                          })}
+                        </select>
+                      </div>
+                      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Day</label>
+                        <select value={calendarDay} onChange={(e) => setCalendarDay(e.target.value)} className="admin-form-input custom-select" style={{ padding: "8px 24px 8px 12px" }}>
+                          {Array.from({ length: 31 }).map((_, i) => {
+                            const dVal = String(i + 1).padStart(2, '0');
+                            return <option key={dVal} value={dVal}>{i + 1}</option>;
+                          })}
+                        </select>
+                      </div>
+                    </div>
 
-                  {editingEventId && (
-                    <motion.button 
-                      type="button" 
-                      onClick={() => {
-                        setEditingEventId(null);
-                        setCalendarName("");
-                        setCalendarEmoji("🎂");
-                        setCalendarType("ivan");
-                      }}
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
-                      style={{ 
-                        padding: "9px 16px", 
-                        backgroundColor: "rgba(150,150,150,0.05)", 
-                        border: "1px solid rgba(150,150,150,0.1)", 
-                        borderRadius: "30px", 
-                        color: "var(--text-secondary)",
-                        fontSize: "0.74rem", 
-                        fontWeight: "750", 
-                        cursor: "pointer",
-                        fontFamily: iosFontStack
-                      }}
-                    >
-                      Cancel
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Event Title</label>
+                      <input className="admin-form-input" type="text" placeholder="e.g. Vera's Birthday or Christmas Day" value={calendarName} onChange={(e) => setCalendarName(e.target.value)} required autoFocus />
+                    </div>
+
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Theme</label>
+                        <select value={calendarType} onChange={(e) => setCalendarType(e.target.value as any)} className="admin-form-input custom-select" style={{ padding: "8px 24px 8px 12px" }}>
+                          <option value="ivan">👑 Ivan's Birthday</option>
+                          <option value="female">🌸 Pink (Female)</option>
+                          <option value="male">🔹 Blue (Male)</option>
+                          <option value="both">🟣 Purple (Joint)</option>
+                          <option value="idul_fitri">🌙 Idul Fitri</option>
+                          <option value="idul_adha">🐏 Idul Adha</option>
+                          <option value="christmas">🎄 Christmas</option>
+                          <option value="chinese_new_year">🏮 Lunar New Year</option>
+                          <option value="nyepi">🌌 Nyepi</option>
+                          <option value="waisak">🪷 Waisak</option>
+                          <option value="general_holiday">🔸 General Holiday</option>
+                        </select>
+                      </div>
+                      <div style={{ width: "80px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Emoji</label>
+                        <input className="admin-form-input" type="text" value={calendarEmoji} onChange={(e) => setCalendarEmoji(e.target.value)} style={{ textAlign: "center" }} required />
+                      </div>
+                    </div>
+
+                    <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
+                      {["🎂", "👑", "🎄", "🌙", "🏮", "🧘", "🎉", "🇮🇩", "🪷", "🌸", "💙", "💖"].map(emoji => (
+                        <button key={emoji} type="button" onClick={() => setCalendarEmoji(emoji)} style={{ padding: "4px 7px", fontSize: "0.65rem", backgroundColor: calendarEmoji === emoji ? "rgba(150,150,150,0.12)" : "rgba(150,150,150,0.03)", border: calendarEmoji === emoji ? "1px solid rgba(150,150,150,0.22)" : "1px solid rgba(150,150,150,0.06)", borderRadius: "8px", cursor: "pointer", fontFamily: iosFontStack, transition: "all 0.15s ease" }}>{emoji}</button>
+                      ))}
+                    </div>
+
+                    <motion.button type="submit" disabled={isSubmittingCalendar || !calendarName.trim()} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} style={{ padding: "9px", backgroundColor: "var(--text-primary)", color: "var(--bg-color)", border: "none", borderRadius: "30px", fontSize: "0.74rem", fontWeight: "800", cursor: "pointer", fontFamily: iosFontStack, marginTop: "2px" }}>
+                      {isSubmittingCalendar ? "Saving..." : (editingEventId ? "Save Updates" : "Add Event")}
                     </motion.button>
-                  )}
+                  </form>
                 </div>
-              </form>
-            </div>
+              </motion.div>
+            )}
 
             {/* List of dynamic calendar events */}
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -1396,6 +1373,7 @@ export default function AdminPage() {
                             setCalendarName(event.name);
                             setCalendarEmoji(event.emoji);
                             setCalendarType(event.type);
+                            setShowCalendarModal(true);
                           }}
                           style={{
                             width: "24px",
@@ -1695,160 +1673,162 @@ export default function AdminPage() {
         {activeTab === "moments" && (
           <motion.div key="moments" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-              <h2 style={{ fontSize: "0.78rem", fontWeight: "800", margin: 0, color: "var(--text-primary)", letterSpacing: "0.04em" }}>Moments Curation</h2>
+              <h2 style={{ fontSize: "0.78rem", fontWeight: "800", margin: 0, color: "var(--text-primary)", letterSpacing: "0.04em" }}>Moments</h2>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => {
+                  setMomentFile(null);
+                  setMomentTitle("");
+                  setMomentLocation("");
+                  setMomentDate("");
+                  setMomentStory("");
+                  setShowMomentModal(true);
+                }}
+                style={{
+                  padding: "5px 12px",
+                  backgroundColor: "var(--text-primary)",
+                  color: "var(--bg-color)",
+                  border: "none",
+                  borderRadius: "20px",
+                  fontSize: "0.65rem",
+                  fontWeight: "750",
+                  cursor: "pointer",
+                  fontFamily: iosFontStack,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px"
+                }}
+              >
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Upload
+              </motion.button>
             </div>
-            
-            {/* Compact Form */}
-            <div style={{ 
-              padding: "12px 14px", 
-              background: theme === "dark" 
-                ? "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)" 
-                : "linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.45) 100%)",
-              backdropFilter: "blur(24px) saturate(190%)", 
-              WebkitBackdropFilter: "blur(24px) saturate(190%)", 
-              border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.14)" : "rgba(0, 0, 0, 0.09)"}`, 
-              borderRadius: "16px", 
-              marginBottom: "1.5rem", 
-              boxShadow: theme === "dark"
-                ? "inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(255, 255, 255, 0.02), 0 8px 32px -4px rgba(0, 0, 0, 0.35)"
-                : "inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(0, 0, 0, 0.01), 0 6px 20px -2px rgba(0, 0, 0, 0.04)"
-            }}>
-              
-              <h3 style={{ fontSize: "0.72rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "0.02em", margin: "0 0 8px 0" }}>Upload New Moment</h3>
 
-              <form onSubmit={handleUploadMoment} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                
-                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <span style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Upload Photo</span>
-                  
-                  <input 
-                    type="file" 
-                    ref={fileInputRef}
-                    accept="image/*" 
-                    onChange={handleFileChange}
-                    style={{ display: "none" }}
-                  />
-
-                  <div 
-                    onClick={triggerFileSelect}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    style={{
-                      border: isDragOver ? "1.5px dashed var(--text-primary)" : "1.5px dashed rgba(150,150,150,0.2)",
-                      borderRadius: "12px",
-                      padding: "16px 12px",
-                      textAlign: "center",
-                      cursor: "pointer",
-                      backgroundColor: isDragOver 
-                        ? "rgba(150,150,150,0.04)" 
-                        : (momentPreviewUrl ? "rgba(0,0,0,0.005)" : "rgba(150,150,150,0.01)"),
-                      transition: "all 0.15s ease",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "6px"
-                    }}
-                  >
-                    {momentPreviewUrl ? (
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
-                        <div style={{ position: "relative", width: "60px", height: "60px", borderRadius: "8px", overflow: "hidden", border: "1px solid rgba(150,150,150,0.15)" }}>
-                          <img 
-                            src={momentPreviewUrl} 
-                            alt="preview" 
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                          />
-                        </div>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
-                          <span style={{ fontSize: "0.68rem", fontWeight: "700", color: "var(--text-primary)" }}>{momentFile?.name}</span>
-                          <span style={{ fontSize: "0.58rem", color: "var(--text-secondary)", fontWeight: "500" }}>
-                            {momentFile ? `${(momentFile.size / (1024 * 1024)).toFixed(2)} MB` : ""}
-                          </span>
-                        </div>
-                        <motion.button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setMomentFile(null);
-                          }}
-                          style={{
-                            padding: "3px 10px",
-                            backgroundColor: "rgba(239, 68, 68, 0.06)",
-                            border: "1px solid rgba(239, 68, 68, 0.12)",
-                            borderRadius: "16px",
-                            color: "#ef4444",
-                            fontSize: "0.58rem",
-                            fontWeight: "750",
-                            cursor: "pointer",
-                            letterSpacing: "0.01em",
-                            fontFamily: iosFontStack
-                          }}
-                        >
-                          Change
-                        </motion.button>
-                      </div>
-                    ) : (
-                      <>
-                        <div style={{ fontSize: "1.2rem", filter: "grayscale(100%)", opacity: 0.8 }}>📸</div>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
-                          <span style={{ fontSize: "0.72rem", fontWeight: "750", color: "var(--text-primary)" }}>
-                            Drag & drop photo here
-                          </span>
-                          <span style={{ fontSize: "0.62rem", color: "var(--text-secondary)", fontWeight: "500" }}>
-                            or tap to browse
-                          </span>
-                        </div>
-                      </>
-                    )}
+            {/* Moments Modal */}
+            {showMomentModal && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.97, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.97, y: 8 }}
+                transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                style={{
+                  position: "fixed",
+                  inset: 0,
+                  zIndex: 500,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "1rem",
+                  backgroundColor: theme === "dark" ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.25)",
+                  backdropFilter: "blur(6px)",
+                  WebkitBackdropFilter: "blur(6px)",
+                  overflowY: "auto",
+                }}
+                onClick={(e) => { if (e.target === e.currentTarget) setShowMomentModal(false); }}
+              >
+                <div style={{
+                  width: "100%",
+                  maxWidth: "360px",
+                  padding: "16px",
+                  background: theme === "dark"
+                    ? "linear-gradient(135deg, rgba(30,30,30,0.98) 0%, rgba(20,20,20,0.98) 100%)"
+                    : "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,248,248,0.98) 100%)",
+                  backdropFilter: "blur(40px) saturate(200%)",
+                  WebkitBackdropFilter: "blur(40px) saturate(200%)",
+                  border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)"}`,
+                  borderRadius: "22px",
+                  boxShadow: theme === "dark"
+                    ? "0 24px 60px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1)"
+                    : "0 24px 60px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,1)",
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                    <h3 style={{ fontSize: "0.78rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "-0.01em", margin: 0 }}>Upload New Moment</h3>
+                    <button
+                      type="button"
+                      onClick={() => setShowMomentModal(false)}
+                      style={{ width: "22px", height: "22px", borderRadius: "50%", border: "none", background: "rgba(150,150,150,0.1)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-secondary)" }}
+                    >
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
                   </div>
-                </div>
-                
-                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Title (Optional)</label>
-                  <input className="admin-form-input" type="text" placeholder="e.g., Autumn Foliage" value={momentTitle} onChange={(e) => setMomentTitle(e.target.value)} />
-                </div>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Location</label>
-                  <input className="admin-form-input" type="text" placeholder="e.g., Tokyo, Japan" value={momentLocation} onChange={(e) => setMomentLocation(e.target.value)} required />
-                </div>
-                
-                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Date Label</label>
-                  <input className="admin-form-input" type="text" placeholder="e.g., Aug 2023 or Spring 2025" value={momentDate} onChange={(e) => setMomentDate(e.target.value)} required />
-                </div>
+                  <form onSubmit={async (e) => { await handleUploadMoment(e); setShowMomentModal(false); }} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <input type="file" ref={fileInputRef} accept="image/*" onChange={handleFileChange} style={{ display: "none" }} />
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <label style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Story Snippet</label>
-                  <textarea className="admin-form-input" placeholder="Cozy memory or story description..." value={momentStory} onChange={(e) => setMomentStory(e.target.value)} style={{ minHeight: "65px", resize: "none" }} />
+                    {/* Compact photo picker */}
+                    <div
+                      onClick={triggerFileSelect}
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}
+                      style={{
+                        border: isDragOver ? "1.5px dashed var(--text-primary)" : "1.5px dashed rgba(150,150,150,0.25)",
+                        borderRadius: "12px",
+                        padding: "12px",
+                        textAlign: "center",
+                        cursor: "pointer",
+                        backgroundColor: isDragOver ? "rgba(150,150,150,0.04)" : (momentPreviewUrl ? "rgba(0,0,0,0.005)" : "rgba(150,150,150,0.01)"),
+                        transition: "all 0.15s ease",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "10px",
+                      }}
+                    >
+                      {momentPreviewUrl ? (
+                        <>
+                          <div style={{ width: "48px", height: "48px", borderRadius: "8px", overflow: "hidden", border: "1px solid rgba(150,150,150,0.15)", flexShrink: 0 }}>
+                            <img src={momentPreviewUrl} alt="preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          </div>
+                          <div style={{ flex: 1, textAlign: "left" }}>
+                            <div style={{ fontSize: "0.68rem", fontWeight: "700", color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "180px" }}>{momentFile?.name}</div>
+                            <div style={{ fontSize: "0.58rem", color: "var(--text-secondary)" }}>{momentFile ? `${(momentFile.size / (1024 * 1024)).toFixed(2)} MB` : ""}</div>
+                          </div>
+                          <motion.button type="button" onClick={(e) => { e.stopPropagation(); setMomentFile(null); }} style={{ padding: "2px 8px", backgroundColor: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.12)", borderRadius: "12px", color: "#ef4444", fontSize: "0.55rem", fontWeight: "750", cursor: "pointer", fontFamily: iosFontStack }} whileTap={{ scale: 0.96 }}>
+                            Remove
+                          </motion.button>
+                        </>
+                      ) : (
+                        <div style={{ padding: "4px 0" }}>
+                          <div style={{ fontSize: "0.72rem", fontWeight: "700", color: "var(--text-primary)" }}>Tap to choose photo</div>
+                          <div style={{ fontSize: "0.6rem", color: "var(--text-secondary)", marginTop: "2px" }}>or drag & drop here</div>
+                        </div>
+                      )}
+                    </div>
+
+                    <input className="admin-form-input" type="text" placeholder="Location (required)" value={momentLocation} onChange={(e) => setMomentLocation(e.target.value)} required />
+                    <input className="admin-form-input" type="text" placeholder="Date label (e.g. Aug 2023)" value={momentDate} onChange={(e) => setMomentDate(e.target.value)} required />
+                    <input className="admin-form-input" type="text" placeholder="Title (optional)" value={momentTitle} onChange={(e) => setMomentTitle(e.target.value)} />
+                    <textarea className="admin-form-input admin-auto-textarea" placeholder="Story snippet (optional)…" value={momentStory} onChange={(e) => setMomentStory(e.target.value)} style={{ minHeight: "50px", resize: "none" }} />
+
+                    <motion.button
+                      type="submit"
+                      disabled={isUploadingMoment || !momentFile || !momentLocation || !momentDate}
+                      whileHover={(!isUploadingMoment && momentFile && momentLocation && momentDate) ? { scale: 1.01 } : {}}
+                      whileTap={(!isUploadingMoment && momentFile && momentLocation && momentDate) ? { scale: 0.99 } : {}}
+                      style={{
+                        padding: "10px",
+                        backgroundColor: "var(--text-primary)",
+                        color: "var(--bg-color)",
+                        border: "none",
+                        borderRadius: "30px",
+                        fontSize: "0.74rem",
+                        fontWeight: "800",
+                        cursor: (isUploadingMoment || !momentFile || !momentLocation || !momentDate) ? "not-allowed" : "pointer",
+                        opacity: (isUploadingMoment || !momentFile || !momentLocation || !momentDate) ? 0.4 : 1,
+                        transition: "opacity 0.2s ease",
+                        fontFamily: iosFontStack,
+                        marginTop: "2px"
+                      }}
+                    >
+                      {isUploadingMoment ? "Uploading…" : "Publish to Gallery"}
+                    </motion.button>
+                  </form>
                 </div>
-                
-                <motion.button 
-                  type="submit" 
-                  disabled={isUploadingMoment || !momentFile || !momentLocation || !momentDate} 
-                  whileHover={(!isUploadingMoment && momentFile && momentLocation && momentDate) ? { scale: 1.01 } : {}}
-                  whileTap={(!isUploadingMoment && momentFile && momentLocation && momentDate) ? { scale: 0.99 } : {}}
-                  style={{ 
-                    padding: "10px", 
-                    backgroundColor: "var(--text-primary)", 
-                    color: "var(--bg-color)", 
-                    border: "none", 
-                    borderRadius: "30px", 
-                    fontSize: "0.74rem", 
-                    fontWeight: "800", 
-                    cursor: (isUploadingMoment || !momentFile || !momentLocation || !momentDate) ? "not-allowed" : "pointer", 
-                    opacity: (isUploadingMoment || !momentFile || !momentLocation || !momentDate) ? 0.4 : 1, 
-                    transition: "opacity 0.2s ease",
-                    letterSpacing: "0.02em",
-                    fontFamily: iosFontStack
-                  }}
-                >
-                  {isUploadingMoment ? "Uploading..." : "Publish to Gallery"}
-                </motion.button>
-              </form>
-            </div>
- 
+              </motion.div>
+            )}
+
             {/* Tightly Stacked Moments List */}
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <h3 style={{ fontSize: "0.72rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "0.02em", margin: "0 0 2px 0" }}>Gallery List</h3>
