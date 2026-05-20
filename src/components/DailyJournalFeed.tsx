@@ -30,27 +30,128 @@ const iosCardVariants = {
 };
 
 const STATIC_SEEDED_EVENTS: CalendarEvent[] = [
+  // --- RECURRING BIRTHDAYS & SOLAR FIXED HOLIDAYS ---
   { id: "s-0", dateKey: "08-03", name: "Ivan's Birthday", type: "ivan", emoji: "👑🎂" },
   { id: "s-1", dateKey: "05-19", name: "Naveena's Birthday", type: "female", emoji: "🎂" },
   { id: "s-2", dateKey: "08-31", name: "Vera's Birthday", type: "female", emoji: "🎂" },
   { id: "s-3", dateKey: "01-15", name: "Dhiffa's Birthday", type: "female", emoji: "🎂" },
   { id: "s-4", dateKey: "10-05", name: "Aluna's Birthday", type: "female", emoji: "🎂" },
+  
   { id: "s-5", dateKey: "01-01", name: "New Year's Day", type: "general_holiday", emoji: "🎉" },
-  { id: "s-6", dateKey: "01-16", name: "Isra Mi'raj", type: "idul_fitri", emoji: "🌙" },
-  { id: "s-7", dateKey: "02-17", name: "Lunar New Year", type: "chinese_new_year", emoji: "🏮" },
-  { id: "s-8", dateKey: "03-19", name: "Nyepi (Day of Silence)", type: "nyepi", emoji: "🧘" },
-  { id: "s-9", dateKey: "03-21", name: "Eid al-Fitr", type: "idul_fitri", emoji: "🌙" },
-  { id: "s-10", dateKey: "05-27", name: "Eid al-Adha", type: "idul_adha", emoji: "🌙" },
-  { id: "s-11", dateKey: "08-17", name: "Independence Day", type: "general_holiday", emoji: "🇮🇩" },
-  { id: "s-12", dateKey: "12-25", name: "Christmas Day", type: "christmas", emoji: "🎄" }
+  { id: "s-6", dateKey: "05-01", name: "International Labor Day", type: "general_holiday", emoji: "🛠️" },
+  { id: "s-7", dateKey: "06-01", name: "Pancasila Day", type: "general_holiday", emoji: "🦅" },
+  { id: "s-8", dateKey: "08-17", name: "Independence Day", type: "independence", emoji: "🇮🇩" },
+  { id: "s-9", dateKey: "12-25", name: "Christmas Day", type: "christmas", emoji: "🎄" },
+
+  // --- SHIFTING NATIONAL HOLIDAYS BY YEAR ---
+  // Year 2024
+  { id: "s-2024-1", dateKey: "2024-02-08", name: "Isra Mi'raj", type: "isra_miraj", emoji: "🌙" },
+  { id: "s-2024-2", dateKey: "2024-02-10", name: "Lunar New Year", type: "chinese_new_year", emoji: "🏮" },
+  { id: "s-2024-3", dateKey: "2024-03-11", name: "Nyepi (Day of Silence)", type: "nyepi", emoji: "🧘" },
+  { id: "s-2024-4", dateKey: "2024-03-29", name: "Good Friday", type: "general_holiday", emoji: "✝️" },
+  { id: "s-2024-5", dateKey: "2024-03-31", name: "Easter Sunday", type: "general_holiday", emoji: "🐣" },
+  { id: "s-2024-6", dateKey: "2024-04-10", name: "Eid al-Fitr", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-2024-7", dateKey: "2024-04-11", name: "Eid al-Fitr Holiday", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-2024-8", dateKey: "2024-05-09", name: "Ascension Day of Jesus Christ", type: "general_holiday", emoji: "✝️" },
+  { id: "s-2024-9", dateKey: "2024-05-23", name: "Vesak Day", type: "waisak", emoji: "🪷" },
+  { id: "s-2024-10", dateKey: "2024-06-17", name: "Eid al-Adha", type: "idul_adha", emoji: "🌙" },
+  { id: "s-2024-11", dateKey: "2024-07-07", name: "Islamic New Year", type: "islamic_new_year", emoji: "🌙" },
+  { id: "s-2024-12", dateKey: "2024-09-16", name: "Prophet Muhammad's Birthday", type: "maulid_nabi", emoji: "🌙" },
+
+  // Year 2025
+  { id: "s-2025-1", dateKey: "2025-01-27", name: "Isra Mi'raj", type: "isra_miraj", emoji: "🌙" },
+  { id: "s-2025-2", dateKey: "2025-01-29", name: "Lunar New Year", type: "chinese_new_year", emoji: "🏮" },
+  { id: "s-2025-3", dateKey: "2025-03-29", name: "Nyepi (Day of Silence)", type: "nyepi", emoji: "🧘" },
+  { id: "s-2025-4", dateKey: "2025-04-18", name: "Good Friday", type: "general_holiday", emoji: "✝️" },
+  { id: "s-2025-5", dateKey: "2025-04-20", name: "Easter Sunday", type: "general_holiday", emoji: "🐣" },
+  { id: "s-2025-6", dateKey: "2025-03-31", name: "Eid al-Fitr", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-2025-7", dateKey: "2025-04-01", name: "Eid al-Fitr Holiday", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-2025-8", dateKey: "2025-05-29", name: "Ascension Day of Jesus Christ", type: "general_holiday", emoji: "✝️" },
+  { id: "s-2025-9", dateKey: "2025-05-12", name: "Vesak Day", type: "waisak", emoji: "🪷" },
+  { id: "s-2025-10", dateKey: "2025-06-06", name: "Eid al-Adha", type: "idul_adha", emoji: "🌙" },
+  { id: "s-2025-11", dateKey: "2025-06-27", name: "Islamic New Year", type: "islamic_new_year", emoji: "🌙" },
+  { id: "s-2025-12", dateKey: "2025-09-05", name: "Prophet Muhammad's Birthday", type: "maulid_nabi", emoji: "🌙" },
+
+  // Year 2026 (Current Year)
+  { id: "s-2026-1", dateKey: "2026-01-16", name: "Isra Mi'raj", type: "isra_miraj", emoji: "🌙" },
+  { id: "s-2026-2", dateKey: "2026-02-17", name: "Lunar New Year", type: "chinese_new_year", emoji: "🏮" },
+  { id: "s-2026-3", dateKey: "2026-03-19", name: "Nyepi (Day of Silence)", type: "nyepi", emoji: "🧘" },
+  { id: "s-2026-4", dateKey: "2026-04-03", name: "Good Friday", type: "general_holiday", emoji: "✝️" },
+  { id: "s-2026-5", dateKey: "2026-04-05", name: "Easter Sunday", type: "general_holiday", emoji: "🐣" },
+  { id: "s-2026-6", dateKey: "2026-03-20", name: "Eid al-Fitr", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-2026-7", dateKey: "2026-03-21", name: "Eid al-Fitr Holiday", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-2026-8", dateKey: "2026-05-14", name: "Ascension Day of Jesus Christ", type: "general_holiday", emoji: "✝️" },
+  { id: "s-2026-9", dateKey: "2026-05-31", name: "Vesak Day", type: "waisak", emoji: "🪷" },
+  { id: "s-2026-10", dateKey: "2026-05-27", name: "Eid al-Adha", type: "idul_adha", emoji: "🌙" },
+  { id: "s-2026-11", dateKey: "2026-06-16", name: "Islamic New Year", type: "islamic_new_year", emoji: "🌙" },
+  { id: "s-2026-12", dateKey: "2026-08-25", name: "Prophet Muhammad's Birthday", type: "maulid_nabi", emoji: "🌙" },
+
+  // Year 2027
+  { id: "s-2027-1", dateKey: "2027-01-05", name: "Isra Mi'raj", type: "isra_miraj", emoji: "🌙" },
+  { id: "s-2027-2", dateKey: "2027-02-06", name: "Lunar New Year", type: "chinese_new_year", emoji: "🏮" },
+  { id: "s-2027-3", dateKey: "2027-03-08", name: "Nyepi (Day of Silence)", type: "nyepi", emoji: "🧘" },
+  { id: "s-2027-4", dateKey: "2027-03-26", name: "Good Friday", type: "general_holiday", emoji: "✝️" },
+  { id: "s-2027-5", dateKey: "2027-03-28", name: "Easter Sunday", type: "general_holiday", emoji: "🐣" },
+  { id: "s-2027-6", dateKey: "2027-03-09", name: "Eid al-Fitr", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-2027-7", dateKey: "2027-03-10", name: "Eid al-Fitr Holiday", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-2027-8", dateKey: "2027-05-06", name: "Ascension Day of Jesus Christ", type: "general_holiday", emoji: "✝️" },
+  { id: "s-2027-9", dateKey: "2027-05-20", name: "Vesak Day", type: "waisak", emoji: "🪷" },
+  { id: "s-2027-10", dateKey: "2027-05-16", name: "Eid al-Adha", type: "idul_adha", emoji: "🌙" },
+  { id: "s-2027-11", dateKey: "2027-06-06", name: "Islamic New Year", type: "islamic_new_year", emoji: "🌙" },
+  { id: "s-2027-12", dateKey: "2027-08-15", name: "Prophet Muhammad's Birthday", type: "maulid_nabi", emoji: "🌙" },
+
+  // Year 2028
+  { id: "s-2028-1", dateKey: "2028-01-24", name: "Isra Mi'raj", type: "isra_miraj", emoji: "🌙" },
+  { id: "s-2028-2", dateKey: "2028-01-26", name: "Lunar New Year", type: "chinese_new_year", emoji: "🏮" },
+  { id: "s-2028-3", dateKey: "2028-03-26", name: "Nyepi (Day of Silence)", type: "nyepi", emoji: "🧘" },
+  { id: "s-2028-4", dateKey: "2028-04-14", name: "Good Friday", type: "general_holiday", emoji: "✝️" },
+  { id: "s-2028-5", dateKey: "2028-04-16", name: "Easter Sunday", type: "general_holiday", emoji: "🐣" },
+  { id: "s-2028-6", dateKey: "2028-02-26", name: "Eid al-Fitr", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-2028-7", dateKey: "2028-02-27", name: "Eid al-Fitr Holiday", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-2028-8", dateKey: "2028-05-25", name: "Ascension Day of Jesus Christ", type: "general_holiday", emoji: "✝️" },
+  { id: "s-2028-9", dateKey: "2028-05-08", name: "Vesak Day", type: "waisak", emoji: "🪷" },
+  { id: "s-2028-10", dateKey: "2028-05-04", name: "Eid al-Adha", type: "idul_adha", emoji: "🌙" },
+  { id: "s-2028-11", dateKey: "2028-05-25", name: "Islamic New Year", type: "islamic_new_year", emoji: "🌙" },
+  { id: "s-2028-12", dateKey: "2028-08-03", name: "Prophet Muhammad's Birthday", type: "maulid_nabi", emoji: "🌙" },
+
+  // Year 2029
+  { id: "s-2029-1", dateKey: "2029-01-13", name: "Isra Mi'raj", type: "isra_miraj", emoji: "🌙" },
+  { id: "s-2029-2", dateKey: "2029-02-13", name: "Lunar New Year", type: "chinese_new_year", emoji: "🏮" },
+  { id: "s-2029-3", dateKey: "2029-03-15", name: "Nyepi (Day of Silence)", type: "nyepi", emoji: "🧘" },
+  { id: "s-2029-4", dateKey: "2029-03-30", name: "Good Friday", type: "general_holiday", emoji: "✝️" },
+  { id: "s-2029-5", dateKey: "2029-04-01", name: "Easter Sunday", type: "general_holiday", emoji: "🐣" },
+  { id: "s-2029-6", dateKey: "2029-02-14", name: "Eid al-Fitr", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-2029-7", dateKey: "2029-02-15", name: "Eid al-Fitr Holiday", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-2029-8", dateKey: "2029-05-10", name: "Ascension Day of Jesus Christ", type: "general_holiday", emoji: "✝️" },
+  { id: "s-2029-9", dateKey: "2029-05-27", name: "Vesak Day", type: "waisak", emoji: "🪷" },
+  { id: "s-2029-10", dateKey: "2029-04-23", name: "Eid al-Adha", type: "idul_adha", emoji: "🌙" },
+  { id: "s-2029-11", dateKey: "2029-05-14", name: "Islamic New Year", type: "islamic_new_year", emoji: "🌙" },
+  { id: "s-2029-12", dateKey: "2029-07-23", name: "Prophet Muhammad's Birthday", type: "maulid_nabi", emoji: "🌙" },
+
+  // Year 2030
+  { id: "s-2030-1", dateKey: "2030-01-02", name: "Isra Mi'raj", type: "isra_miraj", emoji: "🌙" },
+  { id: "s-2030-2", dateKey: "2030-12-22", name: "Isra Mi'raj Holiday", type: "isra_miraj", emoji: "🌙" },
+  { id: "s-2030-3", dateKey: "2030-02-03", name: "Lunar New Year", type: "chinese_new_year", emoji: "🏮" },
+  { id: "s-2030-4", dateKey: "2030-03-05", name: "Nyepi (Day of Silence)", type: "nyepi", emoji: "🧘" },
+  { id: "s-2030-5", dateKey: "2030-04-19", name: "Good Friday", type: "general_holiday", emoji: "✝️" },
+  { id: "s-2030-6", dateKey: "2030-04-21", name: "Easter Sunday", type: "general_holiday", emoji: "🐣" },
+  { id: "s-2030-7", dateKey: "2030-02-04", name: "Eid al-Fitr", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-2030-8", dateKey: "2030-02-05", name: "Eid al-Fitr Holiday", type: "idul_fitri", emoji: "🌙" },
+  { id: "s-2030-9", dateKey: "2030-05-30", name: "Ascension Day of Jesus Christ", type: "general_holiday", emoji: "✝️" },
+  { id: "s-2030-10", dateKey: "2030-05-16", name: "Vesak Day", type: "waisak", emoji: "🪷" },
+  { id: "s-2030-11", dateKey: "2030-04-12", name: "Eid al-Adha", type: "idul_adha", emoji: "🌙" },
+  { id: "s-2030-12", dateKey: "2030-05-03", name: "Islamic New Year", type: "islamic_new_year", emoji: "🌙" },
+  { id: "s-2030-13", dateKey: "2030-07-12", name: "Prophet Muhammad's Birthday", type: "maulid_nabi", emoji: "🌙" }
 ];
 
 const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
   const month = date.getMonth();
   const day = date.getDate();
+  const year = date.getFullYear();
   const dateKey = `${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  const fullDateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
-  const matchingEvent = calendarEvents.find(e => e.dateKey === dateKey);
+  const matchingEvent = calendarEvents.find(e => e.dateKey === dateKey || e.dateKey === fullDateKey);
   if (matchingEvent) {
     if (matchingEvent.type === "ivan" || matchingEvent.type === "male" || matchingEvent.type === "female" || matchingEvent.type === "both") {
       const namesText = matchingEvent.name.includes("'s Birthday") ? matchingEvent.name.split("'s Birthday")[0] : matchingEvent.name;
@@ -72,7 +173,7 @@ const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
       };
     }
 
-    if (matchingEvent.type === "idul_fitri") {
+    if (matchingEvent.type === "idul_fitri" || matchingEvent.type === "isra_miraj" || matchingEvent.type === "islamic_new_year" || matchingEvent.type === "maulid_nabi") {
       return {
         type: "idul_fitri",
         primary: "#10b981",
@@ -145,6 +246,19 @@ const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
         bgDark: "#200408",
         bgUnselected: "rgba(244, 63, 94, 0.12)",
         borderUnselected: "1px solid rgba(244, 63, 94, 0.22)",
+        emoji: matchingEvent.emoji,
+        text: matchingEvent.name
+      };
+    }
+
+    if (matchingEvent.type === "independence") {
+      return {
+        type: "independence",
+        primary: "#ef4444",
+        bgLight: "#FEF2F2",
+        bgDark: "#1F0707",
+        bgUnselected: "rgba(239, 68, 68, 0.12)",
+        borderUnselected: "1px solid rgba(239, 68, 68, 0.22)",
         emoji: matchingEvent.emoji,
         text: matchingEvent.name
       };
@@ -760,7 +874,8 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
 
   // Holiday and Sunday indicators computed globally
   const selectedKey = `${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
-  const matchingEvent = calendarEvents.find(e => e.dateKey === selectedKey);
+  const selectedFullKey = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+  const matchingEvent = calendarEvents.find(e => e.dateKey === selectedKey || e.dateKey === selectedFullKey);
   const selectedHoliday = matchingEvent ? matchingEvent.name : undefined;
   const isSelectedSunday = selectedDate.getDay() === 0;
   const themeColor = isSelectedSunday ? "#ff3b30" : "#ff726f";
@@ -1825,7 +1940,8 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             
             const isSunday = d.getDay() === 0;
             const dKey = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-            const isHoliday = calendarEvents.some(e => e.dateKey === dKey && e.type !== "ivan" && e.type !== "female" && e.type !== "male" && e.type !== "both");
+            const fullDKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            const isHoliday = calendarEvents.some(e => (e.dateKey === dKey || e.dateKey === fullDKey) && e.type !== "ivan" && e.type !== "female" && e.type !== "male" && e.type !== "both");
             
             // Color Hierarchy
             const sundayColor = "#ff3b30";

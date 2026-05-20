@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { sendNotificationEmail } from "@/lib/notifications";
 
 // URL Database Realtime Firebase Resmi & Aktif milik Ivan Affriandi (Region Singapura)
 const FIREBASE_DB_URL = "https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app/questions";
+
 
 // Helper untuk membaca semua pertanyaan dari Firebase Realtime DB
 async function readQuestionsList(): Promise<any[]> {
@@ -72,6 +74,25 @@ export async function POST(request: Request) {
     }
 
     const result = await res.json();
+
+    // Trigger premium email notification asynchronously (so the visitor isn't delayed)
+    const emailSubject = "📬 New Anonymous Message Received!";
+    const emailHtml = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid rgba(0,0,0,0.08); border-radius: 12px; background-color: #fafaf9;">
+        <h2 style="color: #1c1917; font-size: 20px; font-weight: 700; margin-bottom: 8px;">Hello Ivan,</h2>
+        <p style="color: #44403c; font-size: 15px; line-height: 1.5; margin-bottom: 20px;">You've received a new anonymous message on your portal:</p>
+        <div style="padding: 16px 20px; background-color: #ffffff; border-left: 4px solid #007aff; border-radius: 6px; margin-bottom: 24px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+          <p style="color: #1c1917; font-size: 16px; font-style: italic; line-height: 1.6; margin: 0;">"${content}"</p>
+        </div>
+        <p style="color: #78716c; font-size: 13px; margin-bottom: 24px;">Sent at: ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })} WIB</p>
+        <a href="https://ivanaffriandi.com/admin" style="display: inline-block; padding: 12px 24px; background-color: #1c1917; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; transition: background-color 0.2s;">Go to Admin Portal</a>
+      </div>
+    `;
+
+    // Fire-and-forget email sending
+    sendNotificationEmail(emailSubject, emailHtml).catch(err => {
+      console.error("[Async Email Notification Error]:", err);
+    });
 
     // name adalah ID unik yang dibuat otomatis oleh Firebase Realtime DB
     return NextResponse.json({

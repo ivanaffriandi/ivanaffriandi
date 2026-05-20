@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { sendNotificationEmail } from "@/lib/notifications";
 
 // Firebase Realtime DB (same region as questions)
 const FIREBASE_DB_URL = "https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app/comments";
@@ -75,6 +76,28 @@ export async function POST(request: Request) {
     if (!res.ok) throw new Error("Failed to write comment to Firebase");
 
     const result = await res.json();
+
+    // Trigger premium email notification asynchronously
+    const emailSubject = `💬 New Comment on: "${postTitle || 'Untitled Post'}"`;
+    const emailHtml = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid rgba(0,0,0,0.08); border-radius: 12px; background-color: #fafaf9;">
+        <h2 style="color: #1c1917; font-size: 20px; font-weight: 700; margin-bottom: 8px;">Hello Ivan,</h2>
+        <p style="color: #44403c; font-size: 15px; line-height: 1.5; margin-bottom: 20px;">
+          <strong>${authorName}</strong> left a comment on your blog post <strong>"${postTitle || 'Untitled'}"</strong>:
+        </p>
+        <div style="padding: 16px 20px; background-color: #ffffff; border-left: 4px solid #10b981; border-radius: 6px; margin-bottom: 24px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+          <p style="color: #1c1917; font-size: 15px; line-height: 1.6; margin: 0;">"${content}"</p>
+        </div>
+        <p style="color: #78716c; font-size: 13px; margin-bottom: 24px;">Sent at: ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })} WIB</p>
+        <a href="https://ivanaffriandi.com/admin" style="display: inline-block; padding: 12px 24px; background-color: #1c1917; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; transition: background-color 0.2s;">Go to Admin Portal to Approve</a>
+      </div>
+    `;
+
+    // Fire-and-forget
+    sendNotificationEmail(emailSubject, emailHtml).catch(err => {
+      console.error("[Async Comment Notification Error]:", err);
+    });
+
     return NextResponse.json({ id: result.name, ...newComment });
   } catch (err) {
     console.error("POST Comment API error:", err);
