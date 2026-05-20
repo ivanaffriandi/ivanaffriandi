@@ -815,7 +815,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                           color: colors.textSecondary,
                           opacity: 0.45
                         }}>
-                          {new Date(comment.published).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                          {new Date(comment.published).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                         </span>
                         {!comment.approved && (
                           <span style={{
@@ -1087,7 +1087,6 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         }
                       }
                     }}
-                    autoFocus
                   />
                 </motion.div>
               </motion.div>

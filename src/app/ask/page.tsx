@@ -169,7 +169,7 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
                 letterSpacing: "0.04em",
                 textTransform: "uppercase"
               }}>
-                {new Date(qa.published).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                {new Date(qa.published).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
               </span>
               
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "16px" }}>

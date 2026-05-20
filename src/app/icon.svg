@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .stroke-path {
+      stroke: #1a1a1a;
+      stroke-width: 3.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+    @media (prefers-color-scheme: dark) {
+      .stroke-path {
+        stroke: #f5f3ef;
+      }
+    }
+  </style>
+  <!-- I -->
+  <line x1="8" y1="6" x2="8" y2="26" class="stroke-path" />
+  <!-- Inverted V (looks like A without crossbar) -->
+  <polyline points="15,26 22,6 29,26" class="stroke-path" />
+</svg>
