@@ -5,6 +5,8 @@ import Link from "next/link";
 import FadeIn from "./FadeIn";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAllCalendarEvents, CalendarEvent } from "@/lib/calendar";
+import { triggerLightClick, triggerActionClick } from "@/lib/haptic";
+
 
 // iOS stagger spring config
 const iosCardVariants = {
@@ -975,7 +977,11 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
 
   // Orchestrates scrolling a target date pill perfectly to the horizontal viewport center
   const selectAndCenterDate = (date: Date) => {
+    if (date.toDateString() !== selectedDate.toDateString()) {
+      triggerActionClick();
+    }
     setSelectedDate(date);
+
 
     // Wait briefly for React rendering so the correct month DOM pills are fully available
     requestAnimationFrame(() => {
@@ -1104,9 +1110,11 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
     if (closestIndex !== -1) {
       const targetDate = stripDates[closestIndex];
       if (targetDate && targetDate.toDateString() !== selectedDate.toDateString()) {
+        triggerLightClick();
         setSelectedDate(targetDate); // Updates active journal feed instantly, no scrollTo called!
       }
     }
+
   };
 
   const renderCalendarDays = () => {

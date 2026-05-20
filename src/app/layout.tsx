@@ -26,6 +26,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://ivanaffriandi.com"),
   title: "Hello, Ivan!",
   description: "Personal space of Ivan Affriandi — writing, moments, and thoughts.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Ivan A.",
+  },
   openGraph: {
     title: "Hello, Ivan!",
     description: "Personal space of Ivan Affriandi — writing, moments, and thoughts.",
@@ -40,6 +45,7 @@ export const metadata: Metadata = {
     description: "Personal space of Ivan Affriandi — writing, moments, and thoughts.",
   }
 };
+
 
 export default function RootLayout({
   children,
@@ -85,7 +91,23 @@ export default function RootLayout({
             </div>
           </footer>
         </div>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                    console.log('PWA ServiceWorker registered on scope:', reg.scope);
+                  }).catch(function(err) {
+                    console.error('PWA ServiceWorker registration failed:', err);
+                  });
+                });
+              }
+            `
+          }}
+        />
       </body>
     </html>
+
   );
 }
