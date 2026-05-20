@@ -897,15 +897,15 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 backdropFilter: "blur(24px) saturate(190%)",
                 WebkitBackdropFilter: "blur(24px) saturate(190%)",
                 border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
-                borderRadius: isCommenting ? "18px" : "32px",
-                padding: isCommenting ? "4px 8px 4px 12px" : "6px 10px",
+                borderRadius: isCommenting ? "20px" : "32px",
+                padding: isCommenting ? "8px 10px 8px 16px" : "6px 10px",
                 color: theme === "dark" ? "#ffffff" : "#111111",
                 boxShadow: theme === "dark" 
                   ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
                   : "0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
-                width: isCommenting ? "380px" : "max-content",
+                width: isCommenting ? "400px" : "max-content",
                 maxWidth: "92vw",
-                height: isCommenting ? "52px" : "46px",
+                height: isCommenting ? "66px" : "46px",
                 boxSizing: "border-box",
                 overflow: "hidden"
               }}
@@ -941,13 +941,13 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     }}
                     placeholder="Name (Optional)"
                     style={{
-                      height: "17px",
-                      lineHeight: "17px",
+                      height: "22px",
+                      lineHeight: "22px",
                       backgroundColor: "transparent",
                       border: "none",
                       outline: "none",
                       color: colors.text,
-                      fontSize: "0.78rem",
+                      fontSize: "0.85rem",
                       fontWeight: "700",
                       width: "100%",
                       padding: 0,
@@ -959,7 +959,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   <div style={{ 
                     height: "1px", 
                     backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)",
-                    margin: "1px 0"
+                    margin: "2px 0"
                   }} />
 
                   {/* Row 2: Message Field */}
@@ -969,13 +969,13 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     onChange={(e) => setCommentText(e.target.value)}
                     placeholder="Add a reply..."
                     style={{
-                      height: "19px",
-                      lineHeight: "19px",
+                      height: "24px",
+                      lineHeight: "24px",
                       backgroundColor: "transparent",
                       border: "none",
                       outline: "none",
                       color: colors.text,
-                      fontSize: "0.85rem",
+                      fontSize: "0.92rem",
                       fontWeight: "500",
                       width: "100%",
                       padding: 0,
@@ -998,8 +998,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     display: "flex", 
                     alignItems: "center", 
                     justifyContent: "center", 
-                    width: "28px", 
-                    height: "28px", 
+                    width: "30px", 
+                    height: "30px", 
                     boxSizing: "border-box",
                     borderRadius: "50%", 
                     backgroundColor: commentText.trim() 
@@ -1016,7 +1016,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   title="Send reply"
                 >
                   {/* Native iOS styled up-pointing arrow! */}
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="12" y1="19" x2="12" y2="5"></line>
                     <polyline points="5 12 12 5 19 12"></polyline>
                   </svg>
