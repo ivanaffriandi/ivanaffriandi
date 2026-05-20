@@ -954,7 +954,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         localStorage.setItem("ivan_comment_author_name", val);
                       }
                     }}
-                    placeholder="Name (Optional)"
+                    placeholder="Name"
                     style={{
                       height: "18px",
                       lineHeight: "18px",
@@ -1001,7 +1001,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       value={commentText}
                       maxLength={300}
                       onChange={(e) => setCommentText(e.target.value)}
-                      placeholder="Add a reply..."
+                      placeholder="Add a reply"
                       style={{
                         position: "absolute",
                         top: 0,
@@ -1048,10 +1048,10 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     borderRadius: "50%", 
                     backgroundColor: commentText.trim() 
                       ? "#007aff" 
-                      : (theme === "dark" ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)"), 
+                      : (theme === "dark" ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"), 
                     color: commentText.trim() 
                       ? "#ffffff" 
-                      : (theme === "dark" ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.15)"), 
+                      : (theme === "dark" ? "rgba(255, 255, 255, 0.4)" : "rgba(0, 0, 0, 0.3)"), 
                     border: "none",
                     cursor: commentText.trim() ? "pointer" : "default",
                     transition: "all 0.2s ease",
