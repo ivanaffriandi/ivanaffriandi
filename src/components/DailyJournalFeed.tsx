@@ -942,6 +942,8 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
   // Guards for smooth scroll-snapping interaction
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isProgrammaticScroll = useRef(false);
+  const lastHapticIndexRef = useRef(-1);
+
 
   // Low-latency hardware-accelerated 3D barrel roll updater
   const updatePillAnimations = () => {
@@ -1021,6 +1023,16 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
     setCalendarViewDate(new Date(clientToday));
     selectAndCenterDate(clientToday);
   }, []);
+
+  // Cleanup scroll timeouts on unmount to prevent leaks
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
+
 
   // Close calendar when clicking outside
   useEffect(() => {
@@ -1108,13 +1120,35 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
     });
 
     if (closestIndex !== -1) {
-      const targetDate = stripDates[closestIndex];
-      if (targetDate && targetDate.toDateString() !== selectedDate.toDateString()) {
+      // 1. Play haptic light ticks immediately during active scroll without React re-render!
+      if (closestIndex !== lastHapticIndexRef.current) {
         triggerLightClick();
-        setSelectedDate(targetDate); // Updates active journal feed instantly, no scrollTo called!
-      }
-    }
+        lastHapticIndexRef.current = closestIndex;
 
+        // Perform instant DOM highlight for closest index immediately
+        pills.forEach((pill, idx) => {
+          const el = pill as HTMLElement;
+          if (idx === closestIndex) {
+            el.classList.add("visual-active-scroll");
+            el.style.borderColor = "rgba(255, 255, 255, 0.4)";
+          } else {
+            el.classList.remove("visual-active-scroll");
+            el.style.borderColor = "";
+          }
+        });
+      }
+
+      // 2. Debounce the heavy React state update until the scroll stops or slows down
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+      scrollTimeoutRef.current = setTimeout(() => {
+        const targetDate = stripDates[closestIndex];
+        if (targetDate && targetDate.toDateString() !== selectedDate.toDateString()) {
+          setSelectedDate(targetDate);
+        }
+      }, 75); // ultra-fast 75ms settling debounce
+    }
   };
 
   const renderCalendarDays = () => {
