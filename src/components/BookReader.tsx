@@ -411,8 +411,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           }
 
           .floating-island-dock.is-commenting {
-            padding: 14px 14px 14px 22px !important; /* Spacious native iOS padding for mobile */
-            border-radius: 24px !important;
+            padding: 10px 12px 10px 16px !important; /* Compact native iOS padding for mobile */
+            border-radius: 20px !important;
             width: calc(100vw - 2.5rem) !important;
           }
           
@@ -903,8 +903,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 backdropFilter: "blur(24px) saturate(190%)",
                 WebkitBackdropFilter: "blur(24px) saturate(190%)",
                 border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
-                borderRadius: isCommenting ? "24px" : "32px",
-                padding: isCommenting ? "16px 16px 16px 36px" : "6px 10px",
+                borderRadius: isCommenting ? "20px" : "32px",
+                padding: isCommenting ? "10px 12px 10px 18px" : "6px 10px",
                 color: theme === "dark" ? "#ffffff" : "#111111",
                 boxShadow: theme === "dark" 
                   ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
@@ -947,8 +947,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     }}
                     placeholder="Name (Optional)"
                     style={{
-                      height: "24px",
-                      lineHeight: "24px",
+                      height: "20px",
+                      lineHeight: "20px",
                       backgroundColor: "transparent",
                       border: "none",
                       outline: "none",
@@ -966,7 +966,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   <div style={{ 
                     height: "1px", 
                     backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)",
-                    margin: "6px 0"
+                    margin: "4px 0"
                   }} />
 
                   {/* Row 2: Message Field */}
@@ -976,8 +976,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     onChange={(e) => setCommentText(e.target.value)}
                     placeholder="Add a reply..."
                     style={{
-                      height: "24px",
-                      lineHeight: "24px",
+                      height: "20px",
+                      lineHeight: "20px",
                       backgroundColor: "transparent",
                       border: "none",
                       outline: "none",
