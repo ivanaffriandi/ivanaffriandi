@@ -897,13 +897,13 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 backdropFilter: "blur(24px) saturate(190%)",
                 WebkitBackdropFilter: "blur(24px) saturate(190%)",
                 border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
-                borderRadius: isCommenting ? "20px" : "32px",
-                padding: isCommenting ? "10px 10px 10px 16px" : "6px 10px",
+                borderRadius: isCommenting ? "24px" : "32px",
+                padding: isCommenting ? "16px 16px 16px 24px" : "6px 10px",
                 color: theme === "dark" ? "#ffffff" : "#111111",
                 boxShadow: theme === "dark" 
                   ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
                   : "0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
-                width: isCommenting ? "360px" : "max-content",
+                width: isCommenting ? "400px" : "max-content",
                 maxWidth: "92vw",
                 height: isCommenting ? "auto" : "46px",
                 boxSizing: "border-box",
@@ -959,7 +959,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   <div style={{ 
                     height: "1px", 
                     backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)",
-                    margin: "2px 0"
+                    margin: "6px 0"
                   }} />
 
                   {/* Row 2: Message Field */}
