@@ -726,56 +726,72 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             borderTop: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}`
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "2rem" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem", paddingBottom: "0.75rem", borderBottom: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)"}` }}>
             <h3 style={{ 
               margin: 0, 
               fontFamily: "var(--font-sans)", 
-              fontSize: "0.8rem", 
+              fontSize: "0.78rem", 
               fontWeight: "700",
               color: colors.text,
-              letterSpacing: "0.06em",
+              letterSpacing: "0.08em",
               textTransform: "uppercase",
-              opacity: 0.85,
-              textAlign: "center"
+              opacity: 0.85
             }}>
-              Replies ({comments.length})
+              Replies
             </h3>
-            <div style={{ width: "24px", height: "1px", backgroundColor: "#B47A3E", marginTop: "8px", opacity: 0.7 }} />
+            <span style={{
+              fontFamily: "var(--font-sans)",
+              fontSize: "0.75rem",
+              fontWeight: "600",
+              backgroundColor: theme === "dark" ? "rgba(180, 122, 62, 0.15)" : "rgba(180, 122, 62, 0.08)",
+              color: "#B47A3E",
+              padding: "2px 8px",
+              borderRadius: "100px",
+              letterSpacing: "0.02em"
+            }}>
+              {comments.length}
+            </span>
           </div>
 
           {/* Comments List: Balanced modern typography */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0px" }}>
             {comments && comments.length > 0 ? (
               comments.map((comment: any) => {
                 const displayName = comment.author?.displayName || "Anonymous";
-                const handleName = `@${displayName.toLowerCase().replace(/\s+/g, "")}`;
                 return (
                   <div 
                     key={comment.id} 
                     style={{ 
-                      padding: "1rem 0",
-                      borderBottom: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)"}`,
-                      opacity: comment.approved ? 1 : 0.65
+                      padding: "1.1rem 1.25rem",
+                      backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.012)",
+                      border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.03)"}`,
+                      borderRadius: "16px",
+                      marginBottom: "1rem",
+                      opacity: comment.approved ? 1 : 0.65,
+                      boxShadow: theme === "dark" 
+                        ? "0 4px 20px -2px rgba(0, 0, 0, 0.2)" 
+                        : "0 4px 16px -2px rgba(0, 0, 0, 0.02)",
+                      transition: "all 0.2s ease"
                     }}
                   >
                     {/* Comment Body */}
                     <div style={{ flex: 1 }}>
-                      <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "6px", marginBottom: "0.2rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "8px", marginBottom: "0.4rem" }}>
                         <span style={{ 
                           fontFamily: "var(--font-sans)", 
                           fontWeight: "600", 
-                          fontSize: "0.8rem",
+                          fontSize: "0.86rem",
                           color: colors.text,
                           letterSpacing: "-0.01em"
                         }}>
                           {displayName}
                         </span>
-                        <span style={{ fontSize: "0.6rem", color: colors.textSecondary, opacity: 0.3 }}>·</span>
+                        <span style={{ fontSize: "0.6rem", color: colors.textSecondary, opacity: 0.35 }}>·</span>
                         <span style={{ 
                           fontFamily: "var(--font-sans)", 
-                          fontSize: "0.7rem", 
+                          fontSize: "0.75rem", 
                           color: colors.textSecondary,
-                          opacity: 0.4
+                          opacity: 0.45
                         }}>
                           {new Date(comment.published).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                         </span>
@@ -796,14 +812,13 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       </div>
                       <div 
                         style={{ 
-                          fontSize: "0.82rem", 
-                          lineHeight: "1.5",
-                          color: colors.textSecondary,
+                          fontSize: "0.86rem", 
+                          lineHeight: "1.55",
+                          color: theme === "dark" ? "rgba(255, 255, 255, 0.85)" : "rgba(0, 0, 0, 0.75)",
                           fontFamily: "var(--font-sans)",
                           margin: 0,
-                          letterSpacing: "-0.005em",
-                          whiteSpace: "pre-line",
-                          opacity: 0.9
+                          letterSpacing: "-0.01em",
+                          whiteSpace: "pre-line"
                         }}
                         dangerouslySetInnerHTML={{ __html: comment.content }}
                       />
@@ -811,29 +826,43 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       {comment.reply && (
                         <div style={{
                           display: "flex",
-                          gap: "0.6rem",
-                          marginTop: "0.6rem",
-                          padding: "0.6rem 0.8rem",
-                          backgroundColor: theme === "dark" ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.015)",
-                          borderRadius: "10px",
-                          borderLeft: "2.5px solid #B47A3E"
+                          gap: "0.75rem",
+                          marginTop: "0.85rem",
+                          marginLeft: "1rem",
+                          padding: "0.75rem 0.9rem",
+                          backgroundColor: theme === "dark" ? "rgba(180, 122, 62, 0.06)" : "rgba(180, 122, 62, 0.03)",
+                          borderRadius: "12px",
+                          border: `1px solid ${theme === "dark" ? "rgba(180, 122, 62, 0.15)" : "rgba(180, 122, 62, 0.08)"}`,
+                          borderLeft: "3px solid #B47A3E",
+                          boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.02)"
                         }}>
                           <div style={{
-                            width: "22px",
-                            height: "22px",
+                            width: "24px",
+                            height: "24px",
                             borderRadius: "50%",
                             backgroundImage: "url(/profile.jpg), url(/profile.png)",
                             backgroundSize: "cover",
                             backgroundPosition: "center",
-                            border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.06)"}`,
+                            border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.12)"}`,
                             flexShrink: 0
                           }} />
                           <div style={{ flex: 1 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "0.1rem" }}>
-                              <span style={{ fontFamily: "var(--font-sans)", fontWeight: "600", fontSize: "0.75rem", color: colors.text }}>Ivan</span>
-                              <span style={{ fontSize: "0.55rem", fontWeight: "800", backgroundColor: "rgba(180, 122, 62, 0.1)", color: "#B47A3E", padding: "1px 4px", borderRadius: "4px" }}>Writer</span>
+                            <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "0.2rem" }}>
+                              <span style={{ fontFamily: "var(--font-sans)", fontWeight: "600", fontSize: "0.82rem", color: colors.text }}>Ivan</span>
+                              <span style={{ 
+                                fontSize: "0.62rem", 
+                                fontWeight: "700", 
+                                textTransform: "uppercase",
+                                letterSpacing: "0.04em",
+                                backgroundColor: theme === "dark" ? "rgba(180, 122, 62, 0.2)" : "rgba(180, 122, 62, 0.1)", 
+                                color: "#B47A3E", 
+                                padding: "2px 6px", 
+                                borderRadius: "100px" 
+                              }}>
+                                Writer
+                              </span>
                             </div>
-                            <p style={{ margin: 0, fontSize: "0.76rem", lineHeight: "1.45", color: colors.textSecondary, opacity: 0.9 }}>
+                            <p style={{ margin: 0, fontSize: "0.82rem", lineHeight: "1.5", color: theme === "dark" ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.7)", opacity: 0.95 }}>
                               {comment.reply}
                             </p>
                           </div>
