@@ -197,22 +197,6 @@ export default function Navigation() {
           }}
         />
 
-        {/* Structural Tick Marks (25%, 50%, 75%) */}
-        {[25, 50, 75].map((percent) => (
-          <div
-            key={percent}
-            style={{
-              position: "absolute",
-              left: `${percent}%`,
-              top: "-2px",
-              width: "1px",
-              height: "5px",
-              backgroundColor: "var(--border-color)",
-              zIndex: 2,
-              opacity: 0.7,
-            }}
-          />
-        ))}
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>

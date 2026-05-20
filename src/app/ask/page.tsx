@@ -81,7 +81,24 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
   return (
     <div style={{ position: "relative", width: "100%" }}>
       
-      {/* 2-COLUMN ROW LAYOUT (For Mathematically Perfect Sub-Pixel Alignment) */}
+      {/* Spine line — lives in the full-height wrapper, not in the 10px dot column */}
+      {/* top:24px = marginTop(19) + half dot(5) = exact dot center */}
+      {/* bottom:calc(-1.1rem - 24px) bridges the flex gap to the next card's dot center */}
+      {!isLast && (
+        <div style={{
+          position: "absolute",
+          top: "24px",
+          bottom: "calc(-1.1rem - 24px)",
+          left: "7px",
+          width: "1.5px",
+          background: `linear-gradient(to bottom, ${color.border} 0%, var(--border-color) 100%)`,
+          opacity: 0.55,
+          borderRadius: "2px",
+          zIndex: 0,
+        }} />
+      )}
+
+      {/* 2-COLUMN ROW LAYOUT */}
       <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", width: "100%" }}>
         
         {/* Left Column: Timeline Dot (Width: 16px, Centered, flex-shrink: 0) */}
@@ -93,21 +110,7 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
           flexShrink: 0, 
           position: "relative" 
         }}>
-          {/* Continuous spine line connecting to the next QA card */}
-          {!isLast && (
-            <div style={{ 
-              position: "absolute",
-              top: "12px",
-              // Bridge: 1.1rem gap + next card's marginTop(19px) + half dot(5px) = ~41px + gap
-              bottom: "calc(-1.1rem - 26px)",
-              left: "7.25px", 
-              width: "1.5px", 
-              background: `linear-gradient(to bottom, ${color.border}, var(--border-color))`,
-              opacity: 0.5,
-              zIndex: 1,
-              borderRadius: "1px"
-            }} />
-          )}
+
 
           {/* Timeline Dot dynamically colored to match its card background */}
           <motion.div
