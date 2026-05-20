@@ -940,11 +940,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       alignItems: "center",
                       backgroundColor: theme === "dark" ? "rgba(0, 122, 255, 0.25)" : "#EAF3FF",
                       borderRadius: "12px",
-                      padding: "4px 10px 4px 8px",
+                      padding: "4px 14px 4px 10px",
                       color: "#007aff",
                       maxWidth: "fit-content"
                     }}>
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="3" style={{ marginRight: "5px", flexShrink: 0 }}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="3" style={{ marginRight: "6px", flexShrink: 0 }}>
                         <path d="M20 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                       </svg>
@@ -969,7 +969,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                           color: "#007aff",
                           fontSize: "0.78rem",
                           fontWeight: "600",
-                          width: "110px",
+                          width: tempName ? `${Math.max(tempName.length * 7.5, 45)}px` : "110px",
                           padding: 0,
                           fontFamily: "var(--font-sans)"
                         }}
