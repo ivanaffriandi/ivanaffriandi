@@ -411,8 +411,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           }
 
           .floating-island-dock.is-commenting {
-            padding: 10px 12px 10px 16px !important; /* Compact native iOS padding for mobile */
-            border-radius: 20px !important;
+            padding: 8px 10px 8px 14px !important; /* Maximum compact iOS padding */
+            border-radius: 18px !important;
             width: calc(100vw - 2.5rem) !important;
           }
           
@@ -903,8 +903,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 backdropFilter: "blur(24px) saturate(190%)",
                 WebkitBackdropFilter: "blur(24px) saturate(190%)",
                 border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
-                borderRadius: isCommenting ? "20px" : "32px",
-                padding: isCommenting ? "10px 12px 10px 18px" : "6px 10px",
+                borderRadius: isCommenting ? "18px" : "32px",
+                padding: isCommenting ? "8px 10px 8px 14px" : "6px 10px",
                 color: theme === "dark" ? "#ffffff" : "#111111",
                 boxShadow: theme === "dark" 
                   ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
@@ -933,7 +933,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 style={{ display: "flex", alignItems: "flex-end", gap: "10px", flex: 1, height: "100%", minWidth: 0 }}
               >
                 {/* Left Side: Staggered Inputs */}
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px", minWidth: 0 }}>
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0px", minWidth: 0 }}>
                   {/* Row 1: Name Field (iOS Subject Line Style) */}
                   <input 
                     type="text"
@@ -947,8 +947,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     }}
                     placeholder="Name (Optional)"
                     style={{
-                      height: "20px",
-                      lineHeight: "20px",
+                      height: "18px",
+                      lineHeight: "18px",
                       backgroundColor: "transparent",
                       border: "none",
                       outline: "none",
@@ -966,7 +966,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   <div style={{ 
                     height: "1px", 
                     backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)",
-                    margin: "4px 0"
+                    margin: "5px 0"
                   }} />
 
                   {/* Row 2: Message Field */}
@@ -976,8 +976,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     onChange={(e) => setCommentText(e.target.value)}
                     placeholder="Add a reply..."
                     style={{
-                      height: "20px",
-                      lineHeight: "20px",
+                      height: "18px",
+                      lineHeight: "18px",
                       backgroundColor: "transparent",
                       border: "none",
                       outline: "none",
@@ -1006,8 +1006,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     display: "flex", 
                     alignItems: "center", 
                     justifyContent: "center", 
-                    width: "32px", 
-                    height: "32px", 
+                    width: "30px", 
+                    height: "30px", 
                     boxSizing: "border-box",
                     borderRadius: "50%", 
                     backgroundColor: commentText.trim() 
@@ -1020,12 +1020,12 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     cursor: commentText.trim() ? "pointer" : "default",
                     transition: "all 0.2s ease",
                     flexShrink: 0,
-                    marginBottom: "2px"
+                    marginBottom: "1px"
                   }}
                   title="Send reply"
                 >
                   {/* Native iOS styled up-pointing arrow! */}
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="12" y1="19" x2="12" y2="5"></line>
                     <polyline points="5 12 12 5 19 12"></polyline>
                   </svg>
