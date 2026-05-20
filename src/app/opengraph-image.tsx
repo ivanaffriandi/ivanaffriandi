@@ -13,42 +13,89 @@ export default async function Image() {
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#fafafa',
-          color: '#121212',
+          alignItems: 'flex-start',
+          justifyContent: 'flex-end',
+          padding: '72px 80px',
+          background: 'linear-gradient(135deg, #f5f3ef 0%, #e8e4dc 40%, #d4cfc5 100%)',
+          position: 'relative',
           fontFamily: 'sans-serif',
-          position: 'relative'
+          overflow: 'hidden',
         }}
       >
-        {/* Subtle grid pattern background to match the Swiss / Archival theme */}
+        {/* Large background monogram watermark */}
+        <div style={{
+          position: 'absolute',
+          top: '-80px',
+          right: '-60px',
+          fontSize: '520px',
+          fontWeight: 900,
+          color: 'rgba(0,0,0,0.04)',
+          letterSpacing: '-0.05em',
+          lineHeight: 1,
+          userSelect: 'none',
+          display: 'flex',
+        }}>
+          IA
+        </div>
+
+        {/* Thin top accent bar */}
         <div style={{
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
-          bottom: 0,
-          backgroundImage: 'radial-gradient(circle at 25px 25px, rgba(150, 150, 150, 0.15) 2%, transparent 0%), radial-gradient(circle at 75px 75px, rgba(150, 150, 150, 0.15) 2%, transparent 0%)',
-          backgroundSize: '100px 100px',
+          height: '5px',
+          background: 'linear-gradient(90deg, #1a1a1a 0%, #6b6358 50%, #b4a08a 100%)',
+          display: 'flex',
         }} />
-        
-        {/* Glassmorphic central card */}
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column',
-          alignItems: 'center', 
-          justifyContent: 'center',
-          padding: '50px 100px',
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          borderRadius: '35px',
-          border: '1px solid rgba(150,150,150,0.2)',
-          boxShadow: '0 30px 60px rgba(0,0,0,0.05)'
-        }}>
-          <h1 style={{ fontSize: 90, margin: 0, fontWeight: 800, letterSpacing: '-0.04em', color: '#121212' }}>
+
+        {/* Bottom content block */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', zIndex: 10 }}>
+          {/* Eyebrow label */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+          }}>
+            <div style={{
+              width: '32px',
+              height: '3px',
+              background: '#1a1a1a',
+              borderRadius: '2px',
+              display: 'flex',
+            }} />
+            <span style={{
+              fontSize: '20px',
+              fontWeight: 700,
+              color: '#6b6358',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+            }}>
+              Personal
+            </span>
+          </div>
+
+          {/* Main name — full, bold, large */}
+          <h1 style={{
+            fontSize: '112px',
+            fontWeight: 900,
+            letterSpacing: '-0.04em',
+            color: '#1a1a1a',
+            margin: 0,
+            lineHeight: 0.95,
+          }}>
             Ivan Affriandi
           </h1>
-          <p style={{ fontSize: 36, margin: '20px 0 0 0', fontWeight: 500, color: '#86868b', letterSpacing: '-0.01em' }}>
-            Studio & Journal
+
+          {/* Tagline */}
+          <p style={{
+            fontSize: '28px',
+            fontWeight: 500,
+            color: '#6b6358',
+            margin: 0,
+            letterSpacing: '-0.01em',
+          }}>
+            Writing, moments & thoughts — ivanaffriandi.com
           </p>
         </div>
       </div>

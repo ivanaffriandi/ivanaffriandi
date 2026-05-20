@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-export const alt = 'Ask me anything!';
+export const alt = 'Ask Ivan — Ask me anything anonymously.';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -13,54 +13,90 @@ export default async function Image() {
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#fafafa',
+          alignItems: 'flex-start',
+          justifyContent: 'flex-end',
+          padding: '72px 80px',
+          background: 'linear-gradient(135deg, #0f0f10 0%, #18181b 50%, #1e1c1a 100%)',
+          position: 'relative',
           fontFamily: 'sans-serif',
-          position: 'relative'
+          overflow: 'hidden',
         }}
       >
-        {/* Background grid */}
+        {/* Large background question mark watermark */}
+        <div style={{
+          position: 'absolute',
+          top: '-120px',
+          right: '-40px',
+          fontSize: '600px',
+          fontWeight: 900,
+          color: 'rgba(255,255,255,0.03)',
+          letterSpacing: '-0.05em',
+          lineHeight: 1,
+          userSelect: 'none',
+          display: 'flex',
+        }}>
+          ?
+        </div>
+
+        {/* Thin top accent bar */}
         <div style={{
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
-          bottom: 0,
-          backgroundImage: 'radial-gradient(circle at 25px 25px, rgba(150, 150, 150, 0.15) 2%, transparent 0%), radial-gradient(circle at 75px 75px, rgba(150, 150, 150, 0.15) 2%, transparent 0%)',
-          backgroundSize: '100px 100px',
+          height: '5px',
+          background: 'linear-gradient(90deg, #e8e4dc 0%, #b4a08a 50%, #6b6358 100%)',
+          display: 'flex',
         }} />
-        
-        {/* Dark Mode Q&A Card */}
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column',
-          alignItems: 'center', 
-          justifyContent: 'center',
-          padding: '60px 100px',
-          backgroundColor: '#121212', // High contrast for the Ask page thumbnail
-          borderRadius: '40px',
-          boxShadow: '0 40px 80px rgba(0,0,0,0.15)'
-        }}>
-          <h1 style={{ fontSize: 80, margin: 0, fontWeight: 800, letterSpacing: '-0.04em', color: '#ffffff' }}>
-            Ask Ivan Affriandi
-          </h1>
-          <p style={{ fontSize: 36, margin: '24px 0 0 0', fontWeight: 500, color: '#a1a1aa', letterSpacing: '-0.01em' }}>
-            Ask me anything anonymously ✨
-          </p>
-          
-          <div style={{ 
-            display: 'flex', 
-            marginTop: '45px', 
-            padding: '16px 45px', 
-            backgroundColor: '#ffffff', 
-            color: '#121212', 
-            borderRadius: '50px', 
-            fontSize: 28, 
-            fontWeight: 700 
+
+        {/* Bottom content block */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', zIndex: 10 }}>
+          {/* Eyebrow label */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
           }}>
-            ivanaffriandi.com/ask
+            <div style={{
+              width: '32px',
+              height: '3px',
+              background: '#e8e4dc',
+              borderRadius: '2px',
+              display: 'flex',
+            }} />
+            <span style={{
+              fontSize: '20px',
+              fontWeight: 700,
+              color: '#a09e9b',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+            }}>
+              Anonymous Q&amp;A
+            </span>
           </div>
+
+          {/* Main title — full, bold, large */}
+          <h1 style={{
+            fontSize: '120px',
+            fontWeight: 900,
+            letterSpacing: '-0.04em',
+            color: '#f5f3ef',
+            margin: 0,
+            lineHeight: 0.95,
+          }}>
+            Ask Ivan
+          </h1>
+
+          {/* Tagline */}
+          <p style={{
+            fontSize: '30px',
+            fontWeight: 500,
+            color: '#a09e9b',
+            margin: 0,
+            letterSpacing: '-0.01em',
+          }}>
+            Ask me anything anonymously — ivanaffriandi.com/ask
+          </p>
         </div>
       </div>
     ),
