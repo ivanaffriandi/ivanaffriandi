@@ -863,7 +863,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               pointerEvents: "auto"
             }}
           >
-            {/* Kindle-Style Floating Dock with Layout Width morphing */}
+            {/* Kindle-Style Floating Dock with Layout Width/Height morphing */}
             <motion.div 
               layout
               className="floating-island-dock"
@@ -877,14 +877,16 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 backdropFilter: "blur(24px) saturate(190%)",
                 WebkitBackdropFilter: "blur(24px) saturate(190%)",
                 border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
-                borderRadius: isCommenting ? "24px" : "32px",
-                padding: isCommenting ? "8px 10px" : "6px 10px",
+                borderRadius: isCommenting ? "20px" : "32px",
+                padding: isCommenting ? "6px 12px" : "6px 10px",
                 color: theme === "dark" ? "#ffffff" : "#111111",
                 boxShadow: theme === "dark" 
                   ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
                   : "0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
-                width: isCommenting ? "480px" : "max-content",
+                width: isCommenting ? "450px" : "max-content",
                 maxWidth: "92vw",
+                height: isCommenting ? "64px" : "46px",
+                boxSizing: "border-box",
                 overflow: "hidden"
               }}
               transition={{
@@ -931,23 +933,15 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   </svg>
                 </button>
 
-                {/* Metamorphosis iMessage-Style Double-Field Bubble aligned perfectly to 68px height */}
+                {/* iMessage-Style Double-Field borderless stacked inputs directly inside the dock */}
                 <div 
-                  className="floating-island-input-wrapper"
                   style={{
-                    height: "68px",
-                    boxSizing: "border-box",
-                    backgroundColor: theme === "dark" ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.04)",
-                    border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
-                    borderRadius: "18px",
-                    padding: "6px 14px",
-                    width: "380px",
-                    maxWidth: "64vw",
+                    flex: 1,
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
-                    boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.06)",
-                    gap: "2px"
+                    gap: "2px",
+                    padding: "2px 6px"
                   }}
                 >
                   {/* Row 1: Name Field (Bold Subject style) */}
@@ -963,8 +957,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     }}
                     placeholder="Your Name (Optional)"
                     style={{
-                      height: "22px",
-                      lineHeight: "22px",
+                      height: "20px",
+                      lineHeight: "20px",
                       backgroundColor: "transparent",
                       border: "none",
                       outline: "none",
@@ -991,8 +985,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     onChange={(e) => setCommentText(e.target.value)}
                     placeholder="Add a reply..."
                     style={{
-                      height: "24px",
-                      lineHeight: "24px",
+                      height: "22px",
+                      lineHeight: "22px",
                       backgroundColor: "transparent",
                       border: "none",
                       outline: "none",
