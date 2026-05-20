@@ -897,13 +897,13 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 backdropFilter: "blur(24px) saturate(190%)",
                 WebkitBackdropFilter: "blur(24px) saturate(190%)",
                 border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
-                borderRadius: isCommenting ? "24px" : "32px",
-                padding: isCommenting ? "18px 16px 18px 28px" : "6px 10px",
+                borderRadius: isCommenting ? "20px" : "32px",
+                padding: isCommenting ? "10px 10px 10px 16px" : "6px 10px",
                 color: theme === "dark" ? "#ffffff" : "#111111",
                 boxShadow: theme === "dark" 
                   ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
                   : "0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
-                width: isCommenting ? "400px" : "max-content",
+                width: isCommenting ? "360px" : "max-content",
                 maxWidth: "92vw",
                 height: isCommenting ? "auto" : "46px",
                 boxSizing: "border-box",
@@ -916,11 +916,6 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 mass: 0.65
               }}
             >
-          <style>{`
-            .ios-pill-input::placeholder {
-              color: rgba(0, 122, 255, 0.55) !important;
-            }
-          `}</style>
           <AnimatePresence mode="wait" initial={false}>
             {isCommenting ? (
               <motion.div 
@@ -932,50 +927,40 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 style={{ display: "flex", alignItems: "flex-end", gap: "10px", flex: 1, height: "100%", minWidth: 0 }}
               >
                 {/* Left Side: Staggered Inputs */}
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px", minWidth: 0 }}>
-                  {/* Row 1: Name Field styled as a premium iOS blue pill! */}
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      backgroundColor: theme === "dark" ? "rgba(0, 122, 255, 0.25)" : "#EAF3FF",
-                      borderRadius: "12px",
-                      padding: "4px 16px 4px 12px",
-                      color: "#007aff",
-                      maxWidth: "fit-content"
-                    }}>
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#007aff" strokeWidth="3" style={{ marginRight: "6px", flexShrink: 0 }}>
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                      </svg>
-                      <input 
-                        type="text"
-                        value={tempName}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setTempName(val);
-                          if (typeof window !== "undefined") {
-                            localStorage.setItem("ivan_comment_author_name", val);
-                          }
-                        }}
-                        placeholder="Name (Optional)"
-                        className="ios-pill-input"
-                        style={{
-                          height: "16px",
-                          lineHeight: "16px",
-                          backgroundColor: "transparent",
-                          border: "none",
-                          outline: "none",
-                          color: "#007aff",
-                          fontSize: "0.78rem",
-                          fontWeight: "600",
-                          width: tempName ? `${Math.max(tempName.length * 7.5, 48)}px` : "124px",
-                          padding: 0,
-                          fontFamily: "var(--font-sans)"
-                        }}
-                      />
-                    </div>
-                  </div>
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px", minWidth: 0 }}>
+                  {/* Row 1: Name Field (iOS Subject Line Style) */}
+                  <input 
+                    type="text"
+                    value={tempName}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setTempName(val);
+                      if (typeof window !== "undefined") {
+                        localStorage.setItem("ivan_comment_author_name", val);
+                      }
+                    }}
+                    placeholder="Name (Optional)"
+                    style={{
+                      height: "22px",
+                      lineHeight: "22px",
+                      backgroundColor: "transparent",
+                      border: "none",
+                      outline: "none",
+                      color: colors.text,
+                      fontSize: "0.92rem",
+                      fontWeight: "600",
+                      width: "100%",
+                      padding: 0,
+                      fontFamily: "var(--font-sans)"
+                    }}
+                  />
+
+                  {/* Faint Separator Line */}
+                  <div style={{ 
+                    height: "1px", 
+                    backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)",
+                    margin: "2px 0"
+                  }} />
 
                   {/* Row 2: Message Field */}
                   <input 
