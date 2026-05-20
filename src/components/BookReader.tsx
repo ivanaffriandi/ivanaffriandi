@@ -937,15 +937,15 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 backdropFilter: "blur(24px) saturate(190%)",
                 WebkitBackdropFilter: "blur(24px) saturate(190%)",
                 border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
-                borderRadius: isCommenting ? "18px" : "32px",
-                padding: isCommenting ? "8px 10px 8px 14px" : "6px 10px",
+                borderRadius: isCommenting ? "18px" : "24px",
+                padding: isCommenting ? "8px 10px 8px 14px" : "0 8px",
                 color: theme === "dark" ? "#ffffff" : "#111111",
                 boxShadow: theme === "dark" 
                   ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)" 
                   : "0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
                 width: isCommenting ? "400px" : "max-content",
                 maxWidth: "92vw",
-                height: isCommenting ? "auto" : "46px",
+                height: isCommenting ? "auto" : "48px",
                 boxSizing: "border-box",
                 overflow: "hidden"
               }}
@@ -1117,10 +1117,10 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   <button 
                     onClick={() => setMode("read")}
                     style={{
-                      height: "30px",
-                      lineHeight: "30px",
-                      padding: "0 14px",
-                      borderRadius: "15px",
+                      height: "28px",
+                      lineHeight: "28px",
+                      padding: "0 15px",
+                      borderRadius: "14px",
                       border: "none",
                       backgroundColor: mode === "read" 
                         ? (theme === "dark" ? "#ffffff" : "#111111") 
@@ -1131,7 +1131,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       boxShadow: mode === "read"
                         ? (theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.2)")
                         : "none",
-                      fontSize: "0.85rem",
+                      fontSize: "0.82rem",
                       fontWeight: "600",
                       cursor: "pointer",
                       transition: "all 0.2s ease"
@@ -1142,10 +1142,10 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   <button 
                     onClick={() => setMode("listen")}
                     style={{
-                      height: "30px",
-                      lineHeight: "30px",
-                      padding: "0 14px",
-                      borderRadius: "15px",
+                      height: "28px",
+                      lineHeight: "28px",
+                      padding: "0 15px",
+                      borderRadius: "14px",
                       border: "none",
                       backgroundColor: mode === "listen" 
                         ? (theme === "dark" ? "#ffffff" : "#111111") 
@@ -1156,7 +1156,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       boxShadow: mode === "listen"
                         ? (theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.2)")
                         : "none",
-                      fontSize: "0.85rem",
+                      fontSize: "0.82rem",
                       fontWeight: "600",
                       cursor: "pointer",
                       transition: "all 0.2s ease",
