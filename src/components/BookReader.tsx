@@ -328,7 +328,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     // Scroll to comments section
     setTimeout(() => {
       if (commentsSectionRef.current) {
-        commentsSectionRef.current.scrollIntoView({ behavior: "smooth" });
+        if (window.innerWidth >= 1024) {
+          commentsSectionRef.current.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          commentsSectionRef.current.scrollIntoView({ behavior: "smooth" });
+        }
       }
     }, 100);
 
@@ -418,6 +422,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         .book-core-article {
           padding-left: 0;
           padding-right: 0;
+          max-width: 650px;
+          margin: 0 auto;
         }
 
         /* Responsive Mobile Overrides for BookReader */
@@ -480,6 +486,38 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             height: 28px !important;
             padding: 0 !important;
           }
+        }
+
+        @media (min-width: 1024px) {
+          .book-core-article {
+            max-width: 1100px !important;
+          }
+          .book-reader-split-layout {
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 4.5rem !important;
+            align-items: flex-start !important;
+            justify-content: space-between !important;
+          }
+          .book-reader-col-post {
+            flex: 1 1 0% !important;
+            min-width: 0 !important;
+            max-width: 650px !important;
+          }
+          .book-reader-col-comments {
+            flex: 0 0 380px !important;
+            min-width: 0 !important;
+            position: sticky !important;
+            top: 7.5rem !important;
+            max-height: calc(100vh - 12rem) !important;
+            overflow-y: auto !important;
+            padding-right: 12px !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+            border-top: none !important;
+          }
+          .book-reader-col-comments::-webkit-scrollbar { display: none; }
+          .book-reader-col-comments { -ms-overflow-style: none; scrollbar-width: none; }
         }
       `}} />
 
@@ -548,10 +586,12 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
 
 
       {/* Book Core Content Area */}
-      <article className="book-core-article" style={{ maxWidth: "650px", margin: "0 auto" }}>
-        
-        {/* Elegant Rounded Journal Header */}
-        <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+      <article className="book-core-article">
+        <div className="book-reader-split-layout">
+          {/* Column 1: Post Content */}
+          <div className="book-reader-col-post">
+            {/* Elegant Rounded Journal Header */}
+            <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
 
           {/* ===== COMPACT PHOTO GRID (above date) ===== */}
           {extractedImages.length > 0 && (
@@ -714,18 +754,18 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           className={`book-prose prose-style-${fontStyle}`}
           dangerouslySetInnerHTML={{ __html: cleanContent }}
         />
+          </div>
 
-        {/* ==========================================================================
-            ULTRA-MINIMALIST COMMENT SECTION
-            ========================================================================== */}
-        <div 
-          ref={commentsSectionRef}
-          style={{
-            marginTop: "4.5rem",
-            paddingTop: "2.5rem",
-            borderTop: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}`
-          }}
-        >
+          {/* Column 2: Comment Section */}
+          <div 
+            ref={commentsSectionRef}
+            className="book-reader-col-comments"
+            style={{
+              marginTop: "4.5rem",
+              paddingTop: "2.5rem",
+              borderTop: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}`
+            }}
+          >
           <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.5rem" }}>
             <div style={{ 
               display: "inline-flex", 
@@ -915,6 +955,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               </div>
             )}
           </div>
+        </div>
         </div>
 
       </article>

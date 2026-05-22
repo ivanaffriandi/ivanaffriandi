@@ -827,52 +827,14 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
   const [selectedDate, setSelectedDate] = useState(new Date());
   const selectedTheme = getSelectedTheme(selectedDate, calendarEvents);
 
-  // Curate homepage 3x3 grid (9 slots) based on user slot assignment
-  // 1. Get moments explicitly pinned to slots (1 to 9)
-  const curatedMoments = moments
-    .filter((m: any) => m.showOnHomepage && m.homepageOrder !== undefined)
-    .sort((a: any, b: any) => (a.homepageOrder || 0) - (b.homepageOrder || 0));
-
-  // 2. Get other moments that are not pinned, sorted by published date descending
-  const uncuratedMoments = moments
-    .filter((m: any) => !m.showOnHomepage)
-    .sort((a: any, b: any) => new Date(b.published).getTime() - new Date(a.published).getTime());
-
-  // 3. Build a sparse array of size 9 representing the 9 homepage slots (1-indexed, so slots 1 to 9)
-  const slots: any[] = Array.from({ length: 9 }).map(() => null);
-
-  // Place curated moments into their designated slots
-  curatedMoments.forEach((m: any) => {
-    const slotIdx = (m.homepageOrder || 1) - 1;
-    if (slotIdx >= 0 && slotIdx < 9) {
-      slots[slotIdx] = m;
-    }
-  });
-
-  // Fill the empty slots with uncurated moments sequentially
-  let uncuratedIdx = 0;
-  for (let i = 0; i < 9; i++) {
-    if (slots[i] === null) {
-      // Find the next uncurated moment that hasn't been placed in any slot yet
-      while (uncuratedIdx < uncuratedMoments.length) {
-        const candidate = uncuratedMoments[uncuratedIdx++];
-        if (!slots.some((s: any) => s && s.id === candidate.id)) {
-          slots[i] = candidate;
-          break;
-        }
-      }
-    }
-  }
-
-  // 4. If there are still empty slots, fill them with aesthetic placeholders
-  const finalHomepageMoments = slots.map((moment: any, idx: number) => {
-    if (moment) return moment;
-    return {
-      id: `placeholder-${idx}`,
-      url: `https://picsum.photos/seed/${idx + 10}/300/300`,
-      title: `Moment ${idx + 1}`
-    };
-  });
+  // Sort all moments by published date descending, or fallback to aesthetic placeholders if empty
+  const displayMoments = moments.length > 0
+    ? [...moments].sort((a: any, b: any) => new Date(b.published || 0).getTime() - new Date(a.published || 0).getTime())
+    : Array.from({ length: 8 }).map((_, idx) => ({
+        id: `placeholder-${idx}`,
+        url: `https://picsum.photos/seed/${idx + 10}/300/300`,
+        title: `Moment ${idx + 1}`
+      }));
 
   // Holiday and Sunday indicators computed globally
   const selectedKey = `${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
@@ -936,8 +898,10 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
     }
   }, [selectedDate]);
   const [calendarViewDate, setCalendarViewDate] = useState(new Date());
-  const calendarRef = useRef<HTMLDivElement>(null);
-  const stripContainerRef = useRef<HTMLDivElement>(null);
+  const calendarMobileRef = useRef<HTMLDivElement>(null);
+  const calendarDesktopRef = useRef<HTMLDivElement>(null);
+  const stripContainerMobileRef = useRef<HTMLDivElement>(null);
+  const stripContainerDesktopRef = useRef<HTMLDivElement>(null);
 
   // Guards for smooth scroll-snapping interaction
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -947,33 +911,35 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
 
   // Low-latency hardware-accelerated 3D barrel roll updater
   const updatePillAnimations = () => {
-    if (!stripContainerRef.current) return;
-    const container = stripContainerRef.current;
-    const containerCenter = container.scrollLeft + (container.offsetWidth / 2);
-    
-    const pills = container.querySelectorAll(".date-pill");
-    pills.forEach((pill) => {
-      const el = pill as HTMLElement;
-      const pillCenter = el.offsetLeft + (el.offsetWidth / 2);
-      const distance = Math.abs(pillCenter - containerCenter);
+    [stripContainerMobileRef, stripContainerDesktopRef].forEach((ref) => {
+      if (!ref.current) return;
+      const container = ref.current;
+      const containerCenter = container.scrollLeft + (container.offsetWidth / 2);
       
-      const maxEffectDistance = 150; // pixels
-      const distanceRatio = Math.min(distance / maxEffectDistance, 1); // 0 at center, 1 at edge
-      
-      // Apple-premium 3D physical scaling: 1.0 (center) -> 0.88 (edges)
-      const scale = 1.0 - (distanceRatio * 0.12);
-      
-      // Elegant opacity fall-off: 1.0 (center) -> 0.50 (edges)
-      const opacity = 1.0 - (distanceRatio * 0.50);
-      
-      // watchOS 3D barrel roll rotation: bends date strip in 3D cylindrical space
-      const direction = pillCenter < containerCenter ? 1 : -1;
-      const rotateY = direction * (distanceRatio * 20); // rotate up to 20deg
-      const translateZ = -distanceRatio * 22; // push back in Z-axis up to 22px
-      
-      // Direct DOM manipulation guarantees buttery 120 FPS animations without React lag
-      el.style.transform = `perspective(500px) scale(${scale}) rotateY(${rotateY}deg) translateZ(${translateZ}px)`;
-      el.style.opacity = `${opacity}`;
+      const pills = container.querySelectorAll(".date-pill");
+      pills.forEach((pill) => {
+        const el = pill as HTMLElement;
+        const pillCenter = el.offsetLeft + (el.offsetWidth / 2);
+        const distance = Math.abs(pillCenter - containerCenter);
+        
+        const maxEffectDistance = 150; // pixels
+        const distanceRatio = Math.min(distance / maxEffectDistance, 1); // 0 at center, 1 at edge
+        
+        // Apple-premium 3D physical scaling: 1.0 (center) -> 0.88 (edges)
+        const scale = 1.0 - (distanceRatio * 0.12);
+        
+        // Elegant opacity fall-off: 1.0 (center) -> 0.50 (edges)
+        const opacity = 1.0 - (distanceRatio * 0.50);
+        
+        // watchOS 3D barrel roll rotation: bends date strip in 3D cylindrical space
+        const direction = pillCenter < containerCenter ? 1 : -1;
+        const rotateY = direction * (distanceRatio * 20); // rotate up to 20deg
+        const translateZ = -distanceRatio * 22; // push back in Z-axis up to 22px
+        
+        // Direct DOM manipulation guarantees buttery 120 FPS animations without React lag
+        el.style.transform = `perspective(500px) scale(${scale}) rotateY(${rotateY}deg) translateZ(${translateZ}px)`;
+        el.style.opacity = `${opacity}`;
+      });
     });
   };
 
@@ -988,31 +954,33 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
     // Wait briefly for React rendering so the correct month DOM pills are fully available
     requestAnimationFrame(() => {
       setTimeout(() => {
-        if (!stripContainerRef.current) return;
-        const container = stripContainerRef.current;
-        const pills = container.querySelectorAll(".date-pill");
-        let targetEl: HTMLElement | null = null;
+        [stripContainerMobileRef, stripContainerDesktopRef].forEach((ref) => {
+          if (!ref.current) return;
+          const container = ref.current;
+          const pills = container.querySelectorAll(".date-pill");
+          let targetEl: HTMLElement | null = null;
 
-        pills.forEach((pill) => {
-          const el = pill as HTMLElement;
-          if (el.getAttribute("data-date") === date.toDateString()) {
-            targetEl = el;
+          pills.forEach((pill) => {
+            const el = pill as HTMLElement;
+            if (el.getAttribute("data-date") === date.toDateString()) {
+              targetEl = el;
+            }
+          });
+
+          if (targetEl) {
+            const el = targetEl as HTMLElement;
+            isProgrammaticScroll.current = true;
+            const scrollLeft = el.offsetLeft - (container.offsetWidth / 2) + (el.offsetWidth / 2);
+            
+            container.scrollTo({ left: scrollLeft, behavior: "smooth" });
           }
         });
 
-        if (targetEl) {
-          const el = targetEl as HTMLElement;
-          isProgrammaticScroll.current = true;
-          const scrollLeft = el.offsetLeft - (container.offsetWidth / 2) + (el.offsetWidth / 2);
-          
-          container.scrollTo({ left: scrollLeft, behavior: "smooth" });
-          
-          if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-          scrollTimeoutRef.current = setTimeout(() => {
-            isProgrammaticScroll.current = false;
-            updatePillAnimations(); // Sync styles once scrolling concludes
-          }, 450);
-        }
+        if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+        scrollTimeoutRef.current = setTimeout(() => {
+          isProgrammaticScroll.current = false;
+          updatePillAnimations(); // Sync styles once scrolling concludes
+        }, 450);
       }, 50);
     });
   };
@@ -1037,7 +1005,9 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
   // Close calendar when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (calendarRef.current && !calendarRef.current.contains(e.target as Node)) {
+      const clickedMobile = calendarMobileRef.current && calendarMobileRef.current.contains(e.target as Node);
+      const clickedDesktop = calendarDesktopRef.current && calendarDesktopRef.current.contains(e.target as Node);
+      if (!clickedMobile && !clickedDesktop) {
         setIsCalendarOpen(false);
       }
     };
@@ -1093,16 +1063,16 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
   };
 
   // Main scroll snapping selection logic: picks whichever date is closest to center
-  const handleStripScroll = () => {
+  const handleStripScroll = (ref: React.RefObject<HTMLDivElement | null>) => {
     // Keep 3D animations updated in real-time on every single scroll frame
     updatePillAnimations();
 
     // If scrolling was triggered programmatically (e.g. clicking a date),
     // skip center tracking to avoid fighting the smooth scroll animation.
     if (isProgrammaticScroll.current) return;
-    if (!stripContainerRef.current) return;
+    if (!ref.current) return;
 
-    const container = stripContainerRef.current;
+    const container = ref.current;
     const containerCenter = container.scrollLeft + (container.offsetWidth / 2);
 
     let closestIndex = -1;
@@ -1150,6 +1120,9 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
       }, 75); // ultra-fast 75ms settling debounce
     }
   };
+
+  const handleStripScrollMobile = () => handleStripScroll(stripContainerMobileRef);
+  const handleStripScrollDesktop = () => handleStripScroll(stripContainerDesktopRef);
 
   const renderCalendarDays = () => {
     const year = calendarViewDate.getFullYear();
@@ -1239,9 +1212,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
     <div 
       className="daily-journal-feed-container"
       style={{ 
-        maxWidth: "680px", 
         margin: "0 auto", 
-        padding: "1.5rem 1.25rem", 
         fontFamily: "var(--font-sans)",
         color: "var(--text-primary)"
       }}
@@ -1272,6 +1243,20 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
         `}</style>
       )}
       <style>{`
+        .mobile-only-section {
+          display: block !important;
+        }
+        .desktop-only-section {
+          display: none !important;
+        }
+        @media (min-width: 768px) {
+          .mobile-only-section {
+            display: none !important;
+          }
+          .desktop-only-section {
+            display: block !important;
+          }
+        }
         body, html {
           transition: background-color 0.4s ease !important;
         }
@@ -1289,10 +1274,22 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
           padding-left: calc(50% - 25px) !important; /* Centering padding */
           padding-right: calc(50% - 25px) !important; /* Centering padding */
           scroll-snap-type: x mandatory;
+          /* Beautiful visual edge fade to prevent hard cuts on scroll */
+          mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent) !important;
+          -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent) !important;
         }
-        .moments-grid a:nth-child(9) {
-          display: none !important;
+        @media (min-width: 768px) {
+          .date-strip-container {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            /* Slightly tighter edge fade on desktop sidebar */
+            mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent) !important;
+            -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent) !important;
+          }
         }
+
         .today-btn, .month-picker-btn {
           transition: transform 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.18s ease, box-shadow 0.18s ease !important;
         }
@@ -1344,7 +1341,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
         }
 
         /* High-Density Mobile Overrides */
-        @media (max-width: 768px) {
+        @media (max-width: 599px) {
           .daily-journal-feed-container {
             padding: 0.85rem 0.65rem !important; /* Compact padding */
           }
@@ -1391,9 +1388,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
           .moments-grid {
             grid-template-columns: repeat(3, 1fr) !important;
           }
-          .moments-grid a:nth-child(9) {
-            display: block !important;
-          }
+
           .date-strip-container {
             margin-left: calc(-4vw - 0.65rem) !important;
             margin-right: calc(-4vw - 0.65rem) !important;
@@ -1411,19 +1406,42 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             border-radius: 16px !important;
             top: calc(100% + 6px) !important;
           }
-          .custom-calendar-popup div {
-            font-size: 0.85rem !important;
+        }
+        @media (min-width: 768px) {
+          .feed-split-layout {
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 2.5rem !important;
+            align-items: flex-start !important;
+            justify-content: space-between !important; /* Distribute columns beautifully across layout width */
+            min-height: 600px !important; /* Elegant vertical footprint to space footer */
           }
-          .calendar-day-label {
-            font-size: 0.6rem !important;
+          .feed-column-left {
+            flex: 0 0 300px !important; /* Beautiful symmetric width matching Right Column! */
+            min-width: 0 !important;
           }
-          .calendar-day-cell {
-            font-size: 0.7rem !important;
+          .feed-column-middle {
+            flex: 1 !important;
+            min-width: 0 !important;
+            max-width: 480px !important; /* Premium book-like readability limit */
+          }
+          .feed-column-right {
+            flex: 0 0 300px !important;
+            min-width: 0 !important;
+          }
+          /* Custom overrides to hide events border on desktop */
+          .events-header-container {
+            border-top: none !important;
+            padding-top: 0 !important;
+            margin-top: 1.5rem !important;
           }
         }
       `}</style>
-      <FadeIn delay={0.1}>
-        {/* HEADER: DAY & CUSTOM DATE PICKER */}
+
+      {/* MOBILE ONLY TOP CALENDAR SECTION */}
+      <div className="mobile-only-section">
+        {/* 1. HEADER: DAY & CUSTOM DATE PICKER (FULL WIDTH, ABOVE COLUMNS) */}
+        <FadeIn delay={0.05}>
         <div className="journal-header-container" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", padding: "0 0.25rem" }}>
           
           {/* Casino-style letter-by-letter slot-machine vertical roll window */}
@@ -1537,7 +1555,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             )}
 
             {/* Custom Date Picker Button & Dropdown */}
-            <div style={{ position: "relative" }} ref={calendarRef}>
+            <div style={{ position: "relative" }} ref={calendarMobileRef}>
               <button 
                 onClick={handleOpenCalendar}
                 className="month-picker-btn"
@@ -1709,7 +1727,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                                   key={m}
                                   onClick={() => {
                                     setTempMonth(idx);
-                                    if (navigator.vibrate) navigator.vibrate(10);
+                                    if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(10);
                                   }}
                                   style={{
                                     padding: "5px 0",
@@ -1824,7 +1842,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                                   key={y}
                                   onClick={() => {
                                     setTempYear(y);
-                                    if (navigator.vibrate) navigator.vibrate(10);
+                                    if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(10);
                                   }}
                                   style={{
                                     padding: "5px 0",
@@ -1955,17 +1973,19 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
           </div>
         </div>
       </div>
+    </FadeIn>
 
-        {/* HORIZONTAL DATE SELECTOR STRIP (FULL MONTH, SCROLL-SNAPPING 3D BARREL-ROLL WHEEL) */}
+      {/* 2. HORIZONTAL DATE SELECTOR STRIP (FULL WIDTH, ABOVE COLUMNS) */}
+      <FadeIn delay={0.1}>
         <div 
-          ref={stripContainerRef}
-          onScroll={handleStripScroll}
+          ref={stripContainerMobileRef}
+          onScroll={handleStripScrollMobile}
           className="no-scrollbar date-strip-container"
           style={{ 
             display: "flex", 
             gap: "0.22rem",
             alignItems: "flex-end", // Ground the pills to the bottom baseline so floating looks natural
-            marginBottom: "0.85rem",
+            marginBottom: "1.5rem",
             borderBottom: "1px solid rgba(150, 150, 150, 0.12)",
             padding: "12px 0 1.1rem 0", // Give 12px breathing room at the top to prevent clipping during hover/active rises
             overflowX: "auto",
@@ -1999,14 +2019,14 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             const bgSelected = activeColor;
             
             const bgUnselected = isSunday 
-              ? "rgba(255, 59, 48, 0.12)" 
+              ? "rgba(255, 59, 48, 0.06)" 
               : (isHoliday 
-                  ? "rgba(255, 114, 111, 0.08)" 
+                  ? "rgba(255, 114, 111, 0.05)" 
                   : (pillTheme 
                       ? pillTheme.bgUnselected 
                       : (hasPost 
-                          ? "rgba(180, 122, 62, 0.06)" 
-                          : (selectedTheme ? selectedTheme.bgUnselected : "rgba(150, 150, 150, 0.04)"))));
+                          ? "rgba(180, 122, 62, 0.08)" 
+                          : "rgba(150, 150, 150, 0.03)")));
             
             const borderSelected = `1.5px solid ${activeColor}`;
             
@@ -2126,95 +2146,503 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                   {d.toLocaleDateString("en-US", { weekday: "short" })}
                 </span>
               </div>
-            )
+            );
           })}
         </div>
+      </FadeIn>
+      </div>
 
-        {/* HOLIDAY INDICATOR FOR SELECTED DATE ONLY */}
-        <div style={{ padding: "0 0.25rem 0.75rem 0.25rem", minHeight: "1.8rem", overflow: "hidden", position: "relative" }}>
-          <AnimatePresence mode="popLayout" custom={scrollDirection}>
-            <motion.div
-              key={selectedDate.toDateString() + (selectedHoliday || selectedTheme?.text || "none")}
-              custom={scrollDirection}
-              variants={{
-                initial: (direction: "forward" | "backward") => ({
-                  x: direction === "forward" ? 22 : -22,
-                  opacity: 0,
-                  filter: "blur(2px)"
-                }),
-                animate: {
-                  x: 0,
-                  opacity: 1,
-                  filter: "blur(0px)",
-                  transition: {
-                    type: "spring",
-                    stiffness: 350,
-                    damping: 24
-                  }
-                },
-                exit: (direction: "forward" | "backward") => ({
-                  x: direction === "forward" ? -22 : 22,
-                  opacity: 0,
-                  filter: "blur(2px)",
-                  transition: {
-                    duration: 0.16,
-                    ease: "easeInOut"
-                  }
-                })
+      {/* 3. SPLIT LAYOUT (3 COLUMNS ON DESKTOP, VERTICALLY STACKED ON MOBILE) */}
+      <div className="feed-split-layout">
+        
+        {/* Column 1: Events (Left Column) */}
+        <FadeIn delay={0.15} className="feed-column feed-column-left">
+          
+          {/* DESKTOP ONLY SIDEBAR CALENDAR SECTION */}
+          <div className="desktop-only-section" style={{ 
+            borderTop: "1px solid rgba(150,150,150,0.12)", 
+            paddingTop: "1rem", 
+            marginTop: "0.85rem", 
+            marginBottom: "1rem" 
+          }}>
+            
+            {/* 1. HEADER: DAY & CUSTOM DATE PICKER */}
+            <div className="journal-header-container" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginBottom: "0.8rem" }}>
+              
+              {/* Casino-style letter-by-letter slot-machine vertical roll window */}
+              <h1 
+                className="journal-day-header"
+                style={{ 
+                  fontSize: "2.1rem", 
+                  fontWeight: "800", 
+                  fontFamily: "var(--font-sans)",
+                  color: "var(--text-primary)",
+                  margin: 0, 
+                  lineHeight: 1,
+                  letterSpacing: "-0.02em",
+                  display: "flex",
+                  alignItems: "center"
+                }}
+              >
+                {selectedDate.toLocaleDateString("en-US", { weekday: "short" }).split("").map((char, idx) => {
+                  let charWidth = "0.56em";
+                  if (char === "W") charWidth = "0.90em";
+                  else if (char === "M") charWidth = "0.84em";
+                  else if (char === "T" || char === "F" || char === "S") charWidth = "0.62em";
+                  else if (char === "w" || char === "m") charWidth = "0.78em";
+                  else if (char === "i" || char === "l") charWidth = "0.26em";
+                  else if (char === "f" || char === "t" || char === "r") charWidth = "0.38em";
+
+                  return (
+                    <div 
+                      key={idx}
+                      style={{ 
+                        height: "1.55em", 
+                        width: charWidth,
+                        overflow: "hidden", 
+                        display: "inline-flex", 
+                        alignItems: "center", 
+                        justifyContent: "center",
+                        position: "relative"
+                      }}
+                    >
+                      <AnimatePresence mode="popLayout" custom={scrollDirection}>
+                        <motion.span
+                          key={`${char}-${idx}`}
+                          custom={scrollDirection}
+                          variants={{
+                            initial: (direction: "forward" | "backward") => ({
+                              y: direction === "forward" ? "100%" : "-100%",
+                              opacity: 0,
+                              filter: "blur(3px)"
+                            }),
+                            animate: {
+                              y: 0,
+                              opacity: 1,
+                              filter: "blur(0px)",
+                              transition: {
+                                type: "spring",
+                                stiffness: 380,
+                                damping: 20,
+                                delay: idx * 0.05
+                              }
+                            },
+                            exit: (direction: "forward" | "backward") => ({
+                              y: direction === "forward" ? "-100%" : "100%",
+                              opacity: 0,
+                              filter: "blur(3px)",
+                              transition: {
+                                duration: 0.14,
+                                ease: "easeInOut"
+                              }
+                            })
+                          }}
+                          initial="initial"
+                          animate="animate"
+                          exit="exit"
+                          style={{
+                            display: "inline-block",
+                            lineHeight: 1,
+                          }}
+                        >
+                          {char}
+                        </motion.span>
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+              </h1>
+              
+              <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginTop: "0.6rem", width: "100%" }}>
+                {/* DYNAMIC TODAY BUTTON */}
+                {!isSameDay(selectedDate, today) && (
+                  <button
+                    onClick={() => selectAndCenterDate(new Date())}
+                    className="today-btn"
+                    style={{
+                      padding: "5px 10px", 
+                      borderRadius: "12px",
+                      backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
+                      border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                      boxShadow: isDark 
+                        ? "0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)" 
+                        : "0 4px 12px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff",
+                      cursor: "pointer",
+                      fontSize: "0.72rem", 
+                      fontWeight: "600",
+                      color: selectedTheme ? selectedTheme.primary : "var(--text-primary)",
+                      fontFamily: "var(--font-sans)"
+                    }}
+                  >
+                    Today
+                  </button>
+                )}
+
+                {/* Custom Date Picker Button & Dropdown */}
+                <div style={{ position: "relative" }} ref={calendarDesktopRef}>
+                  <button 
+                    onClick={handleOpenCalendar}
+                    className="month-picker-btn"
+                    style={{ 
+                      display: "flex", 
+                      alignItems: "center", 
+                      gap: "5px",
+                      color: selectedTheme ? selectedTheme.primary : "var(--text-primary)", 
+                      cursor: "pointer",
+                      padding: "5px 10px", 
+                      backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
+                      border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                      boxShadow: isDark 
+                        ? "0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)" 
+                        : "0 4px 12px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff",
+                      outline: "none",
+                      borderRadius: "12px",
+                      fontFamily: "var(--font-sans)"
+                    }}
+                  >
+                    <span style={{ fontSize: "0.75rem", fontWeight: "600" }}>
+                      {selectedDate.toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                    </span>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: isCalendarOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s ease" }}>
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+                
+                  {/* CUSTOM CALENDAR POPUP */}
+                  <AnimatePresence>
+                    {isCalendarOpen && (
+                      <motion.div 
+                        className="custom-calendar-popup"
+                        initial={{ opacity: 0, scale: 0.94, y: -8, originX: 0, originY: 0 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.96, y: -4 }}
+                        transition={{ type: "spring", damping: 25, stiffness: 320 }}
+                        style={{
+                          position: "absolute",
+                          top: "calc(100% + 8px)",
+                          left: 0, 
+                          width: "230px", 
+                          backgroundColor: "var(--bg-color)",
+                          backdropFilter: "blur(24px)",
+                          WebkitBackdropFilter: "blur(24px)",
+                          border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                          borderRadius: "18px",
+                          boxShadow: isDark 
+                            ? "0 20px 48px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)" 
+                            : "0 20px 48px rgba(0, 0, 0, 0.08), inset 0 1px 0 #ffffff",
+                          padding: "0.9rem", 
+                          zIndex: 100,
+                        }}
+                      >
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+                          <button 
+                            onClick={() => isWheelPickerOpen ? setIsWheelPickerOpen(false) : changeMonth(-1)} 
+                            style={{ background: "rgba(150,150,150,0.06)", border: "1px solid rgba(150,150,150,0.1)", cursor: isWheelPickerOpen ? "default" : "pointer", color: "var(--text-primary)", padding: "4px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}
+                            disabled={isWheelPickerOpen}
+                          >
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                          </button>
+                          
+                          <div 
+                            onClick={() => {
+                              if (!isWheelPickerOpen) {
+                                const viewYear = calendarViewDate.getFullYear();
+                                setTempMonth(calendarViewDate.getMonth());
+                                setTempYear(viewYear);
+                                setYearPageStart(viewYear - (viewYear % 8));
+                              }
+                              setIsWheelPickerOpen(!isWheelPickerOpen);
+                            }}
+                            style={{ fontWeight: "750", fontSize: "0.85rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}
+                          >
+                            {isWheelPickerOpen ? `${MONTH_NAMES[tempMonth]} ${tempYear}` : calendarViewDate.toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ transform: isWheelPickerOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s ease", opacity: 0.6 }}>
+                              <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                          </div>
+
+                          <button 
+                            onClick={() => isWheelPickerOpen ? setIsWheelPickerOpen(false) : changeMonth(1)} 
+                            style={{ background: "rgba(150,150,150,0.06)", border: "1px solid rgba(150,150,150,0.1)", cursor: isWheelPickerOpen ? "default" : "pointer", color: "var(--text-primary)", padding: "4px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}
+                            disabled={isWheelPickerOpen}
+                          >
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                          </button>
+                        </div>
+
+                        {isWheelPickerOpen ? (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                            <div style={{ display: "flex", gap: "8px" }}>
+                              <div style={{ flex: 1.2, display: "flex", flexDirection: "column", gap: "4px" }}>
+                                <span style={{ fontSize: "0.58rem", fontWeight: "750", color: "var(--text-secondary)", textTransform: "uppercase" }}>Month</span>
+                                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "3px" }}>
+                                  {SHORT_MONTHS.map((m, idx) => (
+                                    <button
+                                      key={m}
+                                      onClick={() => setTempMonth(idx)}
+                                      style={{
+                                        padding: "4px 0",
+                                        borderRadius: "6px",
+                                        fontSize: "0.64rem",
+                                        fontWeight: "700",
+                                        cursor: "pointer",
+                                        border: tempMonth === idx ? "1px solid transparent" : "1px solid rgba(150,150,150,0.08)",
+                                        backgroundColor: tempMonth === idx ? (selectedTheme ? selectedTheme.primary : "var(--text-primary)") : "transparent",
+                                        color: tempMonth === idx ? "#ffffff" : "var(--text-primary)"
+                                      }}
+                                    >
+                                      {m}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                              <div style={{ flex: 0.8, display: "flex", flexDirection: "column", gap: "4px" }}>
+                                <span style={{ fontSize: "0.58rem", fontWeight: "750", color: "var(--text-secondary)", textTransform: "uppercase" }}>Year</span>
+                                <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "3px" }}>
+                                  {YEARS_LIST.map((y) => (
+                                    <button
+                                      key={y}
+                                      onClick={() => setTempYear(y)}
+                                      style={{
+                                        padding: "4px 0",
+                                        borderRadius: "6px",
+                                        fontSize: "0.62rem",
+                                        fontWeight: "700",
+                                        cursor: "pointer",
+                                        border: tempYear === y ? "1px solid transparent" : "1px solid rgba(150,150,150,0.08)",
+                                        backgroundColor: tempYear === y ? (selectedTheme ? selectedTheme.primary : "var(--text-primary)") : "transparent",
+                                        color: tempYear === y ? "#ffffff" : "var(--text-primary)"
+                                      }}
+                                    >
+                                      {y}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => {
+                                const newDate = new Date(calendarViewDate);
+                                newDate.setMonth(tempMonth);
+                                newDate.setFullYear(tempYear);
+                                setCalendarViewDate(newDate);
+                                setIsWheelPickerOpen(false);
+                              }}
+                              style={{ width: "100%", padding: "6px", backgroundColor: "var(--text-primary)", color: "var(--bg-color)", border: "none", borderRadius: "8px", fontSize: "0.72rem", fontWeight: "700", cursor: "pointer" }}
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        ) : (
+                          <>
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "0.4rem" }}>
+                              {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(day => (
+                                <div key={day} style={{ textAlign: "center", fontSize: "0.64rem", fontWeight: "700", color: "var(--text-secondary)" }}>{day}</div>
+                              ))}
+                            </div>
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px" }}>
+                              {renderCalendarDays()}
+                            </div>
+                          </>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
+
+            {/* 2. HORIZONTAL DATE SELECTOR STRIP */}
+            <div 
+              ref={stripContainerDesktopRef}
+              onScroll={handleStripScrollDesktop}
+              className="no-scrollbar date-strip-container"
+              style={{ 
+                display: "flex", 
+                gap: "0.22rem",
+                alignItems: "flex-end",
+                marginBottom: "1rem",
+                borderBottom: "1px solid rgba(150, 150, 150, 0.12)",
+                padding: "12px 0 0.9rem 0", /* Increased top padding to 12px for hover elevation safety! */
+                overflowX: "auto",
+                scrollBehavior: "smooth",
+                WebkitOverflowScrolling: "touch",
+                transformStyle: "preserve-3d",
+                perspective: "500px",
+                width: "100%"
               }}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              style={{ width: "100%" }}
             >
-              {selectedTheme ? (
-                <div style={{ 
-                  fontSize: "0.78rem", 
-                  color: selectedTheme.primary, 
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  fontFamily: "var(--font-sans)",
-                  fontWeight: "600"
-                }}>
-                  <span style={{ fontSize: "0.9rem" }}>{selectedTheme.emoji}</span>
-                  <span style={{ letterSpacing: "0.01em" }}>{selectedTheme.text}</span>
-                </div>
-              ) : selectedHoliday ? (
-                <div style={{ 
-                  fontSize: "0.75rem", 
-                  color: themeColor, 
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  fontFamily: "var(--font-sans)"
-                }}>
-                  <div style={{ width: "5px", height: "5px", borderRadius: "50%", backgroundColor: themeColor }} />
-                  <span style={{ fontWeight: "500", letterSpacing: "0.01em" }}>{selectedHoliday}</span>
-                </div>
-              ) : (
-                <div style={{ 
-                  fontSize: "0.70rem", 
-                  color: "var(--text-secondary)", 
-                  fontFamily: "var(--font-sans)",
-                  opacity: 0.5,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px"
-                }}>
-                  <div style={{ width: "4px", height: "4px", borderRadius: "50%", backgroundColor: "var(--text-secondary)", opacity: 0.25 }} />
-                  <span>No events for this date.</span>
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </div>
+              {stripDates.map((d, i) => {
+                const isSelected = isSameDay(d, selectedDate);
+                const isToday = isSameDay(d, today);
+                const hasPost = hasPostOnDate(d);
+                const pillTheme = getSelectedTheme(d, calendarEvents);
+                
+                const isSunday = d.getDay() === 0;
+                const dKey = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                const fullDKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                const isHoliday = calendarEvents.some(e => (e.dateKey === dKey || e.dateKey === fullDKey) && e.type !== "ivan" && e.type !== "female" && e.type !== "male" && e.type !== "both");
+                
+                const sundayColor = "#ff3b30";
+                const holidayColor = "#ff726f"; 
+                const activeColor = isSunday ? sundayColor : (isHoliday ? holidayColor : (pillTheme ? pillTheme.primary : (selectedTheme ? selectedTheme.primary : "var(--text-primary)")));
+                const bgSelected = activeColor;
+                const bgUnselected = isSunday ? "rgba(255, 59, 48, 0.06)" : (isHoliday ? "rgba(255, 114, 111, 0.05)" : (pillTheme ? pillTheme.bgUnselected : (hasPost ? "rgba(180, 122, 62, 0.08)" : "rgba(150, 150, 150, 0.03)")));
+                const borderSelected = `1.5px solid ${activeColor}`;
+                const borderUnselected = isSunday ? "1px solid rgba(255, 59, 48, 0.3)" : (isHoliday ? "1px solid rgba(255, 114, 111, 0.15)" : (pillTheme ? pillTheme.borderUnselected : (hasPost ? "1px solid rgba(180, 122, 62, 0.45)" : (selectedTheme ? selectedTheme.borderUnselected : "1px solid rgba(150, 150, 150, 0.08)"))));
+                
+                return (
+                  <div 
+                    key={i}
+                    className="date-pill"
+                    data-selected={isSelected}
+                    data-date={d.toDateString()}
+                    onClick={() => selectAndCenterDate(d)}
+                    title={pillTheme ? pillTheme.text : undefined}
+                    style={{
+                      flexShrink: 0,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      width: "44px", 
+                      height: "60px", 
+                      borderRadius: "12px", 
+                      backgroundColor: isSelected ? bgSelected : bgUnselected,
+                      border: isSelected ? borderSelected : borderUnselected,
+                      color: isSelected ? "var(--bg-color)" : activeColor,
+                      backfaceVisibility: "hidden",
+                      WebkitBackfaceVisibility: "hidden",
+                      WebkitFontSmoothing: "subpixel-antialiased",
+                      transformOrigin: "center center",
+                      scrollSnapAlign: "center",
+                      transform: isSelected ? "translateY(-2px)" : "translateY(0)",
+                      boxShadow: isSelected 
+                        ? "0 4px 10px rgba(0, 0, 0, 0.15)" 
+                        : "0 2px 4px rgba(0, 0, 0, 0.02)",
+                      transition: "transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease"
+                    }}
+                  >
+                    {hasPost && (
+                      <div 
+                        title="Contains journal entries"
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: "9px",
+                          width: "6px",
+                          height: "12px",
+                          backgroundColor: isSelected ? "var(--bg-color)" : (pillTheme ? pillTheme.primary : "#B47A3E"),
+                          clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%)",
+                          opacity: 0.95,
+                          zIndex: 3
+                        }} 
+                      />
+                    )}
 
-        {/* JOURNAL HEADER & FEED CONTENT */}
+                    <div style={{ position: "absolute", top: "4px" }}>
+                      {pillTheme ? null : isToday ? (
+                        <div style={{ width: "3px", height: "3px", borderRadius: "50%", backgroundColor: isSelected ? "var(--bg-color)" : sundayColor }} />
+                      ) : null}
+                    </div>
+                    
+                    {pillTheme && pillTheme.emoji && pillTheme.emoji.includes("🎂") ? (
+                      <span className="date-pill-day-num" style={{ fontSize: "1.15rem", lineHeight: 1, marginTop: "6px" }}>🎂</span>
+                    ) : (
+                      <span className="date-pill-day-num" style={{ fontSize: "1.05rem", fontWeight: isSelected ? "750" : "500", lineHeight: 1, marginTop: "6px" }}>{d.getDate()}</span>
+                    )}
+                    
+                    <span 
+                      className="date-pill-day-name"
+                      style={{ 
+                        fontSize: "0.55rem", 
+                        textTransform: "uppercase",
+                        fontWeight: isSelected ? "750" : "600",
+                        marginTop: "4px",
+                        color: isSelected ? "var(--bg-color)" : (isToday ? sundayColor : (isSunday || isHoliday ? activeColor : "var(--text-secondary)")),
+                        opacity: isSelected ? 1 : 0.55
+                      }}
+                    >
+                      {d.toLocaleDateString("en-US", { weekday: "short" })}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+          </div>
+
+          {(() => {
+            const selectedMonth = String(selectedDate.getMonth() + 1).padStart(2, '0');
+            const selectedDay = String(selectedDate.getDate()).padStart(2, '0');
+            const selectedDateKey = `${selectedMonth}-${selectedDay}`;
+            const selectedFullDateKey = `${selectedDate.getFullYear()}-${selectedMonth}-${selectedDay}`;
+            const dayEvents = calendarEvents.filter(e => e.dateKey === selectedDateKey || e.dateKey === selectedFullDateKey);
+            return (
+              <>
+                <div className="events-header-container" style={{ 
+                  borderTop: "1px solid rgba(150,150,150,0.12)", 
+                  paddingTop: "1rem", 
+                  marginBottom: "0.6rem",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center"
+                }}>
+                  <h2 style={{ 
+                    fontSize: "0.75rem", 
+                    fontWeight: "700", 
+                    color: "var(--text-primary)", 
+                    margin: 0,
+                    fontFamily: "var(--font-sans)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.04em"
+                  }}>
+                    Events
+                  </h2>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", paddingTop: "0.4rem" }}>
+                  {dayEvents.length > 0 ? (
+                    dayEvents.map(event => (
+                      <div 
+                        key={event.id}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          fontSize: "0.85rem",
+                          fontWeight: "500",
+                          color: "var(--text-primary)",
+                          padding: "0.4rem 0"
+                        }}
+                      >
+                        <span style={{ fontSize: "1.1rem" }}>{event.emoji}</span>
+                        <span>{event.name}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ 
+                      fontSize: "0.85rem",
+                      color: "var(--text-secondary)",
+                      padding: "0.4rem 0",
+                      opacity: 0.75
+                    }}>
+                      • No events for this date.
+                    </div>
+                  )}
+                </div>
+              </>
+            );
+          })()}
+        </FadeIn>
+
+        {/* Column 2: Journal (Middle Column) */}
+        <FadeIn delay={0.15} className="feed-column feed-column-middle">
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ 
             borderTop: "1px solid rgba(150,150,150,0.12)", 
             paddingTop: "1rem", 
+            marginTop: "0.85rem", /* Perfectly aligned with the Left and Right column baselines! */
             marginBottom: "0.6rem",
             display: "flex",
             justifyContent: "space-between",
@@ -2410,10 +2838,10 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
       </FadeIn>
 
       {/* MOMENTS SECTION (B&W NATURE GRID) */}
-      <FadeIn delay={0.2}>
+      <FadeIn delay={0.2} className="feed-column feed-column-right">
         <div id="moments" style={{ 
           marginTop: "0.85rem", 
-          paddingTop: "0.6rem", 
+          paddingTop: "1rem", /* Increased to 1rem to perfectly align with Column 1 and Column 2! */
           borderTop: "1px solid rgba(150,150,150,0.12)"
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.6rem" }}>
@@ -2456,7 +2884,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
               border: "1px solid rgba(150,150,150,0.08)"
             }}
           >
-            {finalHomepageMoments.map((moment, idx) => (
+            {displayMoments.map((moment, idx) => (
               <Link href="/moments" key={moment.id || idx} style={{ 
                 aspectRatio: "1/1", 
                 backgroundColor: "rgba(150,150,150,0.04)",
@@ -2493,7 +2921,8 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             ))}
           </div>
         </div>
-      </FadeIn>
+        </FadeIn>
+      </div> {/* End feed-split-layout */}
     </div>
   )
 }

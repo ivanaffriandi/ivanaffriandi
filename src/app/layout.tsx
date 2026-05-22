@@ -73,7 +73,7 @@ export default function RootLayout({
           <footer className="yunox-single-footer" style={{ 
             borderTop: "1px solid rgba(150,150,150,0.15)", 
             padding: "0.6rem 0", 
-            marginTop: "1rem",
+            marginTop: "4.5rem", /* Increased top margin for elegant breathing room! */
             display: "grid", 
             gridTemplateColumns: "1fr auto 1fr", 
             alignItems: "center"
