@@ -165,7 +165,7 @@ export default function FooterAbout() {
                 onContextMenu={(e) => e.preventDefault()}
               >
                 <img
-                  src="/profile.jpg"
+                  src="/profile.jpg?v=2"
                   alt="Ivan Affriandi"
                   draggable={false}
                   style={{ 
