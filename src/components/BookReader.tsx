@@ -441,6 +441,20 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         counter.textContent = `1 / ${group.length}`;
         container.appendChild(counter);
 
+        // Prev button
+        const prevBtn = doc.createElement("button");
+        prevBtn.className = "inline-photo-nav inline-photo-nav-prev";
+        prevBtn.setAttribute("aria-label", "Previous photo");
+        prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>`;
+        container.appendChild(prevBtn);
+
+        // Next button
+        const nextBtn = doc.createElement("button");
+        nextBtn.className = "inline-photo-nav inline-photo-nav-next";
+        nextBtn.setAttribute("aria-label", "Next photo");
+        nextBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>`;
+        container.appendChild(nextBtn);
+
         // Remove the empty first wrapper block from DOM
         if (firstWrapper !== firstContentNode && firstWrapper.parentNode) {
           firstWrapper.parentNode.removeChild(firstWrapper);
@@ -701,54 +715,55 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         .inline-photo-grid {
           position: relative;
           width: 100%;
-          height: 260px;
-          margin: 2rem 0;
+          height: 240px;
+          margin: 0.75rem 0 2.5rem 0;
           user-select: none;
           touch-action: pan-y;
         }
         .inline-photo-item {
           position: absolute;
-          inset: 0;
+          left: 0; right: 0; top: 0;
           width: 100%;
-          height: 100%;
-          border-radius: 20px;
+          height: 220px;
+          border-radius: 18px;
           overflow: hidden;
-          border: 1px solid rgba(255,255,255,0.12);
-          box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10);
+          border: 1px solid rgba(200,200,200,0.18);
+          box-shadow: 0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08);
           cursor: pointer;
           will-change: transform, opacity;
-          transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-                      opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+          transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+                      opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1),
                       box-shadow 0.35s ease;
+          transform-origin: center bottom;
         }
-        /* Stacking transforms are applied via JS data attrs,
-           but we give sensible defaults for first three positions */
+        /* Clean vertical peek stack — no rotation */
         .inline-photo-item[data-stack="0"] {
-          transform: translateY(0px) rotate(0deg) scale(1);
+          transform: scale(1) translateY(0px);
           opacity: 1;
           z-index: 30;
-          box-shadow: 0 12px 40px rgba(0,0,0,0.22), 0 4px 12px rgba(0,0,0,0.12);
+          box-shadow: 0 10px 36px rgba(0,0,0,0.18), 0 3px 10px rgba(0,0,0,0.10);
         }
         .inline-photo-item[data-stack="1"] {
-          transform: translateY(10px) translateX(6px) rotate(2.5deg) scale(0.97);
-          opacity: 0.88;
+          transform: scale(0.95) translateY(9px);
+          opacity: 0.75;
           z-index: 20;
         }
         .inline-photo-item[data-stack="2"] {
-          transform: translateY(18px) translateX(10px) rotate(4.5deg) scale(0.94);
-          opacity: 0.68;
+          transform: scale(0.90) translateY(16px);
+          opacity: 0.45;
           z-index: 10;
         }
         .inline-photo-item[data-stack="3"] {
-          transform: translateY(24px) translateX(13px) rotate(6deg) scale(0.91);
-          opacity: 0.42;
+          transform: scale(0.86) translateY(21px);
+          opacity: 0.22;
           z-index: 5;
         }
         .inline-photo-item[data-stack="hidden"] {
           opacity: 0;
-          transform: translateX(-110%) rotate(-8deg) scale(0.88);
+          transform: scale(0.86) translateY(21px);
           z-index: 0;
           pointer-events: none;
+          transition: none;
         }
         .inline-photo-item img {
           width: 100% !important;
@@ -759,48 +774,89 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           display: block !important;
           pointer-events: none;
         }
-        /* Swipe-out animation class */
-        .inline-photo-item.swiping-out {
-          transform: translateX(-120%) rotate(-12deg) scale(0.88) !important;
+        /* Swipe-out animations */
+        .inline-photo-item.swiping-out-left {
+          transform: translateX(-115%) scale(0.92) !important;
           opacity: 0 !important;
-          transition: transform 0.35s cubic-bezier(0.55, 0, 1, 0.45),
-                      opacity 0.3s ease !important;
+          transition: transform 0.32s cubic-bezier(0.55, 0, 1, 0.45),
+                      opacity 0.28s ease !important;
+        }
+        .inline-photo-item.swiping-out-right {
+          transform: translateX(115%) scale(0.92) !important;
+          opacity: 0 !important;
+          transition: transform 0.32s cubic-bezier(0.55, 0, 1, 0.45),
+                      opacity 0.28s ease !important;
+        }
+        /* Nav buttons */
+        .inline-photo-nav {
+          position: absolute;
+          bottom: -2px;
+          z-index: 50;
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          border: 1px solid rgba(0,0,0,0.10);
+          background: rgba(255,255,255,0.82);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: rgba(0,0,0,0.7);
+          transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease;
+          padding: 0;
+        }
+        .inline-photo-nav:hover {
+          background: rgba(255,255,255,0.98);
+          transform: scale(1.08);
+          box-shadow: 0 4px 16px rgba(0,0,0,0.16);
+        }
+        .inline-photo-nav:active {
+          transform: scale(0.94);
+        }
+        .inline-photo-nav-prev {
+          left: calc(50% - 44px);
+        }
+        .inline-photo-nav-next {
+          right: calc(50% - 44px);
         }
         /* Dots indicator */
         .inline-photo-dots {
           position: absolute;
-          bottom: -22px;
+          bottom: 6px;
           left: 50%;
           transform: translateX(-50%);
           display: flex;
           gap: 5px;
           align-items: center;
-          z-index: 50;
+          z-index: 49;
         }
         .inline-photo-dot {
           width: 5px;
           height: 5px;
           border-radius: 50%;
-          background: rgba(0,0,0,0.22);
+          background: rgba(0,0,0,0.2);
           transition: all 0.3s ease;
           display: block;
         }
         .inline-photo-dot.active {
-          width: 18px;
+          width: 16px;
           border-radius: 3px;
-          background: rgba(0,0,0,0.55);
+          background: rgba(0,0,0,0.5);
         }
         /* Counter badge */
         .inline-photo-counter {
           position: absolute;
-          top: 12px;
-          right: 14px;
-          z-index: 40;
-          background: rgba(0,0,0,0.38);
+          top: 11px;
+          right: 13px;
+          z-index: 35;
+          background: rgba(0,0,0,0.36);
           backdrop-filter: blur(8px);
           -webkit-backdrop-filter: blur(8px);
-          color: rgba(255,255,255,0.92);
-          font-size: 0.7rem;
+          color: rgba(255,255,255,0.93);
+          font-size: 0.68rem;
           font-weight: 600;
           letter-spacing: 0.04em;
           padding: 3px 9px;
@@ -809,11 +865,12 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         }
         @media (max-width: 768px) {
           .inline-photo-grid {
-            height: 220px;
-            margin: 1.5rem 0;
+            height: 210px;
+            margin: 0.5rem 0 2.25rem 0;
           }
           .inline-photo-item {
-            border-radius: 16px;
+            height: 192px;
+            border-radius: 14px;
           }
         }
 
@@ -1201,41 +1258,54 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           onClick={(e) => {
             const target = e.target as HTMLElement;
 
-            // ── Card Stack: tap top card to cycle to next ──
-            const stack = target.closest(".inline-photo-grid") as HTMLElement | null;
-            if (stack) {
+            // ── Shared stack cycle helper ──
+            const cycleStack = (stack: HTMLElement, direction: "next" | "prev") => {
               const total = parseInt(stack.getAttribute("data-total") || "1", 10);
               if (total <= 1) return;
               const active = parseInt(stack.getAttribute("data-active") || "0", 10);
-              const nextActive = (active + 1) % total;
-
-              // Cards in DOM (excluding dots + counter; filter by data-card-index)
+              const nextActive = direction === "next"
+                ? (active + 1) % total
+                : (active - 1 + total) % total;
+              const swipeClass = direction === "next" ? "swiping-out-left" : "swiping-out-right";
               const cards = Array.from(stack.querySelectorAll<HTMLElement>(".inline-photo-item[data-card-index]"));
-
-              // Animate current top card away
               const topCard = cards.find(c => c.getAttribute("data-stack") === "0");
-              if (topCard) {
-                topCard.classList.add("swiping-out");
-                setTimeout(() => {
-                  topCard.classList.remove("swiping-out");
-                  // Re-apply stack positions after animation
-                  cards.forEach((card) => {
-                    const cardIdx = parseInt(card.getAttribute("data-card-index") || "0", 10);
-                    const relPos = (cardIdx - nextActive + total) % total;
-                    card.setAttribute("data-stack", relPos < 4 ? String(relPos) : "hidden");
-                  });
-                  // Update dots
-                  const dots = stack.querySelectorAll<HTMLElement>(".inline-photo-dot");
-                  dots.forEach((d, di) => {
-                    d.className = di === nextActive ? "inline-photo-dot active" : "inline-photo-dot";
-                  });
-                  // Update counter
-                  const counter = stack.querySelector(".inline-photo-counter");
-                  if (counter) counter.textContent = `${nextActive + 1} / ${total}`;
-                  stack.setAttribute("data-active", String(nextActive));
-                }, 320);
+              if (!topCard) return;
+              topCard.classList.add(swipeClass);
+              setTimeout(() => {
+                topCard.classList.remove(swipeClass);
+                cards.forEach((card) => {
+                  const cardIdx = parseInt(card.getAttribute("data-card-index") || "0", 10);
+                  const relPos = (cardIdx - nextActive + total) % total;
+                  card.setAttribute("data-stack", relPos < 4 ? String(relPos) : "hidden");
+                });
+                const dots = stack.querySelectorAll<HTMLElement>(".inline-photo-dot");
+                dots.forEach((d, di) => {
+                  d.className = di === nextActive ? "inline-photo-dot active" : "inline-photo-dot";
+                });
+                const counter = stack.querySelector(".inline-photo-counter");
+                if (counter) counter.textContent = `${nextActive + 1} / ${total}`;
+                stack.setAttribute("data-active", String(nextActive));
+              }, 300);
+            };
+
+            // ── Nav button click (prev / next) ──
+            const navBtn = target.closest(".inline-photo-nav") as HTMLElement | null;
+            if (navBtn) {
+              e.preventDefault();
+              e.stopPropagation();
+              const stack = navBtn.closest(".inline-photo-grid") as HTMLElement | null;
+              if (stack) {
+                const dir = navBtn.classList.contains("inline-photo-nav-prev") ? "prev" : "next";
+                cycleStack(stack, dir);
               }
-              return; // Don't open lightbox on stack cycle tap
+              return;
+            }
+
+            // ── Tap anywhere on card stack → next ──
+            const stack = target.closest(".inline-photo-grid") as HTMLElement | null;
+            if (stack) {
+              cycleStack(stack, "next");
+              return;
             }
 
             // ── Normal image click → lightbox ──
