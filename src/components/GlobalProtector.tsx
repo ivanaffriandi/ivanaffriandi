@@ -81,6 +81,8 @@ export default function GlobalProtector() {
     // 3. Listen to Window Blur
     const handleBlur = () => {
       setIsBlurred(true);
+      // Even if OS intercepts keyboard shortcut, snipping tools cause window to lose focus
+      handleScreenshotAttempt("Snipping Tool / Focus Lost");
     };
     const handleFocus = () => {
       setIsBlurred(false);
@@ -191,7 +193,7 @@ export default function GlobalProtector() {
       <div
         style={{
           position: "fixed",
-          top: showWarning ? "24px" : "-100px",
+          top: showWarning ? "24px" : "-200px",
           left: "50%",
           transform: "translateX(-50%)",
           backgroundColor: "rgba(220, 38, 38, 0.95)",
