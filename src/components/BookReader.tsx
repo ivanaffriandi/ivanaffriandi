@@ -383,10 +383,15 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
       groups.push(currentGroup);
     }
 
-    // Process each group of 2 or more images
+    // Process each group of 2 or more images — stacked card deck
     groups.forEach((group) => {
       const container = doc.createElement("div");
       container.className = "inline-photo-grid";
+      container.setAttribute("data-active", "0");
+      container.setAttribute("data-total", String(group.length));
+      // Touch tracking attributes
+      container.setAttribute("data-touch-start-x", "0");
+      container.setAttribute("data-touch-start-y", "0");
 
       const firstContentNode = getContentNode(group[0]);
       const firstWrapper = getOutermostWrapper(firstContentNode);
@@ -394,12 +399,15 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
       if (firstWrapper.parentNode) {
         firstWrapper.parentNode.insertBefore(container, firstWrapper);
         
-        group.forEach((img) => {
+        group.forEach((img, i) => {
           const contentNode = getContentNode(img);
           const wrapper = getOutermostWrapper(contentNode);
 
-          // Add inline-photo-item styling class to contentNode
+          // Add stacked card class + index
           contentNode.classList.add("inline-photo-item");
+          contentNode.setAttribute("data-card-index", String(i));
+          // Initial stack position: 0=top, 1=behind, 2=more behind, >3=hidden
+          contentNode.setAttribute("data-stack", i < 4 ? String(i) : "hidden");
 
           container.appendChild(contentNode);
           
@@ -415,6 +423,23 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           img.style.display = "block";
           img.style.borderRadius = "0";
         });
+
+        // Build dot indicator bar
+        const dotsRow = doc.createElement("div");
+        dotsRow.className = "inline-photo-dots";
+        group.forEach((_, i) => {
+          const dot = doc.createElement("span");
+          dot.className = i === 0 ? "inline-photo-dot active" : "inline-photo-dot";
+          dot.setAttribute("data-dot-index", String(i));
+          dotsRow.appendChild(dot);
+        });
+        container.appendChild(dotsRow);
+
+        // Counter badge (e.g. "1 / 3")
+        const counter = doc.createElement("div");
+        counter.className = "inline-photo-counter";
+        counter.textContent = `1 / ${group.length}`;
+        container.appendChild(counter);
 
         // Remove the empty first wrapper block from DOM
         if (firstWrapper !== firstContentNode && firstWrapper.parentNode) {
@@ -672,50 +697,123 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           }
         }
 
+        /* ── Inline Photo Stack ──────────────────────────── */
         .inline-photo-grid {
-          display: flex;
-          gap: 12px;
-          overflow-x: auto;
-          scroll-snap-type: x mandatory;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-          -ms-overflow-style: none;
+          position: relative;
           width: 100%;
-          margin: 1.75rem 0;
-          padding: 4px 0;
-        }
-        .inline-photo-grid::-webkit-scrollbar {
-          display: none !important;
+          height: 260px;
+          margin: 2rem 0;
+          user-select: none;
+          touch-action: pan-y;
         }
         .inline-photo-item {
-          flex: 0 0 280px;
-          width: 280px;
-          height: 200px;
-          border-radius: 16px;
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          border-radius: 20px;
           overflow: hidden;
-          scroll-snap-align: start;
-          flex-shrink: 0;
-          border: 1px solid var(--border-color);
-          box-shadow: 0 4px 16px rgba(0,0,0,0.03);
-          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+          border: 1px solid rgba(255,255,255,0.12);
+          box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10);
           cursor: pointer;
-          position: relative;
+          will-change: transform, opacity;
+          transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                      opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                      box-shadow 0.35s ease;
+        }
+        /* Stacking transforms are applied via JS data attrs,
+           but we give sensible defaults for first three positions */
+        .inline-photo-item[data-stack="0"] {
+          transform: translateY(0px) rotate(0deg) scale(1);
+          opacity: 1;
+          z-index: 30;
+          box-shadow: 0 12px 40px rgba(0,0,0,0.22), 0 4px 12px rgba(0,0,0,0.12);
+        }
+        .inline-photo-item[data-stack="1"] {
+          transform: translateY(10px) translateX(6px) rotate(2.5deg) scale(0.97);
+          opacity: 0.88;
+          z-index: 20;
+        }
+        .inline-photo-item[data-stack="2"] {
+          transform: translateY(18px) translateX(10px) rotate(4.5deg) scale(0.94);
+          opacity: 0.68;
+          z-index: 10;
+        }
+        .inline-photo-item[data-stack="3"] {
+          transform: translateY(24px) translateX(13px) rotate(6deg) scale(0.91);
+          opacity: 0.42;
+          z-index: 5;
+        }
+        .inline-photo-item[data-stack="hidden"] {
+          opacity: 0;
+          transform: translateX(-110%) rotate(-8deg) scale(0.88);
+          z-index: 0;
+          pointer-events: none;
+        }
+        .inline-photo-item img {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
+          margin: 0 !important;
+          border-radius: 0 !important;
+          display: block !important;
+          pointer-events: none;
+        }
+        /* Swipe-out animation class */
+        .inline-photo-item.swiping-out {
+          transform: translateX(-120%) rotate(-12deg) scale(0.88) !important;
+          opacity: 0 !important;
+          transition: transform 0.35s cubic-bezier(0.55, 0, 1, 0.45),
+                      opacity 0.3s ease !important;
+        }
+        /* Dots indicator */
+        .inline-photo-dots {
+          position: absolute;
+          bottom: -22px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          gap: 5px;
+          align-items: center;
+          z-index: 50;
+        }
+        .inline-photo-dot {
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background: rgba(0,0,0,0.22);
+          transition: all 0.3s ease;
           display: block;
         }
-        .inline-photo-item:hover {
-          transform: translateY(-2px) scale(1.015);
-          box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        .inline-photo-dot.active {
+          width: 18px;
+          border-radius: 3px;
+          background: rgba(0,0,0,0.55);
         }
-        
+        /* Counter badge */
+        .inline-photo-counter {
+          position: absolute;
+          top: 12px;
+          right: 14px;
+          z-index: 40;
+          background: rgba(0,0,0,0.38);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          color: rgba(255,255,255,0.92);
+          font-size: 0.7rem;
+          font-weight: 600;
+          letter-spacing: 0.04em;
+          padding: 3px 9px;
+          border-radius: 20px;
+          pointer-events: none;
+        }
         @media (max-width: 768px) {
           .inline-photo-grid {
-            margin: 1.25rem 0;
+            height: 220px;
+            margin: 1.5rem 0;
           }
           .inline-photo-item {
-            flex: 0 0 230px;
-            width: 230px;
-            height: 165px;
-            border-radius: 12px;
+            border-radius: 16px;
           }
         }
 
@@ -1102,6 +1200,45 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           dangerouslySetInnerHTML={{ __html: cleanContent }}
           onClick={(e) => {
             const target = e.target as HTMLElement;
+
+            // ── Card Stack: tap top card to cycle to next ──
+            const stack = target.closest(".inline-photo-grid") as HTMLElement | null;
+            if (stack) {
+              const total = parseInt(stack.getAttribute("data-total") || "1", 10);
+              if (total <= 1) return;
+              const active = parseInt(stack.getAttribute("data-active") || "0", 10);
+              const nextActive = (active + 1) % total;
+
+              // Cards in DOM (excluding dots + counter; filter by data-card-index)
+              const cards = Array.from(stack.querySelectorAll<HTMLElement>(".inline-photo-item[data-card-index]"));
+
+              // Animate current top card away
+              const topCard = cards.find(c => c.getAttribute("data-stack") === "0");
+              if (topCard) {
+                topCard.classList.add("swiping-out");
+                setTimeout(() => {
+                  topCard.classList.remove("swiping-out");
+                  // Re-apply stack positions after animation
+                  cards.forEach((card) => {
+                    const cardIdx = parseInt(card.getAttribute("data-card-index") || "0", 10);
+                    const relPos = (cardIdx - nextActive + total) % total;
+                    card.setAttribute("data-stack", relPos < 4 ? String(relPos) : "hidden");
+                  });
+                  // Update dots
+                  const dots = stack.querySelectorAll<HTMLElement>(".inline-photo-dot");
+                  dots.forEach((d, di) => {
+                    d.className = di === nextActive ? "inline-photo-dot active" : "inline-photo-dot";
+                  });
+                  // Update counter
+                  const counter = stack.querySelector(".inline-photo-counter");
+                  if (counter) counter.textContent = `${nextActive + 1} / ${total}`;
+                  stack.setAttribute("data-active", String(nextActive));
+                }, 320);
+              }
+              return; // Don't open lightbox on stack cycle tap
+            }
+
+            // ── Normal image click → lightbox ──
             if (target.tagName === "IMG") {
               e.preventDefault();
               const src = (target as HTMLImageElement).src;
