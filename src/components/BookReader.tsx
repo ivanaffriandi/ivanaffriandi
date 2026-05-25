@@ -233,23 +233,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     const doc = parser.parseFromString(post.content, "text/html");
     const imgs = Array.from(doc.querySelectorAll("img")).map((img) => img.src).filter(Boolean);
     
-    // Remove img tags (and their wrapping <a> if only child) from prose
-    doc.querySelectorAll("img").forEach((img) => {
-      const parent = img.parentElement;
-      if (parent && parent.tagName === "A" && parent.children.length === 1) {
-        parent.remove();
-      } else {
-        img.remove();
-      }
-    });
-
-    // Also remove empty <p> / <div> left behind
-    doc.querySelectorAll("p, div").forEach((el) => {
-      if (!el.textContent?.trim() && el.children.length === 0) el.remove();
-    });
-
     setExtractedImages(imgs);
-    setCleanContent(doc.body.innerHTML);
+    setCleanContent(post.content);
   }, [mounted, post.content]);
 
   // Synchronous Speech synthesis action triggered by direct user click gesture

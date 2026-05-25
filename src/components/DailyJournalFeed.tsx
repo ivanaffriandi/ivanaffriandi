@@ -2822,7 +2822,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                           border: "1px solid rgba(150,150,150,0.08)",
                           backgroundColor: "rgba(150,150,150,0.08)"
                         }}>
-                          <img src={imageUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          <img src={imageUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(100%) contrast(1.08)" }} />
                         </div>
                       )}
                     </div>
@@ -3097,8 +3097,8 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                                 width: "100%", 
                                 height: "100%", 
                                 objectFit: "cover",
-                                filter: imageUrl ? "none" : "grayscale(100%) contrast(1.15) brightness(0.92)",
-                                opacity: imageUrl ? 1 : 0.88,
+                                filter: "grayscale(100%) contrast(1.15) brightness(0.92)",
+                                opacity: 0.88,
                                 transition: "transform 0.4s ease"
                               }} 
                             />
