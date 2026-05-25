@@ -357,10 +357,32 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
       groups.forEach((group) => {
         const container = doc.createElement("div");
         container.className = "inline-photo-grid";
-        container.setAttribute("data-active", "0");
-        container.setAttribute("data-total", String(group.length));
-        container.setAttribute("data-touch-start-x", "0");
-        container.setAttribute("data-touch-start-y", "0");
+        container.style.display = "grid";
+        container.style.width = "100%";
+        container.style.margin = "1.8rem 0 2.8rem 0";
+        container.style.borderRadius = "16px";
+        container.style.overflow = "hidden";
+        container.style.gap = "4px";
+        container.style.border = "1px solid rgba(150,150,150,0.12)";
+        container.style.boxShadow = "0 8px 24px rgba(0,0,0,0.04)";
+        container.style.backgroundColor = "rgba(150,150,150,0.04)";
+        
+        const count = group.length;
+        if (count === 2) {
+          container.style.gridTemplateColumns = "1fr 1fr";
+          container.style.height = "240px";
+        } else if (count === 3) {
+          container.style.gridTemplateColumns = "2fr 1fr";
+          container.style.gridTemplateRows = "1fr 1fr";
+          container.style.height = "320px";
+        } else if (count >= 4) {
+          container.style.gridTemplateColumns = "1fr 1fr";
+          container.style.gridTemplateRows = "1fr 1fr";
+          container.style.height = "320px";
+        } else {
+          container.style.display = "block";
+          container.style.height = "auto";
+        }
 
         const firstContentNode = getContentNode(group[0]);
         const firstWrapper = getOutermostWrapper(firstContentNode);
@@ -372,18 +394,60 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             const contentNode = getContentNode(img);
             const wrapper = getOutermostWrapper(contentNode);
 
-            // Wiping out any blogger-injected inline styles to prevent layout overrides
+            // Wiping out Blogger anchor targets and inline styling to prevent new tabs / layout overrides
             contentNode.removeAttribute("style");
+            contentNode.removeAttribute("target");
+            contentNode.setAttribute("href", "#");
+            contentNode.style.position = "relative";
+            contentNode.style.width = "100%";
+            contentNode.style.height = "100%";
+            contentNode.style.overflow = "hidden";
+            contentNode.style.cursor = "pointer";
+            contentNode.style.display = "block";
+            
+            if (count === 3) {
+              if (i === 0) {
+                contentNode.style.gridRow = "span 2";
+              } else if (i === 1) {
+                contentNode.style.gridColumn = "2";
+                contentNode.style.gridRow = "1";
+              } else if (i === 2) {
+                contentNode.style.gridColumn = "2";
+                contentNode.style.gridRow = "2";
+              }
+            }
+
+            // Append dynamic hover glass layer overlay
+            const overlay = doc.createElement("div");
+            overlay.className = "inline-photo-hover-overlay";
+            overlay.style.position = "absolute";
+            overlay.style.inset = "0";
+            overlay.style.backgroundColor = "rgba(0,0,0,0)";
+            overlay.style.transition = "background-color 0.22s ease";
+            contentNode.appendChild(overlay);
+
             contentNode.classList.add("inline-photo-item");
             contentNode.setAttribute("data-card-index", String(i));
-            
-            // Initial stack position for Carousel
-            let initialStack = "hidden";
-            if (i === 0) initialStack = "active";
-            else if (i === 1) initialStack = "next";
-            else if (i === group.length - 1 && group.length > 2) initialStack = "prev";
-            
-            contentNode.setAttribute("data-stack", initialStack);
+
+            if (count > 4 && i === 3) {
+              const extraCount = count - 4;
+              const extraOverlay = doc.createElement("div");
+              extraOverlay.style.position = "absolute";
+              extraOverlay.style.inset = "0";
+              extraOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.45)";
+              extraOverlay.style.backdropFilter = "blur(6px)";
+              extraOverlay.style.webkitBackdropFilter = "blur(6px)";
+              extraOverlay.style.display = "flex";
+              extraOverlay.style.alignItems = "center";
+              extraOverlay.style.justifyContent = "center";
+              extraOverlay.style.flexDirection = "column";
+              extraOverlay.style.color = "#ffffff";
+              extraOverlay.style.fontFamily = "var(--font-sans)";
+              extraOverlay.style.fontWeight = "700";
+              extraOverlay.style.fontSize = "1.4rem";
+              extraOverlay.innerHTML = `+${extraCount}`;
+              contentNode.appendChild(extraOverlay);
+            }
 
             container.appendChild(contentNode);
             
@@ -391,25 +455,23 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               wrapper.parentNode.removeChild(wrapper);
             }
             
+            img.removeAttribute("style");
             img.style.width = "100%";
             img.style.height = "100%";
             img.style.objectFit = "cover";
             img.style.margin = "0";
             img.style.display = "block";
-            img.style.borderRadius = "0";
+            img.style.transition = "transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)";
           });
 
-          const prevBtn = doc.createElement("button");
-          prevBtn.className = "inline-photo-nav inline-photo-nav-prev";
-          prevBtn.setAttribute("aria-label", "Previous photo");
-          prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>`;
-          container.appendChild(prevBtn);
-
-          const nextBtn = doc.createElement("button");
-          nextBtn.className = "inline-photo-nav inline-photo-nav-next";
-          nextBtn.setAttribute("aria-label", "Next photo");
-          nextBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>`;
-          container.appendChild(nextBtn);
+          if (count > 4) {
+            const items = Array.from(container.children);
+            items.forEach((item, idx) => {
+              if (idx >= 4) {
+                (item as HTMLElement).style.display = "none";
+              }
+            });
+          }
 
           if (firstWrapper !== firstContentNode && firstWrapper.parentNode) {
             firstWrapper.parentNode.removeChild(firstWrapper);
@@ -676,138 +738,18 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           }
         }
 
-        /* ── Inline Photo Stack — Carousel Peek ────── */
-        .inline-photo-grid {
-          position: relative;
-          z-index: 1;
-          width: 100%;
-          height: 250px; /* Base height */
-          margin: 1.5rem 0 2.5rem 0;
-          user-select: none;
-          touch-action: pan-y;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          perspective: 1000px;
-          transform-style: preserve-3d;
-        }
+        /* ── Inline Photo Grid & Hover overlays ────── */
         .inline-photo-item {
-          position: absolute !important;
-          width: 74% !important; /* Active card takes 74% width */
-          height: 230px !important;
-          border-radius: 20px !important;
-          overflow: hidden !important;
-          border: 1px solid rgba(255,255,255,0.1) !important;
-          box-shadow: 0 12px 36px rgba(0,0,0,0.18) !important;
-          cursor: pointer !important;
-          transform-style: preserve-3d;
-          transition:
-            transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
-            opacity   0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
-            box-shadow 0.4s ease;
-          transform-origin: center center !important;
+          transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
         }
-        /* Active item */
-        .inline-photo-item[data-stack="active"] {
-          transform: translate3d(0, 0, 30px) scale(1) !important;
-          opacity: 1 !important;
-          z-index: 30 !important;
-          box-shadow: 0 16px 48px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.12) !important;
+        .inline-photo-item:hover {
+          transform: scale(1.01) !important;
         }
-        /* Prev item (left peek) */
-        .inline-photo-item[data-stack="prev"] {
-          transform: translate3d(-64%, 0, 10px) scale(0.85) !important;
-          opacity: 0.65 !important;
-          z-index: 20 !important;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.1) !important;
+        .inline-photo-item:hover img {
+          transform: scale(1.03) !important;
         }
-        /* Next item (right peek) */
-        .inline-photo-item[data-stack="next"] {
-          transform: translate3d(64%, 0, 10px) scale(0.85) !important;
-          opacity: 0.65 !important;
-          z-index: 20 !important;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.1) !important;
-        }
-        /* Hidden items (behind active) */
-        .inline-photo-item[data-stack="hidden"] {
-          transform: translate3d(0, 0, 0) scale(0.7) !important;
-          opacity: 0 !important;
-          z-index: 10 !important;
-          pointer-events: none !important;
-        }
-        .inline-photo-item img {
-          width: 100% !important;
-          height: 100% !important;
-          object-fit: cover !important;
-          margin: 0 !important;
-          border-radius: 0 !important;
-          display: block !important;
-          pointer-events: none !important;
-          user-select: none !important;
-          -webkit-user-drag: none !important;
-        }
-        /* Swipe-out animations (no longer needed for carousel, but kept for click safety) */
-        .inline-photo-item.swiping-out-left,
-        .inline-photo-item.swiping-out-right {
-          opacity: 0 !important;
-          transition: opacity 0.2s ease !important;
-        }
-        /* Overlaid nav buttons */
-        .inline-photo-nav {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          z-index: 50;
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          border: none;
-          background: rgba(0,0,0,0.55);
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          color: rgba(255,255,255,0.95);
-          transition: all 0.2s ease;
-          padding: 0;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        .inline-photo-nav:hover {
-          background: rgba(0,0,0,0.75);
-          transform: translateY(-50%) scale(1.08);
-        }
-        .inline-photo-nav:active {
-          transform: translateY(-50%) scale(0.92);
-        }
-        .inline-photo-nav-prev {
-          left: 12px;
-        }
-        .inline-photo-nav-next {
-          right: 12px;
-        }
-        @media (max-width: 768px) {
-          .inline-photo-grid {
-            height: 220px;
-          }
-          .inline-photo-item {
-            width: 78%;
-            height: 200px;
-          }
-          .inline-photo-item[data-stack="prev"] {
-            transform: translate3d(-68%, 0, 10px) scale(0.85) !important;
-          }
-          .inline-photo-item[data-stack="next"] {
-            transform: translate3d(68%, 0, 10px) scale(0.85) !important;
-          }
-          .inline-photo-nav {
-            width: 28px;
-            height: 28px;
-            background: rgba(0,0,0,0.65);
-          }
-          .inline-photo-nav-prev { left: 8px; }
-          .inline-photo-nav-next { right: 8px; }
+        .inline-photo-item:hover .inline-photo-hover-overlay {
+          background-color: rgba(0,0,0,0.12) !important;
         }
 
         .book-core-article {
@@ -1194,58 +1136,25 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           onClick={(e) => {
             const target = e.target as HTMLElement;
 
-            // ── Shared carousel cycle helper ──
-            const cycleStack = (stack: HTMLElement, direction: "next" | "prev") => {
-              const total = parseInt(stack.getAttribute("data-total") || "1", 10);
-              if (total <= 1) return;
-              const active = parseInt(stack.getAttribute("data-active") || "0", 10);
-              const nextActive = direction === "next"
-                ? (active + 1) % total
-                : (active - 1 + total) % total;
-              
-              const cards = Array.from(stack.querySelectorAll<HTMLElement>(".inline-photo-item[data-card-index]"));
-              
-              cards.forEach((card) => {
-                const cardIdx = parseInt(card.getAttribute("data-card-index") || "0", 10);
-                let stackPos = "hidden";
-                
-                if (cardIdx === nextActive) {
-                  stackPos = "active";
-                } else if (cardIdx === (nextActive + 1) % total) {
-                  stackPos = "next";
-                } else if (total > 2 && cardIdx === (nextActive - 1 + total) % total) {
-                  stackPos = "prev";
-                }
-                
-                card.setAttribute("data-stack", stackPos);
-              });
-              
-              stack.setAttribute("data-active", String(nextActive));
-            };
 
-            // ── Nav button click (prev / next) ──
-            const navBtn = target.closest(".inline-photo-nav") as HTMLElement | null;
-            if (navBtn) {
+            // ── Grid collage photo item click → lightbox ──
+            const photoItem = target.closest(".inline-photo-item") as HTMLElement | null;
+            if (photoItem) {
               e.preventDefault();
               e.stopPropagation();
-              const stack = navBtn.closest(".inline-photo-grid") as HTMLElement | null;
-              if (stack) {
-                const dir = navBtn.classList.contains("inline-photo-nav-prev") ? "prev" : "next";
-                cycleStack(stack, dir);
+              const img = photoItem.querySelector("img");
+              if (img) {
+                const src = img.src;
+                const idx = extractedImages.indexOf(src);
+                setLightboxImg({ src, index: idx !== -1 ? idx : 0 });
               }
               return;
             }
 
-            // ── Tap anywhere on card stack → next ──
-            const stack = target.closest(".inline-photo-grid") as HTMLElement | null;
-            if (stack) {
-              cycleStack(stack, "next");
-              return;
-            }
-
-            // ── Normal image click → lightbox ──
+            // ── Fallback: Normal image click → lightbox ──
             if (target.tagName === "IMG") {
               e.preventDefault();
+              e.stopPropagation();
               const src = (target as HTMLImageElement).src;
               const idx = extractedImages.indexOf(src);
               setLightboxImg({ src, index: idx !== -1 ? idx : 0 });
@@ -1255,6 +1164,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 const img = link.querySelector("img");
                 if (img) {
                   e.preventDefault();
+                  e.stopPropagation();
                   const src = img.src;
                   const idx = extractedImages.indexOf(src);
                   setLightboxImg({ src, index: idx !== -1 ? idx : 0 });
