@@ -723,34 +723,57 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             box-shadow 0.32s ease;
           transform-origin: 50% 50%; /* rotate around card center → always horizontally centered */
         }
-        /* Centered alternating fan — NO translateX (keeps cards centered) */
+        /* ── Inline Photo Stack — Clean Diagonal Peek ────── */
+        .inline-photo-grid {
+          position: relative;
+          width: 100%;
+          height: 225px; /* Fits card + slight vertical peek */
+          margin: 1rem 0 1.5rem 0;
+          user-select: none;
+          touch-action: pan-y;
+        }
+        .inline-photo-item {
+          position: absolute;
+          left: 0; right: 0; top: 0;
+          width: 100%;
+          height: 215px;
+          border-radius: 18px;
+          overflow: hidden;
+          border: 1px solid rgba(255,255,255,0.1);
+          box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+          cursor: pointer;
+          will-change: transform, opacity;
+          transition:
+            transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+            opacity   0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+            box-shadow 0.3s ease;
+          transform-origin: center center;
+        }
+        /* Diagonal peek to the right, no rotation */
         .inline-photo-item[data-stack="0"] {
-          transform: rotate(0deg) scale(1) translateY(0);
+          transform: scale(1) translate(0, 0);
           opacity: 1;
           z-index: 30;
-          box-shadow:
-            0 22px 60px rgba(0,0,0,0.16),
-            0 8px 24px rgba(0,0,0,0.10),
-            0 2px 8px rgba(0,0,0,0.06);
+          box-shadow: 0 10px 40px rgba(0,0,0,0.2), 0 2px 10px rgba(0,0,0,0.1);
         }
         .inline-photo-item[data-stack="1"] {
-          transform: rotate(-4.2deg) scale(0.97) translateY(5px);
-          opacity: 0.82;
+          transform: scale(0.95) translate(20px, 10px);
+          opacity: 0.8;
           z-index: 20;
         }
         .inline-photo-item[data-stack="2"] {
-          transform: rotate(3.5deg) scale(0.94) translateY(10px);
-          opacity: 0.54;
+          transform: scale(0.90) translate(40px, 20px);
+          opacity: 0.5;
           z-index: 10;
         }
         .inline-photo-item[data-stack="3"] {
-          transform: rotate(-6deg) scale(0.91) translateY(14px);
-          opacity: 0.3;
+          transform: scale(0.85) translate(60px, 30px);
+          opacity: 0.2;
           z-index: 5;
         }
         .inline-photo-item[data-stack="hidden"] {
           opacity: 0;
-          transform: rotate(0deg) scale(0.91) translateY(14px);
+          transform: scale(0.85) translate(60px, 30px);
           z-index: 0;
           pointer-events: none;
           transition: none;
@@ -764,68 +787,68 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           display: block !important;
           pointer-events: none;
         }
-        /* Swipe-out with subtle rotation for tactile feel */
+        /* Swipe-out animations */
         .inline-photo-item.swiping-out-left {
-          transform: translateX(-115%) rotate(-5deg) scale(0.93) !important;
+          transform: translateX(-110%) scale(0.9) !important;
           opacity: 0 !important;
           transition: transform 0.3s cubic-bezier(0.55, 0, 1, 0.45),
                       opacity 0.25s ease !important;
         }
         .inline-photo-item.swiping-out-right {
-          transform: translateX(115%) rotate(5deg) scale(0.93) !important;
+          transform: translateX(110%) scale(0.9) !important;
           opacity: 0 !important;
           transition: transform 0.3s cubic-bezier(0.55, 0, 1, 0.45),
                       opacity 0.25s ease !important;
         }
-        /* Minimal nav buttons — clean, below the card */
+        /* Overlaid nav buttons (matching reference) */
         .inline-photo-nav {
           position: absolute;
-          top: 228px; /* 215px card + 13px gap */
+          top: 50%;
+          transform: translateY(-50%);
           z-index: 50;
-          width: 28px;
-          height: 28px;
+          width: 32px;
+          height: 32px;
           border-radius: 50%;
-          border: 1px solid rgba(0,0,0,0.11);
-          background: rgba(255,255,255,0.78);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+          border: none;
+          background: rgba(0,0,0,0.4);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          color: rgba(0,0,0,0.55);
-          transition: all 0.18s ease;
+          color: rgba(255,255,255,0.9);
+          transition: all 0.2s ease;
           padding: 0;
         }
         .inline-photo-nav:hover {
-          background: rgba(255,255,255,1);
-          border-color: rgba(0,0,0,0.18);
-          color: rgba(0,0,0,0.85);
-          box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+          background: rgba(0,0,0,0.6);
+          transform: translateY(-50%) scale(1.05);
         }
         .inline-photo-nav:active {
-          transform: scale(0.9);
+          transform: translateY(-50%) scale(0.95);
         }
         .inline-photo-nav-prev {
-          left: calc(50% - 34px); /* prev center: 50% - 20px */
+          left: 12px;
         }
         .inline-photo-nav-next {
-          right: calc(50% - 34px); /* next center: 50% + 20px */
+          right: 12px;
         }
         @media (max-width: 768px) {
           .inline-photo-grid {
-            height: 238px;
-            margin: 0.75rem 0 1.5rem 0;
+            height: 205px;
           }
           .inline-photo-item {
             height: 196px;
-            border-radius: 18px;
           }
           .inline-photo-nav {
-            top: 210px;
-            width: 26px;
-            height: 26px;
+            width: 28px;
+            height: 28px;
+            left: 8px;
+          }
+          .inline-photo-nav-next {
+            right: 8px;
+            left: auto;
           }
         }
 
