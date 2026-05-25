@@ -158,19 +158,19 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
               transition: "background-color 0.2s ease, border-color 0.2s ease"
             }}
           >
-            {/* THE QUESTION & DATE HEADER */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px", width: "100%" }}>
-              <span style={{ 
-                fontSize: "0.58rem", 
-                fontFamily: "var(--font-sans)", 
-                color: color.text,
-                opacity: 0.7,
-                fontWeight: "700",
-                letterSpacing: "0.04em",
-                textTransform: "uppercase"
-              }}>
-                {new Date(qa.published).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-              </span>
+             {/* THE QUESTION & DATE HEADER */}
+             <div style={{ display: "flex", flexDirection: "column", gap: "6px", width: "100%" }}>
+               <span style={{ 
+                 fontSize: "0.58rem", 
+                 fontFamily: "var(--font-sans)", 
+                 color: color.text,
+                 opacity: 0.7,
+                 fontWeight: "700",
+                 letterSpacing: "0.04em",
+                 textTransform: "uppercase"
+               }}>
+                 {new Date(qa.published).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+               </span>
               
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "16px" }}>
                 <p style={{ 
@@ -181,7 +181,8 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
                   fontWeight: "600",
                   lineHeight: "1.4",
                   letterSpacing: "-0.01em",
-                  flexGrow: 1
+                  flexGrow: 1,
+                  whiteSpace: "pre-wrap"
                 }}>
                   {qa.content}
                 </p>
@@ -230,18 +231,31 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
                       cursor: "text" // Set selection cursor properly inside text tray
                     }}
                   >
-                    {/* Elegant uppercase "IVAN" label at the top-left */}
-                    <span style={{
-                      fontSize: "0.58rem",
-                      fontFamily: "var(--font-sans)",
-                      color: color.text,
-                      fontWeight: "750",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.06em",
-                      opacity: 0.65
-                    }}>
-                      Ivan
-                    </span>
+                    {/* Elegant header row containing "Ivan" label and Answer Date */}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                      <span style={{
+                        fontSize: "0.58rem",
+                        fontFamily: "var(--font-sans)",
+                        color: color.text,
+                        fontWeight: "750",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.06em",
+                        opacity: 0.65
+                      }}>
+                        Ivan
+                      </span>
+                      <span style={{
+                        fontSize: "0.58rem",
+                        fontFamily: "var(--font-sans)",
+                        color: color.text,
+                        fontWeight: "600",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.04em",
+                        opacity: 0.55
+                      }}>
+                        {new Date(qa.answeredAt || qa.published).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                      </span>
+                    </div>
 
                     {/* Answer text beautifully matching parent card's contrast */}
                     <p style={{ 
@@ -251,7 +265,8 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
                       color: color.text, 
                       lineHeight: "1.46",
                       fontWeight: "400",
-                      opacity: 0.95
+                      opacity: 0.95,
+                      whiteSpace: "pre-wrap"
                     }}>
                       {qa.answer}
                     </p>
@@ -286,6 +301,7 @@ export default function AskPage() {
 
   // Question submission form state
   const [content, setContent] = useState("");
+  const [senderName, setSenderName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -350,8 +366,9 @@ export default function AskPage() {
     setIsSubmitting(true);
 
     try {
-      await addQuestion(content.trim());
+      await addQuestion(content.trim(), senderName.trim());
       setContent("");
+      setSenderName("");
       setIsMaximized(false); // Gracefully morph card back to capsule
       
       // Fire premium design confetti celebratory burst
@@ -376,8 +393,12 @@ export default function AskPage() {
     }
   };
 
-  // Sort Q&As descending by date (latest question/answer is always at the top)
-  const sortedQuestions = [...answeredList].sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
+  // Sort Q&As descending by answered/published date (most recently answered/replied is always at the top)
+  const sortedQuestions = [...answeredList].sort((a, b) => {
+    const timeA = new Date(a.answeredAt || a.published).getTime();
+    const timeB = new Date(b.answeredAt || b.published).getTime();
+    return timeB - timeA;
+  });
 
   return (
     <div style={{ 
@@ -511,9 +532,8 @@ export default function AskPage() {
               zIndex: 9999,
               width: "85%",
               boxSizing: "border-box", // Strictly locked border-box calculation
-              // Dynamic dimensions smoothly morphing without distortion
               maxWidth: isMaximized ? "360px" : "340px",
-              height: isMaximized ? "272px" : "44px", // Adjusted to 272px to easily hold the new recessed inner textarea card!
+              height: isMaximized ? "316px" : "44px", // Adjusted to 316px to easily hold the new name input and writing card!
               padding: isMaximized ? "16px 18px" : "6px 8px 6px 10px",
               // MATHEMATICALLY PERFECT BORDER RADIUS TO COMPLETELY ELIMINATE EYE-SHAPE WARPING
               // 22px is exactly half of the 44px height, creating a mathematically flawless round capsule pill on close!
@@ -713,6 +733,47 @@ export default function AskPage() {
 
                   {/* Header Separator Line */}
                   <div style={{ height: "1px", backgroundColor: "var(--border-color)", width: "100%", opacity: 0.6 }} />
+
+                  {/* Optional Name Input */}
+                  <div style={{
+                    backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.25)" : "rgba(0, 0, 0, 0.04)",
+                    borderRadius: "12px",
+                    padding: "6px 12px",
+                    border: isDarkMode ? "1px solid rgba(255,255,255,0.04)" : "1px solid rgba(0, 0, 0, 0.04)",
+                    boxShadow: isDarkMode 
+                      ? "inset 0 1.5px 3px rgba(0,0,0,0.4)" 
+                      : "inset 0 1.5px 3px rgba(0,0,0,0.06)",
+                    display: "flex",
+                    alignItems: "center"
+                  }}>
+                    <span style={{ 
+                      fontSize: "0.78rem", 
+                      color: "var(--text-secondary)", 
+                      marginRight: "6px",
+                      fontWeight: "600",
+                      fontFamily: "var(--font-sans)",
+                      userSelect: "none"
+                    }}>From:</span>
+                    <input
+                      type="text"
+                      value={senderName}
+                      onChange={(e) => setSenderName(e.target.value)}
+                      placeholder="Name / Nickname (Optional)"
+                      maxLength={40}
+                      disabled={isSubmitting}
+                      style={{
+                        flexGrow: 1,
+                        border: "none",
+                        background: "none",
+                        outline: "none",
+                        fontFamily: "var(--font-sans)",
+                        fontSize: "0.78rem",
+                        color: "var(--text-primary)",
+                        padding: "1px 0",
+                        fontWeight: "500"
+                      }}
+                    />
+                  </div>
 
                   {/* CARD-INSIDE-A-CARD: Gorgeous tactile recessed/debossed morphoism writing tray */}
                   <div style={{

@@ -4,10 +4,15 @@ export interface QuestionItem {
   published: string;
   answered: boolean;
   answer?: string;
+  answeredAt?: string;
+  ip?: string;
+  location?: string;
+  device?: string;
+  name?: string;
 }
 
 // 1. Submit a new anonymous question (Default: unanswered)
-export async function addQuestion(content: string): Promise<QuestionItem> {
+export async function addQuestion(content: string, name?: string): Promise<QuestionItem> {
   const res = await fetch("/api/questions", {
     method: "POST",
     headers: { 
@@ -15,7 +20,7 @@ export async function addQuestion(content: string): Promise<QuestionItem> {
       "Cache-Control": "no-cache",
       "Pragma": "no-cache"
     },
-    body: JSON.stringify({ content })
+    body: JSON.stringify({ content, name })
   });
   if (!res.ok) throw new Error("Failed to submit question");
   return res.json();

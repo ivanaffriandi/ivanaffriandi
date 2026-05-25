@@ -389,7 +389,7 @@ export default function AdminPage() {
     if (!answerText.trim()) return;
     const success = await answerQuestion(id, answerText.trim());
     if (success) {
-      setAdminQuestions(prev => prev.map(q => q.id === id ? { ...q, answered: true, answer: answerText.trim() } : q));
+      setAdminQuestions(prev => prev.map(q => q.id === id ? { ...q, answered: true, answer: answerText.trim(), answeredAt: new Date().toISOString() } : q));
       setAnsweringQuestionId(null);
       setAnswerText("");
     }
@@ -1049,7 +1049,83 @@ export default function AdminPage() {
                     <p style={{ margin: "0 0 8px 0", fontSize: "0.82rem", color: "var(--text-primary)", lineHeight: "1.4", fontWeight: "600", letterSpacing: "-0.01em" }}>
                       "{q.content}"
                     </p>
- 
+
+                    {/* Sender Metadata Section */}
+                    {(q.name || q.ip || q.location || q.device) && (
+                      <div style={{ 
+                        display: "flex", 
+                        flexWrap: "wrap", 
+                        gap: "5px", 
+                        marginTop: "2px",
+                        marginBottom: "10px"
+                      }}>
+                        {q.name && (
+                          <span style={{
+                            fontSize: "0.58rem",
+                            fontWeight: "600",
+                            backgroundColor: theme === "dark" ? "rgba(10, 132, 255, 0.15)" : "rgba(0, 122, 255, 0.06)",
+                            color: theme === "dark" ? "#64D2FF" : "#007AFF",
+                            border: `0.5px solid ${theme === "dark" ? "rgba(10, 132, 255, 0.3)" : "rgba(0, 122, 255, 0.14)"}`,
+                            padding: "2px 6px",
+                            borderRadius: "6px",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "3px"
+                          }}>
+                            👤 {q.name}
+                          </span>
+                        )}
+                        {q.ip && (
+                          <span style={{
+                            fontSize: "0.58rem",
+                            fontWeight: "600",
+                            backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(142, 142, 147, 0.07)",
+                            color: "var(--text-secondary)",
+                            border: `0.5px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.15)" : "rgba(142, 142, 147, 0.15)"}`,
+                            padding: "2px 6px",
+                            borderRadius: "6px",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "3px"
+                          }} title={q.ip}>
+                            🌐 {q.ip}
+                          </span>
+                        )}
+                        {q.location && (
+                          <span style={{
+                            fontSize: "0.58rem",
+                            fontWeight: "600",
+                            backgroundColor: theme === "dark" ? "rgba(48, 209, 88, 0.15)" : "rgba(52, 199, 89, 0.06)",
+                            color: theme === "dark" ? "#30D158" : "#34C759",
+                            border: `0.5px solid ${theme === "dark" ? "rgba(48, 209, 88, 0.3)" : "rgba(52, 199, 89, 0.14)"}`,
+                            padding: "2px 6px",
+                            borderRadius: "6px",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "3px"
+                          }}>
+                            📍 {q.location}
+                          </span>
+                        )}
+                        {q.device && (
+                          <span style={{
+                            fontSize: "0.58rem",
+                            fontWeight: "600",
+                            backgroundColor: theme === "dark" ? "rgba(191, 90, 242, 0.15)" : "rgba(175, 82, 222, 0.06)",
+                            color: theme === "dark" ? "#BF5AF2" : "#AF52DE",
+                            border: `0.5px solid ${theme === "dark" ? "rgba(191, 90, 242, 0.3)" : "rgba(175, 82, 222, 0.14)"}`,
+                            padding: "2px 6px",
+                            borderRadius: "6px",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "3px"
+                          }}>
+                            📱 {q.device}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
                     {q.answered && q.answer && (
                       <div style={{ 
                         padding: "10px 12px", 

@@ -60,7 +60,14 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => {
-          return caches.match(request);
+          return caches.match(request).then((cachedResponse) => {
+            if (cachedResponse) return cachedResponse;
+            // Return a 503 response if offline and no cache is available to prevent Service Worker crash
+            return new Response(JSON.stringify({ error: "Network offline and no cache available" }), {
+              status: 503,
+              headers: { "Content-Type": "application/json" }
+            });
+          });
         })
     );
     return;
@@ -69,21 +76,33 @@ self.addEventListener("fetch", (event) => {
   // Stale-While-Revalidate strategy for static resources & general navigation
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
-      const fetchPromise = fetch(request)
-        .then((networkResponse) => {
-          if (networkResponse.status === 200) {
-            const responseClone = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseClone);
-            });
-          }
-          return networkResponse;
-        })
-        .catch(() => {
-          // Silently absorb network failures since we revalidate in background
-        });
+      if (cachedResponse) {
+        // Serve from cache instantly, fetch fresh copy in background to revalidate
+        fetch(request)
+          .then((networkResponse) => {
+            if (networkResponse.status === 200) {
+              const responseClone = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(request, responseClone);
+              });
+            }
+          })
+          .catch(() => {
+            // Silently absorb background network failures since cached copy was already served
+          });
+        return cachedResponse;
+      }
 
-      return cachedResponse || fetchPromise;
+      // No cache available: must fetch from network and return the response directly
+      return fetch(request).then((networkResponse) => {
+        if (networkResponse.status === 200) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(request, responseClone);
+          });
+        }
+        return networkResponse;
+      }); // Let network failures throw naturally so browser handles it correctly without SW crash
     })
   );
 });

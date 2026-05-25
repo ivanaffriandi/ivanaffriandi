@@ -252,22 +252,36 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     setCleanContent(doc.body.innerHTML);
   }, [mounted, post.content]);
 
-  // Text-To-Speech Controller
-  useEffect(() => {
-    if (mode === "listen") {
+  // Synchronous Speech synthesis action triggered by direct user click gesture
+  const handleSetMode = (targetMode: "read" | "listen") => {
+    if (targetMode === "listen") {
       if ("speechSynthesis" in window) {
         window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(rawTextRef.current);
+        
+        // Strip tags dynamically for absolute safety
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = post.content;
+        const text = tempDiv.textContent || tempDiv.innerText || "";
+        
+        if (!text.trim()) {
+          alert("No readable content found in this post.");
+          return;
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text);
         utterance.onend = () => {
           setIsPlaying(false);
           setMode("read");
         };
-        utterance.onerror = () => {
+        utterance.onerror = (e) => {
+          console.error("Speech Synthesis Error:", e);
           setIsPlaying(false);
           setMode("read");
         };
+
         window.speechSynthesis.speak(utterance);
         setIsPlaying(true);
+        setMode("listen");
       } else {
         alert("Text-to-speech is not supported in this browser.");
         setMode("read");
@@ -275,16 +289,20 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     } else {
       if ("speechSynthesis" in window) {
         window.speechSynthesis.cancel();
-        setIsPlaying(false);
       }
+      setIsPlaying(false);
+      setMode("read");
     }
+  };
 
+  // Cleanup speech synthesis when the component unmounts
+  useEffect(() => {
     return () => {
       if ("speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
     };
-  }, [mode]);
+  }, []);
 
   // Handle submitting a comment
   const handleSendComment = () => {
@@ -393,7 +411,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         color: colors.text,
         minHeight: "100vh",
         transition: "background-color 0.4s ease, color 0.4s ease",
-        padding: "7.5rem 4vw 12rem 4vw",
+        padding: "10.5rem 4vw 12rem 4vw", // More spacious top padding on desktop
         margin: "-6rem -4vw -6rem -4vw", // Bleeds up and down out of layout container padding
         position: "relative"
       }}
@@ -438,7 +456,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
 
         @media (max-width: 768px) {
           .book-reader-container {
-            padding: 5.5rem 1.25rem 9rem 1.25rem !important; /* Snugger padding on mobile */
+            padding: 9.5rem 1.25rem 9rem 1.25rem !important; /* Spacious padding on mobile to clear nav bar beautifully */
             margin: -6rem -1.25rem -6rem -1.25rem !important; /* Align negative margins */
           }
 
@@ -448,15 +466,19 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           }
           
           .book-title {
-            font-size: 1.9rem !important; /* Sleeker title text on mobile */
-            margin-bottom: 0.75rem !important;
-            line-height: 1.25 !important;
+            font-size: 2.1rem !important; /* Balanced and elegant mobile title size */
+            margin-bottom: 1.5rem !important; /* Spacious gap below title */
+            line-height: 1.38 !important; /* Majestic, airy line-height for mobile reading */
             letter-spacing: -0.02em !important;
           }
           
           .journal-date {
-            font-size: 0.85rem !important;
-            margin-bottom: 0.4rem !important;
+            font-size: 0.9rem !important;
+            margin-bottom: 1rem !important; /* Extra spacing to breathe */
+          }
+
+          .book-tags-row {
+            margin-bottom: 2.5rem !important; /* Spacious gap before prose */
           }
           
           .book-prose {
@@ -701,8 +723,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               fontFamily: "var(--font-sans)",
               fontWeight: "700",
               fontSize: "clamp(2rem, 7vw, 2.75rem)", 
-              lineHeight: "1.2",
-              margin: "0 0 1.25rem 0",
+              lineHeight: "1.35", // More airy and majestic
+              margin: "0 0 1.6rem 0", // Increased margin below title
               color: colors.text,
               letterSpacing: "-0.03em",
               wordBreak: "break-word",
@@ -713,13 +735,16 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           </h1>
 
           {/* Symmetrical Capsule Tag Pills Row */}
-          <div style={{ 
-            display: "flex", 
-            justifyContent: "center", 
-            gap: "0.5rem", 
-            flexWrap: "wrap",
-            marginBottom: "1.5rem"
-          }}>
+          <div 
+            className="book-tags-row"
+            style={{ 
+              display: "flex", 
+              justifyContent: "center", 
+              gap: "0.5rem", 
+              flexWrap: "wrap",
+              marginBottom: "2.75rem" // Increased margin on desktop
+            }}
+          >
             {computedTags.map((label) => (
                 <span 
                   key={label} 
@@ -1183,7 +1208,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   }}
                 >
                   <button 
-                    onClick={() => setMode("read")}
+                    onClick={() => handleSetMode("read")}
                     style={{
                       height: "28px",
                       lineHeight: "28px",
@@ -1208,7 +1233,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     Read
                   </button>
                   <button 
-                    onClick={() => setMode("listen")}
+                    onClick={() => handleSetMode("listen")}
                     style={{
                       height: "28px",
                       lineHeight: "28px",

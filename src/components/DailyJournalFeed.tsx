@@ -161,7 +161,7 @@ const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
       const bgLight = matchingEvent.type === "female" ? "#FFF5F7" : (matchingEvent.type === "ivan" ? "#F0F6FF" : (matchingEvent.type === "both" ? "#FAF5FF" : "#F0F6FF"));
       const bgDark = matchingEvent.type === "female" ? "#1A0F11" : (matchingEvent.type === "ivan" ? "#0B1528" : (matchingEvent.type === "both" ? "#1E112A" : "#0B1528"));
       const bgUnselected = matchingEvent.type === "female" ? "rgba(255, 192, 203, 0.18)" : (matchingEvent.type === "ivan" ? "rgba(0, 122, 255, 0.12)" : (matchingEvent.type === "both" ? "rgba(168, 85, 247, 0.1)" : "rgba(0, 122, 255, 0.12)"));
-      const borderUnselected = matchingEvent.type === "female" ? "1px solid rgba(255, 105, 180, 0.3)" : (matchingEvent.type === "ivan" ? "1px solid rgba(0, 122, 255, 0.22)" : (matchingEvent.type === "both" ? "1px solid rgba(168, 85, 247, 0.2)" : "1px solid rgba(0, 122, 255, 0.22)"));
+      const borderUnselected = matchingEvent.type === "female" ? "1px solid rgba(255, 105, 180, 0.55)" : (matchingEvent.type === "ivan" ? "1px solid rgba(0, 122, 255, 0.45)" : (matchingEvent.type === "both" ? "1px solid rgba(168, 85, 247, 0.45)" : "1px solid rgba(0, 122, 255, 0.45)"));
 
       return {
         type: matchingEvent.type,
@@ -182,7 +182,7 @@ const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
         bgLight: "#F0FDF4",
         bgDark: "#061F12",
         bgUnselected: "rgba(16, 185, 129, 0.12)",
-        borderUnselected: "1px solid rgba(16, 185, 129, 0.22)",
+        borderUnselected: "1px solid rgba(16, 185, 129, 0.45)",
         emoji: matchingEvent.emoji,
         text: matchingEvent.name
       };
@@ -195,7 +195,7 @@ const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
         bgLight: "#F0FDF4",
         bgDark: "#061F12",
         bgUnselected: "rgba(16, 185, 129, 0.12)",
-        borderUnselected: "1px solid rgba(16, 185, 129, 0.22)",
+        borderUnselected: "1px solid rgba(16, 185, 129, 0.45)",
         emoji: matchingEvent.emoji,
         text: matchingEvent.name
       };
@@ -208,7 +208,7 @@ const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
         bgLight: "#FEF2F2",
         bgDark: "#270808",
         bgUnselected: "rgba(239, 68, 68, 0.12)",
-        borderUnselected: "1px solid rgba(239, 68, 68, 0.22)",
+        borderUnselected: "1px solid rgba(239, 68, 68, 0.45)",
         emoji: matchingEvent.emoji,
         text: matchingEvent.name
       };
@@ -221,7 +221,7 @@ const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
         bgLight: "#FEF3C7",
         bgDark: "#241305",
         bgUnselected: "rgba(245, 158, 11, 0.12)",
-        borderUnselected: "1px solid rgba(245, 158, 11, 0.22)",
+        borderUnselected: "1px solid rgba(245, 158, 11, 0.45)",
         emoji: matchingEvent.emoji,
         text: matchingEvent.name
       };
@@ -234,7 +234,7 @@ const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
         bgLight: "#EEF2FF",
         bgDark: "#0B0C1E",
         bgUnselected: "rgba(99, 102, 241, 0.12)",
-        borderUnselected: "1px solid rgba(99, 102, 241, 0.22)",
+        borderUnselected: "1px solid rgba(99, 102, 241, 0.45)",
         emoji: matchingEvent.emoji,
         text: matchingEvent.name
       };
@@ -247,7 +247,7 @@ const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
         bgLight: "#FFF1F2",
         bgDark: "#200408",
         bgUnselected: "rgba(244, 63, 94, 0.12)",
-        borderUnselected: "1px solid rgba(244, 63, 94, 0.22)",
+        borderUnselected: "1px solid rgba(244, 63, 94, 0.45)",
         emoji: matchingEvent.emoji,
         text: matchingEvent.name
       };
@@ -260,7 +260,7 @@ const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
         bgLight: "#FEF2F2",
         bgDark: "#1F0707",
         bgUnselected: "rgba(239, 68, 68, 0.12)",
-        borderUnselected: "1px solid rgba(239, 68, 68, 0.22)",
+        borderUnselected: "1px solid rgba(239, 68, 68, 0.45)",
         emoji: matchingEvent.emoji,
         text: matchingEvent.name
       };
@@ -272,7 +272,7 @@ const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
       bgLight: "#FFF7ED",
       bgDark: "#240E05",
       bgUnselected: "rgba(249, 115, 22, 0.12)",
-      borderUnselected: "1px solid rgba(249, 115, 22, 0.22)",
+      borderUnselected: "1px solid rgba(249, 115, 22, 0.45)",
       emoji: matchingEvent.emoji,
       text: matchingEvent.name
     };
@@ -800,6 +800,8 @@ const BirthdayConfettiEffect = ({ type }: { type: string }) => {
 export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[], moments?: any[] }) {
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(STATIC_SEEDED_EVENTS);
   const [isDark, setIsDark] = useState(false);
+  const [sliderIndex, setSliderIndex] = useState(0);
+  const visibleCards = 3; // Always show 3 cards per slide for a beautiful minimalist gallery layout
 
   // Sync system dark mode preference
   useEffect(() => {
@@ -1243,6 +1245,11 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
         `}</style>
       )}
       <style>{`
+        .blog-slider-section {
+          margin-top: 2.8rem !important;
+          padding-top: 1.8rem !important;
+          border-top: 1px solid rgba(150, 150, 150, 0.12) !important;
+        }
         .mobile-only-section {
           display: block !important;
         }
@@ -1406,6 +1413,10 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             border-radius: 16px !important;
             top: calc(100% + 6px) !important;
           }
+          .blog-slider-section {
+            margin-top: 1.4rem !important;
+            padding-top: 0.9rem !important;
+          }
         }
         @media (min-width: 768px) {
           .feed-split-layout {
@@ -1441,7 +1452,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
       {/* MOBILE ONLY TOP CALENDAR SECTION */}
       <div className="mobile-only-section">
         {/* 1. HEADER: DAY & CUSTOM DATE PICKER (FULL WIDTH, ABOVE COLUMNS) */}
-        <FadeIn delay={0.05}>
+        <FadeIn delay={0.05} style={{ position: "relative", zIndex: 999999 }}>
         <div className="journal-header-container" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", padding: "0 0.25rem" }}>
           
           {/* Casino-style letter-by-letter slot-machine vertical roll window */}
@@ -1555,7 +1566,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             )}
 
             {/* Custom Date Picker Button & Dropdown */}
-            <div style={{ position: "relative" }} ref={calendarMobileRef}>
+            <div style={{ position: "relative", zIndex: 1000 }} ref={calendarMobileRef}>
               <button 
                 onClick={handleOpenCalendar}
                 className="month-picker-btn"
@@ -1603,9 +1614,9 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                     top: "calc(100% + 8px)",
                     right: 0,
                     width: "240px", 
-                    backgroundColor: "var(--bg-color)",
-                    backdropFilter: "blur(24px)",
-                    WebkitBackdropFilter: "blur(24px)",
+                    backgroundColor: isDark 
+                      ? (selectedTheme ? selectedTheme.bgDark : "#141312") 
+                      : (selectedTheme ? selectedTheme.bgLight : "#FDFBF7"),
                     border: selectedTheme 
                       ? (isDark ? `1px solid rgba(255, 255, 255, 0.15)` : `1px solid rgba(180, 122, 62, 0.22)`)
                       : (isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)"),
@@ -1976,7 +1987,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
     </FadeIn>
 
       {/* 2. HORIZONTAL DATE SELECTOR STRIP (FULL WIDTH, ABOVE COLUMNS) */}
-      <FadeIn delay={0.1}>
+      <FadeIn delay={0.1} style={{ position: "relative", zIndex: 1 }}>
         <div 
           ref={stripContainerMobileRef}
           onScroll={handleStripScrollMobile}
@@ -2031,14 +2042,14 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             const borderSelected = `1.5px solid ${activeColor}`;
             
             const borderUnselected = isSunday 
-              ? "1px solid rgba(255, 59, 48, 0.3)" 
+              ? "1px solid rgba(255, 59, 48, 0.55)" 
               : (isHoliday 
-                  ? "1px solid rgba(255, 114, 111, 0.15)" 
+                  ? "1px solid rgba(255, 114, 111, 0.45)" 
                   : (pillTheme 
                       ? pillTheme.borderUnselected 
                       : (hasPost 
-                          ? "1px solid rgba(180, 122, 62, 0.45)" 
-                          : (selectedTheme ? selectedTheme.borderUnselected : "1px solid rgba(150, 150, 150, 0.08)"))));
+                          ? "1px solid rgba(180, 122, 62, 0.65)" 
+                          : (selectedTheme ? selectedTheme.borderUnselected : (isDark ? "1px solid rgba(255, 255, 255, 0.22)" : "1px solid rgba(0, 0, 0, 0.16)")))));
             
             return (
               <div 
@@ -2122,7 +2133,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                     className="date-pill-day-num"
                     style={{ 
                       fontSize: "1.22rem", 
-                      fontWeight: isSelected ? "750" : "500",
+                      fontWeight: isSelected ? "750" : "600", // Slightly bolder for higher contrast when unselected
                       lineHeight: 1,
                       marginTop: "10px"
                     }}
@@ -2140,7 +2151,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                     letterSpacing: "0.05em",
                     marginTop: "6px",
                     color: isSelected ? "var(--bg-color)" : (isToday ? sundayColor : (isSunday || isHoliday ? activeColor : "var(--text-secondary)")),
-                    opacity: isSelected ? 1 : (isSunday || isHoliday || isToday ? 1 : 0.55)
+                    opacity: isSelected ? 1 : (isSunday || isHoliday || isToday ? 1 : 0.85) // Significantly clearer unselected text color
                   }}
                 >
                   {d.toLocaleDateString("en-US", { weekday: "short" })}
@@ -2156,7 +2167,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
       <div className="feed-split-layout">
         
         {/* Column 1: Events (Left Column) */}
-        <FadeIn delay={0.15} className="feed-column feed-column-left">
+        <FadeIn delay={0.15} className="feed-column feed-column-left" style={{ position: "relative", zIndex: 50 }}>
           
           {/* DESKTOP ONLY SIDEBAR CALENDAR SECTION */}
           <div className="desktop-only-section" style={{ 
@@ -2279,7 +2290,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                 )}
 
                 {/* Custom Date Picker Button & Dropdown */}
-                <div style={{ position: "relative" }} ref={calendarDesktopRef}>
+                <div style={{ position: "relative", zIndex: 1000 }} ref={calendarDesktopRef}>
                   <button 
                     onClick={handleOpenCalendar}
                     className="month-picker-btn"
@@ -2322,9 +2333,9 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                           top: "calc(100% + 8px)",
                           left: 0, 
                           width: "230px", 
-                          backgroundColor: "var(--bg-color)",
-                          backdropFilter: "blur(24px)",
-                          WebkitBackdropFilter: "blur(24px)",
+                          backgroundColor: isDark 
+                            ? (selectedTheme ? selectedTheme.bgDark : "#141312") 
+                            : (selectedTheme ? selectedTheme.bgLight : "#FDFBF7"),
                           border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
                           borderRadius: "18px",
                           boxShadow: isDark 
@@ -2489,7 +2500,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                 const bgSelected = activeColor;
                 const bgUnselected = isSunday ? "rgba(255, 59, 48, 0.06)" : (isHoliday ? "rgba(255, 114, 111, 0.05)" : (pillTheme ? pillTheme.bgUnselected : (hasPost ? "rgba(180, 122, 62, 0.08)" : "rgba(150, 150, 150, 0.03)")));
                 const borderSelected = `1.5px solid ${activeColor}`;
-                const borderUnselected = isSunday ? "1px solid rgba(255, 59, 48, 0.3)" : (isHoliday ? "1px solid rgba(255, 114, 111, 0.15)" : (pillTheme ? pillTheme.borderUnselected : (hasPost ? "1px solid rgba(180, 122, 62, 0.45)" : (selectedTheme ? selectedTheme.borderUnselected : "1px solid rgba(150, 150, 150, 0.08)"))));
+                const borderUnselected = isSunday ? "1px solid rgba(255, 59, 48, 0.55)" : (isHoliday ? "1px solid rgba(255, 114, 111, 0.45)" : (pillTheme ? pillTheme.borderUnselected : (hasPost ? "1px solid rgba(180, 122, 62, 0.65)" : (selectedTheme ? selectedTheme.borderUnselected : (isDark ? "1px solid rgba(255, 255, 255, 0.22)" : "1px solid rgba(0, 0, 0, 0.16)")))));
                 
                 return (
                   <div 
@@ -2550,7 +2561,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                     {pillTheme && pillTheme.emoji && pillTheme.emoji.includes("🎂") ? (
                       <span className="date-pill-day-num" style={{ fontSize: "1.15rem", lineHeight: 1, marginTop: "6px" }}>🎂</span>
                     ) : (
-                      <span className="date-pill-day-num" style={{ fontSize: "1.05rem", fontWeight: isSelected ? "750" : "500", lineHeight: 1, marginTop: "6px" }}>{d.getDate()}</span>
+                      <span className="date-pill-day-num" style={{ fontSize: "1.05rem", fontWeight: isSelected ? "750" : "600", lineHeight: 1, marginTop: "6px" }}>{d.getDate()}</span>
                     )}
                     
                     <span 
@@ -2559,9 +2570,10 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                         fontSize: "0.55rem", 
                         textTransform: "uppercase",
                         fontWeight: isSelected ? "750" : "600",
+                        letterSpacing: "0.05em",
                         marginTop: "4px",
                         color: isSelected ? "var(--bg-color)" : (isToday ? sundayColor : (isSunday || isHoliday ? activeColor : "var(--text-secondary)")),
-                        opacity: isSelected ? 1 : 0.55
+                        opacity: isSelected ? 1 : (isSunday || isHoliday || isToday ? 1 : 0.85) // Significantly clearer unselected text color
                       }}
                     >
                       {d.toLocaleDateString("en-US", { weekday: "short" })}
@@ -2923,6 +2935,214 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
         </div>
         </FadeIn>
       </div> {/* End feed-split-layout */}
+
+      {/* TACTILE MINIMALIST GALLERY SLIDER SECTION FOR ALL BLOG POSTS */}
+      {posts && posts.length > 0 && (() => {
+        const canPrev = sliderIndex > 0;
+        const canNext = sliderIndex + visibleCards < posts.length;
+        const gapPx = 10;
+        
+        return (
+          <FadeIn delay={0.25}>
+            <div 
+              className="blog-slider-section"
+              style={{ paddingBottom: "0.5rem" }}
+            >
+              {/* Slider Header Row */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.9rem" }}>
+                <h2 style={{ 
+                  fontSize: "0.75rem", 
+                  fontWeight: "700", 
+                  color: "var(--text-primary)", 
+                  margin: 0,
+                  fontFamily: "var(--font-sans)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.04em"
+                }}>
+                  Blog Posts
+                </h2>
+                
+                {/* Minimalist Prev / Next Buttons */}
+                {posts.length > visibleCards && (
+                  <div style={{ display: "flex", gap: "6px" }}>
+                    <button
+                      onClick={() => { if (canPrev) setSliderIndex(prev => prev - 1); }}
+                      disabled={!canPrev}
+                      style={{
+                        width: "26px",
+                        height: "26px",
+                        borderRadius: "50%",
+                        border: isDark ? "1px solid rgba(255, 255, 255, 0.15)" : "1px solid rgba(0, 0, 0, 0.08)",
+                        backgroundColor: isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff",
+                        color: "var(--text-primary)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: canPrev ? "pointer" : "not-allowed",
+                        opacity: canPrev ? 1 : 0.35,
+                        transition: "all 0.2s ease",
+                        outline: "none",
+                        padding: 0
+                      }}
+                      title="Previous posts"
+                    >
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => { if (canNext) setSliderIndex(prev => prev + 1); }}
+                      disabled={!canNext}
+                      style={{
+                        width: "26px",
+                        height: "26px",
+                        borderRadius: "50%",
+                        border: isDark ? "1px solid rgba(255, 255, 255, 0.15)" : "1px solid rgba(0, 0, 0, 0.08)",
+                        backgroundColor: isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff",
+                        color: "var(--text-primary)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: canNext ? "pointer" : "not-allowed",
+                        opacity: canNext ? 1 : 0.35,
+                        transition: "all 0.2s ease",
+                        outline: "none",
+                        padding: 0
+                      }}
+                      title="Next posts"
+                    >
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </button>
+                  </div>
+                )}
+              </div>
+              
+              {/* Slider Viewport Container */}
+              <div style={{ position: "relative", width: "100%", overflow: "hidden", paddingBottom: "0.5rem" }}>
+                <div style={{
+                  display: "flex",
+                  gap: `${gapPx}px`,
+                  transform: `translateX(calc(-${sliderIndex} * (100% + ${gapPx}px) / ${visibleCards}))`,
+                  transition: "transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
+                  width: "100%",
+                }}>
+                  {posts.map((post) => {
+                    const match = post.content.match(/<img[^>]+src="([^">]+)"/);
+                    const imageUrl = match ? match[1] : null;
+                    const formattedDate = new Date(post.published).toLocaleDateString("en-US", {
+                      day: "numeric",
+                      month: "short"
+                    });
+                    
+                    const NATURE_FALLBACKS = [
+                      "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=300&auto=format&fit=crop",
+                      "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=80&w=300&auto=format&fit=crop",
+                      "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=300&auto=format&fit=crop",
+                      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=300&auto=format&fit=crop",
+                      "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?q=80&w=300&auto=format&fit=crop"
+                    ];
+                    const hash = post.id.split("").reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+                    const fallbackImage = NATURE_FALLBACKS[hash % NATURE_FALLBACKS.length];
+                    
+                    return (
+                      <div 
+                        key={post.id}
+                        style={{
+                          width: `calc(${100 / visibleCards}% - ${(gapPx * (visibleCards - 1)) / visibleCards}px)`,
+                          flexShrink: 0,
+                          boxSizing: "border-box",
+                        }}
+                      >
+                        <Link 
+                          href={`/blog/${post.id}`}
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            textDecoration: "none",
+                            color: "inherit",
+                            height: "100%",
+                            backgroundColor: selectedTheme ? selectedTheme.bgUnselected : (isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(255, 255, 255, 0.6)"),
+                            border: selectedTheme ? selectedTheme.borderUnselected : "1px solid var(--border-color)",
+                            borderRadius: "12px",
+                            overflow: "hidden",
+                            transition: "all 0.22s cubic-bezier(0.16, 1, 0.3, 1)"
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.transform = "translateY(-3px)";
+                            e.currentTarget.style.boxShadow = isDark 
+                              ? "0 6px 16px rgba(0, 0, 0, 0.35)" 
+                              : "0 6px 14px rgba(0, 0, 0, 0.04)";
+                            e.currentTarget.style.borderColor = "rgba(150, 150, 150, 0.25)";
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.transform = "none";
+                            e.currentTarget.style.boxShadow = "none";
+                            e.currentTarget.style.borderColor = selectedTheme ? (selectedTheme.borderUnselected.replace("1px solid ", "")) : "var(--border-color)";
+                          }}
+                        >
+                          {/* Chic Gallery Square Image Container */}
+                          <div style={{ 
+                            width: "100%", 
+                            aspectRatio: "1/1", 
+                            overflow: "hidden",
+                            backgroundColor: isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.02)",
+                            position: "relative"
+                          }}>
+                            <img 
+                              src={imageUrl || fallbackImage} 
+                              alt="" 
+                              style={{ 
+                                width: "100%", 
+                                height: "100%", 
+                                objectFit: "cover",
+                                filter: imageUrl ? "none" : "grayscale(100%) contrast(1.15) brightness(0.92)",
+                                opacity: imageUrl ? 1 : 0.88,
+                                transition: "transform 0.4s ease"
+                              }} 
+                            />
+                          </div>
+                          
+                          {/* Content Section - High density / ultra clean */}
+                          <div style={{ padding: "0.5rem 0.6rem", display: "flex", flexDirection: "column", gap: "2px" }}>
+                            <span style={{ 
+                              fontSize: "0.5rem", 
+                              fontWeight: "600", 
+                              color: "var(--text-secondary)", 
+                              opacity: 0.6,
+                              textTransform: "uppercase",
+                              letterSpacing: "0.02em"
+                            }}>
+                              {formattedDate}
+                            </span>
+                            <h4 style={{ 
+                              fontSize: "0.72rem", 
+                              fontWeight: "650", 
+                              margin: 0, 
+                              lineHeight: "1.25", 
+                              color: "var(--text-primary)",
+                              display: "-webkit-box",
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: "vertical",
+                              overflow: "hidden",
+                              height: "2.5em",
+                              fontFamily: "var(--font-sans)",
+                              letterSpacing: "-0.015em"
+                            }}>
+                              {post.title}
+                            </h4>
+                          </div>
+                        </Link>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        );
+      })()}
     </div>
   )
 }

@@ -43,7 +43,7 @@ export default function FooterAbout() {
     },
     {
       title: "Let's Hang!",
-      content: "Fluent in English and Indonesian. Hit me up if you want to chat about cool projects, share music, or grab a warm cup of coffee!"
+      content: "Fluent in English, Dutch, and Indonesian. Hit me up if you want to chat about cool projects, share music, or grab a warm cup of coffee!"
     }
   ];
 
@@ -62,32 +62,32 @@ export default function FooterAbout() {
 
   return (
     <div style={{ position: "relative" }} ref={containerRef}>
-      <motion.button 
+      <motion.button
         onClick={() => setIsOpen(!isOpen)}
-        whileHover={{ 
+        whileHover={{
           y: -2.5,
           scale: 1.04,
           backgroundColor: isOpen ? "var(--text-primary)" : (isDark ? "rgba(255, 255, 255, 0.1)" : "#ffffff"),
           borderColor: isOpen ? "transparent" : (isDark ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.12)"),
-          boxShadow: isOpen 
-            ? "none" 
-            : (isDark 
-                ? "0 12px 24px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -2px 0 rgba(0, 0, 0, 0.6)" 
-                : "0 12px 24px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.05), inset 0 1.5px 0 #ffffff, inset 0 -2px 0 rgba(0, 0, 0, 0.08)")
+          boxShadow: isOpen
+            ? "none"
+            : (isDark
+              ? "0 12px 24px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -2px 0 rgba(0, 0, 0, 0.6)"
+              : "0 12px 24px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.05), inset 0 1.5px 0 #ffffff, inset 0 -2px 0 rgba(0, 0, 0, 0.08)")
         }}
         whileTap={{ scale: 0.94, y: 0.5 }}
         transition={{ type: "spring", stiffness: 400, damping: 28 }}
-        style={{ 
-          background: "none", 
-          border: isOpen 
-            ? "1px solid transparent" 
-            : (isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)"), 
-          color: isOpen ? "var(--bg-color)" : "var(--text-primary)", 
-          fontWeight: "600", 
-          cursor: "pointer", 
+        style={{
+          background: "none",
+          border: isOpen
+            ? "1px solid transparent"
+            : (isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)"),
+          color: isOpen ? "var(--bg-color)" : "var(--text-primary)",
+          fontWeight: "600",
+          cursor: "pointer",
           padding: "6px 14.5px",
-          backgroundColor: isOpen 
-            ? "var(--text-primary)" 
+          backgroundColor: isOpen
+            ? "var(--text-primary)"
             : (isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff"),
           borderRadius: "30px",
           fontFamily: "var(--font-sans)",
@@ -97,14 +97,14 @@ export default function FooterAbout() {
           gap: "6px",
           boxShadow: isOpen
             ? "none"
-            : (isDark 
-                ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(0, 0, 0, 0.6)" 
-                : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2px 0 rgba(0, 0, 0, 0.08)"),
+            : (isDark
+              ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(0, 0, 0, 0.6)"
+              : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2px 0 rgba(0, 0, 0, 0.08)"),
           transition: "background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease"
         }}
       >
         About
-        <motion.svg 
+        <motion.svg
           width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ type: "spring", stiffness: 380, damping: 28 }}
@@ -137,8 +137,8 @@ export default function FooterAbout() {
               WebkitBackdropFilter: "blur(20px)",
               borderRadius: "22px",
               padding: "1.15rem",
-              boxShadow: isDark 
-                ? "0 24px 60px -8px rgba(0,0,0,0.7), 0 8px 24px -4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12)" 
+              boxShadow: isDark
+                ? "0 24px 60px -8px rgba(0,0,0,0.7), 0 8px 24px -4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12)"
                 : "0 20px 48px -6px rgba(0,0,0,0.15), 0 6px 18px -2px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9)",
               border: isDark ? "1px solid rgba(255, 255, 255, 0.15)" : "1px solid rgba(0, 0, 0, 0.1)",
               zIndex: 300,
@@ -151,9 +151,9 @@ export default function FooterAbout() {
             {/* Header section with Avatar */}
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <div style={{ width: "44px", height: "44px", borderRadius: "50%", overflow: "hidden", backgroundColor: "rgba(150,150,150,0.1)", border: "1px solid rgba(150,150,150,0.2)" }}>
-                <img 
-                  src="/profile.jpg" 
-                  alt="Ivan Affriandi" 
+                <img
+                  src="/profile.jpg"
+                  alt="Ivan Affriandi"
                   style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(100%)" }}
                   onError={(e) => { e.currentTarget.src = "https://ui-avatars.com/api/?name=Ivan+A&background=random"; }}
                 />
@@ -167,7 +167,7 @@ export default function FooterAbout() {
                 </p>
               </div>
             </div>
-            
+
             {/* Dynamic Sliding Bio */}
             <div style={{ minHeight: "80px", position: "relative" }}>
               <AnimatePresence mode="wait">
@@ -200,36 +200,36 @@ export default function FooterAbout() {
               {/* Ultra-minimal Dash Page Indicators */}
               <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
                 {SLIDES.map((_, i) => (
-                  <div 
-                    key={i} 
-                    style={{ 
-                      width: slide === i ? "12px" : "4px", 
-                      height: "3px", 
-                      borderRadius: "1.5px", 
-                      backgroundColor: slide === i ? "var(--text-primary)" : "rgba(150,150,150,0.25)", 
-                      transition: "all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)" 
-                    }} 
+                  <div
+                    key={i}
+                    style={{
+                      width: slide === i ? "12px" : "4px",
+                      height: "3px",
+                      borderRadius: "1.5px",
+                      backgroundColor: slide === i ? "var(--text-primary)" : "rgba(150,150,150,0.25)",
+                      transition: "all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+                    }}
                   />
                 ))}
               </div>
-              
+
               {/* Sleek Arrow Nav Buttons */}
               <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                <motion.button 
+                <motion.button
                   onClick={() => setSlide(s => (s - 1 + SLIDES.length) % SLIDES.length)}
                   whileHover={{ color: "var(--text-primary)" }}
                   whileTap={{ scale: 0.85 }}
                   transition={{ duration: 0.15 }}
-                  style={{ 
-                    background: "none", 
-                    border: "none", 
+                  style={{
+                    background: "none",
+                    border: "none",
                     padding: 0,
-                    width: "20px", 
-                    height: "20px", 
-                    display: "flex", 
-                    alignItems: "center", 
-                    justifyContent: "center", 
-                    cursor: "pointer", 
+                    width: "20px",
+                    height: "20px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
                     color: "var(--text-secondary)"
                   }}
                   title="Previous slide"
@@ -238,21 +238,21 @@ export default function FooterAbout() {
                     <polyline points="15 18 9 12 15 6"></polyline>
                   </svg>
                 </motion.button>
-                <motion.button 
+                <motion.button
                   onClick={() => setSlide(s => (s + 1) % SLIDES.length)}
                   whileHover={{ color: "var(--text-primary)" }}
                   whileTap={{ scale: 0.85 }}
                   transition={{ duration: 0.15 }}
-                  style={{ 
-                    background: "none", 
-                    border: "none", 
+                  style={{
+                    background: "none",
+                    border: "none",
                     padding: 0,
-                    width: "20px", 
-                    height: "20px", 
-                    display: "flex", 
-                    alignItems: "center", 
-                    justifyContent: "center", 
-                    cursor: "pointer", 
+                    width: "20px",
+                    height: "20px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
                     color: "var(--text-secondary)"
                   }}
                   title="Next slide"
@@ -286,29 +286,29 @@ export default function FooterAbout() {
                     fontFamily: "var(--font-sans)",
                     color: "var(--text-primary)",
                     textDecoration: "none",
-                    boxShadow: isDark 
-                      ? "0 4px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1.5px 0 rgba(0, 0, 0, 0.5)" 
+                    boxShadow: isDark
+                      ? "0 4px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1.5px 0 rgba(0, 0, 0, 0.5)"
                       : "0 4px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0, 0, 0, 0.06)",
                     transition: "all 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-1.5px) scale(1.03)";
-                    e.currentTarget.style.boxShadow = isDark
-                      ? "0 6px 14px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1.5px 0 rgba(0, 0, 0, 0.5)"
-                      : "0 6px 12px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0, 0, 0, 0.06)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "none";
-                    e.currentTarget.style.boxShadow = isDark
-                      ? "0 4px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1.5px 0 rgba(0, 0, 0, 0.5)"
-                      : "0 4px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0, 0, 0, 0.06)";
-                  }}
-                  onMouseDown={(e) => {
-                    e.currentTarget.style.transform = "translateY(0.5px) scale(0.97)";
-                  }}
-                  onMouseUp={(e) => {
-                    e.currentTarget.style.transform = "translateY(-1.5px) scale(1.03)";
-                  }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "translateY(-1.5px) scale(1.03)";
+                      e.currentTarget.style.boxShadow = isDark
+                        ? "0 6px 14px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1.5px 0 rgba(0, 0, 0, 0.5)"
+                        : "0 6px 12px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0, 0, 0, 0.06)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "none";
+                      e.currentTarget.style.boxShadow = isDark
+                        ? "0 4px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1.5px 0 rgba(0, 0, 0, 0.5)"
+                        : "0 4px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0, 0, 0, 0.06)";
+                    }}
+                    onMouseDown={(e) => {
+                      e.currentTarget.style.transform = "translateY(0.5px) scale(0.97)";
+                    }}
+                    onMouseUp={(e) => {
+                      e.currentTarget.style.transform = "translateY(-1.5px) scale(1.03)";
+                    }}
                   >
                     {work.label}
                   </a>
@@ -334,8 +334,8 @@ export default function FooterAbout() {
                     alignItems: "center",
                     fontFamily: "var(--font-sans)",
                     color: "var(--text-primary)",
-                    boxShadow: isDark 
-                      ? "0 4px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1.5px 0 rgba(0, 0, 0, 0.5)" 
+                    boxShadow: isDark
+                      ? "0 4px 10px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1.5px 0 rgba(0, 0, 0, 0.5)"
                       : "0 4px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0, 0, 0, 0.06)"
                   }}>
                     {interest}
@@ -346,122 +346,122 @@ export default function FooterAbout() {
 
             {/* Action Buttons */}
             <div style={{ display: "flex", gap: "8px", marginTop: "0.2rem" }}>
-              <a href="mailto:hello@ivanaffriandi.com" style={{ 
-                flex: 1, 
-                padding: "8px 10px", 
-                backgroundColor: "var(--text-primary)", 
-                color: "var(--bg-color)", 
-                textAlign: "center", 
-                borderRadius: "12px", 
-                textDecoration: "none", 
-                fontSize: "0.76rem", 
-                fontWeight: "600", 
+              <a href="mailto:hello@ivanaffriandi.com" style={{
+                flex: 1,
+                padding: "8px 10px",
+                backgroundColor: "var(--text-primary)",
+                color: "var(--bg-color)",
+                textAlign: "center",
+                borderRadius: "12px",
+                textDecoration: "none",
+                fontSize: "0.76rem",
+                fontWeight: "600",
                 fontFamily: "var(--font-sans)",
                 transition: "all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-                boxShadow: isDark 
-                  ? "0 8px 20px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -2.5px 0 rgba(255, 255, 255, 0.15)" 
+                boxShadow: isDark
+                  ? "0 8px 20px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -2.5px 0 rgba(255, 255, 255, 0.15)"
                   : "0 8px 20px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -2.5px 0 rgba(0, 0, 0, 0.45)",
                 border: isDark ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.12)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-2.5px) scale(1.02)";
-                e.currentTarget.style.boxShadow = isDark
-                  ? "0 12px 24px rgba(0, 0, 0, 0.7), 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1.5px 0 rgba(255, 255, 255, 0.25), inset 0 -2.5px 0 rgba(255, 255, 255, 0.15)"
-                  : "0 12px 24px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.1), inset 0 1.5px 0 rgba(255, 255, 255, 0.45), inset 0 -2.5px 0 rgba(0, 0, 0, 0.45)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "none";
-                e.currentTarget.style.boxShadow = isDark
-                  ? "0 8px 20px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -2.5px 0 rgba(255, 255, 255, 0.15)"
-                  : "0 8px 20px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -2.5px 0 rgba(0, 0, 0, 0.45)";
-              }}
-              onMouseDown={(e) => {
-                e.currentTarget.style.transform = "translateY(0.5px) scale(0.98)";
-              }}
-              onMouseUp={(e) => {
-                e.currentTarget.style.transform = "translateY(-2.5px) scale(1.02)";
-              }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2.5px) scale(1.02)";
+                  e.currentTarget.style.boxShadow = isDark
+                    ? "0 12px 24px rgba(0, 0, 0, 0.7), 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 1.5px 0 rgba(255, 255, 255, 0.25), inset 0 -2.5px 0 rgba(255, 255, 255, 0.15)"
+                    : "0 12px 24px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.1), inset 0 1.5px 0 rgba(255, 255, 255, 0.45), inset 0 -2.5px 0 rgba(0, 0, 0, 0.45)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "none";
+                  e.currentTarget.style.boxShadow = isDark
+                    ? "0 8px 20px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -2.5px 0 rgba(255, 255, 255, 0.15)"
+                    : "0 8px 20px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -2.5px 0 rgba(0, 0, 0, 0.45)";
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.transform = "translateY(0.5px) scale(0.98)";
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2.5px) scale(1.02)";
+                }}
               >
                 Send Email
               </a>
-              <a href="https://instagram.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" style={{ 
-                padding: "8px 10px", 
-                backgroundColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#ffffff", 
-                color: "var(--text-primary)", 
-                borderRadius: "12px", 
-                display: "flex", 
-                alignItems: "center", 
+              <a href="https://instagram.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" style={{
+                padding: "8px 10px",
+                backgroundColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#ffffff",
+                color: "var(--text-primary)",
+                borderRadius: "12px",
+                display: "flex",
+                alignItems: "center",
                 justifyContent: "center",
                 border: isDark ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
-                boxShadow: isDark 
-                  ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)" 
+                boxShadow: isDark
+                  ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)"
                   : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)",
                 transition: "all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-2.5px) scale(1.05)";
-                e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.12)" : "#ffffff";
-                e.currentTarget.style.boxShadow = isDark
-                  ? "0 12px 24px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)"
-                  : "0 12px 24px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.05), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "none";
-                e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.08)" : "#ffffff";
-                e.currentTarget.style.boxShadow = isDark 
-                  ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)" 
-                  : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)";
-              }}
-              onMouseDown={(e) => {
-                e.currentTarget.style.transform = "translateY(0.5px) scale(0.96)";
-              }}
-              onMouseUp={(e) => {
-                e.currentTarget.style.transform = "translateY(-2.5px) scale(1.05)";
-              }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2.5px) scale(1.05)";
+                  e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.12)" : "#ffffff";
+                  e.currentTarget.style.boxShadow = isDark
+                    ? "0 12px 24px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)"
+                    : "0 12px 24px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.05), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "none";
+                  e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.08)" : "#ffffff";
+                  e.currentTarget.style.boxShadow = isDark
+                    ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)"
+                    : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)";
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.transform = "translateY(0.5px) scale(0.96)";
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2.5px) scale(1.05)";
+                }}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
                 </svg>
               </a>
-              <a href="https://x.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" style={{ 
-                padding: "8px 10px", 
-                backgroundColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#ffffff", 
-                color: "var(--text-primary)", 
-                borderRadius: "12px", 
-                display: "flex", 
-                alignItems: "center", 
+              <a href="https://x.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" style={{
+                padding: "8px 10px",
+                backgroundColor: isDark ? "rgba(255, 255, 255, 0.08)" : "#ffffff",
+                color: "var(--text-primary)",
+                borderRadius: "12px",
+                display: "flex",
+                alignItems: "center",
                 justifyContent: "center",
                 border: isDark ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
-                boxShadow: isDark 
-                  ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)" 
+                boxShadow: isDark
+                  ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)"
                   : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)",
                 transition: "all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-2.5px) scale(1.05)";
-                e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.12)" : "#ffffff";
-                e.currentTarget.style.boxShadow = isDark
-                  ? "0 12px 24px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)"
-                  : "0 12px 24px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.05), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "none";
-                e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.08)" : "#ffffff";
-                e.currentTarget.style.boxShadow = isDark 
-                  ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)" 
-                  : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)";
-              }}
-              onMouseDown={(e) => {
-                e.currentTarget.style.transform = "translateY(0.5px) scale(0.96)";
-              }}
-              onMouseUp={(e) => {
-                e.currentTarget.style.transform = "translateY(-2.5px) scale(1.05)";
-              }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2.5px) scale(1.05)";
+                  e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.12)" : "#ffffff";
+                  e.currentTarget.style.boxShadow = isDark
+                    ? "0 12px 24px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)"
+                    : "0 12px 24px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.05), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "none";
+                  e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.08)" : "#ffffff";
+                  e.currentTarget.style.boxShadow = isDark
+                    ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2.5px 0 rgba(0, 0, 0, 0.6)"
+                    : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2.5px 0 rgba(0, 0, 0, 0.08)";
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.transform = "translateY(0.5px) scale(0.96)";
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2.5px) scale(1.05)";
+                }}
               >
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M4 4l11.733 16h4.267l-11.733 -16z" />
