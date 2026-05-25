@@ -31,6 +31,8 @@ declare global {
 if (!global._cachedPostMap) global._cachedPostMap = {};
 if (!global._cachedCommentsMap) global._cachedCommentsMap = {};
 
+const RTDB_POSTS_URL = "https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app/blogger_posts.json";
+
 export async function getPosts(): Promise<BlogPost[]> {
   if (!BLOG_ID || !API_KEY) {
     console.warn("Blogger API credentials are not set. Returning mock data.");
@@ -77,14 +79,42 @@ export async function getPosts(): Promise<BlogPost[]> {
       if (global._cachedPostMap) global._cachedPostMap[p.id] = p;
     });
 
+    // Asynchronously back up posts to Firebase RTDB in background
+    fetch(RTDB_POSTS_URL, {
+      method: "PUT",
+      body: JSON.stringify(posts),
+      headers: { "Content-Type": "application/json" }
+    }).catch((err) => console.error("Blogger RTDB backup failed:", err));
+
     return posts;
   } catch (error) {
     console.error("Error fetching Blogger posts:", error);
-    // Serve cached fallback instead of returning an empty array to prevent flickering!
+    
+    // Serve from global memory cache if present
     if (global._cachedPosts && global._cachedPosts.length > 0) {
-      console.log("Serving cached fallback list for Blogger posts.");
+      console.log("Serving cached memory fallback list for Blogger posts.");
       return global._cachedPosts;
     }
+
+    // Fallback to Firebase RTDB persistent backup
+    try {
+      console.log("Fetching persistent RTDB backup for Blogger posts...");
+      const backupRes = await fetch(RTDB_POSTS_URL, { cache: "no-store" });
+      if (backupRes.ok) {
+        const backupPosts = await backupRes.json();
+        if (backupPosts && Array.isArray(backupPosts) && backupPosts.length > 0) {
+          console.log(`Successfully restored ${backupPosts.length} posts from RTDB backup.`);
+          global._cachedPosts = backupPosts;
+          backupPosts.forEach((p: any) => {
+            if (global._cachedPostMap) global._cachedPostMap[p.id] = p;
+          });
+          return backupPosts;
+        }
+      }
+    } catch (backupErr) {
+      console.error("Failed to fetch Blogger posts backup from RTDB:", backupErr);
+    }
+
     return [];
   }
 }
@@ -117,16 +147,34 @@ export async function getPost(id: string): Promise<BlogPost | null> {
     return post;
   } catch (error) {
     console.error("Error fetching post:", error);
+    
     // Serve cached fallback for post if available
     if (global._cachedPostMap && global._cachedPostMap[id]) {
       console.log(`Serving cached fallback for post ID: ${id}`);
       return global._cachedPostMap[id];
     }
+    
     // Fall back to getPosts cached array
     if (global._cachedPosts) {
       const found = global._cachedPosts.find((p) => p.id === id);
       if (found) return found;
     }
+
+    // Try fetching posts list from Firebase RTDB to find the post
+    try {
+      const backupRes = await fetch(RTDB_POSTS_URL, { cache: "no-store" });
+      if (backupRes.ok) {
+        const backupPosts = await backupRes.json();
+        if (backupPosts && Array.isArray(backupPosts)) {
+          const found = backupPosts.find((p) => p.id === id);
+          if (found) {
+            if (global._cachedPostMap) global._cachedPostMap[id] = found;
+            return found;
+          }
+        }
+      }
+    } catch {}
+
     return null;
   }
 }

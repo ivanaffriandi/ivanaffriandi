@@ -655,8 +655,46 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         footer.yunox-single-footer {
           display: none !important;
         }
-        .photo-grid-scroll::-webkit-scrollbar { display: none; }
-        .photo-grid-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        .photo-grid-scroll {
+          display: flex;
+          gap: 12px;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+          width: 100%;
+          padding-bottom: 4px;
+          margin-bottom: 1.25rem;
+          justify-content: flex-start;
+        }
+        .photo-grid-scroll::-webkit-scrollbar {
+          display: none !important;
+        }
+        .photo-cover-item {
+          flex: 0 0 100%;
+          width: 100%;
+          max-width: 100%;
+          height: 220px;
+          border-radius: 16px;
+          overflow: hidden;
+          scroll-snap-align: start;
+          flex-shrink: 0;
+          cursor: pointer;
+          position: relative;
+          background-color: rgba(150,150,150,0.08);
+          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @media (min-width: 768px) {
+          .photo-cover-item {
+            height: 380px;
+          }
+        }
+        @media (max-width: 768px) {
+          .photo-cover-item {
+            border-radius: 12px;
+          }
+        }
 
         .inline-photo-grid {
           display: flex;
@@ -888,12 +926,6 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             <div
               className="photo-grid-scroll"
               style={{
-                display: "flex",
-                gap: "6px",
-                overflowX: "auto",
-                paddingBottom: "4px",
-                marginBottom: "1.25rem",
-                justifyContent: "flex-start",
                 // Full-bleed left/right for edge-to-edge feel
                 marginLeft: "-1rem",
                 marginRight: "-1rem",
@@ -904,22 +936,12 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               {extractedImages.map((src, idx) => (
                 <motion.div
                   key={idx}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ scale: 1.005 }}
+                  whileTap={{ scale: 0.995 }}
                   onClick={() => setLightboxImg({ src, index: idx })}
+                  className="photo-cover-item"
                   style={{
-                    flexShrink: 0,
-                    // Landscape card-cover: single photo = wider, multiple = compact card
-                    width: extractedImages.length === 1 ? "100%" : "200px",
-                    height: extractedImages.length === 1 ? "200px" : "120px",
-                    borderRadius: "16px",
-                    overflow: "hidden",
-                    cursor: "pointer",
-                    backgroundColor: "rgba(150,150,150,0.08)",
                     border: `1px solid ${colors.border}`,
-                    position: "relative",
-                    // Force max-width so single image doesn't overflow
-                    maxWidth: extractedImages.length === 1 ? "100%" : "200px",
                   }}
                 >
                   <img
@@ -931,14 +953,17 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   <div style={{
                     position: "absolute", inset: 0,
                     background: "linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 55%)",
-                    borderRadius: "16px"
                   }} />
                   {/* photo index badge (if multiple) */}
                   {extractedImages.length > 1 && (
                     <div style={{
-                      position: "absolute", bottom: "6px", right: "7px",
-                      fontSize: "0.55rem", fontWeight: "700",
-                      color: "rgba(255,255,255,0.75)",
+                      position: "absolute", bottom: "12px", right: "12px",
+                      fontSize: "0.65rem", fontWeight: "700",
+                      color: "#ffffff",
+                      backgroundColor: "rgba(0, 0, 0, 0.45)",
+                      padding: "4px 8px",
+                      borderRadius: "6px",
+                      backdropFilter: "blur(4px)",
                       fontFamily: "var(--font-sans)",
                       letterSpacing: "0.04em"
                     }}>
