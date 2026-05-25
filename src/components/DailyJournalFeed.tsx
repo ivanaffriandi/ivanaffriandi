@@ -2821,39 +2821,102 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                         </p>
                       </div>
                       
-                      {/* Dynamic Thumbnail Stack */}
-                      {imageUrls.length > 0 && (
-                        <div style={{
+                      {/* Dynamic Adaptive Thumbnail Grid */}
+                      {imageUrls.length > 0 && (() => {
+                        const count = imageUrls.length;
+                        const containerStyle: React.CSSProperties = {
                           flexShrink: 0,
-                          width: "48px", 
-                          height: "48px",
-                          position: "relative"
-                        }}>
-                          {imageUrls.slice(0, 3).reverse().map((url: string, idx: number) => {
-                             const total = Math.min(imageUrls.length, 3);
-                             const depth = total - 1 - idx; // depth 0 is the front image
-                             const maxOffset = Math.max(0, total - 1) * 4;
-                             
-                             return (
-                               <div key={depth} style={{
-                                 position: "absolute",
-                                 bottom: `${depth * 4}px`,
-                                 right: `${depth * 4}px`,
-                                 width: `calc(100% - ${maxOffset}px)`, 
-                                 height: `calc(100% - ${maxOffset}px)`,
-                                 borderRadius: "8px",
-                                 overflow: "hidden",
-                                 border: "1px solid rgba(150,150,150,0.12)",
-                                 backgroundColor: "var(--bg-color)",
-                                 zIndex: idx,
-                                 boxShadow: depth === 0 ? "0 4px 10px rgba(0,0,0,0.12)" : "none",
-                               }}>
-                                 <img src={url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(100%) contrast(1.08)" }} />
-                               </div>
-                             );
-                          })}
-                        </div>
-                      )}
+                          width: "52px",
+                          height: "52px",
+                          borderRadius: "10px",
+                          overflow: "hidden",
+                          border: "1px solid rgba(150,150,150,0.12)",
+                          boxShadow: "0 3px 8px rgba(0,0,0,0.06)",
+                          backgroundColor: "rgba(150,150,150,0.04)",
+                          alignSelf: "center"
+                        };
+                        const imgStyle: React.CSSProperties = {
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          filter: "grayscale(100%) contrast(1.08)"
+                        };
+
+                        if (count === 1) {
+                          return (
+                            <div style={containerStyle}>
+                              <img src={imageUrls[0]} alt="" style={imgStyle} />
+                            </div>
+                          );
+                        } else if (count === 2) {
+                          return (
+                            <div style={{
+                              ...containerStyle,
+                              display: "grid",
+                              gridTemplateColumns: "1fr 1fr",
+                              gap: "1.5px"
+                            }}>
+                              <img src={imageUrls[0]} alt="" style={imgStyle} />
+                              <img src={imageUrls[1]} alt="" style={imgStyle} />
+                            </div>
+                          );
+                        } else if (count === 3) {
+                          return (
+                            <div style={{
+                              ...containerStyle,
+                              display: "grid",
+                              gridTemplateColumns: "1fr 1fr",
+                              gridTemplateRows: "1fr 1fr",
+                              gap: "1.5px"
+                            }}>
+                              <div style={{ gridColumn: "1", gridRow: "1 / span 2", overflow: "hidden" }}>
+                                <img src={imageUrls[0]} alt="" style={imgStyle} />
+                              </div>
+                              <div style={{ gridColumn: "2", gridRow: "1", overflow: "hidden" }}>
+                                <img src={imageUrls[1]} alt="" style={imgStyle} />
+                              </div>
+                              <div style={{ gridColumn: "2", gridRow: "2", overflow: "hidden" }}>
+                                <img src={imageUrls[2]} alt="" style={imgStyle} />
+                              </div>
+                            </div>
+                          );
+                        } else {
+                          // 4 or more images
+                          const extraCount = count - 4;
+                          return (
+                            <div style={{
+                              ...containerStyle,
+                              display: "grid",
+                              gridTemplateColumns: "1fr 1fr",
+                              gridTemplateRows: "1fr 1fr",
+                              gap: "1.5px"
+                            }}>
+                              <img src={imageUrls[0]} alt="" style={imgStyle} />
+                              <img src={imageUrls[1]} alt="" style={imgStyle} />
+                              <img src={imageUrls[2]} alt="" style={imgStyle} />
+                              <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                                <img src={imageUrls[3]} alt="" style={imgStyle} />
+                                {extraCount > 0 && (
+                                  <div style={{
+                                    position: "absolute",
+                                    inset: 0,
+                                    backgroundColor: "rgba(0,0,0,0.52)",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    color: "#ffffff",
+                                    fontSize: "0.58rem",
+                                    fontWeight: "bold",
+                                    fontFamily: "var(--font-sans)"
+                                  }}>
+                                    +{extraCount}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        }
+                      })()}
                     </div>
                   </Link>
                   </motion.div>

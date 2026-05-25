@@ -676,6 +676,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         /* ── Inline Photo Stack — Carousel Peek ────── */
         .inline-photo-grid {
           position: relative;
+          z-index: 1;
           width: 100%;
           height: 250px; /* Base height */
           margin: 1.5rem 0 2.5rem 0;
@@ -698,8 +699,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           transition:
             transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
             opacity   0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
-            box-shadow 0.4s ease,
-            z-index 0.5s;
+            box-shadow 0.4s ease;
           transform-origin: center center;
         }
         /* Active item */
