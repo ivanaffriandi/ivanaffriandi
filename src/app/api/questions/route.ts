@@ -119,6 +119,16 @@ export async function POST(request: Request) {
       ip = ip.split(",")[0].trim();
     }
 
+    // --- IP BLOCKLIST ---
+    const blockedIPs = ["103.174.18.46"];
+    if (blockedIPs.includes(ip)) {
+      return NextResponse.json(
+        { error: `You have been blocked from interacting. IP ${ip} has been logged for malicious activity.` },
+        { status: 403 }
+      );
+    }
+    // --------------------
+
     // Capture User Agent & Parse Device
     const ua = request.headers.get("user-agent") || "";
     const device = parseUserAgent(ua);

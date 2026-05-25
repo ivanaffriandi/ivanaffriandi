@@ -305,6 +305,7 @@ export default function AskPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   
   // High-fidelity morphing state
   const [isMaximized, setIsMaximized] = useState(false);
@@ -364,6 +365,7 @@ export default function AskPage() {
     if (!content.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
+    setErrorMsg("");
 
     try {
       await addQuestion(content.trim(), senderName.trim());
@@ -386,8 +388,10 @@ export default function AskPage() {
       // Refresh list in background
       const data = await getAnsweredQuestions();
       setAnsweredList(data);
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
+      setErrorMsg(e.message || "Failed to submit question");
+      // keep it maximized to show the error
     } finally {
       setIsSubmitting(false);
     }
@@ -730,6 +734,23 @@ export default function AskPage() {
                       {300 - content.length} left
                     </span>
                   </div>
+
+                  {/* Error Message Display */}
+                  {errorMsg && (
+                    <div style={{
+                      backgroundColor: "rgba(255, 60, 60, 0.1)",
+                      border: "1px solid rgba(255, 60, 60, 0.3)",
+                      borderRadius: "8px",
+                      padding: "8px 12px",
+                      color: "#ff4d4d",
+                      fontSize: "0.75rem",
+                      fontFamily: "var(--font-sans)",
+                      fontWeight: "600",
+                      lineHeight: "1.4"
+                    }}>
+                      {errorMsg}
+                    </div>
+                  )}
 
                   {/* Header Separator Line */}
                   <div style={{ height: "1px", backgroundColor: "var(--border-color)", width: "100%", opacity: 0.6 }} />

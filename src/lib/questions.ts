@@ -22,7 +22,14 @@ export async function addQuestion(content: string, name?: string): Promise<Quest
     },
     body: JSON.stringify({ content, name })
   });
-  if (!res.ok) throw new Error("Failed to submit question");
+  if (!res.ok) {
+    let errorMsg = "Failed to submit question";
+    try {
+      const errData = await res.json();
+      if (errData.error) errorMsg = errData.error;
+    } catch(e) {}
+    throw new Error(errorMsg);
+  }
   return res.json();
 }
 

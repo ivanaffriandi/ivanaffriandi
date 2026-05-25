@@ -52,6 +52,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "postId, authorName and content are required" }, { status: 400 });
     }
 
+    // Capture IP Address
+    let ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "127.0.0.1";
+    if (ip.includes(",")) {
+      ip = ip.split(",")[0].trim();
+    }
+
+    // --- IP BLOCKLIST ---
+    const blockedIPs = ["103.174.18.46"];
+    if (blockedIPs.includes(ip)) {
+      return NextResponse.json(
+        { error: `You have been blocked from interacting. IP ${ip} has been logged for malicious activity.` },
+        { status: 403 }
+      );
+    }
+    // --------------------
+
     const newComment = {
       postId,
       postTitle: postTitle || "",
