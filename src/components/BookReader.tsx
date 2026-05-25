@@ -687,6 +687,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           display: flex;
           align-items: center;
           justify-content: center;
+          perspective: 1000px;
+          transform-style: preserve-3d;
         }
         .inline-photo-item {
           position: absolute !important;
@@ -697,7 +699,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           border: 1px solid rgba(255,255,255,0.1) !important;
           box-shadow: 0 12px 36px rgba(0,0,0,0.18) !important;
           cursor: pointer !important;
-          will-change: transform, opacity !important;
+          transform-style: preserve-3d;
           transition:
             transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
             opacity   0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
@@ -706,28 +708,28 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         }
         /* Active item */
         .inline-photo-item[data-stack="active"] {
-          transform: translateX(0) scale(1) !important;
+          transform: translate3d(0, 0, 30px) scale(1) !important;
           opacity: 1 !important;
           z-index: 30 !important;
           box-shadow: 0 16px 48px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.12) !important;
         }
         /* Prev item (left peek) */
         .inline-photo-item[data-stack="prev"] {
-          transform: translateX(-64%) scale(0.85) !important;
+          transform: translate3d(-64%, 0, 10px) scale(0.85) !important;
           opacity: 0.65 !important;
           z-index: 20 !important;
           box-shadow: 0 8px 24px rgba(0,0,0,0.1) !important;
         }
         /* Next item (right peek) */
         .inline-photo-item[data-stack="next"] {
-          transform: translateX(64%) scale(0.85) !important;
+          transform: translate3d(64%, 0, 10px) scale(0.85) !important;
           opacity: 0.65 !important;
           z-index: 20 !important;
           box-shadow: 0 8px 24px rgba(0,0,0,0.1) !important;
         }
         /* Hidden items (behind active) */
         .inline-photo-item[data-stack="hidden"] {
-          transform: translateX(0) scale(0.7) !important;
+          transform: translate3d(0, 0, 0) scale(0.7) !important;
           opacity: 0 !important;
           z-index: 10 !important;
           pointer-events: none !important;
@@ -793,10 +795,10 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             height: 200px;
           }
           .inline-photo-item[data-stack="prev"] {
-            transform: translateX(-68%) scale(0.85);
+            transform: translate3d(-68%, 0, 10px) scale(0.85) !important;
           }
           .inline-photo-item[data-stack="next"] {
-            transform: translateX(68%) scale(0.85);
+            transform: translate3d(68%, 0, 10px) scale(0.85) !important;
           }
           .inline-photo-nav {
             width: 28px;
