@@ -371,6 +371,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             const contentNode = getContentNode(img);
             const wrapper = getOutermostWrapper(contentNode);
 
+            // Wiping out any blogger-injected inline styles to prevent layout overrides
+            contentNode.removeAttribute("style");
             contentNode.classList.add("inline-photo-item");
             contentNode.setAttribute("data-card-index", String(i));
             
@@ -687,48 +689,48 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           justify-content: center;
         }
         .inline-photo-item {
-          position: absolute;
-          width: 74%; /* Active card takes 74% width */
-          height: 230px;
-          border-radius: 20px;
-          overflow: hidden;
-          border: 1px solid rgba(255,255,255,0.1);
-          box-shadow: 0 12px 36px rgba(0,0,0,0.18);
-          cursor: pointer;
-          will-change: transform, opacity;
+          position: absolute !important;
+          width: 74% !important; /* Active card takes 74% width */
+          height: 230px !important;
+          border-radius: 20px !important;
+          overflow: hidden !important;
+          border: 1px solid rgba(255,255,255,0.1) !important;
+          box-shadow: 0 12px 36px rgba(0,0,0,0.18) !important;
+          cursor: pointer !important;
+          will-change: transform, opacity !important;
           transition:
             transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
             opacity   0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
             box-shadow 0.4s ease;
-          transform-origin: center center;
+          transform-origin: center center !important;
         }
         /* Active item */
         .inline-photo-item[data-stack="active"] {
-          transform: translateX(0) scale(1);
-          opacity: 1;
-          z-index: 30;
-          box-shadow: 0 16px 48px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.12);
+          transform: translateX(0) scale(1) !important;
+          opacity: 1 !important;
+          z-index: 30 !important;
+          box-shadow: 0 16px 48px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.12) !important;
         }
         /* Prev item (left peek) */
         .inline-photo-item[data-stack="prev"] {
-          transform: translateX(-64%) scale(0.85);
-          opacity: 0.65;
-          z-index: 20;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+          transform: translateX(-64%) scale(0.85) !important;
+          opacity: 0.65 !important;
+          z-index: 20 !important;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.1) !important;
         }
         /* Next item (right peek) */
         .inline-photo-item[data-stack="next"] {
-          transform: translateX(64%) scale(0.85);
-          opacity: 0.65;
-          z-index: 20;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+          transform: translateX(64%) scale(0.85) !important;
+          opacity: 0.65 !important;
+          z-index: 20 !important;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.1) !important;
         }
         /* Hidden items (behind active) */
         .inline-photo-item[data-stack="hidden"] {
-          transform: translateX(0) scale(0.7);
-          opacity: 0;
-          z-index: 10;
-          pointer-events: none;
+          transform: translateX(0) scale(0.7) !important;
+          opacity: 0 !important;
+          z-index: 10 !important;
+          pointer-events: none !important;
         }
         .inline-photo-item img {
           width: 100% !important;
