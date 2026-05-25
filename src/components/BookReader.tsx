@@ -738,6 +738,19 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           background-color: rgba(0,0,0,0.12) !important;
         }
 
+        .inline-photo-grid img {
+          width: 100% !important;
+          height: 100% !important;
+          max-width: 100% !important;
+          object-fit: cover !important;
+          margin: 0 !important;
+          border-radius: 0 !important;
+          display: block !important;
+          pointer-events: none !important;
+          user-select: none !important;
+          -webkit-user-drag: none !important;
+        }
+
         /* Premium Responsive Grid Collage Heights */
         .inline-photo-grid.grid-cols-2 {
           height: 140px !important;
