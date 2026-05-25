@@ -316,36 +316,30 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     };
 
     // Helper to get the outermost wrapper block for contentNode that contains no other content/elements
-    const getOutermostWrapper = (node: HTMLElement, groupContentNodes: HTMLElement[]): HTMLElement => {
+    const getOutermostWrapper = (node: HTMLElement): HTMLElement => {
       let current = node;
-      while (current.parentElement && current.parentElement.tagName !== "BODY" && current.parentElement.tagName !== "HTML") {
+      let depth = 0;
+      // Max depth of 2 levels (e.g. img -> a -> p/div)
+      while (current.parentElement && current.parentElement.tagName !== "BODY" && depth < 2) {
         const parent = current.parentElement;
+        const tag = parent.tagName;
         
-        const otherElements = Array.from(parent.children).filter(
-          child => child !== current && 
-                   child.tagName !== "BR" && 
-                   child.tagName !== "SPAN" && 
-                   !groupContentNodes.some(gn => child.contains(gn) || gn.contains(child))
-        );
-        
-        const parentClone = parent.cloneNode(true) as HTMLElement;
-        const childIndex = Array.from(parent.children).indexOf(current);
-        if (childIndex !== -1 && parentClone.children[childIndex]) {
-          parentClone.removeChild(parentClone.children[childIndex]);
+        // We only trace up to standard wrapping tags
+        if (tag !== "A" && tag !== "P" && tag !== "DIV" && tag !== "SPAN") {
+          break;
         }
-        groupContentNodes.forEach(gn => {
-          const selector = gn.tagName.toLowerCase();
-          parentClone.querySelectorAll(selector).forEach(selEl => {
-            if (selEl.parentNode) selEl.parentNode.removeChild(selEl);
-          });
-        });
         
-        const textContent = parentClone.textContent ? parentClone.textContent.trim() : "";
+        // Check if parent has other elements or text
+        const otherElements = Array.from(parent.children).filter(child => child !== current && child.tagName !== "BR");
+        const textContent = parent.textContent ? parent.textContent.trim() : "";
         
+        // If parent has significant other content, we stop
         if (otherElements.length > 0 || textContent !== "") {
           break;
         }
+        
         current = parent;
+        depth++;
       }
       return current;
     };
@@ -381,15 +375,14 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
       container.className = "inline-photo-grid";
 
       const firstContentNode = getContentNode(group[0]);
-      const groupContentNodes = group.map(img => getContentNode(img));
-      const firstWrapper = getOutermostWrapper(firstContentNode, groupContentNodes);
+      const firstWrapper = getOutermostWrapper(firstContentNode);
 
       if (firstWrapper.parentNode) {
         firstWrapper.parentNode.insertBefore(container, firstWrapper);
         
         group.forEach((img) => {
           const contentNode = getContentNode(img);
-          const wrapper = getOutermostWrapper(contentNode, groupContentNodes);
+          const wrapper = getOutermostWrapper(contentNode);
 
           // Add inline-photo-item styling class to contentNode
           contentNode.classList.add("inline-photo-item");
@@ -410,7 +403,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         });
 
         // Remove the empty first wrapper block from DOM
-        if (firstWrapper.parentNode) {
+        if (firstWrapper !== firstContentNode && firstWrapper.parentNode) {
           firstWrapper.parentNode.removeChild(firstWrapper);
         }
       }
@@ -655,44 +648,13 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         footer.yunox-single-footer {
           display: none !important;
         }
-        .photo-grid-scroll {
-          display: flex;
-          gap: 12px;
-          overflow-x: auto;
-          scroll-snap-type: x mandatory;
-          -webkit-overflow-scrolling: touch;
-          scrollbar-width: none;
-          -ms-overflow-style: none;
+        .photo-cover-collage {
           width: 100%;
-          padding-bottom: 4px;
-          margin-bottom: 1.25rem;
-          justify-content: flex-start;
-        }
-        .photo-grid-scroll::-webkit-scrollbar {
-          display: none !important;
-        }
-        .photo-cover-item {
-          flex: 0 0 100%;
-          width: 100%;
-          max-width: 100%;
-          height: 220px;
-          border-radius: 16px;
-          overflow: hidden;
-          scroll-snap-align: start;
-          flex-shrink: 0;
-          cursor: pointer;
-          position: relative;
-          background-color: rgba(150,150,150,0.08);
-          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          height: 220px !important;
         }
         @media (min-width: 768px) {
-          .photo-cover-item {
-            height: 380px;
-          }
-        }
-        @media (max-width: 768px) {
-          .photo-cover-item {
-            border-radius: 12px;
+          .photo-cover-collage {
+            height: 380px !important;
           }
         }
 
@@ -921,57 +883,110 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             {/* Elegant Rounded Journal Header */}
             <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
 
-          {/* ===== COMPACT PHOTO GRID (above date) ===== */}
+          {/* ===== PREMIUM COVER COLLAGE GRID (above date) ===== */}
           {extractedImages.length > 0 && (
             <div
-              className="photo-grid-scroll"
+              className="photo-cover-collage"
               style={{
-                // Full-bleed left/right for edge-to-edge feel
-                marginLeft: "-1rem",
-                marginRight: "-1rem",
-                paddingLeft: "1rem",
-                paddingRight: "1rem",
+                width: "100%",
+                height: "220px",
+                borderRadius: "16px",
+                overflow: "hidden",
+                border: `1px solid ${colors.border}`,
+                boxShadow: "0 8px 32px rgba(0,0,0,0.04)",
+                backgroundColor: "rgba(150,150,150,0.08)",
+                marginBottom: "1.25rem",
+                position: "relative",
+                display: extractedImages.length === 1 ? "block" : "grid",
+                gap: "4px",
+                // Grid layout based on number of images
+                gridTemplateColumns: 
+                  extractedImages.length === 2 
+                    ? "1fr 1fr" 
+                    : extractedImages.length === 3 
+                      ? "2fr 1fr" 
+                      : extractedImages.length >= 4 
+                        ? "1fr 1fr" 
+                        : "none",
+                gridTemplateRows: 
+                  extractedImages.length === 3 
+                    ? "1fr 1fr" 
+                    : extractedImages.length >= 4 
+                      ? "1fr 1fr" 
+                      : "none",
               }}
             >
-              {extractedImages.map((src, idx) => (
-                <motion.div
-                  key={idx}
-                  whileHover={{ scale: 1.005 }}
-                  whileTap={{ scale: 0.995 }}
-                  onClick={() => setLightboxImg({ src, index: idx })}
-                  className="photo-cover-item"
-                  style={{
-                    border: `1px solid ${colors.border}`,
-                  }}
-                >
-                  <img
-                    src={src}
-                    alt={`Photo ${idx + 1}`}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                  />
-                  {/* subtle bottom gradient overlay */}
-                  <div style={{
-                    position: "absolute", inset: 0,
-                    background: "linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 55%)",
-                  }} />
-                  {/* photo index badge (if multiple) */}
-                  {extractedImages.length > 1 && (
+              {extractedImages.slice(0, 4).map((src, idx) => {
+                // Determine grid cell positions for 3 images case
+                let gridStyle: React.CSSProperties = {
+                  position: "relative",
+                  width: "100%",
+                  height: "100%",
+                  overflow: "hidden",
+                  cursor: "pointer",
+                };
+                
+                if (extractedImages.length === 3) {
+                  if (idx === 0) {
+                    gridStyle.gridRow = "span 2";
+                  } else if (idx === 1) {
+                    gridStyle.gridColumn = "2";
+                    gridStyle.gridRow = "1";
+                  } else if (idx === 2) {
+                    gridStyle.gridColumn = "2";
+                    gridStyle.gridRow = "2";
+                  }
+                }
+
+                const isLastCellWithMore = extractedImages.length > 4 && idx === 3;
+                const extraCount = extractedImages.length - 4;
+
+                return (
+                  <motion.div
+                    key={idx}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.995 }}
+                    onClick={() => setLightboxImg({ src, index: idx })}
+                    style={gridStyle}
+                  >
+                    <img
+                      src={src}
+                      alt={`Cover Photo ${idx + 1}`}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                    />
+                    
+                    {/* Dark gradient overlay */}
                     <div style={{
-                      position: "absolute", bottom: "12px", right: "12px",
-                      fontSize: "0.65rem", fontWeight: "700",
-                      color: "#ffffff",
-                      backgroundColor: "rgba(0, 0, 0, 0.45)",
-                      padding: "4px 8px",
-                      borderRadius: "6px",
-                      backdropFilter: "blur(4px)",
-                      fontFamily: "var(--font-sans)",
-                      letterSpacing: "0.04em"
-                    }}>
-                      {idx + 1}/{extractedImages.length}
-                    </div>
-                  )}
-                </motion.div>
-              ))}
+                      position: "absolute", inset: 0,
+                      background: "linear-gradient(to top, rgba(0,0,0,0.2) 0%, transparent 60%)",
+                    }} />
+
+                    {/* "+X More" Overlay for the 4th quadrant */}
+                    {isLastCellWithMore && (
+                      <div style={{
+                        position: "absolute", inset: 0,
+                        backgroundColor: "rgba(0, 0, 0, 0.45)",
+                        backdropFilter: "blur(6px)",
+                        WebkitBackdropFilter: "blur(6px)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexDirection: "column",
+                        color: "#ffffff",
+                        fontFamily: "var(--font-sans)",
+                        userSelect: "none"
+                      }}>
+                        <span style={{ fontSize: "1.6rem", fontWeight: "700", letterSpacing: "-0.02em" }}>
+                          +{extraCount}
+                        </span>
+                        <span style={{ fontSize: "0.6rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em", opacity: 0.8, marginTop: "2px" }}>
+                          Photos
+                        </span>
+                      </div>
+                    )}
+                  </motion.div>
+                );
+              })}
             </div>
           )}
 
