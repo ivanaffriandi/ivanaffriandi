@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { sendNotificationEmail } from "@/lib/notifications";
 
 // URL Database Realtime Firebase Resmi & Aktif milik Ivan Affriandi (Region Singapura)
@@ -207,7 +208,7 @@ export async function POST(request: Request) {
         </div>
 
         <p style="color: #78716c; font-size: 13px; margin-bottom: 24px;">Sent at: ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })} WIB</p>
-        <a href="https://ivanaffriandi.com/admin" style="display: inline-block; padding: 12px 24px; background-color: #1c1917; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; transition: background-color 0.2s;">Go to Admin Portal</a>
+        <a href="https://ivanaffriandi.com/hq-panel" style="display: inline-block; padding: 12px 24px; background-color: #1c1917; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; transition: background-color 0.2s;">Go to Admin Portal</a>
       </div>
     `;
 
@@ -227,9 +228,19 @@ export async function POST(request: Request) {
   }
 }
 
+async function verifyAdminAuth() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("admin_session");
+  return session?.value === "authenticated_ivan_exclusive";
+}
+
 
 export async function PUT(request: Request) {
   try {
+    if (!(await verifyAdminAuth())) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id, answerText } = await request.json();
     if (!id || !answerText) {
       return NextResponse.json({ error: "ID and answerText are required" }, { status: 400 });
@@ -261,6 +272,10 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    if (!(await verifyAdminAuth())) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
     if (!id) {
@@ -282,3 +297,4 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Failed to delete question" }, { status: 500 });
   }
 }
+

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { sendNotificationEmail } from "@/lib/notifications";
 
 // Firebase Realtime DB (same region as questions)
@@ -59,10 +60,10 @@ export async function POST(request: Request) {
     }
 
     // --- IP BLOCKLIST ---
-    const blockedIPs = ["103.174.18.46"];
+    const blockedIPs = ["103.174.18.46", "180.254.78.88"];
     if (blockedIPs.includes(ip)) {
       return NextResponse.json(
-        { error: `You have been blocked from interacting. IP ${ip} has been logged for malicious activity.` },
+        { error: "Your connection has been permanently restricted due to abusive behavior." },
         { status: 403 }
       );
     }
@@ -105,7 +106,7 @@ export async function POST(request: Request) {
           <p style="color: #1c1917; font-size: 15px; line-height: 1.6; margin: 0;">"${content}"</p>
         </div>
         <p style="color: #78716c; font-size: 13px; margin-bottom: 24px;">Sent at: ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })} WIB</p>
-        <a href="https://ivanaffriandi.com/admin" style="display: inline-block; padding: 12px 24px; background-color: #1c1917; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; transition: background-color 0.2s;">Go to Admin Portal to Approve</a>
+        <a href="https://ivanaffriandi.com/hq-panel" style="display: inline-block; padding: 12px 24px; background-color: #1c1917; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; transition: background-color 0.2s;">Go to Admin Portal to Approve</a>
       </div>
     `;
 
@@ -121,9 +122,18 @@ export async function POST(request: Request) {
   }
 }
 
+async function verifyAdminAuth() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("admin_session");
+  return session?.value === "authenticated_ivan_exclusive";
+}
+
 // PATCH: Update comment (approve or add reply)
 export async function PATCH(request: Request) {
   try {
+    if (!(await verifyAdminAuth())) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const body = await request.json();
     const { id, action, replyText } = body;
 
@@ -158,6 +168,9 @@ export async function PATCH(request: Request) {
 // DELETE: Remove a comment
 export async function DELETE(request: Request) {
   try {
+    if (!(await verifyAdminAuth())) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
