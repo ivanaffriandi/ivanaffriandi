@@ -1447,6 +1447,16 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             margin-top: 1.5rem !important;
           }
         }
+        
+        /* Ensure all photos in feed are completely un-interactable (no zoom, no download, no click) */
+        .journal-post-card img,
+        .moments-grid img,
+        .timeline-post-link img,
+        .blog-slider-section img {
+          pointer-events: none !important;
+          user-select: none !important;
+          -webkit-user-drag: none !important;
+        }
       `}</style>
 
       {/* MOBILE ONLY TOP CALENDAR SECTION */}

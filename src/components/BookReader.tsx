@@ -605,6 +605,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           border-radius: 16px;
           margin: 1.5rem 0;
         }
+        .book-prose img, .photo-cover-collage img {
+          pointer-events: none !important;
+          user-select: none !important;
+          -webkit-user-drag: none !important;
+        }
         .live-photo-wrapper {
           position: relative;
           width: 100%;
@@ -732,7 +737,9 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           margin: 0 !important;
           border-radius: 0 !important;
           display: block !important;
-          pointer-events: none;
+          pointer-events: none !important;
+          user-select: none !important;
+          -webkit-user-drag: none !important;
         }
         /* Swipe-out animations (no longer needed for carousel, but kept for click safety) */
         .inline-photo-item.swiping-out-left,
@@ -1037,9 +1044,6 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 return (
                   <motion.div
                     key={idx}
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.995 }}
-                    onClick={() => setLightboxImg({ src, index: idx })}
                     style={gridStyle}
                   >
                     <img
@@ -1229,25 +1233,6 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             if (stack) {
               cycleStack(stack, "next");
               return;
-            }
-
-            // ── Normal image click → lightbox ──
-            if (target.tagName === "IMG") {
-              e.preventDefault();
-              const src = (target as HTMLImageElement).src;
-              const idx = extractedImages.indexOf(src);
-              setLightboxImg({ src, index: idx !== -1 ? idx : 0 });
-            } else {
-              const link = target.closest("a");
-              if (link) {
-                const img = link.querySelector("img");
-                if (img) {
-                  e.preventDefault();
-                  const src = img.src;
-                  const idx = extractedImages.indexOf(src);
-                  setLightboxImg({ src, index: idx !== -1 ? idx : 0 });
-                }
-              }
             }
           }}
         />
