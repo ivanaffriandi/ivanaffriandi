@@ -156,14 +156,15 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
 
   // Randomised-but-stable EXIF-style metadata per image
   const getPhotoMeta = (idx: number) => {
-    const shutters = ["1/60s", "1/120s", "1/250s", "1/500s", "1/1000s"];
-    const apertures = ["f/1.8", "f/2.0", "f/2.2", "f/2.4"];
-    const isos = ["ISO 50", "ISO 100", "ISO 200", "ISO 400"];
+    const cameras = ["Ricoh GR IIIx", "Fujifilm X100VI"];
+    const shutters = ["1/125s", "1/250s", "1/500s", "1/1000s"];
+    const apertures = ["f/2.8", "f/4.0", "f/5.6", "f/8.0"];
+    const isos = ["ISO 100", "ISO 200", "ISO 400", "ISO 800"];
     return {
-      model: "iPhone 11",
-      shutter: shutters[idx % shutters.length],
-      aperture: apertures[(idx + 1) % apertures.length],
-      iso: isos[(idx + 2) % isos.length],
+      model: cameras[idx % cameras.length],
+      shutter: shutters[(idx + 1) % shutters.length],
+      aperture: apertures[(idx + 2) % apertures.length],
+      iso: isos[(idx + 3) % isos.length],
     };
   };
 
@@ -960,8 +961,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     <span>{getPhotoMeta(lightboxImg.index).aperture}</span>
                     <span>{getPhotoMeta(lightboxImg.index).iso}</span>
                   </div>
-                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", fontWeight: "700", color: "#333", letterSpacing: "0.02em", textTransform: "uppercase" }}>
-                    Curated Archive
+                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", fontWeight: "700", color: "#888", letterSpacing: "0.02em", textTransform: "uppercase" }}>
+                    {getPhotoMeta(lightboxImg.index).model}
                   </span>
                 </div>
                 <button
