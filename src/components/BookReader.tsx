@@ -694,12 +694,12 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           }
         }
 
-        /* ── Inline Photo Stack — Scattered Fan ─────────── */
+        /* ── Inline Photo Stack — Premium Centered Fan ────── */
         .inline-photo-grid {
           position: relative;
           width: 100%;
-          height: 230px;
-          margin: 0.75rem 0 1.5rem 0;
+          height: 260px; /* card (215px) + gap + nav area */
+          margin: 1rem 0 1.75rem 0;
           user-select: none;
           touch-action: pan-y;
         }
@@ -708,42 +708,49 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           left: 0; right: 0; top: 0;
           width: 100%;
           height: 215px;
-          border-radius: 18px;
+          border-radius: 22px;
           overflow: hidden;
-          border: 1px solid rgba(200,200,200,0.15);
-          box-shadow: 0 6px 28px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.07);
+          border: 0.5px solid rgba(255,255,255,0.55);
+          box-shadow:
+            0 20px 56px rgba(0,0,0,0.13),
+            0 8px 22px rgba(0,0,0,0.09),
+            0 2px 7px rgba(0,0,0,0.05);
           cursor: pointer;
           will-change: transform, opacity;
-          transition: transform 0.44s cubic-bezier(0.22, 1, 0.36, 1),
-                      opacity 0.44s cubic-bezier(0.22, 1, 0.36, 1),
-                      box-shadow 0.32s ease;
-          transform-origin: center center;
+          transition:
+            transform 0.52s cubic-bezier(0.16, 1, 0.3, 1),
+            opacity   0.52s cubic-bezier(0.16, 1, 0.3, 1),
+            box-shadow 0.32s ease;
+          transform-origin: 50% 50%; /* rotate around card center → always horizontally centered */
         }
-        /* Scattered fan — alternating rotation for organic feel */
+        /* Centered alternating fan — NO translateX (keeps cards centered) */
         .inline-photo-item[data-stack="0"] {
-          transform: rotate(0deg) translateY(0px) scale(1);
+          transform: rotate(0deg) scale(1) translateY(0);
           opacity: 1;
           z-index: 30;
-          box-shadow: 0 10px 34px rgba(0,0,0,0.17), 0 3px 10px rgba(0,0,0,0.09);
+          box-shadow:
+            0 22px 60px rgba(0,0,0,0.16),
+            0 8px 24px rgba(0,0,0,0.10),
+            0 2px 8px rgba(0,0,0,0.06);
         }
         .inline-photo-item[data-stack="1"] {
-          transform: rotate(4.5deg) translateY(5px) translateX(9px) scale(0.97);
+          transform: rotate(-4.2deg) scale(0.97) translateY(5px);
           opacity: 0.82;
           z-index: 20;
         }
         .inline-photo-item[data-stack="2"] {
-          transform: rotate(-3.8deg) translateY(9px) translateX(-7px) scale(0.94);
+          transform: rotate(3.5deg) scale(0.94) translateY(10px);
           opacity: 0.54;
           z-index: 10;
         }
         .inline-photo-item[data-stack="3"] {
-          transform: rotate(6.5deg) translateY(13px) translateX(13px) scale(0.90);
-          opacity: 0.28;
+          transform: rotate(-6deg) scale(0.91) translateY(14px);
+          opacity: 0.3;
           z-index: 5;
         }
         .inline-photo-item[data-stack="hidden"] {
           opacity: 0;
-          transform: rotate(6.5deg) translateY(13px) translateX(13px) scale(0.90);
+          transform: rotate(0deg) scale(0.91) translateY(14px);
           z-index: 0;
           pointer-events: none;
           transition: none;
@@ -757,64 +764,66 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           display: block !important;
           pointer-events: none;
         }
-        /* Swipe-out animations */
+        /* Swipe-out with subtle rotation for tactile feel */
         .inline-photo-item.swiping-out-left {
-          transform: translateX(-118%) rotate(-8deg) scale(0.9) !important;
+          transform: translateX(-115%) rotate(-5deg) scale(0.93) !important;
           opacity: 0 !important;
           transition: transform 0.3s cubic-bezier(0.55, 0, 1, 0.45),
                       opacity 0.25s ease !important;
         }
         .inline-photo-item.swiping-out-right {
-          transform: translateX(118%) rotate(8deg) scale(0.9) !important;
+          transform: translateX(115%) rotate(5deg) scale(0.93) !important;
           opacity: 0 !important;
           transition: transform 0.3s cubic-bezier(0.55, 0, 1, 0.45),
                       opacity 0.25s ease !important;
         }
-        /* Minimalist nav buttons — overlaid on photo edges */
+        /* Minimal nav buttons — clean, below the card */
         .inline-photo-nav {
           position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
+          top: 228px; /* 215px card + 13px gap */
           z-index: 50;
-          width: 30px;
-          height: 30px;
+          width: 28px;
+          height: 28px;
           border-radius: 50%;
-          border: 1px solid rgba(255,255,255,0.3);
-          background: rgba(0,0,0,0.28);
+          border: 1px solid rgba(0,0,0,0.11);
+          background: rgba(255,255,255,0.78);
           backdrop-filter: blur(10px);
           -webkit-backdrop-filter: blur(10px);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          color: rgba(255,255,255,0.9);
-          transition: background 0.18s ease, opacity 0.18s ease;
+          color: rgba(0,0,0,0.55);
+          transition: all 0.18s ease;
           padding: 0;
-          opacity: 0.7;
         }
         .inline-photo-nav:hover {
-          background: rgba(0,0,0,0.46);
-          opacity: 1;
+          background: rgba(255,255,255,1);
+          border-color: rgba(0,0,0,0.18);
+          color: rgba(0,0,0,0.85);
+          box-shadow: 0 3px 12px rgba(0,0,0,0.12);
         }
         .inline-photo-nav:active {
-          background: rgba(0,0,0,0.6);
+          transform: scale(0.9);
         }
         .inline-photo-nav-prev {
-          left: 10px;
+          left: calc(50% - 34px); /* prev center: 50% - 20px */
         }
         .inline-photo-nav-next {
-          right: 10px;
+          right: calc(50% - 34px); /* next center: 50% + 20px */
         }
         @media (max-width: 768px) {
           .inline-photo-grid {
-            height: 205px;
-            margin: 0.5rem 0 1.25rem 0;
+            height: 238px;
+            margin: 0.75rem 0 1.5rem 0;
           }
           .inline-photo-item {
-            height: 190px;
-            border-radius: 14px;
+            height: 196px;
+            border-radius: 18px;
           }
           .inline-photo-nav {
+            top: 210px;
             width: 26px;
             height: 26px;
           }
