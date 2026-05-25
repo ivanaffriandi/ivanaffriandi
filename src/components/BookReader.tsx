@@ -233,8 +233,198 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     const doc = parser.parseFromString(post.content, "text/html");
     const imgs = Array.from(doc.querySelectorAll("img")).map((img) => img.src).filter(Boolean);
     
+    // Transform <video> elements to behave like Apple Live Photos
+    doc.querySelectorAll("video").forEach((video) => {
+      video.setAttribute("autoplay", "true");
+      video.setAttribute("loop", "true");
+      video.setAttribute("muted", "true");
+      video.setAttribute("playsinline", "true");
+      video.removeAttribute("controls"); // Live Photo is clean and loops silently
+      
+      video.style.width = "100%";
+      video.style.height = "auto";
+      video.style.display = "block";
+      video.style.borderRadius = "16px";
+      video.style.margin = "0"; // Handled by wrapper
+
+      // Create Live Photo Wrapper
+      const wrapper = doc.createElement("div");
+      wrapper.className = "live-photo-wrapper";
+      
+      // Create Live Photo Badge
+      const badge = doc.createElement("div");
+      badge.className = "live-photo-badge";
+      badge.innerHTML = "<span></span>LIVE";
+
+      // Insert wrapper, relocate video, append badge
+      if (video.parentNode) {
+        video.parentNode.insertBefore(wrapper, video);
+        wrapper.appendChild(video);
+        wrapper.appendChild(badge);
+      }
+    });
+
+    // Helper to determine if there is significant content (text or other media) between two images
+    const hasSignificantContentBetween = (img1: HTMLImageElement, img2: HTMLImageElement): boolean => {
+      let current: Node | null = img1;
+      
+      const nextNode = (node: Node): Node | null => {
+        if (node.firstChild) return node.firstChild;
+        while (node) {
+          if (node.nextSibling) return node.nextSibling;
+          node = node.parentNode!;
+          if (node === doc.body || node === doc) return null;
+        }
+        return null;
+      };
+
+      current = nextNode(current);
+      while (current && current !== img2) {
+        if (current.nodeType === Node.TEXT_NODE) {
+          const text = current.textContent ? current.textContent.trim() : "";
+          if (text.length > 0) {
+            return true;
+          }
+        } else if (current.nodeType === Node.ELEMENT_NODE) {
+          const el = current as HTMLElement;
+          const tag = el.tagName;
+          if (
+            tag === "VIDEO" || 
+            tag === "IFRAME" || 
+            tag === "HR" || 
+            tag === "H1" || 
+            tag === "H2" || 
+            tag === "H3" || 
+            tag === "H4" || 
+            tag === "H5" || 
+            tag === "H6"
+          ) {
+            return true;
+          }
+        }
+        current = nextNode(current);
+      }
+      return false;
+    };
+
+    // Helper to get the content node of an image (either the image itself or its parent link element)
+    const getContentNode = (img: HTMLImageElement): HTMLElement => {
+      if (img.parentElement && img.parentElement.tagName === "A") {
+        return img.parentElement;
+      }
+      return img;
+    };
+
+    // Helper to get the outermost wrapper block for contentNode that contains no other content/elements
+    const getOutermostWrapper = (node: HTMLElement, groupContentNodes: HTMLElement[]): HTMLElement => {
+      let current = node;
+      while (current.parentElement && current.parentElement.tagName !== "BODY" && current.parentElement.tagName !== "HTML") {
+        const parent = current.parentElement;
+        
+        const otherElements = Array.from(parent.children).filter(
+          child => child !== current && 
+                   child.tagName !== "BR" && 
+                   child.tagName !== "SPAN" && 
+                   !groupContentNodes.some(gn => child.contains(gn) || gn.contains(child))
+        );
+        
+        const parentClone = parent.cloneNode(true) as HTMLElement;
+        const childIndex = Array.from(parent.children).indexOf(current);
+        if (childIndex !== -1 && parentClone.children[childIndex]) {
+          parentClone.removeChild(parentClone.children[childIndex]);
+        }
+        groupContentNodes.forEach(gn => {
+          const selector = gn.tagName.toLowerCase();
+          parentClone.querySelectorAll(selector).forEach(selEl => {
+            if (selEl.parentNode) selEl.parentNode.removeChild(selEl);
+          });
+        });
+        
+        const textContent = parentClone.textContent ? parentClone.textContent.trim() : "";
+        
+        if (otherElements.length > 0 || textContent !== "") {
+          break;
+        }
+        current = parent;
+      }
+      return current;
+    };
+
+    // Extract all images
+    const imgsInDoc = Array.from(doc.querySelectorAll("img"));
+    const groups: HTMLImageElement[][] = [];
+    let currentGroup: HTMLImageElement[] = [];
+
+    for (let i = 0; i < imgsInDoc.length; i++) {
+      const img = imgsInDoc[i];
+      if (currentGroup.length === 0) {
+        currentGroup.push(img);
+      } else {
+        const lastImg = currentGroup[currentGroup.length - 1];
+        if (!hasSignificantContentBetween(lastImg, img)) {
+          currentGroup.push(img);
+        } else {
+          if (currentGroup.length >= 2) {
+            groups.push(currentGroup);
+          }
+          currentGroup = [img];
+        }
+      }
+    }
+    if (currentGroup.length >= 2) {
+      groups.push(currentGroup);
+    }
+
+    // Process each group of 2 or more images
+    groups.forEach((group) => {
+      const container = doc.createElement("div");
+      container.className = "inline-photo-grid";
+
+      const firstContentNode = getContentNode(group[0]);
+      const groupContentNodes = group.map(img => getContentNode(img));
+      const firstWrapper = getOutermostWrapper(firstContentNode, groupContentNodes);
+
+      if (firstWrapper.parentNode) {
+        firstWrapper.parentNode.insertBefore(container, firstWrapper);
+        
+        group.forEach((img) => {
+          const contentNode = getContentNode(img);
+          const wrapper = getOutermostWrapper(contentNode, groupContentNodes);
+
+          // Add inline-photo-item styling class to contentNode
+          contentNode.classList.add("inline-photo-item");
+
+          container.appendChild(contentNode);
+          
+          if (wrapper !== contentNode && wrapper.parentNode && wrapper !== firstWrapper) {
+            wrapper.parentNode.removeChild(wrapper);
+          }
+          
+          // Style inside image nicely
+          img.style.width = "100%";
+          img.style.height = "100%";
+          img.style.objectFit = "cover";
+          img.style.margin = "0";
+          img.style.display = "block";
+          img.style.borderRadius = "0";
+        });
+
+        // Remove the empty first wrapper block from DOM
+        if (firstWrapper.parentNode) {
+          firstWrapper.parentNode.removeChild(firstWrapper);
+        }
+      }
+    });
+
+    // Remove any empty paragraph or div tags left over by parent stripping
+    doc.querySelectorAll("p, div").forEach((el) => {
+      if (!el.textContent.trim() && el.children.length === 0) {
+        el.parentNode?.removeChild(el);
+      }
+    });
+
     setExtractedImages(imgs);
-    setCleanContent(post.content);
+    setCleanContent(doc.body.innerHTML);
   }, [mounted, post.content]);
 
   // Synchronous Speech synthesis action triggered by direct user click gesture
@@ -412,6 +602,52 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           border-radius: 16px;
           margin: 1.5rem 0;
         }
+        .live-photo-wrapper {
+          position: relative;
+          width: 100%;
+          margin: 1.5rem 0;
+          border-radius: 16px;
+          overflow: hidden;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+          border: 1px solid var(--border-color);
+        }
+        .live-photo-badge {
+          position: absolute;
+          top: 12px;
+          left: 12px;
+          background: rgba(0, 0, 0, 0.55);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          color: #ffffff;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          font-size: 0.58rem;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          padding: 4px 8px;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          z-index: 10;
+          user-select: none;
+          pointer-events: none;
+          border: 0.5px solid rgba(255,255,255,0.15);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+          text-transform: uppercase;
+        }
+        .live-photo-badge span {
+          width: 6px;
+          height: 6px;
+          background-color: #ffd60a;
+          border-radius: 50%;
+          display: inline-block;
+          box-shadow: 0 0 4px #ffd60a;
+          animation: live-pulse 1.8s infinite ease-in-out;
+        }
+        @keyframes live-pulse {
+          0%, 100% { opacity: 0.5; transform: scale(0.9); }
+          50% { opacity: 1; transform: scale(1.1); }
+        }
         .book-prose p {
           word-break: break-word;
           overflow-wrap: break-word;
@@ -421,6 +657,53 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         }
         .photo-grid-scroll::-webkit-scrollbar { display: none; }
         .photo-grid-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .inline-photo-grid {
+          display: flex;
+          gap: 12px;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+          width: 100%;
+          margin: 1.75rem 0;
+          padding: 4px 0;
+        }
+        .inline-photo-grid::-webkit-scrollbar {
+          display: none !important;
+        }
+        .inline-photo-item {
+          flex: 0 0 280px;
+          width: 280px;
+          height: 200px;
+          border-radius: 16px;
+          overflow: hidden;
+          scroll-snap-align: start;
+          flex-shrink: 0;
+          border: 1px solid var(--border-color);
+          box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+          cursor: pointer;
+          position: relative;
+          display: block;
+        }
+        .inline-photo-item:hover {
+          transform: translateY(-2px) scale(1.015);
+          box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+        
+        @media (max-width: 768px) {
+          .inline-photo-grid {
+            margin: 1.25rem 0;
+          }
+          .inline-photo-item {
+            flex: 0 0 230px;
+            width: 230px;
+            height: 165px;
+            border-radius: 12px;
+          }
+        }
 
         .book-core-article {
           padding-left: 0;
@@ -763,6 +1046,26 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           }}
           className={`book-prose prose-style-${fontStyle}`}
           dangerouslySetInnerHTML={{ __html: cleanContent }}
+          onClick={(e) => {
+            const target = e.target as HTMLElement;
+            if (target.tagName === "IMG") {
+              e.preventDefault();
+              const src = (target as HTMLImageElement).src;
+              const idx = extractedImages.indexOf(src);
+              setLightboxImg({ src, index: idx !== -1 ? idx : 0 });
+            } else {
+              const link = target.closest("a");
+              if (link) {
+                const img = link.querySelector("img");
+                if (img) {
+                  e.preventDefault();
+                  const src = img.src;
+                  const idx = extractedImages.indexOf(src);
+                  setLightboxImg({ src, index: idx !== -1 ? idx : 0 });
+                }
+              }
+            }
+          }}
         />
           </div>
 
