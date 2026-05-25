@@ -231,6 +231,20 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
 
     const parser = new DOMParser();
     const doc = parser.parseFromString(post.content, "text/html");
+
+    // Clean up Blogger collated images where multiple <img> tags are nested inside a single <a>
+    doc.querySelectorAll("a").forEach((a) => {
+      const aImgs = Array.from(a.querySelectorAll("img"));
+      if (aImgs.length > 1) {
+        aImgs.forEach((img) => {
+          const aClone = a.cloneNode(false) as HTMLAnchorElement;
+          aClone.appendChild(img);
+          a.parentNode?.insertBefore(aClone, a);
+        });
+        a.parentNode?.removeChild(a);
+      }
+    });
+
     const imgs = Array.from(doc.querySelectorAll("img")).map((img) => img.src).filter(Boolean);
     
     // Transform <video> elements to behave like Apple Live Photos
