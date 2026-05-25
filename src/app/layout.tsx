@@ -5,6 +5,7 @@ import FooterAbout from "@/components/FooterAbout";
 import BirthdayCelebration from "@/components/BirthdayCelebration";
 import KonamiEasterEgg from "@/components/KonamiEasterEgg";
 import PageTransition from "@/components/PageTransition";
+import GlobalProtector from "@/components/GlobalProtector";
 import "./globals.css";
 import "./footer.css";
 import fs from "fs";
@@ -59,6 +60,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body>
+        <GlobalProtector />
         <BirthdayCelebration />
         <KonamiEasterEgg />
         <div className="layout-wrapper" style={{ padding: "0 4vw" }}>

@@ -947,7 +947,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 <img
                   src={lightboxImg.src}
                   alt=""
-                  style={{ width: "100%", aspectRatio: "1/1", objectFit: "cover", borderRadius: "2px", display: "block" }}
+                  style={{ width: "100%", aspectRatio: "1/1", objectFit: "cover", borderRadius: "2px", display: "block", pointerEvents: "none", userSelect: "none", WebkitUserDrag: "none" }}
                 />
                 {/* iPhone-style EXIF row */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -956,8 +956,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     <span>{getPhotoMeta(lightboxImg.index).aperture}</span>
                     <span>{getPhotoMeta(lightboxImg.index).iso}</span>
                   </div>
-                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", fontWeight: "700", color: "#333", letterSpacing: "0.02em" }}>
-                    Shot on {getPhotoMeta(lightboxImg.index).model}
+                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", fontWeight: "700", color: "#333", letterSpacing: "0.02em", textTransform: "uppercase" }}>
+                    Curated Archive
                   </span>
                 </div>
                 <button
@@ -1044,6 +1044,9 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 return (
                   <motion.div
                     key={idx}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.995 }}
+                    onClick={() => setLightboxImg({ src, index: idx })}
                     style={gridStyle}
                   >
                     <img
@@ -1233,6 +1236,25 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             if (stack) {
               cycleStack(stack, "next");
               return;
+            }
+
+            // ── Normal image click → lightbox ──
+            if (target.tagName === "IMG") {
+              e.preventDefault();
+              const src = (target as HTMLImageElement).src;
+              const idx = extractedImages.indexOf(src);
+              setLightboxImg({ src, index: idx !== -1 ? idx : 0 });
+            } else {
+              const link = target.closest("a");
+              if (link) {
+                const img = link.querySelector("img");
+                if (img) {
+                  e.preventDefault();
+                  const src = img.src;
+                  const idx = extractedImages.indexOf(src);
+                  setLightboxImg({ src, index: idx !== -1 ? idx : 0 });
+                }
+              }
             }
           }}
         />
