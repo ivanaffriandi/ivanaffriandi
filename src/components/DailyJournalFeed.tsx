@@ -2698,8 +2698,8 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             {filteredPosts.length > 0 ? (
               filteredPosts.map((post, index) => {
                 const publishTime = new Date(post.published).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
-                const match = post.content.match(/<img[^>]+src="([^">]+)"/);
-                const imageUrl = match ? match[1] : null;
+                const matches = [...post.content.matchAll(/<img[^>]+src="([^">]+)"/g)];
+                const imageUrls = matches.map((m: any) => m[1]);
                 const rawText = post.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
                 const excerpt = rawText.length > 100 ? rawText.slice(0, 100) + "..." : rawText;
 
@@ -2821,18 +2821,37 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                         </p>
                       </div>
                       
-                      {/* Optional Thumbnail */}
-                      {imageUrl && (
+                      {/* Dynamic Thumbnail Stack */}
+                      {imageUrls.length > 0 && (
                         <div style={{
                           flexShrink: 0,
                           width: "48px", 
                           height: "48px",
-                          borderRadius: "10px",
-                          overflow: "hidden",
-                          border: "1px solid rgba(150,150,150,0.08)",
-                          backgroundColor: "rgba(150,150,150,0.08)"
+                          position: "relative"
                         }}>
-                          <img src={imageUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(100%) contrast(1.08)" }} />
+                          {imageUrls.slice(0, 3).reverse().map((url: string, idx: number) => {
+                             const total = Math.min(imageUrls.length, 3);
+                             const depth = total - 1 - idx; // depth 0 is the front image
+                             const maxOffset = Math.max(0, total - 1) * 4;
+                             
+                             return (
+                               <div key={depth} style={{
+                                 position: "absolute",
+                                 bottom: `${depth * 4}px`,
+                                 right: `${depth * 4}px`,
+                                 width: `calc(100% - ${maxOffset}px)`, 
+                                 height: `calc(100% - ${maxOffset}px)`,
+                                 borderRadius: "8px",
+                                 overflow: "hidden",
+                                 border: "1px solid rgba(150,150,150,0.12)",
+                                 backgroundColor: "var(--bg-color)",
+                                 zIndex: idx,
+                                 boxShadow: depth === 0 ? "0 4px 10px rgba(0,0,0,0.12)" : "none",
+                               }}>
+                                 <img src={url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(100%) contrast(1.08)" }} />
+                               </div>
+                             );
+                          })}
                         </div>
                       )}
                     </div>
