@@ -8,6 +8,7 @@ export default function GlobalProtector() {
   const [mounted, setMounted] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
+  const [isDevToolsOpen, setIsDevToolsOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -29,7 +30,7 @@ export default function GlobalProtector() {
   }, []);
 
   useEffect(() => {
-    if (isAdmin) return; // Completely bypass all protections if the user is an admin
+    if (isAdmin) return; // Bypass all protections if the user is an admin
 
     const logSuspiciousActivity = async (type: string) => {
       try {
@@ -55,42 +56,60 @@ export default function GlobalProtector() {
 
     // 2. Prevent Keyboard Shortcuts for Screenshots/DevTools
     const handleKeyDown = (e: KeyboardEvent) => {
-      // PrintScreen key
       if (e.key === "PrintScreen") {
         e.preventDefault();
         navigator.clipboard?.writeText("Screenshots are disabled.");
         handleScreenshotAttempt("PrintScreen Shortcut");
       }
       
-      // Mac Screenshot Shortcuts: Cmd + Shift + 3/4/5
       if (e.metaKey && e.shiftKey && (e.key === "3" || e.key === "4" || e.key === "5")) {
         e.preventDefault();
         handleScreenshotAttempt("Mac Screenshot Shortcut");
       }
 
-      // Windows Snipping Tool: Win + Shift + S
       if (e.metaKey && e.shiftKey && (e.key === "s" || e.key === "S")) {
         e.preventDefault();
         handleScreenshotAttempt("Windows Snipping Tool Shortcut");
       }
 
-      // Prevent DevTools (F12, Cmd+Option+I) just in case
       if (e.key === "F12" || (e.metaKey && e.altKey && e.key === "i")) {
         e.preventDefault();
       }
     };
     document.addEventListener("keydown", handleKeyDown);
 
-    // 3. Listen to Window Blur (Snipping Tool takes focus away from window)
+    // 3. Listen to Window Blur
     const handleBlur = () => {
       setIsBlurred(true);
     };
     const handleFocus = () => {
       setIsBlurred(false);
     };
-
     window.addEventListener("blur", handleBlur);
     window.addEventListener("focus", handleFocus);
+
+    // 4. Copy Poisoning
+    const handleCopy = (e: ClipboardEvent) => {
+      e.preventDefault();
+      if (e.clipboardData) {
+        e.clipboardData.setData("text/plain", "This content is strictly protected and copyrighted by Ivan Affriandi. Unauthorized copying is logged.");
+        handleScreenshotAttempt("Unauthorized Copy Attempt");
+      }
+    };
+    document.addEventListener("copy", handleCopy);
+
+    // 5. DevTools Detection (Booby Trap)
+    // We check if window size discrepancy is large (meaning devtools is docked)
+    // Or we use the debugger timing trick
+    let devToolsChecker = setInterval(() => {
+      const widthThreshold = window.outerWidth - window.innerWidth > 160;
+      const heightThreshold = window.outerHeight - window.innerHeight > 160;
+      if (widthThreshold || heightThreshold) {
+        setIsDevToolsOpen(true);
+      } else {
+        setIsDevToolsOpen(false);
+      }
+    }, 1000);
 
     // Global CSS injection for unselectable content
     const style = document.createElement("style");
@@ -104,14 +123,22 @@ export default function GlobalProtector() {
         -webkit-user-select: text !important;
         user-select: text !important;
       }
+      ::selection {
+        background: transparent;
+      }
+      ::-moz-selection {
+        background: transparent;
+      }
     `;
     document.head.appendChild(style);
 
     return () => {
       document.removeEventListener("contextmenu", handleContextMenu);
       document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("copy", handleCopy);
       window.removeEventListener("blur", handleBlur);
       window.removeEventListener("focus", handleFocus);
+      clearInterval(devToolsChecker);
       if (document.head.contains(style)) {
         document.head.removeChild(style);
       }
@@ -122,23 +149,43 @@ export default function GlobalProtector() {
 
   return createPortal(
     <>
+      {/* Blackout overlay for Blur or DevTools */}
       <div
         style={{
           position: "fixed",
           inset: 0,
           backgroundColor: "#000000",
           zIndex: 999999,
-          display: isBlurred && !isAdmin ? "flex" : "none",
+          display: ((isBlurred || isDevToolsOpen) && !isAdmin) ? "flex" : "none",
           alignItems: "center",
           justifyContent: "center",
           color: "#ffffff",
           fontFamily: "var(--font-sans)",
           fontWeight: 600,
-          fontSize: "1.2rem"
+          fontSize: "1.2rem",
+          flexDirection: "column",
+          gap: "10px"
         }}
       >
-        Content is protected.
+        <span>{isDevToolsOpen ? "Security Override Detected." : "Content is protected."}</span>
+        {isDevToolsOpen && <span style={{ fontSize: "0.8rem", color: "#ff4444" }}>Please close Developer Tools.</span>}
       </div>
+
+      {/* Invisible Global Watermark Overlay (Defeats camera pictures of monitor) */}
+      {!isAdmin && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            pointerEvents: "none",
+            zIndex: 999998, // Just below the blackout screen
+            opacity: 0.03, // Extremely faint, almost invisible to human eye, but caught by cameras/screenshots
+            backgroundImage: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"200\" height=\"200\"><text x=\"10\" y=\"50\" fill=\"white\" font-size=\"14\" font-family=\"sans-serif\" transform=\"rotate(-45 50 50)\">IVAN AFFRIANDI</text></svg>')",
+            backgroundRepeat: "repeat",
+            mixBlendMode: "difference"
+          }}
+        />
+      )}
       
       {/* Intangible Warning Modal */}
       <div
@@ -164,7 +211,7 @@ export default function GlobalProtector() {
       >
         <h3 style={{ margin: "0 0 6px 0", fontSize: "1rem", fontWeight: 800, letterSpacing: "0.02em" }}>🚨 SECURITY ALERT 🚨</h3>
         <p style={{ margin: 0, fontSize: "0.85rem", opacity: 0.9, lineHeight: 1.4 }}>
-          Screenshot attempts are strictly prohibited.<br/>
+          Unauthorized access attempt blocked.<br/>
           <strong>Your IP Address has been logged.</strong>
         </p>
       </div>
