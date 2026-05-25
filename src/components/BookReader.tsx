@@ -229,231 +229,205 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
   useEffect(() => {
     if (!mounted) return;
 
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(post.content, "text/html");
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(post.content, "text/html");
 
-    // Clean up Blogger collated images where multiple <img> tags are nested inside a single <a>
-    doc.querySelectorAll("a").forEach((a) => {
-      const aImgs = Array.from(a.querySelectorAll("img"));
-      if (aImgs.length > 1) {
-        aImgs.forEach((img) => {
-          const aClone = a.cloneNode(false) as HTMLAnchorElement;
-          aClone.appendChild(img);
-          a.parentNode?.insertBefore(aClone, a);
-        });
-        a.parentNode?.removeChild(a);
-      }
-    });
-
-    const imgs = Array.from(doc.querySelectorAll("img")).map((img) => img.src).filter(Boolean);
-    
-    // Transform <video> elements to behave like Apple Live Photos
-    doc.querySelectorAll("video").forEach((video) => {
-      video.setAttribute("autoplay", "true");
-      video.setAttribute("loop", "true");
-      video.setAttribute("muted", "true");
-      video.setAttribute("playsinline", "true");
-      video.removeAttribute("controls"); // Live Photo is clean and loops silently
-      
-      video.style.width = "100%";
-      video.style.height = "auto";
-      video.style.display = "block";
-      video.style.borderRadius = "16px";
-      video.style.margin = "0"; // Handled by wrapper
-
-      // Create Live Photo Wrapper
-      const wrapper = doc.createElement("div");
-      wrapper.className = "live-photo-wrapper";
-      
-      // Create Live Photo Badge
-      const badge = doc.createElement("div");
-      badge.className = "live-photo-badge";
-      badge.innerHTML = "<span></span>LIVE";
-
-      // Insert wrapper, relocate video, append badge
-      if (video.parentNode) {
-        video.parentNode.insertBefore(wrapper, video);
-        wrapper.appendChild(video);
-        wrapper.appendChild(badge);
-      }
-    });
-
-    // Helper to determine if there is significant content (text or other media) between two images
-    const hasSignificantContentBetween = (img1: HTMLImageElement, img2: HTMLImageElement): boolean => {
-      let current: Node | null = img1;
-      
-      const nextNode = (node: Node): Node | null => {
-        if (node.firstChild) return node.firstChild;
-        while (node) {
-          if (node.nextSibling) return node.nextSibling;
-          node = node.parentNode!;
-          if (node === doc.body || node === doc) return null;
+      // Clean up Blogger collated images where multiple <img> tags are nested inside a single <a>
+      doc.querySelectorAll("a").forEach((a) => {
+        const aImgs = Array.from(a.querySelectorAll("img"));
+        if (aImgs.length > 1) {
+          aImgs.forEach((img) => {
+            const aClone = a.cloneNode(false) as HTMLAnchorElement;
+            aClone.appendChild(img);
+            a.parentNode?.insertBefore(aClone, a);
+          });
+          a.parentNode?.removeChild(a);
         }
-        return null;
+      });
+
+      const imgs = Array.from(doc.querySelectorAll("img")).map((img) => img.src).filter(Boolean);
+      
+      // Transform <video> elements to behave like Apple Live Photos
+      doc.querySelectorAll("video").forEach((video) => {
+        video.setAttribute("autoplay", "true");
+        video.setAttribute("loop", "true");
+        video.setAttribute("muted", "true");
+        video.setAttribute("playsinline", "true");
+        video.removeAttribute("controls");
+        
+        video.style.width = "100%";
+        video.style.height = "auto";
+        video.style.display = "block";
+        video.style.borderRadius = "16px";
+        video.style.margin = "0";
+
+        const wrapper = doc.createElement("div");
+        wrapper.className = "live-photo-wrapper";
+        
+        const badge = doc.createElement("div");
+        badge.className = "live-photo-badge";
+        badge.innerHTML = "<span></span>LIVE";
+
+        if (video.parentNode) {
+          video.parentNode.insertBefore(wrapper, video);
+          wrapper.appendChild(video);
+          wrapper.appendChild(badge);
+        }
+      });
+
+      const hasSignificantContentBetween = (img1: HTMLImageElement, img2: HTMLImageElement): boolean => {
+        let current: Node | null = img1;
+        
+        const nextNode = (node: Node): Node | null => {
+          if (node.firstChild) return node.firstChild;
+          while (node) {
+            if (node.nextSibling) return node.nextSibling;
+            node = node.parentNode!;
+            if (node === doc.body || node === doc) return null;
+          }
+          return null;
+        };
+
+        current = nextNode(current);
+        while (current && current !== img2) {
+          if (current.nodeType === Node.TEXT_NODE) {
+            const text = current.textContent ? current.textContent.trim() : "";
+            if (text.length > 0) return true;
+          } else if (current.nodeType === Node.ELEMENT_NODE) {
+            const el = current as HTMLElement;
+            const tag = el.tagName;
+            if (["VIDEO", "IFRAME", "HR", "H1", "H2", "H3", "H4", "H5", "H6"].includes(tag)) {
+              return true;
+            }
+          }
+          current = nextNode(current);
+        }
+        return false;
       };
 
-      current = nextNode(current);
-      while (current && current !== img2) {
-        if (current.nodeType === Node.TEXT_NODE) {
-          const text = current.textContent ? current.textContent.trim() : "";
-          if (text.length > 0) {
-            return true;
-          }
-        } else if (current.nodeType === Node.ELEMENT_NODE) {
-          const el = current as HTMLElement;
-          const tag = el.tagName;
-          if (
-            tag === "VIDEO" || 
-            tag === "IFRAME" || 
-            tag === "HR" || 
-            tag === "H1" || 
-            tag === "H2" || 
-            tag === "H3" || 
-            tag === "H4" || 
-            tag === "H5" || 
-            tag === "H6"
-          ) {
-            return true;
-          }
+      const getContentNode = (img: HTMLImageElement): HTMLElement => {
+        if (img.parentElement && img.parentElement.tagName === "A") {
+          return img.parentElement;
         }
-        current = nextNode(current);
-      }
-      return false;
-    };
+        return img;
+      };
 
-    // Helper to get the content node of an image (either the image itself or its parent link element)
-    const getContentNode = (img: HTMLImageElement): HTMLElement => {
-      if (img.parentElement && img.parentElement.tagName === "A") {
-        return img.parentElement;
-      }
-      return img;
-    };
-
-    // Helper to get the outermost wrapper block for contentNode that contains no other content/elements
-    const getOutermostWrapper = (node: HTMLElement): HTMLElement => {
-      let current = node;
-      let depth = 0;
-      // Max depth of 2 levels (e.g. img -> a -> p/div)
-      while (current.parentElement && current.parentElement.tagName !== "BODY" && depth < 2) {
-        const parent = current.parentElement;
-        const tag = parent.tagName;
-        
-        // We only trace up to standard wrapping tags
-        if (tag !== "A" && tag !== "P" && tag !== "DIV" && tag !== "SPAN") {
-          break;
+      const getOutermostWrapper = (node: HTMLElement): HTMLElement => {
+        let current = node;
+        let depth = 0;
+        while (current.parentElement && current.parentElement.tagName !== "BODY" && depth < 2) {
+          const parent = current.parentElement;
+          const tag = parent.tagName;
+          
+          if (tag !== "A" && tag !== "P" && tag !== "DIV" && tag !== "SPAN") break;
+          
+          const otherElements = Array.from(parent.children).filter(child => child !== current && child.tagName !== "BR");
+          const textContent = parent.textContent ? parent.textContent.trim() : "";
+          
+          if (otherElements.length > 0 || textContent !== "") break;
+          
+          current = parent;
+          depth++;
         }
-        
-        // Check if parent has other elements or text
-        const otherElements = Array.from(parent.children).filter(child => child !== current && child.tagName !== "BR");
-        const textContent = parent.textContent ? parent.textContent.trim() : "";
-        
-        // If parent has significant other content, we stop
-        if (otherElements.length > 0 || textContent !== "") {
-          break;
-        }
-        
-        current = parent;
-        depth++;
-      }
-      return current;
-    };
+        return current;
+      };
 
-    // Extract all images
-    const imgsInDoc = Array.from(doc.querySelectorAll("img"));
-    const groups: HTMLImageElement[][] = [];
-    let currentGroup: HTMLImageElement[] = [];
+      const imgsInDoc = Array.from(doc.querySelectorAll("img"));
+      const groups: HTMLImageElement[][] = [];
+      let currentGroup: HTMLImageElement[] = [];
 
-    for (let i = 0; i < imgsInDoc.length; i++) {
-      const img = imgsInDoc[i];
-      if (currentGroup.length === 0) {
-        currentGroup.push(img);
-      } else {
-        const lastImg = currentGroup[currentGroup.length - 1];
-        if (!hasSignificantContentBetween(lastImg, img)) {
+      for (let i = 0; i < imgsInDoc.length; i++) {
+        const img = imgsInDoc[i];
+        if (currentGroup.length === 0) {
           currentGroup.push(img);
         } else {
-          if (currentGroup.length >= 2) {
-            groups.push(currentGroup);
+          const lastImg = currentGroup[currentGroup.length - 1];
+          if (!hasSignificantContentBetween(lastImg, img)) {
+            currentGroup.push(img);
+          } else {
+            if (currentGroup.length >= 2) groups.push(currentGroup);
+            currentGroup = [img];
           }
-          currentGroup = [img];
         }
       }
-    }
-    if (currentGroup.length >= 2) {
-      groups.push(currentGroup);
-    }
+      if (currentGroup.length >= 2) groups.push(currentGroup);
 
-    // Process each group of 2 or more images — stacked card deck
-    groups.forEach((group) => {
-      const container = doc.createElement("div");
-      container.className = "inline-photo-grid";
-      container.setAttribute("data-active", "0");
-      container.setAttribute("data-total", String(group.length));
-      // Touch tracking attributes
-      container.setAttribute("data-touch-start-x", "0");
-      container.setAttribute("data-touch-start-y", "0");
+      groups.forEach((group) => {
+        const container = doc.createElement("div");
+        container.className = "inline-photo-grid";
+        container.setAttribute("data-active", "0");
+        container.setAttribute("data-total", String(group.length));
+        container.setAttribute("data-touch-start-x", "0");
+        container.setAttribute("data-touch-start-y", "0");
 
-      const firstContentNode = getContentNode(group[0]);
-      const firstWrapper = getOutermostWrapper(firstContentNode);
+        const firstContentNode = getContentNode(group[0]);
+        const firstWrapper = getOutermostWrapper(firstContentNode);
 
-      if (firstWrapper.parentNode) {
-        firstWrapper.parentNode.insertBefore(container, firstWrapper);
-        
-        group.forEach((img, i) => {
-          const contentNode = getContentNode(img);
-          const wrapper = getOutermostWrapper(contentNode);
-
-          // Add stacked card class + index
-          contentNode.classList.add("inline-photo-item");
-          contentNode.setAttribute("data-card-index", String(i));
-          // Initial stack position: 0=top, 1=behind, 2=more behind, >3=hidden
-          contentNode.setAttribute("data-stack", i < 4 ? String(i) : "hidden");
-
-          container.appendChild(contentNode);
+        if (firstWrapper.parentNode) {
+          firstWrapper.parentNode.insertBefore(container, firstWrapper);
           
-          if (wrapper !== contentNode && wrapper.parentNode && wrapper !== firstWrapper) {
-            wrapper.parentNode.removeChild(wrapper);
+          group.forEach((img, i) => {
+            const contentNode = getContentNode(img);
+            const wrapper = getOutermostWrapper(contentNode);
+
+            contentNode.classList.add("inline-photo-item");
+            contentNode.setAttribute("data-card-index", String(i));
+            
+            // Initial stack position for Carousel
+            let initialStack = "hidden";
+            if (i === 0) initialStack = "active";
+            else if (i === 1) initialStack = "next";
+            else if (i === group.length - 1 && group.length > 2) initialStack = "prev";
+            
+            contentNode.setAttribute("data-stack", initialStack);
+
+            container.appendChild(contentNode);
+            
+            if (wrapper !== contentNode && wrapper.parentNode && wrapper !== firstWrapper) {
+              wrapper.parentNode.removeChild(wrapper);
+            }
+            
+            img.style.width = "100%";
+            img.style.height = "100%";
+            img.style.objectFit = "cover";
+            img.style.margin = "0";
+            img.style.display = "block";
+            img.style.borderRadius = "0";
+          });
+
+          const prevBtn = doc.createElement("button");
+          prevBtn.className = "inline-photo-nav inline-photo-nav-prev";
+          prevBtn.setAttribute("aria-label", "Previous photo");
+          prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>`;
+          container.appendChild(prevBtn);
+
+          const nextBtn = doc.createElement("button");
+          nextBtn.className = "inline-photo-nav inline-photo-nav-next";
+          nextBtn.setAttribute("aria-label", "Next photo");
+          nextBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>`;
+          container.appendChild(nextBtn);
+
+          if (firstWrapper !== firstContentNode && firstWrapper.parentNode) {
+            firstWrapper.parentNode.removeChild(firstWrapper);
           }
-          
-          // Style inside image nicely
-          img.style.width = "100%";
-          img.style.height = "100%";
-          img.style.objectFit = "cover";
-          img.style.margin = "0";
-          img.style.display = "block";
-          img.style.borderRadius = "0";
-        });
-
-        // Prev button (minimal, overlaid on photo)
-        const prevBtn = doc.createElement("button");
-        prevBtn.className = "inline-photo-nav inline-photo-nav-prev";
-        prevBtn.setAttribute("aria-label", "Previous photo");
-        prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>`;
-        container.appendChild(prevBtn);
-
-        // Next button
-        const nextBtn = doc.createElement("button");
-        nextBtn.className = "inline-photo-nav inline-photo-nav-next";
-        nextBtn.setAttribute("aria-label", "Next photo");
-        nextBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>`;
-        container.appendChild(nextBtn);
-
-        // Remove the empty first wrapper block from DOM
-        if (firstWrapper !== firstContentNode && firstWrapper.parentNode) {
-          firstWrapper.parentNode.removeChild(firstWrapper);
         }
-      }
-    });
+      });
 
-    // Remove any empty paragraph or div tags left over by parent stripping
-    doc.querySelectorAll("p, div").forEach((el) => {
-      if (!el.textContent.trim() && el.children.length === 0) {
-        el.parentNode?.removeChild(el);
-      }
-    });
+      doc.querySelectorAll("p, div").forEach((el) => {
+        if (!el.textContent?.trim() && el.children.length === 0) {
+          el.parentNode?.removeChild(el);
+        }
+      });
 
-    setExtractedImages(imgs);
-    setCleanContent(doc.body.innerHTML);
+      setExtractedImages(imgs);
+      setCleanContent(doc.body.innerHTML);
+    } catch (err) {
+      console.error("Error parsing content:", err);
+      // Fallback: render original content safely
+      setExtractedImages([]);
+      setCleanContent(post.content);
+    }
   }, [mounted, post.content]);
 
   // Synchronous Speech synthesis action triggered by direct user click gesture
@@ -694,89 +668,62 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           }
         }
 
-        /* ── Inline Photo Stack — Premium Centered Fan ────── */
+        /* ── Inline Photo Stack — Carousel Peek ────── */
         .inline-photo-grid {
           position: relative;
           width: 100%;
-          height: 260px; /* card (215px) + gap + nav area */
-          margin: 1rem 0 1.75rem 0;
+          height: 250px; /* Base height */
+          margin: 1.5rem 0 2.5rem 0;
           user-select: none;
           touch-action: pan-y;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         .inline-photo-item {
           position: absolute;
-          left: 0; right: 0; top: 0;
-          width: 100%;
-          height: 215px;
-          border-radius: 22px;
-          overflow: hidden;
-          border: 0.5px solid rgba(255,255,255,0.55);
-          box-shadow:
-            0 20px 56px rgba(0,0,0,0.13),
-            0 8px 22px rgba(0,0,0,0.09),
-            0 2px 7px rgba(0,0,0,0.05);
-          cursor: pointer;
-          will-change: transform, opacity;
-          transition:
-            transform 0.52s cubic-bezier(0.16, 1, 0.3, 1),
-            opacity   0.52s cubic-bezier(0.16, 1, 0.3, 1),
-            box-shadow 0.32s ease;
-          transform-origin: 50% 50%; /* rotate around card center → always horizontally centered */
-        }
-        /* ── Inline Photo Stack — Clean Diagonal Peek ────── */
-        .inline-photo-grid {
-          position: relative;
-          width: 100%;
-          height: 225px; /* Fits card + slight vertical peek */
-          margin: 1rem 0 1.5rem 0;
-          user-select: none;
-          touch-action: pan-y;
-        }
-        .inline-photo-item {
-          position: absolute;
-          left: 0; right: 0; top: 0;
-          width: 100%;
-          height: 215px;
-          border-radius: 18px;
+          width: 74%; /* Active card takes 74% width */
+          height: 230px;
+          border-radius: 20px;
           overflow: hidden;
           border: 1px solid rgba(255,255,255,0.1);
-          box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+          box-shadow: 0 12px 36px rgba(0,0,0,0.18);
           cursor: pointer;
           will-change: transform, opacity;
           transition:
-            transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
-            opacity   0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
-            box-shadow 0.3s ease;
+            transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+            opacity   0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+            box-shadow 0.4s ease,
+            z-index 0.5s;
           transform-origin: center center;
         }
-        /* Diagonal peek to the right, no rotation */
-        .inline-photo-item[data-stack="0"] {
-          transform: scale(1) translate(0, 0);
+        /* Active item */
+        .inline-photo-item[data-stack="active"] {
+          transform: translateX(0) scale(1);
           opacity: 1;
           z-index: 30;
-          box-shadow: 0 10px 40px rgba(0,0,0,0.2), 0 2px 10px rgba(0,0,0,0.1);
+          box-shadow: 0 16px 48px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.12);
         }
-        .inline-photo-item[data-stack="1"] {
-          transform: scale(0.95) translate(20px, 10px);
-          opacity: 0.8;
+        /* Prev item (left peek) */
+        .inline-photo-item[data-stack="prev"] {
+          transform: translateX(-64%) scale(0.85);
+          opacity: 0.65;
           z-index: 20;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.1);
         }
-        .inline-photo-item[data-stack="2"] {
-          transform: scale(0.90) translate(40px, 20px);
-          opacity: 0.5;
-          z-index: 10;
+        /* Next item (right peek) */
+        .inline-photo-item[data-stack="next"] {
+          transform: translateX(64%) scale(0.85);
+          opacity: 0.65;
+          z-index: 20;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.1);
         }
-        .inline-photo-item[data-stack="3"] {
-          transform: scale(0.85) translate(60px, 30px);
-          opacity: 0.2;
-          z-index: 5;
-        }
+        /* Hidden items (behind active) */
         .inline-photo-item[data-stack="hidden"] {
+          transform: translateX(0) scale(0.7);
           opacity: 0;
-          transform: scale(0.85) translate(60px, 30px);
-          z-index: 0;
+          z-index: 10;
           pointer-events: none;
-          transition: none;
         }
         .inline-photo-item img {
           width: 100% !important;
@@ -787,20 +734,13 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           display: block !important;
           pointer-events: none;
         }
-        /* Swipe-out animations */
-        .inline-photo-item.swiping-out-left {
-          transform: translateX(-110%) scale(0.9) !important;
-          opacity: 0 !important;
-          transition: transform 0.3s cubic-bezier(0.55, 0, 1, 0.45),
-                      opacity 0.25s ease !important;
-        }
+        /* Swipe-out animations (no longer needed for carousel, but kept for click safety) */
+        .inline-photo-item.swiping-out-left,
         .inline-photo-item.swiping-out-right {
-          transform: translateX(110%) scale(0.9) !important;
           opacity: 0 !important;
-          transition: transform 0.3s cubic-bezier(0.55, 0, 1, 0.45),
-                      opacity 0.25s ease !important;
+          transition: opacity 0.2s ease !important;
         }
-        /* Overlaid nav buttons (matching reference) */
+        /* Overlaid nav buttons */
         .inline-photo-nav {
           position: absolute;
           top: 50%;
@@ -810,23 +750,24 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           height: 32px;
           border-radius: 50%;
           border: none;
-          background: rgba(0,0,0,0.4);
+          background: rgba(0,0,0,0.55);
           backdrop-filter: blur(8px);
           -webkit-backdrop-filter: blur(8px);
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          color: rgba(255,255,255,0.9);
+          color: rgba(255,255,255,0.95);
           transition: all 0.2s ease;
           padding: 0;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         .inline-photo-nav:hover {
-          background: rgba(0,0,0,0.6);
-          transform: translateY(-50%) scale(1.05);
+          background: rgba(0,0,0,0.75);
+          transform: translateY(-50%) scale(1.08);
         }
         .inline-photo-nav:active {
-          transform: translateY(-50%) scale(0.95);
+          transform: translateY(-50%) scale(0.92);
         }
         .inline-photo-nav-prev {
           left: 12px;
@@ -836,20 +777,25 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         }
         @media (max-width: 768px) {
           .inline-photo-grid {
-            height: 205px;
+            height: 220px;
           }
           .inline-photo-item {
-            height: 196px;
+            width: 78%;
+            height: 200px;
+          }
+          .inline-photo-item[data-stack="prev"] {
+            transform: translateX(-68%) scale(0.85);
+          }
+          .inline-photo-item[data-stack="next"] {
+            transform: translateX(68%) scale(0.85);
           }
           .inline-photo-nav {
             width: 28px;
             height: 28px;
-            left: 8px;
+            background: rgba(0,0,0,0.65);
           }
-          .inline-photo-nav-next {
-            right: 8px;
-            left: auto;
-          }
+          .inline-photo-nav-prev { left: 8px; }
+          .inline-photo-nav-next { right: 8px; }
         }
 
         .book-core-article {
@@ -1236,7 +1182,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           onClick={(e) => {
             const target = e.target as HTMLElement;
 
-            // ── Shared stack cycle helper ──
+            // ── Shared carousel cycle helper ──
             const cycleStack = (stack: HTMLElement, direction: "next" | "prev") => {
               const total = parseInt(stack.getAttribute("data-total") || "1", 10);
               if (total <= 1) return;
@@ -1244,20 +1190,25 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               const nextActive = direction === "next"
                 ? (active + 1) % total
                 : (active - 1 + total) % total;
-              const swipeClass = direction === "next" ? "swiping-out-left" : "swiping-out-right";
+              
               const cards = Array.from(stack.querySelectorAll<HTMLElement>(".inline-photo-item[data-card-index]"));
-              const topCard = cards.find(c => c.getAttribute("data-stack") === "0");
-              if (!topCard) return;
-              topCard.classList.add(swipeClass);
-              setTimeout(() => {
-                topCard.classList.remove(swipeClass);
-                cards.forEach((card) => {
-                  const cardIdx = parseInt(card.getAttribute("data-card-index") || "0", 10);
-                  const relPos = (cardIdx - nextActive + total) % total;
-                  card.setAttribute("data-stack", relPos < 4 ? String(relPos) : "hidden");
-                });
-                stack.setAttribute("data-active", String(nextActive));
-              }, 290);
+              
+              cards.forEach((card) => {
+                const cardIdx = parseInt(card.getAttribute("data-card-index") || "0", 10);
+                let stackPos = "hidden";
+                
+                if (cardIdx === nextActive) {
+                  stackPos = "active";
+                } else if (cardIdx === (nextActive + 1) % total) {
+                  stackPos = "next";
+                } else if (total > 2 && cardIdx === (nextActive - 1 + total) % total) {
+                  stackPos = "prev";
+                }
+                
+                card.setAttribute("data-stack", stackPos);
+              });
+              
+              stack.setAttribute("data-active", String(nextActive));
             };
 
             // ── Nav button click (prev / next) ──
