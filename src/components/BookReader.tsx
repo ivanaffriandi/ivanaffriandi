@@ -369,19 +369,17 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         
         const count = group.length;
         if (count === 2) {
+          container.classList.add("grid-cols-2");
           container.style.gridTemplateColumns = "1fr 1fr";
-          container.style.height = "240px";
         } else if (count === 3) {
-          container.style.gridTemplateColumns = "2fr 1fr";
-          container.style.gridTemplateRows = "1fr 1fr";
-          container.style.height = "320px";
+          container.classList.add("grid-cols-3");
+          container.style.gridTemplateColumns = "1fr 1fr 1fr";
         } else if (count >= 4) {
+          container.classList.add("grid-cols-4");
           container.style.gridTemplateColumns = "1fr 1fr";
           container.style.gridTemplateRows = "1fr 1fr";
-          container.style.height = "320px";
         } else {
           container.style.display = "block";
-          container.style.height = "auto";
         }
 
         const firstContentNode = getContentNode(group[0]);
@@ -404,18 +402,6 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             contentNode.style.overflow = "hidden";
             contentNode.style.cursor = "pointer";
             contentNode.style.display = "block";
-            
-            if (count === 3) {
-              if (i === 0) {
-                contentNode.style.gridRow = "span 2";
-              } else if (i === 1) {
-                contentNode.style.gridColumn = "2";
-                contentNode.style.gridRow = "1";
-              } else if (i === 2) {
-                contentNode.style.gridColumn = "2";
-                contentNode.style.gridRow = "2";
-              }
-            }
 
             // Append dynamic hover glass layer overlay
             const overlay = doc.createElement("div");
@@ -750,6 +736,28 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         }
         .inline-photo-item:hover .inline-photo-hover-overlay {
           background-color: rgba(0,0,0,0.12) !important;
+        }
+
+        /* Premium Responsive Grid Collage Heights */
+        .inline-photo-grid.grid-cols-2 {
+          height: 140px !important;
+        }
+        .inline-photo-grid.grid-cols-3 {
+          height: 100px !important;
+        }
+        .inline-photo-grid.grid-cols-4 {
+          height: 180px !important;
+        }
+        @media (min-width: 768px) {
+          .inline-photo-grid.grid-cols-2 {
+            height: 240px !important;
+          }
+          .inline-photo-grid.grid-cols-3 {
+            height: 180px !important;
+          }
+          .inline-photo-grid.grid-cols-4 {
+            height: 320px !important;
+          }
         }
 
         .book-core-article {
