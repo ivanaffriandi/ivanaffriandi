@@ -947,7 +947,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 <img
                   src={lightboxImg.src}
                   alt=""
-                  style={{ width: "100%", aspectRatio: "1/1", objectFit: "cover", borderRadius: "2px", display: "block", pointerEvents: "none", userSelect: "none", WebkitUserDrag: "none" }}
+                  style={{ width: "100%", aspectRatio: "1/1", objectFit: "cover", borderRadius: "2px", display: "block", pointerEvents: "none", userSelect: "none", WebkitUserDrag: "none" } as React.CSSProperties}
                 />
                 {/* iPhone-style EXIF row */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
