@@ -150,11 +150,30 @@ export default function FooterAbout() {
           >
             {/* Header section with Avatar */}
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <div style={{ width: "44px", height: "44px", borderRadius: "50%", overflow: "hidden", backgroundColor: "rgba(150,150,150,0.1)", border: "1px solid rgba(150,150,150,0.2)" }}>
+              <div 
+                style={{ 
+                  width: "44px", 
+                  height: "44px", 
+                  borderRadius: "50%", 
+                  overflow: "hidden", 
+                  backgroundColor: "rgba(150,150,150,0.1)", 
+                  border: "1px solid rgba(150,150,150,0.2)",
+                  pointerEvents: "none",
+                  userSelect: "none",
+                  WebkitUserSelect: "none"
+                }}
+                onContextMenu={(e) => e.preventDefault()}
+              >
                 <img
                   src="/profile.jpg"
                   alt="Ivan Affriandi"
-                  style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(100%)" }}
+                  draggable={false}
+                  style={{ 
+                    width: "100%", 
+                    height: "100%", 
+                    objectFit: "cover", 
+                    filter: "grayscale(100%)" 
+                  }}
                   onError={(e) => { e.currentTarget.src = "https://ui-avatars.com/api/?name=Ivan+A&background=random"; }}
                 />
               </div>
