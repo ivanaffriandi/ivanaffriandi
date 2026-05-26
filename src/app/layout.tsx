@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Lora, Merriweather, Playfair_Display } from "next/font/google";
 import Navigation from "@/components/Navigation";
 import FooterAbout from "@/components/FooterAbout";
+import AmsterdamClock from "@/components/AmsterdamClock";
 import BirthdayCelebration from "@/components/BirthdayCelebration";
 import KonamiEasterEgg from "@/components/KonamiEasterEgg";
 import PageTransition from "@/components/PageTransition";
@@ -108,7 +109,7 @@ export default function RootLayout({
             <FooterAbout />
             
             <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", fontSize: "0.78rem", color: "var(--text-secondary)", fontWeight: "500", fontFamily: "var(--font-sans)", letterSpacing: "0.01em" }}>
-              Jakarta, ID
+              <AmsterdamClock />
             </div>
           </footer>
         </div>

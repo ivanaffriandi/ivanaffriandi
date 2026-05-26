@@ -46,7 +46,7 @@ export default function FooterAbout() {
   }> = [
     {
       label: "Introduction",
-      text: "Hey, I'm Ivan. I am a designer and developer who builds clean, functional websites. I care deeply about both the technical execution of the code and the aesthetic refinement of the user interface.",
+      text: "Hey, I'm Ivan. I am a designer and developer who builds clean, functional websites. I care deeply about both the technical execution of the code and the visual refinement of the user interface.",
     },
     {
       label: "In My Free Time",
@@ -155,9 +155,9 @@ export default function FooterAbout() {
     .fa-card:hover { transform: translateY(-1px); box-shadow: var(--fa-card-shadow-hover); }
 
     /* Profile */
-    .fa-profile-card { display: flex; align-items: center; gap: 0.875rem; padding: 16px; }
+    .fa-profile-card { display: flex; align-items: center; gap: 0.75rem; padding: 12px 14px; }
     .fa-avatar {
-      width: 58px; height: 58px; border-radius: 50%; overflow: hidden;
+      width: 46px; height: 46px; border-radius: 50%; overflow: hidden;
       border: 1.5px solid var(--border-color); flex-shrink: 0;
       transition: transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
     }
@@ -169,17 +169,17 @@ export default function FooterAbout() {
     }
     .fa-avatar:hover img { filter: grayscale(0%); }
     .fa-profile-info { flex: 1; min-width: 0; }
-    .fa-name { font-size: 1rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text-primary); margin: 0 0 2px; }
-    .fa-role { font-size: 0.73rem; font-weight: 500; color: var(--text-secondary); }
-    .fa-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+    .fa-name { font-size: 0.92rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text-primary); margin: 0 0 1px; }
+    .fa-role { font-size: 0.7rem; font-weight: 500; color: var(--text-secondary); }
+    .fa-actions { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
 
     /* WeChat pill */
     .fa-btn-wechat {
-      padding: 0 14px; height: 32px; border-radius: 30px;
+      padding: 0 11px; height: 28px; border-radius: 30px;
       background: var(--text-primary); color: var(--bg-color);
       border: 1px solid var(--text-primary);
-      font-size: 0.72rem; font-weight: 600; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.68rem; font-weight: 600; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 4px;
       transition: all 0.22s ease; white-space: nowrap;
     }
     .fa-btn-wechat:hover, .fa-btn-wechat.active {
@@ -187,7 +187,7 @@ export default function FooterAbout() {
     }
     /* Circular icon buttons */
     .fa-btn-icon {
-      width: 32px; height: 32px; border-radius: 50%;
+      width: 28px; height: 28px; border-radius: 50%;
       background: transparent; color: var(--text-primary);
       border: 1px solid var(--border-color);
       display: inline-flex; align-items: center; justify-content: center;
@@ -198,21 +198,21 @@ export default function FooterAbout() {
     /* Carousel card shared header */
     .fa-car-header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 16px 0;
+      padding: 10px 14px 0;
     }
     .fa-car-label {
-      font-size: 0.61rem; font-weight: 700; text-transform: uppercase;
+      font-size: 0.58rem; font-weight: 700; text-transform: uppercase;
       letter-spacing: 0.08em; color: var(--text-secondary);
     }
-    .fa-car-nav { display: flex; align-items: center; gap: 6px; }
-    .fa-nav-dots { display: flex; gap: 4px; align-items: center; }
+    .fa-car-nav { display: flex; align-items: center; gap: 5px; }
+    .fa-nav-dots { display: flex; gap: 3.5px; align-items: center; }
     .fa-nav-dot {
-      width: 4px; height: 4px; border-radius: 50%;
+      width: 3.5px; height: 3.5px; border-radius: 50%;
       background: var(--border-color); cursor: pointer; transition: all 0.24s ease;
     }
-    .fa-nav-dot.on { background: var(--text-primary); transform: scale(1.4); }
+    .fa-nav-dot.on { background: var(--text-primary); transform: scale(1.3); }
     .fa-arr {
-      width: 24px; height: 24px; border-radius: 50%;
+      width: 22px; height: 22px; border-radius: 50%;
       border: 1px solid var(--border-color); background: transparent;
       color: var(--text-primary);
       display: flex; align-items: center; justify-content: center;
@@ -221,21 +221,21 @@ export default function FooterAbout() {
     .fa-arr:hover { border-color: var(--text-primary); }
 
     /* Bio carousel body */
-    .fa-bio-body { padding: 10px 16px 12px; min-height: 64px; }
-    .fa-bio-text { font-size: 0.9rem; line-height: 1.57; color: var(--text-primary); margin: 0; font-weight: 400; }
+    .fa-bio-body { padding: 6px 14px 9px; min-height: 48px; }
+    .fa-bio-text { font-size: 0.83rem; line-height: 1.45; color: var(--text-primary); margin: 0; font-weight: 400; }
 
     /* Skill / bio pills */
-    .fa-pills { display: flex; flex-wrap: wrap; gap: 5px; }
+    .fa-pills { display: flex; flex-wrap: wrap; gap: 4px; }
     .fa-pill {
-      font-size: 0.68rem; font-weight: 500;
-      padding: 3.5px 9px; border-radius: 30px;
+      font-size: 0.65rem; font-weight: 500;
+      padding: 2.5px 7px; border-radius: 30px;
       border: 1px solid var(--fa-card-border);
       color: var(--text-secondary);
       background: rgba(128,128,128,0.045);
       letter-spacing: -0.01em; transition: all 0.18s ease;
     }
     .fa-pill:hover { color: var(--text-primary); border-color: var(--text-primary); }
-    .fa-bio-pill { font-size: 0.74rem; padding: 5px 11px; cursor: default; }
+    .fa-bio-pill { font-size: 0.7rem; padding: 3.5px 9px; cursor: default; }
     .fa-bio-pill:hover { color: var(--text-secondary); border-color: var(--fa-card-border); }
     .fa-pill-link {
       text-decoration: none; display: inline-flex; align-items: center; gap: 3px; cursor: pointer;
@@ -247,7 +247,7 @@ export default function FooterAbout() {
     }
 
     /* Skill carousel body */
-    .fa-skill-body { padding: 10px 16px 12px; min-height: auto; }
+    .fa-skill-body { padding: 6px 14px 9px; min-height: auto; }
 
     /* Language pills with clean percentage badges */
     .fa-lang-pill {
