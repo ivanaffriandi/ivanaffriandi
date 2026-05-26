@@ -24,8 +24,6 @@ export default function AmsterdamClock() {
 
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-      <span>Amsterdam, NL</span>
-      <span style={{ opacity: 0.3 }}>—</span>
       <span style={{ 
         fontFamily: "monospace", 
         letterSpacing: "0.02em", 

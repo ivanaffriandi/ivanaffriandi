@@ -21,7 +21,9 @@ export async function getAllBooks(): Promise<BookItem[]> {
       }
     });
     if (!res.ok) return getFallbackBooks();
-    return res.json();
+    const data = await res.json();
+    if (!data || data.length === 0) return getFallbackBooks();
+    return data;
   } catch (err) {
     console.error("Failed to load books:", err);
     return getFallbackBooks();
