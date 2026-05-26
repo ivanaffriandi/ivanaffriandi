@@ -4,17 +4,48 @@ import { useState, useEffect } from "react";
 
 export default function AmsterdamClock() {
   const [time, setTime] = useState<string>("");
+  const [tz, setTz] = useState<string>("CEST");
 
   useEffect(() => {
     const updateClock = () => {
+      const date = new Date();
       const options: Intl.DateTimeFormatOptions = {
         timeZone: "Europe/Amsterdam",
-        hour: "2-digit",
+        hour: "numeric",
         minute: "2-digit",
-        hour12: false,
+        hour12: true,
       };
-      // Format to HH:mm
-      setTime(new Intl.DateTimeFormat("en-GB", options).format(new Date()));
+      
+      // Format to h:mm AM/PM
+      const formattedTime = new Intl.DateTimeFormat("en-US", options).format(date);
+      setTime(formattedTime);
+
+      // Determine timezone abbreviation (CET or CEST)
+      try {
+        const parts = new Intl.DateTimeFormat("en-US", {
+          timeZone: "Europe/Amsterdam",
+          timeZoneName: "short"
+        }).formatToParts(date);
+        const tzPart = parts.find(p => p.type === "timeZoneName");
+        if (tzPart) {
+          const val = tzPart.value;
+          if (val.includes("GMT+2") || val.toLowerCase().includes("summer") || val === "CEST") {
+            setTz("CEST");
+          } else if (val.includes("GMT+1") || val === "CET") {
+            setTz("CET");
+          } else {
+            setTz(val);
+          }
+        }
+      } catch (e) {
+        // Dynamic fallback
+        const month = date.getMonth();
+        if (month > 2 && month < 10) {
+          setTz("CEST");
+        } else {
+          setTz("CET");
+        }
+      }
     };
 
     updateClock();
@@ -23,30 +54,15 @@ export default function AmsterdamClock() {
   }, []);
 
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-      <span style={{ 
-        fontFamily: "monospace", 
-        letterSpacing: "0.02em", 
-        fontWeight: "600",
-        color: "var(--text-primary)"
-      }}>
-        {time || "--:--"}
-      </span>
-      <span style={{
-        width: "4px",
-        height: "4px",
-        borderRadius: "50%",
-        backgroundColor: "#FF5F15", // Premium pulsing orange active dot
-        display: "inline-block",
-        animation: "pulse 2s infinite"
-      }} />
-      <style>{`
-        @keyframes pulse {
-          0% { opacity: 0.3; transform: scale(0.9); }
-          50% { opacity: 1; transform: scale(1.1); }
-          100% { opacity: 0.3; transform: scale(0.9); }
-        }
-      `}</style>
+    <span style={{ 
+      fontFamily: "monospace", 
+      letterSpacing: "0.02em", 
+      fontWeight: "600",
+      color: "var(--text-primary)",
+      display: "inline-flex",
+      alignItems: "center"
+    }}>
+      {time ? `${time} ${tz}` : `--:-- CEST`}
     </span>
   );
 }

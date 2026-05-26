@@ -1,0 +1,33 @@
+[
+  {
+    "id": "1",
+    "title": "Designing Design",
+    "author": "Kenya Hara",
+    "progress": 68,
+    "status": "reading",
+    "coverUrl": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=250&auto=format&fit=crop",
+    "startedAt": "2026-04-26T14:30:00.000Z"
+  },
+  {
+    "id": "2",
+    "title": "Grid Systems in Graphic Design",
+    "author": "Josef Müller-Brockmann",
+    "progress": 100,
+    "status": "completed",
+    "coverUrl": "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=250&auto=format&fit=crop",
+    "startedAt": "2026-03-26T10:00:00.000Z",
+    "completedAt": "2026-04-16T17:00:00.000Z",
+    "review": "A timeless masterpiece that lays the foundations of visual alignment and structural typography. Absolute bible for design engineering."
+  },
+  {
+    "id": "3",
+    "title": "Less and More: The Design Ethos of Dieter Rams",
+    "author": "Klaus Klemp",
+    "progress": 100,
+    "status": "completed",
+    "coverUrl": "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=250&auto=format&fit=crop",
+    "startedAt": "2026-02-26T09:00:00.000Z",
+    "completedAt": "2026-03-20T16:00:00.000Z",
+    "review": "Stunning exploration of functional minimalism. Rams' ten principles are incredibly well detailed and highly relevant for modern digital design."
+  }
+]

@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import fs from "fs";
+import path from "path";
 
-const FIREBASE_DB_URL = "https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app/books";
+const BOOKS_FILE_PATH = path.join(process.cwd(), "src/data/books.json");
 
 async function verifyAdminAuth() {
   const cookieStore = await cookies();
@@ -9,26 +11,40 @@ async function verifyAdminAuth() {
   return session?.value === "authenticated_ivan_exclusive";
 }
 
-async function readBooksList(): Promise<any[]> {
+function readBooksLocal(): any[] {
   try {
-    const res = await fetch(`${FIREBASE_DB_URL}.json`, { cache: "no-store" });
-    if (!res.ok) return [];
-    const data = await res.json();
-    if (!data) return [];
-    return Object.entries(data).map(([id, val]: [string, any]) => ({ id, ...val }));
+    if (!fs.existsSync(BOOKS_FILE_PATH)) {
+      return [];
+    }
+    const raw = fs.readFileSync(BOOKS_FILE_PATH, "utf8");
+    return JSON.parse(raw);
   } catch (err) {
-    console.error("Read books Firebase error:", err);
+    console.error("Read local books error:", err);
     return [];
   }
 }
 
-// GET: Fetch all books
+function writeBooksLocal(books: any[]): boolean {
+  try {
+    const dir = path.dirname(BOOKS_FILE_PATH);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(BOOKS_FILE_PATH, JSON.stringify(books, null, 2), "utf8");
+    return true;
+  } catch (err) {
+    console.error("Write local books error:", err);
+    return false;
+  }
+}
+
+// GET: Fetch all books from local file
 export async function GET() {
   try {
-    const items = await readBooksList();
+    const items = readBooksLocal();
     
     // Sort: reading first, then others, sorted by startedAt or completedAt desc
-    items.sort((a, b) => {
+    items.sort((a: any, b: any) => {
       if (a.status === "reading" && b.status !== "reading") return -1;
       if (a.status !== "reading" && b.status === "reading") return 1;
       const dateA = new Date(a.completedAt || a.startedAt || 0).getTime();
@@ -43,7 +59,7 @@ export async function GET() {
   }
 }
 
-// POST: Add a new book (Admin only)
+// POST: Add a new book locally (Admin only)
 export async function POST(request: Request) {
   try {
     if (!(await verifyAdminAuth())) {
@@ -56,7 +72,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "title and author are required" }, { status: 400 });
     }
 
+    const items = readBooksLocal();
+    const newId = String(Date.now());
+
     const newBook = {
+      id: newId,
       title,
       author,
       coverUrl: coverUrl || "",
@@ -67,23 +87,17 @@ export async function POST(request: Request) {
       completedAt: completedAt || ""
     };
 
-    const res = await fetch(`${FIREBASE_DB_URL}.json`, {
-      method: "POST",
-      body: JSON.stringify(newBook),
-      headers: { "Content-Type": "application/json" }
-    });
+    items.push(newBook);
+    writeBooksLocal(items);
 
-    if (!res.ok) throw new Error("Failed to write book to Firebase");
-    const result = await res.json();
-
-    return NextResponse.json({ id: result.name, ...newBook });
+    return NextResponse.json(newBook);
   } catch (err) {
     console.error("POST Book API error:", err);
     return NextResponse.json({ error: "Failed to add book" }, { status: 500 });
   }
 }
 
-// PATCH: Update a book (Admin only)
+// PATCH: Update a book locally (Admin only)
 export async function PATCH(request: Request) {
   try {
     if (!(await verifyAdminAuth())) {
@@ -96,13 +110,19 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "id is required" }, { status: 400 });
     }
 
-    const res = await fetch(`${FIREBASE_DB_URL}/${id}.json`, {
-      method: "PATCH",
-      body: JSON.stringify(updates),
-      headers: { "Content-Type": "application/json" }
-    });
+    const items = readBooksLocal();
+    const index = items.findIndex((b: any) => b.id === id);
 
-    if (!res.ok) throw new Error("Failed to update book in Firebase");
+    if (index === -1) {
+      return NextResponse.json({ error: "Book not found" }, { status: 404 });
+    }
+
+    items[index] = {
+      ...items[index],
+      ...updates
+    };
+
+    writeBooksLocal(items);
 
     return NextResponse.json({ success: true });
   } catch (err) {
@@ -111,7 +131,7 @@ export async function PATCH(request: Request) {
   }
 }
 
-// DELETE: Remove a book (Admin only)
+// DELETE: Remove a book locally (Admin only)
 export async function DELETE(request: Request) {
   try {
     if (!(await verifyAdminAuth())) {
@@ -124,9 +144,15 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
 
-    const res = await fetch(`${FIREBASE_DB_URL}/${id}.json`, { method: "DELETE" });
+    let items = readBooksLocal();
+    const initialLength = items.length;
+    items = items.filter((b: any) => b.id !== id);
 
-    if (!res.ok) throw new Error("Failed to delete book from Firebase");
+    if (items.length === initialLength) {
+      return NextResponse.json({ error: "Book not found" }, { status: 404 });
+    }
+
+    writeBooksLocal(items);
 
     return NextResponse.json({ success: true });
   } catch (err) {
