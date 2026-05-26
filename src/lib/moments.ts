@@ -10,6 +10,7 @@ import {
   deleteDoc 
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { staticMoments } from "./localMoments";
 
 export interface MomentItem {
   id: string;
@@ -96,23 +97,25 @@ export async function getAllMoments(): Promise<MomentItem[]> {
     try {
       const q = query(collection(db, "moments"), orderBy("published", "desc"));
       
-      // Enforce a strict 3-second timeout to prevent UI hangs
+      // Enforce a strict 400ms timeout to prevent UI hangs and fall back instantly to local moments
       const querySnapshot = await Promise.race([
         getDocs(q),
-        new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Firestore timeout")), 3000))
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Firestore timeout")), 400))
       ]);
 
       const items: MomentItem[] = [];
       querySnapshot.forEach((doc) => {
         items.push({ id: doc.id, ...doc.data() } as MomentItem);
       });
-      return items;
+      if (items.length > 0) return items;
     } catch (e) {
       console.error("Firebase read error, fallback to local:", e);
     }
   }
 
-  return getLocalMoments().sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
+  const localList = getLocalMoments();
+  const fallbackList = localList.length > 0 ? localList : staticMoments;
+  return fallbackList.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
 }
 
 export async function deleteMoment(id: string, storagePath?: string): Promise<boolean> {

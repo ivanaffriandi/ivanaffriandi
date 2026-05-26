@@ -27,6 +27,34 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
   const [lightboxImg, setLightboxImg] = useState<{ src: string; index: number } | null>(null);
   const [mounted, setMounted] = useState(false);
 
+  // ─── ElevenLabs TTS state ────────────────────────────────────────────────
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [audioDuration, setAudioDuration] = useState(0);
+  const [audioCurrentTime, setAudioCurrentTime] = useState(0);
+  const audioUrlRef = useRef<string | null>(null);
+
+  // ─── Fallback SpeechSynthesis state ──────────────────────────────────────
+  const [isBrowserFallback, setIsBrowserFallback] = useState(false);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  // ─── Dynamic paragraph tracking for audiobook sync ───────────────────────
+  const paragraphCharRangesRef = useRef<{ start: number; end: number }[]>([]);
+  const totalCharsRef = useRef<number>(0);
+
+  const activeParagraphIndex = useMemo(() => {
+    if (audioDuration <= 0 || audioCurrentTime <= 0) return -1;
+    const ratio = audioCurrentTime / audioDuration;
+    const virtualCharIndex = ratio * totalCharsRef.current;
+    
+    const matchedIdx = paragraphCharRangesRef.current.findIndex(
+      (range) => virtualCharIndex >= range.start && virtualCharIndex <= range.end
+    );
+    return matchedIdx;
+  }, [audioCurrentTime, audioDuration]);
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -247,6 +275,16 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         }
       });
 
+      // Preprocess all <a> tags wrapping images to wipe out target, href, and inline style to prevent new tabs / leaks
+      doc.querySelectorAll("a").forEach((a) => {
+        if (a.querySelector("img")) {
+          a.removeAttribute("target");
+          a.removeAttribute("href");
+          a.removeAttribute("style");
+          a.style.cursor = "pointer";
+        }
+      });
+
       const imgs = Array.from(doc.querySelectorAll("img")).map((img) => img.src).filter(Boolean);
       
       // Transform <video> elements to behave like Apple Live Photos
@@ -359,6 +397,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         container.className = "inline-photo-grid";
         container.style.display = "grid";
         container.style.width = "100%";
+        
+        // Dynamically set beautiful editorial height based on viewport width (taller for high vertical presence)
+        const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+        container.style.height = isMobile ? "250px" : "420px";
+        
         container.style.margin = "1.8rem 0 2.8rem 0";
         container.style.borderRadius = "16px";
         container.style.overflow = "hidden";
@@ -422,7 +465,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               extraOverlay.style.inset = "0";
               extraOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.45)";
               extraOverlay.style.backdropFilter = "blur(6px)";
-              extraOverlay.style.webkitBackdropFilter = "blur(6px)";
+              extraOverlay.style.setProperty("-webkit-backdrop-filter", "blur(6px)");
               extraOverlay.style.display = "flex";
               extraOverlay.style.alignItems = "center";
               extraOverlay.style.justifyContent = "center";
@@ -471,6 +514,20 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         }
       });
 
+      let charAccumulator = 0;
+      const ranges: { start: number; end: number }[] = [];
+      const textBlocks = doc.querySelectorAll("p, h1, h2, h3, h4, h5, h6, blockquote, li");
+      textBlocks.forEach((el, idx) => {
+        const textLen = (el.textContent || "").trim().length;
+        if (textLen > 0) {
+          el.setAttribute("data-p-idx", String(idx));
+          ranges.push({ start: charAccumulator, end: charAccumulator + textLen });
+          charAccumulator += textLen;
+        }
+      });
+      paragraphCharRangesRef.current = ranges;
+      totalCharsRef.current = charAccumulator;
+
       setExtractedImages(imgs);
       setCleanContent(doc.body.innerHTML);
     } catch (err) {
@@ -481,53 +538,254 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     }
   }, [mounted, post.content]);
 
-  // Synchronous Speech synthesis action triggered by direct user click gesture
-  const handleSetMode = (targetMode: "read" | "listen") => {
-    if (targetMode === "listen") {
-      if ("speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-        
-        // Strip tags dynamically for absolute safety
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = post.content;
-        const text = tempDiv.textContent || tempDiv.innerText || "";
-        
-        if (!text.trim()) {
-          alert("No readable content found in this post.");
-          return;
+  // Timer for SpeechSynthesis fallback progress simulation
+  useEffect(() => {
+    if (!isBrowserFallback || !isPlaying) return;
+
+    const interval = setInterval(() => {
+      setAudioCurrentTime((prev) => {
+        const next = prev + 1 * playbackRate;
+        if (next >= audioDuration) {
+          clearInterval(interval);
+          return audioDuration;
         }
+        return next;
+      });
+    }, 1000);
 
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.onend = () => {
-          setIsPlaying(false);
-          setMode("read");
-        };
-        utterance.onerror = (e) => {
-          console.error("Speech Synthesis Error:", e);
-          setIsPlaying(false);
-          setMode("read");
-        };
+    return () => clearInterval(interval);
+  }, [isBrowserFallback, isPlaying, playbackRate, audioDuration]);
 
-        window.speechSynthesis.speak(utterance);
-        setIsPlaying(true);
-        setMode("listen");
-      } else {
-        alert("Text-to-speech is not supported in this browser.");
-        setMode("read");
+  // ─── ElevenLabs TTS / Browser Fallback handler ─────────────────────────────
+  const handleSetMode = async (targetMode: "read" | "listen") => {
+    if (targetMode === "read") {
+      // Stop audio and go back to read
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
       }
-    } else {
-      if ("speechSynthesis" in window) {
+      if (typeof window !== "undefined" && window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
       setIsPlaying(false);
       setMode("read");
+      setAudioCurrentTime(0);
+      setAudioDuration(0);
+      setIsBrowserFallback(false);
+      return;
+    }
+
+    // ── Switch to listen mode ──
+    setMode("listen");
+    setIsLoadingAudio(true);
+
+    // Strip HTML to plain text
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = post.content;
+    const text = (tempDiv.textContent || tempDiv.innerText || "").trim();
+
+    if (!text) {
+      alert("No readable content found in this post.");
+      setIsLoadingAudio(false);
+      setMode("read");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: "Unknown error" }));
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
+
+      const blob = await res.blob();
+      // Revoke previous URL
+      if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
+      const url = URL.createObjectURL(blob);
+      audioUrlRef.current = url;
+      setAudioUrl(url);
+      setIsBrowserFallback(false);
+
+      // Play
+      if (!audioRef.current) audioRef.current = new Audio();
+      const audio = audioRef.current;
+      audio.src = url;
+      audio.playbackRate = playbackRate;
+
+      audio.onloadedmetadata = () => setAudioDuration(audio.duration);
+      audio.ontimeupdate = () => setAudioCurrentTime(audio.currentTime);
+      audio.onended = () => { setIsPlaying(false); setAudioCurrentTime(0); };
+      audio.onerror = () => { setIsPlaying(false); };
+
+      await audio.play();
+      setIsPlaying(true);
+    } catch (err: any) {
+      console.warn("[Listen] ElevenLabs failed, falling back to browser SpeechSynthesis:", err);
+      
+      // Fallback to Browser SpeechSynthesis!
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        try {
+          window.speechSynthesis.cancel(); // cancel any active speech
+
+          // Detect language (simple client-side logic to match post content)
+          const lower = text.toLowerCase().slice(0, 1000);
+          const nlScore = (lower.match(/\b(de|het|een|van|in|is|dat|niet|zijn|ik|voor|op|te|met|maar|ook|aan|bij|door)\b/g) || []).length;
+          const idScore = (lower.match(/\b(yang|dan|di|ini|itu|dengan|untuk|dalam|tidak|juga|ke|pada|ada|saya|lebih|sudah|dari|bisa|akan|karena)\b/g) || []).length;
+          let lang = "en-US";
+          if (nlScore > idScore && nlScore > 2) lang = "nl-NL";
+          else if (idScore > nlScore && idScore > 2) lang = "id-ID";
+
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = lang;
+          utterance.rate = playbackRate;
+          
+          // Try to select a high quality natural sounding voice if available in correct language
+          const voices = window.speechSynthesis.getVoices();
+          const matchingVoice = voices.find(v => v.lang.startsWith(lang.slice(0, 2)) && v.localService);
+          if (matchingVoice) utterance.voice = matchingVoice;
+
+          // Estimate duration (rough estimation: 150 words per minute -> 2.5 words per second)
+          const words = text.split(/\s+/).length;
+          const estimatedDuration = Math.max(10, (words / 2.5));
+          setAudioDuration(estimatedDuration);
+          setAudioCurrentTime(0);
+
+          setIsBrowserFallback(true);
+          setAudioUrl("browser-fallback"); // Show player bar
+
+          // Setup callbacks
+          utterance.onend = () => {
+            setIsPlaying(false);
+            setAudioCurrentTime(0);
+          };
+          utterance.onerror = (e) => {
+            console.error("SpeechSynthesis error:", e);
+            setIsPlaying(false);
+          };
+
+          // Store reference
+          utteranceRef.current = utterance;
+
+          window.speechSynthesis.speak(utterance);
+          setIsPlaying(true);
+        } catch (fallbackErr) {
+          console.error("Browser SpeechSynthesis failed:", fallbackErr);
+          alert(`Couldn't load audio: ${err.message}`);
+          setMode("read");
+        }
+      } else {
+        alert(`Couldn't load audio: ${err.message}`);
+        setMode("read");
+      }
+    } finally {
+      setIsLoadingAudio(false);
     }
   };
 
-  // Cleanup speech synthesis when the component unmounts
+  // Toggle pause / resume
+  const handleTogglePlay = () => {
+    if (isBrowserFallback) {
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        if (isPlaying) {
+          window.speechSynthesis.pause();
+          setIsPlaying(false);
+        } else {
+          if (window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+            setIsPlaying(true);
+          } else if (utteranceRef.current) {
+            window.speechSynthesis.speak(utteranceRef.current);
+            setIsPlaying(true);
+          }
+        }
+      }
+      return;
+    }
+
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+  // Change playback speed
+  const handleSetSpeed = (rate: number) => {
+    setPlaybackRate(rate);
+    if (isBrowserFallback) {
+      if (typeof window !== "undefined" && window.speechSynthesis && utteranceRef.current) {
+        utteranceRef.current.rate = rate;
+        
+        // If speaking, restart to apply rate cleanly
+        if (window.speechSynthesis.speaking) {
+          window.speechSynthesis.cancel();
+          const tempDiv = document.createElement("div");
+          tempDiv.innerHTML = post.content;
+          const text = (tempDiv.textContent || tempDiv.innerText || "").trim();
+          
+          const newUtterance = new SpeechSynthesisUtterance(text);
+          const lower = text.toLowerCase().slice(0, 1000);
+          const nlScore = (lower.match(/\b(de|het|een|van|in|is|dat|niet|zijn|ik|voor|op|te|met|maar|ook|aan|bij|door)\b/g) || []).length;
+          const idScore = (lower.match(/\b(yang|dan|di|ini|itu|dengan|untuk|dalam|tidak|juga|ke|pada|ada|saya|lebih|sudah|dari|bisa|akan|karena)\b/g) || []).length;
+          let lang = "en-US";
+          if (nlScore > idScore && nlScore > 2) lang = "nl-NL";
+          else if (idScore > nlScore && idScore > 2) lang = "id-ID";
+          newUtterance.lang = lang;
+          newUtterance.rate = rate;
+          
+          const voices = window.speechSynthesis.getVoices();
+          const matchingVoice = voices.find(v => v.lang.startsWith(lang.slice(0, 2)) && v.localService);
+          if (matchingVoice) newUtterance.voice = matchingVoice;
+          
+          newUtterance.onend = () => {
+            setIsPlaying(false);
+            setAudioCurrentTime(0);
+          };
+          newUtterance.onerror = () => setIsPlaying(false);
+          
+          utteranceRef.current = newUtterance;
+          window.speechSynthesis.speak(newUtterance);
+          setIsPlaying(true);
+        }
+      }
+      return;
+    }
+
+    if (audioRef.current) audioRef.current.playbackRate = rate;
+  };
+
+  // Seek
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const t = Number(e.target.value);
+    setAudioCurrentTime(t);
+    if (isBrowserFallback) return;
+    if (audioRef.current) audioRef.current.currentTime = t;
+  };
+
+  // Format mm:ss
+  const fmt = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  };
+
+  // Cleanup audio on unmount
   useEffect(() => {
     return () => {
-      if ("speechSynthesis" in window) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+      }
+      if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
+      if (typeof window !== "undefined" && window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
     };
@@ -649,6 +907,35 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
       {/* Global CSS for book content media to prevent overflowing and hide footer on post details */}
       <style dangerouslySetInnerHTML={{__html: `
         /* Cinematic Scroll Reveal Styles removed for absolute visual stability */
+
+        /* ─── Premium Audiobook Reader Highlights ─── */
+        .book-prose-listening p, 
+        .book-prose-listening h1, 
+        .book-prose-listening h2, 
+        .book-prose-listening h3, 
+        .book-prose-listening h4, 
+        .book-prose-listening h5, 
+        .book-prose-listening h6, 
+        .book-prose-listening blockquote, 
+        .book-prose-listening li {
+          opacity: 0.35;
+          filter: blur(0.3px);
+          transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), 
+                      transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), 
+                      border-left-color 0.5s ease, 
+                      padding-left 0.5s ease,
+                      color 0.5s ease;
+          border-left: 3px solid transparent;
+        }
+
+        .book-prose-listening [data-p-idx="${activeParagraphIndex}"] {
+          opacity: 1 !important;
+          filter: blur(0px) !important;
+          color: ${theme === "dark" ? "#ffffff" : "#111111"} !important;
+          transform: translateX(4px);
+          border-left-color: ${theme === "dark" ? "#ffffff" : "#111111"} !important;
+          padding-left: 12px !important;
+        }
 
         .book-prose img, .book-prose iframe, .book-prose video {
           max-width: 100% !important;
@@ -957,7 +1244,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
               className="photo-cover-collage"
               style={{
                 width: "100%",
-                height: "220px",
+                height: "160px",
                 borderRadius: "16px",
                 overflow: "hidden",
                 border: `1px solid ${colors.border}`,
@@ -1152,7 +1439,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             fontFamily: fontStyle === "serif" ? "var(--font-serif)" : fontStyle === "mono" ? "monospace" : "var(--font-sans)",
             wordBreak: "break-word"
           }}
-          className={`book-prose prose-style-${fontStyle}`}
+          className={`book-prose prose-style-${fontStyle} ${mode === "listen" && isPlaying ? "book-prose-listening" : ""}`}
           dangerouslySetInnerHTML={{ __html: cleanContent }}
           onClick={(e) => {
             const target = e.target as HTMLElement;
@@ -1402,16 +1689,17 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
 
       {/* Centering Wrapper Div inside React Portal to completely bypass page transforms and stay fixed at all times */}
       {mounted && typeof window !== "undefined" && createPortal(
-        <div 
-          style={{
-            position: "fixed",
-            bottom: "2.5rem",
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 9999,
-            pointerEvents: "none"
-          }}
-        >
+        <>
+          <div 
+            style={{
+              position: "fixed",
+              bottom: "1.5rem",
+              left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 9999,
+              pointerEvents: "none"
+            }}
+          >
           {/* Apple Dynamic Island Snappy Scale/Squish Bubble Wrapper */}
           <motion.div
             animate={isCommenting ? "commenting" : "normal"}
@@ -1666,22 +1954,46 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         : "none",
                       fontSize: "0.82rem",
                       fontWeight: "600",
-                      cursor: "pointer",
+                      cursor: isLoadingAudio ? "wait" : "pointer",
                       transition: "all 0.2s ease",
                       display: "inline-flex",
                       alignItems: "center",
-                      gap: "0.25rem"
+                      gap: "5px",
+                      opacity: isLoadingAudio ? 0.7 : 1,
                     }}
                   >
-                    Listen
-                    {isPlaying && (
-                      <span className="tts-pulse-indicator" style={{ display: "inline-block", width: "5px", height: "5px", backgroundColor: "#ff3b30", borderRadius: "50%" }}></span>
+                    {isLoadingAudio ? (
+                      <>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83">
+                            <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite"/>
+                          </path>
+                        </svg>
+                        Generating…
+                      </>
+                    ) : (
+                      <>
+                        Listen
+                        {isPlaying && (
+                          <span style={{ display: "inline-flex", gap: "1.5px", alignItems: "center" }}>
+                            {[0, 1, 2].map(i => (
+                              <span key={i} style={{
+                                display: "inline-block", width: "2px", height: "8px",
+                                backgroundColor: "currentColor", borderRadius: "1px",
+                                animation: `tts-bar 0.8s ease-in-out ${i * 0.13}s infinite alternate`
+                              }} />
+                            ))}
+                          </span>
+                        )}
+                      </>
                     )}
                   </button>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
+
+
 
           {/* Symmetrical, Single-Node Dynamic Morphing Button! Lives outside AnimatePresence to guarantee zero latency and absolute physical continuity! */}
           <motion.button 
@@ -1776,9 +2088,150 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           </motion.button>
             </motion.div>
           </motion.div>
-        </div>,
-        document.body
-      )}
+        </div>
+
+        {/* ─── Audiobook Player Bar Centering Wrapper ──────────────────────── */}
+        <AnimatePresence>
+          {mode === "listen" && !isLoadingAudio && audioUrl && (
+            <div 
+              style={{
+                position: "fixed",
+                bottom: "5.2rem", // Stacked beautifully above the floating dock (which is at 1.5rem)
+                left: "50%",
+                transform: "translateX(-50%)",
+                zIndex: 9998,
+                pointerEvents: "none",
+                width: "min(480px, calc(100vw - 2rem))"
+              }}
+            >
+              <motion.div
+                initial={{ opacity: 0, y: 12, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                style={{
+                  pointerEvents: "auto",
+                  width: "100%",
+                  backgroundColor: theme === "dark" ? "rgba(20,20,20,0.96)" : "rgba(255,255,255,0.97)",
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                  borderRadius: "18px",
+                  border: theme === "dark" ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.08)",
+                  boxShadow: theme === "dark"
+                    ? "0 20px 48px rgba(0,0,0,0.7), 0 6px 16px rgba(0,0,0,0.5)"
+                    : "0 16px 40px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.07)",
+                  padding: "14px 16px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+              >
+                {/* Top row: title + close */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0 }}>
+                    {/* Waveform icon */}
+                    <div style={{ display: "flex", gap: "2px", alignItems: "center", flexShrink: 0 }}>
+                      {[0,1,2,3,4].map(i => (
+                        <div key={i} style={{
+                          width: "2.5px",
+                          height: isPlaying ? `${8 + (i % 3) * 5}px` : "4px",
+                          backgroundColor: theme === "dark" ? "#ffffff" : "#111111",
+                          borderRadius: "1.5px",
+                          opacity: isPlaying ? 0.9 : 0.35,
+                          transition: "height 0.3s ease",
+                          animation: isPlaying ? `tts-bar 0.7s ease-in-out ${i * 0.1}s infinite alternate` : "none"
+                        }} />
+                      ))}
+                    </div>
+                    <span style={{ fontSize: "0.74rem", fontWeight: "600", color: theme === "dark" ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.85)", fontFamily: "var(--font-sans)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {post.title}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => handleSetMode("read")}
+                    style={{ background: "none", border: "none", cursor: "pointer", padding: "2px", color: theme === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.4)", flexShrink: 0 }}
+                    title="Stop"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Progress bar */}
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span style={{ fontSize: "0.65rem", fontFamily: "var(--font-sans)", color: theme === "dark" ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.4)", flexShrink: 0, minWidth: "28px" }}>
+                    {fmt(audioCurrentTime)}
+                  </span>
+                  <input
+                    type="range" min={0} max={audioDuration || 1} step={0.5}
+                    value={audioCurrentTime}
+                    onChange={handleSeek}
+                    style={{
+                      flex: 1, height: "3px", appearance: "none", WebkitAppearance: "none",
+                      backgroundColor: theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)",
+                      borderRadius: "2px", cursor: "pointer", outline: "none",
+                      accentColor: theme === "dark" ? "#ffffff" : "#111111"
+                    } as React.CSSProperties}
+                  />
+                  <span style={{ fontSize: "0.65rem", fontFamily: "var(--font-sans)", color: theme === "dark" ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.4)", flexShrink: 0, minWidth: "28px", textAlign: "right" }}>
+                    {fmt(audioDuration)}
+                  </span>
+                </div>
+
+                {/* Controls row: speeds + pause/play */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  {/* Speed buttons */}
+                  <div style={{ display: "flex", gap: "5px" }}>
+                    {[0.8, 1, 1.2, 1.5].map(r => (
+                      <button key={r} onClick={() => handleSetSpeed(r)} style={{
+                        padding: "3px 8px", borderRadius: "8px", border: "none", cursor: "pointer",
+                        fontSize: "0.65rem", fontWeight: "600", fontFamily: "var(--font-sans)",
+                        backgroundColor: playbackRate === r
+                          ? (theme === "dark" ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.12)")
+                          : "transparent",
+                        color: playbackRate === r
+                          ? (theme === "dark" ? "#ffffff" : "#111111")
+                          : (theme === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.38)"),
+                        transition: "all 0.15s ease"
+                      }}>
+                        {r}x
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Pause / Play */}
+                  <button
+                    onClick={handleTogglePlay}
+                    style={{
+                      width: "38px", height: "38px", borderRadius: "50%", border: "none",
+                      backgroundColor: theme === "dark" ? "#ffffff" : "#111111",
+                      color: theme === "dark" ? "#000000" : "#ffffff",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      cursor: "pointer",
+                      boxShadow: theme === "dark" ? "0 4px 12px rgba(0,0,0,0.5)" : "0 4px 12px rgba(0,0,0,0.2)",
+                      flexShrink: 0
+                    }}
+                  >
+                    {isPlaying ? (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <rect x="6" y="4" width="4" height="16" rx="1"/>
+                        <rect x="14" y="4" width="4" height="16" rx="1"/>
+                      </svg>
+                    ) : (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5,3 19,12 5,21"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+      </>,
+      document.body
+    )}
 
       {/* Identity Modal removed per clean design rules */}
     </div>

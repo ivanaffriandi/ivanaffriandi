@@ -78,17 +78,27 @@ export default function GlobalProtector() {
     };
     document.addEventListener("keydown", handleKeyDown);
 
-    // 3. Listen to Window Blur
+    // 3. Listen to Window Blur and Visibility Change (for mobile app switchers/backgrounding)
     const handleBlur = () => {
       setIsBlurred(true);
       // Even if OS intercepts keyboard shortcut, snipping tools cause window to lose focus
       handleScreenshotAttempt("Snipping Tool / Focus Lost");
     };
     const handleFocus = () => {
-      setIsBlurred(false);
+      if (document.visibilityState === 'visible') {
+        setIsBlurred(false);
+      }
+    };
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setIsBlurred(true);
+      } else {
+        setIsBlurred(false);
+      }
     };
     window.addEventListener("blur", handleBlur);
     window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     // 4. Copy Poisoning
     const handleCopy = (e: ClipboardEvent) => {
@@ -102,8 +112,7 @@ export default function GlobalProtector() {
 
     // 5. DevTools Detection (Booby Trap)
     // We check if window size discrepancy is large (meaning devtools is docked)
-    // Or we use the debugger timing trick
-    let devToolsChecker = setInterval(() => {
+    const checkDevTools = () => {
       const widthThreshold = window.outerWidth - window.innerWidth > 160;
       const heightThreshold = window.outerHeight - window.innerHeight > 160;
       if (widthThreshold || heightThreshold) {
@@ -111,18 +120,31 @@ export default function GlobalProtector() {
       } else {
         setIsDevToolsOpen(false);
       }
-    }, 1000);
+    };
+
+    window.addEventListener("resize", checkDevTools);
+    checkDevTools();
 
     // Global CSS injection for unselectable content
     const style = document.createElement("style");
     style.innerHTML = `
       * {
         -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
         user-select: none !important;
+        
         -webkit-user-drag: none !important;
+        -khtml-user-drag: none !important;
+        -moz-user-drag: none !important;
+        -o-user-drag: none !important;
+        
+        -webkit-touch-callout: none !important;
       }
       input, textarea {
         -webkit-user-select: text !important;
+        -moz-user-select: text !important;
+        -ms-user-select: text !important;
         user-select: text !important;
       }
       ::selection {
@@ -140,7 +162,8 @@ export default function GlobalProtector() {
       document.removeEventListener("copy", handleCopy);
       window.removeEventListener("blur", handleBlur);
       window.removeEventListener("focus", handleFocus);
-      clearInterval(devToolsChecker);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("resize", checkDevTools);
       if (document.head.contains(style)) {
         document.head.removeChild(style);
       }

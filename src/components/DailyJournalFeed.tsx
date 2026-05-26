@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+
 import Link from "next/link";
 import FadeIn from "./FadeIn";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,24 +11,22 @@ import { triggerLightClick, triggerActionClick } from "@/lib/haptic";
 
 // iOS stagger spring config
 const iosCardVariants = {
-  hidden: { opacity: 0, y: 14, scale: 0.98, filter: "blur(3px)" },
+  hidden: { opacity: 0, y: 12, scale: 0.98 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
     scale: 1,
-    filter: "blur(0px)",
     transition: {
-      delay: i * 0.05,
-      duration: 0.38,
+      delay: i * 0.04,
+      duration: 0.32,
       ease: [0.25, 0.46, 0.45, 0.94] as const,
     },
   }),
   exit: {
     opacity: 0,
-    y: -6,
+    y: -4,
     scale: 0.99,
-    filter: "blur(2px)",
-    transition: { duration: 0.16, ease: [0.55, 0, 1, 0.45] as const },
+    transition: { duration: 0.14, ease: [0.55, 0, 1, 0.45] as const },
   },
 };
 
@@ -830,13 +829,18 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
   const selectedTheme = getSelectedTheme(selectedDate, calendarEvents);
 
   // Sort all moments by published date descending, or fallback to aesthetic placeholders if empty
-  const displayMoments = moments.length > 0
-    ? [...moments].sort((a: any, b: any) => new Date(b.published || 0).getTime() - new Date(a.published || 0).getTime())
-    : Array.from({ length: 8 }).map((_, idx) => ({
-        id: `placeholder-${idx}`,
-        url: `https://picsum.photos/seed/${idx + 10}/300/300`,
-        title: `Moment ${idx + 1}`
-      }));
+  const displayMoments = useMemo(() => {
+    if (moments.length > 0) {
+      return [...moments]
+        .sort((a: any, b: any) => new Date(b.published || 0).getTime() - new Date(a.published || 0).getTime())
+        .slice(0, 9);
+    }
+    return Array.from({ length: 9 }).map((_, idx) => ({
+      id: `placeholder-${idx}`,
+      url: `https://picsum.photos/seed/${idx + 10}/300/300`,
+      title: `Moment ${idx + 1}`
+    }));
+  }, [moments]);
 
   // Holiday and Sunday indicators computed globally
   const selectedKey = `${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
@@ -1054,8 +1058,14 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
   const stripDates = generateStrip();
   const today = new Date();
 
-  const filteredPosts = posts.filter(post => isSameDay(parseBloggerDate(post.published), selectedDate));
-  const hasPostOnDate = (d: Date) => posts.some(post => isSameDay(parseBloggerDate(post.published), d));
+  const filteredPosts = useMemo(
+    () => posts.filter(post => isSameDay(parseBloggerDate(post.published), selectedDate)),
+    [posts, selectedDate]
+  );
+  const hasPostOnDate = useCallback(
+    (d: Date) => posts.some(post => isSameDay(parseBloggerDate(post.published), d)),
+    [posts]
+  );
 
   // Calendar navigation logic
   const changeMonth = (offset: number) => {
@@ -2869,13 +2879,13 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                               gridTemplateRows: "1fr 1fr",
                               gap: "1.5px"
                             }}>
-                              <div style={{ gridColumn: "1", gridRow: "1 / span 2", overflow: "hidden" }}>
+                              <div style={{ gridColumn: "1", gridRow: "1 / span 2", overflow: "hidden", height: "100%" }}>
                                 <img src={imageUrls[0]} alt="" style={imgStyle} />
                               </div>
-                              <div style={{ gridColumn: "2", gridRow: "1", overflow: "hidden" }}>
+                              <div style={{ gridColumn: "2", gridRow: "1", overflow: "hidden", height: "100%" }}>
                                 <img src={imageUrls[1]} alt="" style={imgStyle} />
                               </div>
-                              <div style={{ gridColumn: "2", gridRow: "2", overflow: "hidden" }}>
+                              <div style={{ gridColumn: "2", gridRow: "2", overflow: "hidden", height: "100%" }}>
                                 <img src={imageUrls[2]} alt="" style={imgStyle} />
                               </div>
                             </div>
@@ -2891,10 +2901,16 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                               gridTemplateRows: "1fr 1fr",
                               gap: "1.5px"
                             }}>
-                              <img src={imageUrls[0]} alt="" style={imgStyle} />
-                              <img src={imageUrls[1]} alt="" style={imgStyle} />
-                              <img src={imageUrls[2]} alt="" style={imgStyle} />
-                              <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                              <div style={{ overflow: "hidden", height: "100%" }}>
+                                <img src={imageUrls[0]} alt="" style={imgStyle} />
+                              </div>
+                              <div style={{ overflow: "hidden", height: "100%" }}>
+                                <img src={imageUrls[1]} alt="" style={imgStyle} />
+                              </div>
+                              <div style={{ overflow: "hidden", height: "100%" }}>
+                                <img src={imageUrls[2]} alt="" style={imgStyle} />
+                              </div>
+                              <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden" }}>
                                 <img src={imageUrls[3]} alt="" style={imgStyle} />
                                 {extraCount > 0 && (
                                   <div style={{
@@ -2981,7 +2997,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             className="moments-grid"
             style={{ 
               display: "grid", 
-              gridTemplateColumns: "repeat(4, 1fr)", 
+              gridTemplateColumns: "repeat(3, 1fr)", 
               gap: "2px",
               borderRadius: "12px",
               overflow: "hidden",
@@ -3051,7 +3067,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                   textTransform: "uppercase",
                   letterSpacing: "0.04em"
                 }}>
-                  Blog Posts
+                  Story
                 </h2>
                 
                 {/* Minimalist Prev / Next Buttons */}

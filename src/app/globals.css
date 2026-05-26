@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
-
 :root {
   --bg-color: #FDFBF7; /* Beautiful warm Munken book paper */
   --bg-color-rgba: rgba(253, 251, 247, 0.75);
@@ -27,7 +25,7 @@
   --card-border-4: rgba(255, 183, 77, 0.2);
 
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-serif: 'Lora', Georgia, serif;
+  --font-serif: var(--font-lora), 'Lora', Georgia, serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -72,12 +70,14 @@
   font-style: italic;
 }
 
-/* Force hide Next.js Dev overlays that might cause black sidebars */
+/* Force hide Next.js Dev overlays commented out for debugging blank screen */
+/*
 nextjs-portal, 
 #__next-build-watcher, 
 [data-nextjs-toast] {
   display: none !important;
 }
+*/
 
 html, body {
   margin: 0;
@@ -1111,16 +1111,16 @@ header {
 /* Breathtaking Google Serif Fonts for Authentic Editorial Feeling */
 .book-prose,
 .book-prose * {
-  font-family: 'Lora', 'Merriweather', 'Georgia', serif !important;
+  font-family: var(--font-lora), var(--font-merriweather), 'Lora', 'Merriweather', 'Georgia', serif !important;
 }
 
 .book-chapter {
-  font-family: 'Lora', 'Georgia', serif !important;
+  font-family: var(--font-lora), 'Lora', 'Georgia', serif !important;
   font-weight: 500 !important;
 }
 
 .book-title {
-  font-family: 'Playfair Display', 'Georgia', serif !important;
+  font-family: var(--font-playfair), 'Playfair Display', 'Georgia', serif !important;
   font-weight: 700 !important;
 }
 
@@ -1140,7 +1140,7 @@ header {
 
 /* Beautiful Classical Drop-cap */
 .book-prose p:first-of-type::first-letter {
-  font-family: 'Playfair Display', 'Georgia', serif !important;
+  font-family: var(--font-playfair), 'Playfair Display', 'Georgia', serif !important;
   font-size: 4rem;
   font-weight: 700 !important;
   float: left;
@@ -1172,6 +1172,11 @@ header {
 
 .tts-pulse-indicator {
   animation: ttsPulse 1.4s infinite ease-in-out;
+}
+
+@keyframes tts-bar {
+  from { transform: scaleY(0.4); opacity: 0.6; }
+  to   { transform: scaleY(1);   opacity: 1;   }
 }
 
 /* Remove default link hover overrides in book view to keep it neat */
@@ -1606,6 +1611,61 @@ html {
     flex: 0 0 300px;
     min-width: 0;
   }
+}
+
+/* ==========================================================================
+   INLINE PHOTO GRID COLLAGE OVERRIDES (Editorial & Flat Alignment)
+   ========================================================================== */
+.book-prose .inline-photo-grid {
+  display: grid !important;
+  width: 100% !important;
+  height: 420px !important; /* Perfect tall editorial height on desktop */
+  margin: 1.8rem 0 2.8rem 0 !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  gap: 4px !important;
+  border: 1px solid rgba(150,150,150,0.12) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.04) !important;
+  background-color: rgba(150,150,150,0.04) !important;
+}
+
+@media (max-width: 768px) {
+  .book-prose .inline-photo-grid {
+    height: 250px !important; /* Beautiful height on mobile */
+  }
+}
+
+/* Override the leaky .book-prose img properties inside the grid container */
+.book-prose .inline-photo-grid img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  object-fit: cover !important;
+  display: block !important;
+  transform: none !important;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.book-prose .inline-photo-grid img:hover {
+  transform: scale(1.02) !important;
+}
+
+/* Grid item wrappers (anchors) override */
+.book-prose .inline-photo-grid .inline-photo-item {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  display: block !important;
+  cursor: pointer !important;
 }
 
 

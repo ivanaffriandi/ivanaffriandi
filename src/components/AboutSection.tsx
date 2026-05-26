@@ -93,7 +93,7 @@ export default function AboutSection() {
                   <svg width="110" height="110" viewBox="0 0 100 100" style={{ transform: "rotate(-8deg)", filter: "drop-shadow(0px 2px 4px rgba(0,0,0,0.05))" }}>
                     <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(224, 60, 49, 0.75)" strokeWidth="1.5" strokeDasharray="3 1 1 1 2 1" />
                     <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(224, 60, 49, 0.75)" strokeWidth="0.75" />
-                    <text x="50" y="55" fill="rgba(224, 60, 49, 0.85)" fontSize="15" fontFamily="var(--font-serif, 'Playfair Display', Georgia, serif)" fontWeight="800" textAnchor="middle" letterSpacing="0.05em">
+                    <text x="50" y="55" fill="rgba(224, 60, 49, 0.85)" fontSize="15" fontFamily="var(--font-playfair, 'Playfair Display', Georgia, serif)" fontWeight="800" textAnchor="middle" letterSpacing="0.05em">
                       IVAN
                     </text>
                     <path id="circlePath" d="M 22,50 A 28,28 0 1,1 78,50 A 28,28 0 1,1 22,50" fill="none" />
@@ -111,7 +111,7 @@ export default function AboutSection() {
                 {/* Breathtaking Editorial Statement */}
                 <blockquote style={{ margin: 0, padding: 0, border: "none" }}>
                   <p style={{ 
-                    fontFamily: "var(--font-serif, 'Playfair Display', Georgia, serif)", 
+                    fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)", 
                     fontSize: "clamp(1.25rem, 3.5vw, 1.8rem)", 
                     fontWeight: "500", 
                     fontStyle: "italic", 

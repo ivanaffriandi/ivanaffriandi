@@ -360,8 +360,8 @@ export default function AskPage() {
     loadQAs();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent | React.MouseEvent) => {
+    if (e) e.preventDefault();
     if (!content.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
@@ -427,80 +427,305 @@ export default function AskPage() {
         input:focus::placeholder, textarea:focus::placeholder {
           opacity: 0.55 !important;
         }
+
+        /* === RESPONSIVE LAYOUT FOR DESKTOP === */
+        @media (min-width: 768px) {
+          .floating-capsule-portal {
+            display: none !important;
+          }
+          .desktop-composer-container {
+            display: block !important;
+            margin-top: 1.8rem;
+          }
+          .ask-container {
+            max-width: 960px !important;
+            display: grid !important;
+            grid-template-columns: 360px 1fr !important;
+            gap: 48px !important;
+            margin: 0 auto !important;
+          }
+          .ask-left-panel {
+            position: sticky !important;
+            top: 2.5rem !important;
+            height: fit-content !important;
+          }
+        }
+        @media (max-width: 767px) {
+          .floating-capsule-portal {
+            display: flex !important;
+          }
+          .desktop-composer-container {
+            display: none !important;
+          }
+          .ask-container {
+            max-width: 420px !important;
+            margin: 0 auto !important;
+          }
+        }
       `}</style>
 
-      {/* Cozy, highly curated single-column container */}
-      <div style={{ maxWidth: "420px", margin: "0 auto" }}>
+      {/* Cozy, highly curated responsive container */}
+      <div className="ask-container">
         
-        {/* Header Block — Warm, Inviting "Ask Ivan" Swiss Header */}
-        <div style={{ marginBottom: "1.8rem" }}>
-          <h1 style={{ 
-            fontFamily: "var(--font-sans)",
-            fontSize: "clamp(1.65rem, 5vw, 2.1rem)", 
-            fontWeight: "700", 
-            margin: "0 0 0.4rem 0", 
-            letterSpacing: "-0.03em", 
-            lineHeight: "1.1", 
-            color: "var(--text-primary)" 
-          }}>
-            Ask Ivan
-          </h1>
-          <p style={{ 
-            fontSize: "0.85rem", 
-            color: "var(--text-secondary)", 
-            lineHeight: "1.4", 
-            margin: 0,
-            fontFamily: "var(--font-sans)"
-          }}>
-            Ask me anything anonymously.
-          </p>
-        </div>
-
-        {/* Chronological Timeline stream of questions and answers */}
-        {loading ? (
-          <div style={{ display: "flex", justifyContent: "center", padding: "3rem 0" }}>
-            <div style={{ width: "14px", height: "14px", borderRadius: "50%", border: "2px solid rgba(150,150,150,0.2)", borderTopColor: "var(--text-primary)", animation: "spin 0.8s linear infinite" }} />
-            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        {/* Left Column: Branding and static Desktop Composer */}
+        <div className="ask-left-panel">
+          {/* Header Block — Warm, Inviting "Ask Ivan" Swiss Header */}
+          <div style={{ marginBottom: "1rem" }}>
+            <h1 style={{ 
+              fontFamily: "var(--font-sans)",
+              fontSize: "clamp(1.65rem, 5vw, 2.3rem)", 
+              fontWeight: "800", 
+              margin: "0 0 0.4rem 0", 
+              letterSpacing: "-0.03em", 
+              lineHeight: "1.1", 
+              color: "var(--text-primary)" 
+            }}>
+              Ask Ivan
+            </h1>
+            <p style={{ 
+              fontSize: "0.86rem", 
+              color: "var(--text-secondary)", 
+              lineHeight: "1.4", 
+              margin: 0,
+              fontFamily: "var(--font-sans)",
+              fontWeight: 500
+            }}>
+              Ask me anything anonymously.
+            </p>
           </div>
-        ) : (
-          <div style={{ position: "relative", width: "100%" }}>
-            
-            {/* Main timeline stream */}
-            <motion.div 
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-              style={{ 
-                display: "flex", 
-                flexDirection: "column", 
-                gap: "1.1rem", // Open, archival visual rhythm
-                width: "100%",
-                zIndex: 1,
-                position: "relative"
-              }}
-            >
-              {sortedQuestions.length > 0 ? (
-                sortedQuestions.map((qa, index) => {
-                  return (
-                    <QACard 
-                      key={qa.id} 
-                      qa={qa} 
-                      index={index} 
-                      isExpanded={expandedIds.has(qa.id)}
-                      isLast={index === sortedQuestions.length - 1}
-                      onToggle={() => toggleCard(qa.id)}
-                    />
-                  );
-                })
-              ) : (
-                <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)", border: "1px dashed var(--border-color)", borderRadius: "12px" }}>
-                  <p style={{ margin: 0, fontSize: "0.8rem", fontWeight: "500", color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>No questions answered yet</p>
-                  <p style={{ margin: "2px 0 0 0", fontSize: "0.7rem", color: "var(--text-secondary)", fontFamily: "var(--font-sans)" }}>Ask the first anonymous question below!</p>
+
+          {/* Desktop static composer card */}
+          <div className="desktop-composer-container">
+            <form onSubmit={handleSubmit} style={{
+              padding: "20px",
+              borderRadius: "20px",
+              border: isFocused ? "1.5px solid var(--text-primary)" : "1px solid var(--border-color)",
+              backgroundColor: isDarkMode ? "rgba(20, 19, 18, 0.45)" : "rgba(253, 251, 247, 0.55)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.15)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+              transition: "border 0.15s ease, background-color 0.2s ease, box-shadow 0.15s ease"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{
+                  fontSize: "0.65rem",
+                  fontFamily: "var(--font-sans)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                  color: "var(--text-secondary)",
+                  fontWeight: "700"
+                }}>
+                  Ask a Question
+                </span>
+                <span style={{
+                  fontSize: "0.65rem",
+                  fontFamily: "var(--font-sans)",
+                  color: "var(--text-secondary)",
+                  opacity: 0.65,
+                  fontWeight: "600"
+                }}>
+                  {300 - content.length} left
+                </span>
+              </div>
+
+              {errorMsg && (
+                <div style={{
+                  backgroundColor: "rgba(255, 60, 60, 0.1)",
+                  border: "1px solid rgba(255, 60, 60, 0.3)",
+                  borderRadius: "8px",
+                  padding: "8px 12px",
+                  color: "#ff4d4d",
+                  fontSize: "0.75rem",
+                  fontFamily: "var(--font-sans)",
+                  fontWeight: "600",
+                  lineHeight: "1.4"
+                }}>
+                  {errorMsg}
                 </div>
               )}
-            </motion.div>
+
+              <div style={{ height: "1px", backgroundColor: "var(--border-color)", opacity: 0.6 }} />
+
+              {/* Sender Name Input */}
+              <div style={{
+                backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.25)" : "rgba(0, 0, 0, 0.04)",
+                borderRadius: "12px",
+                padding: "8px 12px",
+                border: isDarkMode ? "1px solid rgba(255,255,255,0.04)" : "1px solid rgba(0, 0, 0, 0.04)",
+                display: "flex",
+                alignItems: "center"
+              }}>
+                <span style={{ 
+                  fontSize: "0.8rem", 
+                  color: "var(--text-secondary)", 
+                  marginRight: "6px",
+                  fontWeight: "600",
+                  fontFamily: "var(--font-sans)",
+                  userSelect: "none"
+                }}>From:</span>
+                <input
+                  type="text"
+                  value={senderName}
+                  onChange={(e) => setSenderName(e.target.value)}
+                  placeholder="Name / Nickname (Optional)"
+                  maxLength={40}
+                  disabled={isSubmitting}
+                  style={{
+                    flexGrow: 1,
+                    border: "none",
+                    background: "none",
+                    outline: "none",
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "0.8rem",
+                    color: "var(--text-primary)",
+                    padding: "1px 0",
+                    fontWeight: "500"
+                  }}
+                />
+              </div>
+
+              {/* Textarea Composition Tray */}
+              <div style={{
+                backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.3)" : "rgba(0, 0, 0, 0.05)",
+                borderRadius: "14px",
+                padding: "10px 14px",
+                border: isDarkMode ? "1px solid rgba(255,255,255,0.04)" : "1px solid rgba(0,0,0,0.05)",
+                boxShadow: isDarkMode 
+                  ? "inset 0 3px 8px rgba(0,0,0,0.5)" 
+                  : "inset 0 3px 8px rgba(0,0,0,0.08)",
+                display: "flex",
+                minHeight: "120px"
+              }}>
+                <textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  placeholder="Write your question here... (will be published once answered)"
+                  maxLength={300}
+                  rows={4}
+                  disabled={isSubmitting}
+                  style={{
+                    border: "none",
+                    outline: "none",
+                    background: "none",
+                    resize: "none",
+                    fontSize: "0.88rem",
+                    color: "var(--text-primary)",
+                    fontFamily: "var(--font-sans)",
+                    width: "100%",
+                    lineHeight: "1.4",
+                    fontWeight: "500"
+                  }}
+                />
+              </div>
+
+              <div style={{ height: "1px", backgroundColor: "var(--border-color)", opacity: 0.6 }} />
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                {content.trim() && (
+                  <motion.button
+                    type="button"
+                    onClick={() => { setContent(""); setSenderName(""); }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: "12px",
+                      border: "none",
+                      backgroundColor: "transparent",
+                      color: "var(--text-secondary)",
+                      fontSize: "0.82rem",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      fontFamily: "var(--font-sans)"
+                    }}
+                  >
+                    Clear
+                  </motion.button>
+                )}
+
+                <motion.button
+                  type="submit"
+                  disabled={!content.trim() || isSubmitting}
+                  whileHover={content.trim() ? { scale: 1.02 } : {}}
+                  whileTap={content.trim() ? { scale: 0.98 } : {}}
+                  style={{
+                    padding: "10px 20px",
+                    borderRadius: "14px",
+                    border: content.trim() ? "none" : "1px solid var(--border-color)",
+                    backgroundColor: content.trim() 
+                      ? "var(--text-primary)" 
+                      : (isDarkMode ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0.05)"),
+                    color: content.trim() ? "var(--bg-color)" : "var(--text-secondary)",
+                    opacity: content.trim() ? 1 : 0.65,
+                    fontSize: "0.82rem",
+                    fontWeight: "700",
+                    cursor: content.trim() ? "pointer" : "not-allowed",
+                    fontFamily: "var(--font-sans)",
+                    boxShadow: content.trim() 
+                      ? "0 4px 12px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2)" 
+                      : "none",
+                    transition: "background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease"
+                  }}
+                >
+                  {isSubmitting ? "Sending..." : "Send Question"}
+                </motion.button>
+              </div>
+            </form>
           </div>
-        )}
+        </div>
+
+        {/* Right Column: Q&A Chronological Stream */}
+        <div className="ask-right-panel" style={{ width: "100%" }}>
+          {loading ? (
+            <div style={{ display: "flex", justifyContent: "center", padding: "3rem 0" }}>
+              <div style={{ width: "14px", height: "14px", borderRadius: "50%", border: "2px solid rgba(150,150,150,0.2)", borderTopColor: "var(--text-primary)", animation: "spin 0.8s linear infinite" }} />
+              <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            </div>
+          ) : (
+            <div style={{ position: "relative", width: "100%" }}>
+              
+              {/* Main timeline stream */}
+              <motion.div 
+                variants={staggerContainer}
+                initial="initial"
+                animate="animate"
+                style={{ 
+                  display: "flex", 
+                  flexDirection: "column", 
+                  gap: "1.1rem", // Open, archival visual rhythm
+                  width: "100%",
+                  zIndex: 1,
+                  position: "relative"
+                }}
+              >
+                {sortedQuestions.length > 0 ? (
+                  sortedQuestions.map((qa, index) => {
+                    return (
+                      <QACard 
+                        key={qa.id} 
+                        qa={qa} 
+                        index={index} 
+                        isExpanded={expandedIds.has(qa.id)}
+                        isLast={index === sortedQuestions.length - 1}
+                        onToggle={() => toggleCard(qa.id)}
+                      />
+                    );
+                  })
+                ) : (
+                  <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)", border: "1px dashed var(--border-color)", borderRadius: "12px" }}>
+                    <p style={{ margin: 0, fontSize: "0.8rem", fontWeight: "500", color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>No questions answered yet</p>
+                    <p style={{ margin: "2px 0 0 0", fontSize: "0.7rem", color: "var(--text-secondary)", fontFamily: "var(--font-sans)" }}>Ask the first anonymous question!</p>
+                  </div>
+                )}
+              </motion.div>
+            </div>
+          )}
+        </div>
 
       </div>
 
@@ -528,6 +753,7 @@ export default function AskPage() {
           {/* Permanent Floating Input Capsule which transitions IN-PLACE directly into a Composition Card */}
           {/* USES NATIVE HIGH-PERFORMANCE CSS TRANSITIONS FOR WIDTH, HEIGHT, BORDER-RADIUS, AND PADDING TO ELIMINATE BORDER-RADIUS WARPING COMPLETELY */}
           <div
+            className="floating-capsule-portal"
             style={{
               position: "fixed",
               bottom: "2.5rem",

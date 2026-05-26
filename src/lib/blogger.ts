@@ -33,6 +33,16 @@ if (!global._cachedCommentsMap) global._cachedCommentsMap = {};
 
 const RTDB_POSTS_URL = "https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app/blogger_posts.json";
 
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 1200): Promise<Response> {
+  // Safe Promise.race timeout: we race the fetch query against a timeout reject.
+  // We do NOT use AbortController signal here, as aborting server-side fetches inside Next.js 
+  // Server Components can disrupt Next.js's internal streaming payload, causing client-side Turbopack crashes.
+  return Promise.race([
+    fetch(url, options),
+    new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Blogger fetch timeout")), timeoutMs))
+  ]);
+}
+
 export async function getPosts(): Promise<BlogPost[]> {
   if (!BLOG_ID || !API_KEY) {
     console.warn("Blogger API credentials are not set. Returning mock data.");
@@ -57,7 +67,7 @@ export async function getPosts(): Promise<BlogPost[]> {
   }
 
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `${API_URL}/${BLOG_ID}/posts?key=${API_KEY}&fetchImages=true`,
       { next: { revalidate: 60 } } // Cache for 60 seconds to avoid hitting Blogger rate limits!
     );
@@ -99,7 +109,7 @@ export async function getPosts(): Promise<BlogPost[]> {
     // Fallback to Firebase RTDB persistent backup
     try {
       console.log("Fetching persistent RTDB backup for Blogger posts...");
-      const backupRes = await fetch(RTDB_POSTS_URL, { cache: "no-store" });
+      const backupRes = await fetchWithTimeout(RTDB_POSTS_URL, { cache: "no-store" });
       if (backupRes.ok) {
         const backupPosts = await backupRes.json();
         if (backupPosts && Array.isArray(backupPosts) && backupPosts.length > 0) {
@@ -126,7 +136,7 @@ export async function getPost(id: string): Promise<BlogPost | null> {
   }
 
   try {
-    const res = await fetch(`${API_URL}/${BLOG_ID}/posts/${id}?key=${API_KEY}`, {
+    const res = await fetchWithTimeout(`${API_URL}/${BLOG_ID}/posts/${id}?key=${API_KEY}`, {
       next: { revalidate: 60 },
     });
     if (!res.ok) throw new Error(`Blogger API returned error: ${res.statusText}`);
@@ -162,7 +172,7 @@ export async function getPost(id: string): Promise<BlogPost | null> {
 
     // Try fetching posts list from Firebase RTDB to find the post
     try {
-      const backupRes = await fetch(RTDB_POSTS_URL, { cache: "no-store" });
+      const backupRes = await fetchWithTimeout(RTDB_POSTS_URL, { cache: "no-store" });
       if (backupRes.ok) {
         const backupPosts = await backupRes.json();
         if (backupPosts && Array.isArray(backupPosts)) {
@@ -185,7 +195,7 @@ export async function getPostComments(postId: string): Promise<BlogComment[]> {
   }
 
   try {
-    const res = await fetch(`${API_URL}/${BLOG_ID}/posts/${postId}/comments?key=${API_KEY}`, {
+    const res = await fetchWithTimeout(`${API_URL}/${BLOG_ID}/posts/${postId}/comments?key=${API_KEY}`, {
       next: { revalidate: 30 }, // 30 seconds caching for comments
     });
     if (!res.ok) throw new Error(`Blogger API returned error: ${res.statusText}`);
