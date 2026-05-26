@@ -802,6 +802,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
   const [isDark, setIsDark] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
   const [books, setBooks] = useState<BookItem[]>([]);
+  const [tappedBookId, setTappedBookId] = useState<string | null>(null);
   const visibleCards = 3; // Always show 3 cards per slide for a beautiful minimalist gallery layout
 
   useEffect(() => {
@@ -2673,66 +2674,7 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
             );
           })()}
 
-          {/* 3. NOW READING TICKER */}
-          {(() => {
-            const currentBook = books.find(b => b.status === "reading") || books[0];
-            if (!currentBook) return null;
-            return (
-              <div className="now-reading-container" style={{ 
-                borderTop: "1px solid rgba(150,150,150,0.12)", 
-                paddingTop: "1rem", 
-                marginTop: "1.2rem",
-                marginBottom: "0.6rem",
-                overflow: "hidden"
-              }}>
-                <h2 style={{ 
-                  fontSize: "0.75rem", 
-                  fontWeight: "700", 
-                  color: "var(--text-primary)", 
-                  margin: "0 0 0.6rem 0",
-                  fontFamily: "var(--font-sans)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.04em"
-                }}>
-                  Now Reading
-                </h2>
-                <div style={{
-                  width: "100%",
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  backgroundColor: "rgba(128,128,128,0.03)",
-                  border: "1px solid rgba(128,128,128,0.08)",
-                  borderRadius: "8px",
-                  padding: "8px 0",
-                  position: "relative",
-                  display: "flex",
-                  alignItems: "center"
-                }}>
-                  <div className="marquee-content" style={{
-                    display: "inline-flex",
-                    gap: "3rem",
-                    animation: "marquee-spin 25s linear infinite"
-                  }}>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--text-secondary)", fontWeight: "500" }}>
-                      📖 Reading: <strong>{currentBook.title}</strong> by {currentBook.author} ({currentBook.progress}% complete)
-                    </span>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--text-secondary)", fontWeight: "500" }}>
-                      📖 Reading: <strong>{currentBook.title}</strong> by {currentBook.author} ({currentBook.progress}% complete)
-                    </span>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--text-secondary)", fontWeight: "500" }}>
-                      📖 Reading: <strong>{currentBook.title}</strong> by {currentBook.author} ({currentBook.progress}% complete)
-                    </span>
-                  </div>
-                  <style>{`
-                    @keyframes marquee-spin {
-                      0% { transform: translate3d(0, 0, 0); }
-                      100% { transform: translate3d(-33.33%, 0, 0); }
-                    }
-                  `}</style>
-                </div>
-              </div>
-            );
-          })()}
+
         </FadeIn>
 
         {/* Column 2: Journal (Middle Column) */}
@@ -3332,118 +3274,198 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                 borderTop: "1px solid rgba(150,150,150,0.12)", 
                 paddingTop: "1.2rem",
                 marginTop: "1.5rem",
-                paddingBottom: "2rem"
+                paddingBottom: "2.5rem"
               }}
             >
-              <h2 style={{ 
-                fontSize: "0.75rem", 
-                fontWeight: "700", 
-                color: "var(--text-primary)", 
-                margin: "0 0 1.2rem 0",
-                fontFamily: "var(--font-sans)",
-                textTransform: "uppercase",
-                letterSpacing: "0.04em"
-              }}>
-                Library
-              </h2>
+              {/* Header row with Title on Left, Minimal Marquee on Right */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.2rem", gap: "1rem", flexWrap: "wrap" }}>
+                <h2 style={{ 
+                  fontSize: "0.75rem", 
+                  fontWeight: "700", 
+                  color: "var(--text-primary)", 
+                  margin: 0,
+                  fontFamily: "var(--font-sans)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.04em",
+                  flexShrink: 0
+                }}>
+                  Library
+                </h2>
+                
+                {/* Now Reading ticker on the right of Library! */}
+                {(() => {
+                  const currentBook = books.find(b => b.status === "reading") || books[0];
+                  if (!currentBook) return null;
+                  return (
+                    <div style={{
+                      flex: 1,
+                      maxWidth: "280px",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      backgroundColor: "rgba(128,128,128,0.03)",
+                      border: "1px solid rgba(128,128,128,0.08)",
+                      borderRadius: "8px",
+                      padding: "6px 0",
+                      position: "relative",
+                      display: "flex",
+                      alignItems: "center"
+                    }}>
+                      <div className="marquee-content" style={{
+                        display: "inline-flex",
+                        gap: "2.5rem",
+                        animation: "marquee-spin 22s linear infinite"
+                      }}>
+                        <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.64rem", color: "var(--text-secondary)", fontWeight: "500" }}>
+                          📖 Reading: <strong>{currentBook.title}</strong> ({currentBook.progress}%)
+                        </span>
+                        <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.64rem", color: "var(--text-secondary)", fontWeight: "500" }}>
+                          📖 Reading: <strong>{currentBook.title}</strong> ({currentBook.progress}%)
+                        </span>
+                        <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.64rem", color: "var(--text-secondary)", fontWeight: "500" }}>
+                          📖 Reading: <strong>{currentBook.title}</strong> ({currentBook.progress}%)
+                        </span>
+                      </div>
+                      <style>{`
+                        @keyframes marquee-spin {
+                          0% { transform: translate3d(0, 0, 0); }
+                          100% { transform: translate3d(-33.33%, 0, 0); }
+                        }
+                      `}</style>
+                    </div>
+                  );
+                })()}
+              </div>
               
+              {/* Books bookshelf grid - showing covers, click to expand rating + review */}
               <div style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-                gap: "1.2rem"
+                gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
+                gap: "1.5rem 1.2rem"
               }}>
-                {completedBooks.map((book) => (
-                  <div 
-                    key={book.id}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      backgroundColor: isDark ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.01)",
-                      border: "1px solid rgba(150,150,150,0.08)",
-                      borderRadius: "16px",
-                      padding: "1rem",
-                      fontFamily: "var(--font-sans)",
-                      transition: "transform 0.2s ease, box-shadow 0.2s ease"
-                    }}
-                    onMouseOver={(e) => {
-                      e.currentTarget.style.transform = "translateY(-2px)";
-                      e.currentTarget.style.boxShadow = isDark ? "0 4px 12px rgba(0,0,0,0.25)" : "0 4px 10px rgba(0,0,0,0.02)";
-                    }}
-                    onMouseOut={(e) => {
-                      e.currentTarget.style.transform = "none";
-                      e.currentTarget.style.boxShadow = "none";
-                    }}
-                  >
-                    <div style={{ display: "flex", gap: "0.8rem", marginBottom: "0.8rem" }}>
-                      {book.coverUrl && (
-                        <div style={{
-                          width: "48px",
-                          height: "68px",
-                          borderRadius: "4px",
+                {completedBooks.map((book) => {
+                  const isExpanded = tappedBookId === book.id;
+                  
+                  return (
+                    <div 
+                      key={book.id}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        cursor: "pointer",
+                        fontFamily: "var(--font-sans)",
+                        position: "relative"
+                      }}
+                      onClick={() => setTappedBookId(isExpanded ? null : book.id)}
+                    >
+                      {/* Elegant portrait book cover */}
+                      <div 
+                        style={{
+                          width: "100%",
+                          aspectRatio: "2/3",
+                          borderRadius: "12px",
                           overflow: "hidden",
-                          boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
-                          flexShrink: 0,
-                          backgroundColor: "rgba(128,128,128,0.05)"
-                        }}>
+                          position: "relative",
+                          boxShadow: "0 6px 16px rgba(0,0,0,0.06)",
+                          border: "1px solid rgba(150,150,150,0.08)",
+                          backgroundColor: "rgba(128,128,128,0.04)",
+                          transition: "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.transform = "translateY(-4px) scale(1.02)";
+                          e.currentTarget.style.boxShadow = isDark ? "0 12px 28px rgba(0,0,0,0.4)" : "0 12px 24px rgba(0,0,0,0.08)";
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.transform = "none";
+                          e.currentTarget.style.boxShadow = "0 6px 16px rgba(0,0,0,0.06)";
+                        }}
+                      >
+                        {book.coverUrl ? (
                           <img 
                             src={book.coverUrl} 
                             alt={book.title}
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                           />
-                        </div>
-                      )}
-                      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", minWidth: 0 }}>
-                        <h4 style={{
-                          fontSize: "0.78rem",
-                          fontWeight: "750",
-                          color: "var(--text-primary)",
-                          margin: "0 0 2px 0",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis"
-                        }}>
-                          {book.title}
-                        </h4>
-                        <p style={{
-                          fontSize: "0.66rem",
-                          color: "var(--text-secondary)",
-                          margin: "0 0 4px 0",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis"
-                        }}>
-                          by {book.author}
-                        </p>
-                        {book.completedAt && (
-                          <span style={{ fontSize: "0.58rem", color: "var(--text-secondary)", opacity: 0.6 }}>
-                            Finished: {new Date(book.completedAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}
-                          </span>
+                        ) : (
+                          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(150,150,150,0.06)", color: "var(--text-secondary)", fontSize: "2rem" }}>📖</div>
                         )}
                       </div>
-                    </div>
-                    
-                    {book.review ? (
-                      <div style={{
-                        backgroundColor: isDark ? "rgba(255,255,255,0.01)" : "rgba(0,0,0,0.005)",
-                        borderLeft: "2px solid rgba(150,150,150,0.18)",
-                        paddingLeft: "8px",
-                        margin: 0
+                      
+                      {/* Metadata underneath cover */}
+                      <h4 style={{
+                        fontSize: "0.74rem",
+                        fontWeight: "750",
+                        color: "var(--text-primary)",
+                        margin: "8px 0 2px 0",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis"
                       }}>
-                        <p style={{
-                          fontSize: "0.68rem",
-                          lineHeight: "1.45",
-                          color: "var(--text-secondary)",
-                          margin: 0,
-                          fontStyle: "italic"
-                        }}>
-                          “{book.review}”
-                        </p>
-                      </div>
-                    ) : (
-                      <span style={{ fontSize: "0.62rem", color: "var(--text-secondary)", opacity: 0.5, fontStyle: "italic" }}>No review written yet.</span>
-                    )}
-                  </div>
-                ))}
+                        {book.title}
+                      </h4>
+                      <p style={{
+                        fontSize: "0.64rem",
+                        color: "var(--text-secondary)",
+                        margin: 0,
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis"
+                      }}>
+                        by {book.author}
+                      </p>
+                      
+                      {/* Micro-interactive expanded review and stars */}
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                            animate={{ height: "auto", opacity: 1, marginTop: 8 }}
+                            exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                            style={{ overflow: "hidden" }}
+                            onClick={(e) => e.stopPropagation()} // Prevent closing when tapping on content itself
+                          >
+                            <div style={{
+                              backgroundColor: isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.02)",
+                              border: "1px solid rgba(150, 150, 150, 0.08)",
+                              borderRadius: "10px",
+                              padding: "8px 10px"
+                            }}>
+                              {/* Rating Stars */}
+                              <div style={{ display: "flex", gap: "2px", marginBottom: "4px" }}>
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                  <span 
+                                    key={i} 
+                                    style={{ 
+                                      color: i < (book.rating || 5) ? "#FFCC00" : "rgba(150,150,150,0.25)", 
+                                      fontSize: "0.72rem" 
+                                    }}
+                                  >
+                                    ★
+                                  </span>
+                                ))}
+                              </div>
+                              
+                              {/* Review Text */}
+                              {book.review ? (
+                                <p style={{
+                                  fontSize: "0.65rem",
+                                  lineHeight: "1.4",
+                                  color: "var(--text-secondary)",
+                                  margin: 0,
+                                  fontStyle: "italic"
+                                }}>
+                                  “{book.review}”
+                                </p>
+                              ) : (
+                                <span style={{ fontSize: "0.6rem", color: "var(--text-secondary)", opacity: 0.5, fontStyle: "italic" }}>No review written yet.</span>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </FadeIn>

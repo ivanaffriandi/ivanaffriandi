@@ -93,6 +93,7 @@ export default function AdminPage() {
   const [bookProgress, setBookProgress] = useState(0);
   const [bookStatus, setBookStatus] = useState<"reading" | "completed" | "on_hold" | "to_read">("reading");
   const [bookReview, setBookReview] = useState("");
+  const [bookRating, setBookRating] = useState(5);
   const [showBookModal, setShowBookModal] = useState(false);
   const [isSubmittingBook, setIsSubmittingBook] = useState(false);
 
@@ -214,6 +215,7 @@ export default function AdminPage() {
         progress: bookProgress,
         status: bookStatus,
         review: bookReview.trim(),
+        rating: bookRating,
         startedAt: editingBookId ? (adminBooks.find(b => b.id === editingBookId)?.startedAt || new Date().toISOString()) : new Date().toISOString(),
         completedAt: bookStatus === "completed" ? new Date().toISOString() : ""
       };
@@ -1138,6 +1140,7 @@ export default function AdminPage() {
                         setBookProgress(0); 
                         setBookStatus("reading"); 
                         setBookReview(""); 
+                        setBookRating(5);
                         setShowBookModal(true); 
                       }} 
                       style={{ padding: "6px 14px", backgroundColor: "var(--text-primary)", color: "var(--bg-color)", border: "none", borderRadius: "20px", fontSize: "0.68rem", fontWeight: "750", cursor: "pointer", fontFamily: iosFontStack, display: "flex", alignItems: "center", gap: "4px" }}>
@@ -1185,6 +1188,12 @@ export default function AdminPage() {
                           <label style={{ fontSize: "0.6rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Progress %</label>
                           <input className="admin-form-input" type="number" min="0" max="100" value={bookProgress} onChange={(e) => setBookProgress(Math.min(100, Math.max(0, parseInt(e.target.value) || 0)))} required />
                         </div>
+                        <div style={{ width: "80px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                          <label style={{ fontSize: "0.6rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Stars</label>
+                          <select value={bookRating} onChange={(e) => setBookRating(parseInt(e.target.value))} className="admin-form-input custom-select">
+                            {[1,2,3,4,5].map(num => <option key={num} value={num}>{num} ★</option>)}
+                          </select>
+                        </div>
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                         <label style={{ fontSize: "0.6rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Review & Reflection</label>
@@ -1229,6 +1238,7 @@ export default function AdminPage() {
                               setBookProgress(book.progress); 
                               setBookStatus(book.status); 
                               setBookReview(book.review || ""); 
+                              setBookRating(book.rating || 5);
                               setShowBookModal(true); 
                             }} 
                             style={{ width: "28px", height: "28px", backgroundColor: "rgba(0,122,255,0.05)", border: "1px solid rgba(0,122,255,0.14)", borderRadius: "50%", color: "#007AFF", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }} title="Edit Book">

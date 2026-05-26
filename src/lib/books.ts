@@ -6,6 +6,7 @@ export interface BookItem {
   progress: number; // 0 to 100
   status: "reading" | "completed" | "on_hold" | "to_read";
   review?: string;
+  rating?: number; // 1 to 5
   startedAt?: string;
   completedAt?: string;
 }
@@ -93,7 +94,8 @@ export function getFallbackBooks(): BookItem[] {
       coverUrl: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=250&auto=format&fit=crop",
       startedAt: new Date(Date.now() - 60 * 24 * 3600 * 1000).toISOString(),
       completedAt: new Date(Date.now() - 40 * 24 * 3600 * 1000).toISOString(),
-      review: "A timeless masterpiece that lays the foundations of visual alignment and structural typography. Absolute bible for design engineering."
+      review: "A timeless masterpiece that lays the foundations of visual alignment and structural typography. Absolute bible for design engineering.",
+      rating: 5
     },
     {
       id: "fallback-3",
@@ -104,7 +106,8 @@ export function getFallbackBooks(): BookItem[] {
       coverUrl: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=250&auto=format&fit=crop",
       startedAt: new Date(Date.now() - 90 * 24 * 3600 * 1000).toISOString(),
       completedAt: new Date(Date.now() - 70 * 24 * 3600 * 1000).toISOString(),
-      review: "Stunning exploration of functional minimalism. Rams' ten principles are incredibly well detailed and highly relevant for modern digital design."
+      review: "Stunning exploration of functional minimalism. Rams' ten principles are incredibly well detailed and highly relevant for modern digital design.",
+      rating: 5
     }
   ];
 }
