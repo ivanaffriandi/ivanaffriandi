@@ -55,9 +55,9 @@ export default function AmsterdamClock() {
 
   return (
     <span style={{ 
-      fontFamily: "monospace", 
-      letterSpacing: "0.02em", 
-      fontWeight: "600",
+      fontFamily: "var(--font-sans)", 
+      fontSize: "0.76rem",
+      fontWeight: "500",
       color: "var(--text-primary)",
       display: "inline-flex",
       alignItems: "center"
