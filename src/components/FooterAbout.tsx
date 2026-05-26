@@ -50,7 +50,7 @@ export default function FooterAbout() {
     },
     {
       label: "In My Free Time",
-      pills: ["Mushroom Hunting", "Macro Photography", "City Forest Walks", "Nature Observation", "Music"],
+      pills: ["Book Reading", "Mushroom Hunting", "Macro Photography", "City Forest Walks", "Nature Observation", "Music"],
     },
     {
       label: "Writing",
@@ -62,7 +62,8 @@ export default function FooterAbout() {
         { name: "Indonesian", level: "Native",         pct: 100 },
         { name: "English",    level: "Fluent",          pct: 92  },
         { name: "Dutch",      level: "Fluent",          pct: 85  },
-        { name: "Arabic",     level: "Conversational",  pct: 35  },
+        { name: "Arabic",     level: "Conversational",  pct: 55  },
+        { name: "Hebrew",     level: "Basic",           pct: 38  },
         { name: "Chinese",    level: "Basic",           pct: 22  },
       ],
     },
@@ -81,19 +82,19 @@ export default function FooterAbout() {
     },
     {
       label: "Design",
-      tags: ["UI/UX Design", "Figma", "Motion Design", "Design Systems", "Responsive Layouts", "Typography"],
+      tags: ["UI/UX Design", "Figma", "Typography", "Design Systems", "Motion & Animation", "Brand Identity", "Prototyping", "Design Engineering", "Print & Packaging", "Spatial Design"],
     },
     {
       label: "Frontend",
-      tags: ["React", "Next.js", "TypeScript", "HTML5 / CSS3", "Tailwind CSS", "Framer Motion"],
+      tags: ["React & Next.js", "TypeScript", "HTML5 & Semantic CSS", "Tailwind CSS", "Framer Motion", "WebGL / Three.js", "CSS Modules", "Responsive Web", "State Management", "Performance Optimization"],
     },
     {
       label: "Backend",
-      tags: ["Node.js", "Express", "Firebase", "REST APIs", "GraphQL", "Sanity CMS"],
+      tags: ["Node.js & Express", "Go / Python", "Firebase Firestore & RTDB", "RESTful APIs", "GraphQL", "PostgreSQL / Prisma", "Sanity / Headless CMS", "Serverless Functions", "Caching & Redis", "System Design"],
     },
     {
       label: "Tooling",
-      tags: ["Git & GitHub", "Vite", "ESLint & Prettier", "CI/CD", "Vercel"],
+      tags: ["Git & GitHub", "Docker & Kubernetes", "Vite & Turbopack", "ESLint & Prettier", "CI/CD Actions", "Vercel / AWS", "Webpack & Babel", "Testing (Jest/Playwright)", "Shell Scripting", "Core Web Vitals"],
     },
   ];
 

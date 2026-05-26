@@ -7,6 +7,7 @@ import FadeIn from "./FadeIn";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAllCalendarEvents, CalendarEvent } from "@/lib/calendar";
 import { triggerLightClick, triggerActionClick } from "@/lib/haptic";
+import { BookItem, getAllBooks } from "@/lib/books";
 
 
 // iOS stagger spring config
@@ -800,7 +801,12 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(STATIC_SEEDED_EVENTS);
   const [isDark, setIsDark] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
+  const [books, setBooks] = useState<BookItem[]>([]);
   const visibleCards = 3; // Always show 3 cards per slide for a beautiful minimalist gallery layout
+
+  useEffect(() => {
+    getAllBooks().then(data => setBooks(data)).catch(err => console.error(err));
+  }, []);
 
   // Sync system dark mode preference
   useEffect(() => {
@@ -2664,6 +2670,104 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                   )}
                 </div>
               </>
+            );
+          })()}
+
+          {/* 3. NOW READING WIDGET */}
+          {(() => {
+            const currentBook = books.find(b => b.status === "reading") || books[0];
+            if (!currentBook) return null;
+            return (
+              <div className="now-reading-container" style={{ 
+                borderTop: "1px solid rgba(150,150,150,0.12)", 
+                paddingTop: "1rem", 
+                marginTop: "1.2rem",
+                marginBottom: "0.6rem",
+              }}>
+                <h2 style={{ 
+                  fontSize: "0.75rem", 
+                  fontWeight: "700", 
+                  color: "var(--text-primary)", 
+                  margin: "0 0 0.8rem 0",
+                  fontFamily: "var(--font-sans)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.04em"
+                }}>
+                  Now Reading
+                </h2>
+                <div style={{
+                  display: "flex",
+                  gap: "0.8rem",
+                  backgroundColor: "rgba(128,128,128,0.03)",
+                  border: "1px solid rgba(128,128,128,0.08)",
+                  borderRadius: "14px",
+                  padding: "0.8rem",
+                  fontFamily: "var(--font-sans)"
+                }}>
+                  {currentBook.coverUrl && (
+                    <div style={{
+                      width: "52px",
+                      height: "76px",
+                      borderRadius: "6px",
+                      overflow: "hidden",
+                      boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
+                      flexShrink: 0,
+                      backgroundColor: "rgba(128,128,128,0.05)"
+                    }}>
+                      <img 
+                        src={currentBook.coverUrl} 
+                        alt={currentBook.title}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      />
+                    </div>
+                  )}
+                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", flex: 1, minWidth: 0 }}>
+                    <h3 style={{
+                      fontSize: "0.82rem",
+                      fontWeight: "700",
+                      color: "var(--text-primary)",
+                      margin: "0 0 2px 0",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis"
+                    }}>
+                      {currentBook.title}
+                    </h3>
+                    <p style={{
+                      fontSize: "0.68rem",
+                      color: "var(--text-secondary)",
+                      margin: "0 0 8px 0",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis"
+                    }}>
+                      by {currentBook.author}
+                    </p>
+                    
+                    {/* Minimal Progress Bar */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <div style={{
+                        flex: 1,
+                        height: "4px",
+                        backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)",
+                        borderRadius: "2px",
+                        overflow: "hidden"
+                      }}>
+                        <div style={{
+                          width: `${currentBook.progress}%`,
+                          height: "100%",
+                          backgroundColor: currentBook.status === "completed" ? "#10b981" : (selectedTheme ? selectedTheme.primary : "var(--text-primary)"),
+                          borderRadius: "2px",
+                          transition: "width 0.5s ease"
+                        }} />
+                      </div>
+                      <span style={{ fontSize: "0.62rem", fontWeight: "600", color: "var(--text-secondary)" }}>
+                        {currentBook.progress}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             );
           })()}
         </FadeIn>

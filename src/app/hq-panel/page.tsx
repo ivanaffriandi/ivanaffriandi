@@ -7,6 +7,7 @@ import { getAllCommentsForAdmin, approveComment, deleteComment, replyComment, Co
 import { getAllQuestionsForAdmin, answerQuestion, deleteQuestion, QuestionItem } from "@/lib/questions";
 import { getAllMoments, addMoment, deleteMoment, updateMoment, uploadMomentPhoto, MomentItem } from "@/lib/moments";
 import { getAllCalendarEvents, addCalendarEvent, updateCalendarEvent, deleteCalendarEvent, CalendarEvent } from "@/lib/calendar";
+import { BookItem, getAllBooks, addBook, updateBook, deleteBook } from "@/lib/books";
 
 const iosSpring = { type: "spring" as const, stiffness: 420, damping: 32 };
 const staggerContainer = { animate: { transition: { staggerChildren: 0.03 } } };
@@ -75,13 +76,25 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
 
-  const [activeTab, setActiveTab] = useState<"inbox" | "calendar" | "comments" | "moments">("inbox");
+  const [activeTab, setActiveTab] = useState<"inbox" | "calendar" | "comments" | "moments" | "books">("inbox");
   const [inboxFilter, setInboxFilter] = useState<"all" | "pending" | "answered">("pending");
 
   const [adminQuestions, setAdminQuestions] = useState<QuestionItem[]>([]);
   const [adminComments, setAdminComments] = useState<CommentItem[]>([]);
   const [adminMoments, setAdminMoments] = useState<MomentItem[]>([]);
   const [adminCalendarEvents, setAdminCalendarEvents] = useState<CalendarEvent[]>([]);
+  const [adminBooks, setAdminBooks] = useState<BookItem[]>([]);
+
+  // Books
+  const [editingBookId, setEditingBookId] = useState<string | null>(null);
+  const [bookTitle, setBookTitle] = useState("");
+  const [bookAuthor, setBookAuthor] = useState("");
+  const [bookCoverUrl, setBookCoverUrl] = useState("");
+  const [bookProgress, setBookProgress] = useState(0);
+  const [bookStatus, setBookStatus] = useState<"reading" | "completed" | "on_hold" | "to_read">("reading");
+  const [bookReview, setBookReview] = useState("");
+  const [showBookModal, setShowBookModal] = useState(false);
+  const [isSubmittingBook, setIsSubmittingBook] = useState(false);
 
   // Comment Reply
   const [replyingCommentId, setReplyingCommentId] = useState<string | null>(null);
@@ -174,6 +187,12 @@ export default function AdminPage() {
   }, [isAuthenticated, activeTab]);
 
   useEffect(() => {
+    if (isAuthenticated && activeTab === "books") {
+      getAllBooks().then(setAdminBooks).catch(err => console.error("Failed to load books:", err));
+    }
+  }, [isAuthenticated, activeTab]);
+
+  useEffect(() => {
     if (!momentFile) { setMomentPreviewUrl(null); return; }
     const objectUrl = URL.createObjectURL(momentFile);
     setMomentPreviewUrl(objectUrl);
@@ -181,6 +200,51 @@ export default function AdminPage() {
   }, [momentFile]);
 
   // ---- HANDLERS ----
+
+  const handleSaveBook = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bookTitle.trim() || !bookAuthor.trim()) return;
+    setIsSubmittingBook(true);
+
+    try {
+      const bookData = {
+        title: bookTitle.trim(),
+        author: bookAuthor.trim(),
+        coverUrl: bookCoverUrl.trim(),
+        progress: bookProgress,
+        status: bookStatus,
+        review: bookReview.trim(),
+        startedAt: editingBookId ? (adminBooks.find(b => b.id === editingBookId)?.startedAt || new Date().toISOString()) : new Date().toISOString(),
+        completedAt: bookStatus === "completed" ? new Date().toISOString() : ""
+      };
+
+      if (editingBookId) {
+        const success = await updateBook(editingBookId, bookData);
+        if (success) {
+          setAdminBooks(prev => prev.map(b => b.id === editingBookId ? { ...b, ...bookData } : b));
+        }
+      } else {
+        const newBook = await addBook(bookData);
+        if (newBook) {
+          setAdminBooks(prev => [newBook, ...prev]);
+        }
+      }
+      setShowBookModal(false);
+      setEditingBookId(null);
+    } catch (err) {
+      console.error("Failed to save book:", err);
+    } finally {
+      setIsSubmittingBook(false);
+    }
+  };
+
+  const handleDeleteBook = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this book?")) return;
+    const success = await deleteBook(id);
+    if (success) {
+      setAdminBooks(prev => prev.filter(b => b.id !== id));
+    }
+  };
 
   const handleReplyComment = async (id: string) => {
     if (!commentReplyText.trim()) return;
@@ -398,6 +462,10 @@ export default function AdminPage() {
       id: "moments" as const, label: "Moments", count: 0,
       icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
     },
+    {
+      id: "books" as const, label: "Books", count: 0,
+      icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 0-2.5-2.5z"/><path d="M6 6h10M6 10h10"/></svg>
+    }
   ];
 
   const stats = [
@@ -405,6 +473,7 @@ export default function AdminPage() {
     { label: "Comments", val: totalComments || "—", badge: pendingCommentsCount, color: "#B47A3E" },
     { label: "Moments", val: totalMoments || "—", badge: 0, color: "#10b981" },
     { label: "Events", val: adminCalendarEvents.length || "—", badge: 0, color: "#007AFF" },
+    { label: "Books", val: adminBooks.length || "—", badge: 0, color: "#8e8e93" },
   ];
 
   const GlassCard = ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (
@@ -1049,6 +1118,131 @@ export default function AdminPage() {
                         <div style={{ padding: "3rem 1rem", textAlign: "center", border: "1px dashed rgba(150,150,150,0.12)", borderRadius: "16px" }}>
                         <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "750", color: "var(--text-primary)" }}>No moments published yet</p>
                         <p style={{ margin: "2px 0 0", fontSize: "0.68rem", color: "var(--text-secondary)" }}>Upload your first photo above.</p>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* ---- BOOKS ---- */}
+              {activeTab === "books" && (
+                <motion.div key="books" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                    <span style={{ fontSize: "0.78rem", fontWeight: "700", color: "var(--text-secondary)" }}>Library / Book Reviews</span>
+                    <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} 
+                      onClick={() => { 
+                        setEditingBookId(null); 
+                        setBookTitle(""); 
+                        setBookAuthor(""); 
+                        setBookCoverUrl(""); 
+                        setBookProgress(0); 
+                        setBookStatus("reading"); 
+                        setBookReview(""); 
+                        setShowBookModal(true); 
+                      }} 
+                      style={{ padding: "6px 14px", backgroundColor: "var(--text-primary)", color: "var(--bg-color)", border: "none", borderRadius: "20px", fontSize: "0.68rem", fontWeight: "750", cursor: "pointer", fontFamily: iosFontStack, display: "flex", alignItems: "center", gap: "4px" }}>
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                      Add Book
+                    </motion.button>
+                  </div>
+
+                  {/* Add / Edit Book Modal */}
+                  <GlassModal isOpen={showBookModal} onClose={() => setShowBookModal(false)} theme={theme}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+                      <h3 style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "-0.02em", margin: 0 }}>{editingBookId ? "Edit Book Status" : "Add New Book"}</h3>
+                      <button type="button" onClick={() => setShowBookModal(false)} style={{ width: "26px", height: "26px", borderRadius: "50%", border: "none", background: "rgba(150,150,150,0.1)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-secondary)" }}>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      </button>
+                    </div>
+                    <form onSubmit={handleSaveBook} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <label style={{ fontSize: "0.6rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Title <span style={{ color: "#ef4444" }}>*</span></label>
+                        <input className="admin-form-input" type="text" placeholder="e.g. Designing Design" value={bookTitle} onChange={(e) => setBookTitle(e.target.value)} required />
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <label style={{ fontSize: "0.6rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Author <span style={{ color: "#ef4444" }}>*</span></label>
+                        <input className="admin-form-input" type="text" placeholder="e.g. Kenya Hara" value={bookAuthor} onChange={(e) => setBookAuthor(e.target.value)} required />
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <label style={{ fontSize: "0.6rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Cover Image URL</label>
+                        <input className="admin-form-input" type="text" placeholder="https://..." value={bookCoverUrl} onChange={(e) => setBookCoverUrl(e.target.value)} />
+                      </div>
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
+                          <label style={{ fontSize: "0.6rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Status</label>
+                          <select value={bookStatus} onChange={(e) => {
+                            const newStatus = e.target.value as any;
+                            setBookStatus(newStatus);
+                            if (newStatus === "completed") setBookProgress(100);
+                          }} className="admin-form-input custom-select">
+                            <option value="reading">📖 Reading</option>
+                            <option value="completed">✅ Completed</option>
+                            <option value="on_hold">⏸️ On Hold</option>
+                            <option value="to_read">⏳ To Read</option>
+                          </select>
+                        </div>
+                        <div style={{ width: "80px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                          <label style={{ fontSize: "0.6rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Progress %</label>
+                          <input className="admin-form-input" type="number" min="0" max="100" value={bookProgress} onChange={(e) => setBookProgress(Math.min(100, Math.max(0, parseInt(e.target.value) || 0)))} required />
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <label style={{ fontSize: "0.6rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Review & Reflection</label>
+                        <textarea className="admin-form-input admin-auto-textarea" placeholder="Add book review when completed..." value={bookReview} onChange={(e) => setBookReview(e.target.value)} style={{ minHeight: "80px", resize: "none" }} />
+                      </div>
+                      <motion.button type="submit" disabled={isSubmittingBook || !bookTitle.trim() || !bookAuthor.trim()}
+                        whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}
+                        style={{ padding: "11px", backgroundColor: "var(--text-primary)", color: "var(--bg-color)", border: "none", borderRadius: "30px", fontSize: "0.78rem", fontWeight: "800", cursor: "pointer", fontFamily: iosFontStack, marginTop: "4px" }}>
+                        {isSubmittingBook ? "Saving…" : "Save Book"}
+                      </motion.button>
+                    </form>
+                  </GlassModal>
+
+                  {/* Books List Grid */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    {adminBooks.length > 0 ? adminBooks.map(book => (
+                      <motion.div key={book.id} layoutId={`bcard-${book.id}`} className="admin-glass-card" style={{ display: "flex", gap: "12px", alignItems: "center", padding: "10px 12px" }}>
+                        {book.coverUrl && (
+                          <div style={{ width: "42px", height: "60px", borderRadius: "6px", overflow: "hidden", border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(150,150,150,0.12)"}`, flexShrink: 0 }}>
+                            <img src={book.coverUrl} alt="book cover" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          </div>
+                        )}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <span style={{ fontSize: "0.8rem", fontWeight: "800", color: "var(--text-primary)", display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{book.title}</span>
+                          <span style={{ fontSize: "0.68rem", color: "var(--text-secondary)", fontWeight: "500", display: "block" }}>by {book.author}</span>
+                          <span style={{ fontSize: "0.62rem", display: "inline-block", padding: "2px 6px", borderRadius: "10px", marginTop: "4px", backgroundColor: book.status === "completed" ? "rgba(16,185,129,0.08)" : book.status === "reading" ? "rgba(59,130,246,0.08)" : "rgba(150,150,150,0.08)", color: book.status === "completed" ? "#10b981" : book.status === "reading" ? "#3b82f6" : "var(--text-secondary)", fontWeight: "700" }}>
+                            {book.status.toUpperCase()} • {book.progress}%
+                          </span>
+                          {book.review && (
+                            <p style={{ margin: "6px 0 0 0", fontSize: "0.66rem", color: "var(--text-secondary)", fontStyle: "italic", borderLeft: "2px solid rgba(150,150,150,0.2)", paddingLeft: "6px", lineHeight: "1.4" }}>
+                              {book.review}
+                            </p>
+                          )}
+                        </div>
+                        <div style={{ display: "flex", gap: "4px", alignItems: "center", flexShrink: 0 }}>
+                          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} 
+                            onClick={() => { 
+                              setEditingBookId(book.id); 
+                              setBookTitle(book.title); 
+                              setBookAuthor(book.author); 
+                              setBookCoverUrl(book.coverUrl || ""); 
+                              setBookProgress(book.progress); 
+                              setBookStatus(book.status); 
+                              setBookReview(book.review || ""); 
+                              setShowBookModal(true); 
+                            }} 
+                            style={{ width: "28px", height: "28px", backgroundColor: "rgba(0,122,255,0.05)", border: "1px solid rgba(0,122,255,0.14)", borderRadius: "50%", color: "#007AFF", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }} title="Edit Book">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                          </motion.button>
+                          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleDeleteBook(book.id)} style={{ width: "28px", height: "28px", backgroundColor: "rgba(239,68,68,0.04)", border: "none", borderRadius: "50%", color: "#ef4444", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }} title="Delete Book">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                          </motion.button>
+                        </div>
+                      </motion.div>
+                    )) : (
+                      <div style={{ padding: "3rem 1rem", textAlign: "center", border: "1px dashed rgba(150,150,150,0.12)", borderRadius: "16px" }}>
+                        <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "750", color: "var(--text-primary)" }}>No books cataloged yet</p>
+                        <p style={{ margin: "2px 0 0", fontSize: "0.68rem", color: "var(--text-secondary)" }}>Add your first book above.</p>
                       </div>
                     )}
                   </div>
