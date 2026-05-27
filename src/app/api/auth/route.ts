@@ -19,10 +19,10 @@ async function isIPBlocked(ip: string): Promise<boolean> {
 
 export async function POST(request: Request) {
   try {
-    const { action, password } = await request.json();
+    const { action, email } = await request.json();
 
-    if (action === "login") {
-      if (password === "1Ndrowatu!") {
+    if (action === "login-google") {
+      if (email === "ivanaffriandi@kakao.com") {
         const cookieStore = await cookies();
         cookieStore.set("admin_session", "authenticated_ivan_exclusive", {
           httpOnly: true,
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
         });
         return NextResponse.json({ success: true });
       }
-      return NextResponse.json({ success: false, error: "Access Denied" }, { status: 401 });
+      return NextResponse.json({ success: false, error: "Access Denied: Unauthorized Google Account" }, { status: 401 });
     }
 
     if (action === "logout") {

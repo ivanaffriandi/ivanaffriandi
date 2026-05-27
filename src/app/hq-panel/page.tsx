@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { signInWithGoogle } from "@/lib/firebase";
 import { getAllCommentsForAdmin, approveComment, deleteComment, replyComment, CommentItem } from "@/lib/comments";
 import { getAllQuestionsForAdmin, answerQuestion, deleteQuestion, QuestionItem } from "@/lib/questions";
 import { getAllMoments, addMoment, deleteMoment, updateMoment, uploadMomentPhoto, MomentItem } from "@/lib/moments";
@@ -74,7 +75,6 @@ export default function AdminPage() {
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
-  const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
 
   const [activeTab, setActiveTab] = useState<"inbox" | "calendar" | "comments" | "moments" | "books" | "security">("inbox");
@@ -529,20 +529,33 @@ export default function AdminPage() {
     });
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!password.trim()) return;
+  const handleGoogleLogin = async () => {
     setLoading(true); setLoginError("");
     try {
-      const res = await fetch("/api/auth", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "login", password }) });
+      const result = await signInWithGoogle();
+      const email = result.user?.email;
+      if (!email || email !== "ivanaffriandi@kakao.com") {
+        setLoginError("Access Denied: Only ivanaffriandi@kakao.com is authorized to enter this panel.");
+        return;
+      }
+      const res = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "login-google", email })
+      });
       const data = await res.json();
       if (data.success) {
-        setIsAuthenticated(true); setPassword("");
+        setIsAuthenticated(true);
         const list = await getAllQuestionsForAdmin();
         setAdminQuestions(list.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()));
-      } else { setLoginError("Access denied. Incorrect passcode."); }
-    } catch (error) { setLoginError("System error: " + (error instanceof Error ? error.message : String(error))); }
-    finally { setLoading(false); }
+      } else {
+        setLoginError(data.error || "Access Denied: Server authentication failed.");
+      }
+    } catch (error) {
+      setLoginError("Sign-in failed. Please verify your connection.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleLogout = async () => {
@@ -665,18 +678,42 @@ export default function AdminPage() {
           </div>
           <h1 style={{ fontFamily: iosFontStack, fontSize: "1.1rem", fontWeight: "800", margin: "0 0 0.2rem 0", letterSpacing: "-0.02em", color: "var(--text-primary)" }}>Studio Vault</h1>
           <p style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginBottom: "1.2rem", fontWeight: "500", lineHeight: "1.35" }}>Authenticate to manage calendar, moments, comments, and replies.</p>
-          <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <input type="password" placeholder="Enter passcode..." value={password} onChange={(e) => setPassword(e.target.value)}
-              style={{ width: "100%", padding: "8px 12px", borderRadius: "10px", border: "1px solid rgba(150,150,150,0.15)", backgroundColor: "rgba(255,255,255,0.5)", color: "var(--text-primary)", fontFamily: iosFontStack, fontSize: "0.8rem", fontWeight: "550", outline: "none", textAlign: "center", transition: "all 0.2s ease", boxSizing: "border-box" }}
-              onFocus={(e) => { e.target.style.borderColor = "var(--text-primary)"; e.target.style.backgroundColor = "rgba(255,255,255,0.9)"; }}
-              onBlur={(e) => { e.target.style.borderColor = "rgba(150,150,150,0.15)"; e.target.style.backgroundColor = "rgba(255,255,255,0.5)"; }}
-              autoFocus />
-            {loginError && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ fontSize: "0.68rem", color: "#ef4444", fontWeight: "600", fontFamily: iosFontStack }}>⚠️ {loginError}</motion.div>}
-            <motion.button type="submit" disabled={!password.trim()} whileHover={password.trim() ? { scale: 1.01 } : {}} whileTap={password.trim() ? { scale: 0.99 } : {}}
-              style={{ width: "100%", padding: "9px", marginTop: "4px", backgroundColor: "var(--text-primary)", color: "var(--bg-color)", border: "none", borderRadius: "10px", fontFamily: iosFontStack, fontSize: "0.78rem", fontWeight: "750", cursor: password.trim() ? "pointer" : "not-allowed", opacity: password.trim() ? 1 : 0.45 }}>
-              Verify
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <motion.button 
+              type="button" 
+              onClick={handleGoogleLogin} 
+              whileHover={{ scale: 1.015, boxShadow: "0 4px 12px rgba(0,0,0,0.06)" }} 
+              whileTap={{ scale: 0.985 }}
+              style={{ 
+                width: "100%", 
+                padding: "10px 14px", 
+                backgroundColor: "#ffffff", 
+                color: "#1f1f1f", 
+                border: "1.5px solid rgba(150,150,150,0.22)", 
+                borderRadius: "12px", 
+                fontFamily: iosFontStack, 
+                fontSize: "0.78rem", 
+                fontWeight: "700", 
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.02)",
+                boxSizing: "border-box"
+              }}
+            >
+              {/* Native Google Icon */}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              Sign in with Google
             </motion.button>
-          </form>
+            {loginError && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ fontSize: "0.68rem", color: "#ef4444", fontWeight: "600", marginTop: "4px", fontFamily: iosFontStack }}>⚠️ {loginError}</motion.div>}
+          </div>
         </motion.div>
       </div>
     );
