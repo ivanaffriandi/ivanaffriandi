@@ -823,8 +823,9 @@ function DefaultCover({ title, author }: { title: string; author: string }) {
       borderRadius: "inherit",
       textAlign: "center",
       position: "relative",
-      boxShadow: "inset 0 0 25px rgba(0,0,0,0.5), inset 3px 0 6px rgba(255,255,255,0.15)",
-      border: "1px solid rgba(255,255,255,0.1)",
+      boxShadow: "inset -2.5px -2.5px 6px rgba(0,0,0,0.4), inset 2.5px 2.5px 5px rgba(255,255,255,0.08), 1px 0 0 rgba(255,255,255,0.08) inset",
+      border: "1px solid rgba(0,0,0,0.3)",
+      borderLeft: "4.5px solid rgba(0,0,0,0.45)",
       overflow: "hidden"
     }}>
       {/* Book Spine Shadow Overlay */}
@@ -832,7 +833,7 @@ function DefaultCover({ title, author }: { title: string; author: string }) {
         position: "absolute",
         left: 0, top: 0, bottom: 0,
         width: "10%",
-        background: "linear-gradient(to right, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 50%, transparent 100%)",
+        background: "linear-gradient(to right, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.05) 50%, transparent 100%)",
         pointerEvents: "none"
       }} />
 
@@ -840,8 +841,8 @@ function DefaultCover({ title, author }: { title: string; author: string }) {
       <div style={{
         position: "absolute",
         left: "10%", top: 0, bottom: 0,
-        width: "2px",
-        backgroundColor: "rgba(255,255,255,0.08)",
+        width: "1.5px",
+        backgroundColor: "rgba(255,255,255,0.06)",
         pointerEvents: "none"
       }} />
 
@@ -971,27 +972,75 @@ function CoverImg({ book, grayscale = true }: { book: BookItem; grayscale?: bool
 // ── BookCard: simplified card that opens the review popup ──────────────────
 function BookCard({ book, onClick }: { book: BookItem; onClick: () => void }) {
   const CARD_H = 120;
+  const [hovered, setHovered] = useState(false);
   return (
-    <div
+    <motion.div
       onClick={onClick}
-      style={{ width: "80px", cursor: "pointer", userSelect: "none" }}
-    >
-      <div style={{
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      whileTap={{ scale: 0.96 }}
+      style={{ 
         width: "80px", 
-        height: `${CARD_H}px`,
-        borderRadius: "6px",
-        overflow: "hidden",
-        boxShadow: "2px 4px 14px rgba(0,0,0,0.2)",
-        border: "1px solid rgba(150,150,150,0.08)",
-        backgroundColor: "rgba(128,128,128,0.06)",
-        position: "relative"
-      }}>
+        cursor: "pointer", 
+        userSelect: "none",
+        perspective: "800px",
+        transformStyle: "preserve-3d"
+      }}
+    >
+      <motion.div 
+        animate={{
+          y: hovered ? -6 : 0,
+          scale: hovered ? 1.025 : 1,
+          rotateY: hovered ? -4 : 0,
+          boxShadow: hovered 
+            ? "0 16px 28px -4px rgba(0,0,0,0.35), 0 10px 10px -6px rgba(0,0,0,0.22), 1px 1px 0px rgba(255,255,255,0.12) inset"
+            : "0 6px 14px -4px rgba(0,0,0,0.28), 0 2px 4px -2px rgba(0,0,0,0.18), 1px 1px 0px rgba(255,255,255,0.08) inset"
+        }}
+        transition={{ type: "spring", stiffness: 350, damping: 25 }}
+        style={{
+          width: "80px", 
+          height: `${CARD_H}px`,
+          borderRadius: "3px 6px 6px 3px", 
+          overflow: "hidden",
+          border: "1px solid rgba(0,0,0,0.18)",
+          borderLeft: "none",
+          backgroundColor: "rgba(128,128,128,0.06)",
+          position: "relative"
+        }}
+      >
         <CoverImg book={book} grayscale />
-        {/* Spine */}
+        
+        {/* Outward edge highlight border */}
         <div style={{
-          position: "absolute", left: 0, top: 0, bottom: 0, width: "12%",
-          background: "linear-gradient(to right, rgba(0,0,0,0.25) 0%, transparent 100%)",
-          pointerEvents: "none"
+          position: "absolute", inset: 0,
+          border: "1px solid rgba(0,0,0,0.1)",
+          borderLeft: "none",
+          borderRadius: "inherit",
+          pointerEvents: "none",
+          zIndex: 4
+        }} />
+
+        {/* 3D Page thickness simulation on the right edge */}
+        <div style={{
+          position: "absolute", right: 0, top: "2%", bottom: "2%", width: "2px",
+          background: "linear-gradient(to right, rgba(255,255,255,0.45) 0%, rgba(200,200,200,0.7) 100%)",
+          borderRadius: "0 3px 3px 0",
+          pointerEvents: "none",
+          zIndex: 3
+        }} />
+
+        {/* Hardcover binding hinge crease */}
+        <div style={{
+          position: "absolute", left: 0, top: 0, bottom: 0, width: "11%",
+          background: "linear-gradient(to right, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 85%, transparent 100%)",
+          pointerEvents: "none",
+          zIndex: 3
+        }} />
+        <div style={{
+          position: "absolute", left: "10%", top: 0, bottom: 0, width: "1px",
+          background: "linear-gradient(to right, rgba(0,0,0,0.2) 0%, rgba(255,255,255,0.08) 100%)",
+          pointerEvents: "none",
+          zIndex: 3
         }} />
         {/* Small READING Badge on Homepage Cover */}
         {book.status === "reading" && (
@@ -1013,7 +1062,7 @@ function BookCard({ book, onClick }: { book: BookItem; onClick: () => void }) {
             READING
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* Title & author */}
       <p style={{
@@ -1026,7 +1075,7 @@ function BookCard({ book, onClick }: { book: BookItem; onClick: () => void }) {
         color: "var(--text-secondary)", margin: 0,
         whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"
       }} title={book.author}>{book.author}</p>
-    </div>
+    </motion.div>
   );
 }
 

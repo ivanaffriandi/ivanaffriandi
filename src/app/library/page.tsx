@@ -60,8 +60,9 @@ function DefaultCover({ title, author }: { title: string; author: string }) {
       borderRadius: "inherit",
       textAlign: "center",
       position: "relative",
-      boxShadow: "inset 0 0 25px rgba(0,0,0,0.5), inset 3px 0 6px rgba(255,255,255,0.15)",
-      border: "1px solid rgba(255,255,255,0.1)",
+      boxShadow: "inset -2.5px -2.5px 6px rgba(0,0,0,0.4), inset 2.5px 2.5px 5px rgba(255,255,255,0.08), 1px 0 0 rgba(255,255,255,0.08) inset",
+      border: "1px solid rgba(0,0,0,0.3)",
+      borderLeft: "4.5px solid rgba(0,0,0,0.45)",
       overflow: "hidden"
     }}>
       {/* Book Spine Shadow Overlay */}
@@ -69,7 +70,7 @@ function DefaultCover({ title, author }: { title: string; author: string }) {
         position: "absolute",
         left: 0, top: 0, bottom: 0,
         width: "10%",
-        background: "linear-gradient(to right, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 50%, transparent 100%)",
+        background: "linear-gradient(to right, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.05) 50%, transparent 100%)",
         pointerEvents: "none"
       }} />
 
@@ -77,8 +78,8 @@ function DefaultCover({ title, author }: { title: string; author: string }) {
       <div style={{
         position: "absolute",
         left: "10%", top: 0, bottom: 0,
-        width: "2px",
-        backgroundColor: "rgba(255,255,255,0.08)",
+        width: "1.5px",
+        backgroundColor: "rgba(255,255,255,0.06)",
         pointerEvents: "none"
       }} />
 
@@ -227,19 +228,51 @@ function LibraryBookCard({ book, onClick }: { book: BookItem; onClick: () => voi
       <div style={{
         width: "100%", 
         aspectRatio: "2/3",
-        borderRadius: 8, 
+        borderRadius: "4px 8px 8px 4px", 
         overflow: "hidden",
-        boxShadow: hovered ? "0 12px 30px rgba(0,0,0,0.22)" : "0 4px 14px rgba(0,0,0,0.1)",
+        boxShadow: hovered 
+          ? "0 22px 44px -4px rgba(0,0,0,0.35), 0 14px 16px -6px rgba(0,0,0,0.25), 1px 1px 0px rgba(255,255,255,0.12) inset" 
+          : "0 10px 22px -6px rgba(0,0,0,0.28), 0 4px 8px -4px rgba(0,0,0,0.2), 1px 1px 0px rgba(255,255,255,0.08) inset",
         position: "relative",
         backgroundColor: "rgba(128,128,128,0.06)",
-        transform: hovered ? "translateY(-4px)" : "translateY(0px)",
-        transition: "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+        transform: hovered ? "translateY(-6px) scale(1.015) rotateY(-4deg)" : "translateY(0px) scale(1) rotateY(0deg)",
+        transformStyle: "preserve-3d",
+        perspective: "1000px",
+        transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
       }}>
         <SmartCover book={book} grayscale />
+        
+        {/* Outward edge highlight border */}
         <div style={{
-          position: "absolute", left: 0, top: 0, bottom: 0, width: "12%",
-          background: "linear-gradient(to right, rgba(0,0,0,0.22) 0%, transparent 100%)",
+          position: "absolute", inset: 0,
+          border: "1.5px solid rgba(0,0,0,0.18)",
+          borderLeft: "none",
+          borderRadius: "inherit",
           pointerEvents: "none",
+          zIndex: 4
+        }} />
+
+        {/* 3D Page thickness simulation on the right edge */}
+        <div style={{
+          position: "absolute", right: 0, top: "2%", bottom: "2%", width: "2.5px",
+          background: "linear-gradient(to right, rgba(255,255,255,0.45) 0%, rgba(200,200,200,0.7) 100%)",
+          borderRadius: "0 4px 4px 0",
+          pointerEvents: "none",
+          zIndex: 3
+        }} />
+
+        {/* Hardcover binding hinge crease */}
+        <div style={{
+          position: "absolute", left: 0, top: 0, bottom: 0, width: "11%",
+          background: "linear-gradient(to right, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 85%, transparent 100%)",
+          pointerEvents: "none",
+          zIndex: 3
+        }} />
+        <div style={{
+          position: "absolute", left: "10%", top: 0, bottom: 0, width: "1.5px",
+          background: "linear-gradient(to right, rgba(0,0,0,0.2) 0%, rgba(255,255,255,0.08) 100%)",
+          pointerEvents: "none",
+          zIndex: 3
         }} />
         <div style={{
           position: "absolute", top: 6, right: 6,
