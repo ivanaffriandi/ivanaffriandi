@@ -382,7 +382,7 @@ export default function LibraryPage() {
             fontFamily: "var(--font-sans)", fontSize: "0.72rem",
             color: "var(--text-secondary)", margin: 0, opacity: 0.65, fontWeight: "500"
           }}>
-            {completedCount} books read
+            {mounted ? `${completedCount} books read` : "— books read"}
           </p>
         </div>
 
