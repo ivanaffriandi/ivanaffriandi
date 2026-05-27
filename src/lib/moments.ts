@@ -97,19 +97,31 @@ export async function getAllMoments(): Promise<MomentItem[]> {
     try {
       const q = query(collection(db, "moments"), orderBy("published", "desc"));
       
-      // Enforce a strict 400ms timeout to prevent UI hangs and fall back instantly to local moments
-      const querySnapshot = await Promise.race([
-        getDocs(q),
-        new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Firestore timeout")), 400))
+      // Prevent UI hangs by using a non-rejecting race between Firestore query and a 1500ms timeout.
+      // This guarantees we never throw a rejected promise or cause Next.js dev overlay errors.
+      const result = await Promise.race([
+        getDocs(q)
+          .then(snap => ({ success: true as const, snap }))
+          .catch(err => {
+            console.warn("Firestore query failed:", err);
+            return { success: false as const, snap: null };
+          }),
+        new Promise<{ success: false, snap: null }>(resolve => 
+          setTimeout(() => resolve({ success: false, snap: null }), 1500)
+        )
       ]);
 
-      const items: MomentItem[] = [];
-      querySnapshot.forEach((doc) => {
-        items.push({ id: doc.id, ...doc.data() } as MomentItem);
-      });
-      if (items.length > 0) return items;
+      if (result.success && result.snap) {
+        const items: MomentItem[] = [];
+        result.snap.forEach((doc) => {
+          items.push({ id: doc.id, ...doc.data() } as MomentItem);
+        });
+        if (items.length > 0) return items;
+      } else {
+        console.warn("Firebase query timed out or failed; falling back seamlessly to local moments.");
+      }
     } catch (e) {
-      console.error("Firebase read error, fallback to local:", e);
+      console.warn("Firebase read error, fallback to local:", e);
     }
   }
 
