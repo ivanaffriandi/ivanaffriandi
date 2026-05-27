@@ -378,11 +378,11 @@ export default function LibraryPage() {
             color: "var(--text-primary)", margin: "0 0 4px 0", letterSpacing: "-0.02em",
             lineHeight: "1.1"
           }}>Library</h1>
-          <p style={{
+          <p suppressHydrationWarning style={{
             fontFamily: "var(--font-sans)", fontSize: "0.72rem",
             color: "var(--text-secondary)", margin: 0, opacity: 0.65, fontWeight: "500"
           }}>
-            {mounted ? `${completedCount} books read` : "— books read"}
+            {completedCount} books read
           </p>
         </div>
 
