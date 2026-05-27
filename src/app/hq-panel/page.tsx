@@ -38,6 +38,7 @@ function GlassModal({ isOpen, onClose, children, theme }: { isOpen: boolean; onC
       <motion.div
         initial={{ opacity: 0, scale: 0.94, y: 14 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.94, y: 14 }}
         transition={{ type: "spring", stiffness: 480, damping: 36 }}
+        className="hide-scrollbar"
         style={{
           width: "100%", maxWidth: "440px", maxHeight: "88vh", overflowY: "auto", padding: "22px",
           background: theme === "dark"
@@ -76,8 +77,15 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
 
-  const [activeTab, setActiveTab] = useState<"inbox" | "calendar" | "comments" | "moments" | "books">("inbox");
+  const [activeTab, setActiveTab] = useState<"inbox" | "calendar" | "comments" | "moments" | "books" | "security">("inbox");
   const [inboxFilter, setInboxFilter] = useState<"all" | "pending" | "answered">("pending");
+
+  // Blocked IPs state
+  const [blockedIPs, setBlockedIPs] = useState<{ id: string; ip: string; note?: string; blockedAt?: string }[]>([]);
+  const [newIPToBlock, setNewIPToBlock] = useState("");
+  const [newIPNote, setNewIPNote] = useState("");
+  const [isSubmittingIP, setIsSubmittingIP] = useState(false);
+  const [ipError, setIpError] = useState("");
 
   const [adminQuestions, setAdminQuestions] = useState<QuestionItem[]>([]);
   const [adminComments, setAdminComments] = useState<CommentItem[]>([]);
@@ -96,6 +104,161 @@ export default function AdminPage() {
   const [bookRating, setBookRating] = useState(5);
   const [showBookModal, setShowBookModal] = useState(false);
   const [isSubmittingBook, setIsSubmittingBook] = useState(false);
+  const [isUploadingBookCover, setIsUploadingBookCover] = useState(false);
+
+  // Book Quick Search (used in modal add/edit)
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<Array<{ title: string; author: string; coverUrl: string; source: string }>>([]);
+
+  // Per-row cover update
+  const [coverSearchBookId, setCoverSearchBookId] = useState<string | null>(null);
+  const [coverSearchQuery, setCoverSearchQuery] = useState("");
+  const [coverSearching, setCoverSearching] = useState(false);
+  const [coverSearchResults, setCoverSearchResults] = useState<Array<{ title: string; author: string; coverUrl: string; source: string }>>([]);
+
+  const handleSearchBooks = async () => {
+    if (!searchQuery.trim()) return;
+    setSearching(true);
+    setSearchResults([]);
+    
+    const results: Array<{ title: string; author: string; coverUrl: string; source: string }> = [];
+    const query = encodeURIComponent(searchQuery.trim());
+    
+    // 1. Fetch from Google Books API
+    try {
+      const gRes = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=5`);
+      if (gRes.ok) {
+        const data = await gRes.json();
+        if (data.items) {
+          data.items.forEach((item: any) => {
+            const info = item.volumeInfo;
+            if (info) {
+              const title = info.title || "";
+              const authors = info.authors ? info.authors.join(", ") : "Unknown Author";
+              const coverUrl = info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail || "";
+              const secureCoverUrl = coverUrl ? coverUrl.replace("http://", "https://").replace("zoom=1", "zoom=2") : "";
+              results.push({
+                title,
+                author: authors,
+                coverUrl: secureCoverUrl,
+                source: "Google Play Books"
+              });
+            }
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Google Books search error:", err);
+    }
+    
+    // 2. Fetch from Open Library API
+    try {
+      const olRes = await fetch(`https://openlibrary.org/search.json?q=${query}&limit=5`, {
+        headers: {
+          "User-Agent": "IvanPortfolioBookFetcher/1.0 (ivanaffriandi@gmail.com)",
+          "Accept": "application/json"
+        }
+      });
+      if (olRes.ok) {
+        const data = await olRes.json();
+        if (data.docs) {
+          data.docs.forEach((doc: any) => {
+            const title = doc.title || "";
+            const authors = doc.author_name ? doc.author_name.join(", ") : "Unknown Author";
+            let coverUrl = "";
+            if (doc.cover_i) {
+              coverUrl = `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg`;
+            } else if (doc.isbn && doc.isbn.length > 0) {
+              coverUrl = `https://covers.openlibrary.org/b/isbn/${doc.isbn[0]}-L.jpg`;
+            }
+            results.push({
+              title,
+              author: authors,
+              coverUrl,
+              source: doc.id_amazon ? "Amazon Kindle" : "Open Library"
+            });
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Open Library search error:", err);
+    }
+    
+    // De-duplicate
+    const uniqueMap = new Map<string, typeof results[0]>();
+    results.forEach(res => {
+      const key = `${res.title.toLowerCase()}::${res.author.toLowerCase()}`;
+      if (!uniqueMap.has(key) || (res.coverUrl && !uniqueMap.get(key)!.coverUrl)) {
+        uniqueMap.set(key, res);
+      }
+    });
+    
+    setSearchResults(Array.from(uniqueMap.values()).slice(0, 8));
+    setSearching(false);
+  };
+
+  const selectSearchResult = (result: any) => {
+    setBookTitle(result.title.toUpperCase());
+    setBookAuthor(result.author);
+    setBookCoverUrl(result.coverUrl);
+    setSearchResults([]);
+    setSearchQuery("");
+  };
+
+  const handleCoverSearch = async (query: string) => {
+    if (!query.trim()) return;
+    setCoverSearching(true);
+    setCoverSearchResults([]);
+    const results: Array<{ title: string; author: string; coverUrl: string; source: string }> = [];
+    const q = encodeURIComponent(query.trim());
+    try {
+      const gRes = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${q}&maxResults=8`);
+      if (gRes.ok) {
+        const data = await gRes.json();
+        if (data.items) {
+          data.items.forEach((item: any) => {
+            const info = item.volumeInfo;
+            if (info) {
+              const coverUrl = info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail || "";
+              const secureCoverUrl = coverUrl ? coverUrl.replace("http://", "https://").replace("zoom=1", "zoom=3") : "";
+              if (secureCoverUrl) results.push({ title: info.title || "", author: (info.authors || [""]).join(", "), coverUrl: secureCoverUrl, source: "Google Play Books" });
+            }
+          });
+        }
+      }
+    } catch (e) { /* ignore */ }
+    try {
+      const olRes = await fetch(`https://openlibrary.org/search.json?q=${q}&limit=5`, { headers: { "Accept": "application/json" } });
+      if (olRes.ok) {
+        const data = await olRes.json();
+        if (data.docs) {
+          data.docs.forEach((doc: any) => {
+            let coverUrl = "";
+            if (doc.cover_i) coverUrl = `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg`;
+            else if (doc.isbn?.length > 0) coverUrl = `https://covers.openlibrary.org/b/isbn/${doc.isbn[0]}-L.jpg`;
+            if (coverUrl) results.push({ title: doc.title || "", author: (doc.author_name || [""]).join(", "), coverUrl, source: "Open Library" });
+          });
+        }
+      }
+    } catch (e) { /* ignore */ }
+    // deduplicate by coverUrl
+    const seen = new Set<string>();
+    setCoverSearchResults(results.filter(r => { if (seen.has(r.coverUrl)) return false; seen.add(r.coverUrl); return true; }).slice(0, 10));
+    setCoverSearching(false);
+  };
+
+  const applyNewCover = async (bookId: string, newCoverUrl: string) => {
+    const book = adminBooks.find(b => b.id === bookId);
+    if (!book) return;
+    const success = await updateBook(bookId, { ...book, coverUrl: newCoverUrl });
+    if (success) {
+      setAdminBooks(prev => prev.map(b => b.id === bookId ? { ...b, coverUrl: newCoverUrl } : b));
+      setCoverSearchBookId(null);
+      setCoverSearchResults([]);
+      setCoverSearchQuery("");
+    }
+  };
 
   // Comment Reply
   const [replyingCommentId, setReplyingCommentId] = useState<string | null>(null);
@@ -194,6 +357,64 @@ export default function AdminPage() {
   }, [isAuthenticated, activeTab]);
 
   useEffect(() => {
+    if (isAuthenticated && activeTab === "security") {
+      loadBlockedIPs();
+    }
+  }, [isAuthenticated, activeTab]);
+
+  const loadBlockedIPs = async () => {
+    try {
+      const res = await fetch("/api/blocked-ips");
+      if (res.ok) {
+        const data = await res.json();
+        setBlockedIPs(data);
+      }
+    } catch (err) {
+      console.error("Failed to load blocked IPs", err);
+    }
+  };
+
+  const handleBlockIP = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newIPToBlock.trim()) return;
+    setIsSubmittingIP(true);
+    setIpError("");
+    try {
+      const res = await fetch("/api/blocked-ips", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ip: newIPToBlock, note: newIPNote })
+      });
+      if (res.ok) {
+        setNewIPToBlock("");
+        setNewIPNote("");
+        loadBlockedIPs();
+      } else {
+        const data = await res.json();
+        setIpError(data.error || "Failed to block IP");
+      }
+    } catch (err) {
+      setIpError("System error blocking IP");
+    } finally {
+      setIsSubmittingIP(false);
+    }
+  };
+
+  const handleUnblockIP = async (id: string) => {
+    if (!confirm("Are you sure you want to unblock this IP address?")) return;
+    try {
+      const res = await fetch(`/api/blocked-ips?id=${encodeURIComponent(id)}`, {
+        method: "DELETE"
+      });
+      if (res.ok) {
+        loadBlockedIPs();
+      }
+    } catch (err) {
+      console.error("Failed to unblock IP:", err);
+    }
+  };
+
+  useEffect(() => {
     if (!momentFile) { setMomentPreviewUrl(null); return; }
     const objectUrl = URL.createObjectURL(momentFile);
     setMomentPreviewUrl(objectUrl);
@@ -240,11 +461,31 @@ export default function AdminPage() {
     }
   };
 
-  const handleDeleteBook = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this book?")) return;
-    const success = await deleteBook(id);
-    if (success) {
-      setAdminBooks(prev => prev.filter(b => b.id !== id));
+  const handleDeleteBook = (id: string) => {
+    const book = adminBooks.find(b => b.id === id);
+    triggerConfirm(
+      "Delete Book",
+      `Permanently delete "${book?.title ?? "this book"}"? This cannot be undone.`,
+      async () => {
+        const success = await deleteBook(id);
+        if (success) setAdminBooks(prev => prev.filter(b => b.id !== id));
+      }
+    );
+  };
+
+  const handleBookCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingBookCover(true);
+    try {
+      const path = `books/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
+      const { url } = await uploadMomentPhoto(file, path);
+      setBookCoverUrl(url);
+    } catch (err) {
+      console.error("Failed to upload book cover:", err);
+      alert("Cover upload failed.");
+    } finally {
+      setIsUploadingBookCover(false);
     }
   };
 
@@ -467,6 +708,10 @@ export default function AdminPage() {
     {
       id: "books" as const, label: "Books", count: 0,
       icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 0-2.5-2.5z"/><path d="M6 6h10M6 10h10"/></svg>
+    },
+    {
+      id: "security" as const, label: "Security", count: 0,
+      icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
     }
   ];
 
@@ -1158,6 +1403,42 @@ export default function AdminPage() {
                       </button>
                     </div>
                     <form onSubmit={handleSaveBook} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      {/* ── Quick book search ── */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                        <label style={{ fontSize: "0.6rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>🔍 Quick Search <span style={{ fontWeight: "500", opacity: 0.7 }}>(Google Play Books + Open Library)</span></label>
+                        <div style={{ display: "flex", gap: "6px" }}>
+                          <input className="admin-form-input" type="text" placeholder="Search by title or author…" value={searchQuery}
+                            onChange={e => setSearchQuery(e.target.value)}
+                            onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); handleSearchBooks(); } }}
+                            style={{ flex: 1 }} />
+                          <motion.button type="button" onClick={handleSearchBooks} disabled={searching || !searchQuery.trim()}
+                            whileTap={{ scale: 0.97 }}
+                            style={{ padding: "8px 14px", backgroundColor: "var(--text-primary)", color: "var(--bg-color)", border: "none", borderRadius: "10px", fontSize: "0.7rem", fontWeight: "750", cursor: searching || !searchQuery.trim() ? "not-allowed" : "pointer", opacity: searching || !searchQuery.trim() ? 0.4 : 1, fontFamily: iosFontStack, flexShrink: 0 }}>
+                            {searching ? "…" : "Search"}
+                          </motion.button>
+                        </div>
+                        {searchResults.length > 0 && (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "4px", maxHeight: "220px", overflowY: "auto", marginTop: "2px" }}>
+                            {searchResults.map((result, i) => (
+                              <motion.div key={i} onClick={() => selectSearchResult(result)} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
+                                style={{ display: "flex", gap: "8px", alignItems: "center", padding: "7px 10px", borderRadius: "10px", border: "1px solid rgba(150,150,150,0.12)", background: theme === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.025)", cursor: "pointer" }}>
+                                {result.coverUrl ? (
+                                  <img src={result.coverUrl} alt="" style={{ width: "28px", height: "40px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }} />
+                                ) : (
+                                  <div style={{ width: "28px", height: "40px", borderRadius: "4px", background: "rgba(150,150,150,0.1)", flexShrink: 0 }} />
+                                )}
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <div style={{ fontSize: "0.72rem", fontWeight: "700", color: "var(--text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{result.title}</div>
+                                  <div style={{ fontSize: "0.6rem", color: "var(--text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{result.author}</div>
+                                  <div style={{ fontSize: "0.5rem", fontWeight: "700", color: result.source === "Google Play Books" ? "#4285f4" : "#10b981", marginTop: "1px" }}>{result.source}</div>
+                                </div>
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.4, flexShrink: 0 }}><polyline points="9 18 15 12 9 6"/></svg>
+                              </motion.div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <div style={{ height: "1px", background: "rgba(150,150,150,0.12)", margin: "2px 0" }} />
                       <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                         <label style={{ fontSize: "0.6rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Title <span style={{ color: "#ef4444" }}>*</span></label>
                         <input className="admin-form-input" type="text" placeholder="e.g. Designing Design" value={bookTitle} onChange={(e) => setBookTitle(e.target.value)} required />
@@ -1167,8 +1448,14 @@ export default function AdminPage() {
                         <input className="admin-form-input" type="text" placeholder="e.g. Kenya Hara" value={bookAuthor} onChange={(e) => setBookAuthor(e.target.value)} required />
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                        <label style={{ fontSize: "0.6rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Cover Image URL</label>
-                        <input className="admin-form-input" type="text" placeholder="https://..." value={bookCoverUrl} onChange={(e) => setBookCoverUrl(e.target.value)} />
+                        <label style={{ fontSize: "0.6rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Cover Image</label>
+                        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                          <input className="admin-form-input" type="text" placeholder="https://... or upload file" value={bookCoverUrl} onChange={(e) => setBookCoverUrl(e.target.value)} style={{ flex: 1 }} />
+                          <input type="file" id="book-cover-file" accept="image/*" onChange={handleBookCoverUpload} style={{ display: "none" }} />
+                          <motion.label htmlFor="book-cover-file" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ padding: "8px 12px", backgroundColor: "rgba(150,150,150,0.08)", border: "1px solid rgba(150,150,150,0.15)", borderRadius: "10px", color: "var(--text-primary)", fontSize: "0.62rem", fontWeight: "750", cursor: "pointer", fontFamily: iosFontStack, flexShrink: 0 }}>
+                            {isUploadingBookCover ? "Uploading…" : "Upload Cover"}
+                          </motion.label>
+                        </div>
                       </div>
                       <div style={{ display: "flex", gap: "8px" }}>
                         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
@@ -1208,44 +1495,77 @@ export default function AdminPage() {
                   </GlassModal>
 
                   {/* Books List Grid */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                     {adminBooks.length > 0 ? adminBooks.map(book => (
-                      <motion.div key={book.id} layoutId={`bcard-${book.id}`} className="admin-glass-card" style={{ display: "flex", gap: "12px", alignItems: "center", padding: "10px 12px" }}>
-                        {book.coverUrl && (
-                          <div style={{ width: "42px", height: "60px", borderRadius: "6px", overflow: "hidden", border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(150,150,150,0.12)"}`, flexShrink: 0 }}>
-                            <img src={book.coverUrl} alt="book cover" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                          </div>
-                        )}
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <span style={{ fontSize: "0.8rem", fontWeight: "800", color: "var(--text-primary)", display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{book.title}</span>
-                          <span style={{ fontSize: "0.68rem", color: "var(--text-secondary)", fontWeight: "500", display: "block" }}>by {book.author}</span>
-                          <span style={{ fontSize: "0.62rem", display: "inline-block", padding: "2px 6px", borderRadius: "10px", marginTop: "4px", backgroundColor: book.status === "completed" ? "rgba(16,185,129,0.08)" : book.status === "reading" ? "rgba(59,130,246,0.08)" : "rgba(150,150,150,0.08)", color: book.status === "completed" ? "#10b981" : book.status === "reading" ? "#3b82f6" : "var(--text-secondary)", fontWeight: "700" }}>
-                            {book.status.toUpperCase()} • {book.progress}%
-                          </span>
-                          {book.review && (
-                            <p style={{ margin: "6px 0 0 0", fontSize: "0.66rem", color: "var(--text-secondary)", fontStyle: "italic", borderLeft: "2px solid rgba(150,150,150,0.2)", paddingLeft: "6px", lineHeight: "1.4" }}>
-                              {book.review}
-                            </p>
-                          )}
+                      <motion.div key={book.id} layoutId={`bcard-${book.id}`} className="admin-glass-card"
+                        style={{ display: "flex", gap: "10px", alignItems: "center", padding: "9px 12px" }}>
+                        {/* Cover thumbnail */}
+                        <div style={{ width: "36px", height: "52px", borderRadius: "5px", overflow: "hidden", border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)"}`, flexShrink: 0, background: "rgba(150,150,150,0.06)" }}>
+                          {book.coverUrl
+                            ? <img src={book.coverUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                            : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" opacity={0.3}><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h4"/></svg>
+                              </div>
+                          }
                         </div>
-                        <div style={{ display: "flex", gap: "4px", alignItems: "center", flexShrink: 0 }}>
-                          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} 
-                            onClick={() => { 
-                              setEditingBookId(book.id); 
-                              setBookTitle(book.title); 
-                              setBookAuthor(book.author); 
-                              setBookCoverUrl(book.coverUrl || ""); 
-                              setBookProgress(book.progress); 
-                              setBookStatus(book.status); 
-                              setBookReview(book.review || ""); 
-                              setBookRating(book.rating || 5);
-                              setShowBookModal(true); 
-                            }} 
-                            style={{ width: "28px", height: "28px", backgroundColor: "rgba(0,122,255,0.05)", border: "1px solid rgba(0,122,255,0.14)", borderRadius: "50%", color: "#007AFF", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }} title="Edit Book">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+
+                        {/* Info */}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <span style={{ fontSize: "0.78rem", fontWeight: "800", color: "var(--text-primary)", display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", letterSpacing: "-0.01em" }}>{book.title}</span>
+                          <span style={{ fontSize: "0.64rem", color: "var(--text-secondary)", fontWeight: "500", display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>by {book.author}</span>
+
+                          <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "4px", flexWrap: "wrap" }}>
+                            {/* Status badge */}
+                            <span style={{ fontSize: "0.56rem", display: "inline-block", padding: "2px 6px", borderRadius: "8px", backgroundColor: book.status === "completed" ? "rgba(16,185,129,0.1)" : book.status === "reading" ? "rgba(59,130,246,0.1)" : "rgba(150,150,150,0.08)", color: book.status === "completed" ? "#10b981" : book.status === "reading" ? "#3b82f6" : "var(--text-secondary)", fontWeight: "800", letterSpacing: "0.03em" }}>
+                              {book.status === "reading" ? "READING" : book.status === "completed" ? "DONE" : book.status.replace("_", " ").toUpperCase()} • {book.progress}%
+                            </span>
+
+                            {/* Star rating */}
+                            {book.rating && (
+                              <span style={{ fontSize: "0.6rem", color: "#f59e0b", letterSpacing: "1px" }}>
+                                {"★".repeat(book.rating)}{"☆".repeat(5 - (book.rating || 0))}
+                              </span>
+                            )}
+
+                            {/* Review indicator — no text shown */}
+                            {book.review && (
+                              <span style={{ fontSize: "0.52rem", display: "inline-flex", alignItems: "center", gap: "2px", padding: "1px 5px", borderRadius: "6px", backgroundColor: "rgba(139,92,246,0.08)", color: "#8b5cf6", fontWeight: "700" }}>
+                                <svg width="7" height="7" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                                REVIEW
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div style={{ display: "flex", gap: "3px", alignItems: "center", flexShrink: 0 }}>
+                          {/* Update Cover */}
+                          <motion.button whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.9 }}
+                            onClick={() => { setCoverSearchBookId(book.id); setCoverSearchQuery(`${book.title} ${book.author}`); setCoverSearchResults([]); }}
+                            style={{ width: "28px", height: "28px", backgroundColor: "rgba(16,185,129,0.06)", border: "1px solid rgba(16,185,129,0.18)", borderRadius: "50%", color: "#10b981", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }} title="Update Cover">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
                           </motion.button>
-                          <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => handleDeleteBook(book.id)} style={{ width: "28px", height: "28px", backgroundColor: "rgba(239,68,68,0.04)", border: "none", borderRadius: "50%", color: "#ef4444", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }} title="Delete Book">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                          {/* Edit — opens modal with full review in textarea */}
+                          <motion.button whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.9 }}
+                            onClick={() => {
+                              setEditingBookId(book.id);
+                              setBookTitle(book.title);
+                              setBookAuthor(book.author);
+                              setBookCoverUrl(book.coverUrl || "");
+                              setBookProgress(book.progress);
+                              setBookStatus(book.status);
+                              setBookReview(book.review || "");
+                              setBookRating(book.rating || 5);
+                              setSearchQuery(""); setSearchResults([]);
+                              setShowBookModal(true);
+                            }}
+                            style={{ width: "28px", height: "28px", backgroundColor: "rgba(0,122,255,0.06)", border: "1px solid rgba(0,122,255,0.14)", borderRadius: "50%", color: "#007AFF", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }} title="Edit Book">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                          </motion.button>
+                          {/* Delete */}
+                          <motion.button whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.9 }} onClick={() => handleDeleteBook(book.id)}
+                            style={{ width: "28px", height: "28px", backgroundColor: "rgba(239,68,68,0.04)", border: "none", borderRadius: "50%", color: "#ef4444", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }} title="Delete Book">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                           </motion.button>
                         </div>
                       </motion.div>
@@ -1260,6 +1580,222 @@ export default function AdminPage() {
               )}
             </AnimatePresence>
           </div>
+
+          {/* ===== SECURITY / IP BLOCKER PANEL ===== */}
+          {activeTab === "security" && (
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+            >
+              {/* Header Info */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
+                <div>
+                  <h2 style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--text-primary)", margin: "0 0 4px 0", letterSpacing: "-0.02em" }}>IP Access Control</h2>
+                  <p style={{ margin: 0, fontSize: "0.68rem", color: "var(--text-secondary)", opacity: 0.8 }}>
+                    Manage permanently blocked IP addresses. Blocked users will receive a visual Access Denied blackout screen and their API requests will be immediately rejected with 403 Forbidden.
+                  </p>
+                </div>
+              </div>
+
+              {/* Grid: Add Form & Current List */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "20px" }}>
+                {/* Form to Block New IP */}
+                <div style={{ background: "rgba(150, 150, 150, 0.03)", border: "1px solid rgba(150, 150, 150, 0.1)", borderRadius: "16px", padding: "16px 20px" }}>
+                  <h3 style={{ fontSize: "0.85rem", fontWeight: 750, color: "var(--text-primary)", margin: "0 0 14px 0", letterSpacing: "-0.01em" }}>Block New Connection</h3>
+                  <form onSubmit={handleBlockIP} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div>
+                      <label style={{ fontSize: "0.62rem", fontWeight: 650, color: "var(--text-secondary)", display: "block", marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.03em" }}>IP Address</label>
+                      <input
+                        className="admin-form-input"
+                        type="text"
+                        placeholder="e.g. 114.10.25.175"
+                        value={newIPToBlock}
+                        onChange={e => setNewIPToBlock(e.target.value)}
+                        required
+                        style={{ width: "100%", fontFamily: "monospace" }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: "0.62rem", fontWeight: 650, color: "var(--text-secondary)", display: "block", marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.03em" }}>Reason / Note</label>
+                      <input
+                        className="admin-form-input"
+                        type="text"
+                        placeholder="e.g. Spammer, Scraping"
+                        value={newIPNote}
+                        onChange={e => setNewIPNote(e.target.value)}
+                        style={{ width: "100%" }}
+                      />
+                    </div>
+
+                    {ipError && (
+                      <div style={{ fontSize: "0.65rem", color: "#ef4444", fontWeight: 600 }}>
+                        ⚠️ {ipError}
+                      </div>
+                    )}
+
+                    <motion.button
+                      type="submit"
+                      disabled={isSubmittingIP || !newIPToBlock.trim()}
+                      whileTap={{ scale: 0.98 }}
+                      style={{
+                        padding: "10px 14px",
+                        backgroundColor: "#ef4444",
+                        color: "#ffffff",
+                        border: "none",
+                        borderRadius: "10px",
+                        fontSize: "0.72rem",
+                        fontWeight: "750",
+                        cursor: isSubmittingIP || !newIPToBlock.trim() ? "not-allowed" : "pointer",
+                        opacity: isSubmittingIP || !newIPToBlock.trim() ? 0.5 : 1,
+                        fontFamily: iosFontStack,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "6px",
+                        marginTop: "4px",
+                        boxShadow: "0 4px 12px rgba(239, 68, 68, 0.15)"
+                      }}
+                    >
+                      {isSubmittingIP ? "Blocking..." : "Restrict IP Address"}
+                    </motion.button>
+                  </form>
+                </div>
+
+                {/* List of Blocked IPs */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <h3 style={{ fontSize: "0.85rem", fontWeight: 750, color: "var(--text-primary)", margin: 0, letterSpacing: "-0.01em" }}>Blocked Connections ({blockedIPs.length})</h3>
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxHeight: "400px", overflowY: "auto", paddingRight: "4px" }}>
+                    {blockedIPs.length > 0 ? (
+                      blockedIPs.map(item => (
+                        <motion.div
+                          key={item.id}
+                          layoutId={`ip-card-${item.id}`}
+                          style={{
+                            background: theme === "dark" ? "rgba(239, 68, 68, 0.03)" : "rgba(239, 68, 68, 0.01)",
+                            border: "1px solid rgba(239, 68, 68, 0.12)",
+                            borderRadius: "14px",
+                            padding: "10px 14px",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            gap: "10px"
+                          }}
+                        >
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                              <span style={{ fontSize: "0.78rem", fontWeight: 750, color: "#ef4444", fontFamily: "monospace" }}>{item.ip}</span>
+                              <span style={{ fontSize: "0.55rem", color: "var(--text-secondary)", background: "rgba(150,150,150,0.08)", padding: "2px 6px", borderRadius: "6px" }}>
+                                {item.blockedAt ? new Date(item.blockedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "Permanent"}
+                              </span>
+                            </div>
+                            {item.note && (
+                              <p style={{ margin: "4px 0 0 0", fontSize: "0.65rem", color: "var(--text-secondary)", opacity: 0.85, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                📝 {item.note}
+                              </p>
+                            )}
+                          </div>
+
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => handleUnblockIP(item.id)}
+                            style={{
+                              width: "28px",
+                              height: "28px",
+                              borderRadius: "50%",
+                              border: "1px solid rgba(16, 185, 129, 0.2)",
+                              background: "rgba(16, 185, 129, 0.05)",
+                              color: "#10b981",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              cursor: "pointer"
+                            }}
+                            title="Unblock Connection"
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M18 13V9a4 4 0 0 0-4-4H9" />
+                              <path d="M22 9l-4-4-4 4" />
+                              <path d="M2 13v4a4 4 0 0 0 4 4h9" />
+                              <path d="M22 17a5 5 0 0 1-5 5H6.5a2.5 2.5 0 0 1 0-5H20" />
+                              <circle cx="12" cy="12" r="3" />
+                            </svg>
+                          </motion.button>
+                        </motion.div>
+                      ))
+                    ) : (
+                      <div style={{ padding: "2.5rem 1rem", textAlign: "center", border: "1px dashed rgba(150,150,150,0.12)", borderRadius: "16px" }}>
+                        <p style={{ margin: 0, fontSize: "0.72rem", fontWeight: "700", color: "var(--text-secondary)" }}>No custom blocked IPs in database</p>
+                        <p style={{ margin: "2px 0 0 0", fontSize: "0.64rem", color: "var(--text-secondary)", opacity: 0.7 }}>Fallback blocked list is active.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ===== COVER SEARCH MODAL ===== */}
+          <GlassModal isOpen={!!coverSearchBookId} onClose={() => { setCoverSearchBookId(null); setCoverSearchResults([]); setCoverSearchQuery(""); }} theme={theme}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+              <h3 style={{ fontSize: "0.9rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "-0.02em", margin: 0 }}>Update Cover</h3>
+              <button type="button" onClick={() => { setCoverSearchBookId(null); setCoverSearchResults([]); setCoverSearchQuery(""); }} style={{ width: "26px", height: "26px", borderRadius: "50%", border: "none", background: "rgba(150,150,150,0.1)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-secondary)" }}>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            {coverSearchBookId && (() => {
+              const theBook = adminBooks.find(b => b.id === coverSearchBookId);
+              return theBook ? (
+                <div style={{ display: "flex", gap: "8px", alignItems: "center", padding: "8px 10px", backgroundColor: "rgba(150,150,150,0.04)", borderRadius: "10px", border: "1px solid rgba(150,150,150,0.08)", marginBottom: "12px" }}>
+                  {theBook.coverUrl && <img src={theBook.coverUrl} alt="" style={{ width: "28px", height: "40px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }} />}
+                  <div>
+                    <div style={{ fontSize: "0.72rem", fontWeight: "700", color: "var(--text-primary)" }}>{theBook.title}</div>
+                    <div style={{ fontSize: "0.6rem", color: "var(--text-secondary)" }}>{theBook.author}</div>
+                  </div>
+                </div>
+              ) : null;
+            })()}
+            <div style={{ display: "flex", gap: "6px", marginBottom: "10px" }}>
+              <input className="admin-form-input" type="text" placeholder="Search title or author…" value={coverSearchQuery}
+                onChange={e => setCoverSearchQuery(e.target.value)}
+                onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); handleCoverSearch(coverSearchQuery); } }}
+                style={{ flex: 1 }} autoFocus />
+              <motion.button type="button" onClick={() => handleCoverSearch(coverSearchQuery)} disabled={coverSearching || !coverSearchQuery.trim()}
+                whileTap={{ scale: 0.97 }}
+                style={{ padding: "8px 14px", backgroundColor: "var(--text-primary)", color: "var(--bg-color)", border: "none", borderRadius: "10px", fontSize: "0.7rem", fontWeight: "750", cursor: coverSearching || !coverSearchQuery.trim() ? "not-allowed" : "pointer", opacity: coverSearching || !coverSearchQuery.trim() ? 0.4 : 1, fontFamily: iosFontStack, flexShrink: 0 }}>
+                {coverSearching ? "…" : "Search"}
+              </motion.button>
+            </div>
+            {coverSearchResults.length > 0 && (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", maxHeight: "300px", overflowY: "auto" }}>
+                {coverSearchResults.map((result, i) => (
+                  <motion.div key={i} onClick={() => { if (coverSearchBookId && result.coverUrl) applyNewCover(coverSearchBookId, result.coverUrl); }}
+                    whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}
+                    style={{ display: "flex", flexDirection: "column", gap: "4px", cursor: result.coverUrl ? "pointer" : "default", opacity: result.coverUrl ? 1 : 0.4 }}>
+                    <div style={{ aspectRatio: "2/3", borderRadius: "8px", overflow: "hidden", border: "1px solid rgba(150,150,150,0.15)", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
+                      {result.coverUrl ? (
+                        <img src={result.coverUrl} alt={result.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      ) : (
+                        <div style={{ width: "100%", height: "100%", background: "rgba(150,150,150,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem", color: "var(--text-secondary)" }}>No cover</div>
+                      )}
+                    </div>
+                    <div style={{ fontSize: "0.52rem", fontWeight: "600", color: result.source === "Google Play Books" ? "#4285f4" : "#10b981", textAlign: "center" }}>{result.source}</div>
+                    <div style={{ fontSize: "0.56rem", color: "var(--text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textAlign: "center" }}>{result.title}</div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+            {coverSearchResults.length === 0 && !coverSearching && (
+              <div style={{ textAlign: "center", padding: "2rem 1rem", color: "var(--text-secondary)", fontSize: "0.72rem" }}>
+                Search for a book above to see cover options from Google Play Books &amp; Open Library.
+              </div>
+            )}
+          </GlassModal>
         </main>
       </div>
 

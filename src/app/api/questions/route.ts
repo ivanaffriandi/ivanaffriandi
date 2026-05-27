@@ -121,8 +121,24 @@ export async function POST(request: Request) {
     }
 
     // --- IP BLOCKLIST ---
-    const blockedIPs = ["103.174.18.46"];
-    if (blockedIPs.includes(ip)) {
+    const defaultBlocked = ["114.10.25.175", "103.174.18.46", "180.254.78.88"];
+    let isBlocked = defaultBlocked.includes(ip);
+    if (!isBlocked) {
+      try {
+        const blockRes = await fetch("https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app/blocked_ips.json", { cache: "no-store", signal: AbortSignal.timeout(2000) });
+        if (blockRes.ok) {
+          const blockData = await blockRes.json();
+          if (blockData) {
+            const list = Object.values(blockData) as any[];
+            isBlocked = list.some(item => item.ip === ip);
+          }
+        }
+      } catch (e) {
+        console.error("Questions API blocklist fetch failed, using fallback:", e);
+      }
+    }
+
+    if (isBlocked) {
       return NextResponse.json(
         { error: `You have been blocked from interacting. IP ${ip} has been logged for malicious activity.` },
         { status: 403 }

@@ -1,3 +1,5 @@
+import booksData from "../data/books.json";
+
 export interface BookItem {
   id: string;
   title: string;
@@ -73,41 +75,8 @@ export async function deleteBook(id: string): Promise<boolean> {
   return data.success === true;
 }
 
-// Minimal aesthetic fallback books list to ensure page has gorgeous content out of the box!
+// Complete curated library — politics, queer lit, religion, novels, mycology, self-improvement, design, science
 export function getFallbackBooks(): BookItem[] {
-  return [
-    {
-      id: "fallback-1",
-      title: "Designing Design",
-      author: "Kenya Hara",
-      progress: 68,
-      status: "reading",
-      coverUrl: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=250&auto=format&fit=crop",
-      startedAt: new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString()
-    },
-    {
-      id: "fallback-2",
-      title: "Grid Systems in Graphic Design",
-      author: "Josef Müller-Brockmann",
-      progress: 100,
-      status: "completed",
-      coverUrl: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?q=80&w=250&auto=format&fit=crop",
-      startedAt: new Date(Date.now() - 60 * 24 * 3600 * 1000).toISOString(),
-      completedAt: new Date(Date.now() - 40 * 24 * 3600 * 1000).toISOString(),
-      review: "A timeless masterpiece that lays the foundations of visual alignment and structural typography. Absolute bible for design engineering.",
-      rating: 5
-    },
-    {
-      id: "fallback-3",
-      title: "Less and More: The Design Ethos of Dieter Rams",
-      author: "Klaus Klemp",
-      progress: 100,
-      status: "completed",
-      coverUrl: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?q=80&w=250&auto=format&fit=crop",
-      startedAt: new Date(Date.now() - 90 * 24 * 3600 * 1000).toISOString(),
-      completedAt: new Date(Date.now() - 70 * 24 * 3600 * 1000).toISOString(),
-      review: "Stunning exploration of functional minimalism. Rams' ten principles are incredibly well detailed and highly relevant for modern digital design.",
-      rating: 5
-    }
-  ];
+  return booksData as BookItem[];
 }
+

@@ -39,6 +39,7 @@ function writeBooksLocal(books: any[]): boolean {
 }
 
 // GET: Fetch all books from local file
+export const dynamic = 'force-dynamic';
 export async function GET() {
   try {
     const items = readBooksLocal();

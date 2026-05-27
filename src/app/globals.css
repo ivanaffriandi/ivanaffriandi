@@ -1668,4 +1668,13 @@ html {
   cursor: pointer !important;
 }
 
+/* Custom utility to hide default browser scrollbars */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
+}
+
 

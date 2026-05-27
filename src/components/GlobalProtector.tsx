@@ -9,6 +9,8 @@ export default function GlobalProtector() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [isDevToolsOpen, setIsDevToolsOpen] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [userIP, setUserIP] = useState("");
 
   useEffect(() => {
     setMounted(true);
@@ -22,6 +24,8 @@ export default function GlobalProtector() {
         });
         const data = await res.json();
         setIsAdmin(data.authenticated === true);
+        setIsBlocked(data.blocked === true);
+        if (data.ip) setUserIP(data.ip);
       } catch (err) {
         console.error("Auth check failed", err);
       }
@@ -240,6 +244,64 @@ export default function GlobalProtector() {
           <strong>Your IP Address has been logged.</strong>
         </p>
       </div>
+
+      {/* Permanent IP Block Blackout Screen */}
+      {isBlocked && !isAdmin && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "#0a0a0a",
+            zIndex: 9999999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#ffffff",
+            fontFamily: "var(--font-sans)",
+            flexDirection: "column",
+            gap: "1.5rem",
+            textAlign: "center",
+            padding: "2rem"
+          }}
+        >
+          <div style={{
+            fontSize: "4rem",
+            lineHeight: 1
+          }}>
+            🚫
+          </div>
+          <h1 style={{
+            fontSize: "1.8rem",
+            fontWeight: 800,
+            margin: 0,
+            color: "#ef4444",
+            letterSpacing: "-0.02em"
+          }}>
+            Access Denied
+          </h1>
+          <p style={{
+            fontSize: "0.95rem",
+            color: "#a3a3a3",
+            maxWidth: "460px",
+            lineHeight: 1.6,
+            margin: 0
+          }}>
+            Your connection has been permanently restricted due to suspicious or abusive activity. If you believe this is an error, please contact the administrator.
+          </p>
+          <div style={{
+            fontSize: "0.8rem",
+            color: "#ef4444",
+            background: "rgba(239, 68, 68, 0.08)",
+            border: "1px solid rgba(239, 68, 68, 0.2)",
+            padding: "8px 16px",
+            borderRadius: "8px",
+            fontFamily: "monospace",
+            marginTop: "0.5rem"
+          }}>
+            Blocked IP: {userIP || "Resolving..."}
+          </div>
+        </div>
+      )}
     </>,
     document.body
   );

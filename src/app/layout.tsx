@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Inter, Lora, Merriweather, Playfair_Display } from "next/font/google";
 import Navigation from "@/components/Navigation";
 import FooterAbout from "@/components/FooterAbout";
@@ -113,7 +114,9 @@ export default function RootLayout({
             </div>
           </footer>
         </div>
-        <script
+        <Script
+          id="pwa-service-worker"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator) {

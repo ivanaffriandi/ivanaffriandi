@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { createPortal } from "react-dom";
 
 import Link from "next/link";
 import FadeIn from "./FadeIn";
@@ -797,12 +798,250 @@ const BirthdayConfettiEffect = ({ type }: { type: string }) => {
   );
 };
 
-export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[], moments?: any[] }) {
+function DefaultCover({ title, author }: { title: string; author: string }) {
+  const hash = title.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const gradients = [
+    "linear-gradient(135deg, #2a2a2a 0%, #111111 100%)", // Grayscale 1
+    "linear-gradient(135deg, #333333 0%, #1a1a1a 100%)", // Grayscale 2
+    "linear-gradient(135deg, #222222 0%, #000000 100%)", // Grayscale 3
+    "linear-gradient(135deg, #444444 0%, #222222 100%)", // Grayscale 4
+    "linear-gradient(135deg, #1c1c1c 0%, #0a0a0a 100%)", // Grayscale 5
+    "linear-gradient(135deg, #3a3a3a 0%, #1c1c1c 100%)", // Grayscale 6
+  ];
+  const bg = gradients[hash % gradients.length];
+
+  return (
+    <div style={{
+      width: "100%", height: "100%",
+      background: bg,
+      color: "#f5f5f7",
+      filter: "grayscale(100%)",
+      display: "flex", flexDirection: "column",
+      justifyContent: "space-between",
+      padding: "14px 8px 16px 8px",
+      boxSizing: "border-box",
+      borderRadius: "inherit",
+      textAlign: "center",
+      position: "relative",
+      boxShadow: "inset 0 0 25px rgba(0,0,0,0.5), inset 3px 0 6px rgba(255,255,255,0.15)",
+      border: "1px solid rgba(255,255,255,0.1)",
+      overflow: "hidden"
+    }}>
+      {/* Book Spine Shadow Overlay */}
+      <div style={{
+        position: "absolute",
+        left: 0, top: 0, bottom: 0,
+        width: "10%",
+        background: "linear-gradient(to right, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 50%, transparent 100%)",
+        pointerEvents: "none"
+      }} />
+
+      {/* Book Spine Highlight Overlay */}
+      <div style={{
+        position: "absolute",
+        left: "10%", top: 0, bottom: 0,
+        width: "2px",
+        backgroundColor: "rgba(255,255,255,0.08)",
+        pointerEvents: "none"
+      }} />
+
+      {/* Book Title */}
+      <div style={{
+        fontSize: "0.68rem",
+        fontWeight: "700",
+        lineHeight: 1.3,
+        fontFamily: "var(--font-serif, Georgia, serif)",
+        display: "-webkit-box",
+        WebkitLineClamp: 4,
+        WebkitBoxOrient: "vertical",
+        overflow: "hidden",
+        textShadow: "1px 2px 4px rgba(0,0,0,0.65)",
+        padding: "0 4px",
+        color: "#ffffff"
+      }}>
+        {title}
+      </div>
+
+      {/* Book Author */}
+      <div style={{
+        fontSize: "0.48rem",
+        fontFamily: "var(--font-sans)",
+        opacity: 0.9,
+        fontWeight: "600",
+        overflow: "hidden",
+        whiteSpace: "nowrap",
+        textOverflow: "ellipsis",
+        letterSpacing: "0.5px",
+        color: "#e2e8f0"
+      }}>
+        {author}
+      </div>
+    </div>
+  );
+}
+
+function getIsbn(url?: string) {
+  if (!url) return "";
+  const match = url.match(/ISBN:([0-9X\-]+)/i);
+  return match ? match[1] : "";
+}
+
+function formatDate(iso: string) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  return `${months[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+}
+
+// ── CoverImg: smart cover fetcher using Google Books search ─────────────────
+function CoverImg({ book, grayscale = true }: { book: BookItem; grayscale?: boolean }) {
+  const initialSrc = (book.coverUrl && book.coverUrl.trim()) ? book.coverUrl.trim() : null;
+  const [src, setSrc] = React.useState<string | null>(initialSrc);
+  const [loading, setLoading] = React.useState(true);
+  const [hasTriedProxy, setHasTriedProxy] = React.useState(false);
+
+  const fetchProxyCover = React.useCallback(() => {
+    setLoading(true);
+    const t = encodeURIComponent(book.title);
+    const a = encodeURIComponent(book.author);
+    const isbn = getIsbn(book.coverUrl);
+    fetch(`/api/book-cover?title=${t}&author=${a}&isbn=${isbn}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data?.url) {
+          setSrc(data.url);
+        } else {
+          setSrc(null);
+        }
+      })
+      .catch(() => {
+        setSrc(null);
+      })
+      .finally(() => {
+        setLoading(false);
+        setHasTriedProxy(true);
+      });
+  }, [book.title, book.author, book.coverUrl]);
+
+  React.useEffect(() => {
+    const trimmedCover = book.coverUrl ? book.coverUrl.trim() : "";
+    const isRealCover = trimmedCover.startsWith("http") && !trimmedCover.includes("unsplash.com");
+    
+    if (isRealCover) {
+      setSrc(trimmedCover);
+      setLoading(false);
+      setHasTriedProxy(false);
+      return;
+    }
+
+    fetchProxyCover();
+  }, [book.title, book.author, book.coverUrl, fetchProxyCover]);
+
+  const handleImageError = () => {
+    if (!hasTriedProxy) {
+      console.log(`Cover image load failed for "${book.title}", trying API proxy fallback...`);
+      fetchProxyCover();
+    } else {
+      console.warn(`Fallback cover also failed for "${book.title}", using default text cover.`);
+      setSrc(null);
+      setLoading(false);
+    }
+  };
+
+  if (!src) return <DefaultCover title={book.title} author={book.author} />;
+
+  return (
+    <img
+      src={src}
+      alt={book.title}
+      style={{
+        width: "100%", height: "100%",
+        objectFit: "cover", display: "block",
+        filter: grayscale ? "grayscale(100%)" : "none",
+        opacity: loading ? 0.4 : 1,
+        transition: "opacity 0.3s ease"
+      }}
+      onLoad={() => setLoading(false)}
+      onError={handleImageError}
+      draggable={false}
+    />
+  );
+}
+
+// ── BookCard: simplified card that opens the review popup ──────────────────
+function BookCard({ book, onClick }: { book: BookItem; onClick: () => void }) {
+  const CARD_H = 120;
+  return (
+    <div
+      onClick={onClick}
+      style={{ width: "80px", cursor: "pointer", userSelect: "none" }}
+    >
+      <div style={{
+        width: "80px", 
+        height: `${CARD_H}px`,
+        borderRadius: "6px",
+        overflow: "hidden",
+        boxShadow: "2px 4px 14px rgba(0,0,0,0.2)",
+        border: "1px solid rgba(150,150,150,0.08)",
+        backgroundColor: "rgba(128,128,128,0.06)",
+        position: "relative"
+      }}>
+        <CoverImg book={book} grayscale />
+        {/* Spine */}
+        <div style={{
+          position: "absolute", left: 0, top: 0, bottom: 0, width: "12%",
+          background: "linear-gradient(to right, rgba(0,0,0,0.25) 0%, transparent 100%)",
+          pointerEvents: "none"
+        }} />
+        {/* Small READING Badge on Homepage Cover */}
+        {book.status === "reading" && (
+          <div style={{
+            position: "absolute",
+            top: "5px",
+            right: "5px",
+            backgroundColor: "#f59e0b",
+            color: "#ffffff",
+            fontSize: "0.38rem",
+            fontWeight: 800,
+            padding: "1.5px 3.5px",
+            borderRadius: "3px",
+            fontFamily: "var(--font-sans)",
+            letterSpacing: "0.02em",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.15)",
+            zIndex: 10
+          }}>
+            READING
+          </div>
+        )}
+      </div>
+
+      {/* Title & author */}
+      <p style={{
+        fontFamily: "var(--font-sans)", fontSize: "0.56rem", fontWeight: "700",
+        color: "var(--text-primary)", margin: "4px 0 1px 0",
+        whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"
+      }} title={book.title}>{book.title}</p>
+      <p style={{
+        fontFamily: "var(--font-sans)", fontSize: "0.5rem",
+        color: "var(--text-secondary)", margin: 0,
+        whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"
+      }} title={book.author}>{book.author}</p>
+    </div>
+  );
+}
+
+export default function DailyJournalFeed({ posts, moments = [], initialBooks = [] }: { posts: any[], moments?: any[], initialBooks?: BookItem[] }) {
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(STATIC_SEEDED_EVENTS);
   const [isDark, setIsDark] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
-  const [books, setBooks] = useState<BookItem[]>([]);
-  const [tappedBookId, setTappedBookId] = useState<string | null>(null);
+  const [books, setBooks] = useState<BookItem[]>(initialBooks.length > 0 ? initialBooks : []);
+  const [activeBook, setActiveBook] = useState<BookItem | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const visibleCards = 3; // Always show 3 cards per slide for a beautiful minimalist gallery layout
 
   useEffect(() => {
@@ -1237,14 +1476,14 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
       }}
     >
       {/* Dynamic Seasonal Holiday Animations */}
-      {selectedTheme?.type === "christmas" && <SnowEffect />}
-      {selectedTheme?.type === "independence" && <IndoIndependenceEffect />}
-      {(selectedTheme?.type === "idul_fitri" || selectedTheme?.type === "idul_adha" || selectedTheme?.type === "isra_miraj" || selectedTheme?.type === "islamic_new_year" || selectedTheme?.type === "maulid_nabi") && <EidFitriEffect />}
-      {selectedTheme?.type === "waisak" && <WaisakEffect />}
-      {selectedTheme?.type === "nyepi" && <NyepiEffect />}
-      {selectedTheme?.type === "lunar_new_year" && <LunarNewYearEffect />}
-      {selectedTheme?.type === "general_holiday" && <HolyLightEffect />}
-      {showBirthdayConfetti && selectedTheme && (
+      {mounted && selectedTheme?.type === "christmas" && <SnowEffect />}
+      {mounted && selectedTheme?.type === "independence" && <IndoIndependenceEffect />}
+      {mounted && (selectedTheme?.type === "idul_fitri" || selectedTheme?.type === "idul_adha" || selectedTheme?.type === "isra_miraj" || selectedTheme?.type === "islamic_new_year" || selectedTheme?.type === "maulid_nabi") && <EidFitriEffect />}
+      {mounted && selectedTheme?.type === "waisak" && <WaisakEffect />}
+      {mounted && selectedTheme?.type === "nyepi" && <NyepiEffect />}
+      {mounted && selectedTheme?.type === "lunar_new_year" && <LunarNewYearEffect />}
+      {mounted && selectedTheme?.type === "general_holiday" && <HolyLightEffect />}
+      {mounted && showBirthdayConfetti && selectedTheme && (
         <BirthdayConfettiEffect type={selectedTheme.type} />
       )}
       {selectedTheme && (
@@ -3261,28 +3500,32 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
         );
       })()}
 
-      {/* MINIMALIST SWISS LIBRARY SECTION (NEW) */}
+      {/* MINIMALIST SWISS LIBRARY SECTION */}
       {books && books.length > 0 && (() => {
-        const completedBooks = books.filter(b => b.status === "completed");
-        if (completedBooks.length === 0) return null;
-        
+        // Show all books: currently reading first, then completed
+        const shelfBooks = [
+          ...books.filter(b => b.status === "reading"),
+          ...books.filter(b => b.status === "completed")
+        ];
+        if (shelfBooks.length === 0) return null;
+
         return (
           <FadeIn delay={0.3}>
-            <div 
+            <div
               className="library-section"
-              style={{ 
-                borderTop: "1px solid rgba(150,150,150,0.12)", 
+              style={{
+                borderTop: "1px solid rgba(150,150,150,0.12)",
                 paddingTop: "1.2rem",
                 marginTop: "1.5rem",
                 paddingBottom: "2.5rem"
               }}
             >
-              {/* Header row with Title on Left, Minimal Marquee on Right */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.2rem", gap: "1rem", flexWrap: "wrap" }}>
-                <h2 style={{ 
-                  fontSize: "0.75rem", 
-                  fontWeight: "700", 
-                  color: "var(--text-primary)", 
+              {/* Header: "LIBRARY" left, bare scrolling ticker right */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.2rem", gap: "1rem" }}>
+                <h2 style={{
+                  fontSize: "0.75rem",
+                  fontWeight: "700",
+                  color: "var(--text-primary)",
                   margin: 0,
                   fontFamily: "var(--font-sans)",
                   textTransform: "uppercase",
@@ -3291,186 +3534,240 @@ export default function DailyJournalFeed({ posts, moments = [] }: { posts: any[]
                 }}>
                   Library
                 </h2>
-                
-                {/* Now Reading ticker on the right of Library! */}
-                {(() => {
-                  const currentBook = books.find(b => b.status === "reading") || books[0];
-                  if (!currentBook) return null;
-                  return (
-                    <div style={{
-                      flex: 1,
-                      maxWidth: "280px",
-                      overflow: "hidden",
-                      whiteSpace: "nowrap",
-                      backgroundColor: "rgba(128,128,128,0.03)",
-                      border: "1px solid rgba(128,128,128,0.08)",
-                      borderRadius: "8px",
-                      padding: "6px 0",
-                      position: "relative",
-                      display: "flex",
-                      alignItems: "center"
-                    }}>
-                      <div className="marquee-content" style={{
-                        display: "inline-flex",
-                        gap: "2.5rem",
-                        animation: "marquee-spin 22s linear infinite"
-                      }}>
-                        <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.64rem", color: "var(--text-secondary)", fontWeight: "500" }}>
-                          📖 Reading: <strong>{currentBook.title}</strong> ({currentBook.progress}%)
-                        </span>
-                        <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.64rem", color: "var(--text-secondary)", fontWeight: "500" }}>
-                          📖 Reading: <strong>{currentBook.title}</strong> ({currentBook.progress}%)
-                        </span>
-                        <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.64rem", color: "var(--text-secondary)", fontWeight: "500" }}>
-                          📖 Reading: <strong>{currentBook.title}</strong> ({currentBook.progress}%)
-                        </span>
-                      </div>
-                      <style>{`
-                        @keyframes marquee-spin {
-                          0% { transform: translate3d(0, 0, 0); }
-                          100% { transform: translate3d(-33.33%, 0, 0); }
-                        }
-                      `}</style>
-                    </div>
-                  );
-                })()}
+
+                {/* Library page link — matching Moments style */}
+                <Link
+                  href="/library"
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "0.66rem",
+                    fontWeight: "500",
+                    color: "var(--text-secondary)",
+                    textDecoration: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "3px",
+                    opacity: 0.75,
+                    flexShrink: 0
+                  }}
+                >
+                  View All
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </Link>
               </div>
-              
-              {/* Books bookshelf grid - showing covers, click to expand rating + review */}
-              <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
-                gap: "1.5rem 1.2rem"
-              }}>
-                {completedBooks.map((book) => {
-                  const isExpanded = tappedBookId === book.id;
-                  
-                  return (
-                    <div 
-                      key={book.id}
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        cursor: "pointer",
-                        fontFamily: "var(--font-sans)",
-                        position: "relative"
-                      }}
-                      onClick={() => setTappedBookId(isExpanded ? null : book.id)}
-                    >
-                      {/* Elegant portrait book cover */}
-                      <div 
-                        style={{
-                          width: "100%",
-                          aspectRatio: "2/3",
-                          borderRadius: "12px",
-                          overflow: "hidden",
-                          position: "relative",
-                          boxShadow: "0 6px 16px rgba(0,0,0,0.06)",
-                          border: "1px solid rgba(150,150,150,0.08)",
-                          backgroundColor: "rgba(128,128,128,0.04)",
-                          transition: "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
-                        }}
-                        onMouseOver={(e) => {
-                          e.currentTarget.style.transform = "translateY(-4px) scale(1.02)";
-                          e.currentTarget.style.boxShadow = isDark ? "0 12px 28px rgba(0,0,0,0.4)" : "0 12px 24px rgba(0,0,0,0.08)";
-                        }}
-                        onMouseOut={(e) => {
-                          e.currentTarget.style.transform = "none";
-                          e.currentTarget.style.boxShadow = "0 6px 16px rgba(0,0,0,0.06)";
-                        }}
-                      >
-                        {book.coverUrl ? (
-                          <img 
-                            src={book.coverUrl} 
-                            alt={book.title}
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                          />
-                        ) : (
-                          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(150,150,150,0.06)", color: "var(--text-secondary)", fontSize: "2rem" }}>📖</div>
-                        )}
-                      </div>
-                      
-                      {/* Metadata underneath cover */}
-                      <h4 style={{
-                        fontSize: "0.74rem",
-                        fontWeight: "750",
-                        color: "var(--text-primary)",
-                        margin: "8px 0 2px 0",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis"
-                      }}>
-                        {book.title}
-                      </h4>
-                      <p style={{
-                        fontSize: "0.64rem",
-                        color: "var(--text-secondary)",
-                        margin: 0,
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis"
-                      }}>
-                        by {book.author}
-                      </p>
-                      
-                      {/* Micro-interactive expanded review and stars */}
-                      <AnimatePresence>
-                        {isExpanded && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0, marginTop: 0 }}
-                            animate={{ height: "auto", opacity: 1, marginTop: 8 }}
-                            exit={{ height: 0, opacity: 0, marginTop: 0 }}
-                            transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-                            style={{ overflow: "hidden" }}
-                            onClick={(e) => e.stopPropagation()} // Prevent closing when tapping on content itself
-                          >
-                            <div style={{
-                              backgroundColor: isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.02)",
-                              border: "1px solid rgba(150, 150, 150, 0.08)",
-                              borderRadius: "10px",
-                              padding: "8px 10px"
-                            }}>
-                              {/* Rating Stars */}
-                              <div style={{ display: "flex", gap: "2px", marginBottom: "4px" }}>
-                                {Array.from({ length: 5 }).map((_, i) => (
-                                  <span 
-                                    key={i} 
-                                    style={{ 
-                                      color: i < (book.rating || 5) ? "#FFCC00" : "rgba(150,150,150,0.25)", 
-                                      fontSize: "0.72rem" 
-                                    }}
-                                  >
-                                    ★
-                                  </span>
-                                ))}
-                              </div>
-                              
-                              {/* Review Text */}
-                              {book.review ? (
-                                <p style={{
-                                  fontSize: "0.65rem",
-                                  lineHeight: "1.4",
-                                  color: "var(--text-secondary)",
-                                  margin: 0,
-                                  fontStyle: "italic"
-                                }}>
-                                  “{book.review}”
-                                </p>
-                              ) : (
-                                <span style={{ fontSize: "0.6rem", color: "var(--text-secondary)", opacity: 0.5, fontStyle: "italic" }}>No review written yet.</span>
-                              )}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                })}
+
+              {/* Scroll wrapper (overflow here) + inner grid (no overflow — required for 3D flip CSS transforms) */}
+              <div
+                className="lib-shelf"
+                style={{
+                  overflowX: "auto",
+                  overflowY: "hidden",
+                  paddingBottom: "0.75rem",
+                  scrollSnapType: "x mandatory",
+                  WebkitOverflowScrolling: "touch"
+                }}
+              >
+                <div style={{
+                  display: "grid",
+                  gridTemplateRows: "repeat(2, 145px)",
+                  gridAutoFlow: "column",
+                  gridAutoColumns: "80px",
+                  gap: "1rem 0.65rem",
+                  width: "max-content",
+                  alignItems: "start"
+                }}>
+                  {shelfBooks.map((book) => (
+                    <BookCard key={book.id} book={book} onClick={() => setActiveBook(book)} />
+                  ))}
+                </div>
               </div>
+
+              <style>{`
+                @keyframes lib-marquee {
+                  0%   { transform: translateX(0); }
+                  100% { transform: translateX(-33.33%); }
+                }
+                .lib-shelf::-webkit-scrollbar { height: 3px; }
+                .lib-shelf::-webkit-scrollbar-track { background: rgba(128,128,128,0.03); border-radius: 99px; }
+                .lib-shelf::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.15); border-radius: 99px; }
+                .lib-shelf::-webkit-scrollbar-thumb:hover { background: rgba(128,128,128,0.3); }
+              `}</style>
             </div>
           </FadeIn>
         );
       })()}
+
+      {/* LIGHTBOX MODAL: POLAROID FINE ART REVIEW */}
+      {mounted && typeof window !== "undefined" && createPortal(
+        <AnimatePresence>
+          {activeBook && (() => {
+            const modalBg = isDark ? "rgba(28, 28, 30, 0.85)" : "rgba(255, 255, 255, 0.9)";
+            const modalColor = isDark ? "#ffffff" : "#1c1c1e";
+            const modalBorder = isDark ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)";
+            const modalShadow = isDark ? "0 30px 60px rgba(0,0,0,0.65)" : "0 30px 60px rgba(0,0,0,0.15)";
+            const backdropBlur = "blur(30px) saturate(190%)";
+            const separatorColor = isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.06)";
+            const titleColor = isDark ? "#ffffff" : "#1c1c1e";
+            const authorColor = isDark ? "#8e8e93" : "#6c6c70";
+            const labelColor = isDark ? "#d4af37" : "#c9a84c";
+            const reviewTextColor = isDark ? "#e5e5ea" : "#2c2c2e";
+
+            return (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setActiveBook(null)}
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: isDark ? "rgba(0,0,0,0.7)" : "rgba(0,0,0,0.5)",
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  zIndex: 99999,
+                  cursor: "zoom-out",
+                  padding: "20px"
+                }}
+              >
+                <motion.div
+                  initial={{ scale: 0.94, y: 12 }}
+                  animate={{ scale: 1, y: 0 }}
+                  exit={{ scale: 0.94, y: 12 }}
+                  transition={{ type: "spring", damping: 26, stiffness: 280 }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="hide-scrollbar"
+                  style={{
+                    backgroundColor: modalBg,
+                    color: modalColor,
+                    borderRadius: "24px",
+                    padding: "24px 20px 28px 20px",
+                    boxShadow: modalShadow,
+                    border: modalBorder,
+                    backdropFilter: backdropBlur,
+                    WebkitBackdropFilter: backdropBlur,
+                    width: "100%",
+                    maxWidth: "400px",
+                    maxHeight: "85vh",
+                    overflowY: "auto",
+                    cursor: "default",
+                    display: "flex",
+                    flexDirection: "column",
+                    position: "relative",
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                  }}
+                >
+                  {/* iOS Close Button */}
+                  <button 
+                    onClick={() => setActiveBook(null)}
+                    style={{
+                      position: "absolute",
+                      top: "14px",
+                      right: "14px",
+                      width: "28px",
+                      height: "28px",
+                      borderRadius: "50%",
+                      backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)",
+                      border: "none",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      color: isDark ? "#ffffff" : "#000000",
+                      zIndex: 10,
+                      transition: "background-color 0.2s"
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)"; }}
+                  >
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+
+                  {/* Cover in the Pop-up */}
+                  <div style={{
+                    width: "55%",
+                    aspectRatio: "2/3",
+                    margin: "0 auto 1.25rem auto",
+                    borderRadius: "12px",
+                    overflow: "hidden",
+                    boxShadow: isDark ? "5px 10px 30px rgba(0,0,0,0.5)" : "5px 10px 25px rgba(0,0,0,0.2)",
+                    backgroundColor: isDark ? "#1c1c1e" : "#f5f5f7",
+                    position: "relative",
+                    flexShrink: 0
+                  }}>
+                    <CoverImg book={activeBook} />
+                    <div style={{
+                      position: "absolute", left: 0, top: 0, bottom: 0, width: "12%",
+                      background: "linear-gradient(to right, rgba(0,0,0,0.2) 0%, transparent 100%)",
+                      pointerEvents: "none",
+                    }} />
+                  </div>
+
+                  {/* Title & Author */}
+                  <div style={{ textAlign: "center", marginBottom: "0.75rem", flexShrink: 0 }}>
+                    <h2 style={{
+                      fontSize: "1.1rem",
+                      fontWeight: "800",
+                      color: titleColor,
+                      margin: "0 0 4px 0",
+                      lineHeight: "1.25",
+                      letterSpacing: "-0.015em"
+                    }}>{activeBook.title}</h2>
+                    <p style={{
+                      fontSize: "0.82rem",
+                      color: authorColor,
+                      margin: 0,
+                      fontWeight: "500"
+                    }}>{activeBook.author}</p>
+                  </div>
+
+                  {/* Stars & Read Date */}
+                  <div style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    borderTop: separatorColor,
+                    borderBottom: separatorColor,
+                    borderTopStyle: "solid",
+                    borderTopWidth: "1px",
+                    borderBottomStyle: "solid",
+                    borderBottomWidth: "1px",
+                    padding: "10px 4px",
+                    marginBottom: "1.25rem",
+                    flexShrink: 0
+                  }}>
+                    <div style={{ fontSize: "0.85rem", color: labelColor, letterSpacing: "1px" }}>
+                      {"★".repeat(activeBook.rating ?? 0)}{"☆".repeat(5 - (activeBook.rating ?? 0))}
+                    </div>
+                    <span style={{ fontSize: "0.72rem", color: authorColor, fontWeight: "600", letterSpacing: "-0.01em" }}>
+                      {activeBook.completedAt ? `Read ${formatDate(activeBook.completedAt)}` : activeBook.status === "reading" ? `Reading (${activeBook.progress}%)` : "To Read"}
+                    </span>
+                  </div>
+
+                  {/* Story/Review Text */}
+                  <div style={{
+                    fontSize: "0.86rem",
+                    lineHeight: "1.65",
+                    color: reviewTextColor,
+                    textAlign: "left",
+                    whiteSpace: "pre-wrap",
+                    padding: "0 4px"
+                  }}>
+                    {activeBook.review ? activeBook.review : "Er is nog geen review geschreven voor dit boek."}
+                  </div>
+
+                </motion.div>
+              </motion.div>
+            );
+          })()}
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   )
 }

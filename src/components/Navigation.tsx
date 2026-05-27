@@ -204,9 +204,16 @@ export default function Navigation() {
         {isAdminPage ? (
           <SignOutButton />
         ) : (
-          <NavLink href={pathname === "/ask" ? "/" : "/ask"}>
-            {pathname === "/ask" ? "Home" : "Ask"}
-          </NavLink>
+          <>
+            {pathname === "/library" && (
+              <NavLink href="/">Home</NavLink>
+            )}
+            {pathname !== "/library" && (
+              <NavLink href={pathname === "/ask" ? "/" : "/ask"}>
+                {pathname === "/ask" ? "Home" : "Ask"}
+              </NavLink>
+            )}
+          </>
         )}
       </div>
     </header>
