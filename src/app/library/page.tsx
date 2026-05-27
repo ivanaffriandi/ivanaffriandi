@@ -132,6 +132,7 @@ function isHotlinkBlocked(url: string): boolean {
 }
 
 function SmartCover({ book, grayscale = true }: { book: BookItem; height?: number | string; grayscale?: boolean }) {
+  const [mounted, setMounted] = useState(false);
   const trimmedCover = book.coverUrl ? book.coverUrl.trim() : "";
 
   // Determine if we need to start with direct src or immediately use proxy
@@ -160,6 +161,7 @@ function SmartCover({ book, grayscale = true }: { book: BookItem; height?: numbe
   }, [book.title, book.author, book.coverUrl]);
 
   useEffect(() => {
+    setMounted(true);
     const tc = book.coverUrl ? book.coverUrl.trim() : "";
     if (!tc || isHotlinkBlocked(tc) || !tc.startsWith("http")) {
       // No usable direct URL → go straight to proxy
@@ -181,7 +183,7 @@ function SmartCover({ book, grayscale = true }: { book: BookItem; height?: numbe
     }
   };
 
-  if (!src) return <DefaultCover title={book.title} author={book.author} />;
+  if (!mounted || !src) return <DefaultCover title={book.title} author={book.author} />;
 
   return (
     <img
@@ -305,9 +307,11 @@ function LibraryBookCard({ book, onClick }: { book: BookItem; onClick: () => voi
           color: "var(--text-secondary)", margin: "0 0 4px 0",
           overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis",
         }}>{book.author}</p>
-        <div style={{ fontSize: "0.6rem", color: "#c9a84c", letterSpacing: "0.5px" }}>
-          {"★".repeat(book.rating ?? 0)}{"☆".repeat(5 - (book.rating ?? 0))}
-        </div>
+        {book.status === "completed" && (
+          <div style={{ fontSize: "0.6rem", color: "#c9a84c", letterSpacing: "0.5px" }}>
+            {"★".repeat(book.rating ?? 0)}{"☆".repeat(5 - (book.rating ?? 0))}
+          </div>
+        )}
       </div>
     </motion.div>
   );
@@ -575,7 +579,9 @@ export default function LibraryPage() {
                     flexShrink: 0
                   }}>
                     <div style={{ fontSize: "0.85rem", color: labelColor, letterSpacing: "1px" }}>
-                      {"★".repeat(activeBook.rating ?? 0)}{"☆".repeat(5 - (activeBook.rating ?? 0))}
+                      {activeBook.status === "completed" && (
+                        <>{"★".repeat(activeBook.rating ?? 0)}{"☆".repeat(5 - (activeBook.rating ?? 0))}</>
+                      )}
                     </div>
                     <span style={{ fontSize: "0.72rem", color: authorColor, fontWeight: "600", letterSpacing: "-0.01em" }}>
                       {activeBook.completedAt ? `Read ${formatDate(activeBook.completedAt)}` : activeBook.status === "reading" ? `Reading (${activeBook.progress}%)` : "To Read"}

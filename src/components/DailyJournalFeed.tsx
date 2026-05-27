@@ -3791,7 +3791,9 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     flexShrink: 0
                   }}>
                     <div style={{ fontSize: "0.85rem", color: labelColor, letterSpacing: "1px" }}>
-                      {"★".repeat(activeBook.rating ?? 0)}{"☆".repeat(5 - (activeBook.rating ?? 0))}
+                      {activeBook.status === "completed" && (
+                        <>{"★".repeat(activeBook.rating ?? 0)}{"☆".repeat(5 - (activeBook.rating ?? 0))}</>
+                      )}
                     </div>
                     <span style={{ fontSize: "0.72rem", color: authorColor, fontWeight: "600", letterSpacing: "-0.01em" }}>
                       {activeBook.completedAt ? `Read ${formatDate(activeBook.completedAt)}` : activeBook.status === "reading" ? `Reading (${activeBook.progress}%)` : "To Read"}

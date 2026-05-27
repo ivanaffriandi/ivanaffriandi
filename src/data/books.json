@@ -1,5 +1,29 @@
 [
   {
+    "id": "crit_1",
+    "title": "THE 5 AM CLUB",
+    "author": "Robin Sharma",
+    "coverUrl": "https://covers.openlibrary.org/b/id/12065783-L.jpg",
+    "progress": 100,
+    "status": "completed",
+    "review": "Jujur, aku beli buku ini karena pengen banget ngebiasain bangun pagi dan produktif pas lagi padet-padetnya kerjaan. Tapi pas dibaca, aku ngerasa ini salah satu buku self-help paling buang-buang waktu yang pernah kubaca. Penulis ngebungkus saran sederhananya dalam bentuk cerita fiksi buatan yang super cringe dan dipaksakan banget dialognya. Setiap karakter ngomongnya kayak bot motivator di seminar abal-abal. Rasanya melelahkan banget harus nembus ratusan halaman cerita fiktif cuma buat dapet tips yang sebenernya bisa dirangkum dalam satu postingan blog pendek.\n\nKritik Tajam:\nKonsep utama bangun jam 5 pagi itu terlalu elitis dan mengabaikan realita hidup banyak orang. Nggak semua orang punya ritme sirkadian yang sama, atau pekerjaan kantoran biasa yang bisa diselesaikan dengan tidur jam 9 malam. Buku ini menyebarkan toxic productivity yang bikin pembaca merasa bersalah hanya karena ritme tidurnya berbeda. Terlahu mendewakan produktivitas tanpa peduli keseimbangan hidup yang riil.",
+    "rating": 2,
+    "startedAt": "2026-05-01T17:00:00.000Z",
+    "completedAt": "2026-05-05T17:00:00.000Z"
+  },
+  {
+    "id": "crit_2",
+    "title": "THE SECRET",
+    "author": "Rhonda Byrne",
+    "coverUrl": "https://covers.openlibrary.org/b/id/12539702-L.jpg",
+    "progress": 100,
+    "status": "completed",
+    "review": "Aku dikasih buku ini sama temenku pas aku lagi ngalamin masa-masa sulit dalam karier. Katanya buku ini ajaib dan bisa ngubah hidup. Tapi pas aku baca sendiri, aku malah ngerasa buku ini delusional dan berbahaya. Konsep 'Law of Attraction' yang diagung-agungkan di sini bener-bener dipelintir seolah-olah semua musibah, penyakit, atau kemiskinan di dunia ini adalah salah pikiran korbannya sendiri karena memikirkan hal negatif.\n\nKritik Tajam:\nBuku ini adalah puncak dari toxic positivity dan pseudo-science. Mengklaim bahwa penyakit kronis atau kemiskinan bisa sembuh murni hanya dengan 'berpikir positif' itu sangat meremehkan sains medis dan ketidakadilan sosial struktural. Ini cara licik buat menyalahkan korban (victim blaming) atas nasib buruk mereka sendiri demi jualan mimpi indah.",
+    "rating": 1,
+    "startedAt": "2026-04-20T17:00:00.000Z",
+    "completedAt": "2026-04-25T17:00:00.000Z"
+  },
+  {
     "id": "r1",
     "title": "PATA",
     "author": "Mun Kayoung",
@@ -978,8 +1002,8 @@
     "coverUrl": "https://is1-ssl.mzstatic.com/image/thumb/Publication111/v4/5a/23/10/5a231085-a455-131c-8e1b-8d1331f6e5de/9780062416216_marketingimage.jpg/600x600bb.jpg",
     "progress": 100,
     "status": "completed",
-    "review": "Coelho's fable about a Spanish shepherd boy who follows his \"Personal Legend\" across Africa to the Egyptian pyramids has sold more copies than almost any novel in history, which is an interesting data point regardless of your aesthetic opinion. The philosophy — that the universe conspires to help you achieve your deepest desire, that the journey matters more than the destination, that the Soul of the World speaks through coincidence — is appealing precisely because it's not falsifiable. You can read anything as a sign when you're looking for signs. What I find genuinely moving about the book is the figure of the desert, and the idea that you have to learn its language before it will reveal anything to you — that patience and attention are prerequisites for understanding. The prose is simple and the story moves quickly. It's not deep literature but it's not trying to be. As a parable about following your intuition about your own life, it works.",
-    "rating": 4,
+    "review": "Aku baca novel ini karena dibilang novel legendaris yang menginspirasi jutaan orang. Perjalanan Santiago mencari harta karun di piramida mesir emang puitis banget dan gampang dibaca. Bagian favoritku adalah ketika dia belajar mendengarkan bahasa gurun pasir.\n\nKritik Tajam:\nNamun secara pribadi, aku ngerasa pesan moralnya kelewat naif dan penuh toxic positivity. Kalimat terkenalnya bahwa 'seluruh alam semesta akan bersengkokol membantumu' itu terdengar indah tapi delusional di dunia nyata. Buku ini seolah menafikan bahwa ada faktor keberuntungan nasib buruk, atau ketidakadilan sistem yang bikin usaha sekeras apapun kadang tetap gagal. Paulo Coelho terlalu menjual mimpi manis daripada realita perjuangan.",
+    "rating": 3,
     "startedAt": "2019-03-09T17:00:00.000Z",
     "completedAt": "2019-03-17T17:00:00.000Z"
   },
@@ -1038,7 +1062,7 @@
     "coverUrl": "https://is1-ssl.mzstatic.com/image/thumb/Publication2/v4/db/fa/f8/dbfaf8df-3a6c-a99a-7169-7c912b775cf0/9781612680187-frontcover.jpg/600x600bb.jpg",
     "progress": 100,
     "status": "completed",
-    "review": "I have complicated feelings about this book. The core financial literacy argument — that schools don't teach people how to think about money, that the middle-class path of job security and a home as primary asset is not actually a wealth-building strategy, that understanding assets versus liabilities is fundamental — is genuinely valuable and presented in accessible story form. The distinction between working for money and making money work for you changed how I thought about financial decisions. What's problematic is that the specific advice and the specific claims about what constitutes an asset vs. a liability are sometimes wrong, that the biographical framing is semi-fictional in ways Kiyosaki has been evasive about, and that the book has been used to justify some genuinely terrible real estate investment strategies. Read it for the mindset shift and verify the specifics elsewhere. The framework is more useful than the implementation details.",
+    "review": "Ini buku finansial pertama yang aku baca pas baru mulai kerja. Awalnya aku terpesona banget sama konsep aset vs liabilitas yang dijelaskan lewat cerita Robert Kiyosaki kecil. Buku ini emang bagus banget buat ngegeser mindset dari sekadar pekerja gajian menjadi memikirkan cara memutar uang.\n\nKritik Tajam:\nTapi, seiring berjalannya waktu dan setelah aku beneran terjun ke dunia investasi, aku sadar saran finansial buku ini banyak yang usang dan nggak realistis. Kiyosaki terlalu menggampangkan urusan utang dan real estate, bahkan cenderung menganjurkan trik-trik yang abu-abu secara hukum. Dia juga terkesan menyalahkan kemiskinan sebagai kesalahan mental personal tanpa peduli privilege dan hambatan ekonomi sistemik.",
     "rating": 3,
     "startedAt": "2018-10-04T17:00:00.000Z",
     "completedAt": "2018-10-19T17:00:00.000Z"
