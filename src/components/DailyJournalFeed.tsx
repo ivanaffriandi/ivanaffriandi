@@ -340,7 +340,10 @@ const SnowEffect = () => {
               borderRadius: "50%",
               opacity: opacity,
               willChange: "transform, opacity",
-              animation: `fall ${duration}s linear infinite`,
+              animationName: "fall",
+              animationDuration: `${duration}s`,
+              animationTimingFunction: "linear",
+              animationIterationCount: "infinite",
               animationDelay: `${delay}s`
             }}
           />
@@ -386,7 +389,10 @@ const IndoIndependenceEffect = () => {
               borderRadius: isRed ? "1px" : "50%",
               opacity: opacity,
               willChange: "transform, opacity",
-              animation: `float-confetti ${duration}s ease-in-out infinite`,
+              animationName: "float-confetti",
+              animationDuration: `${duration}s`,
+              animationTimingFunction: "ease-in-out",
+              animationIterationCount: "infinite",
               animationDelay: `${delay}s`
             }}
           />
@@ -430,7 +436,10 @@ const EidFitriEffect = () => {
               opacity: 0,
               color: "#fbbf24",
               willChange: "transform, opacity",
-              animation: `pulse-star ${duration}s ease-in-out infinite`,
+              animationName: "pulse-star",
+              animationDuration: `${duration}s`,
+              animationTimingFunction: "ease-in-out",
+              animationIterationCount: "infinite",
               animationDelay: `${delay}s`
             }}
           >
@@ -477,7 +486,10 @@ const WaisakEffect = () => {
               opacity: 0,
               color: "#fbbf24", // Golden Saffron
               willChange: "transform, opacity",
-              animation: `waisak-rise ${duration}s ease-in-out infinite`,
+              animationName: "waisak-rise",
+              animationDuration: `${duration}s`,
+              animationTimingFunction: "ease-in-out",
+              animationIterationCount: "infinite",
               animationDelay: `${delay}s`
             }}
           >
@@ -536,7 +548,10 @@ const NyepiEffect = () => {
                 transform: "rotate(-35deg)",
                 opacity: 0,
                 willChange: "transform, opacity",
-                animation: `shooting-star ${shootingDuration}s linear infinite`,
+                animationName: "shooting-star",
+                animationDuration: `${shootingDuration}s`,
+                animationTimingFunction: "linear",
+                animationIterationCount: "infinite",
                 animationDelay: `${shootingDelay}s`
               }}
             />
@@ -556,7 +571,10 @@ const NyepiEffect = () => {
               borderRadius: "50%",
               opacity: 0,
               willChange: "transform, opacity",
-              animation: `nyepi-twinkle ${duration}s ease-in-out infinite`,
+              animationName: "nyepi-twinkle",
+              animationDuration: `${duration}s`,
+              animationTimingFunction: "ease-in-out",
+              animationIterationCount: "infinite",
               animationDelay: `${delay}s`
             }}
           />
@@ -617,7 +635,10 @@ const LunarNewYearEffect = () => {
               opacity: 0,
               color: isLantern ? "#f43f5e" : "#eab308", // Lantern Red or Gold Coin
               willChange: "transform, opacity",
-              animation: `lunar-float ${duration}s ease-in-out infinite`,
+              animationName: "lunar-float",
+              animationDuration: `${duration}s`,
+              animationTimingFunction: "ease-in-out",
+              animationIterationCount: "infinite",
               animationDelay: `${delay}s`
             }}
           >
@@ -677,7 +698,10 @@ const HolyLightEffect = () => {
               borderRadius: "50%",
               opacity: 0,
               willChange: "transform, opacity",
-              animation: `holy-glow ${duration}s ease-in-out infinite`,
+              animationName: "holy-glow",
+              animationDuration: `${duration}s`,
+              animationTimingFunction: "ease-in-out",
+              animationIterationCount: "infinite",
               animationDelay: `${delay}s`
             }}
           />
@@ -739,7 +763,10 @@ const BirthdayConfettiEffect = ({ type }: { type: string }) => {
               borderRadius: "1.5px",
               opacity: 0.85,
               willChange: "transform, opacity",
-              animation: `confetti-rain ${duration}s ease-out forwards`,
+              animationName: "confetti-rain",
+              animationDuration: `${duration}s`,
+              animationTimingFunction: "ease-out",
+              animationFillMode: "forwards",
               animationDelay: `${delay}s`
             }}
           />
@@ -767,7 +794,10 @@ const BirthdayConfettiEffect = ({ type }: { type: string }) => {
               boxShadow: "inset -4px -4px 8px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.06)",
               opacity: 0.85,
               willChange: "transform, opacity",
-              animation: `balloon-rise ${duration}s ease-in-out forwards`,
+              animationName: "balloon-rise",
+              animationDuration: `${duration}s`,
+              animationTimingFunction: "ease-in-out",
+              animationFillMode: "forwards",
               animationDelay: `${delay}s`
             }}
           />
@@ -795,7 +825,10 @@ const BirthdayConfettiEffect = ({ type }: { type: string }) => {
               boxShadow: "inset -4px -4px 8px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.06)",
               opacity: 0.75,
               willChange: "transform, opacity",
-              animation: `balloon-rise ${duration}s ease-in-out infinite`,
+              animationName: "balloon-rise",
+              animationDuration: `${duration}s`,
+              animationTimingFunction: "ease-in-out",
+              animationIterationCount: "infinite",
               animationDelay: `${delay}s`
             }}
           />
