@@ -461,10 +461,15 @@ export default function AskPage() {
     setErrorMsg("");
 
     try {
+      const landingReferrer = typeof window !== "undefined" ? (sessionStorage.getItem("ivan_landing_referrer") || "") : "";
+      const entryPage = typeof window !== "undefined" ? window.location.href : "";
+
       await addQuestion(
         content.trim(),
         senderName.trim(),
-        chatMessages.length > 1 ? chatMessages : undefined
+        chatMessages.length > 1 ? chatMessages : undefined,
+        landingReferrer,
+        entryPage
       );
       setContent("");
       setSenderName("");
@@ -667,18 +672,21 @@ export default function AskPage() {
         {/* Tab Switcher */}
         <div style={{
           display: "inline-flex",
+          width: "118px",
           backgroundColor: isDarkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
           borderRadius: "99px",
           padding: "3px",
           marginBottom: "0.75rem",
           position: "relative",
           border: isDarkMode ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.06)",
-          zIndex: 10
+          zIndex: 10,
+          boxSizing: "border-box"
         }}>
           <button
             onClick={() => setActiveTab("qa")}
             style={{
-              padding: "5px 12px",
+              width: "56px",
+              padding: "5px 0",
               borderRadius: "99px",
               border: "none",
               background: "none",
@@ -690,7 +698,10 @@ export default function AskPage() {
               position: "relative",
               zIndex: 2,
               transition: "color 0.25s ease",
-              whiteSpace: "nowrap"
+              whiteSpace: "nowrap",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
             }}
           >
             Q&A
@@ -698,7 +709,8 @@ export default function AskPage() {
           <button
             onClick={() => setActiveTab("ai")}
             style={{
-              padding: "5px 12px",
+              width: "56px",
+              padding: "5px 0",
               borderRadius: "99px",
               border: "none",
               background: "none",
@@ -710,7 +722,10 @@ export default function AskPage() {
               position: "relative",
               zIndex: 2,
               transition: "color 0.25s ease",
-              whiteSpace: "nowrap"
+              whiteSpace: "nowrap",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
             }}
           >
             AI
@@ -723,8 +738,8 @@ export default function AskPage() {
               position: "absolute",
               top: "3px",
               bottom: "3px",
-              left: activeTab === "qa" ? "3px" : "50%",
-              width: "calc(50% - 3px)",
+              left: activeTab === "qa" ? "3px" : "59px",
+              width: "56px",
               backgroundColor: "var(--text-primary)",
               borderRadius: "99px",
               zIndex: 1
@@ -772,10 +787,13 @@ export default function AskPage() {
               ref={chatScrollRef}
               className="ai-chat-portal-container"
               onScroll={(e) => {
-                const scrolled = e.currentTarget.scrollTop > 5;
-                if (scrolled !== chatScrolled) {
-                  setChatScrolled(scrolled);
-                }
+                const el = e.currentTarget;
+                requestAnimationFrame(() => {
+                  const scrolled = el.scrollTop > 5;
+                  if (scrolled !== chatScrolled) {
+                    setChatScrolled(scrolled);
+                  }
+                });
               }}
               style={{
                 flex: 1,
@@ -785,6 +803,8 @@ export default function AskPage() {
                 paddingBottom: "4.2rem",
                 paddingRight: "2px",
                 paddingTop: "8px",
+                WebkitOverflowScrolling: "touch",
+                contain: "layout style paint"
               }}
             >
               <motion.div
@@ -903,7 +923,7 @@ export default function AskPage() {
                 <form onSubmit={handleSubmit} style={{
                   padding: "20px",
                   borderRadius: "20px",
-                  border: isFocused ? "1.5px solid var(--text-primary)" : "1px solid var(--border-color)",
+                  border: isFocused ? "1px solid var(--text-primary)" : "1px solid var(--border-color)",
                   backgroundColor: isDarkMode ? "rgba(20, 19, 18, 0.45)" : "rgba(253, 251, 247, 0.55)",
                   backdropFilter: "blur(20px)",
                   WebkitBackdropFilter: "blur(20px)",
@@ -1092,6 +1112,8 @@ export default function AskPage() {
                 overflowY: "auto",
                 minHeight: 0,
                 paddingBottom: "8rem",
+                WebkitOverflowScrolling: "touch",
+                contain: "layout style paint"
               }}
             >
               {loading ? (
@@ -1174,8 +1196,8 @@ export default function AskPage() {
               padding: (activeTab === "qa" && isMaximized) ? "16px 18px" : (activeTab === "ai" && chatLoading) ? "0px 8px" : "6px 8px 6px 10px",
               borderRadius: (activeTab === "qa" && isMaximized) ? "24px" : "22px",
               border: isFocused 
-                ? "1.5px solid var(--text-primary)" 
-                : (isDarkMode ? "1.5px solid rgba(255, 255, 255, 0.16)" : "1.5px solid rgba(0, 0, 0, 0.14)"),
+                ? "1px solid var(--text-primary)" 
+                : (isDarkMode ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.10)"),
               backgroundColor: isDarkMode ? "rgba(20, 19, 18, 0.98)" : "rgba(253, 251, 247, 0.98)",
               backdropFilter: "blur(20px)",
               WebkitBackdropFilter: "blur(20px)",

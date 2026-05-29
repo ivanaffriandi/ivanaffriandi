@@ -7,6 +7,7 @@ import AmsterdamClock from "@/components/AmsterdamClock";
 import BirthdayCelebration from "@/components/BirthdayCelebration";
 import KonamiEasterEgg from "@/components/KonamiEasterEgg";
 import PageTransition from "@/components/PageTransition";
+import VisitorTracker from "@/components/VisitorTracker";
 
 import "./globals.css";
 import "./footer.css";
@@ -83,7 +84,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${lora.variable} ${merriweather.variable} ${playfairDisplay.variable}`}>
       <body>
-
+        <VisitorTracker />
         <BirthdayCelebration />
         <KonamiEasterEgg />
         <div className="layout-wrapper" style={{ padding: "0 4vw" }}>

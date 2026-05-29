@@ -107,9 +107,57 @@ function generatePseudoId(ip: string, userAgent: string): string {
   return `Anon-${hex}`;
 }
 
+// Smart platform detection
+function getPlatform(referrer: string, entryPage: string): string {
+  if (entryPage) {
+    try {
+      const url = new URL(entryPage);
+      const utm = url.searchParams.get("utm_source") || url.searchParams.get("ref");
+      if (utm) return `UTM: ${utm}`;
+    } catch(e) {}
+  }
+  if (!referrer) {
+    return "Direct / Bookmark";
+  }
+  try {
+    const url = new URL(referrer);
+    const host = url.hostname.toLowerCase();
+    if (host.includes("t.co") || host.includes("twitter.com") || host.includes("x.com")) {
+      return "Twitter / X";
+    }
+    if (host.includes("instagram.com")) {
+      return "Instagram";
+    }
+    if (host.includes("linkedin.com")) {
+      return "LinkedIn";
+    }
+    if (host.includes("github.com")) {
+      return "GitHub";
+    }
+    if (host.includes("facebook.com") || host.includes("fb.com")) {
+      return "Facebook";
+    }
+    if (host.includes("tiktok.com")) {
+      return "TikTok";
+    }
+    if (host.includes("youtube.com") || host.includes("youtu.be")) {
+      return "YouTube";
+    }
+    if (host.includes("google.com")) {
+      return "Google Search";
+    }
+    if (host.includes("ivanaffriandi.com") || host.includes("localhost") || host.includes("127.0.0.1")) {
+      return "Internal Navigation";
+    }
+    return host;
+  } catch (e) {
+    return referrer;
+  }
+}
+
 export async function POST(request: Request) {
   try {
-    const { content, name, chatHistory } = await request.json();
+    const { content, name, chatHistory, referrer, entryPage } = await request.json();
     if (!content) {
       return NextResponse.json({ error: "Content is required" }, { status: 400 });
     }
@@ -180,6 +228,8 @@ export async function POST(request: Request) {
     const pseudoId = generatePseudoId(ip, ua);
     const displayName = cleanName ? `${cleanName} (${pseudoId})` : `Anonymous (${pseudoId})`;
 
+    const platform = getPlatform(referrer || "", entryPage || "");
+
     const newQuestion = {
       content,
       published: new Date().toISOString(),
@@ -188,7 +238,10 @@ export async function POST(request: Request) {
       location,
       device,
       name: displayName,
-      chatHistory: chatHistory || null
+      chatHistory: chatHistory || null,
+      referrer: referrer || null,
+      entryPage: entryPage || null,
+      platform: platform || null
     };
 
     // Tulis data baru secara efisien ke Firebase Realtime DB menggunakan POST

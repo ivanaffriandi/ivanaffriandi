@@ -95,6 +95,7 @@ function AdminPageContent() {
   const [adminMoments, setAdminMoments] = useState<MomentItem[]>([]);
   const [adminCalendarEvents, setAdminCalendarEvents] = useState<CalendarEvent[]>([]);
   const [adminBooks, setAdminBooks] = useState<BookItem[]>([]);
+  const [visitorSessions, setVisitorSessions] = useState<Record<string, any>>({});
 
   // Books
   const [editingBookId, setEditingBookId] = useState<string | null>(null);
@@ -404,6 +405,7 @@ function AdminPageContent() {
       getAllCalendarEvents().then(list => setAdminCalendarEvents(list.sort((a, b) => a.dateKey.localeCompare(b.dateKey)))).catch(err => console.error("Failed to load calendar:", err));
       getAllBooks().then(setAdminBooks).catch(err => console.error("Failed to load books:", err));
       loadBlockedIPs();
+      loadVisitorSessions();
     }
   }, [isAuthenticated]);
 
@@ -416,6 +418,18 @@ function AdminPageContent() {
       }
     } catch (err) {
       console.error("Failed to load blocked IPs", err);
+    }
+  };
+
+  const loadVisitorSessions = async () => {
+    try {
+      const res = await fetch("/api/visitor-sessions");
+      if (res.ok) {
+        const data = await res.json();
+        setVisitorSessions(data);
+      }
+    } catch (err) {
+      console.error("Failed to load visitor sessions", err);
     }
   };
 
@@ -1112,26 +1126,32 @@ function AdminPageContent() {
                     </div>
                   </div>
                   <motion.div variants={staggerContainer} initial="initial" animate="animate" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    {filteredQuestions.length > 0 ? filteredQuestions.map(q => (
-                      <motion.div key={q.id} variants={fadeRise} layoutId={`qcard-${q.id}`} className="admin-glass-card">
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                            <span style={{ fontSize: "0.6rem", color: "#FF9500", fontWeight: "700" }}>{new Date(q.published).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}</span>
-                            <span style={{ fontSize: "0.55rem", fontWeight: "800", backgroundColor: q.answered ? "rgba(52,199,89,0.08)" : "rgba(255,149,0,0.08)", color: q.answered ? "#34C759" : "#FF9500", border: q.answered ? "0.5px solid rgba(52,199,89,0.18)" : "0.5px solid rgba(255,149,0,0.18)", padding: "2px 6px", borderRadius: "6px" }}>{q.answered ? "Answered" : "New"}</span>
+                    {filteredQuestions.length > 0 ? filteredQuestions.map(q => {
+                      const encodedIp = q.ip ? q.ip.replace(/\./g, "_").replace(/:/g, "_") : "";
+                      const session = encodedIp ? visitorSessions[encodedIp] : null;
+                      const activePlatform = q.platform || session?.lastPlatform || session?.firstPlatform;
+                      return (
+                        <motion.div key={q.id} variants={fadeRise} layoutId={`qcard-${q.id}`} className="admin-glass-card">
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                              <span style={{ fontSize: "0.6rem", color: "#FF9500", fontWeight: "700" }}>{new Date(q.published).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}</span>
+                              <span style={{ fontSize: "0.55rem", fontWeight: "800", backgroundColor: q.answered ? "rgba(52,199,89,0.08)" : "rgba(255,149,0,0.08)", color: q.answered ? "#34C759" : "#FF9500", border: q.answered ? "0.5px solid rgba(52,199,89,0.18)" : "0.5px solid rgba(255,149,0,0.18)", padding: "2px 6px", borderRadius: "6px" }}>{q.answered ? "Answered" : "New"}</span>
+                            </div>
+                            <motion.button whileHover={{ scale: 1.1, color: "#ef4444" }} whileTap={{ scale: 0.9 }} onClick={() => handleDeleteQuestion(q.id)} style={{ width: "22px", height: "22px", backgroundColor: "transparent", border: "none", borderRadius: "50%", color: "var(--text-secondary)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                            </motion.button>
                           </div>
-                          <motion.button whileHover={{ scale: 1.1, color: "#ef4444" }} whileTap={{ scale: 0.9 }} onClick={() => handleDeleteQuestion(q.id)} style={{ width: "22px", height: "22px", backgroundColor: "transparent", border: "none", borderRadius: "50%", color: "var(--text-secondary)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                          </motion.button>
-                        </div>
-                        <p style={{ margin: "0 0 8px 0", fontSize: "0.84rem", color: "var(--text-primary)", lineHeight: "1.45", fontWeight: "600", letterSpacing: "-0.01em" }}>"{q.content}"</p>
-                        {(q.name || q.ip || q.location || q.device) && (
-                          <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "10px" }}>
-                            {q.name && <span style={{ fontSize: "0.6rem", fontWeight: "600", backgroundColor: theme === "dark" ? "rgba(10,132,255,0.15)" : "rgba(0,122,255,0.06)", color: theme === "dark" ? "#64D2FF" : "#007AFF", border: `0.5px solid ${theme === "dark" ? "rgba(10,132,255,0.3)" : "rgba(0,122,255,0.14)"}`, padding: "2px 6px", borderRadius: "6px" }}>👤 {q.name}</span>}
-                            {q.ip && <span style={{ fontSize: "0.6rem", fontWeight: "600", backgroundColor: theme === "dark" ? "rgba(255,255,255,0.08)" : "rgba(142,142,147,0.07)", color: "var(--text-secondary)", border: `0.5px solid ${theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(142,142,147,0.15)"}`, padding: "2px 6px", borderRadius: "6px" }}>🌐 {q.ip}</span>}
-                            {q.location && <span style={{ fontSize: "0.6rem", fontWeight: "600", backgroundColor: theme === "dark" ? "rgba(48,209,88,0.15)" : "rgba(52,199,89,0.06)", color: theme === "dark" ? "#30D158" : "#34C759", border: `0.5px solid ${theme === "dark" ? "rgba(48,209,88,0.3)" : "rgba(52,199,89,0.14)"}`, padding: "2px 6px", borderRadius: "6px" }}>📍 {q.location}</span>}
-                            {q.device && <span style={{ fontSize: "0.6rem", fontWeight: "600", backgroundColor: theme === "dark" ? "rgba(191,90,242,0.15)" : "rgba(175,82,222,0.06)", color: theme === "dark" ? "#BF5AF2" : "#AF52DE", border: `0.5px solid ${theme === "dark" ? "rgba(191,90,242,0.3)" : "rgba(175,82,222,0.14)"}`, padding: "2px 6px", borderRadius: "6px" }}>📱 {q.device}</span>}
-                          </div>
-                        )}
+                          <p style={{ margin: "0 0 8px 0", fontSize: "0.84rem", color: "var(--text-primary)", lineHeight: "1.45", fontWeight: "600", letterSpacing: "-0.01em" }}>"{q.content}"</p>
+                          {(q.name || q.ip || q.location || q.device || activePlatform || session) && (
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "10px" }}>
+                              {q.name && <span style={{ fontSize: "0.6rem", fontWeight: "600", backgroundColor: theme === "dark" ? "rgba(10,132,255,0.15)" : "rgba(0,122,255,0.06)", color: theme === "dark" ? "#64D2FF" : "#007AFF", border: `0.5px solid ${theme === "dark" ? "rgba(10,132,255,0.3)" : "rgba(0,122,255,0.14)"}`, padding: "2px 6px", borderRadius: "6px" }}>👤 {q.name}</span>}
+                              {q.ip && <span style={{ fontSize: "0.6rem", fontWeight: "600", backgroundColor: theme === "dark" ? "rgba(255,255,255,0.08)" : "rgba(142,142,147,0.07)", color: "var(--text-secondary)", border: `0.5px solid ${theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(142,142,147,0.15)"}`, padding: "2px 6px", borderRadius: "6px" }}>🌐 {q.ip}</span>}
+                              {q.location && <span style={{ fontSize: "0.6rem", fontWeight: "600", backgroundColor: theme === "dark" ? "rgba(48,209,88,0.15)" : "rgba(52,199,89,0.06)", color: theme === "dark" ? "#30D158" : "#34C759", border: `0.5px solid ${theme === "dark" ? "rgba(48,209,88,0.3)" : "rgba(52,199,89,0.14)"}`, padding: "2px 6px", borderRadius: "6px" }}>📍 {q.location}</span>}
+                              {q.device && <span style={{ fontSize: "0.6rem", fontWeight: "600", backgroundColor: theme === "dark" ? "rgba(191,90,242,0.15)" : "rgba(175,82,222,0.06)", color: theme === "dark" ? "#BF5AF2" : "#AF52DE", border: `0.5px solid ${theme === "dark" ? "rgba(191,90,242,0.3)" : "rgba(175,82,222,0.14)"}`, padding: "2px 6px", borderRadius: "6px" }}>📱 {q.device}</span>}
+                              {activePlatform && <span style={{ fontSize: "0.6rem", fontWeight: "600", backgroundColor: "rgba(255, 45, 85, 0.08)", color: "#FF2D55", border: "0.5px solid rgba(255, 45, 85, 0.18)", padding: "2px 6px", borderRadius: "6px" }}>🔗 {activePlatform}</span>}
+                              {session && <span style={{ fontSize: "0.6rem", fontWeight: "600", backgroundColor: "rgba(90, 200, 250, 0.08)", color: "#5AC8FA", border: "0.5px solid rgba(90, 200, 250, 0.18)", padding: "2px 6px", borderRadius: "6px" }}>🔄 Visited {session.count}x</span>}
+                            </div>
+                          )}
                         {/* AI Chat History log (if it exists for this question) */}
                         {q.chatHistory && Array.isArray(q.chatHistory) && q.chatHistory.length > 0 && (
                           <div style={{
@@ -1160,6 +1180,37 @@ function AdminPageContent() {
                             </div>
                           </div>
                         )}
+
+                        {/* Page Refresh & View Log from visitorSessions */}
+                        {session && session.history && Array.isArray(session.history) && session.history.length > 0 && (
+                          <div style={{
+                            marginTop: "8px",
+                            marginBottom: "8px",
+                            padding: "10px",
+                            backgroundColor: theme === "dark" ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+                            border: theme === "dark" ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.07)",
+                            borderRadius: "12px",
+                          }}>
+                            <span style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "6px", letterSpacing: "0.03em" }}>
+                              🔄 Page Refresh & View Log ({session.count} total)
+                            </span>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "6px", maxHeight: "120px", overflowY: "auto", paddingRight: "4px" }}>
+                              {session.history.map((hist: any, hIdx: number) => (
+                                <div key={hIdx} style={{ fontSize: "0.68rem", lineHeight: "1.4", display: "flex", justifyContent: "space-between", gap: "8px" }}>
+                                  <div style={{ minWidth: 0, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
+                                    <span style={{ fontWeight: "700", color: "var(--text-primary)" }}>{hist.page}</span>
+                                    {hist.platform && hist.platform !== "Internal Navigation" && hist.platform !== "Direct / Bookmark" && (
+                                      <span style={{ color: "#FF2D55", marginLeft: "4px", fontSize: "0.58rem", fontWeight: "700" }}>({hist.platform})</span>
+                                    )}
+                                  </div>
+                                  <span style={{ color: "var(--text-secondary)", flexShrink: 0, fontSize: "0.6rem" }}>
+                                    {new Date(hist.timestamp).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                         {q.answered && q.answer && (
                           <div style={{ padding: "10px 12px", backgroundColor: "rgba(0,0,0,0.02)", borderRadius: "12px", border: "1px solid rgba(150,150,150,0.06)", marginTop: "8px" }}>
                             <span style={{ fontSize: "0.55rem", fontWeight: "800", color: "#10b981", letterSpacing: "0.03em", display: "block", marginBottom: "4px" }}>Reply from Ivan</span>
@@ -1184,7 +1235,7 @@ function AdminPageContent() {
                           </motion.div>
                         )}
                       </motion.div>
-                    )) : (
+                    )}) : (
                       <div style={{ padding: "3rem 1rem", textAlign: "center", border: "1px dashed rgba(150,150,150,0.12)", borderRadius: "16px" }}>
                         <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "750", color: "var(--text-primary)" }}>Empty Inbox</p>
                         <p style={{ margin: "2px 0 0", fontSize: "0.68rem", color: "var(--text-secondary)" }}>{inboxFilter === "pending" ? "All questions answered!" : "No items found."}</p>
