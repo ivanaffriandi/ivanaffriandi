@@ -109,7 +109,7 @@ function generatePseudoId(ip: string, userAgent: string): string {
 
 export async function POST(request: Request) {
   try {
-    const { content, name } = await request.json();
+    const { content, name, chatHistory } = await request.json();
     if (!content) {
       return NextResponse.json({ error: "Content is required" }, { status: 400 });
     }
@@ -187,7 +187,8 @@ export async function POST(request: Request) {
       ip,
       location,
       device,
-      name: displayName
+      name: displayName,
+      chatHistory: chatHistory || null
     };
 
     // Tulis data baru secara efisien ke Firebase Realtime DB menggunakan POST

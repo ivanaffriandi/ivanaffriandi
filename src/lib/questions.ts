@@ -9,10 +9,11 @@ export interface QuestionItem {
   location?: string;
   device?: string;
   name?: string;
+  chatHistory?: any[];
 }
 
 // 1. Submit a new anonymous question (Default: unanswered)
-export async function addQuestion(content: string, name?: string): Promise<QuestionItem> {
+export async function addQuestion(content: string, name?: string, chatHistory?: any[]): Promise<QuestionItem> {
   const res = await fetch("/api/questions", {
     method: "POST",
     headers: { 
@@ -20,7 +21,7 @@ export async function addQuestion(content: string, name?: string): Promise<Quest
       "Cache-Control": "no-cache",
       "Pragma": "no-cache"
     },
-    body: JSON.stringify({ content, name })
+    body: JSON.stringify({ content, name, chatHistory })
   });
   if (!res.ok) {
     let errorMsg = "Failed to submit question";

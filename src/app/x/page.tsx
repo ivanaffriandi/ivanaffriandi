@@ -1132,6 +1132,34 @@ function AdminPageContent() {
                             {q.device && <span style={{ fontSize: "0.6rem", fontWeight: "600", backgroundColor: theme === "dark" ? "rgba(191,90,242,0.15)" : "rgba(175,82,222,0.06)", color: theme === "dark" ? "#BF5AF2" : "#AF52DE", border: `0.5px solid ${theme === "dark" ? "rgba(191,90,242,0.3)" : "rgba(175,82,222,0.14)"}`, padding: "2px 6px", borderRadius: "6px" }}>📱 {q.device}</span>}
                           </div>
                         )}
+                        {/* AI Chat History log (if it exists for this question) */}
+                        {q.chatHistory && Array.isArray(q.chatHistory) && q.chatHistory.length > 0 && (
+                          <div style={{
+                            marginTop: "8px",
+                            marginBottom: "8px",
+                            padding: "10px",
+                            backgroundColor: theme === "dark" ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+                            border: theme === "dark" ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.07)",
+                            borderRadius: "12px",
+                          }}>
+                            <span style={{ fontSize: "0.58rem", fontWeight: "800", color: "var(--text-secondary)", textTransform: "uppercase", display: "block", marginBottom: "6px", letterSpacing: "0.03em" }}>
+                              💬 AI Chat Log Session
+                            </span>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "6px", maxHeight: "150px", overflowY: "auto", paddingRight: "4px" }}>
+                              {q.chatHistory.map((chat: any, cIdx: number) => {
+                                const isAI = chat.role === "model" || chat.role === "assistant";
+                                return (
+                                  <div key={cIdx} style={{ fontSize: "0.7rem", lineHeight: "1.4" }}>
+                                    <strong style={{ color: isAI ? "#007AFF" : "var(--text-primary)" }}>
+                                      {isAI ? "AI: " : "User: "}
+                                    </strong>
+                                    <span style={{ color: "var(--text-secondary)", whiteSpace: "pre-wrap" }}>{chat.content}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
                         {q.answered && q.answer && (
                           <div style={{ padding: "10px 12px", backgroundColor: "rgba(0,0,0,0.02)", borderRadius: "12px", border: "1px solid rgba(150,150,150,0.06)", marginTop: "8px" }}>
                             <span style={{ fontSize: "0.55rem", fontWeight: "800", color: "#10b981", letterSpacing: "0.03em", display: "block", marginBottom: "4px" }}>Reply from Ivan</span>

@@ -461,7 +461,11 @@ export default function AskPage() {
     setErrorMsg("");
 
     try {
-      await addQuestion(content.trim(), senderName.trim());
+      await addQuestion(
+        content.trim(),
+        senderName.trim(),
+        chatMessages.length > 1 ? chatMessages : undefined
+      );
       setContent("");
       setSenderName("");
       setIsMaximized(false); // Gracefully morph card back to capsule
@@ -666,7 +670,7 @@ export default function AskPage() {
           backgroundColor: isDarkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
           borderRadius: "99px",
           padding: "3px",
-          marginBottom: "1rem",
+          marginBottom: "0.75rem",
           position: "relative",
           border: isDarkMode ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.06)",
           zIndex: 10
@@ -729,6 +733,16 @@ export default function AskPage() {
         </div>
       </div>
 
+      {/* Elegant separator border between tab switch section and portals */}
+      <div style={{
+        height: "1.5px",
+        width: "100%",
+        backgroundColor: "var(--text-primary)",
+        opacity: isDarkMode ? 0.08 : 0.05,
+        marginBottom: "0.85rem",
+        flexShrink: 0
+      }} />
+
       {/* ===== UNIFIED CONTENT PORTALS ===== */}
       <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
         {activeTab === "ai" ? (
@@ -768,7 +782,7 @@ export default function AskPage() {
                 overflowY: "auto",
                 overflowX: "hidden",
                 minHeight: 0,
-                paddingBottom: "7rem",
+                paddingBottom: "4.2rem",
                 paddingRight: "2px",
                 paddingTop: "8px",
               }}
@@ -777,7 +791,7 @@ export default function AskPage() {
                 variants={staggerContainer}
                 initial="initial"
                 animate="animate"
-                style={{ display: "flex", flexDirection: "column", gap: "0.85rem", width: "100%" }}
+                style={{ display: "flex", flexDirection: "column", gap: "0.65rem", width: "100%" }}
               >
                 {chatMessages.map((msg, i) => {
                   const isUser = msg.role === "user";
@@ -795,8 +809,8 @@ export default function AskPage() {
                     >
                       <div style={{
                         maxWidth: "82%",
-                        padding: "12px 16px",
-                        borderRadius: isUser ? "20px 20px 5px 20px" : "20px 20px 20px 5px",
+                        padding: "8px 12px",
+                        borderRadius: isUser ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
                         backgroundColor: isUser
                           ? "var(--text-primary)"
                           : (isDarkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)"),
@@ -805,8 +819,8 @@ export default function AskPage() {
                           : (isDarkMode ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.07)"),
                         color: isUser ? "var(--bg-color)" : "var(--text-primary)",
                         fontFamily: "var(--font-sans)",
-                        fontSize: "0.87rem",
-                        lineHeight: "1.52",
+                        fontSize: "0.81rem",
+                        lineHeight: "1.45",
                         boxShadow: isUser
                           ? "0 3px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.15)"
                           : "0 2px 8px rgba(0,0,0,0.03)"
@@ -1161,15 +1175,15 @@ export default function AskPage() {
               borderRadius: (activeTab === "qa" && isMaximized) ? "24px" : "22px",
               border: isFocused 
                 ? "1.5px solid var(--text-primary)" 
-                : "1px solid var(--border-color)",
-              backgroundColor: isDarkMode ? "rgba(20, 19, 18, 0.96)" : "rgba(253, 251, 247, 0.96)",
+                : (isDarkMode ? "1.5px solid rgba(255, 255, 255, 0.16)" : "1.5px solid rgba(0, 0, 0, 0.14)"),
+              backgroundColor: isDarkMode ? "rgba(20, 19, 18, 0.98)" : "rgba(253, 251, 247, 0.98)",
               backdropFilter: "blur(20px)",
               WebkitBackdropFilter: "blur(20px)",
               boxShadow: (activeTab === "qa" && isMaximized)
                 ? "0 24px 60px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.2)"
                 : (isFocused 
                     ? "0 12px 36px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.2)" 
-                    : "0 10px 30px rgba(0,0,0,0.12), 0 2px 10px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.15)"),
+                    : "0 10px 30px rgba(0,0,0,0.14), 0 2px 10px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.15)"),
               display: "flex",
               flexDirection: "column",
               justifyContent: (activeTab === "qa" && isMaximized) ? "stretch" : "center",
@@ -1209,25 +1223,25 @@ export default function AskPage() {
                       type="button"
                       onClick={handleResetChat}
                       disabled={chatLoading}
-                      whileHover={!chatLoading ? { scale: 1.12, opacity: 1 } : {}}
-                      whileTap={!chatLoading ? { scale: 0.9 } : {}}
+                      whileHover={!chatLoading ? { scale: 1.15, opacity: 1 } : {}}
+                      whileTap={!chatLoading ? { scale: 0.88 } : {}}
                       title="Reset chat"
                       style={{
-                        width: "24px",
-                        height: "24px",
+                        width: "26px",
+                        height: "26px",
                         border: "none",
                         backgroundColor: "transparent",
-                        color: "var(--text-secondary)",
+                        color: "var(--text-primary)",
                         cursor: chatLoading ? "default" : "pointer",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         flexShrink: 0,
-                        opacity: chatLoading ? 0.3 : 0.65,
+                        opacity: chatLoading ? 0.35 : 0.85,
                         transition: "opacity 0.2s ease"
                       }}
                     >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="1 4 1 10 7 10"></polyline>
                         <path d="M3.51 15a9 9 0 1 0 .49-3.51"></path>
                       </svg>
@@ -1243,42 +1257,32 @@ export default function AskPage() {
                     }} />
 
                     {/* MIDDLE: input OR typing indicator */}
-                    <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center" }}>
+                    <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <AnimatePresence mode="wait">
                         {chatLoading ? (
-                          /* TYPING STATE — dots + label */
+                          /* TYPING STATE — centered animating dots without text label */
                           <motion.div
                             key="typing-indicator"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.15 }}
-                            style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%" }}
+                            style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}
                           >
-                            <div style={{ display: "flex", gap: "3px", alignItems: "center" }}>
+                            <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
                               {[0, 1, 2].map((dot) => (
                                 <motion.div
                                   key={dot}
-                                  animate={{ opacity: [0.2, 1, 0.2], y: [0, -3, 0] }}
-                                  transition={{ duration: 0.85, repeat: Infinity, delay: dot * 0.16, ease: "easeInOut" }}
+                                  animate={{ opacity: [0.35, 1, 0.35], y: [0, -4, 0] }}
+                                  transition={{ duration: 0.8, repeat: Infinity, delay: dot * 0.15, ease: "easeInOut" }}
                                   style={{
-                                    width: "5px", height: "5px",
+                                    width: "6px", height: "6px",
                                     borderRadius: "50%",
-                                    backgroundColor: "var(--text-secondary)"
+                                    backgroundColor: "var(--text-primary)"
                                   }}
                                 />
                               ))}
                             </div>
-                            <span style={{
-                              fontSize: "0.82rem",
-                              color: "var(--text-secondary)",
-                              fontFamily: "var(--font-sans)",
-                              fontWeight: "500",
-                              fontStyle: "italic",
-                              opacity: 0.65
-                            }}>
-                              Ivan AI is typing...
-                            </span>
                           </motion.div>
                         ) : (
                           /* NORMAL STATE — text input */
@@ -1311,22 +1315,22 @@ export default function AskPage() {
                       </AnimatePresence>
                     </div>
 
-                    {/* Send button — always visible, dimmed when loading */}
+                    {/* Send button — always visible, clearer styling */}
                     <motion.button
                       type="submit"
                       disabled={!chatInput.trim() || chatLoading}
-                      whileHover={chatInput.trim() && !chatLoading ? { scale: 1.07 } : {}}
+                      whileHover={chatInput.trim() && !chatLoading ? { scale: 1.08 } : {}}
                       whileTap={chatInput.trim() && !chatLoading ? { scale: 0.92 } : {}}
                       style={{
                         width: "28px",
                         height: "28px",
                         borderRadius: "50%",
-                        border: chatInput.trim() && !chatLoading ? "none" : "1px solid var(--border-color)",
+                        border: chatInput.trim() && !chatLoading ? "none" : "1.5px solid var(--text-primary)",
                         backgroundColor: chatInput.trim() && !chatLoading
                           ? "var(--text-primary)"
-                          : (isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.06)"),
-                        color: chatInput.trim() && !chatLoading ? "var(--bg-color)" : "var(--text-secondary)",
-                        opacity: chatLoading ? 0.25 : chatInput.trim() ? 1 : 0.55,
+                          : "transparent",
+                        color: chatInput.trim() && !chatLoading ? "var(--bg-color)" : "var(--text-primary)",
+                        opacity: chatLoading ? 0.3 : chatInput.trim() ? 1 : 0.75,
                         cursor: chatInput.trim() && !chatLoading ? "pointer" : "not-allowed",
                         display: "flex",
                         alignItems: "center",
@@ -1336,7 +1340,7 @@ export default function AskPage() {
                         transition: "all 0.2s ease"
                       }}
                     >
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="12" y1="19" x2="12" y2="5"></line>
                         <polyline points="5 12 12 5 19 12"></polyline>
                       </svg>
@@ -1444,25 +1448,25 @@ export default function AskPage() {
                       whileHover={content.trim() ? { scale: 1.05 } : {}}
                       whileTap={content.trim() ? { scale: 0.95 } : {}}
                       style={{
-                        width: "30px",
-                        height: "30px",
+                        width: "28px",
+                        height: "28px",
                         borderRadius: "50%",
-                        border: content.trim() ? "none" : "1px solid var(--border-color)",
+                        border: content.trim() ? "none" : "1.5px solid var(--text-primary)",
                         backgroundColor: content.trim() 
                           ? "var(--text-primary)" 
-                          : (isDarkMode ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)"),
-                        color: "var(--text-primary)",
-                        opacity: content.trim() ? 1 : 0.8,
+                          : "transparent",
+                        color: content.trim() ? "var(--bg-color)" : "var(--text-primary)",
+                        opacity: isSubmitting ? 0.3 : content.trim() ? 1 : 0.75,
                         cursor: content.trim() ? "pointer" : "not-allowed",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        transition: "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease",
+                        transition: "all 0.2s ease",
                         padding: 0,
                         flexShrink: 0
                       }}
                     >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ color: content.trim() ? "var(--bg-color)" : "var(--text-primary)" }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="12" y1="19" x2="12" y2="5"></line>
                         <polyline points="5 12 12 5 19 12"></polyline>
                       </svg>
