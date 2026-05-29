@@ -3,9 +3,11 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 
 export default function FooterAbout() {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [isWeChatOpen, setIsWeChatOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -356,7 +358,7 @@ export default function FooterAbout() {
         whileTap={{ scale: 0.96 }}
         transition={{ type: "spring", stiffness: 400, damping: 28 }}
       >
-        About
+        {t("about")}
         <motion.svg
           width="13" height="13" viewBox="0 0 24 24"
           fill="none" stroke="currentColor" strokeWidth="2.8"

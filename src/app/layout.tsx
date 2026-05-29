@@ -8,6 +8,7 @@ import BirthdayCelebration from "@/components/BirthdayCelebration";
 import KonamiEasterEgg from "@/components/KonamiEasterEgg";
 import PageTransition from "@/components/PageTransition";
 import VisitorTracker from "@/components/VisitorTracker";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 import "./globals.css";
 import "./footer.css";
@@ -84,37 +85,39 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${lora.variable} ${merriweather.variable} ${playfairDisplay.variable}`}>
       <body>
-        <VisitorTracker />
-        <BirthdayCelebration />
-        <KonamiEasterEgg />
-        <div className="layout-wrapper" style={{ padding: "0 4vw" }}>
-          <Navigation />
-          
-          <main className="content-wrapper" style={{ minHeight: "calc(100vh - 160px)", paddingBottom: "0.25rem" }}>
-            {children}
-          </main>
+        <LanguageProvider>
+          <VisitorTracker />
+          <BirthdayCelebration />
+          <KonamiEasterEgg />
+          <div className="layout-wrapper" style={{ padding: "0 4vw" }}>
+            <Navigation />
+            
+            <main className="content-wrapper" style={{ minHeight: "calc(100vh - 160px)", paddingBottom: "0.25rem" }}>
+              {children}
+            </main>
 
-          <footer className="yunox-single-footer" style={{ 
-            width: "100%",
-            padding: "0.75rem 0 0.75rem 0",
-            marginTop: "0.5rem",
-            display: "grid",
-            gridTemplateColumns: "1fr auto 1fr",
-            alignItems: "center",
-            boxSizing: "border-box"
-          }}>
-            <div style={{ fontSize: "0.78rem", color: "var(--text-secondary)", fontWeight: "500", fontFamily: "var(--font-sans)" }}>
-              Ivan &copy; 2026
-            </div>
-            
-            {/* About button sits in the center column, perfectly aligned with left/right text */}
-            <FooterAbout />
-            
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", fontSize: "0.78rem", color: "var(--text-secondary)", fontWeight: "500", fontFamily: "var(--font-sans)", letterSpacing: "0.01em" }}>
-              <LanguageSwitcher />
-            </div>
-          </footer>
-        </div>
+            <footer className="yunox-single-footer" style={{ 
+              width: "100%",
+              padding: "0.75rem 0 0.75rem 0",
+              marginTop: "0.5rem",
+              display: "grid",
+              gridTemplateColumns: "1fr auto 1fr",
+              alignItems: "center",
+              boxSizing: "border-box"
+            }}>
+              <div style={{ fontSize: "0.78rem", color: "var(--text-secondary)", fontWeight: "500", fontFamily: "var(--font-sans)" }}>
+                Ivan &copy; 2026
+              </div>
+              
+              {/* About button sits in the center column, perfectly aligned with left/right text */}
+              <FooterAbout />
+              
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", fontSize: "0.78rem", color: "var(--text-secondary)", fontWeight: "500", fontFamily: "var(--font-sans)", letterSpacing: "0.01em" }}>
+                <LanguageSwitcher />
+              </div>
+            </footer>
+          </div>
+        </LanguageProvider>
         <Script
           id="pwa-service-worker"
           strategy="afterInteractive"

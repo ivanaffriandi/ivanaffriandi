@@ -9,6 +9,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { getAllCalendarEvents, CalendarEvent } from "@/lib/calendar";
 import { triggerLightClick, triggerActionClick } from "@/lib/haptic";
 import { BookItem, getAllBooks } from "@/lib/books";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { LangCode, translations } from "@/lib/i18n";
 
 
 // iOS stagger spring config
@@ -1036,11 +1038,11 @@ function getIsbn(url?: string) {
   return match ? match[1] : "";
 }
 
-function formatDate(iso: string) {
+function formatDate(iso: string, lang: LangCode = "en") {
   if (!iso) return "";
   const d = new Date(iso);
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  return `${months[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+  const mList = translations[lang]?.months || translations["en"].months;
+  return `${mList[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
 // ── CoverImg: smart cover fetcher using Google Books search ─────────────────
@@ -1289,6 +1291,7 @@ function getISOWeek(date: Date): number {
 }
 
 export default function DailyJournalFeed({ posts, moments = [], initialBooks = [] }: { posts: any[], moments?: any[], initialBooks?: BookItem[] }) {
+  const { t, lang, isRtl } = useLanguage();
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(STATIC_SEEDED_EVENTS);
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
   const selectedTheme = getSelectedTheme(selectedDate, calendarEvents);
@@ -1435,15 +1438,9 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
   });
   const [showBirthdayConfetti, setShowBirthdayConfetti] = useState(false);
 
-  const MONTH_NAMES = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
+  const MONTH_NAMES = t("full_months") as any as string[];
 
-  const SHORT_MONTHS = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-  ];
+  const SHORT_MONTHS = t("months") as any as string[];
 
   const YEARS_LIST = Array.from({ length: 8 }, (_, i) => yearPageStart + i);
 
@@ -2222,7 +2219,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                         >
                           {isWheelPickerOpen
                             ? `${MONTH_NAMES[tempMonth]} ${tempYear}`
-                            : calendarViewDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                            : calendarViewDate.toLocaleDateString(lang === "zh" ? "zh-CN" : lang === "ar" ? "ar-EG" : lang === "nl" ? "nl-NL" : "en-US", { month: "long", year: "numeric" })}
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isWheelPickerOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s ease", opacity: 0.6 }}>
                             <polyline points="6 9 12 15 18 9"></polyline>
                           </svg>
@@ -2492,14 +2489,14 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                               e.currentTarget.style.transform = "translateY(-1.5px)";
                             }}
                           >
-                            Apply
+                            {t("apply")}
                           </button>
                         </div>
                       ) : (
                         <>
                           {/* Day Labels */}
                           <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "3px", marginBottom: "0.5rem" }}>
-                            {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(day => (
+                            {(t("weekdays") as any as string[]).map(day => (
                               <div key={day} className="calendar-day-label" style={{ textAlign: "center", fontSize: "0.68rem", fontWeight: "700", color: "var(--text-secondary)" }}>
                                 {day}
                               </div>
@@ -2862,7 +2859,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                             }}
                             style={{ fontWeight: "750", fontSize: "0.85rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}
                           >
-                            {isWheelPickerOpen ? `${MONTH_NAMES[tempMonth]} ${tempYear}` : calendarViewDate.toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                            {isWheelPickerOpen ? `${MONTH_NAMES[tempMonth]} ${tempYear}` : calendarViewDate.toLocaleDateString(lang === "zh" ? "zh-CN" : lang === "ar" ? "ar-EG" : lang === "nl" ? "nl-NL" : "en-US", { month: "short", year: "numeric" })}
                             <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ transform: isWheelPickerOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s ease", opacity: 0.6 }}>
                               <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
@@ -2937,13 +2934,13 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                               }}
                               style={{ width: "100%", padding: "6px", backgroundColor: "var(--text-primary)", color: "var(--bg-color)", border: "none", borderRadius: "8px", fontSize: "0.72rem", fontWeight: "700", cursor: "pointer" }}
                             >
-                              Apply
+                              {t("apply")}
                             </button>
                           </div>
                         ) : (
                           <>
                             <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px", marginBottom: "0.4rem" }}>
-                              {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(day => (
+                              {(t("weekdays") as any as string[]).map(day => (
                                 <div key={day} style={{ textAlign: "center", fontSize: "0.64rem", fontWeight: "700", color: "var(--text-secondary)" }}>{day}</div>
                               ))}
                             </div>
@@ -3404,7 +3401,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                         fontFamily: "var(--font-sans)",
                         opacity: 0.5
                       }}>
-                        No entries for this day.
+                        {t("no_entries")}
                       </div>
                     );
                   })()
@@ -3432,7 +3429,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                 textTransform: "uppercase",
                 letterSpacing: "0.04em"
               }}>
-                Journal
+                {t("journal")}
               </h2>
               <div style={{
                 fontSize: "0.66rem",
@@ -3714,8 +3711,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                         }}
                       >
                         {(journalPage + 1) >= journalTotalPages
-                          ? "↩ Latest"
-                          : `${sortedAllPosts.length - (journalPage + 1) * 3} more →`}
+                          ? t("back_to_latest")
+                          : t("more_entries", { count: sortedAllPosts.length - (journalPage + 1) * 3 })}
                       </button>
                     ) : (
                       <span style={{
@@ -3741,7 +3738,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                   flexDirection: "column",
                   alignItems: "center"
                 }}>
-                  <span style={{ fontWeight: "500", opacity: 0.65 }}>No entries yet.</span>
+                  <span style={{ fontWeight: "500", opacity: 0.65 }}>{t("no_entries")}</span>
                 </div>
               )}
             </div>
@@ -3767,7 +3764,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                 textTransform: "uppercase",
                 letterSpacing: "0.04em"
               }}>
-                Moments
+                {t("moments")}
               </h2>
 
               <Link href="/moments" style={{
@@ -3781,7 +3778,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                 fontFamily: "var(--font-sans)",
                 opacity: 0.75
               }}>
-                View All
+                {t("view_all")}
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
               </Link>
             </div>
@@ -3878,7 +3875,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                   letterSpacing: "0.04em",
                   flexShrink: 0
                 }}>
-                  Library
+                  {t("library")}
                 </h2>
 
                 {/* Library page link — matching Moments style */}
@@ -3897,7 +3894,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     flexShrink: 0
                   }}
                 >
-                  View All
+                  {t("view_all")}
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </Link>
               </div>
@@ -4121,7 +4118,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                       )}
                     </div>
                     <span style={{ fontSize: "0.72rem", color: authorColor, fontWeight: "600", letterSpacing: "-0.01em" }}>
-                      {activeBook.completedAt ? `Read ${formatDate(activeBook.completedAt)}` : activeBook.status === "reading" ? `Reading (${activeBook.progress}%)` : "To Read"}
+                      {activeBook.completedAt ? `${t("filter_completed")} ${formatDate(activeBook.completedAt, lang)}` : activeBook.status === "reading" ? `${t("filter_reading")} (${activeBook.progress}%)` : "To Read"}
                     </span>
                   </div>
 

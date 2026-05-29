@@ -5,6 +5,7 @@ import { motion, useScroll, useSpring } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import LofiPlayer from "./LofiPlayer";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // iOS spring config — snappy, physical feel
 const iosSpring = { type: "spring" as const, stiffness: 400, damping: 30 };
@@ -109,6 +110,7 @@ function SignOutButton() {
 }
 
 export default function Navigation() {
+  const { t } = useLanguage();
   const { scrollYProgress } = useScroll();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -240,11 +242,11 @@ export default function Navigation() {
         ) : (
           <>
             {pathname === "/library" && (
-              <NavLink href="/">Home</NavLink>
+              <NavLink href="/">{t("nav_home")}</NavLink>
             )}
             {pathname !== "/library" && (
               <NavLink href={pathname === "/ask" ? "/" : "/ask"}>
-                {pathname === "/ask" ? "Home" : "Ask"}
+                {pathname === "/ask" ? t("nav_home") : t("nav_ask")}
               </NavLink>
             )}
           </>

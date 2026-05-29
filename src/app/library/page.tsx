@@ -6,6 +6,7 @@ import Link from "next/link";
 import { getFallbackBooks, getAllBooks } from "@/lib/books";
 import type { BookItem } from "@/lib/books";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // iOS spring config for reactive interactions
 const iosSpring = { type: "spring" as const, stiffness: 380, damping: 28 };
@@ -221,6 +222,7 @@ function SmartCover({ book, grayscale = true }: { book: BookItem; height?: numbe
 // ── LibraryBookCard ───────────────────────────────────────────────────────────
 
 function LibraryBookCard({ book, onClick }: { book: BookItem; onClick: () => void }) {
+  const { t } = useLanguage();
   const tag = langTag(book);
   const [hovered, setHovered] = useState(false);
 
@@ -316,7 +318,7 @@ function LibraryBookCard({ book, onClick }: { book: BookItem; onClick: () => voi
               fontSize: "0.45rem", fontWeight: 700,
               fontFamily: "var(--font-sans)",
               padding: "2px 5px", borderRadius: 4, letterSpacing: "0.04em",
-            }}>READING</div>
+            }}>{String(t("filter_reading")).toUpperCase()}</div>
           )}
         </div>
       </div>
@@ -383,6 +385,7 @@ function getDarkenedColor(rgbaStr: string, factor = 0.35, alpha = 0.85) {
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 export default function LibraryPage() {
+  const { t, lang, isRtl } = useLanguage();
   // Start with empty state to prevent SSR hydration mismatch, then hydrate from API
   const [allBooks, setAllBooks] = useState<BookItem[]>([]);
   const [filter, setFilter] = useState<"all" | "reading" | "completed">("all");
@@ -662,12 +665,12 @@ export default function LibraryPage() {
             fontFamily: "var(--font-sans)", fontSize: "1.45rem", fontWeight: "800",
             color: "var(--text-primary)", margin: "0 0 4px 0", letterSpacing: "-0.02em",
             lineHeight: "1.1"
-          }}>Library</h1>
+          }}>{t("library")}</h1>
           <p suppressHydrationWarning style={{
             fontFamily: "var(--font-sans)", fontSize: "0.72rem",
             color: "var(--text-secondary)", margin: 0, opacity: 0.65, fontWeight: "500"
           }}>
-            {mounted ? completedCount : "—"} books read
+            {mounted ? completedCount : "—"} {t("books_read")}
           </p>
         </div>
 
@@ -691,7 +694,7 @@ export default function LibraryPage() {
               gap: "4px"
             }}
           >
-            <span>Insights</span>
+            <span>{t("insights")}</span>
             <motion.svg
               width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
               animate={{ rotate: showInsights ? 180 : 0 }}
@@ -748,7 +751,7 @@ export default function LibraryPage() {
                       }}
                     />
                   )}
-                  <span style={{ position: "relative", zIndex: 1 }}>{f}</span>
+                  <span style={{ position: "relative", zIndex: 1 }}>{t(`filter_${f}` as any)}</span>
                 </button>
               );
             })}
@@ -789,24 +792,24 @@ export default function LibraryPage() {
               <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                 <div>
                   <h3 style={{ fontSize: "0.6rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-secondary)", margin: "0 0 10px 0" }}>
-                    {period.label} READING JOURNEY
+                    {period.label} {t("reading_journey")}
                   </h3>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <span style={{ fontSize: "1.3rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
-                      {completedInPeriod} <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", fontWeight: "500" }}>/ {readingGoal} Books</span>
+                      {completedInPeriod} <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", fontWeight: "500" }}>/ {readingGoal} {t("books")}</span>
                     </span>
                   </div>
                 </div>
 
                 <div style={{ marginTop: "1.5rem" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.62rem", color: "var(--text-secondary)", marginBottom: "5px", fontWeight: "600" }}>
-                    <span>{Math.round((completedInPeriod / readingGoal) * 100)}% Complete</span>
+                    <span>{t("complete_pct", { pct: Math.round((completedInPeriod / readingGoal) * 100) })}</span>
                     <span>
                       {completedInPeriod >= readingGoal
                         ? completedInPeriod > readingGoal
-                          ? `+${completedInPeriod - readingGoal} over goal 🎉`
-                          : "Goal met! 🎉"
-                        : `${readingGoal - completedInPeriod} more to go`}
+                          ? t("over_goal", { count: completedInPeriod - readingGoal })
+                          : t("goal_met")
+                        : t("more_to_go", { count: readingGoal - completedInPeriod })}
                     </span>
                   </div>
                   <div style={{ height: "6px", backgroundColor: "rgba(150,150,150,0.1)", borderRadius: "3px", overflow: "hidden" }}>
@@ -823,7 +826,7 @@ export default function LibraryPage() {
               {/* Column 2: Library Composition (Languages) */}
               <div>
                 <h3 style={{ fontSize: "0.6rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-secondary)", margin: "0 0 10px 0" }}>
-                  Language Diversity
+                  {t("lang_diversity")}
                 </h3>
                 <div style={{ height: "6px", display: "flex", borderRadius: "3px", overflow: "hidden", backgroundColor: "rgba(150,150,150,0.1)", marginBottom: "0.8rem" }}>
                   {langData.map((item, idx) => (
@@ -844,7 +847,7 @@ export default function LibraryPage() {
                       <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
                         <span style={{ width: "5px", height: "5px", borderRadius: "50%", backgroundColor: item.color }} />
                         <span style={{ fontWeight: "600", color: "var(--text-primary)" }}>{item.label}</span>
-                        <span style={{ color: "var(--text-secondary)", opacity: 0.65 }}>({item.count} {item.count === 1 ? "book" : "books"})</span>
+                        <span style={{ color: "var(--text-secondary)", opacity: 0.65 }}>({item.count} {t("books")})</span>
                       </div>
                       <span style={{ fontWeight: "700", color: "var(--text-secondary)" }}>{item.pct}%</span>
                     </div>
@@ -856,7 +859,7 @@ export default function LibraryPage() {
               <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                 <div>
                   <h3 style={{ fontSize: "0.6rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-secondary)", margin: "0 0 10px 0" }}>
-                    Currently Reading
+                    {t("currently_reading")}
                   </h3>
                   {readingBooks.length > 0 ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxHeight: "120px", overflowY: "auto" }} className="hide-scrollbar">
@@ -898,14 +901,14 @@ export default function LibraryPage() {
                         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 0-2.5-2.5z"/>
                       </svg>
                       <span style={{ fontSize: "0.62rem", color: "var(--text-secondary)", opacity: 0.6, fontStyle: "italic" }}>
-                        No active reads right now.
+                        {t("no_active_reads")}
                       </span>
                     </div>
                   )}
                 </div>
 
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(150,150,150,0.1)", paddingTop: "10px", marginTop: "10px" }}>
-                  <span style={{ fontSize: "0.62rem", fontWeight: "600", color: "var(--text-secondary)" }}>Average Rating</span>
+                  <span style={{ fontSize: "0.62rem", fontWeight: "600", color: "var(--text-secondary)" }}>{t("avg_rating")}</span>
                   <span style={{ fontSize: "0.78rem", fontWeight: "800", color: "#c9a84c", display: "inline-flex", alignItems: "center", gap: "2px" }}>
                     ★ {avgRating}
                   </span>
@@ -1182,7 +1185,7 @@ export default function LibraryPage() {
                     letterSpacing: "-0.01em",
                     fontFamily: "var(--font-sans)"
                   }}>
-                    {genre.name} <span style={{
+                    {t(`genre_${genre.id}` as any) || genre.name} <span style={{
                       fontSize: "0.72rem",
                       color: "var(--text-secondary)",
                       fontWeight: "500",

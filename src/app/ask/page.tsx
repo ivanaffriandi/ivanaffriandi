@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { addQuestion, getAnsweredQuestions, QuestionItem } from "@/lib/questions";
 import confetti from "canvas-confetti";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const iosSpring = { type: "spring" as const, stiffness: 400, damping: 30 };
 const staggerContainer = {
@@ -293,6 +294,7 @@ const parseSources = (text: string) => {
 };
 
 export default function AskPage() {
+  const { t, lang, isRtl } = useLanguage();
   const [answeredList, setAnsweredList] = useState<QuestionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
@@ -655,7 +657,7 @@ export default function AskPage() {
             lineHeight: "1.1", 
             color: "var(--text-primary)" 
           }}>
-            Ask Ivan
+            {t("ask_ivan")}
           </h1>
           <p style={{ 
             fontSize: "0.82rem", 
@@ -665,7 +667,7 @@ export default function AskPage() {
             fontFamily: "var(--font-sans)",
             fontWeight: 500
           }}>
-            {activeTab === "qa" ? "Ask me anything, anonymously." : "Live chat with Ivan AI."}
+            {activeTab === "qa" ? t("ask_subtitle_qa") : t("ask_subtitle_ai")}
           </p>
         </div>
 
@@ -996,7 +998,7 @@ export default function AskPage() {
                       type="text"
                       value={senderName}
                       onChange={(e) => setSenderName(e.target.value)}
-                      placeholder="Name / Nickname (Optional)"
+                      placeholder={t("name_optional")}
                       maxLength={40}
                       disabled={isSubmitting}
                       style={{
@@ -1030,7 +1032,7 @@ export default function AskPage() {
                       onChange={(e) => setContent(e.target.value)}
                       onFocus={() => setIsFocused(true)}
                       onBlur={() => setIsFocused(false)}
-                      placeholder="Write your question here... (will be published once answered)"
+                      placeholder={t("placeholder_qa")}
                       maxLength={300}
                       rows={4}
                       disabled={isSubmitting}
@@ -1098,7 +1100,7 @@ export default function AskPage() {
                         transition: "background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease"
                       }}
                     >
-                      {isSubmitting ? "Sending..." : "Send Question"}
+                      {isSubmitting ? t("connecting") : t("submit")}
                     </motion.button>
                   </div>
                 </form>
@@ -1249,7 +1251,7 @@ export default function AskPage() {
                       disabled={chatLoading}
                       whileHover={!chatLoading ? { scale: 1.15, opacity: 1 } : {}}
                       whileTap={!chatLoading ? { scale: 0.88 } : {}}
-                      title="Reset chat"
+                      title={t("reset_chat")}
                       style={{
                         width: "26px",
                         height: "26px",
@@ -1323,7 +1325,7 @@ export default function AskPage() {
                             onFocus={() => setIsFocused(true)}
                             onBlur={() => setIsFocused(false)}
                             onChange={(e) => setChatInput(e.target.value)}
-                            placeholder="Send a message"
+                            placeholder={t("placeholder_ai")}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
