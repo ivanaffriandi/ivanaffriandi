@@ -1624,7 +1624,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
   );
   const journalTotalPages = Math.max(1, Math.ceil(sortedAllPosts.length / 3));
   const journalDisplayed = useMemo(
-    () => sortedAllPosts.slice(journalPage * 3, journalPage * 3 + 3),
+    () => sortedAllPosts.slice(0, journalPage * 3 + 3),
     [sortedAllPosts, journalPage]
   );
   const hasPostOnDate = useCallback(
@@ -3438,7 +3438,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                 fontFamily: "var(--font-sans)",
                 opacity: 0.8
               }}>
-                {journalPage * 3 + 1}–{Math.min(journalPage * 3 + journalDisplayed.length, sortedAllPosts.length)} / {sortedAllPosts.length}
+                1–{Math.min(journalDisplayed.length, sortedAllPosts.length)} / {sortedAllPosts.length}
               </div>
             </div>
 

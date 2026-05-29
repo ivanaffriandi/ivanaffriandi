@@ -1,0 +1,493 @@
+[debug] [2026-05-29T06:57:43.054Z] ----------------------------------------------------------------------
+[debug] [2026-05-29T06:57:43.057Z] Command:       /Users/ivanaffriandi/.nvm/versions/node/v25.8.1/bin/node /Users/ivanaffriandi/.nvm/versions/node/v25.8.1/bin/firebase deploy
+[debug] [2026-05-29T06:57:43.058Z] CLI Version:   15.14.0
+[debug] [2026-05-29T06:57:43.058Z] Platform:      darwin
+[debug] [2026-05-29T06:57:43.058Z] Node Version:  v25.8.1
+[debug] [2026-05-29T06:57:43.058Z] Time:          Fri May 29 2026 13:57:43 GMT+0700 (Western Indonesia Time)
+[debug] [2026-05-29T06:57:43.058Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-05-29T06:57:46.171Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-05-29T06:57:46.171Z] > authorizing via signed-in user (ivanaffriandi@kakao.com)
+[debug] [2026-05-29T06:57:46.172Z] [iam] checking project ivan-affriandi for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-05-29T06:57:46.173Z] Checked if tokens are valid: false, expires at: 1780038381335
+[debug] [2026-05-29T06:57:46.173Z] Checked if tokens are valid: false, expires at: 1780038381335
+[debug] [2026-05-29T06:57:46.173Z] > refreshing access token with scopes: []
+[debug] [2026-05-29T06:57:46.175Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-05-29T06:57:46.175Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-05-29T06:57:46.707Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-05-29T06:57:46.707Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-05-29T06:57:46.817Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions [none]
+[debug] [2026-05-29T06:57:46.817Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions  x-goog-user-project=ivan-affriandi
+[debug] [2026-05-29T06:57:46.817Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-05-29T06:57:47.153Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions 200
+[debug] [2026-05-29T06:57:47.153Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-05-29T06:57:47.154Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:57:47.154Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:57:47.154Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/ivan-affriandi [none]
+[debug] [2026-05-29T06:57:47.737Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/ivan-affriandi 200
+[debug] [2026-05-29T06:57:47.737Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/ivan-affriandi {"projectId":"ivan-affriandi","projectNumber":"19364784137","displayName":"Ivan Affriandi","name":"projects/ivan-affriandi","resources":{"hostingSite":"ivan-affriandi","realtimeDatabaseInstance":"ivan-affriandi-default-rtdb"},"state":"ACTIVE","etag":"1_1e246b72-ec29-4114-bbfa-7cd1da79cddc"}
+[debug] [2026-05-29T06:57:51.366Z] defaultcredentials: writing to file /Users/ivanaffriandi/.config/firebase/ivanaffriandi_kakao_com_application_default_credentials.json
+[debug] [2026-05-29T06:57:51.372Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:57:51.373Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:57:51.373Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/ivan-affriandi/sites pageToken=&pageSize=10
+[debug] [2026-05-29T06:57:52.386Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/ivan-affriandi/sites 200
+[debug] [2026-05-29T06:57:52.386Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/ivan-affriandi/sites {"sites":[{"name":"projects/ivan-affriandi/sites/ivan-affriandi","defaultUrl":"https://ivan-affriandi.web.app","appId":"1:19364784137:web:68af34a005ff21e23a70d8","type":"DEFAULT_SITE"}]}
+[debug] [2026-05-29T06:57:52.386Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:57:52.386Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:57:52.386Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:19364784137:web:68af34a005ff21e23a70d8/config [none]
+[debug] [2026-05-29T06:57:53.911Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:19364784137:web:68af34a005ff21e23a70d8/config 200
+[debug] [2026-05-29T06:57:53.911Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:19364784137:web:68af34a005ff21e23a70d8/config {"projectId":"ivan-affriandi","appId":"1:19364784137:web:68af34a005ff21e23a70d8","databaseURL":"https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app","storageBucket":"ivan-affriandi.firebasestorage.app","apiKey":"AIzaSyBVRIwhZ3CXTJLdbp4ma15XMXYfhWa_iPw","authDomain":"ivan-affriandi.firebaseapp.com","messagingSenderId":"19364784137","measurementId":"G-2X9KMR58R6","projectNumber":"19364784137","version":"2"}
+[info] 
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 15.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[debug] [2026-05-29T06:57:59.754Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:57:59.755Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:57:59.755Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/ivan-affriandi/sites/ivan-affriandi [none]
+[debug] [2026-05-29T06:58:00.675Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/ivan-affriandi/sites/ivan-affriandi 200
+[debug] [2026-05-29T06:58:00.675Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/ivan-affriandi/sites/ivan-affriandi {"name":"projects/ivan-affriandi/sites/ivan-affriandi","defaultUrl":"https://ivan-affriandi.web.app","appId":"1:19364784137:web:68af34a005ff21e23a70d8","type":"DEFAULT_SITE"}
+[info] ▲ Next.js 16.2.6 (Turbopack)
+
+[info] - Environments: .env.local, .env
+- Experiments (use with caution):
+  · serverActions
+
+
+[info]   Creating an optimized production build ...
+
+[info] ✓ Compiled successfully in 14.0s
+
+[info]   Running TypeScript ...
+
+[info]   Finished TypeScript in 10.5s ...
+
+[info]   Collecting page data using 3 workers ...
+
+[info]   Generating static pages using 3 workers (0/24) ...
+
+[info]   Generating static pages using 3 workers (6/24) 
+
+[info]   Generating static pages using 3 workers (12/24) 
+
+[info] `z-index` is currently not supported.
+
+[info] `z-index` is currently not supported.
+
+[info]   Generating static pages using 3 workers (18/24) 
+
+[info] [2026-05-29T06:58:30.202Z]  @firebase/firestore: Firestore (12.13.0): GrpcConnection RPC 'Listen' stream 0x344a6c5e error. Code: 5 Message: 5 NOT_FOUND: 
+[2026-05-29T06:58:30.203Z]  @firebase/firestore: Firestore (12.13.0): Could not reach Cloud Firestore backend. Connection failed 1 times. Most recent error: FirebaseError: [code=not-found]: 5 NOT_FOUND: 
+This typically indicates that your device does not have a healthy Internet connection at the moment. The client will operate in offline mode until it is able to successfully connect to the backend.
+
+[info] ✓ Generating static pages using 3 workers (24/24) in 1444ms
+
+[info]   Finalizing page optimization ...
+
+[info] 
+
+[info] Route (app)                Revalidate  Expire
+┌ ƒ /
+├ ○ /_not-found
+├ ○ /about
+├ ƒ /api/ask/ai
+├ ƒ /api/auth
+├ ƒ /api/blocked-ips
+├ ƒ /api/book-cover
+├ ƒ /api/books
+├ ƒ /api/comments
+├ ƒ /api/instagram
+├ ƒ /api/log-screenshot
+├ ƒ /api/questions
+├ ƒ /api/track
+├ ƒ /api/tts
+├ ƒ /api/twitter
+├ ƒ /api/visitor-sessions
+├ ○ /ask
+├ ○ /ask/opengraph-image
+├ ƒ /blog/[id]
+├ ○ /gallery
+├ ○ /icon.svg
+├ ○ /library
+├ ○ /manifest.webmanifest
+├ ○ /moments                       1m      1y
+├ ○ /opengraph-image
+└ ○ /x
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+[info] Building a Cloud Function to run this application. This is needed due to:
+[info]  • use of revalidate /moments
+[info]  • non-static component /api/ask/ai/route
+[info]  • non-static component /api/auth/route
+[info]  • non-static component /api/blocked-ips/route
+[info]  • non-static component /api/book-cover/route
+[debug] [2026-05-29T06:58:33.642Z]  • non-static component /api/books/route
+[debug] [2026-05-29T06:58:33.642Z]  • non-static component /api/comments/route
+[debug] [2026-05-29T06:58:33.642Z]  • non-static component /api/instagram/route
+[debug] [2026-05-29T06:58:33.642Z]  • non-static component /api/log-screenshot/route
+[debug] [2026-05-29T06:58:33.642Z]  • non-static component /api/questions/route
+[debug] [2026-05-29T06:58:33.642Z]  • non-static component /api/track/route
+[debug] [2026-05-29T06:58:33.642Z]  • non-static component /api/tts/route
+[debug] [2026-05-29T06:58:33.642Z]  • non-static component /api/twitter/route
+[debug] [2026-05-29T06:58:33.642Z]  • non-static component /api/visitor-sessions/route
+[debug] [2026-05-29T06:58:33.642Z]  • non-static component /blog/[id]/page
+[debug] [2026-05-29T06:58:33.642Z]  • non-static component /page
+[info]  • and 11 other reasons, use --debug to see more
+[info] 
+[debug] [2026-05-29T06:58:34.702Z] skipping /moments due to revalidate
+[debug] [2026-05-29T06:58:40.845Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:58:40.845Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:58:40.846Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/ivan-affriandi/sites/ivan-affriandi [none]
+[debug] [2026-05-29T06:58:41.862Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/ivan-affriandi/sites/ivan-affriandi 200
+[debug] [2026-05-29T06:58:41.862Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/ivan-affriandi/sites/ivan-affriandi {"name":"projects/ivan-affriandi/sites/ivan-affriandi","defaultUrl":"https://ivan-affriandi.web.app","appId":"1:19364784137:web:68af34a005ff21e23a70d8","type":"DEFAULT_SITE"}
+[warn] ⚠  This integration expects Node version 20, 22, or 24. You're running version 25, problems may be encountered. 
+[debug] [2026-05-29T06:59:00.008Z] [web frameworks] effective firebase.json:  {
+  "hosting": [
+    {
+      "source": ".",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "frameworksBackend": {
+        "region": "us-central1"
+      },
+      "site": "ivan-affriandi",
+      "rewrites": [
+        {
+          "source": "**",
+          "function": {
+            "functionId": "ssrivanaffriandi",
+            "region": "us-central1",
+            "pinTag": true
+          }
+        }
+      ],
+      "redirects": [],
+      "headers": [
+        {
+          "source": "/_global-error",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/_global-error/layout,_N_T_/_global-error/page,_N_T_/_global-error"
+            }
+          ]
+        },
+        {
+          "source": "/_not-found",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/_not-found/layout,_N_T_/_not-found/page,_N_T_/_not-found"
+            }
+          ]
+        },
+        {
+          "source": "/ask/opengraph-image",
+          "headers": [
+            {
+              "key": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "key": "content-type",
+              "value": "image/png"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/ask/layout,_N_T_/ask/opengraph-image/layout,_N_T_/ask/opengraph-image/route,_N_T_/ask/opengraph-image"
+            }
+          ]
+        },
+        {
+          "source": "/about",
+          "headers": [
+            {
+              "key": "location",
+              "value": "/#about"
+            },
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/about/layout,_N_T_/about/page,_N_T_/about"
+            }
+          ]
+        },
+        {
+          "source": "/ask",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/ask/layout,_N_T_/ask/page,_N_T_/ask"
+            }
+          ]
+        },
+        {
+          "source": "/gallery",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/gallery/layout,_N_T_/gallery/page,_N_T_/gallery"
+            }
+          ]
+        },
+        {
+          "source": "/icon.svg",
+          "headers": [
+            {
+              "key": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "key": "content-type",
+              "value": "image/svg+xml"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/icon.svg/layout,_N_T_/icon.svg/route,_N_T_/icon.svg"
+            }
+          ]
+        },
+        {
+          "source": "/library",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/library/layout,_N_T_/library/page,_N_T_/library"
+            }
+          ]
+        },
+        {
+          "source": "/manifest.webmanifest",
+          "headers": [
+            {
+              "key": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "key": "content-type",
+              "value": "application/manifest+json"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/manifest.webmanifest/layout,_N_T_/manifest.webmanifest/route,_N_T_/manifest.webmanifest"
+            }
+          ]
+        },
+        {
+          "source": "/moments",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/moments/layout,_N_T_/moments/page,_N_T_/moments"
+            }
+          ]
+        },
+        {
+          "source": "/opengraph-image",
+          "headers": [
+            {
+              "key": "cache-control",
+              "value": "public, max-age=0, must-revalidate"
+            },
+            {
+              "key": "content-type",
+              "value": "image/png"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/opengraph-image/layout,_N_T_/opengraph-image/route,_N_T_/opengraph-image"
+            }
+          ]
+        },
+        {
+          "source": "/x",
+          "headers": [
+            {
+              "key": "x-nextjs-stale-time",
+              "value": "300"
+            },
+            {
+              "key": "x-nextjs-prerender",
+              "value": "1"
+            },
+            {
+              "key": "x-next-cache-tags",
+              "value": "_N_T_/layout,_N_T_/x/layout,_N_T_/x/page,_N_T_/x"
+            }
+          ]
+        },
+        {
+          "source": "**/*.[jt]s",
+          "headers": [
+            {
+              "key": "Set-Cookie",
+              "value": "__FIREBASE_DEFAULTS__=eyJjb25maWciOnsicHJvamVjdElkIjoiaXZhbi1hZmZyaWFuZGkiLCJhcHBJZCI6IjE6MTkzNjQ3ODQxMzc6d2ViOjY4YWYzNGEwMDVmZjIxZTIzYTcwZDgiLCJkYXRhYmFzZVVSTCI6Imh0dHBzOi8vaXZhbi1hZmZyaWFuZGktZGVmYXVsdC1ydGRiLmFzaWEtc291dGhlYXN0MS5maXJlYmFzZWRhdGFiYXNlLmFwcCIsInN0b3JhZ2VCdWNrZXQiOiJpdmFuLWFmZnJpYW5kaS5maXJlYmFzZXN0b3JhZ2UuYXBwIiwiYXBpS2V5IjoiQUl6YVN5QlZSSXdoWjNDWFRKTGRicDRtYTE1WE1YWWZoV2FfaVB3IiwiYXV0aERvbWFpbiI6Iml2YW4tYWZmcmlhbmRpLmZpcmViYXNlYXBwLmNvbSIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiMTkzNjQ3ODQxMzciLCJtZWFzdXJlbWVudElkIjoiRy0yWDlLTVI1OFI2IiwicHJvamVjdE51bWJlciI6IjE5MzY0Nzg0MTM3IiwidmVyc2lvbiI6IjIifSwiX2F1dGhUb2tlblN5bmNVUkwiOiIvX19zZXNzaW9uIn0; SameSite=Strict; Expires=2028-04-22T17:39:00.007Z; Path=/;"
+            }
+          ]
+        }
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false,
+      "public": ".firebase/ivan-affriandi/hosting",
+      "webFramework": "next_ssr"
+    }
+  ],
+  "functions": [
+    {
+      "source": ".firebase/ivan-affriandi/functions",
+      "codebase": "firebase-frameworks-ivan-affriandi"
+    }
+  ]
+}
+[debug] [2026-05-29T06:59:00.010Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-05-29T06:59:00.011Z] > authorizing via signed-in user (ivanaffriandi@kakao.com)
+[debug] [2026-05-29T06:59:00.011Z] [iam] checking project ivan-affriandi for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2026-05-29T06:59:00.012Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:59:00.012Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:59:00.014Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions [none]
+[debug] [2026-05-29T06:59:00.014Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions  x-goog-user-project=ivan-affriandi
+[debug] [2026-05-29T06:59:00.014Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-05-29T06:59:01.256Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions 200
+[debug] [2026-05-29T06:59:01.256Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[info] 
+[info] === Deploying to 'ivan-affriandi'...
+[info] 
+[info] i  deploying functions, hosting 
+[debug] [2026-05-29T06:59:01.270Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:59:01.271Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:59:01.271Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi [none]
+[debug] [2026-05-29T06:59:01.559Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi 200
+[debug] [2026-05-29T06:59:01.560Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi {"projectNumber":"19364784137","projectId":"ivan-affriandi","lifecycleState":"ACTIVE","name":"Ivan Affriandi","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2026-04-18T11:35:43.556Z"}
+[info] i  functions: preparing codebase firebase-frameworks-ivan-affriandi for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2026-05-29T06:59:01.563Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:59:01.563Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:59:01.564Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/ivan-affriandi/adminSdkConfig [none]
+[debug] [2026-05-29T06:59:01.954Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/ivan-affriandi/adminSdkConfig 200
+[debug] [2026-05-29T06:59:01.955Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/ivan-affriandi/adminSdkConfig {"projectId":"ivan-affriandi","databaseURL":"https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app","storageBucket":"ivan-affriandi.firebasestorage.app"}
+[debug] [2026-05-29T06:59:01.956Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:59:01.956Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:59:01.956Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/ivan-affriandi/configs [none]
+[debug] [2026-05-29T06:59:02.417Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/ivan-affriandi/configs 200
+[debug] [2026-05-29T06:59:02.417Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/ivan-affriandi/configs {}
+[debug] [2026-05-29T06:59:02.420Z] Validating nodejs source
+[warn] ⚠  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[warn] ⚠  functions: Please note that there will be breaking changes when you upgrade. 
+[debug] [2026-05-29T06:59:03.854Z] > [functions] package.json contents: {
+  "name": "personal-blog",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@types/canvas-confetti": "^1.9.0",
+    "canvas-confetti": "^1.9.4",
+    "firebase": "^12.13.0",
+    "firebase-admin": "^13.10.0",
+    "framer-motion": "^12.38.0",
+    "next": "16.2.6",
+    "nodemailer": "^8.0.7",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "firebase-frameworks": "^0.11.0",
+    "firebase-functions": "^6.0.1"
+  },
+  "main": "server.js",
+  "engines": {
+    "node": "24"
+  }
+}
+[debug] [2026-05-29T06:59:03.854Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase firebase-frameworks-ivan-affriandi to determine what to deploy 
+[debug] [2026-05-29T06:59:03.863Z] Could not find functions.yaml. Must use http discovery
+[debug] [2026-05-29T06:59:03.884Z] Found firebase-functions binary at '/Users/ivanaffriandi/Ivan Affriandi/.firebase/ivan-affriandi/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8114
+
+[debug] [2026-05-29T06:59:06.037Z] Got response from /__/functions.yaml {"endpoints":{"ssrivanaffriandi":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["us-central1"],"labels":{},"httpsTrigger":{},"entryPoint":"ssrivanaffriandi"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[info] i  extensions: ensuring required API firebaseextensions.googleapis.com is enabled... 
+[debug] [2026-05-29T06:59:10.084Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-05-29T06:59:10.084Z] > authorizing via signed-in user (ivanaffriandi@kakao.com)
+[debug] [2026-05-29T06:59:10.084Z] [iam] checking project ivan-affriandi for permissions ["firebase.projects.get","firebaseextensions.instances.list"]
+[debug] [2026-05-29T06:59:10.084Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:59:10.084Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:59:10.084Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions [none]
+[debug] [2026-05-29T06:59:10.085Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions  x-goog-user-project=ivan-affriandi
+[debug] [2026-05-29T06:59:10.085Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2026-05-29T06:59:10.360Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions 200
+[debug] [2026-05-29T06:59:10.360Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions {"permissions":["firebase.projects.get","firebaseextensions.instances.list"]}
+[debug] [2026-05-29T06:59:10.361Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:59:10.361Z] Checked if tokens are valid: true, expires at: 1780041465707
+[debug] [2026-05-29T06:59:10.361Z] >>> [apiv2][query] GET https://firebaseextensions.googleapis.com/v1beta/projects/ivan-affriandi/instances pageSize=100&pageToken=
+[debug] [2026-05-29T06:59:11.856Z] <<< [apiv2][status] GET https://firebaseextensions.googleapis.com/v1beta/projects/ivan-affriandi/instances 200
+[debug] [2026-05-29T06:59:11.856Z] <<< [apiv2][body] GET https://firebaseextensions.googleapis.com/v1beta/projects/ivan-affriandi/instances {}
+[info] i  functions: Loaded environment variables from .env. 
+[info] i  functions: preparing .firebase/ivan-affriandi/functions directory for uploading... 
