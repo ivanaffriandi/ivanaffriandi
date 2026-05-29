@@ -3071,22 +3071,22 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     };
 
                     return (
-                      <div style={{ padding: "0.6rem 0.75rem", display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+                      <div style={{ padding: "0.4rem 0.6rem", display: "flex", flexDirection: "column", gap: "0.3rem" }}>
                         {events.map((ev, i) => {
                           const c = eventColors[ev.type] ?? { bg: "rgba(128,128,128,0.09)", text: "var(--text-primary)" };
                           return (
                             <div key={ev.id} style={{
                               backgroundColor: c.bg,
                               border: `1px solid ${c.text}25`,
-                              borderRadius: "13px",
-                              padding: "0.6rem 0.85rem",
+                              borderRadius: "10px",
+                              padding: "0.4rem 0.65rem",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "space-between"
                             }}>
                               <div>
                                 <div style={{
-                                  fontSize: "0.88rem",
+                                  fontSize: "0.78rem",
                                   fontWeight: "600",
                                   color: c.text,
                                   fontFamily: "var(--font-sans)",
@@ -3095,7 +3095,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                                   {ev.name}
                                 </div>
                               </div>
-                              <span style={{ fontSize: "1.25rem" }}>{ev.emoji}</span>
+                              <span style={{ fontSize: "1.05rem" }}>{ev.emoji}</span>
                             </div>
                           );
                         })}
