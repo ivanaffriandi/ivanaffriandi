@@ -1,0 +1,81 @@
+[debug] [2026-05-29T06:41:22.360Z] ----------------------------------------------------------------------
+[debug] [2026-05-29T06:41:22.363Z] Command:       /Users/ivanaffriandi/.nvm/versions/node/v25.8.1/bin/node /Users/ivanaffriandi/.nvm/versions/node/v25.8.1/bin/firebase deploy
+[debug] [2026-05-29T06:41:22.363Z] CLI Version:   15.14.0
+[debug] [2026-05-29T06:41:22.364Z] Platform:      darwin
+[debug] [2026-05-29T06:41:22.364Z] Node Version:  v25.8.1
+[debug] [2026-05-29T06:41:22.364Z] Time:          Fri May 29 2026 13:41:22 GMT+0700 (Western Indonesia Time)
+[debug] [2026-05-29T06:41:22.364Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-05-29T06:41:26.142Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-05-29T06:41:26.142Z] > authorizing via signed-in user (ivanaffriandi@kakao.com)
+[debug] [2026-05-29T06:41:26.142Z] [iam] checking project ivan-affriandi for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-05-29T06:41:26.144Z] Checked if tokens are valid: true, expires at: 1780038381335
+[debug] [2026-05-29T06:41:26.144Z] Checked if tokens are valid: true, expires at: 1780038381335
+[debug] [2026-05-29T06:41:26.145Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions [none]
+[debug] [2026-05-29T06:41:26.145Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions  x-goog-user-project=ivan-affriandi
+[debug] [2026-05-29T06:41:26.145Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-05-29T06:41:26.578Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions 200
+[debug] [2026-05-29T06:41:26.578Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/ivan-affriandi:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-05-29T06:41:26.578Z] Checked if tokens are valid: true, expires at: 1780038381335
+[debug] [2026-05-29T06:41:26.579Z] Checked if tokens are valid: true, expires at: 1780038381335
+[debug] [2026-05-29T06:41:26.579Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/ivan-affriandi [none]
+[debug] [2026-05-29T06:41:27.023Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/ivan-affriandi 200
+[debug] [2026-05-29T06:41:27.023Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/ivan-affriandi {"projectId":"ivan-affriandi","projectNumber":"19364784137","displayName":"Ivan Affriandi","name":"projects/ivan-affriandi","resources":{"hostingSite":"ivan-affriandi","realtimeDatabaseInstance":"ivan-affriandi-default-rtdb"},"state":"ACTIVE","etag":"1_1e246b72-ec29-4114-bbfa-7cd1da79cddc"}
+[debug] [2026-05-29T06:41:31.101Z] defaultcredentials: writing to file /Users/ivanaffriandi/.config/firebase/ivanaffriandi_kakao_com_application_default_credentials.json
+[debug] [2026-05-29T06:41:31.108Z] Checked if tokens are valid: true, expires at: 1780038381335
+[debug] [2026-05-29T06:41:31.109Z] Checked if tokens are valid: true, expires at: 1780038381335
+[debug] [2026-05-29T06:41:31.109Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/ivan-affriandi/sites pageToken=&pageSize=10
+[debug] [2026-05-29T06:41:32.108Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/ivan-affriandi/sites 200
+[debug] [2026-05-29T06:41:32.108Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/ivan-affriandi/sites {"sites":[{"name":"projects/ivan-affriandi/sites/ivan-affriandi","defaultUrl":"https://ivan-affriandi.web.app","appId":"1:19364784137:web:68af34a005ff21e23a70d8","type":"DEFAULT_SITE"}]}
+[debug] [2026-05-29T06:41:32.109Z] Checked if tokens are valid: true, expires at: 1780038381335
+[debug] [2026-05-29T06:41:32.109Z] Checked if tokens are valid: true, expires at: 1780038381335
+[debug] [2026-05-29T06:41:32.109Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:19364784137:web:68af34a005ff21e23a70d8/config [none]
+[debug] [2026-05-29T06:41:33.371Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:19364784137:web:68af34a005ff21e23a70d8/config 200
+[debug] [2026-05-29T06:41:33.371Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:19364784137:web:68af34a005ff21e23a70d8/config {"projectId":"ivan-affriandi","appId":"1:19364784137:web:68af34a005ff21e23a70d8","databaseURL":"https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app","storageBucket":"ivan-affriandi.firebasestorage.app","apiKey":"AIzaSyBVRIwhZ3CXTJLdbp4ma15XMXYfhWa_iPw","authDomain":"ivan-affriandi.firebaseapp.com","messagingSenderId":"19364784137","measurementId":"G-2X9KMR58R6","projectNumber":"19364784137","version":"2"}
+[info] 
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 15.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[debug] [2026-05-29T06:41:40.081Z] Checked if tokens are valid: true, expires at: 1780038381335
+[debug] [2026-05-29T06:41:40.082Z] Checked if tokens are valid: true, expires at: 1780038381335
+[debug] [2026-05-29T06:41:40.082Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/ivan-affriandi/sites/ivan-affriandi [none]
+[debug] [2026-05-29T06:41:41.065Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/ivan-affriandi/sites/ivan-affriandi 200
+[debug] [2026-05-29T06:41:41.070Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/ivan-affriandi/sites/ivan-affriandi {"name":"projects/ivan-affriandi/sites/ivan-affriandi","defaultUrl":"https://ivan-affriandi.web.app","appId":"1:19364784137:web:68af34a005ff21e23a70d8","type":"DEFAULT_SITE"}
+[info] ▲ Next.js 16.2.6 (Turbopack)
+
+[info] - Environments: .env.local, .env
+- Experiments (use with caution):
+  · serverActions
+
+
+[info]   Creating an optimized production build ...
+
+[info] ✓ Compiled successfully in 14.1s
+
+[info]   Running TypeScript ...
+
+[info] Failed to type check.
+
+./src/components/DailyJournalFeed.tsx:186:65
+Type error: Type '"arab_national"' is not assignable to type '"ivan" | "female" | "male" | "both" | "idul_fitri" | "idul_adha" | "christmas" | "chinese_new_year" | "waisak" | "nyepi" | "general_holiday" | "isra_miraj" | "islamic_new_year" | "maulid_nabi" | "independence"'.
+
+  184 | ...
+  185 | ...L HOLIDAYS (FIXED ANNUAL) ---
+> 186 | ...eKey: "09-23", name: "Saudi National Day", type: "arab_national", emoji: "🇸🇦" },
+      |                                               ^
+  187 | ...eKey: "12-02", name: "UAE National Day", type: "arab_national", emoji: "🇦🇪" },
+  188 | ...eKey: "02-22", name: "Saudi Foundation Day", type: "arab_national", emoji: "🇸🇦" },
+  189 | ...eKey: "02-25", name: "Kuwait National Day", type: "arab_national", emoji: "🇰🇼" },
+
+[info] Next.js build worker exited with code: 1 and signal: null
+
+[debug] [2026-05-29T06:42:09.270Z] Error: ENOENT: no such file or directory, open '/Users/ivanaffriandi/Ivan Affriandi/.next/export-marker.json'
+[error] 
+[error] Error: An unexpected error has occurred.

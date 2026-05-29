@@ -12,7 +12,7 @@ export interface CalendarEvent {
   id: string;
   dateKey: string; // "MM-DD" or "YYYY-MM-DD"
   name: string; // e.g. "Ivan's Birthday" or "Christmas Day"
-  type: "ivan" | "female" | "male" | "both" | "idul_fitri" | "idul_adha" | "christmas" | "chinese_new_year" | "waisak" | "nyepi" | "general_holiday" | "isra_miraj" | "islamic_new_year" | "maulid_nabi" | "independence";
+  type: "ivan" | "female" | "male" | "both" | "idul_fitri" | "idul_adha" | "christmas" | "chinese_new_year" | "waisak" | "nyepi" | "general_holiday" | "isra_miraj" | "islamic_new_year" | "maulid_nabi" | "independence" | "arab_national" | "chinese_national";
   emoji: string; // e.g. "👑🎂", "🎄", "🌙", "🏮", "🇮🇩"
 }
 
