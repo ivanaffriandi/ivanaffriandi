@@ -222,7 +222,7 @@ ${visitorContext}
     const genAI = new GoogleGenerativeAI(apiKey);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.5-flash-preview-05-20",
       systemInstruction: systemPrompt,
     });
 
@@ -234,8 +234,8 @@ ${visitorContext}
     const result = await model.generateContent({
       contents,
       generationConfig: {
-        maxOutputTokens: 800,
-        temperature: 0.85,
+        maxOutputTokens: 900,
+        temperature: 0.80,
       },
     });
 

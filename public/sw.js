@@ -1,4 +1,4 @@
-const CACHE_NAME = "ivan-affriandi-cache-v2";
+const CACHE_NAME = "ivan-affriandi-cache-v3";
 const OFFLINE_URLS = [
   "/icon.svg",
   "/manifest.webmanifest"
