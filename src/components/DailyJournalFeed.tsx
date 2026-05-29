@@ -2974,7 +2974,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                 {/* Widget card */}
                 <div style={{
                   backgroundColor: selectedTheme
-                    ? (isDark ? "rgba(28, 28, 30, 0.88)" : "rgba(255, 255, 255, 0.78)")
+                    ? (isDark ? "rgba(20, 20, 22, 0.82)" : "rgba(255, 255, 255, 0.52)")
                     : (isDark ? "rgba(28, 28, 30, 0.96)" : "rgba(255, 255, 255, 0.96)"),
                   backdropFilter: selectedTheme ? "blur(20px)" : "none",
                   WebkitBackdropFilter: selectedTheme ? "blur(20px)" : "none",
@@ -3324,7 +3324,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
             }}>
               <div style={{
                 backgroundColor: selectedTheme
-                  ? (isDark ? "rgba(28, 28, 30, 0.88)" : "rgba(255, 255, 255, 0.78)")
+                  ? (isDark ? "rgba(20, 20, 22, 0.82)" : "rgba(255, 255, 255, 0.52)")
                   : (isDark ? "rgba(28, 28, 30, 0.96)" : "rgba(255, 255, 255, 0.96)"),
                 backdropFilter: selectedTheme ? "blur(20px)" : "none",
                 WebkitBackdropFilter: selectedTheme ? "blur(20px)" : "none",
@@ -3366,28 +3366,58 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
 
                     // Dynamically compute high-contrast, premium, theme-aware cycled colors inside card
                     const innerCardStyle = (() => {
-                      if (selectedTheme) {
-                        // Tint each card subtly with the active event/birthday theme color
-                        const p = selectedTheme.primary;
-                        const shade = index % 2 === 0 ? "0.055" : "0.03";
-                        return isDark
-                          ? { bg: `${p}${Math.round(parseFloat(shade) * 255).toString(16).padStart(2, '0')}`, border: `${p}22` }
-                          : { bg: `${p}11`, border: `${p}1e` };
-                      }
                       const lightColors = [
-                        { bg: "rgba(242, 241, 238, 0.96)", border: "rgba(0, 0, 0, 0.08)" },
-                        { bg: "rgba(235, 242, 235, 0.96)", border: "rgba(0, 0, 0, 0.07)" },
-                        { bg: "rgba(245, 237, 238, 0.96)", border: "rgba(0, 0, 0, 0.07)" },
-                        { bg: "rgba(246, 241, 232, 0.96)", border: "rgba(0, 0, 0, 0.07)" },
+                        { bg: "#F2EBE0", border: "rgba(180, 160, 140, 0.22)" }, // Warm Stone/Linen
+                        { bg: "#E1EDE0", border: "rgba(120, 160, 120, 0.22)" }, // Sage/Mint Green
+                        { bg: "#F7E8EB", border: "rgba(190, 140, 160, 0.22)" }, // Blush Rose
+                        { bg: "#F7EBD9", border: "rgba(180, 140, 100, 0.22)" }, // Warm Wheat/Sand
                       ];
                       const darkColors = [
-                        { bg: "rgba(255, 255, 255, 0.045)", border: "rgba(255, 255, 255, 0.08)" },
-                        { bg: "rgba(255, 255, 255, 0.025)", border: "rgba(255, 255, 255, 0.06)" },
-                        { bg: "rgba(255, 255, 255, 0.045)", border: "rgba(255, 255, 255, 0.08)" },
-                        { bg: "rgba(255, 255, 255, 0.025)", border: "rgba(255, 255, 255, 0.06)" },
+                        { bg: "rgba(255, 245, 230, 0.045)", border: "rgba(255, 245, 230, 0.08)" },
+                        { bg: "rgba(230, 255, 230, 0.04)", border: "rgba(230, 255, 230, 0.08)" },
+                        { bg: "rgba(255, 230, 235, 0.04)", border: "rgba(255, 230, 235, 0.08)" },
+                        { bg: "rgba(230, 240, 255, 0.04)", border: "rgba(230, 240, 255, 0.08)" },
                       ];
-                      const colors = isDark ? darkColors : lightColors;
-                      return colors[index % colors.length];
+
+                      const base = isDark 
+                        ? darkColors[index % darkColors.length]
+                        : lightColors[index % lightColors.length];
+
+                      if (selectedTheme) {
+                        const p = selectedTheme.primary;
+                        if (!isDark) {
+                          // Blend distinct light background with theme primary color
+                          const blendColors = (baseHex: string, themeHex: string, ratio = 0.22) => {
+                            try {
+                              const cleanB = baseHex.replace("#", "");
+                              const cleanT = themeHex.replace("#", "");
+                              const br = parseInt(cleanB.substring(0, 2), 16);
+                              const bg = parseInt(cleanB.substring(2, 4), 16);
+                              const bb = parseInt(cleanB.substring(4, 6), 16);
+                              const tr = parseInt(cleanT.substring(0, 2), 16);
+                              const tg = parseInt(cleanT.substring(2, 4), 16);
+                              const tb = parseInt(cleanT.substring(4, 6), 16);
+                              const r = Math.round(br * (1 - ratio) + tr * ratio);
+                              const g = Math.round(bg * (1 - ratio) + tg * ratio);
+                              const b = Math.round(bb * (1 - ratio) + tb * ratio);
+                              return `rgb(${r}, ${g}, ${b})`;
+                            } catch (e) {
+                              return baseHex;
+                            }
+                          };
+                          return {
+                            bg: blendColors(base.bg, p, 0.22),
+                            border: `${p}3a`
+                          };
+                        } else {
+                          const shade = index % 2 === 0 ? "0.055" : "0.03";
+                          return {
+                            bg: `${p}${Math.round(parseFloat(shade) * 255).toString(16).padStart(2, '0')}`,
+                            border: `${p}22`
+                          };
+                        }
+                      }
+                      return base;
                     })();
 
                     return (
@@ -3767,7 +3797,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
               {/* Single horizontally scrollable shelf — all books in one row */}
               {(() => {
                 const glassBg = selectedTheme
-                  ? (isDark ? "rgba(28, 28, 30, 0.88)" : "rgba(255, 255, 255, 0.78)")
+                  ? (isDark ? "rgba(20, 20, 22, 0.82)" : "rgba(255, 255, 255, 0.52)")
                   : (isDark ? "rgba(32, 32, 38, 0.96)" : "rgba(255, 255, 255, 0.96)");
 
                 const glassBorder = selectedTheme
