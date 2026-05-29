@@ -180,7 +180,31 @@ const STATIC_SEEDED_EVENTS: CalendarEvent[] = [
   { id: "s-2030-10", dateKey: "2030-05-16", name: "Vesak Day", type: "waisak", emoji: "🪷" },
   { id: "s-2030-11", dateKey: "2030-04-12", name: "Eid al-Adha", type: "idul_adha", emoji: "🌙" },
   { id: "s-2030-12", dateKey: "2030-05-03", name: "Islamic New Year", type: "islamic_new_year", emoji: "🌙" },
-  { id: "s-2030-13", dateKey: "2030-07-12", name: "Prophet Muhammad's Birthday", type: "maulid_nabi", emoji: "🌙" }
+  { id: "s-2030-13", dateKey: "2030-07-12", name: "Prophet Muhammad's Birthday", type: "maulid_nabi", emoji: "🌙" },
+
+  // --- ARAB NATIONAL HOLIDAYS (FIXED ANNUAL) ---
+  { id: "arab-1", dateKey: "09-23", name: "Saudi National Day", type: "arab_national", emoji: "🇸🇦" },
+  { id: "arab-2", dateKey: "12-02", name: "UAE National Day", type: "arab_national", emoji: "🇦🇪" },
+  { id: "arab-3", dateKey: "02-22", name: "Saudi Foundation Day", type: "arab_national", emoji: "🇸🇦" },
+  { id: "arab-4", dateKey: "02-25", name: "Kuwait National Day", type: "arab_national", emoji: "🇰🇼" },
+  { id: "arab-5", dateKey: "12-18", name: "Qatar National Day", type: "arab_national", emoji: "🇶🇦" },
+  { id: "arab-6", dateKey: "05-25", name: "Jordan Independence Day", type: "arab_national", emoji: "🇯🇴" },
+
+  // --- CHINESE NATIONAL & FIXED FESTIVALS ---
+  { id: "cn-1", dateKey: "10-01", name: "China National Day", type: "chinese_national", emoji: "🇨🇳" },
+  { id: "cn-2", dateKey: "04-04", name: "Qingming Festival", type: "chinese_national", emoji: "🌸" },
+
+  // Dragon Boat Festival (Duanwu 端午节)
+  { id: "cn-2024-dragon", dateKey: "2024-06-10", name: "Dragon Boat Festival", type: "chinese_national", emoji: "🐉" },
+  { id: "cn-2025-dragon", dateKey: "2025-05-31", name: "Dragon Boat Festival", type: "chinese_national", emoji: "🐉" },
+  { id: "cn-2026-dragon", dateKey: "2026-06-19", name: "Dragon Boat Festival", type: "chinese_national", emoji: "🐉" },
+  { id: "cn-2027-dragon", dateKey: "2027-06-09", name: "Dragon Boat Festival", type: "chinese_national", emoji: "🐉" },
+
+  // Mid-Autumn Festival (Zhongqiu 中秋节)
+  { id: "cn-2024-midautumn", dateKey: "2024-09-17", name: "Mid-Autumn Festival", type: "chinese_national", emoji: "🥮" },
+  { id: "cn-2025-midautumn", dateKey: "2025-10-06", name: "Mid-Autumn Festival", type: "chinese_national", emoji: "🥮" },
+  { id: "cn-2026-midautumn", dateKey: "2026-09-25", name: "Mid-Autumn Festival", type: "chinese_national", emoji: "🥮" },
+  { id: "cn-2027-midautumn", dateKey: "2027-09-15", name: "Mid-Autumn Festival", type: "chinese_national", emoji: "🥮" }
 ];
 
 const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
@@ -285,6 +309,32 @@ const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
         bgDark: "#200408",
         bgUnselected: "rgba(244, 63, 94, 0.12)",
         borderUnselected: "1px solid rgba(244, 63, 94, 0.45)",
+        emoji: matchingEvent.emoji,
+        text: matchingEvent.name
+      };
+    }
+
+    if (matchingEvent.type === "arab_national") {
+      return {
+        type: "arab_national",
+        primary: "#c8a84b",
+        bgLight: "#FFFBEB",
+        bgDark: "#1A1300",
+        bgUnselected: "rgba(200, 168, 75, 0.12)",
+        borderUnselected: "1px solid rgba(200, 168, 75, 0.45)",
+        emoji: matchingEvent.emoji,
+        text: matchingEvent.name
+      };
+    }
+
+    if (matchingEvent.type === "chinese_national") {
+      return {
+        type: "chinese_national",
+        primary: "#dc2626",
+        bgLight: "#FEF2F2",
+        bgDark: "#1E0505",
+        bgUnselected: "rgba(220, 38, 38, 0.12)",
+        borderUnselected: "1px solid rgba(220, 38, 38, 0.45)",
         emoji: matchingEvent.emoji,
         text: matchingEvent.name
       };
@@ -1249,6 +1299,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
   const [activeBook, setActiveBook] = useState<BookItem | null>(null);
   const [mounted, setMounted] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [journalPage, setJournalPage] = useState(0);
   const [weather, setWeather] = useState<{ temp: number; icon: string; label: string } | null>(null);
   const [isBlogDropdownOpen, setIsBlogDropdownOpen] = useState(true);
 
@@ -1573,6 +1624,11 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
   const sortedAllPosts = useMemo(
     () => [...posts].sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()),
     [posts]
+  );
+  const journalTotalPages = Math.max(1, Math.ceil(sortedAllPosts.length / 3));
+  const journalDisplayed = useMemo(
+    () => sortedAllPosts.slice(journalPage * 3, journalPage * 3 + 3),
+    [sortedAllPosts, journalPage]
   );
   const hasPostOnDate = useCallback(
     (d: Date) => posts.some(post => isSameDay(parseBloggerDate(post.published), d)),
@@ -3385,7 +3441,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                 fontFamily: "var(--font-sans)",
                 opacity: 0.8
               }}>
-                {sortedAllPosts.length} Entries
+                {journalPage * 3 + 1}–{Math.min(journalPage * 3 + journalDisplayed.length, sortedAllPosts.length)} / {sortedAllPosts.length}
               </div>
             </div>
 
@@ -3412,23 +3468,16 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
               }}>
                 {/* TIMELINE FEED */}
                 <div
-                  className="no-scrollbar"
                   style={{
                     display: "flex",
                     flexDirection: "column",
                     position: "relative",
-                    paddingTop: "0.2rem", // Complements the card's top padding beautifully
-                    paddingBottom: "1.2rem", // Complements the card's bottom padding and gives end-marker space
-                    maxHeight: "365px",
-                    overflowY: "auto",
-                    scrollbarWidth: "none",
-                    willChange: "transform", // Hardware-accelerated ultra-light scroll rendering!
-                    WebkitOverflowScrolling: "touch" // iOS Safari butter-smooth inertia scrolling!
+                    paddingTop: "0.2rem",
                   }}
                 >
               {sortedAllPosts.length > 0 ? (
                 <>
-                  {sortedAllPosts.map((post, index) => {
+                  {journalDisplayed.map((post, index) => {
                     const pubDate = parseBloggerDate(post.published);
                     const dateStr = pubDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
                     const matches = [...post.content.matchAll(/<img[^>]+src="([^">]+)"/g)];
@@ -3439,16 +3488,16 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     // Dynamically compute high-contrast, premium, theme-aware cycled colors inside card
                     const innerCardStyle = (() => {
                       const lightColors = [
-                        { bg: "#F2EBE0", border: "rgba(180, 160, 140, 0.22)" }, // Warm Stone/Linen
-                        { bg: "#E1EDE0", border: "rgba(120, 160, 120, 0.22)" }, // Sage/Mint Green
-                        { bg: "#F7E8EB", border: "rgba(190, 140, 160, 0.22)" }, // Blush Rose
-                        { bg: "#E3EAF4", border: "rgba(140, 160, 190, 0.22)" }, // Slate Blue/Lavender (Distinct 4th color)
+                        { bg: "#F3EEE9", border: "rgba(155, 140, 125, 0.18)" }, // Warm Cream
+                        { bg: "#EFEBE5", border: "rgba(150, 136, 120, 0.18)" }, // Warm Sand
+                        { bg: "#EBE7E1", border: "rgba(145, 132, 116, 0.18)" }, // Warm Stone
+                        { bg: "#E8E3DD", border: "rgba(140, 128, 112, 0.18)" }, // Warm Greige
                       ];
                       const darkColors = [
-                        { bg: "rgba(255, 245, 230, 0.045)", border: "rgba(255, 245, 230, 0.08)" },
-                        { bg: "rgba(230, 255, 230, 0.04)", border: "rgba(230, 255, 230, 0.08)" },
-                        { bg: "rgba(255, 230, 235, 0.04)", border: "rgba(255, 230, 235, 0.08)" },
-                        { bg: "rgba(230, 240, 255, 0.04)", border: "rgba(230, 240, 255, 0.08)" },
+                        { bg: "rgba(255, 248, 240, 0.04)", border: "rgba(255, 248, 240, 0.07)" },
+                        { bg: "rgba(248, 242, 234, 0.04)", border: "rgba(248, 242, 234, 0.07)" },
+                        { bg: "rgba(242, 236, 228, 0.04)", border: "rgba(242, 236, 228, 0.07)" },
+                        { bg: "rgba(236, 230, 222, 0.04)", border: "rgba(236, 230, 222, 0.07)" },
                       ];
 
                       const base = isDark 
@@ -3511,7 +3560,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                             gap: "0.7rem", // Compact gap
                             textDecoration: "none",
                             color: "inherit",
-                            paddingBottom: index === sortedAllPosts.length - 1 ? "0.75rem" : "1.5rem",
+                            paddingBottom: index === journalDisplayed.length - 1 ? "0.75rem" : "1.5rem",
                             position: "relative",
                             zIndex: 1
                           }}
@@ -3520,7 +3569,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                           <div style={{
                             position: "absolute",
                             top: "10px",
-                            bottom: index === sortedAllPosts.length - 1 ? "-16px" : "-10px",
+                            bottom: index === journalDisplayed.length - 1 ? "-16px" : "-10px",
                             left: "20.25px", // Center exactly in the 42px left column
                             width: "1.5px",
                             backgroundColor: "rgba(150,150,150,0.12)",
@@ -3642,38 +3691,33 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     );
                   })}
                   
-                  {/* Timeline End Marker */}
-                  <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.7rem",
-                    paddingLeft: "0rem",
-                    marginTop: "0.4rem",
-                    marginBottom: "0.4rem"
-                  }}>
-                    {/* Centered end dot/icon */}
-                    <div style={{
-                      width: "42px",
-                      display: "flex",
-                      justifyContent: "center",
-                      flexShrink: 0
-                    }}>
-                      <div style={{
-                        width: "8px",
-                        height: "8px",
-                        borderRadius: "50%",
-                        border: "1.5px solid var(--text-secondary)",
-                        opacity: 0.35,
-                        backgroundColor: "transparent"
-                      }} />
-                    </div>
-                    {/* Soft line and text */}
-                    <div style={{
-                      flex: 1,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px"
-                    }}>
+                  {/* PAGINATION FOOTER */}
+                  <div style={{ paddingTop: "0.25rem", paddingLeft: "42px", paddingBottom: "0.15rem" }}>
+                    {sortedAllPosts.length > 3 ? (
+                      <button
+                        onClick={() => setJournalPage(p => (p + 1) >= journalTotalPages ? 0 : p + 1)}
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "5px",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          padding: "3px 0",
+                          color: "var(--text-secondary)",
+                          fontFamily: "var(--font-sans)",
+                          fontSize: "0.62rem",
+                          fontWeight: "650",
+                          letterSpacing: "0.04em",
+                          textTransform: "uppercase",
+                          opacity: 0.5,
+                        }}
+                      >
+                        {(journalPage + 1) >= journalTotalPages
+                          ? "↩ Latest"
+                          : `${sortedAllPosts.length - (journalPage + 1) * 3} more →`}
+                      </button>
+                    ) : (
                       <span style={{
                         fontSize: "0.62rem",
                         fontFamily: "var(--font-sans)",
@@ -3681,17 +3725,9 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                         fontWeight: "600",
                         letterSpacing: "0.04em",
                         textTransform: "uppercase",
-                        opacity: 0.4
-                      }}>
-                        End of Journal
-                      </span>
-                      <div style={{
-                        flex: 1,
-                        height: "1px",
-                        backgroundColor: "var(--text-secondary)",
-                        opacity: 0.08
-                      }} />
-                    </div>
+                        opacity: 0.35
+                      }}>End of Journal</span>
+                    )}
                   </div>
                 </>
               ) : (
