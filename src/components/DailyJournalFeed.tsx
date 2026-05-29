@@ -319,9 +319,13 @@ const getSelectedTheme = (date: Date, calendarEvents: CalendarEvent[]) => {
 };
 
 const SnowEffect = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => { setIsMobile(window.innerWidth < 768); }, []);
+  const count = isMobile ? 18 : 60;
+
   return (
     <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
-      {Array.from({ length: 60 }).map((_, idx) => {
+      {Array.from({ length: count }).map((_, idx) => {
         const left = Math.random() * 100;
         const delay = Math.random() * 8;
         const duration = 5 + Math.random() * 6;
@@ -367,9 +371,13 @@ const SnowEffect = () => {
 };
 
 const IndoIndependenceEffect = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => { setIsMobile(window.innerWidth < 768); }, []);
+  const count = isMobile ? 10 : 30;
+
   return (
     <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
-      {Array.from({ length: 30 }).map((_, idx) => {
+      {Array.from({ length: count }).map((_, idx) => {
         const left = Math.random() * 100;
         const delay = Math.random() * 6;
         const duration = 4 + Math.random() * 5;
@@ -416,9 +424,13 @@ const IndoIndependenceEffect = () => {
 };
 
 const EidFitriEffect = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => { setIsMobile(window.innerWidth < 768); }, []);
+  const count = isMobile ? 6 : 18;
+
   return (
     <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
-      {Array.from({ length: 18 }).map((_, idx) => {
+      {Array.from({ length: count }).map((_, idx) => {
         const left = Math.random() * 100;
         const top = Math.random() * 100;
         const delay = Math.random() * 4;
@@ -466,9 +478,13 @@ const EidFitriEffect = () => {
 };
 
 const WaisakEffect = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => { setIsMobile(window.innerWidth < 768); }, []);
+  const count = isMobile ? 4 : 10;
+
   return (
     <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
-      {Array.from({ length: 10 }).map((_, idx) => {
+      {Array.from({ length: count }).map((_, idx) => {
         const left = Math.random() * 100;
         const delay = Math.random() * 8;
         const duration = 8 + Math.random() * 8;
@@ -522,9 +538,13 @@ const WaisakEffect = () => {
 };
 
 const NyepiEffect = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => { setIsMobile(window.innerWidth < 768); }, []);
+  const count = isMobile ? 10 : 28;
+
   return (
     <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
-      {Array.from({ length: 28 }).map((_, idx) => {
+      {Array.from({ length: count }).map((_, idx) => {
         const left = Math.random() * 100;
         const top = Math.random() * 100;
         const delay = Math.random() * 6;
@@ -614,9 +634,13 @@ const NyepiEffect = () => {
 };
 
 const LunarNewYearEffect = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => { setIsMobile(window.innerWidth < 768); }, []);
+  const count = isMobile ? 4 : 12;
+
   return (
     <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
-      {Array.from({ length: 12 }).map((_, idx) => {
+      {Array.from({ length: count }).map((_, idx) => {
         const left = Math.random() * 100;
         const delay = Math.random() * 6;
         const duration = 6 + Math.random() * 6;
@@ -678,9 +702,13 @@ const LunarNewYearEffect = () => {
 };
 
 const HolyLightEffect = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => { setIsMobile(window.innerWidth < 768); }, []);
+  const count = isMobile ? 4 : 10;
+
   return (
     <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
-      {Array.from({ length: 10 }).map((_, idx) => {
+      {Array.from({ length: count }).map((_, idx) => {
         const left = Math.random() * 100;
         const delay = Math.random() * 8;
         const duration = 6 + Math.random() * 6;
@@ -725,6 +753,8 @@ const HolyLightEffect = () => {
 
 const BirthdayConfettiEffect = ({ type }: { type: string }) => {
   const isIvan = type === "ivan";
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => { setIsMobile(window.innerWidth < 768); }, []);
 
   const colors = isIvan
     ? ["#007aff", "#3b82f6", "#ef4444", "#f43f5e", "#10b981", "#fbbf24", "#a855f7", "#ec4899"] // Fully rich colorful rainbow for Ivan's royal birthday!
@@ -735,11 +765,11 @@ const BirthdayConfettiEffect = ({ type }: { type: string }) => {
         : ["#a855f7", "#c084fc", "#ff5c9d", "#007aff", "#fcd34d"]; // Purple, pink, blue & gold
 
   // Initial burst counts (plays once for everyone!)
-  const confettiCount = isIvan ? 50 : 35;
-  const burstBalloonCount = isIvan ? 12 : 6;
+  const confettiCount = isMobile ? (isIvan ? 20 : 12) : (isIvan ? 50 : 35);
+  const burstBalloonCount = isMobile ? (isIvan ? 4 : 2) : (isIvan ? 12 : 6);
 
   // Continuous gentle floating (Ivan only - loops infinitely!)
-  const continuousBalloonCount = isIvan ? 3 : 0;
+  const continuousBalloonCount = isIvan ? (isMobile ? 1 : 3) : 0;
 
   return (
     <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 99999 }}>
@@ -1218,12 +1248,19 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
   const [books, setBooks] = useState<BookItem[]>(initialBooks.length > 0 ? initialBooks : []);
   const [activeBook, setActiveBook] = useState<BookItem | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [weather, setWeather] = useState<{ temp: number; icon: string; label: string } | null>(null);
   const [isBlogDropdownOpen, setIsBlogDropdownOpen] = useState(true);
 
   useEffect(() => {
     setMounted(true);
     setSelectedDate(new Date());
+    
+    // Detect mobile device width for major performance optimization
+    setIsMobileDevice(window.innerWidth < 768);
+    const handleResize = () => setIsMobileDevice(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+
     // Fetch Amsterdam live weather
     fetch("https://api.open-meteo.com/v1/forecast?latitude=52.3676&longitude=4.9041&current=temperature_2m,weathercode,weather_code&timezone=Europe%2FAmsterdam&temperature_unit=celsius")
       .then(r => r.json())
@@ -1234,6 +1271,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
         setWeather({ temp, icon: wmo.icon, label: wmo.label });
       })
       .catch(() => {});
+
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // Dynamic seasonal theme styling injected safely client-side to prevent hydration mismatch
@@ -3009,8 +3048,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                   backgroundColor: selectedTheme
                     ? (isDark ? "rgba(20, 20, 22, 0.82)" : "rgba(255, 255, 255, 0.52)")
                     : (isDark ? "rgba(28, 28, 30, 0.96)" : "rgba(255, 255, 255, 0.96)"),
-                  backdropFilter: selectedTheme ? "blur(20px)" : "none",
-                  WebkitBackdropFilter: selectedTheme ? "blur(20px)" : "none",
+                  backdropFilter: (selectedTheme && !isMobileDevice) ? "blur(20px)" : "none",
+                  WebkitBackdropFilter: (selectedTheme && !isMobileDevice) ? "blur(20px)" : "none",
                   border: selectedTheme
                     ? `1px solid ${selectedTheme.primary}4d`
                     : (isDark ? "1px solid rgba(255, 255, 255, 0.16)" : "1px solid rgba(0, 0, 0, 0.12)"),
@@ -3359,8 +3398,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                 backgroundColor: selectedTheme
                   ? (isDark ? "rgba(20, 20, 22, 0.82)" : "rgba(255, 255, 255, 0.52)")
                   : (isDark ? "rgba(28, 28, 30, 0.96)" : "rgba(255, 255, 255, 0.96)"),
-                backdropFilter: selectedTheme ? "blur(20px)" : "none",
-                WebkitBackdropFilter: selectedTheme ? "blur(20px)" : "none",
+                backdropFilter: (selectedTheme && !isMobileDevice) ? "blur(20px)" : "none",
+                WebkitBackdropFilter: (selectedTheme && !isMobileDevice) ? "blur(20px)" : "none",
                 border: selectedTheme
                   ? `1px solid ${selectedTheme.primary}4d`
                   : (isDark ? "1px solid rgba(255, 255, 255, 0.16)" : "1px solid rgba(0, 0, 0, 0.12)"),
@@ -3403,7 +3442,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                         { bg: "#F2EBE0", border: "rgba(180, 160, 140, 0.22)" }, // Warm Stone/Linen
                         { bg: "#E1EDE0", border: "rgba(120, 160, 120, 0.22)" }, // Sage/Mint Green
                         { bg: "#F7E8EB", border: "rgba(190, 140, 160, 0.22)" }, // Blush Rose
-                        { bg: "#F7EBD9", border: "rgba(180, 140, 100, 0.22)" }, // Warm Wheat/Sand
+                        { bg: "#E3EAF4", border: "rgba(140, 160, 190, 0.22)" }, // Slate Blue/Lavender (Distinct 4th color)
                       ];
                       const darkColors = [
                         { bg: "rgba(255, 245, 230, 0.045)", border: "rgba(255, 245, 230, 0.08)" },
@@ -3844,7 +3883,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                 return (
                   <div style={{ 
                     borderRadius: "16px", background: glassBg, 
-                    backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", 
+                    backdropFilter: isMobileDevice ? "none" : "blur(20px)", 
+                    WebkitBackdropFilter: isMobileDevice ? "none" : "blur(20px)", 
                     border: glassBorder, boxShadow: glassShadow, 
                     padding: "16px 14px", overflow: "hidden",
                     transition: "all 0.4s ease"
