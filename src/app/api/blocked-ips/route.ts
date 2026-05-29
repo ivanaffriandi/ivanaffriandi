@@ -16,18 +16,32 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const defaultBlocked = [
+      { id: "def-1", ip: "114.10.25.175", note: "System Fallback Block", blockedAt: null, isSystem: true },
+      { id: "def-2", ip: "103.174.18.46", note: "System Fallback Block", blockedAt: null, isSystem: true },
+      { id: "def-3", ip: "180.254.78.88", note: "System Fallback Block", blockedAt: null, isSystem: true }
+    ];
+
     const res = await fetch(`${FIREBASE_DB_URL}.json`, { cache: "no-store" });
-    if (!res.ok) return NextResponse.json([]);
-    const data = await res.json();
-    if (!data) return NextResponse.json([]);
+    let dbItems = [];
+    if (res.ok) {
+      const data = await res.json();
+      if (data) {
+        dbItems = Object.entries(data).map(([id, val]: [string, any]) => ({
+          id,
+          ...val
+        }));
+      }
+    }
 
-    const items = Object.entries(data).map(([id, val]: [string, any]) => ({
-      id,
-      ...val
-    }));
+    const items = [...defaultBlocked, ...dbItems];
 
-    // Sort by blockedAt desc
-    items.sort((a: any, b: any) => new Date(b.blockedAt || 0).getTime() - new Date(a.blockedAt || 0).getTime());
+    // Sort by blockedAt desc, keeping system ones first or sorting
+    items.sort((a: any, b: any) => {
+      if (a.isSystem && !b.isSystem) return -1;
+      if (!a.isSystem && b.isSystem) return 1;
+      return new Date(b.blockedAt || 0).getTime() - new Date(a.blockedAt || 0).getTime();
+    });
 
     return NextResponse.json(items);
   } catch (err) {

@@ -103,7 +103,7 @@ export async function getAllMoments(): Promise<MomentItem[]> {
         getDocs(q)
           .then(snap => ({ success: true as const, snap }))
           .catch(err => {
-            console.warn("Firestore query failed:", err);
+            console.warn("Firestore query failed:", err?.message || err);
             return { success: false as const, snap: null };
           }),
         new Promise<{ success: false, snap: null }>(resolve => 
@@ -138,7 +138,7 @@ export async function deleteMoment(id: string, storagePath?: string): Promise<bo
         await Promise.race([
           deleteObject(storageRef),
           new Promise<void>((_, reject) => setTimeout(() => reject(new Error("Storage delete timeout")), 3500))
-        ]).catch(e => console.warn("Failed or timed out deleting storage file:", e));
+        ]).catch(e => console.warn("Failed or timed out deleting storage file:", e?.message || e));
       }
       const docRef = doc(db, "moments", id);
       await Promise.race([
@@ -146,8 +146,8 @@ export async function deleteMoment(id: string, storagePath?: string): Promise<bo
         new Promise<void>((_, reject) => setTimeout(() => reject(new Error("Firestore delete timeout")), 3500))
       ]);
       return true;
-    } catch (e) {
-      console.error("Firebase delete error, using local fallback:", e);
+    } catch (e: any) {
+      console.error("Firebase delete error, using local fallback:", e?.message || e);
     }
   }
 
@@ -163,8 +163,8 @@ export async function updateMoment(id: string, data: Partial<MomentItem>): Promi
       const docRef = doc(db, "moments", id);
       await updateDoc(docRef, data);
       return true;
-    } catch (e) {
-      console.error("Firebase update error:", e);
+    } catch (e: any) {
+      console.error("Firebase update error:", e?.message || e);
     }
   }
 

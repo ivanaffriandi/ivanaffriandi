@@ -11,14 +11,26 @@ export default function AmsterdamClock() {
       const date = new Date();
       const options: Intl.DateTimeFormatOptions = {
         timeZone: "Europe/Amsterdam",
-        hour: "numeric",
+        hour: "2-digit",
         minute: "2-digit",
-        hour12: true,
+        hour12: false,
       };
       
-      // Format to h:mm AM/PM
-      const formattedTime = new Intl.DateTimeFormat("en-US", options).format(date);
-      setTime(formattedTime);
+      // Format to HH:MM strictly
+      try {
+        const parts = new Intl.DateTimeFormat("en-US", {
+          timeZone: "Europe/Amsterdam",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        }).formatToParts(date);
+        const hr = parts.find(p => p.type === "hour")?.value || "00";
+        const min = parts.find(p => p.type === "minute")?.value || "00";
+        setTime(`${hr}:${min}`);
+      } catch (err) {
+        const formattedTime = new Intl.DateTimeFormat("en-US", options).format(date);
+        setTime(formattedTime.replace(/\s*[a-zA-Z]/g, "").trim());
+      }
 
       // Determine timezone abbreviation (CET or CEST)
       try {

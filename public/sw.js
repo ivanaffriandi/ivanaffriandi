@@ -1,8 +1,7 @@
-const CACHE_NAME = "ivan-affriandi-cache-v1";
+const CACHE_NAME = "ivan-affriandi-cache-v2";
 const OFFLINE_URLS = [
-  "/",
-  "/ask",
-  "/icon.svg"
+  "/icon.svg",
+  "/manifest.webmanifest"
 ];
 
 // 1. Install Event: Precaches static shells for offline accessibility
@@ -43,6 +42,12 @@ self.addEventListener("fetch", (event) => {
 
   // Avoid intercepting local Webpack or Next.js developer hot-reload assets
   if (url.pathname.includes("_next") || url.pathname.includes("webpack") || url.pathname.includes("hot-update")) {
+    return;
+  }
+
+  // Avoid caching HTML/navigation requests to prevent stale chunk errors (blank pages)
+  if (request.mode === "navigate" || request.headers.get("accept")?.includes("text/html")) {
+    // Network-Only for HTML pages to ensure fresh chunks are always resolved!
     return;
   }
 

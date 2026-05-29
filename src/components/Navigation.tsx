@@ -113,7 +113,7 @@ export default function Navigation() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
 
-  const isAdminPage = pathname === "/admin";
+  const isAdminPage = pathname === "/admin" || pathname === "/hq-panel" || pathname === "/x";
 
   // Smooth scroll listener for glassmorphism trigger
   useEffect(() => {
@@ -200,7 +200,41 @@ export default function Navigation() {
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
-        <LofiPlayer />
+        {pathname === "/hq-panel" || pathname === "/x" ? (
+          <Link
+            href="/x?tab=security"
+            title="Access Security"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "30px",
+              height: "30px",
+              borderRadius: "50%",
+              border: "1px solid rgba(142, 142, 147, 0.18)",
+              backgroundColor: "rgba(142, 142, 147, 0.06)",
+              color: "var(--text-primary)",
+              cursor: "pointer",
+              flexShrink: 0,
+            }}
+          >
+            {/* iOS-like Shield Icon */}
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </Link>
+        ) : (
+          <LofiPlayer />
+        )}
         {isAdminPage ? (
           <SignOutButton />
         ) : (

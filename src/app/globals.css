@@ -359,8 +359,8 @@ header {
 .footer-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  padding-top: 4rem;
-  margin-top: 8rem;
+  padding-top: 2rem;
+  margin-top: 3.5rem;
   border-top: 1px solid var(--grid-line);
 }
 
@@ -800,8 +800,8 @@ header {
   .footer-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
-    margin-top: 5rem;
-    padding-top: 3rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
   }
 
   .calendar-widget {

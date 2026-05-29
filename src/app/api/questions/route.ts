@@ -224,7 +224,7 @@ export async function POST(request: Request) {
         </div>
 
         <p style="color: #78716c; font-size: 13px; margin-bottom: 24px;">Sent at: ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })} WIB</p>
-        <a href="https://ivanaffriandi.com/hq-panel" style="display: inline-block; padding: 12px 24px; background-color: #1c1917; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; transition: background-color 0.2s;">Go to Admin Portal</a>
+        <a href="https://ivanaffriandi.com/x" style="display: inline-block; padding: 12px 24px; background-color: #1c1917; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; transition: background-color 0.2s;">Go to Admin Portal</a>
       </div>
     `;
 

@@ -39,12 +39,48 @@ const STATIC_SEEDED_EVENTS: CalendarEvent[] = [
   { id: "s-2", dateKey: "08-31", name: "Vera's Birthday", type: "female", emoji: "🎂" },
   { id: "s-3", dateKey: "01-15", name: "Dhiffa's Birthday", type: "female", emoji: "🎂" },
   { id: "s-4", dateKey: "10-05", name: "Aluna's Birthday", type: "female", emoji: "🎂" },
-  
+
   { id: "s-5", dateKey: "01-01", name: "New Year's Day", type: "general_holiday", emoji: "🎉" },
   { id: "s-6", dateKey: "05-01", name: "International Labor Day", type: "general_holiday", emoji: "🛠️" },
   { id: "s-7", dateKey: "06-01", name: "Pancasila Day", type: "general_holiday", emoji: "🦅" },
   { id: "s-8", dateKey: "08-17", name: "Independence Day", type: "independence", emoji: "🇮🇩" },
   { id: "s-9", dateKey: "12-25", name: "Christmas Day", type: "christmas", emoji: "🎄" },
+  { id: "s-10", dateKey: "12-26", name: "Boxing Day", type: "christmas", emoji: "🎄" },
+
+  // --- DUTCH NATIONAL HOLIDAYS (fixed) ---
+  { id: "nl-1", dateKey: "04-27", name: "King's Day", type: "general_holiday", emoji: "🧡👑" },
+  { id: "nl-2", dateKey: "05-05", name: "Liberation Day", type: "general_holiday", emoji: "🕊️🇳🇱" },
+  { id: "nl-3", dateKey: "12-05", name: "Sinterklaas Eve", type: "general_holiday", emoji: "🎅" },
+
+  // --- DUTCH NATIONAL HOLIDAYS (shifting by year) ---
+  // 2024
+  { id: "nl-2024-1", dateKey: "2024-03-29", name: "Good Friday", type: "general_holiday", emoji: "✝️" },
+  { id: "nl-2024-2", dateKey: "2024-03-31", name: "Easter Sunday", type: "general_holiday", emoji: "🐣" },
+  { id: "nl-2024-3", dateKey: "2024-04-01", name: "Easter Monday", type: "general_holiday", emoji: "🐣" },
+  { id: "nl-2024-4", dateKey: "2024-05-09", name: "Ascension Day", type: "general_holiday", emoji: "☁️" },
+  { id: "nl-2024-5", dateKey: "2024-05-19", name: "Pentecost Sunday", type: "general_holiday", emoji: "🕊️" },
+  { id: "nl-2024-6", dateKey: "2024-05-20", name: "Pentecost Monday", type: "general_holiday", emoji: "🕊️" },
+  // 2025
+  { id: "nl-2025-1", dateKey: "2025-04-18", name: "Good Friday", type: "general_holiday", emoji: "✝️" },
+  { id: "nl-2025-2", dateKey: "2025-04-20", name: "Easter Sunday", type: "general_holiday", emoji: "🐣" },
+  { id: "nl-2025-3", dateKey: "2025-04-21", name: "Easter Monday", type: "general_holiday", emoji: "🐣" },
+  { id: "nl-2025-4", dateKey: "2025-05-29", name: "Ascension Day", type: "general_holiday", emoji: "☁️" },
+  { id: "nl-2025-5", dateKey: "2025-06-08", name: "Pentecost Sunday", type: "general_holiday", emoji: "🕊️" },
+  { id: "nl-2025-6", dateKey: "2025-06-09", name: "Pentecost Monday", type: "general_holiday", emoji: "🕊️" },
+  // 2026
+  { id: "nl-2026-1", dateKey: "2026-04-03", name: "Good Friday", type: "general_holiday", emoji: "✝️" },
+  { id: "nl-2026-2", dateKey: "2026-04-05", name: "Easter Sunday", type: "general_holiday", emoji: "🐣" },
+  { id: "nl-2026-3", dateKey: "2026-04-06", name: "Easter Monday", type: "general_holiday", emoji: "🐣" },
+  { id: "nl-2026-4", dateKey: "2026-05-14", name: "Ascension Day", type: "general_holiday", emoji: "☁️" },
+  { id: "nl-2026-5", dateKey: "2026-05-24", name: "Pentecost Sunday", type: "general_holiday", emoji: "🕊️" },
+  { id: "nl-2026-6", dateKey: "2026-05-25", name: "Pentecost Monday", type: "general_holiday", emoji: "🕊️" },
+  // 2027
+  { id: "nl-2027-1", dateKey: "2027-03-26", name: "Good Friday", type: "general_holiday", emoji: "✝️" },
+  { id: "nl-2027-2", dateKey: "2027-03-28", name: "Easter Sunday", type: "general_holiday", emoji: "🐣" },
+  { id: "nl-2027-3", dateKey: "2027-03-29", name: "Easter Monday", type: "general_holiday", emoji: "🐣" },
+  { id: "nl-2027-4", dateKey: "2027-05-06", name: "Ascension Day", type: "general_holiday", emoji: "☁️" },
+  { id: "nl-2027-5", dateKey: "2027-05-16", name: "Pentecost Sunday", type: "general_holiday", emoji: "🕊️" },
+  { id: "nl-2027-6", dateKey: "2027-05-17", name: "Pentecost Monday", type: "general_holiday", emoji: "🕊️" },
 
   // --- SHIFTING NATIONAL HOLIDAYS BY YEAR ---
   // Year 2024
@@ -399,7 +435,7 @@ const EidFitriEffect = () => {
             }}
           >
             <svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%">
-              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
             </svg>
           </div>
         );
@@ -483,7 +519,7 @@ const NyepiEffect = () => {
         const duration = 3 + Math.random() * 5;
         const size = 1.5 + Math.random() * 2;
         const isShootingStar = idx === 0 || idx === 10;
-        
+
         if (isShootingStar) {
           const shootingDelay = Math.random() * 12;
           const shootingDuration = 1.5 + Math.random() * 1.5;
@@ -568,7 +604,7 @@ const LunarNewYearEffect = () => {
         const duration = 6 + Math.random() * 6;
         const size = 12 + Math.random() * 12;
         const isLantern = idx % 2 === 0;
-        
+
         return (
           <div
             key={idx}
@@ -665,19 +701,19 @@ const HolyLightEffect = () => {
 
 const BirthdayConfettiEffect = ({ type }: { type: string }) => {
   const isIvan = type === "ivan";
-  
+
   const colors = isIvan
     ? ["#007aff", "#3b82f6", "#ef4444", "#f43f5e", "#10b981", "#fbbf24", "#a855f7", "#ec4899"] // Fully rich colorful rainbow for Ivan's royal birthday!
-    : type === "female" 
-    ? ["#ff5c9d", "#f472b6", "#ec4899", "#f43f5e", "#fcd34d"] // Pink & gold
-    : type === "male"
-    ? ["#007aff", "#60a5fa", "#3b82f6", "#1d4ed8", "#fcd34d"] // Blue & gold
-    : ["#a855f7", "#c084fc", "#ff5c9d", "#007aff", "#fcd34d"]; // Purple, pink, blue & gold
+    : type === "female"
+      ? ["#ff5c9d", "#f472b6", "#ec4899", "#f43f5e", "#fcd34d"] // Pink & gold
+      : type === "male"
+        ? ["#007aff", "#60a5fa", "#3b82f6", "#1d4ed8", "#fcd34d"] // Blue & gold
+        : ["#a855f7", "#c084fc", "#ff5c9d", "#007aff", "#fcd34d"]; // Purple, pink, blue & gold
 
   // Initial burst counts (plays once for everyone!)
   const confettiCount = isIvan ? 50 : 35;
   const burstBalloonCount = isIvan ? 12 : 6;
-  
+
   // Continuous gentle floating (Ivan only - loops infinitely!)
   const continuousBalloonCount = isIvan ? 3 : 0;
 
@@ -896,13 +932,26 @@ function formatDate(iso: string) {
 
 // ── CoverImg: smart cover fetcher using Google Books search ─────────────────
 function CoverImg({ book, grayscale = true }: { book: BookItem; grayscale?: boolean }) {
-  const initialSrc = (book.coverUrl && book.coverUrl.trim()) ? book.coverUrl.trim() : null;
+  const trimmedCover = book.coverUrl ? book.coverUrl.trim() : "";
+  const isBlocked = trimmedCover.includes("compressed.photo.goodreads.com") || trimmedCover.includes("gr-assets.com") || trimmedCover.includes("goodreads.com/book/show");
+
+  const initialSrc = trimmedCover
+    ? (isBlocked ? `/api/book-cover?url=${encodeURIComponent(trimmedCover)}` : trimmedCover)
+    : null;
+
   const [src, setSrc] = React.useState<string | null>(initialSrc);
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(!initialSrc);
   const [hasTriedProxy, setHasTriedProxy] = React.useState(false);
 
   const fetchProxyCover = React.useCallback(() => {
     setLoading(true);
+    const trimmed = book.coverUrl ? book.coverUrl.trim() : "";
+    if (trimmed.startsWith("http")) {
+      setSrc(`/api/book-cover?url=${encodeURIComponent(trimmed)}`);
+      setLoading(false);
+      setHasTriedProxy(true);
+      return;
+    }
     const t = encodeURIComponent(book.title);
     const a = encodeURIComponent(book.author);
     const isbn = getIsbn(book.coverUrl);
@@ -925,17 +974,18 @@ function CoverImg({ book, grayscale = true }: { book: BookItem; grayscale?: bool
   }, [book.title, book.author, book.coverUrl]);
 
   React.useEffect(() => {
-    const trimmedCover = book.coverUrl ? book.coverUrl.trim() : "";
-    const isRealCover = trimmedCover.startsWith("http") && !trimmedCover.includes("unsplash.com");
-    
-    if (isRealCover) {
-      setSrc(trimmedCover);
+    const trimmed = book.coverUrl ? book.coverUrl.trim() : "";
+    if (!trimmed) {
+      fetchProxyCover();
+    } else if (trimmed.includes("compressed.photo.goodreads.com") || trimmed.includes("gr-assets.com") || trimmed.includes("goodreads.com/book/show")) {
+      setSrc(`/api/book-cover?url=${encodeURIComponent(trimmed)}`);
+      setLoading(false);
+      setHasTriedProxy(true);
+    } else {
+      setSrc(trimmed);
       setLoading(false);
       setHasTriedProxy(false);
-      return;
     }
-
-    fetchProxyCover();
   }, [book.title, book.author, book.coverUrl, fetchProxyCover]);
 
   const handleImageError = () => {
@@ -970,7 +1020,7 @@ function CoverImg({ book, grayscale = true }: { book: BookItem; grayscale?: bool
 }
 
 // ── BookCard: simplified card that opens the review popup ──────────────────
-function BookCard({ book, onClick }: { book: BookItem; onClick: () => void }) {
+function BookCard({ book, isDark = false, onClick, theme }: { book: BookItem; isDark?: boolean; onClick: () => void; theme?: any }) {
   const CARD_H = 120;
   const [hovered, setHovered] = useState(false);
   return (
@@ -979,45 +1029,67 @@ function BookCard({ book, onClick }: { book: BookItem; onClick: () => void }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       whileTap={{ scale: 0.96 }}
-      style={{ 
-        width: "80px", 
-        cursor: "pointer", 
+      style={{
+        width: "80px",
+        cursor: "pointer",
         userSelect: "none",
         perspective: "800px",
         transformStyle: "preserve-3d"
       }}
     >
-      <motion.div 
+      <motion.div
         animate={{
           y: hovered ? -6 : 0,
           scale: hovered ? 1.025 : 1,
           rotateY: hovered ? -4 : 0,
-          boxShadow: hovered 
-            ? "0 16px 28px -4px rgba(0,0,0,0.35), 0 10px 10px -6px rgba(0,0,0,0.22), 1px 1px 0px rgba(255,255,255,0.12) inset"
-            : "0 6px 14px -4px rgba(0,0,0,0.28), 0 2px 4px -2px rgba(0,0,0,0.18), 1px 1px 0px rgba(255,255,255,0.08) inset"
+          boxShadow: hovered
+            ? (isDark
+              ? "0 24px 48px rgba(0, 0, 0, 0.72), 0 8px 18px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25)"
+              : "0 20px 42px rgba(0, 0, 0, 0.24), 0 6px 14px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.95)")
+            : (isDark
+              ? "0 10px 24px rgba(0, 0, 0, 0.52), 0 3px 8px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.16)"
+              : "0 8px 20px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.7)")
         }}
         transition={{ type: "spring", stiffness: 350, damping: 25 }}
         style={{
-          width: "80px", 
+          width: "80px",
           height: `${CARD_H}px`,
-          borderRadius: "3px 6px 6px 3px", 
+          borderRadius: "3px 6px 6px 3px",
           overflow: "hidden",
-          border: "1px solid rgba(0,0,0,0.18)",
+          borderTop: hovered ? "1px solid rgba(255,255,255,0.55)" : "1px solid rgba(255,255,255,0.35)",
+          borderRight: hovered ? "1px solid rgba(255,255,255,0.55)" : "1px solid rgba(255,255,255,0.35)",
+          borderBottom: hovered ? "1px solid rgba(255,255,255,0.55)" : "1px solid rgba(255,255,255,0.35)",
           borderLeft: "none",
-          backgroundColor: "rgba(128,128,128,0.06)",
-          position: "relative"
+          backgroundColor: "rgba(255,255,255,0.06)",
+          position: "relative",
+          transition: "border-color 0.3s ease, background-color 0.3s ease"
         }}
       >
         <CoverImg book={book} grayscale />
-        
+
+        {/* Diagonal glassmorphic sleeve shine */}
+        <div style={{
+          position: "absolute",
+          inset: 0,
+          background: hovered
+            ? "linear-gradient(135deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.1) 50%, transparent 100%)"
+            : "linear-gradient(135deg, rgba(255,255,255,0.22) 0%, transparent 100%)",
+          pointerEvents: "none",
+          zIndex: 4,
+          transition: "background 0.3s ease"
+        }} />
+
         {/* Outward edge highlight border */}
         <div style={{
           position: "absolute", inset: 0,
-          border: "1px solid rgba(0,0,0,0.1)",
+          borderTop: hovered ? "1px solid rgba(255,255,255,0.3)" : "1px solid rgba(255,255,255,0.12)",
+          borderRight: hovered ? "1px solid rgba(255,255,255,0.3)" : "1px solid rgba(255,255,255,0.12)",
+          borderBottom: hovered ? "1px solid rgba(255,255,255,0.3)" : "1px solid rgba(255,255,255,0.12)",
           borderLeft: "none",
           borderRadius: "inherit",
           pointerEvents: "none",
-          zIndex: 4
+          zIndex: 4,
+          transition: "border-color 0.3s ease"
         }} />
 
         {/* 3D Page thickness simulation on the right edge */}
@@ -1048,7 +1120,7 @@ function BookCard({ book, onClick }: { book: BookItem; onClick: () => void }) {
             position: "absolute",
             top: "5px",
             right: "5px",
-            backgroundColor: "#f59e0b",
+            backgroundColor: theme ? theme.primary : "#f59e0b",
             color: "#ffffff",
             fontSize: "0.38rem",
             fontWeight: 800,
@@ -1079,22 +1151,96 @@ function BookCard({ book, onClick }: { book: BookItem; onClick: () => void }) {
   );
 }
 
+// Amsterdam weather via Open-Meteo (free, no API key)
+const WMO_ICONS: Record<number, { icon: string; label: string }> = {
+  0: { icon: "☀️", label: "Clear" }, 1: { icon: "🌤", label: "Mainly clear" },
+  2: { icon: "⛅", label: "Partly cloudy" }, 3: { icon: "☁️", label: "Overcast" },
+  45: { icon: "🌫", label: "Fog" }, 48: { icon: "🌫", label: "Rime fog" },
+  51: { icon: "🌦", label: "Light drizzle" }, 53: { icon: "🌦", label: "Drizzle" },
+  55: { icon: "🌧", label: "Heavy drizzle" },
+  61: { icon: "🌧", label: "Light rain" }, 63: { icon: "🌧", label: "Rain" },
+  65: { icon: "🌧", label: "Heavy rain" },
+  71: { icon: "🌨", label: "Light snow" }, 73: { icon: "❄️", label: "Snow" },
+  75: { icon: "❄️", label: "Heavy snow" },
+  80: { icon: "🌦", label: "Rain showers" }, 81: { icon: "🌧", label: "Showers" },
+  82: { icon: "⛈", label: "Heavy showers" },
+  95: { icon: "⛈", label: "Thunderstorm" }, 99: { icon: "⛈", label: "Heavy storm" },
+};
+
+function getISOWeek(date: Date): number {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+}
+
 export default function DailyJournalFeed({ posts, moments = [], initialBooks = [] }: { posts: any[], moments?: any[], initialBooks?: BookItem[] }) {
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(STATIC_SEEDED_EVENTS);
+  const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
+  const selectedTheme = getSelectedTheme(selectedDate, calendarEvents);
+
   const [isDark, setIsDark] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
   const [books, setBooks] = useState<BookItem[]>(initialBooks.length > 0 ? initialBooks : []);
   const [activeBook, setActiveBook] = useState<BookItem | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [weather, setWeather] = useState<{ temp: number; icon: string; label: string } | null>(null);
+  const [isBlogDropdownOpen, setIsBlogDropdownOpen] = useState(true);
 
   useEffect(() => {
     setMounted(true);
+    setSelectedDate(new Date());
+    // Fetch Amsterdam live weather
+    fetch("https://api.open-meteo.com/v1/forecast?latitude=52.3676&longitude=4.9041&current=temperature_2m,weathercode,weather_code&timezone=Europe%2FAmsterdam&temperature_unit=celsius")
+      .then(r => r.json())
+      .then(data => {
+        const temp = Math.round(data?.current?.temperature_2m ?? 0);
+        const code = data?.current?.weather_code ?? data?.current?.weathercode ?? 0;
+        const wmo = WMO_ICONS[code] ?? { icon: "🌡", label: "Weather" };
+        setWeather({ temp, icon: wmo.icon, label: wmo.label });
+      })
+      .catch(() => {});
   }, []);
+
+  // Dynamic seasonal theme styling injected safely client-side to prevent hydration mismatch
+  useEffect(() => {
+    if (!mounted || !selectedTheme) {
+      const existing = document.getElementById("dynamic-seasonal-theme");
+      if (existing) existing.remove();
+      return;
+    }
+
+    let styleTag = document.getElementById("dynamic-seasonal-theme") as HTMLStyleElement;
+    if (!styleTag) {
+      styleTag = document.createElement("style");
+      styleTag.id = "dynamic-seasonal-theme";
+      document.head.appendChild(styleTag);
+    }
+
+    styleTag.innerHTML = `
+      :root {
+        --bg-color: ${selectedTheme.bgLight} !important;
+        --bg-color-rgba: rgba(255, 255, 255, 0.75) !important;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg-color: ${selectedTheme.bgDark} !important;
+          --bg-color-rgba: rgba(0, 0, 0, 0.75) !important;
+        }
+      }
+    `;
+
+    return () => {
+      const existing = document.getElementById("dynamic-seasonal-theme");
+      if (existing) existing.remove();
+    };
+  }, [mounted, selectedTheme]);
 
   const visibleCards = 3; // Always show 3 cards per slide for a beautiful minimalist gallery layout
 
   useEffect(() => {
-    getAllBooks().then(data => setBooks(data)).catch(err => console.error(err));
+    getAllBooks().then(data => setBooks(data)).catch(err => console.warn(err?.message || err));
   }, []);
 
   // Sync system dark mode preference
@@ -1113,15 +1259,13 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
       try {
         const events = await getAllCalendarEvents();
         setCalendarEvents(events);
-      } catch (err) {
-        console.error("Failed to fetch calendar events:", err);
+      } catch (err: any) {
+        console.warn("Failed to fetch calendar events:", err?.message || err);
       }
     };
     fetchCalendar();
   }, []);
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const selectedTheme = getSelectedTheme(selectedDate, calendarEvents);
 
   // Sort all moments by published date descending, or fallback to aesthetic placeholders if empty
   const displayMoments = useMemo(() => {
@@ -1216,27 +1360,27 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
       if (!ref.current) return;
       const container = ref.current;
       const containerCenter = container.scrollLeft + (container.offsetWidth / 2);
-      
+
       const pills = container.querySelectorAll(".date-pill");
       pills.forEach((pill) => {
         const el = pill as HTMLElement;
         const pillCenter = el.offsetLeft + (el.offsetWidth / 2);
         const distance = Math.abs(pillCenter - containerCenter);
-        
+
         const maxEffectDistance = 150; // pixels
         const distanceRatio = Math.min(distance / maxEffectDistance, 1); // 0 at center, 1 at edge
-        
+
         // Apple-premium 3D physical scaling: 1.0 (center) -> 0.88 (edges)
         const scale = 1.0 - (distanceRatio * 0.12);
-        
+
         // Elegant opacity fall-off: 1.0 (center) -> 0.50 (edges)
         const opacity = 1.0 - (distanceRatio * 0.50);
-        
+
         // watchOS 3D barrel roll rotation: bends date strip in 3D cylindrical space
         const direction = pillCenter < containerCenter ? 1 : -1;
         const rotateY = direction * (distanceRatio * 20); // rotate up to 20deg
         const translateZ = -distanceRatio * 22; // push back in Z-axis up to 22px
-        
+
         // Direct DOM manipulation guarantees buttery 120 FPS animations without React lag
         el.style.transform = `perspective(500px) scale(${scale}) rotateY(${rotateY}deg) translateZ(${translateZ}px)`;
         el.style.opacity = `${opacity}`;
@@ -1246,9 +1390,6 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
 
   // Orchestrates scrolling a target date pill perfectly to the horizontal viewport center
   const selectAndCenterDate = (date: Date) => {
-    if (date.toDateString() !== selectedDate.toDateString()) {
-      triggerActionClick();
-    }
     setSelectedDate(date);
 
 
@@ -1272,7 +1413,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
             const el = targetEl as HTMLElement;
             isProgrammaticScroll.current = true;
             const scrollLeft = el.offsetLeft - (container.offsetWidth / 2) + (el.offsetWidth / 2);
-            
+
             container.scrollTo({ left: scrollLeft, behavior: "smooth" });
           }
         });
@@ -1326,8 +1467,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
 
   const isSameDay = (d1: Date, d2: Date) => {
     return d1.getFullYear() === d2.getFullYear() &&
-           d1.getMonth() === d2.getMonth() &&
-           d1.getDate() === d2.getDate();
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
   };
 
   // Timezone-safe parsing to preserve the exact publication calendar date from Blogger API
@@ -1342,7 +1483,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
     const year = selectedDate.getFullYear();
     const month = selectedDate.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    
+
     const dates = [];
     for (let i = 1; i <= daysInMonth; i++) {
       dates.push(new Date(year, month, i));
@@ -1356,6 +1497,10 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
   const filteredPosts = useMemo(
     () => posts.filter(post => isSameDay(parseBloggerDate(post.published), selectedDate)),
     [posts, selectedDate]
+  );
+  const sortedAllPosts = useMemo(
+    () => [...posts].sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()),
+    [posts]
   );
   const hasPostOnDate = useCallback(
     (d: Date) => posts.some(post => isSameDay(parseBloggerDate(post.published), d)),
@@ -1389,7 +1534,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
     pills.forEach((pill, index) => {
       const pillCenter = (pill as HTMLElement).offsetLeft + ((pill as HTMLElement).offsetWidth / 2);
       const distance = Math.abs(pillCenter - containerCenter);
-      
+
       if (distance < minDistance) {
         minDistance = distance;
         closestIndex = index;
@@ -1399,7 +1544,6 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
     if (closestIndex !== -1) {
       // 1. Play haptic light ticks immediately during active scroll without React re-render!
       if (closestIndex !== lastHapticIndexRef.current) {
-        triggerLightClick();
         lastHapticIndexRef.current = closestIndex;
 
         // Perform instant DOM highlight for closest index immediately
@@ -1442,7 +1586,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
     for (let i = 0; i < firstDay; i++) {
       days.push(<div key={`empty-${i}`} style={{ width: "100%", aspectRatio: "1/1" }} />);
     }
-    
+
     // Actual days
     for (let i = 1; i <= daysInMonth; i++) {
       const date = new Date(year, month, i);
@@ -1450,58 +1594,58 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
       const isToday = isSameDay(date, today);
       const hasPost = hasPostOnDate(date);
       const cellTheme = getSelectedTheme(date, calendarEvents);
-      
+
       days.push(
-        <div 
-          key={i} 
+        <div
+          key={i}
           className="calendar-day-cell"
           onClick={() => {
             selectAndCenterDate(date);
             setIsCalendarOpen(false);
           }}
           title={cellTheme ? cellTheme.text : undefined}
-          style={{ 
-            width: "100%", 
-            aspectRatio: "1/1", 
-            display: "flex", 
-            alignItems: "center", 
+          style={{
+            width: "100%",
+            aspectRatio: "1/1",
+            display: "flex",
+            alignItems: "center",
             justifyContent: "center",
             cursor: "pointer",
             borderRadius: "50%",
             fontSize: "0.75rem",
             fontWeight: isSelected ? "600" : (cellTheme || hasPost ? "700" : "500"),
-            backgroundColor: isSelected 
-              ? (selectedTheme ? selectedTheme.primary : (hasPost ? "#B47A3E" : "var(--text-primary)")) 
-              : (cellTheme 
-                  ? (isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(255, 255, 255, 0.95)") 
-                  : (hasPost 
-                      ? (isDark ? "rgba(180, 122, 62, 0.12)" : "#ffffff") 
-                      : "transparent")),
-            color: isSelected 
-              ? "var(--bg-color)" 
-              : (isToday 
-                  ? "#ff3b30" 
-                  : (cellTheme 
-                      ? cellTheme.primary 
-                      : (hasPost ? "#B47A3E" : "var(--text-primary)"))),
+            backgroundColor: isSelected
+              ? (selectedTheme ? selectedTheme.primary : (hasPost ? "#B47A3E" : "var(--text-primary)"))
+              : (cellTheme
+                ? (isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(255, 255, 255, 0.95)")
+                : (hasPost
+                  ? (isDark ? "rgba(180, 122, 62, 0.12)" : "#ffffff")
+                  : "transparent")),
+            color: isSelected
+              ? "var(--bg-color)"
+              : (isToday
+                ? "#ff3b30"
+                : (cellTheme
+                  ? cellTheme.primary
+                  : (hasPost ? "#B47A3E" : "var(--text-primary)"))),
             border: isSelected
               ? "none"
-              : (cellTheme 
-                  ? `1px solid ${cellTheme.primary}45` 
-                  : (hasPost && !isSelected ? "1px solid rgba(180, 122, 62, 0.45)" : "none")),
+              : (cellTheme
+                ? `1px solid ${cellTheme.primary}45`
+                : (hasPost && !isSelected ? "1px solid rgba(180, 122, 62, 0.45)" : "none")),
             boxShadow: isSelected
-              ? (isDark 
-                  ? "0 4px 10px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2)" 
-                  : "0 4px 12px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.5)")
+              ? (isDark
+                ? "0 4px 10px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2)"
+                : "0 4px 12px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.5)")
               : (hasPost
-                  ? (isDark 
-                      ? "4px 4px 12px rgba(0, 0, 0, 0.5), -2px -2px 8px rgba(255, 255, 255, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.06)" 
-                      : "4px 4px 10px rgba(180, 165, 150, 0.28), -3px -3px 8px #ffffff, inset 0 1px 0 #ffffff")
-                  : (cellTheme
-                      ? (isDark 
-                          ? "0 3px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)" 
-                          : "0 3px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9)")
-                      : "none")),
+                ? (isDark
+                  ? "4px 4px 12px rgba(0, 0, 0, 0.5), -2px -2px 8px rgba(255, 255, 255, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.06)"
+                  : "4px 4px 10px rgba(180, 165, 150, 0.28), -3px -3px 8px #ffffff, inset 0 1px 0 #ffffff")
+                : (cellTheme
+                  ? (isDark
+                    ? "0 3px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)"
+                    : "0 3px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9)")
+                  : "none")),
             transition: "all 0.2s ease",
             position: "relative"
           }}
@@ -1516,10 +1660,10 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
   };
 
   return (
-    <div 
+    <div
       className="daily-journal-feed-container"
-      style={{ 
-        margin: "0 auto", 
+      style={{
+        margin: "0 auto",
         fontFamily: "var(--font-sans)",
         color: "var(--text-primary)"
       }}
@@ -1534,20 +1678,6 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
       {mounted && selectedTheme?.type === "general_holiday" && <HolyLightEffect />}
       {mounted && showBirthdayConfetti && selectedTheme && (
         <BirthdayConfettiEffect type={selectedTheme.type} />
-      )}
-      {selectedTheme && (
-        <style>{`
-          :root {
-            --bg-color: ${selectedTheme.bgLight} !important;
-            --bg-color-rgba: rgba(255, 255, 255, 0.75) !important;
-          }
-          @media (prefers-color-scheme: dark) {
-            :root {
-              --bg-color: ${selectedTheme.bgDark} !important;
-              --bg-color-rgba: rgba(0, 0, 0, 0.75) !important;
-            }
-          }
-        `}</style>
       )}
       <style>{`
         .blog-slider-section {
@@ -1706,7 +1836,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
             margin-right: calc(-4vw - 0.65rem) !important;
             padding-left: calc(50% - 25px) !important;
             padding-right: calc(50% - 25px) !important;
-            padding-bottom: 0.75rem !important;
+            padding-bottom: 0.2rem !important;
+            margin-bottom: 0.15rem !important;
           }
           .timeline-post-link {
             gap: 0.6rem !important;
@@ -1768,817 +1899,739 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
       <div className="mobile-only-section">
         {/* 1. HEADER: DAY & CUSTOM DATE PICKER (FULL WIDTH, ABOVE COLUMNS) */}
         <FadeIn delay={0.05} style={{ position: "relative", zIndex: 999999 }}>
-        <div className="journal-header-container" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", padding: "0 0.25rem" }}>
-          
-          {/* Casino-style letter-by-letter slot-machine vertical roll window */}
-          <h1 
-            className="journal-day-header"
-            style={{ 
-              fontSize: "2.5rem", 
-              fontWeight: "800", 
-              fontFamily: "var(--font-sans)",
-              color: "var(--text-primary)",
-              margin: 0, 
-              lineHeight: 1,
-              letterSpacing: "-0.02em",
-              display: "flex",
-              alignItems: "center"
-            }}
-          >
-            {selectedDate.toLocaleDateString("en-US", { weekday: "short" }).split("").map((char, idx) => {
-              // Proportional standard spacing to make letter placement perfectly natural (not too tight, not too loose)
-              let charWidth = "0.56em";
-              if (char === "W") charWidth = "0.90em";
-              else if (char === "M") charWidth = "0.84em";
-              else if (char === "T" || char === "F" || char === "S") charWidth = "0.62em";
-              else if (char === "w" || char === "m") charWidth = "0.78em";
-              else if (char === "i" || char === "l") charWidth = "0.26em";
-              else if (char === "f" || char === "t" || char === "r") charWidth = "0.38em";
+          <div className="journal-header-container" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", padding: "0 0.25rem" }}>
 
-              return (
-                <div 
-                  key={idx}
-                  style={{ 
-                    height: "1.55em", 
-                    width: charWidth,
-                    overflow: "hidden", 
-                    display: "inline-flex", 
-                    alignItems: "center", 
-                    justifyContent: "center",
-                    position: "relative"
+            {/* Casino-style letter-by-letter slot-machine vertical roll window */}
+            <h1
+              className="journal-day-header"
+              style={{
+                fontSize: "2.5rem",
+                fontWeight: "800",
+                fontFamily: "var(--font-sans)",
+                color: "var(--text-primary)",
+                margin: 0,
+                lineHeight: 1,
+                letterSpacing: "-0.02em",
+                display: "flex",
+                alignItems: "center"
+              }}
+            >
+              <AnimatePresence mode="wait" custom={scrollDirection}>
+                <motion.span
+                  key={selectedDate.toLocaleDateString("en-US", { weekday: "short" })}
+                  custom={scrollDirection}
+                  variants={{
+                    initial: (direction: "forward" | "backward") => ({
+                      y: direction === "forward" ? "40%" : "-40%",
+                      opacity: 0
+                    }),
+                    animate: {
+                      y: 0,
+                      opacity: 1,
+                      transition: { duration: 0.18, ease: "easeOut" }
+                    },
+                    exit: (direction: "forward" | "backward") => ({
+                      y: direction === "forward" ? "-40%" : "40%",
+                      opacity: 0,
+                      transition: { duration: 0.12, ease: "easeIn" }
+                    })
                   }}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  style={{ display: "inline-block", lineHeight: 1 }}
                 >
-                  <AnimatePresence mode="popLayout" custom={scrollDirection}>
-                    <motion.span
-                      key={`${char}-${idx}`}
-                      custom={scrollDirection}
-                      variants={{
-                        initial: (direction: "forward" | "backward") => ({
-                          y: direction === "forward" ? "100%" : "-100%",
-                          opacity: 0,
-                          filter: "blur(3px)"
-                        }),
-                        animate: {
-                          y: 0,
-                          opacity: 1,
-                          filter: "blur(0px)",
-                          transition: {
-                            type: "spring",
-                            stiffness: 380,
-                            damping: 20,
-                            delay: idx * 0.05 // Authentic staggered jackpot reel stops!
-                          }
-                        },
-                        exit: (direction: "forward" | "backward") => ({
-                          y: direction === "forward" ? "-100%" : "100%",
-                          opacity: 0,
-                          filter: "blur(3px)",
-                          transition: {
-                            duration: 0.14,
-                            ease: "easeInOut"
-                          }
-                        })
-                      }}
-                      initial="initial"
-                      animate="animate"
-                      exit="exit"
-                      style={{
-                        display: "inline-block",
-                        lineHeight: 1,
-                      }}
-                    >
-                      {char}
-                    </motion.span>
-                  </AnimatePresence>
-                </div>
-              );
-            })}
-          </h1>
-          
-          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-            {/* DYNAMIC TODAY BUTTON */}
-            {!isSameDay(selectedDate, today) && (
-              <button
-                onClick={() => selectAndCenterDate(new Date())}
-                className="today-btn"
-                style={{
-                  padding: "6px 12px", 
-                  borderRadius: "16px",
-                  backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
-                  border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
-                  boxShadow: isDark 
-                    ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(0, 0, 0, 0.6)" 
-                    : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2px 0 rgba(0, 0, 0, 0.08)",
-                  cursor: "pointer",
-                  fontSize: "0.76rem", 
-                  fontWeight: "600",
-                  color: selectedTheme ? selectedTheme.primary : "var(--text-primary)",
-                  fontFamily: "var(--font-sans)"
-                }}
-              >
-                Today
-              </button>
-            )}
+                  {selectedDate.toLocaleDateString("en-US", { weekday: "short" })}
+                </motion.span>
+              </AnimatePresence>
+            </h1>
 
-            {/* Custom Date Picker Button & Dropdown */}
-            <div style={{ position: "relative", zIndex: 1000 }} ref={calendarMobileRef}>
-              <button 
-                onClick={handleOpenCalendar}
-                className="month-picker-btn"
-                style={{ 
-                  display: "flex", 
-                  alignItems: "center", 
-                  gap: "6px",
-                  color: selectedTheme ? selectedTheme.primary : "var(--text-primary)", 
-                  cursor: "pointer",
-                  padding: "6px 12px", 
-                  backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
-                  border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
-                  boxShadow: isDark 
-                    ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(0, 0, 0, 0.6)" 
-                    : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2px 0 rgba(0, 0, 0, 0.08)",
-                  outline: "none",
-                  borderRadius: "16px",
-                  fontFamily: "var(--font-sans)"
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                  <span style={{ fontSize: "0.82rem", fontWeight: "600", fontFamily: "var(--font-sans)", letterSpacing: "-0.01em" }}>
-                    {selectedDate.toLocaleDateString("en-US", { month: "long" })}
-                  </span>
-                  <span style={{ fontSize: "0.82rem", fontWeight: "400", opacity: 0.65, fontFamily: "var(--font-sans)", paddingTop: "0.5px" }}>
-                    {selectedDate.getFullYear()}
-                  </span>
-                </div>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: selectedTheme ? 0.9 : 0.6, color: selectedTheme ? selectedTheme.primary : "inherit", transform: isCalendarOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s ease" }}>
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </button>
-            
-            {/* CUSTOM CALENDAR POPUP */}
-            <AnimatePresence>
-              {isCalendarOpen && (
-                <motion.div 
-                  className="custom-calendar-popup"
-                  initial={{ opacity: 0, scale: 0.94, y: -8, originX: 0.9, originY: 0 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.96, y: -4 }}
-                  transition={{ type: "spring", damping: 25, stiffness: 320 }}
+            <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+              {/* DYNAMIC TODAY BUTTON */}
+              {!isSameDay(selectedDate, today) && (
+                <button
+                  onClick={() => selectAndCenterDate(new Date())}
+                  className="today-btn"
                   style={{
-                    position: "absolute",
-                    top: "calc(100% + 8px)",
-                    right: 0,
-                    width: "240px", 
-                    backgroundColor: isDark 
-                      ? (selectedTheme ? selectedTheme.bgDark : "#141312") 
-                      : (selectedTheme ? selectedTheme.bgLight : "#FDFBF7"),
-                    border: selectedTheme 
-                      ? (isDark ? `1px solid rgba(255, 255, 255, 0.15)` : `1px solid rgba(180, 122, 62, 0.22)`)
-                      : (isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)"),
-                    borderRadius: "22px",
-                    boxShadow: isDark 
-                      ? "0 24px 60px -8px rgba(0, 0, 0, 0.7), 0 8px 24px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)" 
-                      : (selectedTheme 
-                          ? "0 20px 48px -8px rgba(0, 0, 0, 0.12), 0 8px 20px -4px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)"
-                          : "0 20px 48px -8px rgba(0, 0, 0, 0.1), 0 8px 20px -4px rgba(0, 0, 0, 0.05), inset 0 1px 0 #ffffff"),
-                    padding: "1.1rem", 
-                    zIndex: 100,
+                    padding: "6px 12px",
+                    borderRadius: "16px",
+                    backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
+                    border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                    boxShadow: isDark
+                      ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(0, 0, 0, 0.6)"
+                      : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2px 0 rgba(0, 0, 0, 0.08)",
+                    cursor: "pointer",
+                    fontSize: "0.76rem",
+                    fontWeight: "600",
+                    color: selectedTheme ? selectedTheme.primary : "var(--text-primary)",
+                    fontFamily: "var(--font-sans)"
                   }}
                 >
-                  {/* Calendar Header: Month Year + Chevrons */}
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.85rem" }}>
-                    <button 
-                      onClick={() => {
-                        if (isWheelPickerOpen) {
-                          setIsWheelPickerOpen(false);
-                        } else {
-                          changeMonth(-1);
-                        }
-                      }} 
-                      style={{ 
-                        background: "rgba(150,150,150,0.06)", 
-                        border: "1px solid rgba(150,150,150,0.1)", 
-                        cursor: isWheelPickerOpen ? "default" : "pointer", 
-                        color: "var(--text-primary)", 
-                        padding: "4px",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        transition: "all 0.15s ease",
-                        opacity: isWheelPickerOpen ? 0.25 : 1
-                      }}
-                      disabled={isWheelPickerOpen}
-                    >
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                    </button>
-                    
-                    <div 
-                      onClick={() => {
-                        if (!isWheelPickerOpen) {
-                          const viewYear = calendarViewDate.getFullYear();
-                          setTempMonth(calendarViewDate.getMonth());
-                          setTempYear(viewYear);
-                          setYearPageStart(viewYear - (viewYear % 8));
-                        }
-                        setIsWheelPickerOpen(!isWheelPickerOpen);
-                      }}
-                      style={{ 
-                        fontWeight: "750", 
-                        fontSize: "0.90rem", 
-                        fontFamily: "var(--font-sans)", 
-                        letterSpacing: "0.01em", 
-                        color: "var(--text-primary)",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "4px",
-                        padding: "2px 8px",
-                        borderRadius: "8px",
-                        backgroundColor: isWheelPickerOpen ? "rgba(150, 150, 150, 0.08)" : "transparent",
-                        transition: "all 0.2s ease"
-                      }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(150, 150, 150, 0.12)"}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = isWheelPickerOpen ? "rgba(150, 150, 150, 0.08)" : "transparent"}
-                    >
-                      {isWheelPickerOpen 
-                        ? `${MONTH_NAMES[tempMonth]} ${tempYear}`
-                        : calendarViewDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isWheelPickerOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s ease", opacity: 0.6 }}>
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                      </svg>
-                    </div>
+                  Today
+                </button>
+              )}
 
-                    <button 
-                      onClick={() => {
-                        if (isWheelPickerOpen) {
-                          setIsWheelPickerOpen(false);
-                        } else {
-                          changeMonth(1);
-                        }
-                      }} 
-                      style={{ 
-                        background: "rgba(150,150,150,0.06)", 
-                        border: "1px solid rgba(150,150,150,0.1)", 
-                        cursor: isWheelPickerOpen ? "default" : "pointer", 
-                        color: "var(--text-primary)", 
-                        padding: "4px",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        transition: "all 0.15s ease",
-                        opacity: isWheelPickerOpen ? 0.25 : 1
-                      }}
-                      disabled={isWheelPickerOpen}
-                    >
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </button>
+              {/* Custom Date Picker Button & Dropdown */}
+              <div style={{ position: "relative", zIndex: 1000 }} ref={calendarMobileRef}>
+                <button
+                  onClick={handleOpenCalendar}
+                  className="month-picker-btn"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    color: selectedTheme ? selectedTheme.primary : "var(--text-primary)",
+                    cursor: "pointer",
+                    padding: "6px 12px",
+                    backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
+                    border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                    boxShadow: isDark
+                      ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(0, 0, 0, 0.6)"
+                      : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2px 0 rgba(0, 0, 0, 0.08)",
+                    outline: "none",
+                    borderRadius: "16px",
+                    fontFamily: "var(--font-sans)"
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                    <span style={{ fontSize: "0.82rem", fontWeight: "600", fontFamily: "var(--font-sans)", letterSpacing: "-0.01em" }}>
+                      {selectedDate.toLocaleDateString("en-US", { month: "long" })}
+                    </span>
+                    <span style={{ fontSize: "0.82rem", fontWeight: "400", opacity: 0.65, fontFamily: "var(--font-sans)", paddingTop: "0.5px" }}>
+                      {selectedDate.getFullYear()}
+                    </span>
                   </div>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: selectedTheme ? 0.9 : 0.6, color: selectedTheme ? selectedTheme.primary : "inherit", transform: isCalendarOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s ease" }}>
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
 
-                  {isWheelPickerOpen ? (
-                    /* TACTILE KEYCAP GRID DASHBOARD SELECTOR */
-                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                      <div style={{ display: "flex", gap: "10px", width: "100%" }}>
-                        {/* Month Picker Column */}
-                        <div style={{ flex: 1.2, display: "flex", flexDirection: "column", gap: "4px" }}>
-                          <span style={{ fontSize: "0.62rem", fontWeight: "750", color: "var(--text-secondary)", opacity: 0.7, textTransform: "uppercase", letterSpacing: "0.03em", fontFamily: "var(--font-sans)", paddingLeft: "2px" }}>
-                            Month
-                          </span>
-                          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" }}>
-                            {SHORT_MONTHS.map((m, idx) => {
-                              const isSelected = tempMonth === idx;
-                              return (
-                                <button
-                                  key={m}
-                                  onClick={() => {
-                                    setTempMonth(idx);
-                                    if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(10);
-                                  }}
-                                  style={{
-                                    padding: "5px 0",
-                                    borderRadius: "8px",
-                                    fontSize: "0.68rem",
-                                    fontWeight: "700",
-                                    fontFamily: "var(--font-sans)",
-                                    textAlign: "center",
-                                    cursor: "pointer",
-                                    border: isSelected 
-                                      ? "1px solid transparent" 
-                                      : (isDark ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.06)"),
-                                    backgroundColor: isSelected 
-                                      ? (selectedTheme ? selectedTheme.primary : "var(--text-primary)")
-                                      : (isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff"),
-                                    color: isSelected 
-                                      ? (selectedTheme ? "#ffffff" : "var(--bg-color)")
-                                      : "var(--text-primary)",
-                                    boxShadow: isSelected
-                                      ? (isDark 
-                                          ? "0 3px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -2px 0 rgba(0,0,0,0.4)" 
-                                          : "0 3px 8px rgba(0,0,0,0.12), inset 0 1.5px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)")
-                                      : (isDark 
-                                          ? "0 2px 4px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1.5px 0 rgba(0,0,0,0.3)" 
-                                          : "0 2px 4px rgba(0,0,0,0.03), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0,0,0,0.06)"),
-                                    transition: "all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    if (!isSelected) {
-                                      e.currentTarget.style.transform = "translateY(-1px) scale(1.05)";
-                                      e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.1)" : "#f5f5f7";
-                                    }
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    if (!isSelected) {
-                                      e.currentTarget.style.transform = "none";
-                                      e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff";
-                                    }
-                                  }}
-                                  onMouseDown={(e) => {
-                                    e.currentTarget.style.transform = "scale(0.94)";
-                                  }}
-                                  onMouseUp={(e) => {
-                                    if (!isSelected) {
-                                      e.currentTarget.style.transform = "translateY(-1px) scale(1.05)";
-                                    } else {
-                                      e.currentTarget.style.transform = "none";
-                                    }
-                                  }}
-                                >
-                                  {m}
-                                </button>
-                              );
-                            })}
-                          </div>
+                {/* CUSTOM CALENDAR POPUP */}
+                <AnimatePresence>
+                  {isCalendarOpen && (
+                    <motion.div
+                      className="custom-calendar-popup"
+                      initial={{ opacity: 0, scale: 0.94, y: -8, originX: 0.9, originY: 0 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.96, y: -4 }}
+                      transition={{ type: "spring", damping: 25, stiffness: 320 }}
+                      style={{
+                        position: "absolute",
+                        top: "calc(100% + 8px)",
+                        right: 0,
+                        width: "240px",
+                        backgroundColor: isDark
+                          ? (selectedTheme ? selectedTheme.bgDark : "#141312")
+                          : (selectedTheme ? selectedTheme.bgLight : "#FDFBF7"),
+                        border: selectedTheme
+                          ? (isDark ? `1px solid rgba(255, 255, 255, 0.15)` : `1px solid rgba(180, 122, 62, 0.22)`)
+                          : (isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)"),
+                        borderRadius: "22px",
+                        boxShadow: isDark
+                          ? "0 24px 60px -8px rgba(0, 0, 0, 0.7), 0 8px 24px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)"
+                          : (selectedTheme
+                            ? "0 20px 48px -8px rgba(0, 0, 0, 0.12), 0 8px 20px -4px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)"
+                            : "0 20px 48px -8px rgba(0, 0, 0, 0.1), 0 8px 20px -4px rgba(0, 0, 0, 0.05), inset 0 1px 0 #ffffff"),
+                        padding: "1.1rem",
+                        zIndex: 100,
+                      }}
+                    >
+                      {/* Calendar Header: Month Year + Chevrons */}
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.85rem" }}>
+                        <button
+                          onClick={() => {
+                            if (isWheelPickerOpen) {
+                              setIsWheelPickerOpen(false);
+                            } else {
+                              changeMonth(-1);
+                            }
+                          }}
+                          style={{
+                            background: "rgba(150,150,150,0.06)",
+                            border: "1px solid rgba(150,150,150,0.1)",
+                            cursor: isWheelPickerOpen ? "default" : "pointer",
+                            color: "var(--text-primary)",
+                            padding: "4px",
+                            borderRadius: "50%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            transition: "all 0.15s ease",
+                            opacity: isWheelPickerOpen ? 0.25 : 1
+                          }}
+                          disabled={isWheelPickerOpen}
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
+
+                        <div
+                          onClick={() => {
+                            if (!isWheelPickerOpen) {
+                              const viewYear = calendarViewDate.getFullYear();
+                              setTempMonth(calendarViewDate.getMonth());
+                              setTempYear(viewYear);
+                              setYearPageStart(viewYear - (viewYear % 8));
+                            }
+                            setIsWheelPickerOpen(!isWheelPickerOpen);
+                          }}
+                          style={{
+                            fontWeight: "750",
+                            fontSize: "0.90rem",
+                            fontFamily: "var(--font-sans)",
+                            letterSpacing: "0.01em",
+                            color: "var(--text-primary)",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px",
+                            padding: "2px 8px",
+                            borderRadius: "8px",
+                            backgroundColor: isWheelPickerOpen ? "rgba(150, 150, 150, 0.08)" : "transparent",
+                            transition: "all 0.2s ease"
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(150, 150, 150, 0.12)"}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = isWheelPickerOpen ? "rgba(150, 150, 150, 0.08)" : "transparent"}
+                        >
+                          {isWheelPickerOpen
+                            ? `${MONTH_NAMES[tempMonth]} ${tempYear}`
+                            : calendarViewDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isWheelPickerOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s ease", opacity: 0.6 }}>
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                          </svg>
                         </div>
 
-                        {/* Year Picker Column */}
-                        <div style={{ flex: 0.8, display: "flex", flexDirection: "column", gap: "4px" }}>
-                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", paddingRight: "4px" }}>
-                            <span style={{ fontSize: "0.62rem", fontWeight: "750", color: "var(--text-secondary)", opacity: 0.7, textTransform: "uppercase", letterSpacing: "0.03em", fontFamily: "var(--font-sans)", paddingLeft: "2px" }}>
-                              Year
-                            </span>
-                            <div style={{ display: "flex", gap: "2px", alignItems: "center" }}>
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setYearPageStart(prev => prev - 8);
-                                }}
-                                style={{ 
-                                  background: "none", 
-                                  border: "none", 
-                                  cursor: "pointer", 
-                                  color: "var(--text-primary)", 
-                                  opacity: 0.6,
-                                  padding: "0 2px", 
-                                  display: "flex", 
-                                  alignItems: "center" 
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
-                                onMouseLeave={(e) => e.currentTarget.style.opacity = "0.6"}
-                              >
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                              </button>
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setYearPageStart(prev => prev + 8);
-                                }}
-                                style={{ 
-                                  background: "none", 
-                                  border: "none", 
-                                  cursor: "pointer", 
-                                  color: "var(--text-primary)", 
-                                  opacity: 0.6,
-                                  padding: "0 2px", 
-                                  display: "flex", 
-                                  alignItems: "center" 
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
-                                onMouseLeave={(e) => e.currentTarget.style.opacity = "0.6"}
-                              >
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                              </button>
+                        <button
+                          onClick={() => {
+                            if (isWheelPickerOpen) {
+                              setIsWheelPickerOpen(false);
+                            } else {
+                              changeMonth(1);
+                            }
+                          }}
+                          style={{
+                            background: "rgba(150,150,150,0.06)",
+                            border: "1px solid rgba(150,150,150,0.1)",
+                            cursor: isWheelPickerOpen ? "default" : "pointer",
+                            color: "var(--text-primary)",
+                            padding: "4px",
+                            borderRadius: "50%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            transition: "all 0.15s ease",
+                            opacity: isWheelPickerOpen ? 0.25 : 1
+                          }}
+                          disabled={isWheelPickerOpen}
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                      </div>
+
+                      {isWheelPickerOpen ? (
+                        /* TACTILE KEYCAP GRID DASHBOARD SELECTOR */
+                        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                          <div style={{ display: "flex", gap: "10px", width: "100%" }}>
+                            {/* Month Picker Column */}
+                            <div style={{ flex: 1.2, display: "flex", flexDirection: "column", gap: "4px" }}>
+                              <span style={{ fontSize: "0.62rem", fontWeight: "750", color: "var(--text-secondary)", opacity: 0.7, textTransform: "uppercase", letterSpacing: "0.03em", fontFamily: "var(--font-sans)", paddingLeft: "2px" }}>
+                                Month
+                              </span>
+                              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" }}>
+                                {SHORT_MONTHS.map((m, idx) => {
+                                  const isSelected = tempMonth === idx;
+                                  return (
+                                    <button
+                                      key={m}
+                                      onClick={() => {
+                                        setTempMonth(idx);
+                                        if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(10);
+                                      }}
+                                      style={{
+                                        padding: "5px 0",
+                                        borderRadius: "8px",
+                                        fontSize: "0.68rem",
+                                        fontWeight: "700",
+                                        fontFamily: "var(--font-sans)",
+                                        textAlign: "center",
+                                        cursor: "pointer",
+                                        border: isSelected
+                                          ? "1px solid transparent"
+                                          : (isDark ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.06)"),
+                                        backgroundColor: isSelected
+                                          ? (selectedTheme ? selectedTheme.primary : "var(--text-primary)")
+                                          : (isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff"),
+                                        color: isSelected
+                                          ? (selectedTheme ? "#ffffff" : "var(--bg-color)")
+                                          : "var(--text-primary)",
+                                        boxShadow: isSelected
+                                          ? (isDark
+                                            ? "0 3px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -2px 0 rgba(0,0,0,0.4)"
+                                            : "0 3px 8px rgba(0,0,0,0.12), inset 0 1.5px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)")
+                                          : (isDark
+                                            ? "0 2px 4px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1.5px 0 rgba(0,0,0,0.3)"
+                                            : "0 2px 4px rgba(0,0,0,0.03), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0,0,0,0.06)"),
+                                        transition: "all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+                                      }}
+                                      onMouseEnter={(e) => {
+                                        if (!isSelected) {
+                                          e.currentTarget.style.transform = "translateY(-1px) scale(1.05)";
+                                          e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.1)" : "#f5f5f7";
+                                        }
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        if (!isSelected) {
+                                          e.currentTarget.style.transform = "none";
+                                          e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff";
+                                        }
+                                      }}
+                                      onMouseDown={(e) => {
+                                        e.currentTarget.style.transform = "scale(0.94)";
+                                      }}
+                                      onMouseUp={(e) => {
+                                        if (!isSelected) {
+                                          e.currentTarget.style.transform = "translateY(-1px) scale(1.05)";
+                                        } else {
+                                          e.currentTarget.style.transform = "none";
+                                        }
+                                      }}
+                                    >
+                                      {m}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
+                            {/* Year Picker Column */}
+                            <div style={{ flex: 0.8, display: "flex", flexDirection: "column", gap: "4px" }}>
+                              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", paddingRight: "4px" }}>
+                                <span style={{ fontSize: "0.62rem", fontWeight: "750", color: "var(--text-secondary)", opacity: 0.7, textTransform: "uppercase", letterSpacing: "0.03em", fontFamily: "var(--font-sans)", paddingLeft: "2px" }}>
+                                  Year
+                                </span>
+                                <div style={{ display: "flex", gap: "2px", alignItems: "center" }}>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setYearPageStart(prev => prev - 8);
+                                    }}
+                                    style={{
+                                      background: "none",
+                                      border: "none",
+                                      cursor: "pointer",
+                                      color: "var(--text-primary)",
+                                      opacity: 0.6,
+                                      padding: "0 2px",
+                                      display: "flex",
+                                      alignItems: "center"
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
+                                    onMouseLeave={(e) => e.currentTarget.style.opacity = "0.6"}
+                                  >
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setYearPageStart(prev => prev + 8);
+                                    }}
+                                    style={{
+                                      background: "none",
+                                      border: "none",
+                                      cursor: "pointer",
+                                      color: "var(--text-primary)",
+                                      opacity: 0.6,
+                                      padding: "0 2px",
+                                      display: "flex",
+                                      alignItems: "center"
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
+                                    onMouseLeave={(e) => e.currentTarget.style.opacity = "0.6"}
+                                  >
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                  </button>
+                                </div>
+                              </div>
+                              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "4px" }}>
+                                {YEARS_LIST.map((y) => {
+                                  const isSelected = tempYear === y;
+                                  return (
+                                    <button
+                                      key={y}
+                                      onClick={() => {
+                                        setTempYear(y);
+                                        if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(10);
+                                      }}
+                                      style={{
+                                        padding: "5px 0",
+                                        borderRadius: "8px",
+                                        fontSize: "0.66rem",
+                                        fontWeight: "700",
+                                        letterSpacing: "-0.01em",
+                                        fontFamily: "var(--font-sans)",
+                                        textAlign: "center",
+                                        cursor: "pointer",
+                                        border: isSelected
+                                          ? "1px solid transparent"
+                                          : (isDark ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.06)"),
+                                        backgroundColor: isSelected
+                                          ? (selectedTheme ? selectedTheme.primary : "var(--text-primary)")
+                                          : (isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff"),
+                                        color: isSelected
+                                          ? (selectedTheme ? "#ffffff" : "var(--bg-color)")
+                                          : "var(--text-primary)",
+                                        boxShadow: isSelected
+                                          ? (isDark
+                                            ? "0 3px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -2px 0 rgba(0,0,0,0.4)"
+                                            : "0 3px 8px rgba(0,0,0,0.12), inset 0 1.5px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)")
+                                          : (isDark
+                                            ? "0 2px 4px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1.5px 0 rgba(0,0,0,0.3)"
+                                            : "0 2px 4px rgba(0,0,0,0.03), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0,0,0,0.06)"),
+                                        transition: "all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+                                      }}
+                                      onMouseEnter={(e) => {
+                                        if (!isSelected) {
+                                          e.currentTarget.style.transform = "translateY(-1px) scale(1.05)";
+                                          e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.1)" : "#f5f5f7";
+                                        }
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        if (!isSelected) {
+                                          e.currentTarget.style.transform = "none";
+                                          e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff";
+                                        }
+                                      }}
+                                      onMouseDown={(e) => {
+                                        e.currentTarget.style.transform = "scale(0.94)";
+                                      }}
+                                      onMouseUp={(e) => {
+                                        if (!isSelected) {
+                                          e.currentTarget.style.transform = "translateY(-1px) scale(1.05)";
+                                        } else {
+                                          e.currentTarget.style.transform = "none";
+                                        }
+                                      }}
+                                    >
+                                      {y}
+                                    </button>
+                                  );
+                                })}
+                              </div>
                             </div>
                           </div>
-                          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "4px" }}>
-                            {YEARS_LIST.map((y) => {
-                              const isSelected = tempYear === y;
-                              return (
-                                <button
-                                  key={y}
-                                  onClick={() => {
-                                    setTempYear(y);
-                                    if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(10);
-                                  }}
-                                  style={{
-                                    padding: "5px 0",
-                                    borderRadius: "8px",
-                                    fontSize: "0.66rem",
-                                    fontWeight: "700",
-                                    letterSpacing: "-0.01em",
-                                    fontFamily: "var(--font-sans)",
-                                    textAlign: "center",
-                                    cursor: "pointer",
-                                    border: isSelected 
-                                      ? "1px solid transparent" 
-                                      : (isDark ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.06)"),
-                                    backgroundColor: isSelected 
-                                      ? (selectedTheme ? selectedTheme.primary : "var(--text-primary)")
-                                      : (isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff"),
-                                    color: isSelected 
-                                      ? (selectedTheme ? "#ffffff" : "var(--bg-color)")
-                                      : "var(--text-primary)",
-                                    boxShadow: isSelected
-                                      ? (isDark 
-                                          ? "0 3px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -2px 0 rgba(0,0,0,0.4)" 
-                                          : "0 3px 8px rgba(0,0,0,0.12), inset 0 1.5px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)")
-                                      : (isDark 
-                                          ? "0 2px 4px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1.5px 0 rgba(0,0,0,0.3)" 
-                                          : "0 2px 4px rgba(0,0,0,0.03), inset 0 1px 0 #ffffff, inset 0 -1.5px 0 rgba(0,0,0,0.06)"),
-                                    transition: "all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    if (!isSelected) {
-                                      e.currentTarget.style.transform = "translateY(-1px) scale(1.05)";
-                                      e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.1)" : "#f5f5f7";
-                                    }
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    if (!isSelected) {
-                                      e.currentTarget.style.transform = "none";
-                                      e.currentTarget.style.backgroundColor = isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff";
-                                    }
-                                  }}
-                                  onMouseDown={(e) => {
-                                    e.currentTarget.style.transform = "scale(0.94)";
-                                  }}
-                                  onMouseUp={(e) => {
-                                    if (!isSelected) {
-                                      e.currentTarget.style.transform = "translateY(-1px) scale(1.05)";
-                                    } else {
-                                      e.currentTarget.style.transform = "none";
-                                    }
-                                  }}
-                                >
-                                  {y}
-                                </button>
-                              );
-                            })}
-                          </div>
+
+                          {/* Apply Done Button */}
+                          <button
+                            onClick={() => {
+                              const newDate = new Date(calendarViewDate);
+                              newDate.setMonth(tempMonth);
+                              newDate.setFullYear(tempYear);
+                              setCalendarViewDate(newDate);
+                              setIsWheelPickerOpen(false);
+                            }}
+                            style={{
+                              width: "100%",
+                              padding: "8px 12px",
+                              marginTop: "2px",
+                              backgroundColor: "var(--text-primary)",
+                              color: "var(--bg-color)",
+                              border: isDark ? "1px solid rgba(255, 255, 255, 0.15)" : "1px solid rgba(0, 0, 0, 0.12)",
+                              borderRadius: "12px",
+                              fontSize: "0.78rem",
+                              fontWeight: "700",
+                              fontFamily: "var(--font-sans)",
+                              cursor: "pointer",
+                              boxShadow: isDark
+                                ? "0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(255, 255, 255, 0.1)"
+                                : "0 4px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -2px 0 rgba(0, 0, 0, 0.1)",
+                              transition: "all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = "translateY(-1.5px)";
+                              e.currentTarget.style.boxShadow = isDark
+                                ? "0 6px 14px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25)"
+                                : "0 6px 12px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = "none";
+                              e.currentTarget.style.boxShadow = isDark
+                                ? "0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(255, 255, 255, 0.1)"
+                                : "0 4px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -2px 0 rgba(0, 0, 0, 0.1)";
+                            }}
+                            onMouseDown={(e) => {
+                              e.currentTarget.style.transform = "translateY(0.5px) scale(0.98)";
+                            }}
+                            onMouseUp={(e) => {
+                              e.currentTarget.style.transform = "translateY(-1.5px)";
+                            }}
+                          >
+                            Apply
+                          </button>
                         </div>
-                      </div>
-
-                      {/* Apply Done Button */}
-                      <button
-                        onClick={() => {
-                          const newDate = new Date(calendarViewDate);
-                          newDate.setMonth(tempMonth);
-                          newDate.setFullYear(tempYear);
-                          setCalendarViewDate(newDate);
-                          setIsWheelPickerOpen(false);
-                        }}
-                        style={{
-                          width: "100%",
-                          padding: "8px 12px",
-                          marginTop: "2px",
-                          backgroundColor: "var(--text-primary)",
-                          color: "var(--bg-color)",
-                          border: isDark ? "1px solid rgba(255, 255, 255, 0.15)" : "1px solid rgba(0, 0, 0, 0.12)",
-                          borderRadius: "12px",
-                          fontSize: "0.78rem",
-                          fontWeight: "700",
-                          fontFamily: "var(--font-sans)",
-                          cursor: "pointer",
-                          boxShadow: isDark
-                            ? "0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(255, 255, 255, 0.1)"
-                            : "0 4px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -2px 0 rgba(0, 0, 0, 0.1)",
-                          transition: "all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)"
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = "translateY(-1.5px)";
-                          e.currentTarget.style.boxShadow = isDark
-                            ? "0 6px 14px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25)"
-                            : "0 6px 12px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = "none";
-                          e.currentTarget.style.boxShadow = isDark
-                            ? "0 4px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(255, 255, 255, 0.1)"
-                            : "0 4px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -2px 0 rgba(0, 0, 0, 0.1)";
-                        }}
-                        onMouseDown={(e) => {
-                          e.currentTarget.style.transform = "translateY(0.5px) scale(0.98)";
-                        }}
-                        onMouseUp={(e) => {
-                          e.currentTarget.style.transform = "translateY(-1.5px)";
-                        }}
-                      >
-                        Apply
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      {/* Day Labels */}
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "3px", marginBottom: "0.5rem" }}>
-                        {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(day => (
-                          <div key={day} className="calendar-day-label" style={{ textAlign: "center", fontSize: "0.68rem", fontWeight: "700", color: "var(--text-secondary)" }}>
-                            {day}
+                      ) : (
+                        <>
+                          {/* Day Labels */}
+                          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "3px", marginBottom: "0.5rem" }}>
+                            {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(day => (
+                              <div key={day} className="calendar-day-label" style={{ textAlign: "center", fontSize: "0.68rem", fontWeight: "700", color: "var(--text-secondary)" }}>
+                                {day}
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
 
-                      {/* Days Grid */}
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "3px", rowGap: "5px" }}>
-                        {renderCalendarDays()}
-                      </div>
-                    </>
+                          {/* Days Grid */}
+                          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "3px", rowGap: "5px" }}>
+                            {renderCalendarDays()}
+                          </div>
+                        </>
+                      )}
+                    </motion.div>
                   )}
-                </motion.div>
-              )}
-            </AnimatePresence>
+                </AnimatePresence>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </FadeIn>
+        </FadeIn>
 
-      {/* 2. HORIZONTAL DATE SELECTOR STRIP (FULL WIDTH, ABOVE COLUMNS) */}
-      <FadeIn delay={0.1} style={{ position: "relative", zIndex: 1 }}>
-        <div 
-          ref={stripContainerMobileRef}
-          onScroll={handleStripScrollMobile}
-          className="no-scrollbar date-strip-container"
-          style={{ 
-            display: "flex", 
-            gap: "0.22rem",
-            alignItems: "flex-end", // Ground the pills to the bottom baseline so floating looks natural
-            marginBottom: "1.5rem",
+        {/* 2. HORIZONTAL DATE SELECTOR STRIP (FULL WIDTH, ABOVE COLUMNS) */}
+        <FadeIn delay={0.1} style={{ position: "relative", zIndex: 1 }}>
+          <div
+            ref={stripContainerMobileRef}
+            onScroll={handleStripScrollMobile}
+            className="no-scrollbar date-strip-container"
+            style={{
+              display: "flex",
+              gap: "0.22rem",
+              alignItems: "flex-end", // Ground the pills to the bottom baseline so floating looks natural
+            marginBottom: "0.2rem",
             borderBottom: "1px solid rgba(150, 150, 150, 0.12)",
-            padding: "12px 0 1.1rem 0", // Give 12px breathing room at the top to prevent clipping during hover/active rises
+            padding: "12px 0 0.35rem 0", // Give 12px breathing room at the top to prevent clipping during hover/active rises
             overflowX: "auto",
             scrollBehavior: "smooth",
             WebkitOverflowScrolling: "touch",
             transformStyle: "preserve-3d",
             perspective: "500px"
           }}>
-          {stripDates.map((d, i) => {
-            const isSelected = isSameDay(d, selectedDate);
-            const isToday = isSameDay(d, today);
-            const hasPost = hasPostOnDate(d);
-            const pillTheme = getSelectedTheme(d, calendarEvents);
-            
-            const isSunday = d.getDay() === 0;
-            const dKey = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-            const fullDKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-            const isHoliday = calendarEvents.some(e => (e.dateKey === dKey || e.dateKey === fullDKey) && e.type !== "ivan" && e.type !== "female" && e.type !== "male" && e.type !== "both");
-            
-            // Color Hierarchy
-            const sundayColor = "#ff3b30";
-            const holidayColor = "#ff726f"; 
-            const activeColor = isSunday 
-              ? sundayColor 
-              : (isHoliday 
-                  ? holidayColor 
-                  : (pillTheme 
-                      ? pillTheme.primary 
-                      : (selectedTheme ? selectedTheme.primary : "var(--text-primary)")));
-            
-            const bgSelected = activeColor;
-            
-            const bgUnselected = isSunday 
-              ? "rgba(255, 59, 48, 0.06)" 
-              : (isHoliday 
-                  ? "rgba(255, 114, 111, 0.05)" 
-                  : (pillTheme 
-                      ? pillTheme.bgUnselected 
-                      : (hasPost 
-                          ? "rgba(180, 122, 62, 0.08)" 
-                          : "rgba(150, 150, 150, 0.03)")));
-            
-            const borderSelected = `1.5px solid ${activeColor}`;
-            
-            const borderUnselected = isSunday 
-              ? "1px solid rgba(255, 59, 48, 0.55)" 
-              : (isHoliday 
-                  ? "1px solid rgba(255, 114, 111, 0.45)" 
-                  : (pillTheme 
-                      ? pillTheme.borderUnselected 
-                      : (hasPost 
-                          ? "1px solid rgba(180, 122, 62, 0.65)" 
-                          : (selectedTheme ? selectedTheme.borderUnselected : (isDark ? "1px solid rgba(255, 255, 255, 0.22)" : "1px solid rgba(0, 0, 0, 0.16)")))));
-            
-            return (
-              <div 
-                key={i}
-                className="date-pill"
-                data-selected={isSelected}
-                data-date={d.toDateString()}
-                onClick={() => selectAndCenterDate(d)}
-                title={pillTheme ? pillTheme.text : undefined}
-                style={{
-                  flexShrink: 0,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  width: "50px", 
-                  height: "70px", 
-                  borderRadius: "16px", 
-                  backgroundColor: isSelected ? bgSelected : bgUnselected,
-                  border: isSelected ? borderSelected : borderUnselected,
-                  color: isSelected ? "var(--bg-color)" : activeColor,
-                  // hardware acceleration properties to keep 3D transforms razor-sharp without blur or jagged edges!
-                  backfaceVisibility: "hidden",
-                  WebkitBackfaceVisibility: "hidden",
-                  WebkitFontSmoothing: "subpixel-antialiased",
-                  transformOrigin: "center center",
-                  scrollSnapAlign: "center",
-                  transform: isSelected ? "translateY(-4px)" : "translateY(0)",
-                  boxShadow: isSelected 
-                    ? (isDark 
-                        ? "0 12px 28px -4px rgba(0, 0, 0, 0.45), 0 4px 10px -2px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)" 
-                        : `0 12px 28px -4px rgba(0, 0, 0, 0.14), 0 4px 10px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.45)`)
-                    : (isDark 
-                        ? "0 2px 6px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05)" 
-                        : "0 2px 6px rgba(0, 0, 0, 0.03), inset 0 1px 0 #ffffff"),
-                  transition: "transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease"
-                }}
-              >
-                {/* Hanging ribbon bookmark for dates with posts */}
-                {hasPost && (
-                  <div 
-                    title="Contains journal entries"
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: "11px",
-                      width: "8px",
-                      height: "15px",
-                      backgroundColor: isSelected ? "var(--bg-color)" : (pillTheme ? pillTheme.primary : "#B47A3E"),
-                      clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%)",
-                      opacity: 0.95,
-                      transition: "all 0.2s ease",
-                      zIndex: 3
-                    }} 
-                  />
-                )}
+            {stripDates.map((d, i) => {
+              const isSelected = isSameDay(d, selectedDate);
+              const isToday = isSameDay(d, today);
+              const hasPost = hasPostOnDate(d);
+              const pillTheme = getSelectedTheme(d, calendarEvents);
 
-                {/* Dot indicator area */}
-                <div style={{ position: "absolute", top: "6px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  {pillTheme ? null : isToday ? (
-                    <div style={{ width: "4px", height: "4px", borderRadius: "50%", backgroundColor: isSelected ? "var(--bg-color)" : sundayColor }} />
-                  ) : null}
-                </div>
-                
-                {/* Birthday cake replaces date numbers directly */}
-                {pillTheme && pillTheme.emoji && pillTheme.emoji.includes("🎂") ? (
-                  <span 
-                    className="date-pill-day-num"
-                    style={{ 
-                      fontSize: "1.45rem", 
-                      lineHeight: 1,
-                      marginTop: "10px",
-                      display: "block"
-                    }}
-                  >
-                    🎂
-                  </span>
-                ) : (
-                  <span 
-                    className="date-pill-day-num"
-                    style={{ 
-                      fontSize: "1.22rem", 
-                      fontWeight: isSelected ? "750" : "600", // Slightly bolder for higher contrast when unselected
-                      lineHeight: 1,
-                      marginTop: "10px"
-                    }}
-                  >
-                    {d.getDate()}
-                  </span>
-                )}
-                
-                <span 
-                  className="date-pill-day-name"
-                  style={{ 
-                    fontSize: "0.6rem", 
-                    textTransform: "uppercase",
-                    fontWeight: isSelected ? "750" : "600",
-                    letterSpacing: "0.05em",
-                    marginTop: "6px",
-                    color: isSelected ? "var(--bg-color)" : (isToday ? sundayColor : (isSunday || isHoliday ? activeColor : "var(--text-secondary)")),
-                    opacity: isSelected ? 1 : (isSunday || isHoliday || isToday ? 1 : 0.85) // Significantly clearer unselected text color
+              const isSunday = d.getDay() === 0;
+              const dKey = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+              const fullDKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+              const isHoliday = calendarEvents.some(e => (e.dateKey === dKey || e.dateKey === fullDKey) && e.type !== "ivan" && e.type !== "female" && e.type !== "male" && e.type !== "both");
+
+              // Color Hierarchy
+              const sundayColor = "#ff3b30";
+              const holidayColor = "#ff726f";
+              const activeColor = isSunday
+                ? sundayColor
+                : (isHoliday
+                  ? holidayColor
+                  : (pillTheme
+                    ? pillTheme.primary
+                    : (selectedTheme ? selectedTheme.primary : "var(--text-primary)")));
+
+              const bgSelected = activeColor;
+
+              const bgUnselected = isSunday
+                ? "rgba(255, 59, 48, 0.06)"
+                : (isHoliday
+                  ? "rgba(255, 114, 111, 0.05)"
+                  : (pillTheme
+                    ? pillTheme.bgUnselected
+                    : (hasPost
+                      ? "rgba(180, 122, 62, 0.08)"
+                      : "rgba(150, 150, 150, 0.03)")));
+
+              const borderSelected = `1.5px solid ${activeColor}`;
+
+              const borderUnselected = isSunday
+                ? "1px solid rgba(255, 59, 48, 0.55)"
+                : (isHoliday
+                  ? "1px solid rgba(255, 114, 111, 0.45)"
+                  : (pillTheme
+                    ? pillTheme.borderUnselected
+                    : (hasPost
+                      ? "1px solid rgba(180, 122, 62, 0.65)"
+                      : (selectedTheme ? selectedTheme.borderUnselected : (isDark ? "1px solid rgba(255, 255, 255, 0.22)" : "1px solid rgba(0, 0, 0, 0.16)")))));
+
+              return (
+                <div
+                  key={i}
+                  className="date-pill"
+                  data-selected={isSelected}
+                  data-date={d.toDateString()}
+                  onClick={() => selectAndCenterDate(d)}
+                  title={pillTheme ? pillTheme.text : undefined}
+                  style={{
+                    flexShrink: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    width: "50px",
+                    height: "70px",
+                    borderRadius: "16px",
+                    backgroundColor: isSelected ? bgSelected : bgUnselected,
+                    border: isSelected ? borderSelected : borderUnselected,
+                    color: isSelected ? "var(--bg-color)" : activeColor,
+                    // hardware acceleration properties to keep 3D transforms razor-sharp without blur or jagged edges!
+                    backfaceVisibility: "hidden",
+                    WebkitBackfaceVisibility: "hidden",
+                    WebkitFontSmoothing: "subpixel-antialiased",
+                    transformOrigin: "center center",
+                    scrollSnapAlign: "center",
+                    transform: isSelected ? "translateY(-4px)" : "translateY(0)",
+                    boxShadow: isSelected
+                      ? (isDark
+                        ? "0 12px 28px -4px rgba(0, 0, 0, 0.45), 0 4px 10px -2px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)"
+                        : `0 12px 28px -4px rgba(0, 0, 0, 0.14), 0 4px 10px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.45)`)
+                      : (isDark
+                        ? "0 2px 6px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05)"
+                        : "0 2px 6px rgba(0, 0, 0, 0.03), inset 0 1px 0 #ffffff"),
+                    transition: "transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease"
                   }}
                 >
-                  {d.toLocaleDateString("en-US", { weekday: "short" })}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </FadeIn>
+                  {/* Hanging ribbon bookmark for dates with posts */}
+                  {hasPost && (
+                    <div
+                      title="Contains journal entries"
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: "11px",
+                        width: "8px",
+                        height: "15px",
+                        backgroundColor: isSelected ? "var(--bg-color)" : (pillTheme ? pillTheme.primary : "#B47A3E"),
+                        clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%)",
+                        opacity: 0.95,
+                        transition: "all 0.2s ease",
+                        zIndex: 3
+                      }}
+                    />
+                  )}
+
+                  {/* Dot indicator area */}
+                  <div style={{ position: "absolute", top: "6px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    {pillTheme ? null : isToday ? (
+                      <div style={{ width: "4px", height: "4px", borderRadius: "50%", backgroundColor: isSelected ? "var(--bg-color)" : sundayColor }} />
+                    ) : null}
+                  </div>
+
+                  {/* Birthday cake replaces date numbers directly */}
+                  {pillTheme && pillTheme.emoji && pillTheme.emoji.includes("🎂") ? (
+                    <span
+                      className="date-pill-day-num"
+                      style={{
+                        fontSize: "1.45rem",
+                        lineHeight: 1,
+                        marginTop: "10px",
+                        display: "block"
+                      }}
+                    >
+                      🎂
+                    </span>
+                  ) : (
+                    <span
+                      className="date-pill-day-num"
+                      style={{
+                        fontSize: "1.22rem",
+                        fontWeight: isSelected ? "750" : "600", // Slightly bolder for higher contrast when unselected
+                        lineHeight: 1,
+                        marginTop: "10px"
+                      }}
+                    >
+                      {d.getDate()}
+                    </span>
+                  )}
+
+                  <span
+                    className="date-pill-day-name"
+                    style={{
+                      fontSize: "0.6rem",
+                      textTransform: "uppercase",
+                      fontWeight: isSelected ? "750" : "600",
+                      letterSpacing: "0.05em",
+                      marginTop: "6px",
+                      color: isSelected ? "var(--bg-color)" : (isToday ? sundayColor : (isSunday || isHoliday ? activeColor : "var(--text-secondary)")),
+                      opacity: isSelected ? 1 : (isSunday || isHoliday || isToday ? 1 : 0.85) // Significantly clearer unselected text color
+                    }}
+                  >
+                    {d.toLocaleDateString("en-US", { weekday: "short" })}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </FadeIn>
       </div>
+
 
       {/* 3. SPLIT LAYOUT (3 COLUMNS ON DESKTOP, VERTICALLY STACKED ON MOBILE) */}
       <div className="feed-split-layout">
-        
+
         {/* Column 1: Events (Left Column) */}
         <FadeIn delay={0.15} className="feed-column feed-column-left" style={{ position: "relative", zIndex: 50 }}>
-          
+
           {/* DESKTOP ONLY SIDEBAR CALENDAR SECTION */}
-          <div className="desktop-only-section" style={{ 
-            borderTop: "1px solid rgba(150,150,150,0.12)", 
-            paddingTop: "1rem", 
-            marginTop: "0.85rem", 
-            marginBottom: "1rem" 
+          <div className="desktop-only-section" style={{
+            borderTop: "1px solid rgba(150,150,150,0.12)",
+            paddingTop: "1rem",
+            marginTop: "0.85rem",
+            marginBottom: "1rem"
           }}>
-            
+
             {/* 1. HEADER: DAY & CUSTOM DATE PICKER */}
             <div className="journal-header-container" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginBottom: "0.8rem" }}>
-              
+
               {/* Casino-style letter-by-letter slot-machine vertical roll window */}
-              <h1 
+              <h1
                 className="journal-day-header"
-                style={{ 
-                  fontSize: "2.1rem", 
-                  fontWeight: "800", 
+                style={{
+                  fontSize: "2.1rem",
+                  fontWeight: "800",
                   fontFamily: "var(--font-sans)",
                   color: "var(--text-primary)",
-                  margin: 0, 
+                  margin: 0,
                   lineHeight: 1,
                   letterSpacing: "-0.02em",
                   display: "flex",
                   alignItems: "center"
                 }}
               >
-                {selectedDate.toLocaleDateString("en-US", { weekday: "short" }).split("").map((char, idx) => {
-                  let charWidth = "0.56em";
-                  if (char === "W") charWidth = "0.90em";
-                  else if (char === "M") charWidth = "0.84em";
-                  else if (char === "T" || char === "F" || char === "S") charWidth = "0.62em";
-                  else if (char === "w" || char === "m") charWidth = "0.78em";
-                  else if (char === "i" || char === "l") charWidth = "0.26em";
-                  else if (char === "f" || char === "t" || char === "r") charWidth = "0.38em";
-
-                  return (
-                    <div 
-                      key={idx}
-                      style={{ 
-                        height: "1.55em", 
-                        width: charWidth,
-                        overflow: "hidden", 
-                        display: "inline-flex", 
-                        alignItems: "center", 
-                        justifyContent: "center",
-                        position: "relative"
-                      }}
-                    >
-                      <AnimatePresence mode="popLayout" custom={scrollDirection}>
-                        <motion.span
-                          key={`${char}-${idx}`}
-                          custom={scrollDirection}
-                          variants={{
-                            initial: (direction: "forward" | "backward") => ({
-                              y: direction === "forward" ? "100%" : "-100%",
-                              opacity: 0,
-                              filter: "blur(3px)"
-                            }),
-                            animate: {
-                              y: 0,
-                              opacity: 1,
-                              filter: "blur(0px)",
-                              transition: {
-                                type: "spring",
-                                stiffness: 380,
-                                damping: 20,
-                                delay: idx * 0.05
-                              }
-                            },
-                            exit: (direction: "forward" | "backward") => ({
-                              y: direction === "forward" ? "-100%" : "100%",
-                              opacity: 0,
-                              filter: "blur(3px)",
-                              transition: {
-                                duration: 0.14,
-                                ease: "easeInOut"
-                              }
-                            })
-                          }}
-                          initial="initial"
-                          animate="animate"
-                          exit="exit"
-                          style={{
-                            display: "inline-block",
-                            lineHeight: 1,
-                          }}
-                        >
-                          {char}
-                        </motion.span>
-                      </AnimatePresence>
-                    </div>
-                  );
-                })}
+                <AnimatePresence mode="wait" custom={scrollDirection}>
+                  <motion.span
+                    key={selectedDate.toLocaleDateString("en-US", { weekday: "short" })}
+                    custom={scrollDirection}
+                    variants={{
+                      initial: (direction: "forward" | "backward") => ({
+                        y: direction === "forward" ? "40%" : "-40%",
+                        opacity: 0
+                      }),
+                      animate: {
+                        y: 0,
+                        opacity: 1,
+                        transition: { duration: 0.18, ease: "easeOut" }
+                      },
+                      exit: (direction: "forward" | "backward") => ({
+                        y: direction === "forward" ? "-40%" : "40%",
+                        opacity: 0,
+                        transition: { duration: 0.12, ease: "easeIn" }
+                      })
+                    }}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    style={{ display: "inline-block", lineHeight: 1 }}
+                  >
+                    {selectedDate.toLocaleDateString("en-US", { weekday: "short" })}
+                  </motion.span>
+                </AnimatePresence>
               </h1>
-              
+
               <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginTop: "0.6rem", width: "100%" }}>
                 {/* DYNAMIC TODAY BUTTON */}
                 {!isSameDay(selectedDate, today) && (
@@ -2586,15 +2639,15 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     onClick={() => selectAndCenterDate(new Date())}
                     className="today-btn"
                     style={{
-                      padding: "5px 10px", 
+                      padding: "5px 10px",
                       borderRadius: "12px",
                       backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
                       border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
-                      boxShadow: isDark 
-                        ? "0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)" 
+                      boxShadow: isDark
+                        ? "0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)"
                         : "0 4px 12px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff",
                       cursor: "pointer",
-                      fontSize: "0.72rem", 
+                      fontSize: "0.72rem",
                       fontWeight: "600",
                       color: selectedTheme ? selectedTheme.primary : "var(--text-primary)",
                       fontFamily: "var(--font-sans)"
@@ -2606,20 +2659,20 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
 
                 {/* Custom Date Picker Button & Dropdown */}
                 <div style={{ position: "relative", zIndex: 1000 }} ref={calendarDesktopRef}>
-                  <button 
+                  <button
                     onClick={handleOpenCalendar}
                     className="month-picker-btn"
-                    style={{ 
-                      display: "flex", 
-                      alignItems: "center", 
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
                       gap: "5px",
-                      color: selectedTheme ? selectedTheme.primary : "var(--text-primary)", 
+                      color: selectedTheme ? selectedTheme.primary : "var(--text-primary)",
                       cursor: "pointer",
-                      padding: "5px 10px", 
+                      padding: "5px 10px",
                       backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
                       border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
-                      boxShadow: isDark 
-                        ? "0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)" 
+                      boxShadow: isDark
+                        ? "0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)"
                         : "0 4px 12px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff",
                       outline: "none",
                       borderRadius: "12px",
@@ -2633,11 +2686,11 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                       <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
                   </button>
-                
+
                   {/* CUSTOM CALENDAR POPUP */}
                   <AnimatePresence>
                     {isCalendarOpen && (
-                      <motion.div 
+                      <motion.div
                         className="custom-calendar-popup"
                         initial={{ opacity: 0, scale: 0.94, y: -8, originX: 0, originY: 0 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -2646,30 +2699,30 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                         style={{
                           position: "absolute",
                           top: "calc(100% + 8px)",
-                          left: 0, 
-                          width: "230px", 
-                          backgroundColor: isDark 
-                            ? (selectedTheme ? selectedTheme.bgDark : "#141312") 
+                          left: 0,
+                          width: "230px",
+                          backgroundColor: isDark
+                            ? (selectedTheme ? selectedTheme.bgDark : "#141312")
                             : (selectedTheme ? selectedTheme.bgLight : "#FDFBF7"),
                           border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
                           borderRadius: "18px",
-                          boxShadow: isDark 
-                            ? "0 20px 48px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)" 
+                          boxShadow: isDark
+                            ? "0 20px 48px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)"
                             : "0 20px 48px rgba(0, 0, 0, 0.08), inset 0 1px 0 #ffffff",
-                          padding: "0.9rem", 
+                          padding: "0.9rem",
                           zIndex: 100,
                         }}
                       >
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-                          <button 
-                            onClick={() => isWheelPickerOpen ? setIsWheelPickerOpen(false) : changeMonth(-1)} 
+                          <button
+                            onClick={() => isWheelPickerOpen ? setIsWheelPickerOpen(false) : changeMonth(-1)}
                             style={{ background: "rgba(150,150,150,0.06)", border: "1px solid rgba(150,150,150,0.1)", cursor: isWheelPickerOpen ? "default" : "pointer", color: "var(--text-primary)", padding: "4px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}
                             disabled={isWheelPickerOpen}
                           >
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="15 18 9 12 15 6"></polyline></svg>
                           </button>
-                          
-                          <div 
+
+                          <div
                             onClick={() => {
                               if (!isWheelPickerOpen) {
                                 const viewYear = calendarViewDate.getFullYear();
@@ -2687,8 +2740,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                             </svg>
                           </div>
 
-                          <button 
-                            onClick={() => isWheelPickerOpen ? setIsWheelPickerOpen(false) : changeMonth(1)} 
+                          <button
+                            onClick={() => isWheelPickerOpen ? setIsWheelPickerOpen(false) : changeMonth(1)}
                             style={{ background: "rgba(150,150,150,0.06)", border: "1px solid rgba(150,150,150,0.1)", cursor: isWheelPickerOpen ? "default" : "pointer", color: "var(--text-primary)", padding: "4px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}
                             disabled={isWheelPickerOpen}
                           >
@@ -2779,46 +2832,46 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
             </div>
 
             {/* 2. HORIZONTAL DATE SELECTOR STRIP */}
-            <div 
+            <div
               ref={stripContainerDesktopRef}
               onScroll={handleStripScrollDesktop}
               className="no-scrollbar date-strip-container"
-              style={{ 
-                display: "flex", 
+              style={{
+                display: "flex",
                 gap: "0.22rem",
                 alignItems: "flex-end",
-                marginBottom: "1rem",
-                borderBottom: "1px solid rgba(150, 150, 150, 0.12)",
-                padding: "12px 0 0.9rem 0", /* Increased top padding to 12px for hover elevation safety! */
-                overflowX: "auto",
-                scrollBehavior: "smooth",
-                WebkitOverflowScrolling: "touch",
-                transformStyle: "preserve-3d",
-                perspective: "500px",
-                width: "100%"
-              }}
+              marginBottom: "0.4rem",
+              borderBottom: "1px solid rgba(150, 150, 150, 0.12)",
+              padding: "12px 0 0.45rem 0", /* Increased top padding to 12px for hover elevation safety! */
+              overflowX: "auto",
+              scrollBehavior: "smooth",
+              WebkitOverflowScrolling: "touch",
+              transformStyle: "preserve-3d",
+              perspective: "500px",
+              width: "100%"
+            }}
             >
               {stripDates.map((d, i) => {
                 const isSelected = isSameDay(d, selectedDate);
                 const isToday = isSameDay(d, today);
                 const hasPost = hasPostOnDate(d);
                 const pillTheme = getSelectedTheme(d, calendarEvents);
-                
+
                 const isSunday = d.getDay() === 0;
                 const dKey = `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
                 const fullDKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
                 const isHoliday = calendarEvents.some(e => (e.dateKey === dKey || e.dateKey === fullDKey) && e.type !== "ivan" && e.type !== "female" && e.type !== "male" && e.type !== "both");
-                
+
                 const sundayColor = "#ff3b30";
-                const holidayColor = "#ff726f"; 
+                const holidayColor = "#ff726f";
                 const activeColor = isSunday ? sundayColor : (isHoliday ? holidayColor : (pillTheme ? pillTheme.primary : (selectedTheme ? selectedTheme.primary : "var(--text-primary)")));
                 const bgSelected = activeColor;
                 const bgUnselected = isSunday ? "rgba(255, 59, 48, 0.06)" : (isHoliday ? "rgba(255, 114, 111, 0.05)" : (pillTheme ? pillTheme.bgUnselected : (hasPost ? "rgba(180, 122, 62, 0.08)" : "rgba(150, 150, 150, 0.03)")));
                 const borderSelected = `1.5px solid ${activeColor}`;
                 const borderUnselected = isSunday ? "1px solid rgba(255, 59, 48, 0.55)" : (isHoliday ? "1px solid rgba(255, 114, 111, 0.45)" : (pillTheme ? pillTheme.borderUnselected : (hasPost ? "1px solid rgba(180, 122, 62, 0.65)" : (selectedTheme ? selectedTheme.borderUnselected : (isDark ? "1px solid rgba(255, 255, 255, 0.22)" : "1px solid rgba(0, 0, 0, 0.16)")))));
-                
+
                 return (
-                  <div 
+                  <div
                     key={i}
                     className="date-pill"
                     data-selected={isSelected}
@@ -2832,9 +2885,9 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                       alignItems: "center",
                       justifyContent: "center",
                       cursor: "pointer",
-                      width: "44px", 
-                      height: "60px", 
-                      borderRadius: "12px", 
+                      width: "44px",
+                      height: "60px",
+                      borderRadius: "12px",
                       backgroundColor: isSelected ? bgSelected : bgUnselected,
                       border: isSelected ? borderSelected : borderUnselected,
                       color: isSelected ? "var(--bg-color)" : activeColor,
@@ -2844,14 +2897,14 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                       transformOrigin: "center center",
                       scrollSnapAlign: "center",
                       transform: isSelected ? "translateY(-2px)" : "translateY(0)",
-                      boxShadow: isSelected 
-                        ? "0 4px 10px rgba(0, 0, 0, 0.15)" 
+                      boxShadow: isSelected
+                        ? "0 4px 10px rgba(0, 0, 0, 0.15)"
                         : "0 2px 4px rgba(0, 0, 0, 0.02)",
                       transition: "transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease"
                     }}
                   >
                     {hasPost && (
-                      <div 
+                      <div
                         title="Contains journal entries"
                         style={{
                           position: "absolute",
@@ -2863,7 +2916,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                           clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%)",
                           opacity: 0.95,
                           zIndex: 3
-                        }} 
+                        }}
                       />
                     )}
 
@@ -2872,17 +2925,17 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                         <div style={{ width: "3px", height: "3px", borderRadius: "50%", backgroundColor: isSelected ? "var(--bg-color)" : sundayColor }} />
                       ) : null}
                     </div>
-                    
+
                     {pillTheme && pillTheme.emoji && pillTheme.emoji.includes("🎂") ? (
                       <span className="date-pill-day-num" style={{ fontSize: "1.15rem", lineHeight: 1, marginTop: "6px" }}>🎂</span>
                     ) : (
                       <span className="date-pill-day-num" style={{ fontSize: "1.05rem", fontWeight: isSelected ? "750" : "600", lineHeight: 1, marginTop: "6px" }}>{d.getDate()}</span>
                     )}
-                    
-                    <span 
+
+                    <span
                       className="date-pill-day-name"
-                      style={{ 
-                        fontSize: "0.55rem", 
+                      style={{
+                        fontSize: "0.55rem",
                         textTransform: "uppercase",
                         fontWeight: isSelected ? "750" : "600",
                         letterSpacing: "0.05em",
@@ -2900,663 +2953,740 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
 
           </div>
 
-          {(() => {
-            const selectedMonth = String(selectedDate.getMonth() + 1).padStart(2, '0');
-            const selectedDay = String(selectedDate.getDate()).padStart(2, '0');
-            const selectedDateKey = `${selectedMonth}-${selectedDay}`;
-            const selectedFullDateKey = `${selectedDate.getFullYear()}-${selectedMonth}-${selectedDay}`;
-            const dayEvents = calendarEvents.filter(e => e.dateKey === selectedDateKey || e.dateKey === selectedFullDateKey);
-            return (
-              <>
-                <div className="events-header-container" style={{ 
-                  borderTop: "1px solid rgba(150,150,150,0.12)", 
-                  paddingTop: "1rem", 
-                  marginBottom: "0.6rem",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center"
-                }}>
-                  <h2 style={{ 
-                    fontSize: "0.75rem", 
-                    fontWeight: "700", 
-                    color: "var(--text-primary)", 
-                    margin: 0,
-                    fontFamily: "var(--font-sans)",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.04em"
-                  }}>
-                    Events
-                  </h2>
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", paddingTop: "0.4rem" }}>
-                  {dayEvents.length > 0 ? (
-                    dayEvents.map(event => (
-                      <div 
-                        key={event.id}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "0.5rem",
-                          fontSize: "0.85rem",
-                          fontWeight: "500",
-                          color: "var(--text-primary)",
-                          padding: "0.4rem 0"
-                        }}
-                      >
-                        <span style={{ fontSize: "1.1rem" }}>{event.emoji}</span>
-                        <span>{event.name}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <div style={{ 
-                      fontSize: "0.85rem",
-                      color: "var(--text-secondary)",
-                      padding: "0.4rem 0",
-                      opacity: 0.75
-                    }}>
-                      • No events for this date.
-                    </div>
-                  )}
-                </div>
-              </>
-            );
-          })()}
-
-
         </FadeIn>
 
         {/* Column 2: Journal (Middle Column) */}
         <FadeIn delay={0.15} className="feed-column feed-column-middle">
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ 
-            borderTop: "1px solid rgba(150,150,150,0.12)", 
-            paddingTop: "1rem", 
-            marginTop: "0.85rem", /* Perfectly aligned with the Left and Right column baselines! */
-            marginBottom: "0.6rem",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center"
-          }}>
-            <h2 style={{ 
-              fontSize: "0.75rem", 
-              fontWeight: "700", 
-              color: "var(--text-primary)", 
-              margin: 0,
-              fontFamily: "var(--font-sans)",
-              textTransform: "uppercase",
-              letterSpacing: "0.04em"
-            }}>
-              Journal
-            </h2>
-            <div style={{
-              fontSize: "0.66rem",
-              fontWeight: "500",
-              color: "var(--text-secondary)",
-              fontFamily: "var(--font-sans)",
-              opacity: 0.75
-            }}>
-              {selectedDate.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
-            </div>
-          </div>
-          
-          {/* TIMELINE FEED */}
-          <AnimatePresence mode="wait">
-          <div style={{ display: "flex", flexDirection: "column", position: "relative", paddingTop: "0.4rem" }} key={selectedDate.toDateString()}>
-            {filteredPosts.length > 0 ? (
-              filteredPosts.map((post, index) => {
-                const publishTime = new Date(post.published).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
-                const matches = [...post.content.matchAll(/<img[^>]+src="([^">]+)"/g)];
-                const imageUrls = matches.map((m: any) => m[1]);
-                const rawText = post.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-                const excerpt = rawText.length > 100 ? rawText.slice(0, 100) + "..." : rawText;
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {/* 2.5 TODAY SECTION — Calendar-widget style, perfectly sized to match the journal column */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`today-section-${selectedDate.toDateString()}`}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.28 }}
+                style={{
+                  width: "100%",
+                  marginBottom: "1rem"
+                }}
+              >
+                {/* Widget card */}
+                <div style={{
+                  backgroundColor: selectedTheme
+                    ? (isDark ? `${selectedTheme.bgDark}fa` : `${selectedTheme.bgLight}fa`)
+                    : (isDark ? "rgba(28, 28, 30, 0.96)" : "rgba(255, 255, 255, 0.96)"),
+                  border: selectedTheme
+                    ? `1px solid ${selectedTheme.primary}4d`
+                    : (isDark ? "1px solid rgba(255, 255, 255, 0.16)" : "1px solid rgba(0, 0, 0, 0.12)"),
+                  borderRadius: "20px",
+                  overflow: "hidden",
+                  boxShadow: isDark
+                    ? "0 6px 30px rgba(0,0,0,0.45)"
+                    : "0 6px 30px rgba(0,0,0,0.06)"
+                }}>
 
-                return (
-                  <motion.div
-                    key={post.id}
-                    custom={index}
-                    variants={iosCardVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                  >
-                  <Link 
-                    href={`/blog/${post.id}`}
-                    className="timeline-post-link"
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: "1rem", 
-                      textDecoration: "none",
-                      color: "inherit",
-                      paddingBottom: index === filteredPosts.length - 1 ? "0.75rem" : "1.5rem",
-                      position: "relative",
-                      zIndex: 1
-                    }}
-                  >
-                    {/* Dynamic Spine Line connecting to the next post */}
-                    {index !== filteredPosts.length - 1 && (
-                      <div style={{ 
-                        position: "absolute",
-                        top: "10px", 
-                        bottom: "-10px", 
-                        left: "17px", 
-                        width: "1.5px", 
-                        backgroundColor: selectedTheme ? `rgba(${selectedTheme.type === "both" ? "168, 85, 247" : selectedTheme.type === "male" ? "0, 122, 255" : "255, 92, 157"}, 0.3)` : "rgba(150,150,150,0.12)",
-                        zIndex: 0
-                      }} />
-                    )}
-
-                    {/* Left Column: Timeline Dot & Time */}
-                    <div style={{ 
-                      flexShrink: 0, 
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      width: "36px",
-                      position: "relative",
-                      zIndex: 2,
-                      marginTop: "5px"
-                    }}>
-                      <div style={{ 
-                        width: "10px", 
-                        height: "10px", 
-                        borderRadius: "50%", 
-                        backgroundColor: selectedTheme ? selectedTheme.primary : "var(--text-primary)",
-                        border: "2.5px solid var(--bg-color)",
-                        boxShadow: selectedTheme ? `0 0 0 1px rgba(${selectedTheme.type === "both" ? "168, 85, 247" : selectedTheme.type === "male" ? "0, 122, 255" : "255, 92, 157"}, 0.3)` : "0 0 0 1px rgba(150,150,150,0.15)", 
-                        marginBottom: "0.4rem",
-                        position: "relative",
-                        zIndex: 2
-                      }} />
-                      <span style={{ 
-                        fontSize: "0.68rem", 
-                        fontFamily: "var(--font-sans)", 
-                        color: selectedTheme ? selectedTheme.primary : "var(--text-secondary)",
-                        fontWeight: "600",
-                        letterSpacing: "-0.01em"
+                  {/* ── Header row: Month & Day + Weather ── */}
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "0.85rem 1.1rem 0.75rem 1.1rem",
+                    borderBottom: "1px solid rgba(128,128,128,0.22)"
+                  }}>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
+                      <span style={{
+                        fontSize: "1.05rem",
+                        fontWeight: "700",
+                        color: "var(--text-primary)",
+                        fontFamily: "var(--font-sans)",
+                        letterSpacing: "-0.02em"
                       }}>
-                        {publishTime}
+                        {`${selectedDate.getDate()} ${selectedDate.toLocaleDateString("en-US", { month: "long" })}`}
                       </span>
                     </div>
-
-                    {/* Right Column: iOS Card */}
-                    <div
-                      className="journal-post-card"
-                      style={{
-                      flex: 1,
-                      backgroundColor: selectedTheme ? selectedTheme.bgUnselected : `var(--card-bg-${(index % 4) + 1})`,
-                      borderRadius: "16px", 
-                      padding: "1rem", 
-                      boxShadow: selectedTheme ? `0 3px 15px rgba(${selectedTheme.type === "both" ? "168, 85, 247" : selectedTheme.type === "male" ? "0, 122, 255" : "255, 92, 157"}, 0.04)` : "0 3px 15px rgba(0, 0, 0, 0.02)",
-                      border: selectedTheme ? selectedTheme.borderUnselected : `1px solid var(--card-border-${(index % 4) + 1})`,
+                    {/* Live Amsterdam weather */}
+                    <div style={{
                       display: "flex",
-                      gap: "0.85rem",
-                      minWidth: 0
-                    }}
-                    >
-                      {/* Text Section */}
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <h3 style={{ 
-                          fontSize: "0.92rem", 
-                          fontWeight: "600", 
-                          margin: "0 0 0.4rem 0",
-                          color: "var(--text-primary)",
-                          fontFamily: "var(--font-sans)",
-                          letterSpacing: "-0.01em",
-                          lineHeight: "1.3"
-                        }}>
-                          {post.title}
-                        </h3>
-                        <div style={{ 
-                          height: "1px", 
-                          backgroundColor: "var(--text-secondary)", 
-                          opacity: 0.12, 
-                          margin: "0.4rem 0 0.45rem 0" 
-                        }} />
-                        <p style={{ 
-                          fontSize: "0.76rem", 
-                          color: "var(--text-secondary)", 
-                          margin: 0, 
-                          lineHeight: "1.45",
-                          fontFamily: "var(--font-sans)",
-                          display: "-webkit-box",
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: "vertical",
-                          overflow: "hidden"
-                        }}>
-                          {excerpt}
-                        </p>
-                      </div>
-                      
-                      {/* Dynamic Adaptive Thumbnail Grid */}
-                      {imageUrls.length > 0 && (() => {
-                        const count = imageUrls.length;
-                        const containerStyle: React.CSSProperties = {
-                          flexShrink: 0,
-                          width: "52px",
-                          height: "52px",
-                          borderRadius: "10px",
-                          overflow: "hidden",
-                          border: "1px solid rgba(150,150,150,0.12)",
-                          boxShadow: "0 3px 8px rgba(0,0,0,0.06)",
-                          backgroundColor: "rgba(150,150,150,0.04)",
-                          alignSelf: "center"
-                        };
-                        const imgStyle: React.CSSProperties = {
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          filter: "grayscale(100%) contrast(1.08)"
-                        };
+                      alignItems: "center",
+                      gap: "4px",
+                      fontSize: "0.82rem",
+                      color: "var(--text-secondary)",
+                      fontFamily: "var(--font-sans)",
+                      fontWeight: "500"
+                    }}>
+                      {weather ? (
+                        <>
+                          <span style={{ fontSize: "0.95rem" }}>{weather.icon}</span>
+                          <span>{weather.temp}°C</span>
+                        </>
+                      ) : (
+                        <span style={{ opacity: 0.4, fontSize: "0.75rem" }}>Amsterdam</span>
+                      )}
+                    </div>
+                  </div>
 
-                        if (count === 1) {
+                  {/* ── Events for selected date ── */}
+                  {(() => {
+                    const dayVal = selectedDate.getDate();
+                    const monthVal = selectedDate.getMonth();
+                    const dK = `${String(monthVal + 1).padStart(2, '0')}-${String(dayVal).padStart(2, '0')}`;
+                    const fDK = `${selectedDate.getFullYear()}-${String(monthVal + 1).padStart(2, '0')}-${String(dayVal).padStart(2, '0')}`;
+                    const events = calendarEvents.filter(e => e.dateKey === dK || e.dateKey === fDK);
+                    if (events.length === 0) return null;
+
+                    // Color palettes per event type — tailored dynamically for outstanding readability in both Light and Dark modes!
+                    const eventColors: Record<string, { bg: string; text: string }> = isDark ? {
+                      ivan:            { bg: "rgba(168,85,247,0.18)",  text: "#E9D8FD" },
+                      female:          { bg: "rgba(255,105,157,0.18)", text: "#FED7E2" },
+                      male:            { bg: "rgba(59,130,246,0.18)",  text: "#BEE3F8" },
+                      both:            { bg: "rgba(168,85,247,0.18)",  text: "#E9D8FD" },
+                      christmas:       { bg: "rgba(34,197,94,0.16)",   text: "#A7F3D0" },
+                      general_holiday: { bg: "rgba(249,115,22,0.16)",  text: "#FEEBC8" },
+                      independence:    { bg: "rgba(239,68,68,0.16)",   text: "#FED7D7" },
+                      idul_fitri:      { bg: "rgba(16,185,129,0.18)",  text: "#A7F3D0" },
+                      idul_adha:       { bg: "rgba(16,185,129,0.18)",  text: "#A7F3D0" },
+                      isra_miraj:      { bg: "rgba(99,102,241,0.18)",  text: "#C3DAFE" },
+                      waisak:          { bg: "rgba(234,179,8,0.18)",   text: "#FDE68A" },
+                      nyepi:           { bg: "rgba(20,184,166,0.18)",  text: "#A5F3FC" },
+                      maulid_nabi:     { bg: "rgba(16,185,129,0.18)",  text: "#A7F3D0" },
+                      islamic_new_year:{ bg: "rgba(99,102,241,0.18)",  text: "#C3DAFE" },
+                      chinese_new_year:{ bg: "rgba(239,68,68,0.18)",   text: "#FED7D7" },
+                    } : {
+                      ivan:            { bg: "rgba(147,112,219,0.13)", text: "#5B21B6" },
+                      female:          { bg: "rgba(255,105,157,0.11)", text: "#9D174D" },
+                      male:            { bg: "rgba(59,130,246,0.11)",  text: "#1E40AF" },
+                      both:            { bg: "rgba(168,85,247,0.11)",  text: "#6D28D9" },
+                      christmas:       { bg: "rgba(34,197,94,0.10)",   text: "#065F46" },
+                      general_holiday: { bg: "rgba(249,115,22,0.10)",  text: "#9A3412" },
+                      independence:    { bg: "rgba(239,68,68,0.10)",   text: "#991B1B" },
+                      idul_fitri:      { bg: "rgba(16,185,129,0.10)",  text: "#065F46" },
+                      idul_adha:       { bg: "rgba(16,185,129,0.10)",  text: "#065F46" },
+                      isra_miraj:      { bg: "rgba(99,102,241,0.10)",  text: "#3730A3" },
+                      waisak:          { bg: "rgba(234,179,8,0.10)",   text: "#78350F" },
+                      nyepi:           { bg: "rgba(20,184,166,0.10)",  text: "#075985" },
+                      maulid_nabi:     { bg: "rgba(16,185,129,0.10)",  text: "#065F46" },
+                      islamic_new_year:{ bg: "rgba(99,102,241,0.10)",  text: "#3730A3" },
+                      chinese_new_year:{ bg: "rgba(239,68,68,0.10)",   text: "#991B1B" },
+                    };
+
+                    return (
+                      <div style={{ padding: "0.6rem 0.75rem", display: "flex", flexDirection: "column", gap: "0.45rem" }}>
+                        {events.map((ev, i) => {
+                          const c = eventColors[ev.type] ?? { bg: "rgba(128,128,128,0.09)", text: "var(--text-primary)" };
                           return (
-                            <div style={containerStyle}>
-                              <img src={imageUrls[0]} alt="" style={imgStyle} />
+                            <div key={ev.id} style={{
+                              backgroundColor: c.bg,
+                              border: `1px solid ${c.text}25`,
+                              borderRadius: "13px",
+                              padding: "0.6rem 0.85rem",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between"
+                            }}>
+                              <div>
+                                <div style={{
+                                  fontSize: "0.88rem",
+                                  fontWeight: "600",
+                                  color: c.text,
+                                  fontFamily: "var(--font-sans)",
+                                  letterSpacing: "-0.01em"
+                                }}>
+                                  {ev.name}
+                                </div>
+                              </div>
+                              <span style={{ fontSize: "1.25rem" }}>{ev.emoji}</span>
                             </div>
                           );
-                        } else if (count === 2) {
-                          return (
-                            <div style={{
-                              ...containerStyle,
-                              display: "grid",
-                              gridTemplateColumns: "1fr 1fr",
-                              gap: "1.5px"
-                            }}>
-                              <img src={imageUrls[0]} alt="" style={imgStyle} />
-                              <img src={imageUrls[1]} alt="" style={imgStyle} />
-                            </div>
-                          );
-                        } else if (count === 3) {
-                          return (
-                            <div style={{
-                              ...containerStyle,
-                              display: "grid",
-                              gridTemplateColumns: "1fr 1fr",
-                              gridTemplateRows: "1fr 1fr",
-                              gap: "1.5px"
-                            }}>
-                              <div style={{ gridColumn: "1", gridRow: "1 / span 2", overflow: "hidden", height: "100%" }}>
-                                <img src={imageUrls[0]} alt="" style={imgStyle} />
-                              </div>
-                              <div style={{ gridColumn: "2", gridRow: "1", overflow: "hidden", height: "100%" }}>
-                                <img src={imageUrls[1]} alt="" style={imgStyle} />
-                              </div>
-                              <div style={{ gridColumn: "2", gridRow: "2", overflow: "hidden", height: "100%" }}>
-                                <img src={imageUrls[2]} alt="" style={imgStyle} />
-                              </div>
-                            </div>
-                          );
-                        } else {
-                          // 4 or more images
-                          const extraCount = count - 4;
-                          return (
-                            <div style={{
-                              ...containerStyle,
-                              display: "grid",
-                              gridTemplateColumns: "1fr 1fr",
-                              gridTemplateRows: "1fr 1fr",
-                              gap: "1.5px"
-                            }}>
-                              <div style={{ overflow: "hidden", height: "100%" }}>
-                                <img src={imageUrls[0]} alt="" style={imgStyle} />
-                              </div>
-                              <div style={{ overflow: "hidden", height: "100%" }}>
-                                <img src={imageUrls[1]} alt="" style={imgStyle} />
-                              </div>
-                              <div style={{ overflow: "hidden", height: "100%" }}>
-                                <img src={imageUrls[2]} alt="" style={imgStyle} />
-                              </div>
-                              <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden" }}>
-                                <img src={imageUrls[3]} alt="" style={imgStyle} />
-                                {extraCount > 0 && (
-                                  <div style={{
-                                    position: "absolute",
-                                    inset: 0,
-                                    backgroundColor: "rgba(0,0,0,0.52)",
+                        })}
+                      </div>
+                    );
+                  })()}
+
+                  {/* ── Blog posts: minimalist list with dropdown toggle ── */}
+                  {filteredPosts.length > 0 && (
+                    <div style={{
+                      borderTop: calendarEvents.some(e => {
+                        const dayVal = selectedDate.getDate();
+                        const monthVal = selectedDate.getMonth();
+                        const dK = `${String(monthVal + 1).padStart(2, '0')}-${String(dayVal).padStart(2, '0')}`;
+                        const fDK = `${selectedDate.getFullYear()}-${String(monthVal + 1).padStart(2, '0')}-${String(dayVal).padStart(2, '0')}`;
+                        return e.dateKey === dK || e.dateKey === fDK;
+                      }) ? "1px solid rgba(128,128,128,0.16)" : "none",
+                      padding: "0.5rem 0.75rem 0.65rem"
+                    }}>
+                      <div
+                        onClick={() => setIsBlogDropdownOpen(!isBlogDropdownOpen)}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "0.35rem 0.35rem 0.5rem 0.35rem",
+                          cursor: "pointer",
+                          userSelect: "none"
+                        }}
+                      >
+                        <span style={{
+                          fontSize: "0.7rem",
+                          fontWeight: "700",
+                          color: "var(--text-secondary)",
+                          fontFamily: "var(--font-sans)",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.03em"
+                        }}>
+                          TODAY
+                        </span>
+                        <motion.svg
+                          animate={{ rotate: isBlogDropdownOpen ? 180 : 0 }}
+                          transition={{ duration: 0.2 }}
+                          width="11"
+                          height="11"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          style={{ color: "var(--text-secondary)", opacity: 0.75 }}
+                        >
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </motion.svg>
+                      </div>
+
+                      <AnimatePresence initial={false}>
+                        {isBlogDropdownOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0, overflow: "hidden" }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25, ease: "easeInOut" }}
+                          >
+                            {filteredPosts.map((post, index) => {
+                              const pubDate = parseBloggerDate(post.published);
+                              const timeStr = pubDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
+                              const rawText = post.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+                              const excerpt = rawText.length > 80 ? rawText.slice(0, 80) + "…" : rawText;
+                              const matches = [...post.content.matchAll(/<img[^>]+src="([^">]+)"/g)];
+                              const thumb = matches.length > 0 ? (matches[0] as any)[1] : null;
+
+                              return (
+                                <Link
+                                  key={post.id}
+                                  href={`/blog/${post.id}`}
+                                  style={{
                                     display: "flex",
                                     alignItems: "center",
-                                    justifyContent: "center",
-                                    color: "#ffffff",
-                                    fontSize: "0.58rem",
-                                    fontWeight: "bold",
-                                    fontFamily: "var(--font-sans)"
-                                  }}>
-                                    +{extraCount}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        }
-                      })()}
-                    </div>
-                  </Link>
-                  </motion.div>
-                );
-              })
-            ) : (
-              <div style={{ 
-                textAlign: "center", 
-                padding: "2.5rem 0", 
-                color: "var(--text-secondary)",
-                fontSize: "0.85rem",
-                fontFamily: "var(--font-sans)",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center"
-              }}>
-                <span style={{ fontWeight: "500", opacity: 0.65 }}>No entries for this date.</span>
-              </div>
-            )}
-          </div>
-          </AnimatePresence>
-        </div>
-      </FadeIn>
+                                    gap: "0.75rem",
+                                    padding: "0.5rem 0.35rem",
+                                    borderBottom: index < filteredPosts.length - 1 ? "1px solid rgba(128,128,128,0.06)" : "none",
+                                    textDecoration: "none",
+                                    color: "inherit",
+                                    borderRadius: "8px",
+                                    transition: "background 0.15s"
+                                  }}
+                                  onMouseOver={e => { (e.currentTarget as HTMLElement).style.background = "rgba(128,128,128,0.04)"; }}
+                                  onMouseOut={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+                                >
+                                  {/* Time chip */}
+                                  <span style={{
+                                    flexShrink: 0,
+                                    fontSize: "0.65rem",
+                                    fontWeight: "700",
+                                    color: selectedTheme ? selectedTheme.primary : "var(--text-secondary)",
+                                    fontFamily: "var(--font-sans)",
+                                    minWidth: "36px",
+                                    opacity: 0.85
+                                  }}>{timeStr}</span>
 
-      {/* MOMENTS SECTION (B&W NATURE GRID) */}
-      <FadeIn delay={0.2} className="feed-column feed-column-right">
-        <div id="moments" style={{ 
-          marginTop: "0.85rem", 
-          paddingTop: "1rem", /* Increased to 1rem to perfectly align with Column 1 and Column 2! */
-          borderTop: "1px solid rgba(150,150,150,0.12)"
-        }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.6rem" }}>
-            <h2 style={{ 
-              fontSize: "0.75rem", 
-              fontWeight: "700", 
-              color: "var(--text-primary)", 
-              margin: 0,
-              fontFamily: "var(--font-sans)",
-              textTransform: "uppercase",
-              letterSpacing: "0.04em"
-            }}>
-              Moments
-            </h2>
-            
-            <Link href="/moments" style={{
-              fontSize: "0.66rem",
-              fontWeight: "500",
-              color: "var(--text-secondary)",
-              textDecoration: "none",
+                                  {/* Title + excerpt */}
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{
+                                      fontSize: "0.84rem",
+                                      fontWeight: "600",
+                                      color: "var(--text-primary)",
+                                      fontFamily: "var(--font-sans)",
+                                      letterSpacing: "-0.01em",
+                                      whiteSpace: "nowrap",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis"
+                                    }}>{post.title}</div>
+                                    <div style={{
+                                      fontSize: "0.72rem",
+                                      color: "var(--text-secondary)",
+                                      fontFamily: "var(--font-sans)",
+                                      marginTop: "1px",
+                                      whiteSpace: "nowrap",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      opacity: 0.65
+                                    }}>{excerpt}</div>
+                                  </div>
+
+                                  {/* Thumbnail */}
+                                  {thumb && (
+                                    <div style={{
+                                      flexShrink: 0,
+                                      width: "38px",
+                                      height: "38px",
+                                      borderRadius: "8px",
+                                      overflow: "hidden",
+                                      backgroundColor: "rgba(128,128,128,0.06)"
+                                    }}>
+                                      <img src={thumb} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(100%)" }} />
+                                    </div>
+                                  )}
+                                </Link>
+                              );
+                            })}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )}
+
+                  {/* ── Empty state if nothing at all ── */}
+                  {filteredPosts.length === 0 && (() => {
+                    const dayVal = selectedDate.getDate();
+                    const monthVal = selectedDate.getMonth();
+                    const dK = `${String(monthVal + 1).padStart(2, '0')}-${String(dayVal).padStart(2, '0')}`;
+                    const fDK = `${selectedDate.getFullYear()}-${String(monthVal + 1).padStart(2, '0')}-${String(dayVal).padStart(2, '0')}`;
+                    const hasEvents = calendarEvents.some(e => e.dateKey === dK || e.dateKey === fDK);
+                    if (hasEvents) return null;
+                    return (
+                      <div style={{
+                        padding: "1rem 1.1rem",
+                        textAlign: "center",
+                        color: "var(--text-secondary)",
+                        fontSize: "0.78rem",
+                        fontFamily: "var(--font-sans)",
+                        opacity: 0.5
+                      }}>
+                        No entries for this day.
+                      </div>
+                    );
+                  })()
+                  }
+
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Journal Header (Rendered OUTSIDE the card) */}
+            <div style={{
+              paddingTop: "0.4rem",
+              marginTop: "0.4rem",
+              marginBottom: "0.6rem",
               display: "flex",
-              alignItems: "center",
-              gap: "3px",
-              fontFamily: "var(--font-sans)",
-              opacity: 0.75
+              justifyContent: "space-between",
+              alignItems: "center"
             }}>
-              View All 
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </Link>
-          </div>
-          
-          <div 
-            className="moments-grid"
-            style={{ 
-              display: "grid", 
-              gridTemplateColumns: "repeat(3, 1fr)", 
-              gap: "2px",
-              borderRadius: "12px",
-              overflow: "hidden",
-              border: "1px solid rgba(150,150,150,0.08)"
-            }}
-          >
-            {displayMoments.map((moment, idx) => (
-              <Link href="/moments" key={moment.id || idx} style={{ 
-                aspectRatio: "1/1", 
-                backgroundColor: "rgba(150,150,150,0.04)",
-                position: "relative",
-                overflow: "hidden",
-                cursor: "pointer",
-                transition: "opacity 0.2s ease",
-                display: "block"
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.opacity = "0.8";
-                const img = e.currentTarget.querySelector('img');
-                if(img) img.style.transform = "scale(1.05)";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.opacity = "1";
-                const img = e.currentTarget.querySelector('img');
-                if(img) img.style.transform = "scale(1)";
-              }}
-              >
-                <img 
-                  src={moment.url} 
-                  alt={moment.title || `Moment ${idx + 1}`} 
-                  style={{ 
-                    width: "100%", 
-                    height: "100%", 
-                    objectFit: "cover",
-                    filter: "grayscale(100%) contrast(1.1)", 
-                    transition: "transform 0.4s ease" 
-                  }} 
-                  onError={(e) => { e.currentTarget.src = "/nature_hero.png"; }}
-                />
-              </Link>
-            ))}
+              <h2 style={{
+                fontSize: "0.75rem",
+                fontWeight: "700",
+                color: "var(--text-primary)",
+                margin: 0,
+                fontFamily: "var(--font-sans)",
+                textTransform: "uppercase",
+                letterSpacing: "0.04em"
+              }}>
+                Journal
+              </h2>
+              <div style={{
+                fontSize: "0.66rem",
+                fontWeight: "550",
+                color: "var(--text-secondary)",
+                fontFamily: "var(--font-sans)",
+                opacity: 0.8
+              }}>
+                {sortedAllPosts.length} Entries
+              </div>
+            </div>
+
+            {/* JOURNAL SECTION CARD */}
+            <div style={{
+              width: "100%",
+              marginTop: "0.2rem"
+            }}>
+              <div style={{
+                backgroundColor: isDark ? "rgba(28, 28, 30, 0.96)" : "rgba(255, 255, 255, 0.96)",
+                border: isDark ? "1px solid rgba(255, 255, 255, 0.16)" : "1px solid rgba(0, 0, 0, 0.12)",
+                borderRadius: "20px",
+                padding: "1.2rem 1.2rem 1.2rem 0.8rem", // Perfect asymmetric padding to visually center card contents
+                boxShadow: isDark
+                  ? "0 6px 30px rgba(0,0,0,0.45)"
+                  : "0 6px 30px rgba(0,0,0,0.06)",
+                overflow: "hidden"
+              }}>
+                {/* TIMELINE FEED */}
+                <div
+                  className="no-scrollbar"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    position: "relative",
+                    paddingTop: "0.2rem", // Complements the card's top padding beautifully
+                    paddingBottom: "1.2rem", // Complements the card's bottom padding and gives end-marker space
+                    maxHeight: "365px",
+                    overflowY: "auto",
+                    scrollbarWidth: "none",
+                    willChange: "transform", // Hardware-accelerated ultra-light scroll rendering!
+                    WebkitOverflowScrolling: "touch" // iOS Safari butter-smooth inertia scrolling!
+                  }}
+                >
+              {sortedAllPosts.length > 0 ? (
+                <>
+                  {sortedAllPosts.map((post, index) => {
+                    const pubDate = parseBloggerDate(post.published);
+                    const dateStr = pubDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                    const matches = [...post.content.matchAll(/<img[^>]+src="([^">]+)"/g)];
+                    const imageUrls = matches.map((m: any) => m[1]);
+                    const rawText = post.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+                    const excerpt = rawText.length > 100 ? rawText.slice(0, 100) + "..." : rawText;
+
+                    // Dynamically compute high-contrast, premium, solid cycled colors inside card
+                    const innerCardStyle = (() => {
+                      const lightColors = [
+                        { bg: "rgba(242, 241, 238, 0.96)", border: "rgba(0, 0, 0, 0.08)" },
+                        { bg: "rgba(235, 242, 235, 0.96)", border: "rgba(0, 0, 0, 0.07)" },
+                        { bg: "rgba(245, 237, 238, 0.96)", border: "rgba(0, 0, 0, 0.07)" },
+                        { bg: "rgba(246, 241, 232, 0.96)", border: "rgba(0, 0, 0, 0.07)" },
+                      ];
+                      const darkColors = [
+                        { bg: "rgba(255, 255, 255, 0.045)", border: "rgba(255, 255, 255, 0.08)" },
+                        { bg: "rgba(34, 197, 94, 0.045)",    border: "rgba(34, 197, 94, 0.09)" },
+                        { bg: "rgba(239, 68, 68, 0.045)",     border: "rgba(239, 68, 68, 0.09)" },
+                        { bg: "rgba(234, 179, 8, 0.045)",     border: "rgba(234, 179, 8, 0.09)" },
+                      ];
+                      const colors = isDark ? darkColors : lightColors;
+                      return colors[index % colors.length];
+                    })();
+
+                    return (
+                      <motion.div
+                        key={post.id}
+                        custom={index}
+                        variants={iosCardVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        style={{ willChange: "transform, opacity" }} // Hardware-accelerated pure 120Hz layer animations!
+                      >
+                        <Link
+                          href={`/blog/${post.id}`}
+                          className="timeline-post-link"
+                          style={{
+                            display: "flex",
+                            alignItems: "flex-start",
+                            gap: "0.7rem", // Compact gap
+                            textDecoration: "none",
+                            color: "inherit",
+                            paddingBottom: index === sortedAllPosts.length - 1 ? "0.75rem" : "1.5rem",
+                            position: "relative",
+                            zIndex: 1
+                          }}
+                        >
+                          {/* Dynamic Spine Line connecting to the next post or end marker */}
+                          <div style={{
+                            position: "absolute",
+                            top: "10px",
+                            bottom: index === sortedAllPosts.length - 1 ? "-16px" : "-10px",
+                            left: "20.25px", // Center exactly in the 42px left column
+                            width: "1.5px",
+                            backgroundColor: "rgba(150,150,150,0.12)",
+                            zIndex: 0
+                          }} />
+
+                          {/* Left Column: Timeline Dot & Date */}
+                          <div style={{
+                            flexShrink: 0,
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            width: "42px", // Compact width
+                            position: "relative",
+                            zIndex: 2,
+                            marginTop: "5px"
+                          }}>
+                            <div style={{
+                              width: "10px",
+                              height: "10px",
+                              borderRadius: "50%",
+                              backgroundColor: "var(--text-primary)",
+                              border: "2.5px solid var(--bg-color)",
+                              boxShadow: "0 0 0 1px rgba(150,150,150,0.15)",
+                              marginBottom: "0.4rem",
+                              position: "relative",
+                              zIndex: 2
+                            }} />
+                            <span style={{
+                              fontSize: "0.62rem",
+                              fontFamily: "var(--font-sans)",
+                              color: "var(--text-secondary)",
+                              fontWeight: "700",
+                              letterSpacing: "-0.01em",
+                              textAlign: "center",
+                              lineHeight: "1.15"
+                            }}>
+                              {dateStr}
+                            </span>
+                          </div>
+
+                          {/* Right Column: iOS Card */}
+                          <div
+                            className="journal-post-card"
+                            style={{
+                              flex: 1,
+                              backgroundColor: innerCardStyle.bg,
+                              borderRadius: "16px",
+                              padding: "1rem",
+                              boxShadow: "0 3px 15px rgba(0, 0, 0, 0.02)",
+                              border: `1px solid ${innerCardStyle.border}`,
+                              display: "flex",
+                              gap: "0.85rem",
+                              minWidth: 0
+                            }}
+                          >
+                            {/* Text Section */}
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <h3 style={{
+                                fontSize: "0.92rem",
+                                fontWeight: "600",
+                                margin: "0 0 0.4rem 0",
+                                color: "var(--text-primary)",
+                                fontFamily: "var(--font-sans)",
+                                letterSpacing: "-0.01em",
+                                lineHeight: "1.3"
+                              }}>
+                                {post.title}
+                              </h3>
+                              <div style={{
+                                height: "1px",
+                                backgroundColor: "var(--text-secondary)",
+                                opacity: 0.12,
+                                margin: "0.4rem 0 0.45rem 0"
+                              }} />
+                              <p style={{
+                                fontSize: "0.76rem",
+                                color: "var(--text-secondary)",
+                                margin: 0,
+                                lineHeight: "1.45",
+                                fontFamily: "var(--font-sans)",
+                                display: "-webkit-box",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden"
+                              }}>
+                                {excerpt}
+                              </p>
+                            </div>
+
+                            {/* Single high-fidelity Monochrome Thumbnail Cover */}
+                            {imageUrls.length > 0 && (
+                              <div style={{
+                                flexShrink: 0,
+                                width: "52px",
+                                height: "52px",
+                                borderRadius: "10px",
+                                overflow: "hidden",
+                                border: "1px solid rgba(150,150,150,0.12)",
+                                boxShadow: "0 3px 8px rgba(0,0,0,0.06)",
+                                backgroundColor: "rgba(150,150,150,0.04)",
+                                alignSelf: "center"
+                              }}>
+                                <img 
+                                  src={imageUrls[0]} 
+                                  alt="" 
+                                  style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover",
+                                    filter: "grayscale(100%) contrast(1.08)"
+                                  }} 
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
+                  
+                  {/* Timeline End Marker */}
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.7rem",
+                    paddingLeft: "0rem",
+                    marginTop: "0.4rem",
+                    marginBottom: "0.4rem"
+                  }}>
+                    {/* Centered end dot/icon */}
+                    <div style={{
+                      width: "42px",
+                      display: "flex",
+                      justifyContent: "center",
+                      flexShrink: 0
+                    }}>
+                      <div style={{
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "50%",
+                        border: "1.5px solid var(--text-secondary)",
+                        opacity: 0.35,
+                        backgroundColor: "transparent"
+                      }} />
+                    </div>
+                    {/* Soft line and text */}
+                    <div style={{
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px"
+                    }}>
+                      <span style={{
+                        fontSize: "0.62rem",
+                        fontFamily: "var(--font-sans)",
+                        color: "var(--text-secondary)",
+                        fontWeight: "600",
+                        letterSpacing: "0.04em",
+                        textTransform: "uppercase",
+                        opacity: 0.4
+                      }}>
+                        End of Journal
+                      </span>
+                      <div style={{
+                        flex: 1,
+                        height: "1px",
+                        backgroundColor: "var(--text-secondary)",
+                        opacity: 0.08
+                      }} />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div style={{
+                  textAlign: "center",
+                  padding: "2.5rem 0",
+                  color: "var(--text-secondary)",
+                  fontSize: "0.85rem",
+                  fontFamily: "var(--font-sans)",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center"
+                }}>
+                  <span style={{ fontWeight: "500", opacity: 0.65 }}>No entries yet.</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
+          </div>
+        </FadeIn>
+
+        {/* MOMENTS SECTION (B&W NATURE GRID) */}
+        <FadeIn delay={0.2} className="feed-column feed-column-right">
+          <div id="moments" style={{
+            marginTop: "0.85rem",
+            paddingTop: "1rem", /* Increased to 1rem to perfectly align with Column 1 and Column 2! */
+            borderTop: "1px solid rgba(150,150,150,0.12)"
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.6rem" }}>
+              <h2 style={{
+                fontSize: "0.75rem",
+                fontWeight: "700",
+                color: "var(--text-primary)",
+                margin: 0,
+                fontFamily: "var(--font-sans)",
+                textTransform: "uppercase",
+                letterSpacing: "0.04em"
+              }}>
+                Moments
+              </h2>
+
+              <Link href="/moments" style={{
+                fontSize: "0.66rem",
+                fontWeight: "500",
+                color: "var(--text-secondary)",
+                textDecoration: "none",
+                display: "flex",
+                alignItems: "center",
+                gap: "3px",
+                fontFamily: "var(--font-sans)",
+                opacity: 0.75
+              }}>
+                View All
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </Link>
+            </div>
+
+            <div
+              className="moments-grid"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: "2px",
+                borderRadius: "12px",
+                overflow: "hidden",
+                border: "1px solid rgba(150,150,150,0.08)"
+              }}
+            >
+              {displayMoments.map((moment, idx) => (
+                <Link href="/moments" key={moment.id || idx} style={{
+                  aspectRatio: "1/1",
+                  backgroundColor: "rgba(150,150,150,0.04)",
+                  position: "relative",
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  transition: "opacity 0.2s ease",
+                  display: "block"
+                }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.opacity = "0.8";
+                    const img = e.currentTarget.querySelector('img');
+                    if (img) img.style.transform = "scale(1.05)";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.opacity = "1";
+                    const img = e.currentTarget.querySelector('img');
+                    if (img) img.style.transform = "scale(1)";
+                  }}
+                >
+                  <img
+                    src={moment.url}
+                    alt={moment.title || `Moment ${idx + 1}`}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      filter: "grayscale(100%) contrast(1.1)",
+                      transition: "transform 0.4s ease"
+                    }}
+                    onError={(e) => { e.currentTarget.src = "/nature_hero.png"; }}
+                  />
+                </Link>
+              ))}
+            </div>
+          </div>
         </FadeIn>
       </div> {/* End feed-split-layout */}
 
-      {/* TACTILE MINIMALIST GALLERY SLIDER SECTION FOR ALL BLOG POSTS */}
-      {posts && posts.length > 0 && (() => {
-        const canPrev = sliderIndex > 0;
-        const canNext = sliderIndex + visibleCards < posts.length;
-        const gapPx = 10;
-        
-        return (
-          <FadeIn delay={0.25}>
-            <div 
-              className="blog-slider-section"
-              style={{ paddingBottom: "0.5rem" }}
-            >
-              {/* Slider Header Row */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.9rem" }}>
-                <h2 style={{ 
-                  fontSize: "0.75rem", 
-                  fontWeight: "700", 
-                  color: "var(--text-primary)", 
-                  margin: 0,
-                  fontFamily: "var(--font-sans)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.04em"
-                }}>
-                  Story
-                </h2>
-                
-                {/* Minimalist Prev / Next Buttons */}
-                {posts.length > visibleCards && (
-                  <div style={{ display: "flex", gap: "6px" }}>
-                    <button
-                      onClick={() => { if (canPrev) setSliderIndex(prev => prev - 1); }}
-                      disabled={!canPrev}
-                      style={{
-                        width: "26px",
-                        height: "26px",
-                        borderRadius: "50%",
-                        border: isDark ? "1px solid rgba(255, 255, 255, 0.15)" : "1px solid rgba(0, 0, 0, 0.08)",
-                        backgroundColor: isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff",
-                        color: "var(--text-primary)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        cursor: canPrev ? "pointer" : "not-allowed",
-                        opacity: canPrev ? 1 : 0.35,
-                        transition: "all 0.2s ease",
-                        outline: "none",
-                        padding: 0
-                      }}
-                      title="Previous posts"
-                    >
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="15 18 9 12 15 6"></polyline>
-                      </svg>
-                    </button>
-                    <button
-                      onClick={() => { if (canNext) setSliderIndex(prev => prev + 1); }}
-                      disabled={!canNext}
-                      style={{
-                        width: "26px",
-                        height: "26px",
-                        borderRadius: "50%",
-                        border: isDark ? "1px solid rgba(255, 255, 255, 0.15)" : "1px solid rgba(0, 0, 0, 0.08)",
-                        backgroundColor: isDark ? "rgba(255, 255, 255, 0.05)" : "#ffffff",
-                        color: "var(--text-primary)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        cursor: canNext ? "pointer" : "not-allowed",
-                        opacity: canNext ? 1 : 0.35,
-                        transition: "all 0.2s ease",
-                        outline: "none",
-                        padding: 0
-                      }}
-                      title="Next posts"
-                    >
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                      </svg>
-                    </button>
-                  </div>
-                )}
-              </div>
-              
-              {/* Slider Viewport Container */}
-              <div style={{ position: "relative", width: "100%", overflow: "hidden", paddingBottom: "0.5rem" }}>
-                <div style={{
-                  display: "flex",
-                  gap: `${gapPx}px`,
-                  transform: `translateX(calc(-${sliderIndex} * (100% + ${gapPx}px) / ${visibleCards}))`,
-                  transition: "transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
-                  width: "100%",
-                }}>
-                  {posts.map((post) => {
-                    const match = post.content.match(/<img[^>]+src="([^">]+)"/);
-                    const imageUrl = match ? match[1] : null;
-                    const formattedDate = new Date(post.published).toLocaleDateString("en-US", {
-                      day: "numeric",
-                      month: "short"
-                    });
-                    
-                    const NATURE_FALLBACKS = [
-                      "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=300&auto=format&fit=crop",
-                      "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=80&w=300&auto=format&fit=crop",
-                      "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=300&auto=format&fit=crop",
-                      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=300&auto=format&fit=crop",
-                      "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?q=80&w=300&auto=format&fit=crop"
-                    ];
-                    const hash = post.id.split("").reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
-                    const fallbackImage = NATURE_FALLBACKS[hash % NATURE_FALLBACKS.length];
-                    
-                    return (
-                      <div 
-                        key={post.id}
-                        style={{
-                          width: `calc(${100 / visibleCards}% - ${(gapPx * (visibleCards - 1)) / visibleCards}px)`,
-                          flexShrink: 0,
-                          boxSizing: "border-box",
-                        }}
-                      >
-                        <Link 
-                          href={`/blog/${post.id}`}
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            textDecoration: "none",
-                            color: "inherit",
-                            height: "100%",
-                            backgroundColor: selectedTheme ? selectedTheme.bgUnselected : (isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(255, 255, 255, 0.6)"),
-                            border: selectedTheme ? selectedTheme.borderUnselected : "1px solid var(--border-color)",
-                            borderRadius: "12px",
-                            overflow: "hidden",
-                            transition: "all 0.22s cubic-bezier(0.16, 1, 0.3, 1)"
-                          }}
-                          onMouseOver={(e) => {
-                            e.currentTarget.style.transform = "translateY(-3px)";
-                            e.currentTarget.style.boxShadow = isDark 
-                              ? "0 6px 16px rgba(0, 0, 0, 0.35)" 
-                              : "0 6px 14px rgba(0, 0, 0, 0.04)";
-                            e.currentTarget.style.borderColor = "rgba(150, 150, 150, 0.25)";
-                          }}
-                          onMouseOut={(e) => {
-                            e.currentTarget.style.transform = "none";
-                            e.currentTarget.style.boxShadow = "none";
-                            e.currentTarget.style.borderColor = selectedTheme ? (selectedTheme.borderUnselected.replace("1px solid ", "")) : "var(--border-color)";
-                          }}
-                        >
-                          {/* Chic Gallery Square Image Container */}
-                          <div style={{ 
-                            width: "100%", 
-                            aspectRatio: "1/1", 
-                            overflow: "hidden",
-                            backgroundColor: isDark ? "rgba(255, 255, 255, 0.03)" : "rgba(0, 0, 0, 0.02)",
-                            position: "relative"
-                          }}>
-                            <img 
-                              src={imageUrl || fallbackImage} 
-                              alt="" 
-                              style={{ 
-                                width: "100%", 
-                                height: "100%", 
-                                objectFit: "cover",
-                                filter: "grayscale(100%) contrast(1.15) brightness(0.92)",
-                                opacity: 0.88,
-                                transition: "transform 0.4s ease"
-                              }} 
-                            />
-                          </div>
-                          
-                          {/* Content Section - High density / ultra clean */}
-                          <div style={{ padding: "0.5rem 0.6rem", display: "flex", flexDirection: "column", gap: "2px" }}>
-                            <span style={{ 
-                              fontSize: "0.5rem", 
-                              fontWeight: "600", 
-                              color: "var(--text-secondary)", 
-                              opacity: 0.6,
-                              textTransform: "uppercase",
-                              letterSpacing: "0.02em"
-                            }}>
-                              {formattedDate}
-                            </span>
-                            <h4 style={{ 
-                              fontSize: "0.72rem", 
-                              fontWeight: "650", 
-                              margin: 0, 
-                              lineHeight: "1.25", 
-                              color: "var(--text-primary)",
-                              display: "-webkit-box",
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: "vertical",
-                              overflow: "hidden",
-                              height: "2.5em",
-                              fontFamily: "var(--font-sans)",
-                              letterSpacing: "-0.015em"
-                            }}>
-                              {post.title}
-                            </h4>
-                          </div>
-                        </Link>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </FadeIn>
-        );
-      })()}
-
       {/* MINIMALIST SWISS LIBRARY SECTION */}
       {books && books.length > 0 && (() => {
-        // Show all books: currently reading first, then completed
         const shelfBooks = [
           ...books.filter(b => b.status === "reading"),
           ...books.filter(b => b.status === "completed")
         ];
         if (shelfBooks.length === 0) return null;
+
+        const glassBg = isDark
+          ? "rgba(32, 32, 38, 0.55)"
+          : "rgba(255, 255, 255, 0.76)";
+        const glassBorder = isDark
+          ? "1px solid rgba(255, 255, 255, 0.12)"
+          : "1px solid rgba(255, 255, 255, 0.75)";
+        const glassShadow = isDark
+          ? "0 28px 68px rgba(0, 0, 0, 0.58), 0 8px 22px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2)"
+          : "0 24px 54px rgba(0, 0, 0, 0.09), 0 6px 16px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.95)";
 
         return (
           <FadeIn delay={0.3}>
@@ -3566,7 +3696,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                 borderTop: "1px solid rgba(150,150,150,0.12)",
                 paddingTop: "1.2rem",
                 marginTop: "1.5rem",
-                paddingBottom: "2.5rem"
+                paddingBottom: "1rem"
               }}
             >
               {/* Header: "LIBRARY" left, bare scrolling ticker right */}
@@ -3605,41 +3735,68 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                 </Link>
               </div>
 
-              {/* Scroll wrapper (overflow here) + inner grid (no overflow — required for 3D flip CSS transforms) */}
-              <div
-                className="lib-shelf"
-                style={{
-                  overflowX: "auto",
-                  overflowY: "hidden",
-                  paddingBottom: "0.75rem",
-                  scrollSnapType: "x mandatory",
-                  WebkitOverflowScrolling: "touch"
-                }}
-              >
-                <div style={{
-                  display: "grid",
-                  gridTemplateRows: "repeat(2, 145px)",
-                  gridAutoFlow: "column",
-                  gridAutoColumns: "80px",
-                  gap: "1rem 0.65rem",
-                  width: "max-content",
-                  alignItems: "start"
-                }}>
-                  {shelfBooks.map((book) => (
-                    <BookCard key={book.id} book={book} onClick={() => setActiveBook(book)} />
-                  ))}
-                </div>
-              </div>
+              {/* Single horizontally scrollable shelf — all books in one row */}
+              {(() => {
+                const glassBg = selectedTheme
+                  ? (isDark ? `${selectedTheme.bgDark}fa` : `${selectedTheme.bgLight}fa`)
+                  : (isDark ? "rgba(32, 32, 38, 0.96)" : "rgba(255, 255, 255, 0.96)");
+
+                const glassBorder = selectedTheme
+                  ? `1px solid ${selectedTheme.primary}4d`
+                  : (isDark ? "1px solid rgba(255, 255, 255, 0.16)" : "1px solid rgba(0, 0, 0, 0.12)");
+
+                const glassShadow = isDark
+                  ? "0 6px 30px rgba(0,0,0,0.45)"
+                  : "0 6px 30px rgba(0,0,0,0.06)";
+
+                return (
+                  <div style={{ 
+                    borderRadius: "16px", background: glassBg, 
+                    backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", 
+                    border: glassBorder, boxShadow: glassShadow, 
+                    padding: "16px 14px", overflow: "hidden",
+                    transition: "all 0.4s ease"
+                  }}>
+                    <div
+                      className="lib-shelf-row hide-scrollbar"
+                      style={{
+                        overflowX: "auto",
+                        overflowY: "hidden",
+                        display: "flex",
+                        gap: "12px",
+                        paddingBottom: "24px",
+                        marginBottom: "-24px",
+                        scrollSnapType: "x mandatory",
+                        WebkitOverflowScrolling: "touch",
+                        position: "relative",
+                        scrollbarWidth: "none",
+                        msOverflowStyle: "none"
+                      }}
+                    >
+                      {shelfBooks.map((book) => (
+                        <div key={book.id} style={{ scrollSnapAlign: "start", flexShrink: 0 }}>
+                          <BookCard book={book} isDark={isDark} onClick={() => setActiveBook(book)} theme={selectedTheme} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
 
               <style>{`
-                @keyframes lib-marquee {
-                  0%   { transform: translateX(0); }
-                  100% { transform: translateX(-33.33%); }
+                .lib-shelf-row::-webkit-scrollbar,
+                .hide-scrollbar::-webkit-scrollbar {
+                  display: none !important;
+                  width: 0 !important;
+                  height: 0 !important;
+                  background: transparent !important;
                 }
-                .lib-shelf::-webkit-scrollbar { height: 3px; }
-                .lib-shelf::-webkit-scrollbar-track { background: rgba(128,128,128,0.03); border-radius: 99px; }
-                .lib-shelf::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.15); border-radius: 99px; }
-                .lib-shelf::-webkit-scrollbar-thumb:hover { background: rgba(128,128,128,0.3); }
+                .lib-shelf-row-1,
+                .lib-shelf-row-2,
+                .hide-scrollbar {
+                  scrollbar-width: none !important;
+                  -ms-overflow-style: none !important;
+                }
               `}</style>
             </div>
           </FadeIn>
@@ -3712,7 +3869,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                   }}
                 >
                   {/* iOS Close Button */}
-                  <button 
+                  <button
                     onClick={() => setActiveBook(null)}
                     style={{
                       position: "absolute",
@@ -3734,7 +3891,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)"; }}
                   >
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
                   </button>
 
                   {/* Cover in the Pop-up */}

@@ -26,11 +26,35 @@ function isbn13To10(isbn13: string): string | null {
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
+  const directUrl = searchParams.get("url");
+
+  if (directUrl) {
+    try {
+      const res = await fetch(directUrl, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+        },
+      });
+      if (res.ok) {
+        const blob = await res.blob();
+        return new NextResponse(blob, {
+          headers: {
+            "Content-Type": res.headers.get("content-type") || "image/jpeg",
+            "Cache-Control": "public, max-age=31536000, immutable",
+          },
+        });
+      }
+    } catch (err) {
+      console.error("Direct cover URL proxy failed:", err);
+    }
+  }
+
   const title = searchParams.get("title") ?? "";
   const author = searchParams.get("author") ?? "";
   const isbn = searchParams.get("isbn") ?? "";
 
-  if (!title && !isbn) return NextResponse.json({ url: null });
+  if (!title && !isbn && !directUrl) return NextResponse.json({ url: null });
 
   const cacheKey = `${title}::${author}::${isbn}`.toLowerCase();
   if (coverCache.has(cacheKey)) {

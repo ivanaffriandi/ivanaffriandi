@@ -5,6 +5,7 @@ export interface BlockedIP {
   ip: string;
   note?: string;
   blockedAt?: string;
+  isSystem?: boolean;
 }
 
 // 1. Get all blocked IPs
@@ -13,8 +14,8 @@ export async function getBlockedIPs(): Promise<BlockedIP[]> {
     const res = await fetch("/api/blocked-ips", { cache: "no-store" });
     if (!res.ok) return [];
     return res.json();
-  } catch (err) {
-    console.error("Failed to load blocked IPs client side:", err);
+  } catch (err: any) {
+    console.error("Failed to load blocked IPs client side:", err?.message || err);
     return [];
   }
 }
@@ -33,7 +34,7 @@ export async function addBlockedIP(ip: string, note?: string): Promise<BlockedIP
     }
     return res.json();
   } catch (err: any) {
-    console.error("Failed to add blocked IP client side:", err);
+    console.error("Failed to add blocked IP client side:", err?.message || err);
     throw err;
   }
 }
@@ -45,8 +46,8 @@ export async function deleteBlockedIP(id: string): Promise<boolean> {
       method: "DELETE"
     });
     return res.ok;
-  } catch (err) {
-    console.error("Failed to delete blocked IP client side:", err);
+  } catch (err: any) {
+    console.error("Failed to delete blocked IP client side:", err?.message || err);
     return false;
   }
 }

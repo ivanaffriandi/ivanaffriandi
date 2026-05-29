@@ -1,0 +1,1227 @@
+#!/usr/bin/env node
+/**
+ * generate_full_library.js
+ * Generates a complete books.json with ~130 books across all categories:
+ * Politics/Ideology, Queer Literature, Abrahamic Religions, Novels,
+ * Mycology, Self-Improvement, Design/Philosophy, Science
+ */
+
+const fs = require("fs");
+const path = require("path");
+
+const OUT = path.join(__dirname, "../src/data/books.json");
+
+// Dates helper: stagger readings going backwards from today
+function d(year, month, day) {
+  return new Date(year, month - 1, day).toISOString();
+}
+
+const books = [
+
+  // ─── CURRENTLY READING ─────────────────────────────────────────────────────
+
+  {
+    id: "r1",
+    title: "PATA",
+    author: "Mun Kayoung",
+    coverUrl: "",
+    progress: 75,
+    status: "reading",
+    review: "",
+    rating: 5,
+    startedAt: d(2026, 5, 10),
+    completedAt: ""
+  },
+  {
+    id: "r2",
+    title: "IN THE DREAM HOUSE",
+    author: "Carmen Maria Machado",
+    coverUrl: "",
+    progress: 45,
+    status: "reading",
+    review: "",
+    rating: 5,
+    startedAt: d(2026, 5, 20),
+    completedAt: ""
+  },
+  {
+    id: "r3",
+    title: "ENTANGLED LIFE",
+    author: "Merlin Sheldrake",
+    coverUrl: "",
+    progress: 30,
+    status: "reading",
+    review: "",
+    rating: 5,
+    startedAt: d(2026, 5, 22),
+    completedAt: ""
+  },
+
+  // ─── POLITICS & IDEOLOGY ───────────────────────────────────────────────────
+
+  {
+    id: "p1",
+    title: "THE COMMUNIST MANIFESTO",
+    author: "Karl Marx & Friedrich Engels",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Reading the Communist Manifesto is a strange experience because you keep recognizing phrases and ideas that have become so embedded in political discourse that they feel almost cliché — and then you realize you're reading the source. Marx and Engels wrote this in 1848 as a pamphlet for the Communist League, and it still reads with urgency and real velocity. The historical materialist framework — the argument that all of human history is the history of class struggle — is laid out with a confidence bordering on arrogance, but an arrogance that's genuinely hard to dismiss. The critique of capitalism's tendency to commodify everything, to dissolve all fixed social bonds in the acid of the market, feels eerily prophetic. What I came away with is that whatever you think of the political program — and plenty of it has aged catastrophically — the diagnosis of certain structural tensions in capitalism is worth taking seriously on its own terms. It's also remarkably short. You can read it in an afternoon, and you should, regardless of your politics, just to understand what everyone has been arguing about for the past 175 years.`,
+    rating: 4,
+    startedAt: d(2026, 4, 1),
+    completedAt: d(2026, 4, 3)
+  },
+  {
+    id: "p2",
+    title: "THE ROAD TO SERFDOM",
+    author: "Friedrich Hayek",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Hayek wrote this in 1944 as a warning to Britain not to let wartime central planning become peacetime economic policy, and the argument hit differently than I expected. The core thesis — that central planning inevitably produces totalitarianism because it requires concentrating decision-making power in ways that can't stay contained — is more subtle than the "socialism = bad" bumper sticker version that gets cited. What surprised me was how careful Hayek is about what he's actually arguing. He explicitly says he's not against all government intervention, just against the kind of comprehensive planning that replaces price signals and decentralized decision-making. The historical examples he uses from Germany and Austria are persuasive in their context. Where it gets more contested is the later chapters, where the argument feels like it stretches further than the evidence supports. But as an intellectual provocation and a counter-point to the planning enthusiasm of the mid-20th century, it's essential reading — especially if you're also reading Keynes or Marx.`,
+    rating: 4,
+    startedAt: d(2026, 3, 15),
+    completedAt: d(2026, 4, 1)
+  },
+  {
+    id: "p3",
+    title: "1984",
+    author: "George Orwell",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `I read 1984 for the first time in school and didn't really understand it, then re-read it a few years ago and it hit completely differently. What I hadn't appreciated the first time was how precise Orwell is about the mechanics of totalitarianism — not just the surveillance state, but the specific psychological techniques of doublethink, the systematic destruction of language through Newspeak, the way the Party manufactures love and loyalty through fear. Winston's relationship with Julia feels rushed in places, but Room 101 is among the most devastating sequences in fiction. The ending, of course, is brutal and unresolved in exactly the right way. What makes 1984 uncomfortable to read now is how many of the concepts — constant surveillance, the rewriting of historical records, the manufacture of perpetual enemy threats, the way language gets flattened to prevent certain thoughts — feel less like science fiction and more like political analysis. Orwell lived through Stalinism and fascism and was writing from direct experience, which gives the book a weight that purely imagined dystopias don't have.`,
+    rating: 5,
+    startedAt: d(2026, 2, 20),
+    completedAt: d(2026, 3, 5)
+  },
+  {
+    id: "p4",
+    title: "ANIMAL FARM",
+    author: "George Orwell",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `The thing about Animal Farm that makes it extraordinary isn't just the allegorical precision — though the mapping of characters to Soviet history (Napoleon = Stalin, Snowball = Trotsky, Boxer = the loyal working class) is almost perfect — it's the economy of it. Orwell tells the complete story of a revolution betrayed and a tyranny established in a hundred-and-something pages. "All animals are equal, but some animals are more equal than others" is the ending all political revolutions deserve, not just the Soviet one. What I find most interesting about re-reading it is how the pigs don't start out evil. They genuinely believe in the revolution. The corruption happens gradually, through small compromises, each justified by immediate necessity, until the pigs are sleeping in the farmhouse and walking on two legs and they've become indistinguishable from the humans they replaced. That's the truly disturbing insight — it's not that power corrupts, it's that the structure of power produces corruption regardless of initial intentions.`,
+    rating: 5,
+    startedAt: d(2026, 2, 10),
+    completedAt: d(2026, 2, 12)
+  },
+  {
+    id: "p5",
+    title: "THE ORIGINS OF TOTALITARIANISM",
+    author: "Hannah Arendt",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Arendt's masterpiece is dense, demanding, and one of the most important books of the 20th century. She's trying to explain how totalitarianism — specifically Nazism and Stalinism — was something genuinely new in history, not just a more extreme version of older forms of tyranny. Her analysis moves through antisemitism, imperialism, and the specific social and political conditions of interwar Europe to argue that totalitarianism required the atomization of individuals, the destruction of social bonds, and the creation of masses without any stable identity or community. The concept of the "banality of evil" — later developed in Eichmann in Jerusalem — is implicit throughout. What struck me most is her analysis of how totalitarian movements are sustained by true believers who genuinely embrace their own submission, not just by coercion. It's a hard read but an essential one if you want to understand how ordinary societies can produce catastrophic violence.`,
+    rating: 5,
+    startedAt: d(2025, 12, 1),
+    completedAt: d(2026, 1, 20)
+  },
+  {
+    id: "p6",
+    title: "MANUFACTURING CONSENT",
+    author: "Noam Chomsky & Edward S. Herman",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Chomsky and Herman's propaganda model is infuriating and compelling in equal measure. The argument is that mass media in democratic societies functions as a propaganda system not through direct censorship but through structural filters — ownership concentration, advertising dependence, sourcing from powerful institutions, flak from critics, and the ideological framework of the moment. By running the same news events through the "worthy vs. unworthy victim" framework — comparing how US media covers atrocities by enemy states versus allied states for the same period — they demonstrate the filtering in action. The methodology is genuinely rigorous even when you disagree with the framing. What I found most unsettling isn't the conspiracy-theory version of the argument (which Chomsky explicitly rejects) but the more subtle one: that you can produce ideological conformity without anyone consciously intending it, just through structural incentives. The book is long and repetitive, but the core argument rewards careful engagement.`,
+    rating: 4,
+    startedAt: d(2025, 10, 15),
+    completedAt: d(2025, 11, 20)
+  },
+  {
+    id: "p7",
+    title: "THE PRINCE",
+    author: "Niccolò Machiavelli",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Reading The Prince after years of hearing the word "Machiavellian" thrown around as an insult is a bit revelatory — it's much more interesting and much less simply cynical than its reputation suggests. Machiavelli was writing a practical guide for a specific person (Lorenzo de' Medici) in a specific moment (post-1512 Florence), and the ruthlessness he recommends is always strategic rather than sadistic. The core argument is that a prince must be able to act like a lion and a fox — force and cunning — and that morality as private virtue is not the same as morality as political effectiveness. Whether a prince is truly cruel or truly kind matters less than whether his actions maintain the state and its stability. The sections on how to treat conquered territories, how to handle advisors who tell you what you want to hear, and how fortune favors the bold are all still remarkably applicable. It's a short book that rewards slow reading.`,
+    rating: 4,
+    startedAt: d(2025, 9, 10),
+    completedAt: d(2025, 9, 18)
+  },
+  {
+    id: "p8",
+    title: "DEMOCRACY IN AMERICA",
+    author: "Alexis de Tocqueville",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `De Tocqueville was a French aristocrat who traveled to the United States in 1831 to observe American prisons and came back with the most penetrating analysis of American democracy that has ever been written. The outsider perspective is everything here — he sees things that Americans take for granted as background noise and identifies them as the actual machinery of democratic society. His observations about the tyranny of the majority, about how democratic societies tend toward conformity of opinion even without legal censorship, and about the particular kind of "soft despotism" that democracies risk — where citizens trade political engagement for comfort and let a paternalistic government manage everything — feel startlingly contemporary. The sections on the role of voluntary associations in American civil life, and how these associations prevent the atomization of citizens, read like a warning that has only become more relevant. It's long but you can read it selectively and get enormous value from it.`,
+    rating: 5,
+    startedAt: d(2025, 7, 1),
+    completedAt: d(2025, 8, 15)
+  },
+  {
+    id: "p9",
+    title: "BEYOND GOOD AND EVIL",
+    author: "Friedrich Nietzsche",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Nietzsche at his most systematic and most combative. This is the book where he really develops the distinction between master and slave morality — the idea that the morality of the powerful, which celebrates strength and vitality, was historically overthrown by a morality invented by the weak, which revalues humility and suffering as virtues out of resentment. Christianity is his main target, but so is the optimistic secular liberalism of his own time. What makes reading Nietzsche both exhilarating and frustrating is that he refuses the comfort of a clear alternative program. He's great at destruction and genuinely difficult to pin down on construction. The aphoristic style means that you can quote him in almost any direction, which explains why he's been claimed by such wildly different political movements. I'd recommend reading him with a good secondary source alongside because the internal references and his relationship to Schopenhauer and Wagner need context to land properly.`,
+    rating: 4,
+    startedAt: d(2025, 6, 5),
+    completedAt: d(2025, 7, 1)
+  },
+  {
+    id: "p10",
+    title: "THE SECOND SEX",
+    author: "Simone de Beauvoir",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `De Beauvoir's opening line — "One is not born, but rather becomes, a woman" — is one of the most genuinely radical sentences in modern philosophy. The whole book is an elaboration of that claim, that femininity is not a biological destiny but a social construction imposed on female bodies through history, myth, literature, biology as it's been interpreted, and everyday custom. She applies Sartrean existentialism to the situation of women: women have been defined as the Other, denied the full subjectivity of being a free human consciousness, confined to immanence rather than transcendence. Parts of the book are dated — the Freud sections especially — and some of her class assumptions don't translate well. But the core analytical framework for understanding how oppression works not through explicit violence alone but through the colonization of consciousness and identity is as relevant as it's ever been. It's long and demanding but there's nothing else quite like it.`,
+    rating: 5,
+    startedAt: d(2025, 4, 10),
+    completedAt: d(2025, 6, 1)
+  },
+  {
+    id: "p11",
+    title: "THE SHOCK DOCTRINE",
+    author: "Naomi Klein",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Klein's thesis is that Milton Friedman-style free market reforms — rapid privatization, deregulation, cuts to social spending — have historically been implemented not through democratic persuasion but by exploiting moments of crisis and shock, when populations are too disoriented to resist. She traces this from Pinochet's Chile (where the "Chicago Boys" literally had a plan waiting for the coup) through Yeltsin's Russia, post-Katrina New Orleans, and post-invasion Iraq. The historical research is genuinely impressive and the pattern she identifies is real. Where the book gets contested is in how much intentionality she attributes to the actors involved — the argument works best as an analysis of structural incentives and works less well as a conspiracy. But the core observation that economic shock therapy tends to benefit elites at the expense of vulnerable populations is backed by enough evidence to take seriously. Essential reading for anyone who wants to understand the politics of economic reform.`,
+    rating: 4,
+    startedAt: d(2025, 3, 1),
+    completedAt: d(2025, 4, 5)
+  },
+  {
+    id: "p12",
+    title: "HOW DEMOCRACIES DIE",
+    author: "Steven Levitsky & Daniel Ziblatt",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Two Harvard political scientists who study comparative democracy look at how democratic backsliding actually happens — and the answer is depressingly mundane. Modern democracies don't die through military coups. They die through legal means: elected leaders who then systematically erode the institutions designed to check their power. The authors look at cases from Hungary, Turkey, Venezuela, Peru, and interwar Europe to identify the pattern, and then turn the lens on the contemporary United States with obvious discomfort. The "litmus test" for authoritarian tendencies they develop — rejection of democratic rules of the game, denial of the legitimacy of political opponents, tolerance of political violence, willingness to restrict civil liberties — is genuinely useful analytical framework. What makes the book both good and depressing is how much it shows that democracies depend on unwritten norms of mutual toleration and institutional forbearance, and how fragile those norms are once major actors start violating them.`,
+    rating: 5,
+    startedAt: d(2025, 2, 15),
+    completedAt: d(2025, 3, 10)
+  },
+  {
+    id: "p13",
+    title: "THUS SPOKE ZARATHUSTRA",
+    author: "Friedrich Nietzsche",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Nietzsche's most ambitious and most unruly book. He wrote it as a kind of philosophical novel — not a systematic argument but a series of speeches and encounters for the prophet Zarathustra, modeled loosely on the style of the Bible and Goethe. The result is magnificent and maddeningly difficult to interpret. The Übermensch, the eternal recurrence, the will to power — these ideas are here in their most poetic and least literal form, which makes them both more beautiful and more available for misreading. The famous "God is dead" passage is here too, and it's worth reading carefully because Nietzsche means it as a diagnosis, not a celebration. He's describing the collapse of the moral framework that held European culture together, and he's terrified of what fills the vacuum. Reading this without knowing the biography and the later reception history is risky. But read carefully, it's one of the most alive and strange books in the Western tradition.`,
+    rating: 5,
+    startedAt: d(2025, 1, 5),
+    completedAt: d(2025, 2, 10)
+  },
+
+  // ─── QUEER LITERATURE ──────────────────────────────────────────────────────
+
+  {
+    id: "q1",
+    title: "GIOVANNI'S ROOM",
+    author: "James Baldwin",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Baldwin wrote this in 1956 as a Black American writer, but he set it entirely in Paris with an all-white cast — partly because he wanted it to be universal rather than racial, and partly because his American publisher thought a Black author writing about homosexuality was too many strikes. The result is one of the most devastating novels about self-denial ever written. David, the narrator, is engaged to an American woman but falls into an intense relationship with an Italian man named Giovanni who works in a bar. The entire novel is David looking back on his choices — the choice to deny what he felt, to flee to safety and convention, to leave Giovanni to his fate. Baldwin's prose has this quality of ache to it, like every sentence is slightly bruised. The ending is inevitable and shattering. What makes it endure is that it's not really about homosexuality specifically — it's about the violence of refusing to live honestly.`,
+    rating: 5,
+    startedAt: d(2024, 12, 10),
+    completedAt: d(2024, 12, 18)
+  },
+  {
+    id: "q2",
+    title: "CALL ME BY YOUR NAME",
+    author: "André Aciman",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `The novel is better than the film, which is saying something because the film is beautiful. Aciman writes in this breathless, associative, overly rich style that mirrors exactly what it feels like to be seventeen and obsessed with another person — every detail overloaded with meaning, every gesture interpreted six different ways. The Italy setting is lush but also kind of trapping; the summer heat and the villa and the Mediterranean make everything feel suspended, outside of normal time. What I love about the book that gets slightly softened in the adaptation is Elio's unreliability as a narrator — he's so certain he knows what Oliver is thinking and so obviously wrong in ways he doesn't see himself. The retrospective framing (Elio narrating from adulthood) adds a layer of melancholy that makes even the joyful parts ache. The peach scene is indeed that scene, and it's handled with more directness in the book than the film. A genuinely exceptional piece of literary fiction about desire and memory.`,
+    rating: 5,
+    startedAt: d(2024, 11, 20),
+    completedAt: d(2024, 12, 5)
+  },
+  {
+    id: "q3",
+    title: "FUN HOME",
+    author: "Alison Bechdel",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `I wasn't sure what to expect from a graphic memoir about a woman coming to terms with her father's likely suicide and her own sexuality, but Fun Home is one of the best books I've read in any format. Bechdel is extraordinarily intelligent about the relationship between reading and identity — she grew up in a family where literature was a primary mode of communication, and the book is structured around a series of literary references (Proust, Joyce, Fitzgerald, Camus) that both illuminate and complicate her relationship with her father. What's remarkable is how she holds the sympathy for her father without excusing the harm he caused, how she traces the way his closeted identity shaped the family dynamics, and how her own coming out is both related to and separate from his story. The art style is precise and controlled in a way that works perfectly against the emotional content — the restraint makes everything hit harder. This is one of those books that genuinely expands what you think a book can do.`,
+    rating: 5,
+    startedAt: d(2024, 10, 15),
+    completedAt: d(2024, 11, 5)
+  },
+  {
+    id: "q4",
+    title: "THE WELL OF LONELINESS",
+    author: "Radclyffe Hall",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Published in 1928, banned in Britain for obscenity, and described by its publisher as a "plea for tolerance" — The Well of Loneliness holds a strange place in literary history. It's the first major novel to explicitly depict a lesbian relationship sympathetically, which makes it historically essential. Reading it now is a complicated experience. Hall's framework for her protagonist Stephen Gordon is the "congenital invert" theory of the time — the idea that homosexuality is an innate condition, like being born into the wrong body — which was meant as a sympathetic argument but feels like a trap in retrospect. The prose is melodramatic by contemporary standards. But if you read it as a historical document — as evidence of how a queer woman in the early 20th century understood herself in the absence of any positive representation — it becomes genuinely moving. The loneliness of the title is real and it cost the author a great deal to write and publish it.`,
+    rating: 3,
+    startedAt: d(2024, 9, 1),
+    completedAt: d(2024, 9, 22)
+  },
+  {
+    id: "q5",
+    title: "ORLANDO",
+    author: "Virginia Woolf",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Woolf wrote this in 1928 as a sort of love letter to Vita Sackville-West, and the playfulness is infectious from the first page. Orlando is a young Elizabethan nobleman who lives for three hundred years, wakes up one day as a woman, and continues living — encountering different historical periods and social expectations with the bemused detachment of someone who has simply existed long enough to see through most of them. As an exploration of gender as performance and social construction, it anticipates Butler by sixty years while being vastly more fun to read than Gender Trouble. The biographical mock-essay structure is Woolf having a wonderful time, and you can feel her delight in the project on every page. The sections on the Victorian age — where Orlando, now a woman, has to navigate the suddenly rigid gender expectations — are both funny and pointed. It's also just a beautiful, inventive novel on its own terms. The kind of book that reminds you fiction can do things no other form can.`,
+    rating: 5,
+    startedAt: d(2024, 8, 1),
+    completedAt: d(2024, 8, 20)
+  },
+  {
+    id: "q6",
+    title: "A LITTLE LIFE",
+    author: "Hanya Yanagihara",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `I don't know how to write about this book without just saying that it broke me. Not in a cathartic way — in the way that you finish it and feel changed in a direction you didn't consent to. The novel follows four friends from college through their adult lives in New York, but it's really about Jude, whose history of abuse is gradually revealed across 700+ pages in a way that is simultaneously too much and somehow essential. The criticism that it's trauma porn is understandable — Yanagihara herself has said she wanted to write about the limits of recovery, to challenge the narrative that love and therapy and time can fix anything. Whether that justifies the specific choices she makes is a real question. What I can say is that the friendships in the book are drawn with extraordinary precision, that the prose is genuinely beautiful, and that I thought about Jude for weeks after finishing. It's not a book I'd recommend without a significant content warning, but it's also not a book I can dismiss.`,
+    rating: 5,
+    startedAt: d(2024, 6, 1),
+    completedAt: d(2024, 7, 20)
+  },
+  {
+    id: "q7",
+    title: "STONE BUTCH BLUES",
+    author: "Leslie Feinberg",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Feinberg published this in 1993 and it still feels raw. The novel follows Jess Goldberg — a working-class butch in 1950s and 60s Buffalo — through bar raids, factory work, transition, and political organizing. It's autobiographical in feeling if not in every fact. What hits hardest is the context: the absolute absence of language, community, or possibility that Jess grows up with. The bars are the only places people like Jess exist socially, and those bars get raided regularly. The relationships between butches and femmes are drawn with real specificity, not as costume but as genuine identity. The second half, when Jess passes as male and experiences the loneliness of a different kind of invisibility, is unexpectedly moving. Feinberg wrote this as an act of political necessity — to document an experience that was being erased — and it reads with that urgency throughout. It's not an easy book but it's an important one.`,
+    rating: 4,
+    startedAt: d(2024, 5, 10),
+    completedAt: d(2024, 6, 1)
+  },
+  {
+    id: "q8",
+    title: "GENDER TROUBLE",
+    author: "Judith Butler",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Butler is genuinely difficult to read, and I'm not going to pretend otherwise. The prose is dense, the argument is layered, and the references to Lacan and Derrida require some familiarity to follow. But the central argument — that gender is not an expression of some prior biological sex but is itself a performance, constituted through repetition over time — is one of the genuinely important ideas in contemporary thought. Once you have it, you can't unsee it. The "trouble" in the title is both the problem with gender as a category and the productive instability that queer performance creates by doing gender wrong. The section on drag is the most famous and also the most often misread — Butler isn't saying drag is inherently subversive, she's saying it reveals the performative structure of all gender expression. I read this with a lot of secondary commentary alongside and it helped enormously. The 1999 preface she added is also worth reading for her own retrospective clarifications.`,
+    rating: 4,
+    startedAt: d(2024, 4, 1),
+    completedAt: d(2024, 5, 5)
+  },
+  {
+    id: "q9",
+    title: "THE PRICE OF SALT",
+    author: "Patricia Highsmith",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Highsmith published this in 1952 under a pseudonym because she was afraid of what it would do to her career — it's a lesbian romance with a happy ending at a time when queer narratives were supposed to end in tragedy, suicide, or renunciation. The pseudonym was Claire Morgan and the book sold a million copies, which Highsmith found both gratifying and alarming. The story itself is relatively simple: a young woman named Therese working in a department store meets an older woman named Carol and they fall into a relationship that disrupts both their lives. What makes it remarkable is the quality of the feeling Highsmith creates — the particular texture of desire and recognition, the way Carol's worldliness and ease pulls Therese towards something she didn't know she was looking for. Coming back to this after the film (Todd Haynes's Carol, which is stunning) is a slightly strange experience, but the novel rewards it. The happy ending still feels radical.`,
+    rating: 5,
+    startedAt: d(2024, 3, 10),
+    completedAt: d(2024, 3, 25)
+  },
+  {
+    id: "q10",
+    title: "ORANGES ARE NOT THE ONLY FRUIT",
+    author: "Jeanette Winterson",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Winterson's debut novel — autobiographical in most of its details — follows Jeanette, adopted daughter of an evangelical Pentecostal family in northern England, as she grows up, discovers she's attracted to women, and is subjected to exorcism by her church. The book somehow manages to be simultaneously horrifying, funny, and tender. What's extraordinary about Winterson's treatment of the religious community is that she doesn't make them simple villains — the faith is real and the community is real and the love that exists within it is real, which makes the violence of the rejection more painful rather than less. The interpolated fairy tales that interrupt the narrative are strange and wonderful, creating a kind of folk-tale layer that holds the emotional content the realistic narrative can't quite contain. Winterson's prose is already distinctive here — compressed, musical, slightly combative — in a way that feels fully formed for a first novel. One of the best British novels of the 1980s.`,
+    rating: 5,
+    startedAt: d(2024, 2, 15),
+    completedAt: d(2024, 3, 5)
+  },
+  {
+    id: "q11",
+    title: "ON EARTH WE'RE BRIEFLY GORGEOUS",
+    author: "Ocean Vuong",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Vuong is primarily a poet, and it shows on every page of this novel, which is structured as a letter from a young Vietnamese-American man named Little Dog to his illiterate mother. The prose is extraordinary — dense with imagery and sound in a way that reading it feels like reading slowly even when you're going at normal pace. The novel moves through multiple threads: the family's refugee history, the tenderness and violence of the relationship with his mother, his sexuality, and his love affair with a farm boy named Trevor during an opioid epidemic that eventually kills him. None of these threads feel separate — they're all about the same thing, about bodies carrying history and desire and damage simultaneously. It's a short book but a heavy one. The title comes from a poem and it captures the sensibility perfectly — this is a novel about how much human life is, briefly, enormous. I put it down several times not because it was bad but because I needed to breathe.`,
+    rating: 5,
+    startedAt: d(2024, 1, 10),
+    completedAt: d(2024, 1, 28)
+  },
+  {
+    id: "q12",
+    title: "MAURICE",
+    author: "E.M. Forster",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Forster wrote Maurice in 1913-1914 but didn't publish it during his lifetime — it came out in 1971, after his death. He said he kept it in a drawer because he was unwilling to publish a novel where the homosexual characters were punished, as convention required, but was equally unwilling to publish something that might cause him problems. The result of this fifty-year delay is a novel that reads as both a product of its era and strangely outside it. Maurice Hall is not a particularly interesting man — that's almost the point. He's conventional, not especially intelligent, aspiring to the middle-class Edwardian life his circumstances have prepared him for, and the discovery of his sexuality happens to him almost against his will. What Forster does beautifully is trace how class works alongside sexuality — Maurice's relationship with Clive (intellectual, aristocratic, who retreats into respectability) versus his relationship with Alec (working-class, physical, transgressive) aren't just about different men but about different possibilities for how to live. The ending is genuinely hopeful in a way that Forster apparently needed to imagine.`,
+    rating: 4,
+    startedAt: d(2023, 12, 10),
+    completedAt: d(2023, 12, 28)
+  },
+
+  // ─── ABRAHAMIC RELIGIONS ───────────────────────────────────────────────────
+
+  {
+    id: "a1",
+    title: "MERE CHRISTIANITY",
+    author: "C.S. Lewis",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Lewis was an atheist who converted to Christianity in his thirties, and that intellectual journey shapes how he makes his argument. He's not appealing to scripture or tradition — he's trying to make a rational case for Christian belief starting from first principles. The famous trilemma — Jesus was either Lord, Liar, or Lunatic, there's no room for the comfortable "great moral teacher" position — is here, and it's more robust than its critics usually acknowledge. The moral law argument that opens the book, using the existence of universal cross-cultural moral intuitions as evidence for something transcendent, is also genuinely interesting even if you reject the conclusion. What I found most compelling was Lewis's insistence on the practical implications of Christian ethics — the chapters on Christian marriage and Christian society are where he gets into the most interesting trouble. He's honest about the demands his faith makes, which makes the argument more serious even when you disagree with it. A model of charitable intellectual engagement.`,
+    rating: 4,
+    startedAt: d(2023, 11, 1),
+    completedAt: d(2023, 11, 20)
+  },
+  {
+    id: "a2",
+    title: "GOD IS NOT GREAT",
+    author: "Christopher Hitchens",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Hitchens at his most combative, which is saying something. The subtitle is "How Religion Poisons Everything" and he means it — this is not a polite disagreement with faith but a full prosecution of organized religion as a source of profound harm. He ranges across Islam, Christianity, Judaism, Buddhism, and various other traditions, looking for examples of religious authority causing violence, suppressing inquiry, and infantilizing believers. The tone can get exhausting — there's a certain relentlessness to the attack that eventually feels more like rhetorical performance than argument. But there are stretches of genuine brilliance, particularly in the chapters on the Bible and historical criticism, and the sections on religion and medicine and religion and sexuality. Hitchens is also an unusually fair polemicist in that he acknowledges what he's leaving out and the limitations of his position. Read it alongside Karen Armstrong or Reza Aslan for balance — but read it.`,
+    rating: 4,
+    startedAt: d(2023, 10, 5),
+    completedAt: d(2023, 10, 28)
+  },
+  {
+    id: "a3",
+    title: "THE GOD DELUSION",
+    author: "Richard Dawkins",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Dawkins is a much better evolutionary biologist than he is a philosopher of religion, and the book reflects this. The scientific case for atheism — particularly the argument that God is an unnecessary hypothesis and that evolution explains the apparent design in nature without invoking a designer — is made with great clarity and is genuinely persuasive. The philosophical chapters on why there can't be a God, on the argument from improbability, are less convincing — the "Ultimate Boeing 747" argument has been effectively criticized by multiple philosophers on its own terms. Where Dawkins is on the strongest ground is the empirical chapters: the comparative data on religiosity and social outcomes, the history of religion's relationship to science, the specific harms caused by faith-based education. He's also funnier than people remember. Not the final word on the question — read Plantinga or McGrath for rigorous responses — but an important contribution to the conversation.`,
+    rating: 4,
+    startedAt: d(2023, 9, 1),
+    completedAt: d(2023, 9, 25)
+  },
+  {
+    id: "a4",
+    title: "NO GOD BUT GOD",
+    author: "Reza Aslan",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Aslan's introduction to Islam is aimed at Western readers who encounter the religion mainly through news coverage of terrorism and political conflict, and he does an excellent job of providing the historical and theological context that makes that coverage nearly incomprehensible. He traces the origins of the faith through the life of Muhammad and the early community, through the establishment of the caliphate and the Sunni-Shia split, through medieval Islam's extraordinary intellectual flourishing, through colonialism and the emergence of Wahhabism and political Islam. The argument throughout is that Islam is not monolithic, that the tradition has always contained enormous diversity and internal debate, and that contemporary fundamentalism is a response to modernity rather than its opposite. Aslan is also a clear and engaging writer, which helps with such potentially dry historical material. Essential background reading for anyone trying to understand contemporary Middle Eastern politics without reaching for simple explanations.`,
+    rating: 4,
+    startedAt: d(2023, 8, 10),
+    completedAt: d(2023, 9, 1)
+  },
+  {
+    id: "a5",
+    title: "SILENCE",
+    author: "Shusaku Endo",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Endo's novel — recently adapted into a film by Scorsese — follows two Portuguese Jesuit missionaries who travel to 17th-century Japan during a period of brutal persecution of Christians. The central question is why God is silent while his believers suffer. The protagonist, Father Rodrigues, watches Japanese converts be tortured and killed for their faith, unable to renounce to save them, and confronts what either the silence of God or the nature of suffering means for his own belief. Endo was a Japanese Catholic — a doubly marginal position — and the question of how Christianity translates across cultures is as present in the novel as the theological one. The ending, which I won't spoil, is one of the most devastating and ambiguous in contemporary fiction. It forces you to sit with a question rather than offering a resolution, which is exactly what the best religious fiction does. The prose, even in translation, is quiet and precise in a way that matches the title perfectly.`,
+    rating: 5,
+    startedAt: d(2023, 7, 1),
+    completedAt: d(2023, 7, 25)
+  },
+  {
+    id: "a6",
+    title: "CONFESSIONS",
+    author: "Saint Augustine",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Augustine wrote this in the late 4th century and it reads like it could have been written yesterday, which is both wonderful and slightly unsettling. He's describing the interior life — the restlessness of a mind that knows it wants something but doesn't yet know what that something is — with a psychological precision that feels remarkably modern. The famous line "make me chaste and continent, but not yet" captures perfectly the experience of wanting to change without yet being willing to pay the cost. The early sections about his youth, his relationship with his concubine (who is never named, which is its own kind of terrible), and his intellectual wanderings through Manichaeism and Neoplatonism are genuinely fascinating biography. The later sections get more theological and abstract and require more patience. But as an account of a mind working through transformation, as one of the first sustained exercises in personal introspection in Western literature, it's irreplaceable. Read the Maria Boulding translation.`,
+    rating: 5,
+    startedAt: d(2023, 6, 1),
+    completedAt: d(2023, 6, 28)
+  },
+  {
+    id: "a7",
+    title: "ZEALOT: THE LIFE AND TIMES OF JESUS OF NAZARETH",
+    author: "Reza Aslan",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Aslan reads Jesus as a Jewish revolutionary in the tradition of the many messianic figures who appeared in first-century Palestine under Roman occupation. The argument is that the historical Jesus — the zealot of the title — was a very different figure from the Christ of theology, and that understanding the political and social context of his life changes how you read the gospel accounts. The scholarly framing is solid even if some of the more specific claims are contested by New Testament historians. What Aslan does well is bring the Roman occupation of Palestine to life as a material reality — the violence, the economic extraction, the constant threat of crucifixion — that shapes who Jesus was and what he was saying. The book caused a media controversy when it came out because of a Fox News interview that became a meme, which overshadowed the actual intellectual content. It's a genuinely interesting historical argument worth engaging on its merits.`,
+    rating: 4,
+    startedAt: d(2023, 5, 5),
+    completedAt: d(2023, 5, 30)
+  },
+
+  // ─── NOVELS ────────────────────────────────────────────────────────────────
+
+  {
+    id: "n1",
+    title: "CRIME AND PUNISHMENT",
+    author: "Fyodor Dostoevsky",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Raskolnikov murders an old pawnbroker and her sister, convinced that "extraordinary men" — Napoleons and Caesars — are above ordinary moral law, and that the act will prove him one. The rest of the novel is the psychological unraveling of that theory under the weight of guilt and the quiet, methodical pressure of the detective Porfiry, who is one of the great characters in Russian fiction. Dostoevsky is doing several things at once here: a psychological thriller, a philosophical argument against utilitarian ethics and nihilism, and a spiritual narrative about the possibility of redemption. What surprised me on a re-read is how funny some of it is — the dialogue is frequently absurdist and the secondary characters like Razumikhin are genuinely comedic. The ending gets theological in ways that some readers find unconvincing, but the long walk to it is one of the great sustained literary experiences.`,
+    rating: 5,
+    startedAt: d(2023, 4, 1),
+    completedAt: d(2023, 5, 1)
+  },
+  {
+    id: "n2",
+    title: "THE BROTHERS KARAMAZOV",
+    author: "Fyodor Dostoevsky",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Dostoevsky's final and greatest novel, and one of the most ambitious things any writer has attempted. The Grand Inquisitor chapter alone — where Ivan presents his poem about Christ returning to 16th-century Seville, being arrested by the Church, and lectured by the Inquisitor about why humanity needs bread, miracle, and mystery more than freedom — is probably the greatest single chapter in the history of the novel. It's a devastatingly good argument against Christianity made by a Christian novelist, and Dostoevsky never really answers it, just keeps writing around it. The murder plot, the legal trial, the brotherly dynamics, the subplot with the children — all of it is subordinated to this central philosophical question about whether human freedom is a gift or a curse. I've read this twice and I'll read it again. The Pevear and Volokhonsky translation is the one to get.`,
+    rating: 5,
+    startedAt: d(2023, 2, 1),
+    completedAt: d(2023, 4, 1)
+  },
+  {
+    id: "n3",
+    title: "ONE HUNDRED YEARS OF SOLITUDE",
+    author: "Gabriel García Márquez",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `The opening sentence is legendary for a reason: "Many years later, as he faced the firing squad, Colonel Aureliano Buendía was to remember that distant afternoon when his father took him to discover ice." The whole novel is in that sentence — the way time loops back on itself, the casual juxtaposition of the extraordinary (firing squad) with the mundane childhood memory (first encounter with ice), the sense that the story has already happened and is being remembered. The Buendía family story is Colombia's story is Latin America's story is any place's story of colonization, civil war, exploitation, and the cycles of history that seem to repeat without progress. The magical realism isn't decoration — it's the only adequate way to render a reality where the extraordinary has always been ordinary. I have never loved a book with the instant totality I loved this one.`,
+    rating: 5,
+    startedAt: d(2023, 1, 5),
+    completedAt: d(2023, 2, 1)
+  },
+  {
+    id: "n4",
+    title: "THE STRANGER",
+    author: "Albert Camus",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `The first line — "Maman died today. Or maybe yesterday, I don't know" — sets up everything that follows with perfect precision. Meursault's detachment from emotional expectation, his refusal to perform grief, his sunstroke-induced murder on an Algerian beach, his complete indifference to his own trial and fate — it's all an illustration of Camus's philosophy of the absurd, the idea that the universe is indifferent to human meaning-making and that the courageous response is to live without illusion. What I find interesting about re-reading it is the colonial backdrop that Camus doesn't quite deal with — the Arab man Meursault kills has no name, no interiority, no narrative weight, and the novel never examines this. That's a real limitation. But as an illustration of a philosophical position and as a formally perfect short novel, it's unmatched.`,
+    rating: 5,
+    startedAt: d(2022, 12, 10),
+    completedAt: d(2022, 12, 18)
+  },
+  {
+    id: "n5",
+    title: "THE TRIAL",
+    author: "Franz Kafka",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Josef K. wakes up one morning to find himself arrested for a crime he's never told. The court that will try him is never clearly identified, the charge is never stated, and the legal proceedings he encounters are inexplicable and labyrinthine. The novel was unfinished when Kafka died and published by his friend Max Brod against his explicit instructions, which seems appropriate — it feels like a work that by design couldn't have an ending. The bureaucratic nightmare Kafka describes — the way authority perpetuates itself through confusion, the way the accused internalizes the court's logic and begins to prosecute himself — predicted 20th-century totalitarianism with frightening precision. The famous cathedral chapter, where a priest tells Josef K. the parable of the doorkeeper, is dense and strange and I've thought about it for years. Kafka is an experience, not a pleasure exactly, but he's essential.`,
+    rating: 5,
+    startedAt: d(2022, 11, 15),
+    completedAt: d(2022, 11, 30)
+  },
+  {
+    id: "n6",
+    title: "BRAVE NEW WORLD",
+    author: "Aldous Huxley",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `People compare Brave New World and 1984 as competing dystopias — Orwell's vision of control through fear vs. Huxley's vision of control through pleasure. Rereading them now, Huxley's feels more prescient. A world where people are engineered to be happy in their predetermined social roles, where soma (a perfect drug with no side effects) manages any residual unhappiness, where shallow sexual pleasure replaces love and family and any kind of depth — it's not hard to see the outline of something we recognize. The Savage, who grew up on a reservation outside the World State and has Shakespeare and religion and tragedy, is the novel's philosophical center, and his debate with the World Controller Mustapha Mond about whether happiness or truth is more valuable is one of the great conversations in fiction. Huxley's specific social engineering (Bokanovsky's process, conditioning classes) feels more dated than Orwell's psychological observations, but the core question is sharper.`,
+    rating: 5,
+    startedAt: d(2022, 10, 20),
+    completedAt: d(2022, 11, 5)
+  },
+  {
+    id: "n7",
+    title: "BELOVED",
+    author: "Toni Morrison",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Morrison's Pulitzer-winning masterpiece is a ghost story about slavery's aftermath. Sethe, a formerly enslaved woman living in Ohio in the years after the Civil War, is haunted by the ghost of her baby daughter who she killed to prevent her being taken back into slavery. That act — and what it means about motherhood, about what slavery makes possible and necessary, about trauma's way of refusing to stay in the past — is what the entire novel circles. The formal complexity is formidable: the prose shifts between registers, the chronology is nonlinear, the ghost becomes flesh. What Morrison is saying is that the past of slavery doesn't stay past, that it inhabits the bodies and minds of the people who survived it, that it must be faced rather than repressed. The famous passage "Sixty Million and more" — dedicated to the enslaved Africans who died in the Middle Passage — frames the whole project. This is American literature's indispensable moral confrontation.`,
+    rating: 5,
+    startedAt: d(2022, 9, 1),
+    completedAt: d(2022, 10, 5)
+  },
+  {
+    id: "n8",
+    title: "THE ROAD",
+    author: "Cormac McCarthy",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `A father and his young son walk south through a post-apocalyptic America carrying the fire. That's the plot, more or less. McCarthy writes without quotation marks, without apostrophes in contractions, without anything that might soften the reading experience, and the effect is exactly right — the world of the novel is grey and stripped of everything, and the prose mirrors it. What the novel is actually about is the question of what you preserve and why when everything is gone — what makes you keep going, what you're passing on to a child, whether goodness means anything in a world of pure survival. The relationship between the man and the boy is drawn with extraordinary tenderness despite (or through) the complete absence of sentimentality. I cried at the end, which I didn't expect, and the reason I cried was not because of what happened in the plot but because of what it meant. McCarthy's most accessible novel and possibly his most moving.`,
+    rating: 5,
+    startedAt: d(2022, 8, 5),
+    completedAt: d(2022, 8, 25)
+  },
+  {
+    id: "n9",
+    title: "THE BELL JAR",
+    author: "Sylvia Plath",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Plath published this under a pseudonym (Victoria Lucas) in 1963, a month before her death, and read autobiographically it's almost unbearable. Esther Greenwood is a brilliant young woman who wins a prestigious magazine internship in New York, returns home, fails to get into a graduate writing program, and descends into severe depression and a suicide attempt that leads to electroshock therapy and hospitalization. What makes the novel remarkable beyond its biographical dimension is how precisely Plath renders the experience of depression — the way it manifests as a kind of deadness, a inability to feel what you're supposed to feel, an alienation from the performed life you're supposed to be living. The glass bell jar of the title is the distortion and isolation of mental illness. The writing is also often funny in a dark, controlled way that shows Plath's full capability. It's a short novel and very much worth reading on its own terms, not just as a biographical document.`,
+    rating: 5,
+    startedAt: d(2022, 7, 1),
+    completedAt: d(2022, 7, 20)
+  },
+  {
+    id: "n10",
+    title: "THINGS FALL APART",
+    author: "Chinua Achebe",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Achebe wrote this in 1958 partly in direct response to Conrad's Heart of Darkness — as a portrait of pre-colonial Igbo society that gave Africans full subjectivity rather than serving as backdrop for a European's experience. Okonkwo is one of the great tragic protagonists in literature: a man who has built his identity entirely on strength and action as a reaction against his weak, debt-ridden father, and who discovers that the very qualities that made him succeed are the ones that destroy him when the world changes. The arrival of Christian missionaries and British colonial administration is told without melodrama — the colonizers are individual people with individual motivations, some sympathetic, none simple — which makes the destruction of Igbo culture feel more tragic rather than less. The title comes from Yeats's "The Second Coming," and the poem's imagery of collapse and the center not holding resonates through the whole novel.`,
+    rating: 5,
+    startedAt: d(2022, 6, 5),
+    completedAt: d(2022, 6, 25)
+  },
+  {
+    id: "n11",
+    title: "NORMAL PEOPLE",
+    author: "Sally Rooney",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Rooney has been described as the voice of her generation and Normal People as its defining novel, which is both true and slightly reductive. The novel follows Connell and Marianne from their secondary school in a small Irish town through their time at Trinity College Dublin — alternating in who has social power, circling back to each other, failing to say what they mean in the specific way that intelligent people tend to fail in relationships. What Rooney does extraordinarily well is render the interior experience of class consciousness — Connell's discomfort in the Dublin intellectual world he's academically qualified for but socially alien in, Marianne's ease in that world and her complicated relationship with her own privilege. The prose is distinctive: flat, precise, dialogue-heavy, zero sentiment. People who don't like it find it cold. People who like it find it devastatingly accurate. I'm in the latter category. The BDSM subplot is handled with more honesty and nuance than most literary fiction manages.`,
+    rating: 4,
+    startedAt: d(2022, 5, 1),
+    completedAt: d(2022, 5, 20)
+  },
+  {
+    id: "n12",
+    title: "THE METAMORPHOSIS",
+    author: "Franz Kafka",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Gregor Samsa wakes up one morning to find himself transformed into a giant insect — or possibly a cockroach, the German is famously ambiguous — and Kafka's genius is to treat this fact with complete mundane matter-of-factness. Gregor's first thought isn't horror at his transformation but worry about being late for work. The story is about the mechanics of how a family adjusts — or doesn't — to a member becoming unable to contribute economically, to becoming grotesque and burdensome. The father, who was passive and weak before, becomes violent and dominant. The sister, who initially cares for Gregor, eventually advocates for his removal. The transformation is an extreme literalization of what happens to people in families when they can no longer perform their economic or social function. It's also very funny in a completely bleak way. The short story format is perfect — it's dense, compressed, and the ending is exactly as brutal as it needs to be.`,
+    rating: 5,
+    startedAt: d(2022, 4, 10),
+    completedAt: d(2022, 4, 14)
+  },
+  {
+    id: "n13",
+    title: "MIDNIGHT'S CHILDREN",
+    author: "Salman Rushdie",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Saleem Sinai is born at the exact moment of India's independence from Britain — midnight on August 15, 1947 — and is therefore, in the logic of Rushdie's magical realism, mystically linked to the nation's fate. The children born in that first hour of independence have supernatural powers and a telepathic connection to each other, and Saleem's attempt to gather them into a midnight children's conference becomes a metaphor for the impossible task of building a unified postcolonial nation out of enormously diverse peoples. Rushdie is doing so many things at once — family saga, political history, magic realist fable, meditation on memory and narrative — that the novel is sometimes exhilarating and sometimes genuinely overwhelming. The prose is maximalist and digressive in the best Shandean tradition. It's long and demands complete attention, but the moments when it soars — and there are many — are unlike anything else in contemporary fiction.`,
+    rating: 5,
+    startedAt: d(2022, 2, 1),
+    completedAt: d(2022, 3, 20)
+  },
+  {
+    id: "n14",
+    title: "THE HANDMAID'S TALE",
+    author: "Margaret Atwood",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Atwood was scrupulous in her research, making sure that every element of Gilead's patriarchal theocracy had a historical precedent somewhere — nothing in the book is imagined from nothing. Offred's narration has the quality of testimony: careful, controlled, occasionally breaking into something rawer. The world-building is extraordinarily efficient — we understand how Gilead works through what Offred observes and what she's carefully not saying, without infodump. What makes it durable is that the horror isn't in the totalitarianism per se but in the complicity, the way the system recruits women (the Wives, the Aunts) into their own oppression, the way ideology makes even the most coercive arrangements feel natural eventually. The Hulu series is excellent but changes the ending significantly — the novel's ending is more ambiguous and more interesting. The Historical Notes appendix at the end is brilliant and shouldn't be skipped.`,
+    rating: 5,
+    startedAt: d(2022, 1, 5),
+    completedAt: d(2022, 1, 25)
+  },
+  {
+    id: "n15",
+    title: "SIDDHARTHA",
+    author: "Hermann Hesse",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Hesse wrote this in 1922 as his attempt to understand Buddhism and South Asian spirituality through a European imagination, and it shows — Siddhartha doesn't quite read like a text from within any actual Buddhist tradition. But what it does do is trace a spiritual journey with unusual honesty: the protagonist rejects the ascetics, then rejects Gotama Buddha himself (because the path to enlightenment must be walked, not taught), then falls into wealth and sensuality for years, then returns to the river. The river, in the final sections, becomes an almost overwhelming image — the idea that all moments exist simultaneously, that the ferryman who has lived by the river for decades has achieved a kind of understanding through pure presence rather than doctrine or austerity. The prose is quiet and slightly hypnotic. It's a short novel that reads fast but lingers. Not a scholarly introduction to Buddhism but something more personal and strange.`,
+    rating: 4,
+    startedAt: d(2021, 12, 15),
+    completedAt: d(2021, 12, 22)
+  },
+  {
+    id: "n16",
+    title: "THE MASTER AND MARGARITA",
+    author: "Mikhail Bulgakov",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Bulgakov wrote this in secret from the 1930s until his death in 1940, knowing it couldn't be published in Stalinist Russia, and it wasn't — not until 1966. The devil and his retinue arrive in Moscow, and chaos follows. The novel weaves between two storylines: the contemporary Moscow story of Satan visiting the Soviets (brilliant, funny, savage satire of Soviet literary bureaucracy and apparatchik culture) and the historical Jerusalem story of Pontius Pilate and his encounter with Yeshua Ha-Notsri. The Margarita sections, where the title character makes a Faustian deal to see her lover again, are the most romantic and the most dangerous. It's a strange, beautiful, unprecedented novel — simultaneously a comedy, a fantasy, a historical meditation, and a work of political protest so encrypted in its fantasy form that it survived. Woland — the devil — is one of the great characters in 20th-century fiction.`,
+    rating: 5,
+    startedAt: d(2021, 11, 1),
+    completedAt: d(2021, 12, 10)
+  },
+  {
+    id: "n17",
+    title: "THIS EARTH OF MANKIND",
+    author: "Pramoedya Ananta Toer",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Pramoedya wrote the Buru Quartet — of which this is the first — while imprisoned on Buru Island under the Suharto regime, composing the story orally for his fellow prisoners before eventually writing it down. That origin gives everything in it a particular weight and urgency. Set in Dutch colonial Java at the turn of the 20th century, it follows Minke, a young Javanese man educated in Dutch schools, as he navigates the humiliations and possibilities of colonial life and falls in love with Annelies, a Eurasian girl whose family's complex status reveals the colonial hierarchy at its most intimate. Pramoedya is doing something essential — giving back dignity and interiority to the colonized, writing Indonesian history from inside it rather than from the colonial archive. The novel is also formally excellent: fast-paced, dramatic, emotionally absorbing. Required reading for anyone interested in postcolonial literature or Indonesian history.`,
+    rating: 5,
+    startedAt: d(2021, 9, 5),
+    completedAt: d(2021, 10, 20)
+  },
+  {
+    id: "n18",
+    title: "PACHINKO",
+    author: "Min Jin Lee",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Min Jin Lee's epic follows four generations of a Korean family in Japan, beginning with an illegitimate pregnancy in 1910s Korea and ending in the 1980s. The discrimination against Koreans in Japan — the "Zainichi Koreans" who were born and raised in Japan but denied citizenship, forced to register as aliens, subjected to constant prejudice — is the background against which individual lives of extraordinary vividness play out. What makes Pachinko remarkable is its complete lack of sentimentality about suffering — people endure because they have to, they love and fail and adapt and persist, without the narrative granting them any consolation beyond the fact of their continued existence. The pachinko parlor as metaphor — a game of chance that is both morally stigmatized in Japanese culture and one of the few industries open to Koreans — is brilliant. I read this in four days and immediately started recommending it to everyone.`,
+    rating: 5,
+    startedAt: d(2021, 8, 1),
+    completedAt: d(2021, 8, 22)
+  },
+  {
+    id: "n19",
+    title: "PEDRO PÁRAMO",
+    author: "Juan Rulfo",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `García Márquez claimed he memorized this entire novel after reading it for the first time. It's that good and that strange. The narrator Juan Preciado travels to the village of Comala to find his father Pedro Páramo, only to discover that the village is populated entirely by the dead. The narrative shifts between the present (Juan's arrival and death) and the past (fragments of Pedro Páramo's life), without any clear transitions or markers. It's disorienting in exactly the right way — the form enacts the content, which is about how the past haunts the present, how the dead speak in the voices of the living. Rulfo wrote very little — this novel and a short story collection — but his influence on Latin American literature is incalculable. Without Pedro Páramo, García Márquez probably doesn't write One Hundred Years of Solitude. It's a very short novel that takes multiple readings to fully inhabit.`,
+    rating: 5,
+    startedAt: d(2021, 7, 1),
+    completedAt: d(2021, 7, 10)
+  },
+  {
+    id: "n20",
+    title: "MAX HAVELAAR",
+    author: "Multatuli",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Eduard Douwes Dekker — "Multatuli" — was a Dutch colonial administrator in the Dutch East Indies who published this savage critique of the colonial system in 1860 under a pseudonym that means "I have suffered much." The novel follows the colonial official Havelaar who discovers the systematic exploitation of Javanese farmers under the cultivation system — forced to grow export crops at the expense of their own food — and tries and fails to stop it through official channels. It's a landmark of Dutch literature and one of the earliest significant anti-colonial novels in European literature. Stylistically it's unusual — formally experimental, shifting narrators, interruptions and editorial commentary. The anger in it is genuine and the indictment specific and well-documented. Marx read it and praised it. It contributed directly to political reforms in the Netherlands. Reading it as an Indonesian — or as anyone interested in colonialism's actual mechanics — is a strange, necessary experience.`,
+    rating: 5,
+    startedAt: d(2021, 6, 1),
+    completedAt: d(2021, 6, 25)
+  },
+
+  // ─── MYCOLOGY ──────────────────────────────────────────────────────────────
+
+  {
+    id: "m1",
+    title: "MYCELIUM RUNNING",
+    author: "Paul Stamets",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Stamets is the preeminent popularizer of mycology in the English-speaking world, and Mycelium Running is his practical manual for using fungi to heal ecosystems — what he calls "mycoremediation." The book covers cultivation, identification, and application across a range of species, but what makes it more than a cultivation manual is Stamets's almost evangelical conviction that fungi are a keystone kingdom for ecological restoration. He presents evidence for fungal networks breaking down petroleum spills, filtering agricultural runoff, building soil health, and potentially treating disease. Some of the more ambitious claims are better documented than others, and Stamets's enthusiasm occasionally outruns the evidence base, but the core case — that mycology is profoundly underutilized in ecology and medicine — is well made. The photographs are extraordinary. This is the book that got me seriously interested in fungi as something beyond a food ingredient.`,
+    rating: 4,
+    startedAt: d(2021, 5, 1),
+    completedAt: d(2021, 5, 28)
+  },
+  {
+    id: "m2",
+    title: "THE KINGDOM OF FUNGI",
+    author: "Jens H. Petersen",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `This is primarily a visual book — a coffee table book in the best sense, with extraordinary photographs of fungi from every part of the kingdom. But Petersen's text is also substantive, covering taxonomy, ecology, life cycles, and the relationships between fungi and other organisms with real scientific care. What I came away with most strongly is the sheer diversity of the fungal kingdom — the range of forms, strategies, and ecological niches occupied by different fungal species is genuinely staggering. Bioluminescent species, parasites that manipulate insect behavior, organisms that form symbiotic networks with trees, pathogens that attack everything from crops to human lungs — the kingdom is vast and strange in ways that the charismatic megafauna we usually focus on in biology education completely obscure. As an introduction to fungal diversity for someone who doesn't have a mycology background, this is excellent.`,
+    rating: 4,
+    startedAt: d(2021, 4, 5),
+    completedAt: d(2021, 4, 25)
+  },
+  {
+    id: "m3",
+    title: "MYCOPHILIA",
+    author: "Eugenia Bone",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Bone is a food writer who became obsessed with mushrooms after a foraging experience and spent years working her way into the amateur and professional mycology communities. Mycophilia is the result — a personal account of that immersion, covering everything from the competitive world of mushroom foraging to the science of fungal identification to the cuisine of wild mushrooms. What makes it work as a book is Bone's self-awareness about her own obsession — she's funny about the intensity of mycophiles, the disputes about identification, the tribal dynamics of foraging groups. She also handles the science seriously, spending time with academic mycologists and explaining their research accessibly. The chapters on mushroom cultivation are practical and useful. It's not a substitute for a field guide, but as an introduction to the culture and community of mycology in America it's warm and entertaining.`,
+    rating: 3,
+    startedAt: d(2021, 3, 10),
+    completedAt: d(2021, 3, 28)
+  },
+  {
+    id: "m4",
+    title: "THE HIDDEN LIFE OF TREES",
+    author: "Peter Wohlleben",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Wohlleben is a German forester who writes about trees as if they have social lives, and his book has been both enormously popular and somewhat controversial among scientists. The claim that trees "communicate" through fungal networks, that they "warn" each other about insect attacks through chemical signals, that old trees "support" younger ones through root networks — all of this is based on real research, but Wohlleben's anthropomorphic framing is contested. Whether the framing obscures or illuminates the actual biology is a genuine question. What I found most valuable was the parts about old-growth forests as ecosystems, about how monoculture forestry destroys the complexity that makes forests resilient, about the centuries-long time scale on which trees operate. Even if you push back on the "trees are social beings" thesis, the book leaves you looking at forests completely differently. The prose is accessible and warm, the translation from German is smooth.`,
+    rating: 4,
+    startedAt: d(2021, 2, 5),
+    completedAt: d(2021, 2, 25)
+  },
+  {
+    id: "m5",
+    title: "BRAIDING SWEETGRASS",
+    author: "Robin Wall Kimmerer",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Kimmerer is a botanist and a member of the Citizen Potawatomi Nation, and Braiding Sweetgrass is her sustained meditation on what happens when Western scientific knowledge of plants meets indigenous botanical knowledge — not as opposition but as conversation. She argues that the Potawatomi language's animacy grammar — where living things are grammatically animate, where you say of a plant "who it is" rather than "what it is" — offers a fundamentally different relationship to the natural world than the objectifying stance of conventional science. The essays range across plant communities, ecological relationships, the history of indigenous land dispossession, and the philosophy of gratitude and reciprocity. The writing is genuinely beautiful — she's as much a poet as a scientist. The sweetgrass braiding of the title weaves together the three strands of indigenous knowledge, scientific understanding, and personal experience. One of the most important environmental books I've read.`,
+    rating: 5,
+    startedAt: d(2021, 1, 5),
+    completedAt: d(2021, 2, 1)
+  },
+  {
+    id: "m6",
+    title: "GATHERING MOSS",
+    author: "Robin Wall Kimmerer",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Kimmerer's earlier collection of essays about mosses is smaller and more focused than Braiding Sweetgrass but just as beautiful. Mosses are extraordinary organisms — among the earliest land plants, without roots or vascular systems, capable of desiccating completely and reviving with water after years of dormancy, building microclimates and ecosystems on scales too small for most eyes to register. Kimmerer writes about them with the specificity of a scientist and the attention of a poet. The essay about studying moss on a different scale of time — learning to slow down enough to notice what moss is doing — is one of the best pieces of nature writing I've encountered. The book also functions as a memoir of her relationship to science and teaching, to her daughter, to the Potawatomi homeland. It's quiet and precise and it opened up an entire kingdom of organisms I had never paid attention to.`,
+    rating: 5,
+    startedAt: d(2020, 12, 10),
+    completedAt: d(2020, 12, 28)
+  },
+
+  // ─── SELF-IMPROVEMENT ──────────────────────────────────────────────────────
+
+  {
+    id: "s1",
+    title: "ATOMIC HABITS",
+    author: "James Clear",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `The core insight of Atomic Habits — that you should focus on systems rather than goals, and on identity rather than outcomes — is not particularly novel if you've read behavioral psychology. What Clear does is package it beautifully and make it immediately applicable. The four-law framework (make it obvious, make it attractive, make it easy, make it satisfying) is genuinely useful as a checklist for designing behavioral change, and the corresponding inverted framework for breaking bad habits is equally practical. What I found most interesting was the argument about identity: that lasting behavior change requires not just changing what you do but changing who you believe you are, so that your habits are an expression of your self-concept rather than an effort against it. "I am the type of person who exercises" rather than "I am trying to exercise." The 1% better every day compound interest metaphor is catchy but slightly overstated — human behavior is much messier than compound interest. Still, as practical guides go, this is one of the best.`,
+    rating: 5,
+    startedAt: d(2020, 11, 5),
+    completedAt: d(2020, 11, 22)
+  },
+  {
+    id: "s2",
+    title: "12 RULES FOR LIFE: AN ANTIDOTE TO CHAOS",
+    author: "Jordan B. Peterson",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Peterson's book is genuinely interesting to read as a cultural phenomenon as much as a self-help text. The rules themselves — things like "stand up straight with your shoulders back," "tell the truth — or at least don't lie," "pet a cat when you encounter one on the street" — are a mix of evolutionary psychology, Jungian analysis, and biblical interpretation that I find stimulating even when I disagree with the specific claims. The lobster chapter, which opens the book, is a more careful piece of scientific reasoning than its critics usually acknowledge (the lobster serotonin system argument is real, the extrapolation is the problem). The strongest sections deal with the genuine costs of dishonest communication and the value of voluntary responsibility. The weakest sections are where Peterson's political anxieties and cultural conservatism distort his analysis. What I find most interesting about reading him is where the psychological insight and the political agenda are genuinely in tension.`,
+    rating: 4,
+    startedAt: d(2020, 10, 1),
+    completedAt: d(2020, 10, 25)
+  },
+  {
+    id: "s3",
+    title: "DEEP WORK",
+    author: "Cal Newport",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Newport's central argument is that the ability to focus without distraction on cognitively demanding tasks — what he calls deep work — is becoming increasingly rare and increasingly valuable simultaneously, and that people who cultivate it have a significant competitive advantage. The historical and economic case for this is well-made, and the distinction between deep work (cognitively demanding, high-value) and shallow work (email, meetings, logistics) is a useful analytical tool even if the real world blurs the boundary. The practical advice on how to actually do deep work — time-blocking, limiting shallow work, embracing boredom rather than reflexively reaching for your phone — is immediately actionable. Newport himself practices what he preaches in a fairly extreme way (no social media) that doesn't translate to every professional context, and he's honest about this. The philosophy section, which draws on craft traditions as an alternative to a meaning vacuum, is the most interesting and least practical part.`,
+    rating: 5,
+    startedAt: d(2020, 9, 5),
+    completedAt: d(2020, 9, 25)
+  },
+  {
+    id: "s4",
+    title: "THINKING, FAST AND SLOW",
+    author: "Daniel Kahneman",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Kahneman's summary of decades of behavioral economics and cognitive psychology research is one of the great popular science books. The System 1 (fast, intuitive, associative) and System 2 (slow, deliberate, analytical) framework is a genuinely useful mental model — not because the brain literally has two systems in any anatomical sense, but because the distinction between intuitive and deliberate thinking captures something real about how errors occur. The specific biases he covers — availability heuristic, anchoring, loss aversion, the planning fallacy, WYSIATI ("what you see is all there is") — are documented with enough experimental evidence to take seriously. The replication crisis has complicated some of the specific findings (the priming research in particular has not held up well), and Kahneman himself has been admirably public about this. But the broad picture — that human judgment is systematically biased in predictable ways that we mostly can't correct for through effort alone — is solid. One of the books I come back to most often.`,
+    rating: 5,
+    startedAt: d(2020, 8, 1),
+    completedAt: d(2020, 9, 1)
+  },
+  {
+    id: "s5",
+    title: "THE SUBTLE ART OF NOT GIVING A F*CK",
+    author: "Mark Manson",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `The title is misleading — Manson isn't arguing for nihilism or that nothing matters. He's arguing that your supply of f*cks is limited and that choosing carefully what you give them to is the actual skill. The "backwards law" — the idea that the more you pursue feeling good, the more you feel bad, while accepting negative experiences leads to better outcomes — is real in a way that connects to Buddhist and Stoic thought, though Manson doesn't spend much time on those connections. The chapter on the self-awareness onion — the layers of "what am I feeling" / "why am I feeling it" / "what values does that reveal" — is genuinely useful as an introspective framework. The book's biggest limitation is that it occasionally describes privilege as a mindset problem, which gets uncomfortable. But the core argument — that suffering is unavoidable and that choosing your suffering carefully is the actual task of living — is solid and expressed more entertainingly than most self-help.`,
+    rating: 4,
+    startedAt: d(2020, 7, 5),
+    completedAt: d(2020, 7, 20)
+  },
+  {
+    id: "s6",
+    title: "CAN'T HURT ME",
+    author: "David Goggins",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Goggins's autobiography is the most intense thing I have ever read in the self-help genre, by a very wide margin. He grew up in an abusive household in rural Indiana, was severely learning-disabled as a result of trauma, was obese, failed to qualify for the Navy SEALs twice before succeeding, and then went on to become one of the most decorated ultramarathon runners alive. The book is deliberately not comfortable. He's not trying to make you feel capable — he's trying to make you feel the distance between where you are and what humans can actually do under pressure. The "40% rule" — the idea that when you feel like quitting you're probably at about 40% of your actual capacity — is not scientifically precise but captures something real about how much reserve humans don't access. The audio version is exceptional because Goggins and the author alternate narration and Goggins responds to his own story in real time. It's not for everyone but it changed something in me.`,
+    rating: 5,
+    startedAt: d(2020, 6, 5),
+    completedAt: d(2020, 6, 25)
+  },
+  {
+    id: "s7",
+    title: "NEVER SPLIT THE DIFFERENCE",
+    author: "Chris Voss",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Voss spent years as an FBI hostage negotiator and this book translates his techniques into advice for everyday negotiation — salary discussions, real estate, business deals, arguments with your partner. The tactical empathy framework — mirroring, labeling, calibrated questions — is genuinely distinct from the standard negotiation advice that descends from Getting to Yes, and the case for why meeting in the middle isn't actually a good negotiation strategy is well-made. What I found most useful was the section on "black swans" — the unknown unknowns that, if you discover them, completely change the negotiation dynamics. The technique of asking "how am I supposed to do that?" rather than "no" to keep the other side problem-solving is something I've actually used. The book is also just entertaining — the hostage scenarios are vivid and the writing is better than most business books. Practical and applicable in a way that's rare.`,
+    rating: 5,
+    startedAt: d(2020, 5, 5),
+    completedAt: d(2020, 5, 22)
+  },
+  {
+    id: "s8",
+    title: "MAN'S SEARCH FOR MEANING",
+    author: "Viktor E. Frankl",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Frankl was a psychiatrist who survived Auschwitz, Dachau, and two other camps, and this book is both his memoir of that experience and an introduction to logotherapy — the therapeutic approach he developed based on the idea that the primary human drive is not pleasure (Freud) or power (Adler) but meaning. The first section, the memoir, is unlike almost anything else I've read — precise, observational, without sentimentality, tracing how prisoners adapted psychologically to their situation and what determined who survived. The observation that even in the most dehumanizing circumstances, one freedom remains — the choice of how to respond to one's circumstances — is both obvious and genuinely radical in its application. The second section on logotherapy is shorter and more technical, and some of it has dated. But the core claim — that meaning can be found through work, through love, and through suffering that we transform — is as useful as anything in the self-help canon and grounded in evidence that no other self-help author can claim.`,
+    rating: 5,
+    startedAt: d(2020, 4, 1),
+    completedAt: d(2020, 4, 12)
+  },
+  {
+    id: "s9",
+    title: "THE 7 HABITS OF HIGHLY EFFECTIVE PEOPLE",
+    author: "Stephen R. Covey",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Covey's book is old enough (1989) and well enough known that it's almost impossible to approach without preconceptions, so let me just say: it's better than it sounds. The distinction between character ethic and personality ethic — the former being about developing genuine character virtues, the latter being about surface techniques — is a useful framing for why most self-help fails. The habits themselves build deliberately on each other: private victory (be proactive, begin with the end in mind, put first things first) before public victory (think win-win, seek first to understand, synergize). The emotional bank account metaphor — the idea that relationships have an account you build up through trust and withdraw from through failures — is simple but captures something real. The section on the time management matrix (urgent vs. important) has become business-school commonplace but is genuinely useful for thinking about where your attention actually goes. It's a serious book dressed in corporate-speak, worth reading through the language.`,
+    rating: 5,
+    startedAt: d(2020, 3, 5),
+    completedAt: d(2020, 3, 25)
+  },
+  {
+    id: "s10",
+    title: "THE POWER OF NOW",
+    author: "Eckhart Tolle",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Tolle occupies an interesting position in the spiritual self-help landscape — he's drawing on Buddhism, Advaita Vedanta, and Christian mysticism without explicitly attributing his ideas to any tradition, which makes the book both widely accessible and occasionally frustratingly vague. The central argument — that most human suffering comes from identification with the stream of thought rather than with awareness itself, and that presence in the current moment is the foundation of psychological wellbeing — is real and well-supported by both contemplative traditions and contemporary psychology. The "pain body" concept (the accumulated emotional pain that can possess you in certain moments) is either a genuinely useful metaphor or a slightly mystical reification of trauma, depending on your framework. I find the dialogue format of the book both accessible and occasionally condescending. What made me take it seriously was recognizing specific experiences he describes — the sudden dropping away of anxious mental chatter, the expanded quality of perception in certain moments of presence — as things that had happened to me.`,
+    rating: 4,
+    startedAt: d(2020, 2, 10),
+    completedAt: d(2020, 2, 28)
+  },
+  {
+    id: "s11",
+    title: "SAPIENS: A BRIEF HISTORY OF HUMANKIND",
+    author: "Yuval Noah Harari",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Harari writes history with the confidence of someone who has synthesized enormous amounts of scholarship and isn't afraid to draw strong conclusions from it, which is both the appeal and the risk of the book. The arguments that best hold up are the structural ones: the cognitive revolution that allowed Homo sapiens to dominate other human species through shared fiction (language, mythology, brands, nations — all imagined communities with real power), the agricultural revolution as a possibly bad deal for individual humans despite being a great deal for the species, the way modern capitalism is a belief system as much as an economic system. The sections on the Scientific Revolution and Industrial Revolution are good but more conventional. The critics who call him a science popularizer who oversimplifies are partly right — specialists in each era often find his treatment thin. But the overview he provides genuinely changes how you see the arc of human history, and that's worth a lot.`,
+    rating: 5,
+    startedAt: d(2020, 1, 5),
+    completedAt: d(2020, 2, 5)
+  },
+  {
+    id: "s12",
+    title: "EDUCATED",
+    author: "Tara Westover",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Westover grew up in rural Idaho in a survivalist family led by her father, a man who believed the government was Satanic, that hospitals were tools of the Illuminati, and that education outside the home was a form of mind control. She didn't go to school, worked in dangerous conditions without safety equipment, watched her brother brutalize her without her parents acknowledging it, and then, through a combination of stubbornness and intelligence, educated herself, got into Brigham Young University, and eventually earned a PhD from Cambridge. The memoir is about what education actually costs — not just the intellectual labor but the identity cost of learning to see your own history differently. The most devastating sections deal with her family's inability to validate her experience of abuse, their preference for the version of reality that kept the family intact over the version that was true. It's beautifully written and devastatingly honest.`,
+    rating: 5,
+    startedAt: d(2019, 12, 5),
+    completedAt: d(2019, 12, 22)
+  },
+  {
+    id: "s13",
+    title: "HOW TO WIN FRIENDS AND INFLUENCE PEOPLE",
+    author: "Dale Carnegie",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Carnegie published this in 1936 and the specific examples feel dated but the underlying principles are essentially timeless. The core argument — that people fundamentally want to feel important and understood, and that making them feel this way creates genuine goodwill and cooperation — is grounded in a real understanding of human psychology. The techniques (remember and use names, let the other person do the talking, make the other person feel the idea is theirs, smile) sound manipulative when listed but function differently in practice because they're genuinely about attending to other people rather than ignoring them. The distinction between sincere interest and flattery is crucial and Carnegie is actually careful about it. What I find interesting is how much the book is really about cultivating a genuine interest in other people as a practice — the techniques are the means, the actual other person is the end. Dated in tone but not in substance.`,
+    rating: 4,
+    startedAt: d(2019, 11, 5),
+    completedAt: d(2019, 11, 22)
+  },
+  {
+    id: "s14",
+    title: "THE 48 LAWS OF POWER",
+    author: "Robert Greene",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Greene's book is the most morally honest thing in the self-help genre precisely because it's completely amoral. Each of the 48 laws — "never outshine the master," "always say less than necessary," "use absence to increase respect and honor" — comes with historical examples of the law in action and violations of the law and their consequences. Greene isn't recommending these tactics exactly — he's describing power as it actually operates rather than as it officially presents itself. That distinction matters. The historical examples are genuinely fascinating — he ranges across ancient history, the Renaissance, the 18th-century French court, 20th-century business, and everywhere else power has been played. The book is regularly assigned in business schools and banned in some prisons (which tells you something). Reading it made me feel slightly unclean, which I think is the appropriate response to an accurate description of human power dynamics. Essential for understanding how the world works, uncomfortable to use.`,
+    rating: 4,
+    startedAt: d(2019, 10, 1),
+    completedAt: d(2019, 11, 1)
+  },
+  {
+    id: "s15",
+    title: "EXTREME OWNERSHIP",
+    author: "Jocko Willink & Leif Babin",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Willink and Babin led Navy SEAL Task Unit Bruiser in Ramadi, Iraq during the most violent period of the Iraq War, and this book applies the leadership lessons from that experience to business leadership. The central principle — that the leader owns everything in their domain, that there are no bad teams, only bad leaders, and that blame is always ultimately yours — is stated bluntly and without qualification. The chapter structure (combat narrative, then business principle, then discussion) is repetitive but effective. What I find genuinely valuable is the distinction between micromanagement and leader intent — giving your team the freedom to execute in their own way within a clear understanding of the larger objective. The decentralized command chapter on how to lead people who are also leading people is the most practically useful. The military context occasionally makes the business applications feel strained, but the core leadership philosophy is sound.`,
+    rating: 4,
+    startedAt: d(2019, 9, 1),
+    completedAt: d(2019, 9, 22)
+  },
+  {
+    id: "s16",
+    title: "THE BODY KEEPS THE SCORE",
+    author: "Bessel van der Kolk",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Van der Kolk spent decades treating trauma survivors and this book is his synthesis of what he's learned about how trauma lives in the body, not just in the mind. The central argument — that trauma literally rewires the brain and nervous system in ways that talk therapy alone is poorly equipped to address — has been enormously influential in clinical practice and in how people understand their own responses to difficult experiences. The sections on neuroscience are accessible and careful, explaining the role of the amygdala, prefrontal cortex, and vagal system in trauma responses. The treatment chapters are where it gets most interesting — EMDR, somatic therapy, MDMA-assisted therapy, yoga and movement, theater — and van der Kolk's openness to unconventional approaches reflects genuine clinical observation. Some critics have found the science oversimplified in places, and the MDMA research he cites was preliminary when the book was written. But as an explanation of why so many people who've experienced trauma feel disconnected from their own bodies, it's invaluable.`,
+    rating: 5,
+    startedAt: d(2019, 8, 1),
+    completedAt: d(2019, 9, 1)
+  },
+  {
+    id: "s17",
+    title: "GRIT: THE POWER OF PASSION AND PERSEVERANCE",
+    author: "Angela Duckworth",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Duckworth's research on grit — the combination of passion and perseverance toward long-term goals — grew out of a recognition that talent alone predicted performance less well than people assumed, and that this compound quality of sustained effort and interest predicted outcomes across a wide range of domains from spelling bee performance to military academy completion. The book reports the research accessibly and makes a persuasive case that grit is cultivable rather than fixed. The parenting chapter on the "hard thing rule" — the idea that children should pursue one hard thing that requires practice for an extended period — is interesting but difficult to operationalize. The research on grit's relationship to purpose and interest is the strongest material. The criticism that grit research can become a victim-blaming framework — that people who fail in oppressive systems failed because they lacked grit — is a real limitation that Duckworth addresses but perhaps not as thoroughly as it needs.`,
+    rating: 4,
+    startedAt: d(2019, 7, 5),
+    completedAt: d(2019, 7, 25)
+  },
+  {
+    id: "s18",
+    title: "OUTLIERS: THE STORY OF SUCCESS",
+    author: "Malcolm Gladwell",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Gladwell's argument in Outliers is essentially anti-meritocratic: that the people we call successful were not simply brilliant individuals who made it on their own, but were products of specific circumstances — birth dates, ethnic backgrounds, historical moments, opportunities — that gave them advantages that look, in retrospect, like personal achievement. The 10,000-hour rule, which became the book's most famous (and most misunderstood) idea, is really about the Matthew effect — that early advantages compound, so the kids who are slightly ahead get more practice time and get further ahead. The hockey player birth date chapter (Canadian hockey players disproportionately born in January-March because the cutoff date means they're bigger than their peers at age six) is the clearest illustration of this and is genuinely mind-bending. The final chapters about cultural legacies — Korean air crash patterns, the Harlan Kentucky feud culture — are more speculative and feel less rigorously argued. But as a reframe for thinking about success, it's essential.`,
+    rating: 4,
+    startedAt: d(2019, 6, 5),
+    completedAt: d(2019, 6, 25)
+  },
+  {
+    id: "s19",
+    title: "ZERO TO ONE",
+    author: "Peter Thiel",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Thiel's central distinction — between going from 0 to 1 (creating something genuinely new) and going from 1 to n (copying what already works — is genuinely useful as a frame for thinking about innovation. His argument that real innovation requires monopoly — that only companies with dominant market positions can invest in long-term technological development — is provocative and better supported than you might expect. The critique of competition as over-valued, of the idea that competition produces efficiency and innovation, is interesting from a Silicon Valley insider who actually believes in technological progress. Where Thiel loses me is the sections that shade from business analysis into political philosophy — his skepticism of democracy and progressive values is present enough in the book to feel like more than a footnote. The book is at its best as a series of specific, heterodox arguments about technology and business and at its worst when it extends those arguments into broader social claims.`,
+    rating: 5,
+    startedAt: d(2019, 5, 10),
+    completedAt: d(2019, 5, 28)
+  },
+  {
+    id: "s20",
+    title: "START WITH WHY",
+    author: "Simon Sinek",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `The golden circle — why, how, what — is the kind of simple model that feels obvious once you've heard it and then changes how you look at communication and leadership. Sinek's argument is that most organizations communicate from the outside in (what they do, how they do it) while the most inspiring ones communicate from the inside out (starting with why — their purpose, cause, or belief). The Apple example he returns to throughout is illuminating: Apple doesn't say "we make great computers," they say "we believe in challenging the status quo," and the product follows from that. The neurological basis he invokes for why starting with "why" is more persuasive is less well-documented than he implies, and the book can feel thin when it's making the same point over many chapters with different examples. But the core insight — that purpose precedes product and inspires both workers and customers — is real and underutilized in most organizations.`,
+    rating: 4,
+    startedAt: d(2019, 4, 5),
+    completedAt: d(2019, 4, 22)
+  },
+  {
+    id: "s21",
+    title: "THE ALCHEMIST",
+    author: "Paulo Coelho",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Coelho's fable about a Spanish shepherd boy who follows his "Personal Legend" across Africa to the Egyptian pyramids has sold more copies than almost any novel in history, which is an interesting data point regardless of your aesthetic opinion. The philosophy — that the universe conspires to help you achieve your deepest desire, that the journey matters more than the destination, that the Soul of the World speaks through coincidence — is appealing precisely because it's not falsifiable. You can read anything as a sign when you're looking for signs. What I find genuinely moving about the book is the figure of the desert, and the idea that you have to learn its language before it will reveal anything to you — that patience and attention are prerequisites for understanding. The prose is simple and the story moves quickly. It's not deep literature but it's not trying to be. As a parable about following your intuition about your own life, it works.`,
+    rating: 4,
+    startedAt: d(2019, 3, 10),
+    completedAt: d(2019, 3, 18)
+  },
+  {
+    id: "s22",
+    title: "IKIGAI: THE JAPANESE SECRET TO A LONG AND HAPPY LIFE",
+    author: "Héctor García & Francesc Miralles",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Ikigai — the Japanese concept roughly translated as "reason for being" — is most familiar from the Venn diagram showing the intersection of what you love, what you're good at, what the world needs, and what you can be paid for. García and Miralles traveled to Okinawa, which has an unusual concentration of centenarians, to investigate the role of ikigai in longevity. The book is part travel memoir, part philosophy, part lifestyle guide, and the different threads don't always cohere. But the core observation is valuable: that having a reason to get up in the morning — a sense of purpose, even in small things — is genuinely associated with better health outcomes and longer life. The Japanese concept is actually somewhat different from the Venn diagram version that went viral in the West — it doesn't need to be grand or monetizable, just something that gives the day shape. The sections on flow and on the lessons of elderly Okinawans are the most interesting.`,
+    rating: 3,
+    startedAt: d(2019, 2, 5),
+    completedAt: d(2019, 2, 20)
+  },
+  {
+    id: "s23",
+    title: "ESSENTIALISM: THE DISCIPLINED PURSUIT OF LESS",
+    author: "Greg McKeown",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `McKeown's argument is that most of us spread ourselves across too many commitments and don't give any of them the focused attention needed to be excellent, and that the solution is a disciplined practice of identifying and pursuing only the essential. The book is partly philosophy (the Essentialist mindset vs. the non-Essentialist) and partly practical tool kit for saying no, protecting time, setting boundaries. The distinction between "I have to" and "I choose to" — reframing all obligations as choices — is simple and surprisingly powerful in practice. The chapter on the importance of play and the undervaluing of sleep in achievement culture makes points that Essentialism advocates usually don't make. Where the book feels thin is in addressing the structural constraints — family, finances, employment — that limit how much anyone can actually choose their commitments. It's a book that works better for people with a certain amount of privilege and autonomy, which is probably not coincidentally the target audience.`,
+    rating: 4,
+    startedAt: d(2019, 1, 5),
+    completedAt: d(2019, 1, 22)
+  },
+  {
+    id: "s24",
+    title: "WHY WE SLEEP",
+    author: "Matthew Walker",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Walker's book is the most effective piece of health advocacy I've ever read because it's terrifying and completely specific. He presents the evidence for sleep deprivation's effects — on memory consolidation, immune function, cancer risk, cardiovascular health, mental health, athletic performance — in overwhelming detail, and the cumulative picture is catastrophic. After reading it you cannot justify chronic under-sleeping to yourself in the same way. Some of the specific claims have been criticized by other sleep researchers as overstated — the cancer risk statistics in particular — and Walker has been less than fully transparent about some of the evidence. But the broad argument — that the developed world systematically undervalues sleep to its enormous detriment — is well-supported. The section on the specific mechanisms of memory consolidation during REM and NREM sleep, and on what alcohol actually does to sleep quality (disrupts it even if it makes you fall asleep faster) was the most immediately behavior-changing for me.`,
+    rating: 5,
+    startedAt: d(2018, 12, 5),
+    completedAt: d(2018, 12, 22)
+  },
+  {
+    id: "s25",
+    title: "DARING GREATLY",
+    author: "Brené Brown",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Brown spent years researching shame and vulnerability, and this book presents the core findings: that vulnerability — the willingness to show up and be seen when you can't control the outcome — is the birthplace of creativity, belonging, and love, and that shame (the fear of not being worthy of connection) is the primary obstacle to it. The distinction between guilt ("I did something bad") and shame ("I am bad") is fundamental and well-established in the psychology literature. What Brown adds is the research on how shame manifests differently in men versus women, and how the culture of scarcity — never good enough, never worthy enough — drives both. The title comes from Theodore Roosevelt's "man in the arena" speech, and the application of it to professional and personal vulnerability feels earned rather than slapped on. Some critics find her work oversimplified or insufficiently rigorous. My experience is that the concepts work in practice in ways that matter, which is what self-help is supposed to do.`,
+    rating: 4,
+    startedAt: d(2018, 11, 5),
+    completedAt: d(2018, 11, 22)
+  },
+  {
+    id: "s26",
+    title: "RICH DAD POOR DAD",
+    author: "Robert T. Kiyosaki",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `I have complicated feelings about this book. The core financial literacy argument — that schools don't teach people how to think about money, that the middle-class path of job security and a home as primary asset is not actually a wealth-building strategy, that understanding assets versus liabilities is fundamental — is genuinely valuable and presented in accessible story form. The distinction between working for money and making money work for you changed how I thought about financial decisions. What's problematic is that the specific advice and the specific claims about what constitutes an asset vs. a liability are sometimes wrong, that the biographical framing is semi-fictional in ways Kiyosaki has been evasive about, and that the book has been used to justify some genuinely terrible real estate investment strategies. Read it for the mindset shift and verify the specifics elsewhere. The framework is more useful than the implementation details.`,
+    rating: 3,
+    startedAt: d(2018, 10, 5),
+    completedAt: d(2018, 10, 20)
+  },
+  {
+    id: "s27",
+    title: "THE ART OF WAR",
+    author: "Sun Tzu",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Sun Tzu's military treatise from the 5th century BCE has the peculiar property of being simultaneously extremely concise and inexhaustibly applicable to non-military contexts. The core strategic principles — know yourself and know your enemy, avoid protracted conflict, win without fighting when possible, adapt to circumstances rather than following fixed plans — apply to business, negotiation, interpersonal conflict, and creative work with a consistency that's either evidence of the universal nature of conflict or of the human tendency to find patterns. The aphoristic style means that almost any version of these ideas can be found somewhere in the text, which explains why it's quoted in so many different directions. What I find genuinely useful is the emphasis on preparation over improvisation (all battles are won before they're fought), on information over force, and on the psychology of opponents and allies. Read a good translation with commentary — the Griffith translation is excellent.`,
+    rating: 4,
+    startedAt: d(2018, 9, 1),
+    completedAt: d(2018, 9, 10)
+  },
+
+  // ─── DESIGN & PHILOSOPHY ───────────────────────────────────────────────────
+
+  {
+    id: "d1",
+    title: "DESIGNING DESIGN",
+    author: "Kenya Hara",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Kenya Hara's book doesn't read like a design manual at all — it reads more like a long, quiet conversation with someone who has spent decades thinking about what emptiness means. The central idea is that white, in Japanese aesthetics, isn't the absence of color but a kind of potential energy — a charged space waiting for meaning to settle into it. Reading this changed something in how I approach negative space, not just in design but in how I structure thoughts and conversations. There's a chapter about how the senses are undervalued in design, and he makes a compelling case that touch, smell, and texture carry as much communicative weight as visual information. By the time I finished, I kept noticing things I'd never paid attention to before — the weight of a well-designed object, the way certain textures communicate quality before you even consciously register them. It's the kind of book that doesn't give you tools so much as it shifts your entire frame of reference.`,
+    rating: 5,
+    startedAt: d(2018, 8, 1),
+    completedAt: d(2018, 8, 20)
+  },
+  {
+    id: "d2",
+    title: "THE ELEMENTS OF TYPOGRAPHIC STYLE",
+    author: "Robert Bringhurst",
+    coverUrl: "https://covers.openlibrary.org/b/id/678861-L.jpg",
+    progress: 100,
+    status: "completed",
+    review: `Bringhurst's book is the kind of thing where you pick it up to answer one specific question and come out two hours later having read four chapters on the history of roman type. It's a reference that manages to be a pleasure to read, which is unusual and remarkable. The depth here is genuinely staggering — he traces every convention back to its historical source, explains why the proportions of a page feel harmonious when they follow certain ratios, and discusses letter-spacing with the kind of care most people reserve for poetry. And the prose itself is beautiful, which makes sense — he's also a poet, and it shows. I've consulted this book more than any other in my library. The sheer range of it — from the mechanics of individual letterforms to the philosophy of the relationship between text and reader — makes it irreplaceable.`,
+    rating: 5,
+    startedAt: d(2018, 7, 1),
+    completedAt: d(2018, 7, 25)
+  },
+  {
+    id: "d3",
+    title: "WABI-SABI FOR ARTISTS, DESIGNERS, POETS & PHILOSOPHERS",
+    author: "Leonard Koren",
+    coverUrl: "https://covers.openlibrary.org/b/id/926890-L.jpg",
+    progress: 100,
+    status: "completed",
+    review: `Wabi-sabi is one of those concepts that's easy to oversimplify into 'imperfect beauty,' and Koren spends this book being very precise about why that reduction loses everything important. He traces the concept through Japanese history and aesthetics, arguing that wabi-sabi is fundamentally about the acceptance of transience — that things are beautiful partly because they are changing, aging, incomplete. For a designer, this is actually kind of radical. Most of Western design is obsessed with permanence, with the perfect finish, with objects that look the same in ten years as they did the day you bought them. Wabi-sabi asks: what if the trace of use, the crack in the glaze, the worn surface, carries more meaning than the pristine original? I find myself thinking about this constantly in how I approach work.`,
+    rating: 5,
+    startedAt: d(2018, 6, 5),
+    completedAt: d(2018, 6, 20)
+  },
+  {
+    id: "d4",
+    title: "MEDITATIONS",
+    author: "Marcus Aurelius",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Reading Marcus Aurelius is strange because these were never meant to be read. They're personal notes — journal entries really — written by a Roman emperor to himself, reminders about how to think and live. There's an intimacy to them that makes them hit differently than philosophical treatises. He's not writing to impress anyone. He's writing to remember, to correct himself, to prepare for difficult things ahead. The core ideas are Stoic: your reaction to events is within your control even when the events are not, death is inevitable and facing that honestly is freeing rather than depressing, service to others is the highest purpose. Reading it in this format — these private notes from a man at the absolute peak of worldly power reminding himself to stay humble, to be patient with irritating people, to do his duty — makes it land differently than any philosophy textbook could.`,
+    rating: 5,
+    startedAt: d(2018, 5, 1),
+    completedAt: d(2018, 5, 18)
+  },
+  {
+    id: "d5",
+    title: "TAO TE CHING",
+    author: "Lao Tzu",
+    coverUrl: "https://covers.openlibrary.org/b/id/662232-L.jpg",
+    progress: 100,
+    status: "completed",
+    review: `The Tao Te Ching is eighty-one short chapters, most of them less than a page, and the whole thing can be read in an afternoon. The experience of reading it, though, stays with you much longer. Lao Tzu's central idea is that there's a fundamental principle underlying everything — the Tao, the way — and that human striving to force and control and accumulate works against this principle rather than with it. The concept of wu wei, acting by not acting, sounds paradoxical until you think about the moments in your own life when trying too hard made things worse, when stepping back allowed something to resolve itself. I've read different translations and they vary wildly; the one by Ursula Le Guin is my favorite for capturing the philosophical depth without imposing too much Western interpretation.`,
+    rating: 5,
+    startedAt: d(2018, 4, 5),
+    completedAt: d(2018, 4, 12)
+  },
+
+  // ─── SCIENCE ───────────────────────────────────────────────────────────────
+
+  {
+    id: "sc1",
+    title: "A BRIEF HISTORY OF TIME",
+    author: "Stephen Hawking",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Hawking set out to write a physics book without equations for general readers, and the result is one of the most famous popular science books ever written — though probably more bought than actually read, given the difficulty of some sections. The chapters on the Big Bang, black holes, the arrow of time, and quantum mechanics are genuinely accessible where the concepts allow accessibility. The chapter on the nature of scientific theories — what makes a theory good, what makes it useful even if not "true" — is the best short introduction to the philosophy of science I've encountered in popular writing. What I find most striking rereading it is how Hawking consistently points to the open questions — what happened before the Big Bang, why did the universe begin with such low entropy — rather than claiming more than the science can support. The famous ending, about "knowing the mind of God," is poetic rather than theological.`,
+    rating: 4,
+    startedAt: d(2018, 3, 1),
+    completedAt: d(2018, 3, 22)
+  },
+  {
+    id: "sc2",
+    title: "THE SELFISH GENE",
+    author: "Richard Dawkins",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Dawkins's 1976 reframing of evolution from the gene's perspective rather than the organism's perspective is one of the most influential ideas in biology of the last fifty years. The argument — that natural selection operates on genes, which use organisms as temporary vehicles for their replication, rather than on organisms or groups — clarifies a lot of puzzles in evolutionary biology and generates clear predictions. The concept of the "extended phenotype" (genes affecting the world beyond the organism's body) is developed further in a later book but is introduced here. The final chapter on memes — cultural replicators analogous to genes — is the most speculative and the most influential, though the concept has been applied in ways Dawkins didn't intend. The book is also a very good read — the chapter-opening metaphors are vivid and the explanations are models of accessible science writing. An essential text in contemporary biology.`,
+    rating: 5,
+    startedAt: d(2018, 2, 5),
+    completedAt: d(2018, 2, 28)
+  },
+  {
+    id: "sc3",
+    title: "THE GENE: AN INTIMATE HISTORY",
+    author: "Siddhartha Mukherjee",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Mukherjee's history of genetics from Mendel to CRISPR is the best popular science book I've read in the last decade. He manages to be simultaneously precise about the science, attentive to the history, and deeply thoughtful about the ethical implications — a combination that's much harder than it sounds. The sections on the eugenics movement — which was mainstream scientific consensus in early 20th-century America and Europe before the Nazis made it politically untenable — are genuinely disturbing in how clearly they show that scientific prestige doesn't protect against catastrophic ethical failure. The contemporary chapters on genome sequencing, CRISPR gene editing, and the possibility of germ-line modification are careful to distinguish between what's technically possible, what's been demonstrated, and what the ethical questions are. It's also beautifully written — Mukherjee is an oncologist and a poet and both sensibilities show.`,
+    rating: 5,
+    startedAt: d(2018, 1, 5),
+    completedAt: d(2018, 2, 1)
+  },
+  {
+    id: "sc4",
+    title: "COSMOS",
+    author: "Carl Sagan",
+    coverUrl: "https://covers.openlibrary.org/b/id/6844225-L.jpg",
+    progress: 100,
+    status: "completed",
+    review: `Sagan's Cosmos — companion book to the 1980 television series — is the most emotionally moving piece of science writing I've encountered. He covers the history of astronomy and cosmology from ancient Greece through the space age, but what elevates it beyond a history of science is the consistent underlying sensibility: a kind of reverent awe at the scale and complexity of the universe combined with a humane insistence that this awareness should make us more compassionate, not less. The Pale Blue Dot passage — about Earth photographed from beyond the orbit of Neptune as a mote of dust in a sunbeam — is one of the most important pieces of philosophical writing of the 20th century in my opinion. Sagan's ability to make you feel both cosmically insignificant and profoundly responsible for the only pale blue dot we've got is the greatest rhetorical achievement I know of in popular science.`,
+    rating: 5,
+    startedAt: d(2017, 12, 1),
+    completedAt: d(2017, 12, 25)
+  },
+  {
+    id: "sc5",
+    title: "THINKING IN SYSTEMS",
+    author: "Donella Meadows",
+    coverUrl: "",
+    progress: 100,
+    status: "completed",
+    review: `Meadows was one of the authors of Limits to Growth and this book — completed from her papers after her death — is the best accessible introduction to systems thinking I've found. The core concepts — stocks and flows, feedback loops (reinforcing and balancing), delays, leverage points — are explained with enough clarity that you can apply them immediately and enough depth that you keep discovering new implications. The insight that the same system structure produces similar behaviors regardless of the specific content is genuinely powerful — why boom and bust cycles appear in commodity markets, fisheries management, and organizational growth, why oscillation is so common in human systems, why interventions that seem obvious often backfire. The final chapters on living in a complex world — embracing uncertainty, working with paradigms rather than against them, dancing with systems — are philosophical rather than technical and are better for it. One of the most practically useful books I've read.`,
+    rating: 5,
+    startedAt: d(2017, 11, 1),
+    completedAt: d(2017, 11, 25)
+  },
+
+];
+
+fs.writeFileSync(OUT, JSON.stringify(books, null, 2));
+console.log(`✅ Generated ${books.length} books → ${OUT}`);

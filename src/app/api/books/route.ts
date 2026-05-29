@@ -67,7 +67,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const body = await request.json();
-    const { title, author, coverUrl, progress, status, review, startedAt, completedAt } = body;
+    const { title, author, coverUrl, progress, status, review, rating, startedAt, completedAt } = body;
 
     if (!title || !author) {
       return NextResponse.json({ error: "title and author are required" }, { status: 400 });
@@ -84,12 +84,16 @@ export async function POST(request: Request) {
       progress: progress ?? 0,
       status: status || "to_read",
       review: review || "",
+      rating: rating ?? 5,
       startedAt: startedAt || new Date().toISOString(),
       completedAt: completedAt || ""
     };
 
     items.push(newBook);
-    writeBooksLocal(items);
+    const success = writeBooksLocal(items);
+    if (!success) {
+      return NextResponse.json({ error: "Failed to write database file" }, { status: 500 });
+    }
 
     return NextResponse.json(newBook);
   } catch (err) {
@@ -123,7 +127,10 @@ export async function PATCH(request: Request) {
       ...updates
     };
 
-    writeBooksLocal(items);
+    const success = writeBooksLocal(items);
+    if (!success) {
+      return NextResponse.json({ error: "Failed to write database file" }, { status: 500 });
+    }
 
     return NextResponse.json({ success: true });
   } catch (err) {
@@ -153,7 +160,10 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: "Book not found" }, { status: 404 });
     }
 
-    writeBooksLocal(items);
+    const success = writeBooksLocal(items);
+    if (!success) {
+      return NextResponse.json({ error: "Failed to write database file" }, { status: 500 });
+    }
 
     return NextResponse.json({ success: true });
   } catch (err) {

@@ -2,6 +2,8 @@ import { getPosts } from "@/lib/blogger";
 import { getAllMoments } from "@/lib/moments";
 import { getFallbackBooks } from "@/lib/books";
 import DailyJournalFeed from "@/components/DailyJournalFeed";
+import fs from "fs";
+import path from "path";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +14,19 @@ export default async function Home() {
     getAllMoments()
   ]);
 
-  const books = getFallbackBooks();
+  // Read books dynamically on the server to prevent Next.js caching / hydration mismatch
+  let books = [];
+  try {
+    const booksFilePath = path.join(process.cwd(), "src/data/books.json");
+    if (fs.existsSync(booksFilePath)) {
+      const raw = fs.readFileSync(booksFilePath, "utf8");
+      books = JSON.parse(raw);
+    } else {
+      books = getFallbackBooks();
+    }
+  } catch (err) {
+    books = getFallbackBooks();
+  }
 
   // Render the interactive daily journal interface with server-side parsed books!
   return (

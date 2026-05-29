@@ -163,8 +163,8 @@ export async function getAllCalendarEvents(): Promise<CalendarEvent[]> {
         items.push({ id: doc.id, ...doc.data() } as CalendarEvent);
       });
       fetchedSuccessful = true;
-    } catch (e) {
-      console.error("Firebase calendar read error, fallback to localStorage:", e);
+    } catch (e: any) {
+      console.error("Firebase calendar read error, fallback to localStorage:", e?.message || e);
     }
   }
 
@@ -186,8 +186,8 @@ export async function getAllCalendarEvents(): Promise<CalendarEvent[]> {
         try {
           const docRef = await addDoc(collection(db, "calendar"), e);
           merged.push({ id: docRef.id, ...e });
-        } catch (err) {
-          console.error("Failed to seed missing default event to Firebase:", err);
+        } catch (err: any) {
+          console.error("Failed to seed missing default event to Firebase:", err?.message || err);
           merged.push({ id: `seed-${Date.now()}-${Math.random()}`, ...e });
         }
       } else {
@@ -209,8 +209,8 @@ export async function addCalendarEvent(event: Omit<CalendarEvent, "id">): Promis
     try {
       const docRef = await addDoc(collection(db, "calendar"), event);
       return { id: docRef.id, ...event };
-    } catch (e) {
-      console.error("Firebase calendar write error, fallback to localStorage:", e);
+    } catch (e: any) {
+      console.error("Firebase calendar write error, fallback to localStorage:", e?.message || e);
     }
   }
   
@@ -228,8 +228,8 @@ export async function updateCalendarEvent(id: string, updates: Partial<Omit<Cale
       const docRef = doc(db, "calendar", id);
       await updateDoc(docRef, updates);
       return true;
-    } catch (e) {
-      console.error("Firebase calendar update error, fallback to localStorage:", e);
+    } catch (e: any) {
+      console.error("Firebase calendar update error, fallback to localStorage:", e?.message || e);
     }
   }
 
@@ -246,8 +246,8 @@ export async function deleteCalendarEvent(id: string): Promise<boolean> {
       const docRef = doc(db, "calendar", id);
       await deleteDoc(docRef);
       return true;
-    } catch (e) {
-      console.error("Firebase calendar delete error, fallback to localStorage:", e);
+    } catch (e: any) {
+      console.error("Firebase calendar delete error, fallback to localStorage:", e?.message || e);
     }
   }
 

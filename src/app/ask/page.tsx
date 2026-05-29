@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { addQuestion, getAnsweredQuestions, QuestionItem } from "@/lib/questions";
@@ -81,9 +81,7 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
   return (
     <div style={{ position: "relative", width: "100%" }}>
       
-      {/* Spine line — lives in the full-height wrapper, not in the 10px dot column */}
-      {/* top:24px = marginTop(19) + half dot(5) = exact dot center */}
-      {/* bottom:calc(-1.1rem - 24px) bridges the flex gap to the next card's dot center */}
+      {/* Spine line */}
       {!isLast && (
         <div style={{
           position: "absolute",
@@ -101,18 +99,15 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
       {/* 2-COLUMN ROW LAYOUT */}
       <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", width: "100%" }}>
         
-        {/* Left Column: Timeline Dot (Width: 16px, Centered, flex-shrink: 0) */}
+        {/* Left Column: Timeline Dot */}
         <div style={{ 
           width: "16px", 
           display: "flex", 
           justifyContent: "center", 
-          marginTop: "19px", // Centered perfectly with Date text row
+          marginTop: "19px", 
           flexShrink: 0, 
           position: "relative" 
         }}>
-
-
-          {/* Timeline Dot dynamically colored to match its card background */}
           <motion.div
             animate={{
               scale: isExpanded ? 1.25 : 1,
@@ -133,11 +128,11 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
           />
         </div>
 
-        {/* Right Column: QACard (Fills remaining width) */}
+        {/* Right Column: QACard */}
         <div style={{ flexGrow: 1, minWidth: 0 }}>
           <motion.div
             variants={fadeRise}
-            layout // Magical accordion height transitions
+            layout
             onClick={onToggle}
             whileHover={{ scale: 0.995 }}
             whileTap={{ scale: 0.985 }}
@@ -146,7 +141,7 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
               borderRadius: "16px",
               backgroundColor: color.bg,
               border: `1px solid ${color.border}`,
-              backdropFilter: "blur(12px)", // Frosted glass effect
+              backdropFilter: "blur(12px)",
               WebkitBackdropFilter: "blur(12px)",
               display: "flex",
               flexDirection: "column",
@@ -187,7 +182,6 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
                   {qa.content}
                 </p>
                 
-                {/* Chevron parallel to question */}
                 <motion.div 
                   animate={{ rotate: isExpanded ? 180 : 0 }} 
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
@@ -200,7 +194,7 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
               </div>
             </div>
 
-            {/* THE ANSWER (Recessed/Molded morphoism effect with quiet "Ivan" label) */}
+            {/* THE ANSWER */}
             <AnimatePresence>
               {isExpanded && qa.answer && (
                 <motion.div 
@@ -210,16 +204,13 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
                   transition={{ type: "spring", stiffness: 450, damping: 32 }}
                   style={{ overflow: "hidden" }}
                 >
-                  {/* Recessed tray: darker translucent background + deep inward shadow */}
-                  {/* onClick stopPropagation and cursor: text allows normal user text selection without collapsing card! */}
                   <div 
                     onClick={(e) => e.stopPropagation()}
                     style={{ 
-                      backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.13)", // Deep glass recess
+                      backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.13)",
                       borderRadius: "12px",
                       padding: "12px 14px",
                       border: isDarkMode ? "1px solid rgba(255,255,255,0.04)" : "1px solid rgba(0,0,0,0.05)",
-                      // Deep, tactile debossed morphoism inner shadow
                       boxShadow: isDarkMode 
                         ? "inset 0 3px 8px rgba(0,0,0,0.5)" 
                         : "inset 0 3px 8px rgba(0,0,0,0.12)",
@@ -228,10 +219,9 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
                       display: "flex",
                       flexDirection: "column",
                       gap: "4px",
-                      cursor: "text" // Set selection cursor properly inside text tray
+                      cursor: "text"
                     }}
                   >
-                    {/* Elegant header row containing "Ivan" label and Answer Date */}
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
                       <span style={{
                         fontSize: "0.58rem",
@@ -257,7 +247,6 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
                       </span>
                     </div>
 
-                    {/* Answer text beautifully matching parent card's contrast */}
                     <p style={{ 
                       margin: 0, 
                       fontFamily: "var(--font-sans)",
@@ -282,13 +271,37 @@ const QACard = ({ qa, index, isExpanded, isLast, onToggle }: QACardProps) => {
   );
 };
 
+const parseSources = (text: string) => {
+  // Regex to match [Sources: Name1|Url1; Name2|Url2]
+  const regex = /\[Sources:\s*([^\]]+)\]/i;
+  const match = text.match(regex);
+  if (!match) return { cleanText: text, sources: [] };
+
+  const fullTag = match[0];
+  const sourcesContent = match[1];
+  
+  const sources = sourcesContent.split(";").map(s => {
+    const parts = s.split("|");
+    return {
+      title: parts[0]?.trim() || "Source",
+      url: parts[1]?.trim() || "#"
+    };
+  }).filter(s => s.url && s.url !== "#");
+
+  const cleanText = text.replace(fullTag, "").trim();
+  return { cleanText, sources };
+};
+
 export default function AskPage() {
   const [answeredList, setAnsweredList] = useState<QuestionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [mounted, setMounted] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   
-  // Multi-open accordion: each card independently toggle-able
+  // Tab segment: "qa" (Q&A Board) or "ai" (Live Chat with Ivan's Clone)
+  const [activeTab, setActiveTab] = useState<"qa" | "ai">("qa");
+
+  // Multi-open accordion for Q&A
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
   const toggleCard = (id: string) => {
@@ -310,6 +323,78 @@ export default function AskPage() {
   // High-fidelity morphing state
   const [isMaximized, setIsMaximized] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const GREETING = "Hey. What's up?";
+
+  // Live Chat clone states
+  const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "model"; content: string }>>([{ role: "model", content: GREETING }]);
+  const [chatInput, setChatInput] = useState("");
+  const [chatLoading, setChatLoading] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
+  const [chatScrolled, setChatScrolled] = useState(false);
+
+  // Reset chat to initial greeting
+  const handleResetChat = () => {
+    setChatMessages([{ role: "model", content: GREETING }]);
+    setChatInput("");
+    setChatScrolled(false);
+  };
+
+  // Auto-scroll chat board — scrolls the container div to bottom
+  const scrollToBottom = () => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+    } else {
+      chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+  useEffect(() => {
+    if (activeTab === "ai") {
+      setTimeout(scrollToBottom, 50);
+    }
+  }, [chatMessages, activeTab]);
+
+  // Suggested Prompts to kickstart creative conversations
+  const suggestedPrompts = [
+    "What do you think of Orwell's 1984?",
+    "Why did you rate The 5 AM Club 3 stars?",
+    "Tell me about Mun Kayoung's PATA.",
+    "What is your take on Judith Butler's gender theory?",
+    "You seem pretty snarky on this portfolio."
+  ];
+
+  // Send message to Ivan AI
+  const handleSendChat = async (e?: React.FormEvent, textOverride?: string) => {
+    if (e) e.preventDefault();
+    const queryText = (textOverride || chatInput).trim();
+    if (!queryText || chatLoading) return;
+
+    if (!textOverride) setChatInput("");
+
+    const updatedMessages = [...chatMessages, { role: "user" as const, content: queryText }];
+    setChatMessages(updatedMessages);
+    setChatLoading(true);
+
+    try {
+      const res = await fetch("/api/ask/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: updatedMessages }),
+      });
+      if (!res.ok) throw new Error("API call failed");
+      const data = await res.json();
+      setChatMessages([...updatedMessages, { role: "model" as const, content: data.reply }]);
+    } catch (err) {
+      console.error(err);
+      setChatMessages([
+        ...updatedMessages,
+        { role: "model" as const, content: "Sorry, it seems my AI brain is experiencing a connection glitch. Mind trying again?" }
+      ]);
+    } finally {
+      setChatLoading(false);
+    }
+  };
 
   // Focus textarea when capsule transforms into card
   useEffect(() => {
@@ -342,7 +427,15 @@ export default function AskPage() {
     };
   }, []);
 
-  // Load live answered Q&As & track mounting (purged MOCK_QUESTIONS strictly for live visitor interactions)
+  // Lock body scroll for the Ask Page so that only nested containers scroll
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  // Load live answered Q&As & track mounting
   useEffect(() => {
     setMounted(true);
     document.title = "Ask Ivan";
@@ -373,7 +466,6 @@ export default function AskPage() {
       setSenderName("");
       setIsMaximized(false); // Gracefully morph card back to capsule
       
-      // Fire premium design confetti celebratory burst
       confetti({
         particleCount: 85,
         spread: 60,
@@ -381,46 +473,46 @@ export default function AskPage() {
         colors: ["#007aff", "#E2DDD5", "#B47A3E", "#A09E9B"]
       });
 
-      // Show floating premium iMessage success toast
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
       
-      // Refresh list in background
       const data = await getAnsweredQuestions();
       setAnsweredList(data);
     } catch (e: any) {
       console.error(e);
       setErrorMsg(e.message || "Failed to submit question");
-      // keep it maximized to show the error
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Sort Q&As descending by answered/published date (most recently answered/replied is always at the top)
   const sortedQuestions = [...answeredList].sort((a, b) => {
     const timeA = new Date(a.answeredAt || a.published).getTime();
     const timeB = new Date(b.answeredAt || b.published).getTime();
     return timeB - timeA;
   });
 
+  // In AI mode the wrapper becomes a true full-viewport fixed layer so nothing else scrolls
+  // Unified page wrapper style for both Q&A and AI tabs
+  const pageWrapperStyle: React.CSSProperties = {
+    position: "relative" as const,
+    backgroundColor: "var(--bg-color)",
+    display: "flex",
+    flexDirection: "column",
+    overflow: "hidden",
+    boxSizing: "border-box" as const,
+  };
+
   return (
-    <div style={{ 
-      minHeight: "100vh", 
-      padding: "2rem 4vw 9rem 4vw",
-      backgroundColor: "var(--bg-color)",
-      position: "relative"
-    }}>
+    <div className={`ask-page-wrapper ai-tab-${activeTab}`} style={pageWrapperStyle}>
       <style>{`
-        /* Force-hide any global footer components on this page to achieve a clean app-like feed */
         footer, .footer, [class*="footer"], [id*="footer"] {
           display: none !important;
         }
 
-        /* Highly legible placeholder styles for both light and dark mode */
         input::placeholder, textarea::placeholder {
           color: var(--text-secondary) !important;
-          opacity: 0.9 !important; /* Maximized contrast opacity for high legibility */
+          opacity: 0.9 !important;
           font-weight: 500;
           transition: opacity 0.15s ease;
         }
@@ -428,309 +520,612 @@ export default function AskPage() {
           opacity: 0.55 !important;
         }
 
-        /* === RESPONSIVE LAYOUT FOR DESKTOP === */
+        /* Suggested chips hide scrollbar */
+        .no-scrollbar::-webkit-scrollbar {
+          display: none !important;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
+        }
+
+        /* === DEFAULT (both modes, all sizes) === */
+        .ask-page-wrapper {
+          height: calc(100dvh - 120px);
+          max-height: calc(100dvh - 120px);
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          padding: 0.5rem 4vw 0 4vw;
+        }
+        @media (max-width: 767px) {
+          .ask-page-wrapper {
+            height: calc(100dvh - 110px);
+            max-height: calc(100dvh - 110px);
+            padding: 0.25rem 4vw 0 4vw;
+          }
+        }
+
+        /* === RESPONSIVE LAYOUT FOR DESKTOP (QA mode) === */
         @media (min-width: 768px) {
-          .floating-capsule-portal {
+          .ai-tab-qa .floating-capsule-portal {
             display: none !important;
           }
-          .desktop-composer-container {
+          .ai-tab-qa .desktop-composer-container {
             display: block !important;
             margin-top: 1.8rem;
           }
-          .ask-container {
+          .ai-tab-qa .ask-container {
             max-width: 960px !important;
             display: grid !important;
             grid-template-columns: 360px 1fr !important;
             gap: 48px !important;
             margin: 0 auto !important;
+            height: 100%;
           }
-          .ask-left-panel {
+          .ai-tab-qa .ask-left-panel {
             position: sticky !important;
             top: 2.5rem !important;
             height: fit-content !important;
           }
         }
+
+        /* === MOBILE: Q&A mode === */
         @media (max-width: 767px) {
-          .floating-capsule-portal {
+          .ai-tab-qa .floating-capsule-portal {
             display: flex !important;
           }
-          .desktop-composer-container {
+          .ai-tab-qa .desktop-composer-container {
             display: none !important;
           }
-          .ask-container {
-            max-width: 420px !important;
+          .ai-tab-qa .ask-container {
+            max-width: 100% !important;
             margin: 0 auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
           }
+        }
+
+        /* === AI MODE: Full-screen layout === */
+        .ai-tab-ai {
+          /* no-op */
+        }
+
+        /* Smooth thin scrollbar for the chat list */
+        .ai-chat-portal-container {
+          scrollbar-width: none;
+        }
+        .ai-chat-portal-container::-webkit-scrollbar {
+          display: none;
+        }
+
+        /* Smooth thin scrollbar for the right panel card list */
+        .ask-right-panel {
+          scrollbar-width: thin;
+          scrollbar-color: var(--border-color) transparent;
+        }
+        .ask-right-panel::-webkit-scrollbar {
+          width: 4px;
+        }
+        .ask-right-panel::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .ask-right-panel::-webkit-scrollbar-thumb {
+          background-color: var(--border-color);
+          border-radius: 99px;
+        }
+
+        /* Desktop: AI mode two-column layout */
+        @media (min-width: 768px) {
+          .ai-tab-ai .ai-ask-container-grid {
+            display: grid !important;
+            grid-template-columns: 300px 1fr !important;
+            gap: 48px !important;
+          }
+          .ai-tab-ai .ai-left-panel {
+            flex-shrink: 0;
+          }
+        }
+
+        /* Hide desktop composer in AI mode (has its own description panel in left) */
+        .ai-tab-ai .desktop-composer-container {
+          display: none !important;
         }
       `}</style>
 
-      {/* Cozy, highly curated responsive container */}
-      <div className="ask-container">
-        
-        {/* Left Column: Branding and static Desktop Composer */}
-        <div className="ask-left-panel">
-          {/* Header Block — Warm, Inviting "Ask Ivan" Swiss Header */}
-          <div style={{ marginBottom: "1rem" }}>
-            <h1 style={{ 
-              fontFamily: "var(--font-sans)",
-              fontSize: "clamp(1.65rem, 5vw, 2.3rem)", 
-              fontWeight: "800", 
-              margin: "0 0 0.4rem 0", 
-              letterSpacing: "-0.03em", 
-              lineHeight: "1.1", 
-              color: "var(--text-primary)" 
-            }}>
-              Ask Ivan
-            </h1>
-            <p style={{ 
-              fontSize: "0.86rem", 
-              color: "var(--text-secondary)", 
-              lineHeight: "1.4", 
-              margin: 0,
-              fontFamily: "var(--font-sans)",
-              fontWeight: 500
-            }}>
-              Ask me anything anonymously.
-            </p>
-          </div>
-
-          {/* Desktop static composer card */}
-          <div className="desktop-composer-container">
-            <form onSubmit={handleSubmit} style={{
-              padding: "20px",
-              borderRadius: "20px",
-              border: isFocused ? "1.5px solid var(--text-primary)" : "1px solid var(--border-color)",
-              backgroundColor: isDarkMode ? "rgba(20, 19, 18, 0.45)" : "rgba(253, 251, 247, 0.55)",
-              backdropFilter: "blur(20px)",
-              WebkitBackdropFilter: "blur(20px)",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.15)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "12px",
-              transition: "border 0.15s ease, background-color 0.2s ease, box-shadow 0.15s ease"
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{
-                  fontSize: "0.65rem",
-                  fontFamily: "var(--font-sans)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.06em",
-                  color: "var(--text-secondary)",
-                  fontWeight: "700"
-                }}>
-                  Ask a Question
-                </span>
-                <span style={{
-                  fontSize: "0.65rem",
-                  fontFamily: "var(--font-sans)",
-                  color: "var(--text-secondary)",
-                  opacity: 0.65,
-                  fontWeight: "600"
-                }}>
-                  {300 - content.length} left
-                </span>
-              </div>
-
-              {errorMsg && (
-                <div style={{
-                  backgroundColor: "rgba(255, 60, 60, 0.1)",
-                  border: "1px solid rgba(255, 60, 60, 0.3)",
-                  borderRadius: "8px",
-                  padding: "8px 12px",
-                  color: "#ff4d4d",
-                  fontSize: "0.75rem",
-                  fontFamily: "var(--font-sans)",
-                  fontWeight: "600",
-                  lineHeight: "1.4"
-                }}>
-                  {errorMsg}
-                </div>
-              )}
-
-              <div style={{ height: "1px", backgroundColor: "var(--border-color)", opacity: 0.6 }} />
-
-              {/* Sender Name Input */}
-              <div style={{
-                backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.25)" : "rgba(0, 0, 0, 0.04)",
-                borderRadius: "12px",
-                padding: "8px 12px",
-                border: isDarkMode ? "1px solid rgba(255,255,255,0.04)" : "1px solid rgba(0, 0, 0, 0.04)",
-                display: "flex",
-                alignItems: "center"
-              }}>
-                <span style={{ 
-                  fontSize: "0.8rem", 
-                  color: "var(--text-secondary)", 
-                  marginRight: "6px",
-                  fontWeight: "600",
-                  fontFamily: "var(--font-sans)",
-                  userSelect: "none"
-                }}>From:</span>
-                <input
-                  type="text"
-                  value={senderName}
-                  onChange={(e) => setSenderName(e.target.value)}
-                  placeholder="Name / Nickname (Optional)"
-                  maxLength={40}
-                  disabled={isSubmitting}
-                  style={{
-                    flexGrow: 1,
-                    border: "none",
-                    background: "none",
-                    outline: "none",
-                    fontFamily: "var(--font-sans)",
-                    fontSize: "0.8rem",
-                    color: "var(--text-primary)",
-                    padding: "1px 0",
-                    fontWeight: "500"
-                  }}
-                />
-              </div>
-
-              {/* Textarea Composition Tray */}
-              <div style={{
-                backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.3)" : "rgba(0, 0, 0, 0.05)",
-                borderRadius: "14px",
-                padding: "10px 14px",
-                border: isDarkMode ? "1px solid rgba(255,255,255,0.04)" : "1px solid rgba(0,0,0,0.05)",
-                boxShadow: isDarkMode 
-                  ? "inset 0 3px 8px rgba(0,0,0,0.5)" 
-                  : "inset 0 3px 8px rgba(0,0,0,0.08)",
-                display: "flex",
-                minHeight: "120px"
-              }}>
-                <textarea
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  onFocus={() => setIsFocused(true)}
-                  onBlur={() => setIsFocused(false)}
-                  placeholder="Write your question here... (will be published once answered)"
-                  maxLength={300}
-                  rows={4}
-                  disabled={isSubmitting}
-                  style={{
-                    border: "none",
-                    outline: "none",
-                    background: "none",
-                    resize: "none",
-                    fontSize: "0.88rem",
-                    color: "var(--text-primary)",
-                    fontFamily: "var(--font-sans)",
-                    width: "100%",
-                    lineHeight: "1.4",
-                    fontWeight: "500"
-                  }}
-                />
-              </div>
-
-              <div style={{ height: "1px", backgroundColor: "var(--border-color)", opacity: 0.6 }} />
-
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
-                {content.trim() && (
-                  <motion.button
-                    type="button"
-                    onClick={() => { setContent(""); setSenderName(""); }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    style={{
-                      padding: "8px 16px",
-                      borderRadius: "12px",
-                      border: "none",
-                      backgroundColor: "transparent",
-                      color: "var(--text-secondary)",
-                      fontSize: "0.82rem",
-                      fontWeight: "600",
-                      cursor: "pointer",
-                      fontFamily: "var(--font-sans)"
-                    }}
-                  >
-                    Clear
-                  </motion.button>
-                )}
-
-                <motion.button
-                  type="submit"
-                  disabled={!content.trim() || isSubmitting}
-                  whileHover={content.trim() ? { scale: 1.02 } : {}}
-                  whileTap={content.trim() ? { scale: 0.98 } : {}}
-                  style={{
-                    padding: "10px 20px",
-                    borderRadius: "14px",
-                    border: content.trim() ? "none" : "1px solid var(--border-color)",
-                    backgroundColor: content.trim() 
-                      ? "var(--text-primary)" 
-                      : (isDarkMode ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0.05)"),
-                    color: content.trim() ? "var(--bg-color)" : "var(--text-secondary)",
-                    opacity: content.trim() ? 1 : 0.65,
-                    fontSize: "0.82rem",
-                    fontWeight: "700",
-                    cursor: content.trim() ? "pointer" : "not-allowed",
-                    fontFamily: "var(--font-sans)",
-                    boxShadow: content.trim() 
-                      ? "0 4px 12px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2)" 
-                      : "none",
-                    transition: "background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease"
-                  }}
-                >
-                  {isSubmitting ? "Sending..." : "Send Question"}
-                </motion.button>
-              </div>
-            </form>
-          </div>
+      {/* ===== UNIFIED BRANDING & TAB SWITCHER ===== */}
+      <div style={{ flexShrink: 0, paddingTop: "0.2rem" }}>
+        <div style={{ marginBottom: "0.6rem" }}>
+          <h1 style={{ 
+            fontFamily: "var(--font-sans)",
+            fontSize: "clamp(1.4rem, 4vw, 2rem)", 
+            fontWeight: "800", 
+            margin: "0 0 0.2rem 0", 
+            letterSpacing: "-0.03em", 
+            lineHeight: "1.1", 
+            color: "var(--text-primary)" 
+          }}>
+            Ask Ivan
+          </h1>
+          <p style={{ 
+            fontSize: "0.82rem", 
+            color: "var(--text-secondary)", 
+            lineHeight: "1.4", 
+            margin: 0,
+            fontFamily: "var(--font-sans)",
+            fontWeight: 500
+          }}>
+            {activeTab === "qa" ? "Ask me anything, anonymously." : "Live chat with Ivan AI."}
+          </p>
         </div>
 
-        {/* Right Column: Q&A Chronological Stream */}
-        <div className="ask-right-panel" style={{ width: "100%" }}>
-          {loading ? (
-            <div style={{ display: "flex", justifyContent: "center", padding: "3rem 0" }}>
-              <div style={{ width: "14px", height: "14px", borderRadius: "50%", border: "2px solid rgba(150,150,150,0.2)", borderTopColor: "var(--text-primary)", animation: "spin 0.8s linear infinite" }} />
-              <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-            </div>
-          ) : (
-            <div style={{ position: "relative", width: "100%" }}>
-              
-              {/* Main timeline stream */}
-              <motion.div 
+        {/* Tab Switcher */}
+        <div style={{
+          display: "inline-flex",
+          backgroundColor: isDarkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
+          borderRadius: "99px",
+          padding: "3px",
+          marginBottom: "1rem",
+          position: "relative",
+          border: isDarkMode ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.06)",
+          zIndex: 10
+        }}>
+          <button
+            onClick={() => setActiveTab("qa")}
+            style={{
+              padding: "5px 12px",
+              borderRadius: "99px",
+              border: "none",
+              background: "none",
+              fontSize: "0.72rem",
+              fontWeight: "700",
+              fontFamily: "var(--font-sans)",
+              color: activeTab === "qa" ? (isDarkMode ? "#121214" : "#FDFBF7") : "var(--text-secondary)",
+              cursor: "pointer",
+              position: "relative",
+              zIndex: 2,
+              transition: "color 0.25s ease",
+              whiteSpace: "nowrap"
+            }}
+          >
+            Q&A
+          </button>
+          <button
+            onClick={() => setActiveTab("ai")}
+            style={{
+              padding: "5px 12px",
+              borderRadius: "99px",
+              border: "none",
+              background: "none",
+              fontSize: "0.72rem",
+              fontWeight: "700",
+              fontFamily: "var(--font-sans)",
+              color: activeTab === "ai" ? (isDarkMode ? "#121214" : "#FDFBF7") : "var(--text-secondary)",
+              cursor: "pointer",
+              position: "relative",
+              zIndex: 2,
+              transition: "color 0.25s ease",
+              whiteSpace: "nowrap"
+            }}
+          >
+            AI
+          </button>
+          
+          <motion.div
+            layoutId="activeTabPillUnified"
+            transition={{ type: "spring", stiffness: 380, damping: 28 }}
+            style={{
+              position: "absolute",
+              top: "3px",
+              bottom: "3px",
+              left: activeTab === "qa" ? "3px" : "50%",
+              width: "calc(50% - 3px)",
+              backgroundColor: "var(--text-primary)",
+              borderRadius: "99px",
+              zIndex: 1
+            }}
+          />
+        </div>
+      </div>
+
+      {/* ===== UNIFIED CONTENT PORTALS ===== */}
+      <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+        {activeTab === "ai" ? (
+          /* ===== AI MODE: Fixed full-screen layout ===== */
+          <div style={{
+            position: "relative",
+            flex: 1,
+            minHeight: 0,
+            display: "flex",
+            flexDirection: "column"
+          }}>
+            {/* Top fade gradient — hides clipped text elegantly on scroll */}
+            <div style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: "40px",
+              background: `linear-gradient(to bottom, var(--bg-color) 0%, transparent 100%)`,
+              zIndex: 5,
+              pointerEvents: "none",
+              opacity: chatScrolled ? 1 : 0,
+              transition: "opacity 0.25s ease"
+            }} />
+
+            <div
+              ref={chatScrollRef}
+              className="ai-chat-portal-container"
+              onScroll={(e) => {
+                const scrolled = e.currentTarget.scrollTop > 5;
+                if (scrolled !== chatScrolled) {
+                  setChatScrolled(scrolled);
+                }
+              }}
+              style={{
+                flex: 1,
+                overflowY: "auto",
+                overflowX: "hidden",
+                minHeight: 0,
+                paddingBottom: "7rem",
+                paddingRight: "2px",
+                paddingTop: "8px",
+              }}
+            >
+              <motion.div
                 variants={staggerContainer}
                 initial="initial"
                 animate="animate"
-                style={{ 
-                  display: "flex", 
-                  flexDirection: "column", 
-                  gap: "1.1rem", // Open, archival visual rhythm
-                  width: "100%",
-                  zIndex: 1,
-                  position: "relative"
-                }}
+                style={{ display: "flex", flexDirection: "column", gap: "0.85rem", width: "100%" }}
               >
-                {sortedQuestions.length > 0 ? (
-                  sortedQuestions.map((qa, index) => {
-                    return (
-                      <QACard 
-                        key={qa.id} 
-                        qa={qa} 
-                        index={index} 
-                        isExpanded={expandedIds.has(qa.id)}
-                        isLast={index === sortedQuestions.length - 1}
-                        onToggle={() => toggleCard(qa.id)}
-                      />
-                    );
-                  })
-                ) : (
-                  <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)", border: "1px dashed var(--border-color)", borderRadius: "12px" }}>
-                    <p style={{ margin: 0, fontSize: "0.8rem", fontWeight: "500", color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>No questions answered yet</p>
-                    <p style={{ margin: "2px 0 0 0", fontSize: "0.7rem", color: "var(--text-secondary)", fontFamily: "var(--font-sans)" }}>Ask the first anonymous question!</p>
-                  </div>
-                )}
+                {chatMessages.map((msg, i) => {
+                  const isUser = msg.role === "user";
+                  const { cleanText, sources } = isUser ? { cleanText: msg.content, sources: [] } : parseSources(msg.content);
+                  return (
+                    <motion.div
+                      key={i}
+                      variants={fadeRise}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: isUser ? "flex-end" : "flex-start",
+                        width: "100%"
+                      }}
+                    >
+                      <div style={{
+                        maxWidth: "82%",
+                        padding: "12px 16px",
+                        borderRadius: isUser ? "20px 20px 5px 20px" : "20px 20px 20px 5px",
+                        backgroundColor: isUser
+                          ? "var(--text-primary)"
+                          : (isDarkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)"),
+                        border: isUser
+                          ? "none"
+                          : (isDarkMode ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.07)"),
+                        color: isUser ? "var(--bg-color)" : "var(--text-primary)",
+                        fontFamily: "var(--font-sans)",
+                        fontSize: "0.87rem",
+                        lineHeight: "1.52",
+                        boxShadow: isUser
+                          ? "0 3px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.15)"
+                          : "0 2px 8px rgba(0,0,0,0.03)"
+                      }}>
+                        {isUser ? (
+                          <span style={{ whiteSpace: "pre-wrap" }}>{cleanText}</span>
+                        ) : (
+                          // Render AI markdown: **bold**, *italic*, and newlines
+                          <span style={{ display: "block" }}>
+                            {cleanText.split(/\n/).map((line, li) => {
+                              const parts = line.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+                              return (
+                                <span key={li}>
+                                  {li > 0 && <br />}
+                                  {parts.map((seg, si) => {
+                                    if (seg.startsWith("**") && seg.endsWith("**") && seg.length > 4)
+                                      return <strong key={si}>{seg.slice(2, -2)}</strong>;
+                                    if (seg.startsWith("*") && seg.endsWith("*") && seg.length > 2)
+                                      return <em key={si}>{seg.slice(1, -1)}</em>;
+                                    return <React.Fragment key={si}>{seg}</React.Fragment>;
+                                  })}
+                                </span>
+                              );
+                            })}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Pillbar source links */}
+                      {!isUser && sources.length > 0 && (
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "6px", marginLeft: "4px", maxWidth: "82%" }}>
+                          {sources.map((src, idx) => (
+                            <a
+                              key={idx}
+                              href={src.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "4px",
+                                padding: "4px 8px",
+                                borderRadius: "99px",
+                                backgroundColor: isDarkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
+                                border: isDarkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)",
+                                fontSize: "0.68rem",
+                                fontWeight: "600",
+                                color: "var(--text-secondary)",
+                                textDecoration: "none",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <line x1="10" y1="14" x2="21" y2="3"></line>
+                              </svg>
+                              <span>{src.title}</span>
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </motion.div>
+                  );
+                })}
+
+                {/* NO typing bubble here — handled by capsule input below */}
+
+                <div ref={chatEndRef} />
               </motion.div>
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          /* ===== Q&A MODE ===== */
+          <div className="ask-container" style={{ flex: 1, minHeight: 0 }}>
+            {/* Left Column: Composer Panel */}
+            <div className="ask-left-panel">
+              {/* Desktop static composer (for Q&A mode) */}
+              <div className="desktop-composer-container">
+                <form onSubmit={handleSubmit} style={{
+                  padding: "20px",
+                  borderRadius: "20px",
+                  border: isFocused ? "1.5px solid var(--text-primary)" : "1px solid var(--border-color)",
+                  backgroundColor: isDarkMode ? "rgba(20, 19, 18, 0.45)" : "rgba(253, 251, 247, 0.55)",
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.15)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "12px",
+                  transition: "border 0.15s ease, background-color 0.2s ease, box-shadow 0.15s ease"
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{
+                      fontSize: "0.65rem",
+                      fontFamily: "var(--font-sans)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.06em",
+                      color: "var(--text-secondary)",
+                      fontWeight: "700"
+                    }}>
+                      Ask a Question
+                    </span>
+                    <span style={{
+                      fontSize: "0.65rem",
+                      fontFamily: "var(--font-sans)",
+                      color: "var(--text-secondary)",
+                      opacity: 0.65,
+                      fontWeight: "600"
+                    }}>
+                      {300 - content.length} left
+                    </span>
+                  </div>
 
+                  {errorMsg && (
+                    <div style={{
+                      backgroundColor: "rgba(255, 60, 60, 0.1)",
+                      border: "1px solid rgba(255, 60, 60, 0.3)",
+                      borderRadius: "8px",
+                      padding: "8px 12px",
+                      color: "#ff4d4d",
+                      fontSize: "0.75rem",
+                      fontFamily: "var(--font-sans)",
+                      fontWeight: "600",
+                      lineHeight: "1.4"
+                    }}>
+                      {errorMsg}
+                    </div>
+                  )}
+
+                  <div style={{ height: "1px", backgroundColor: "var(--border-color)", opacity: 0.6 }} />
+
+                  {/* Sender Name Input */}
+                  <div style={{
+                    backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.25)" : "rgba(0, 0, 0, 0.04)",
+                    borderRadius: "12px",
+                    padding: "8px 12px",
+                    border: isDarkMode ? "1px solid rgba(255,255,255,0.04)" : "1px solid rgba(0, 0, 0, 0.04)",
+                    display: "flex",
+                    alignItems: "center"
+                  }}>
+                    <span style={{ 
+                      fontSize: "0.8rem", 
+                      color: "var(--text-secondary)", 
+                      marginRight: "6px",
+                      fontWeight: "600",
+                      fontFamily: "var(--font-sans)",
+                      userSelect: "none"
+                    }}>From:</span>
+                    <input
+                      type="text"
+                      value={senderName}
+                      onChange={(e) => setSenderName(e.target.value)}
+                      placeholder="Name / Nickname (Optional)"
+                      maxLength={40}
+                      disabled={isSubmitting}
+                      style={{
+                        flexGrow: 1,
+                        border: "none",
+                        background: "none",
+                        outline: "none",
+                        fontFamily: "var(--font-sans)",
+                        fontSize: "0.8rem",
+                        color: "var(--text-primary)",
+                        padding: "1px 0",
+                        fontWeight: "500"
+                      }}
+                    />
+                  </div>
+
+                  {/* Textarea Composition Tray */}
+                  <div style={{
+                    backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.3)" : "rgba(0, 0, 0, 0.05)",
+                    borderRadius: "14px",
+                    padding: "10px 14px",
+                    border: isDarkMode ? "1px solid rgba(255,255,255,0.04)" : "1px solid rgba(0,0,0,0.05)",
+                    boxShadow: isDarkMode 
+                      ? "inset 0 3px 8px rgba(0,0,0,0.5)" 
+                      : "inset 0 3px 8px rgba(0,0,0,0.08)",
+                    display: "flex",
+                    minHeight: "120px"
+                  }}>
+                    <textarea
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      onFocus={() => setIsFocused(true)}
+                      onBlur={() => setIsFocused(false)}
+                      placeholder="Write your question here... (will be published once answered)"
+                      maxLength={300}
+                      rows={4}
+                      disabled={isSubmitting}
+                      style={{
+                        border: "none",
+                        outline: "none",
+                        background: "none",
+                        resize: "none",
+                        fontSize: "0.88rem",
+                        color: "var(--text-primary)",
+                        fontFamily: "var(--font-sans)",
+                        width: "100%",
+                        lineHeight: "1.4",
+                        fontWeight: "500"
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ height: "1px", backgroundColor: "var(--border-color)", opacity: 0.6 }} />
+
+                  <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                    {content.trim() && (
+                      <motion.button
+                        type="button"
+                        onClick={() => { setContent(""); setSenderName(""); }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        style={{
+                          padding: "8px 16px",
+                          borderRadius: "12px",
+                          border: "none",
+                          backgroundColor: "transparent",
+                          color: "var(--text-secondary)",
+                          fontSize: "0.82rem",
+                          fontWeight: "600",
+                          cursor: "pointer",
+                          fontFamily: "var(--font-sans)"
+                        }}
+                      >
+                        Clear
+                      </motion.button>
+                    )}
+
+                    <motion.button
+                      type="submit"
+                      disabled={!content.trim() || isSubmitting}
+                      whileHover={content.trim() ? { scale: 1.02 } : {}}
+                      whileTap={content.trim() ? { scale: 0.98 } : {}}
+                      style={{
+                        padding: "10px 20px",
+                        borderRadius: "14px",
+                        border: content.trim() ? "none" : "1px solid var(--border-color)",
+                        backgroundColor: content.trim() 
+                          ? "var(--text-primary)" 
+                          : (isDarkMode ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0.05)"),
+                        color: content.trim() ? "var(--bg-color)" : "var(--text-secondary)",
+                        opacity: content.trim() ? 1 : 0.65,
+                        fontSize: "0.82rem",
+                        fontWeight: "700",
+                        cursor: content.trim() ? "pointer" : "not-allowed",
+                        fontFamily: "var(--font-sans)",
+                        boxShadow: content.trim() 
+                          ? "0 4px 12px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2)" 
+                          : "none",
+                        transition: "background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease"
+                      }}
+                    >
+                      {isSubmitting ? "Sending..." : "Send Question"}
+                    </motion.button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            {/* Right Column: Q&A Stream */}
+            <div 
+              className="ask-right-panel no-scrollbar" 
+              style={{ 
+                width: "100%",
+                flex: 1,
+                overflowY: "auto",
+                minHeight: 0,
+                paddingBottom: "8rem",
+              }}
+            >
+              {loading ? (
+                <div style={{ display: "flex", justifyContent: "center", padding: "3rem 0" }}>
+                  <div style={{ width: "14px", height: "14px", borderRadius: "50%", border: "2px solid rgba(150,150,150,0.2)", borderTopColor: "var(--text-primary)", animation: "spin 0.8s linear infinite" }} />
+                  <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                </div>
+              ) : (
+                <div style={{ position: "relative", width: "100%" }}>
+                  <motion.div 
+                    variants={staggerContainer}
+                    initial="initial"
+                    animate="animate"
+                    style={{ 
+                      display: "flex", 
+                      flexDirection: "column", 
+                      gap: "1.1rem", 
+                      width: "100%",
+                      zIndex: 1,
+                      position: "relative"
+                    }}
+                  >
+                    {sortedQuestions.length > 0 ? (
+                      sortedQuestions.map((qa, index) => (
+                        <QACard 
+                          key={qa.id} 
+                          qa={qa} 
+                          index={index} 
+                          isExpanded={expandedIds.has(qa.id)}
+                          isLast={index === sortedQuestions.length - 1}
+                          onToggle={() => toggleCard(qa.id)}
+                        />
+                      ))
+                    ) : (
+                      <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)", border: "1px dashed var(--border-color)", borderRadius: "12px" }}>
+                        <p style={{ margin: 0, fontSize: "0.8rem", fontWeight: "500", color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>No questions answered yet</p>
+                        <p style={{ margin: "2px 0 0 0", fontSize: "0.7rem", color: "var(--text-secondary)", fontFamily: "var(--font-sans)" }}>Ask the first anonymous question!</p>
+                      </div>
+                    )}
+                  </motion.div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Transparent Click Catcher Overlay: Tap anywhere outside expanded card to collapse back to capsule */}
-      {mounted && isMaximized && typeof window !== "undefined" && createPortal(
+      {mounted && isMaximized && activeTab === "qa" && typeof window !== "undefined" && createPortal(
         <div 
           onClick={() => setIsMaximized(false)}
           style={{
@@ -739,7 +1134,7 @@ export default function AskPage() {
             left: 0,
             right: 0,
             bottom: 0,
-            zIndex: 9998, // Placed exactly below the morphing container
+            zIndex: 9998,
             backgroundColor: "transparent",
             cursor: "default"
           }}
@@ -747,11 +1142,9 @@ export default function AskPage() {
         document.body
       )}
 
-      {/* Centered Wrapper inside React Portal to completely bypass page transforms and stay fixed at all times */}
+      {/* Floating Input Capsule — visible only in Q&A / AI tabs on mobile */}
       {mounted && typeof window !== "undefined" && createPortal(
         <>
-          {/* Permanent Floating Input Capsule which transitions IN-PLACE directly into a Composition Card */}
-          {/* USES NATIVE HIGH-PERFORMANCE CSS TRANSITIONS FOR WIDTH, HEIGHT, BORDER-RADIUS, AND PADDING TO ELIMINATE BORDER-RADIUS WARPING COMPLETELY */}
           <div
             className="floating-capsule-portal"
             style={{
@@ -761,39 +1154,197 @@ export default function AskPage() {
               transform: "translateX(-50%)",
               zIndex: 9999,
               width: "85%",
-              boxSizing: "border-box", // Strictly locked border-box calculation
-              maxWidth: isMaximized ? "360px" : "340px",
-              height: isMaximized ? "316px" : "44px", // Adjusted to 316px to easily hold the new name input and writing card!
-              padding: isMaximized ? "16px 18px" : "6px 8px 6px 10px",
-              // MATHEMATICALLY PERFECT BORDER RADIUS TO COMPLETELY ELIMINATE EYE-SHAPE WARPING
-              // 22px is exactly half of the 44px height, creating a mathematically flawless round capsule pill on close!
-              borderRadius: isMaximized ? "24px" : "22px",
-              // HIGHLY DEFINED borders for supreme visual clarity
+              boxSizing: "border-box",
+              maxWidth: (activeTab === "qa" && isMaximized) ? "360px" : "340px",
+              height: (activeTab === "qa" && isMaximized) ? "316px" : (activeTab === "ai" && chatLoading) ? "38px" : "44px",
+              padding: (activeTab === "qa" && isMaximized) ? "16px 18px" : (activeTab === "ai" && chatLoading) ? "0px 8px" : "6px 8px 6px 10px",
+              borderRadius: (activeTab === "qa" && isMaximized) ? "24px" : "22px",
               border: isFocused 
                 ? "1.5px solid var(--text-primary)" 
                 : "1px solid var(--border-color)",
-              // Solid frosted base (opacity 0.96) to ground it clearly over card overlaps
               backgroundColor: isDarkMode ? "rgba(20, 19, 18, 0.96)" : "rgba(253, 251, 247, 0.96)",
-              // Thick, premium frosted backdrop filter
               backdropFilter: "blur(20px)",
               WebkitBackdropFilter: "blur(20px)",
-              // Soft premium shadow shifts as it transforms
-              boxShadow: isMaximized
+              boxShadow: (activeTab === "qa" && isMaximized)
                 ? "0 24px 60px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.2)"
                 : (isFocused 
                     ? "0 12px 36px rgba(0,0,0,0.18), 0 4px 12px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.2)" 
                     : "0 10px 30px rgba(0,0,0,0.12), 0 2px 10px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.15)"),
               display: "flex",
               flexDirection: "column",
-              justifyContent: isMaximized ? "stretch" : "center",
-              // Precise, sub-pixel browser-native morphing transition
-              transition: "width 0.35s cubic-bezier(0.16, 1, 0.3, 1), height 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.35s cubic-bezier(0.16, 1, 0.3, 1), padding 0.35s cubic-bezier(0.16, 1, 0.3, 1), border 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease",
+              justifyContent: (activeTab === "qa" && isMaximized) ? "stretch" : "center",
+              transition: "all 0.32s cubic-bezier(0.16, 1, 0.3, 1), border 0.15s ease, box-shadow 0.15s ease",
               overflow: "hidden"
             }}
           >
             <AnimatePresence mode="wait">
-              {!isMaximized ? (
-                /* CAPSULE VIEW (Horizontal single-line input) */
+              {activeTab === "ai" ? (
+                /* AI TAB CAPSULE VIEW */
+                <motion.div
+                  key="ai-capsule-mode"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.12 }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    width: "100%",
+                    height: "100%"
+                  }}
+                >
+                  <form 
+                    onSubmit={handleSendChat}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      width: "100%",
+                      height: "100%"
+                    }}
+                  >
+                    {/* Reset button — always visible */}
+                    <motion.button
+                      type="button"
+                      onClick={handleResetChat}
+                      disabled={chatLoading}
+                      whileHover={!chatLoading ? { scale: 1.12, opacity: 1 } : {}}
+                      whileTap={!chatLoading ? { scale: 0.9 } : {}}
+                      title="Reset chat"
+                      style={{
+                        width: "24px",
+                        height: "24px",
+                        border: "none",
+                        backgroundColor: "transparent",
+                        color: "var(--text-secondary)",
+                        cursor: chatLoading ? "default" : "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
+                        opacity: chatLoading ? 0.3 : 0.65,
+                        transition: "opacity 0.2s ease"
+                      }}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="1 4 1 10 7 10"></polyline>
+                        <path d="M3.51 15a9 9 0 1 0 .49-3.51"></path>
+                      </svg>
+                    </motion.button>
+
+                    {/* Divider */}
+                    <div style={{ 
+                      width: "1.5px", height: "16px",
+                      backgroundColor: "var(--text-primary)",
+                      opacity: chatLoading ? 0.08 : 0.15,
+                      flexShrink: 0,
+                      transition: "opacity 0.2s ease"
+                    }} />
+
+                    {/* MIDDLE: input OR typing indicator */}
+                    <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center" }}>
+                      <AnimatePresence mode="wait">
+                        {chatLoading ? (
+                          /* TYPING STATE — dots + label */
+                          <motion.div
+                            key="typing-indicator"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.15 }}
+                            style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%" }}
+                          >
+                            <div style={{ display: "flex", gap: "3px", alignItems: "center" }}>
+                              {[0, 1, 2].map((dot) => (
+                                <motion.div
+                                  key={dot}
+                                  animate={{ opacity: [0.2, 1, 0.2], y: [0, -3, 0] }}
+                                  transition={{ duration: 0.85, repeat: Infinity, delay: dot * 0.16, ease: "easeInOut" }}
+                                  style={{
+                                    width: "5px", height: "5px",
+                                    borderRadius: "50%",
+                                    backgroundColor: "var(--text-secondary)"
+                                  }}
+                                />
+                              ))}
+                            </div>
+                            <span style={{
+                              fontSize: "0.82rem",
+                              color: "var(--text-secondary)",
+                              fontFamily: "var(--font-sans)",
+                              fontWeight: "500",
+                              fontStyle: "italic",
+                              opacity: 0.65
+                            }}>
+                              Ivan AI is typing...
+                            </span>
+                          </motion.div>
+                        ) : (
+                          /* NORMAL STATE — text input */
+                          <motion.input
+                            key="chat-input"
+                            type="text"
+                            value={chatInput}
+                            onFocus={() => setIsFocused(true)}
+                            onBlur={() => setIsFocused(false)}
+                            onChange={(e) => setChatInput(e.target.value)}
+                            placeholder="Send a message"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.12 }}
+                            style={{
+                              width: "100%",
+                              border: "none",
+                              background: "none",
+                              outline: "none",
+                              fontFamily: "var(--font-sans)",
+                              fontSize: "0.85rem",
+                              color: "var(--text-primary)",
+                              padding: "4px 0",
+                              lineHeight: "1.2",
+                              fontWeight: "500"
+                            }}
+                          />
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    {/* Send button — always visible, dimmed when loading */}
+                    <motion.button
+                      type="submit"
+                      disabled={!chatInput.trim() || chatLoading}
+                      whileHover={chatInput.trim() && !chatLoading ? { scale: 1.07 } : {}}
+                      whileTap={chatInput.trim() && !chatLoading ? { scale: 0.92 } : {}}
+                      style={{
+                        width: "28px",
+                        height: "28px",
+                        borderRadius: "50%",
+                        border: chatInput.trim() && !chatLoading ? "none" : "1px solid var(--border-color)",
+                        backgroundColor: chatInput.trim() && !chatLoading
+                          ? "var(--text-primary)"
+                          : (isDarkMode ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.06)"),
+                        color: chatInput.trim() && !chatLoading ? "var(--bg-color)" : "var(--text-secondary)",
+                        opacity: chatLoading ? 0.25 : chatInput.trim() ? 1 : 0.55,
+                        cursor: chatInput.trim() && !chatLoading ? "pointer" : "not-allowed",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: 0,
+                        flexShrink: 0,
+                        transition: "all 0.2s ease"
+                      }}
+                    >
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="12" y1="19" x2="12" y2="5"></line>
+                        <polyline points="5 12 12 5 19 12"></polyline>
+                      </svg>
+                    </motion.button>
+                  </form>
+                </motion.div>
+              ) : !isMaximized ? (
+                /* Q&A TAB CAPSULE VIEW */
                 <motion.div
                   key="capsule-mode"
                   initial={{ opacity: 0 }}
@@ -816,7 +1367,6 @@ export default function AskPage() {
                       width: "100%"
                     }}
                   >
-                    {/* Ultra-Minimalist corner-arrow expand button - HIGH VISIBILITY */}
                     <motion.button
                       type="button"
                       onClick={() => setIsMaximized(true)}
@@ -844,7 +1394,6 @@ export default function AskPage() {
                       </svg>
                     </motion.button>
 
-                    {/* HIGH VISIBILITY Divider line */}
                     <div style={{ 
                       width: "1.5px",
                       height: "16px", 
@@ -876,7 +1425,6 @@ export default function AskPage() {
                       }}
                     />
 
-                    {/* Remaining character counter */}
                     {content.length > 0 && (
                       <span style={{ 
                         fontSize: "0.6rem", 
@@ -890,7 +1438,6 @@ export default function AskPage() {
                       </span>
                     )}
 
-                    {/* Bold outlined Send button */}
                     <motion.button
                       type="submit"
                       disabled={!content.trim() || isSubmitting}
@@ -923,7 +1470,7 @@ export default function AskPage() {
                   </form>
                 </motion.div>
               ) : (
-                /* CARD VIEW (Vertical multiline composition card morph) */
+                /* CARD VIEW */
                 <motion.div
                   key="card-mode"
                   initial={{ opacity: 0 }}
@@ -938,7 +1485,6 @@ export default function AskPage() {
                     height: "100%"
                   }}
                 >
-                  {/* Card Header row */}
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
                     <span style={{
                       fontSize: "0.62rem",
@@ -961,7 +1507,6 @@ export default function AskPage() {
                     </span>
                   </div>
 
-                  {/* Error Message Display */}
                   {errorMsg && (
                     <div style={{
                       backgroundColor: "rgba(255, 60, 60, 0.1)",
@@ -978,10 +1523,8 @@ export default function AskPage() {
                     </div>
                   )}
 
-                  {/* Header Separator Line */}
                   <div style={{ height: "1px", backgroundColor: "var(--border-color)", width: "100%", opacity: 0.6 }} />
 
-                  {/* Optional Name Input */}
                   <div style={{
                     backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.25)" : "rgba(0, 0, 0, 0.04)",
                     borderRadius: "12px",
@@ -1022,13 +1565,11 @@ export default function AskPage() {
                     />
                   </div>
 
-                  {/* CARD-INSIDE-A-CARD: Gorgeous tactile recessed/debossed morphoism writing tray */}
                   <div style={{
                     backgroundColor: isDarkMode ? "rgba(0, 0, 0, 0.3)" : "rgba(0, 0, 0, 0.05)",
                     borderRadius: "14px",
                     padding: "8px 12px",
                     border: isDarkMode ? "1px solid rgba(255,255,255,0.04)" : "1px solid rgba(0,0,0,0.05)",
-                    // Tactile recessed debossed inner shadow
                     boxShadow: isDarkMode 
                       ? "inset 0 3px 8px rgba(0,0,0,0.5)" 
                       : "inset 0 3px 8px rgba(0,0,0,0.08)",
@@ -1060,13 +1601,9 @@ export default function AskPage() {
                     />
                   </div>
 
-                  {/* Footer Separator Line */}
                   <div style={{ height: "1px", backgroundColor: "var(--border-color)", width: "100%", opacity: 0.6 }} />
 
-                  {/* Actions Row with stunning debossed morphoism buttons */}
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px", width: "100%" }}>
-                    
-                    {/* Tactile debossed/quiet cancel button */}
                     <motion.button
                       type="button"
                       onClick={() => setIsMaximized(false)}
@@ -1077,7 +1614,6 @@ export default function AskPage() {
                         borderRadius: "12px",
                         border: isDarkMode ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(0,0,0,0.05)",
                         backgroundColor: isDarkMode ? "rgba(0,0,0,0.15)" : "rgba(0,0,0,0.04)",
-                        // Subtle recessed shadows
                         boxShadow: isDarkMode 
                           ? "inset 0 1px 2px rgba(0,0,0,0.4)" 
                           : "inset 0 1px 2px rgba(0,0,0,0.08)",
@@ -1092,7 +1628,6 @@ export default function AskPage() {
                       Cancel
                     </motion.button>
 
-                    {/* Outlined, highly tactile debossed (inactive) / proud popped (active) Send button */}
                     <motion.button
                       type="button"
                       onClick={handleSubmit}
@@ -1102,11 +1637,9 @@ export default function AskPage() {
                       style={{
                         padding: "8px 18px",
                         borderRadius: "14px",
-                        // Dynamic borders for active/inactive deboss
                         border: content.trim()
                           ? "none"
                           : (isDarkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.08)"),
-                        // Debossed morphoism fill when inactive, solid popped primary color when active
                         backgroundColor: content.trim() 
                           ? "var(--text-primary)" 
                           : (isDarkMode ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0.05)"),
@@ -1116,7 +1649,6 @@ export default function AskPage() {
                         fontWeight: "700",
                         cursor: content.trim() ? "pointer" : "not-allowed",
                         fontFamily: "var(--font-sans)",
-                        // Premium popped shadow when active, tactile debossed inner shadow when inactive!
                         boxShadow: content.trim() 
                           ? "0 4px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.2)" 
                           : (isDarkMode 
@@ -1133,7 +1665,7 @@ export default function AskPage() {
             </AnimatePresence>
           </div>
 
-          {/* Slide-Down Premium Success Toast */}
+          {/* Success Toast */}
           <AnimatePresence>
             {showToast && (
               <motion.div

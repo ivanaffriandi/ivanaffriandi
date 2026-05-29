@@ -27,8 +27,8 @@ export async function getAllBooks(): Promise<BookItem[]> {
     const data = await res.json();
     if (!data || data.length === 0) return getFallbackBooks();
     return data;
-  } catch (err) {
-    console.error("Failed to load books:", err);
+  } catch (err: any) {
+    console.warn("Could not load books from API, using fallback data. Error:", err?.message || err);
     return getFallbackBooks();
   }
 }

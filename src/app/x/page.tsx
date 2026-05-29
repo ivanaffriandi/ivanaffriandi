@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { signInWithGoogle } from "@/lib/firebase";
@@ -60,7 +61,9 @@ function GlassModal({ isOpen, onClose, children, theme }: { isOpen: boolean; onC
   );
 }
 
-export default function AdminPage() {
+function AdminPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -77,11 +80,11 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [loginError, setLoginError] = useState("");
 
-  const [activeTab, setActiveTab] = useState<"inbox" | "calendar" | "comments" | "moments" | "books" | "security">("inbox");
+  const [activeTab, setActiveTab] = useState<"inbox" | "calendar" | "comments" | "moments" | "books" | "security">("comments");
   const [inboxFilter, setInboxFilter] = useState<"all" | "pending" | "answered">("pending");
 
   // Blocked IPs state
-  const [blockedIPs, setBlockedIPs] = useState<{ id: string; ip: string; note?: string; blockedAt?: string }[]>([]);
+  const [blockedIPs, setBlockedIPs] = useState<{ id: string; ip: string; note?: string; blockedAt?: string; isSystem?: boolean }[]>([]);
   const [newIPToBlock, setNewIPToBlock] = useState("");
   const [newIPNote, setNewIPNote] = useState("");
   const [isSubmittingIP, setIsSubmittingIP] = useState(false);
@@ -257,6 +260,7 @@ export default function AdminPage() {
       setCoverSearchBookId(null);
       setCoverSearchResults([]);
       setCoverSearchQuery("");
+      router.refresh();
     }
   };
 
@@ -298,6 +302,26 @@ export default function AdminPage() {
   const [showMomentModal, setShowMomentModal] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const bookReviewRef = useRef<HTMLTextAreaElement>(null);
+
+  const applyFormat = (tag: string) => {
+    if (!bookReviewRef.current) return;
+    const textarea = bookReviewRef.current;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = bookReview.substring(start, end);
+    let newText = "";
+    if (tag === 'ul') {
+      const formattedList = selectedText ? selectedText.split('\n').map(line => `<li>${line}</li>`).join('\n') : "<li>List item</li>";
+      newText = bookReview.substring(0, start) + `<ul>\n${formattedList}\n</ul>` + bookReview.substring(end);
+    } else {
+      newText = bookReview.substring(0, start) + `<${tag}>${selectedText}</${tag}>` + bookReview.substring(end);
+    }
+    setBookReview(newText);
+    setTimeout(() => {
+      textarea.focus();
+    }, 0);
+  };
 
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean; title: string; message: string;
@@ -314,53 +338,74 @@ export default function AdminPage() {
     });
   };
 
+  // Process a successfully-obtained Google result (popup or redirect)
+  const processGoogleResult = async (email: string | null | undefined) => {
+    if (!email || email !== "ivanaffriandi@kakao.com") {
+      setLoginError(`Access denied. Authorized accounts only.`);
+      setLoading(false);
+      return;
+    }
+    const res = await fetch("/api/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "login-google", email })
+    });
+    const data = await res.json();
+    if (data.success) {
+      setIsAuthenticated(true);
+      const list = await getAllQuestionsForAdmin();
+      setAdminQuestions(list.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()));
+    } else {
+      setLoginError(data.error || "Server auth failed.");
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     const verifyAuth = async () => {
       try {
+        // Check existing session
         const res = await fetch("/api/auth", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "check" }) });
         const data = await res.json();
-        setIsAuthenticated(data.authenticated === true);
-      } catch (err) { console.error("Auth check failed:", err); setIsAuthenticated(false); }
-      finally { setLoading(false); }
+        if (data.authenticated === true) {
+          setIsAuthenticated(true);
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        console.error("Auth check failed:", err);
+        setIsAuthenticated(false);
+      }
+      setLoading(false);
     };
     verifyAuth();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const tabParam = searchParams.get("tab");
   useEffect(() => {
-    if (isAuthenticated && activeTab === "comments") {
+    if (tabParam && ["inbox", "calendar", "comments", "moments", "books", "security"].includes(tabParam)) {
+      setActiveTab(tabParam as any);
+    }
+  }, [tabParam]);
+
+  const handleTabChange = (tabId: typeof activeTab) => {
+    setActiveTab(tabId);
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", `/x?tab=${tabId}`);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
       getAllCommentsForAdmin().then(setAdminComments).catch(err => console.error("Failed to load comments:", err));
-    }
-  }, [isAuthenticated, activeTab]);
-
-  useEffect(() => {
-    if (isAuthenticated && activeTab === "inbox") {
       getAllQuestionsForAdmin().then(list => setAdminQuestions(list.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()))).catch(err => console.error("Failed to load questions:", err));
-    }
-  }, [isAuthenticated, activeTab]);
-
-  useEffect(() => {
-    if (isAuthenticated && activeTab === "moments") {
       getAllMoments().then(setAdminMoments).catch(err => console.error("Failed to load moments:", err));
-    }
-  }, [isAuthenticated, activeTab]);
-
-  useEffect(() => {
-    if (isAuthenticated && activeTab === "calendar") {
       getAllCalendarEvents().then(list => setAdminCalendarEvents(list.sort((a, b) => a.dateKey.localeCompare(b.dateKey)))).catch(err => console.error("Failed to load calendar:", err));
-    }
-  }, [isAuthenticated, activeTab]);
-
-  useEffect(() => {
-    if (isAuthenticated && activeTab === "books") {
       getAllBooks().then(setAdminBooks).catch(err => console.error("Failed to load books:", err));
-    }
-  }, [isAuthenticated, activeTab]);
-
-  useEffect(() => {
-    if (isAuthenticated && activeTab === "security") {
       loadBlockedIPs();
     }
-  }, [isAuthenticated, activeTab]);
+  }, [isAuthenticated]);
 
   const loadBlockedIPs = async () => {
     try {
@@ -445,17 +490,26 @@ export default function AdminPage() {
         const success = await updateBook(editingBookId, bookData);
         if (success) {
           setAdminBooks(prev => prev.map(b => b.id === editingBookId ? { ...b, ...bookData } : b));
+          router.refresh();
+          alert("Book review and details updated successfully!");
+        } else {
+          alert("Failed to update book. Please try again.");
         }
       } else {
         const newBook = await addBook(bookData);
         if (newBook) {
           setAdminBooks(prev => [newBook, ...prev]);
+          router.refresh();
+          alert("New book added successfully!");
+        } else {
+          alert("Failed to add book. Please try again.");
         }
       }
       setShowBookModal(false);
       setEditingBookId(null);
     } catch (err) {
       console.error("Failed to save book:", err);
+      alert("An error occurred while saving the book.");
     } finally {
       setIsSubmittingBook(false);
     }
@@ -468,7 +522,13 @@ export default function AdminPage() {
       `Permanently delete "${book?.title ?? "this book"}"? This cannot be undone.`,
       async () => {
         const success = await deleteBook(id);
-        if (success) setAdminBooks(prev => prev.filter(b => b.id !== id));
+        if (success) {
+          setAdminBooks(prev => prev.filter(b => b.id !== id));
+          router.refresh();
+          alert("Book deleted successfully!");
+        } else {
+          alert("Failed to delete book. Please try again.");
+        }
       }
     );
   };
@@ -497,6 +557,7 @@ export default function AdminPage() {
     if (success) {
       setAdminComments(prev => prev.map(c => c.id === id ? { ...c, approved: true, reply: commentReplyText.trim() } : c));
       setReplyingCommentId(null); setCommentReplyText("");
+      router.refresh();
     }
   };
 
@@ -512,11 +573,13 @@ export default function AdminPage() {
         if (success) {
           setAdminCalendarEvents(prev => prev.map(ev => ev.id === editingEventId ? { ...ev, ...eventPayload } : ev).sort((a, b) => a.dateKey.localeCompare(b.dateKey)));
           setEditingEventId(null); setCalendarName("");
+          router.refresh();
         }
       } else {
         const newEvent = await addCalendarEvent(eventPayload);
         setAdminCalendarEvents(prev => [...prev, newEvent].sort((a, b) => a.dateKey.localeCompare(b.dateKey)));
         setCalendarName("");
+        router.refresh();
       }
     } catch (err) { console.error("Failed to save calendar event:", err); alert("Failed to save calendar event."); }
     finally { setIsSubmittingCalendar(false); }
@@ -525,7 +588,10 @@ export default function AdminPage() {
   const handleDeleteCalendarEvent = (id: string) => {
     triggerConfirm("Delete Event", "Permanently delete this calendar event?", async () => {
       const success = await deleteCalendarEvent(id);
-      if (success) setAdminCalendarEvents(prev => prev.filter(ev => ev.id !== id));
+      if (success) {
+        setAdminCalendarEvents(prev => prev.filter(ev => ev.id !== id));
+        router.refresh();
+      }
     });
   };
 
@@ -533,27 +599,15 @@ export default function AdminPage() {
     setLoading(true); setLoginError("");
     try {
       const result = await signInWithGoogle();
-      const email = result.user?.email;
-      if (!email || email !== "ivanaffriandi@kakao.com") {
-        setLoginError("Access Denied: Only ivanaffriandi@kakao.com is authorized to enter this panel.");
-        return;
+      await processGoogleResult(result?.user?.email);
+    } catch (error: any) {
+      let errMsg = error?.message ?? "Sign-in failed. Check console for details.";
+      if (errMsg.includes("auth/configuration-not-found")) {
+        errMsg = "Google Sign-In is not enabled. Enable it in Firebase Console > Authentication > Sign-in method.";
+      } else if (errMsg.includes("auth/popup-closed-by-user") || errMsg.includes("auth/cancelled-popup-request")) {
+        errMsg = "Sign-in popup was closed. Please try again.";
       }
-      const res = await fetch("/api/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "login-google", email })
-      });
-      const data = await res.json();
-      if (data.success) {
-        setIsAuthenticated(true);
-        const list = await getAllQuestionsForAdmin();
-        setAdminQuestions(list.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()));
-      } else {
-        setLoginError(data.error || "Access Denied: Server authentication failed.");
-      }
-    } catch (error) {
-      setLoginError("Sign-in failed. Please verify your connection.");
-    } finally {
+      setLoginError(errMsg);
       setLoading(false);
     }
   };
@@ -571,25 +625,35 @@ export default function AdminPage() {
     if (success) {
       setAdminQuestions(prev => prev.map(q => q.id === id ? { ...q, answered: true, answer: answerText.trim(), answeredAt: new Date().toISOString() } : q));
       setAnsweringQuestionId(null); setAnswerText("");
+      router.refresh();
     }
   };
 
   const handleDeleteQuestion = (id: string) => {
     triggerConfirm("Delete Question", "Permanently delete this question? This cannot be undone.", async () => {
       const success = await deleteQuestion(id);
-      if (success) setAdminQuestions(prev => prev.filter(q => q.id !== id));
+      if (success) {
+        setAdminQuestions(prev => prev.filter(q => q.id !== id));
+        router.refresh();
+      }
     });
   };
 
   const handleApproveComment = async (id: string) => {
     const success = await approveComment(id);
-    if (success) setAdminComments(prev => prev.map(c => c.id === id ? { ...c, approved: true } : c));
+    if (success) {
+      setAdminComments(prev => prev.map(c => c.id === id ? { ...c, approved: true } : c));
+      router.refresh();
+    }
   };
 
   const handleDeleteComment = (id: string) => {
     triggerConfirm("Delete Comment", "Permanently delete this comment from the database?", async () => {
       const success = await deleteComment(id);
-      if (success) setAdminComments(prev => prev.filter(c => c.id !== id));
+      if (success) {
+        setAdminComments(prev => prev.filter(c => c.id !== id));
+        router.refresh();
+      }
     });
   };
 
@@ -603,6 +667,7 @@ export default function AdminPage() {
       const newMoment = await addMoment({ url, storagePath, title: momentTitle || "Untitled", location: momentLocation, date: momentDate, story: momentStory });
       setAdminMoments(prev => [newMoment, ...prev]);
       setMomentFile(null); setMomentTitle(""); setMomentLocation(""); setMomentDate(""); setMomentStory("");
+      router.refresh();
     } catch (err) { console.error("Failed to upload moment:", err); alert("Upload failed. See console."); }
     finally { setIsUploadingMoment(false); }
   };
@@ -610,7 +675,10 @@ export default function AdminPage() {
   const handleDeleteMoment = (id: string, storagePath?: string) => {
     triggerConfirm("Delete Photo", "Permanently delete this photo from your moments gallery?", async () => {
       const success = await deleteMoment(id, storagePath);
-      if (success) setAdminMoments(prev => prev.filter(m => m.id !== id));
+      if (success) {
+        setAdminMoments(prev => prev.filter(m => m.id !== id));
+        router.refresh();
+      }
     });
   };
 
@@ -630,6 +698,7 @@ export default function AdminPage() {
       setAdminMoments(prev => prev.map(m => m.id === editingMomentId ? { ...m, ...updates } : m));
       setShowEditMomentModal(false);
       setEditingMomentId(null);
+      router.refresh();
     } catch (err) { console.error("Failed to update moment:", err); alert("Failed to save changes."); }
     finally { setIsSavingMoment(false); }
   };
@@ -639,6 +708,7 @@ export default function AdminPage() {
     setAdminMoments(prev => prev.map(m => m.id === momentId ? { ...m, showOnHomepage: slotVal !== 0, homepageOrder: slotVal !== 0 ? slotVal : undefined } : m));
     try {
       await updateMoment(momentId, { showOnHomepage: slotVal !== 0, homepageOrder: slotVal !== 0 ? slotVal : undefined });
+      router.refresh();
     } catch (err) { console.error("Failed to update homepage slot:", err); alert("Failed to update slot."); }
   };
 
@@ -669,27 +739,90 @@ export default function AdminPage() {
 
   if (!isAuthenticated) {
     return (
-      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "1rem", backgroundColor: "var(--bg-color)", position: "relative" }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 25px 25px, rgba(150,150,150,0.05) 1.5%, transparent 0%), radial-gradient(circle at 75px 75px, rgba(150,150,150,0.05) 1.5%, transparent 0%)", backgroundSize: "100px 100px", zIndex: 0 }} />
-        <motion.div initial={{ opacity: 0, y: 12, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={iosSpring}
-          style={{ maxWidth: "300px", width: "100%", padding: "1.5rem", backgroundColor: "rgba(255,255,255,0.4)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(150,150,150,0.12)", borderRadius: "20px", textAlign: "center", boxShadow: "0 12px 30px rgba(0,0,0,0.02), inset 0 1px 0 rgba(255,255,255,0.7)", zIndex: 1, fontFamily: iosFontStack }}>
-          <div style={{ display: "inline-flex", padding: "10px", borderRadius: "12px", backgroundColor: "rgba(150,150,150,0.05)", border: "1px solid rgba(150,150,150,0.08)", marginBottom: "1rem" }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "1rem", backgroundColor: theme === "dark" ? "#141312" : "#FDFBF7", position: "relative" }}>
+        {/* Global style injection to hide navigation header and footer on login page */}
+        <style>{`
+          header, footer {
+            display: none !important;
+          }
+        `}</style>
+
+        <div style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage: theme === "dark"
+            ? "radial-gradient(circle at 25px 25px, rgba(255,255,255,0.02) 1.5%, transparent 0%), radial-gradient(circle at 75px 75px, rgba(255,255,255,0.02) 1.5%, transparent 0%)"
+            : "radial-gradient(circle at 25px 25px, rgba(0,0,0,0.035) 1.5%, transparent 0%), radial-gradient(circle at 75px 75px, rgba(0,0,0,0.035) 1.5%, transparent 0%)",
+          backgroundSize: "100px 100px",
+          zIndex: 0
+        }} />
+
+        <motion.div
+          initial={{ opacity: 0, y: 12, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={iosSpring}
+          style={{
+            maxWidth: "320px",
+            width: "100%",
+            padding: "2rem 1.75rem",
+            backgroundColor: theme === "dark" ? "rgba(28, 28, 30, 0.94)" : "rgba(255, 255, 255, 0.94)",
+            backdropFilter: "blur(30px) saturate(190%)",
+            WebkitBackdropFilter: "blur(30px) saturate(190%)",
+            border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+            borderRadius: "24px",
+            textAlign: "center",
+            boxShadow: theme === "dark"
+              ? "0 24px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06)"
+              : "0 20px 50px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.9)",
+            zIndex: 1,
+            fontFamily: iosFontStack
+          }}
+        >
+          <div style={{
+            display: "inline-flex",
+            padding: "12px",
+            borderRadius: "14px",
+            backgroundColor: theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
+            border: theme === "dark" ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)",
+            marginBottom: "1.2rem",
+            color: theme === "dark" ? "#ffffff" : "#000000"
+          }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
           </div>
-          <h1 style={{ fontFamily: iosFontStack, fontSize: "1.1rem", fontWeight: "800", margin: "0 0 0.2rem 0", letterSpacing: "-0.02em", color: "var(--text-primary)" }}>Studio Vault</h1>
-          <p style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginBottom: "1.2rem", fontWeight: "500", lineHeight: "1.35" }}>Authenticate to manage calendar, moments, comments, and replies.</p>
+          <h1 style={{
+            fontFamily: iosFontStack,
+            fontSize: "1.2rem",
+            fontWeight: "800",
+            margin: "0 0 0.3rem 0",
+            letterSpacing: "-0.02em",
+            color: theme === "dark" ? "#ffffff" : "#000000"
+          }}>
+            Studio Vault
+          </h1>
+          <p style={{
+            fontSize: "0.74rem",
+            color: theme === "dark" ? "rgba(255,255,255,0.55)" : "rgba(0,0,0,0.55)",
+            marginBottom: "1.6rem",
+            fontWeight: "500",
+            lineHeight: "1.4"
+          }}>
+            Authenticate to manage calendar, moments, comments, and replies.
+          </p>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <motion.button 
               type="button" 
               onClick={handleGoogleLogin} 
-              whileHover={{ scale: 1.015, boxShadow: "0 4px 12px rgba(0,0,0,0.06)" }} 
+              whileHover={{ scale: 1.015, boxShadow: theme === "dark" ? "0 4px 20px rgba(0,0,0,0.4)" : "0 4px 12px rgba(0,0,0,0.04)" }} 
               whileTap={{ scale: 0.985 }}
               style={{ 
                 width: "100%", 
-                padding: "10px 14px", 
-                backgroundColor: "#ffffff", 
-                color: "#1f1f1f", 
-                border: "1.5px solid rgba(150,150,150,0.22)", 
+                padding: "11px 14px", 
+                backgroundColor: theme === "dark" ? "rgba(255,255,255,0.07)" : "#ffffff", 
+                color: theme === "dark" ? "#ffffff" : "#1f1f1f", 
+                border: theme === "dark" ? "1px solid rgba(255,255,255,0.15)" : "1.5px solid rgba(150,150,150,0.22)", 
                 borderRadius: "12px", 
                 fontFamily: iosFontStack, 
                 fontSize: "0.78rem", 
@@ -699,7 +832,7 @@ export default function AdminPage() {
                 alignItems: "center",
                 justifyContent: "center",
                 gap: "8px",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.02)",
+                boxShadow: theme === "dark" ? "none" : "0 2px 4px rgba(0,0,0,0.02)",
                 boxSizing: "border-box"
               }}
             >
@@ -712,7 +845,7 @@ export default function AdminPage() {
               </svg>
               Sign in with Google
             </motion.button>
-            {loginError && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ fontSize: "0.68rem", color: "#ef4444", fontWeight: "600", marginTop: "4px", fontFamily: iosFontStack }}>⚠️ {loginError}</motion.div>}
+            {loginError && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ fontSize: "0.68rem", color: "#ff453a", fontWeight: "600", marginTop: "6px", fontFamily: iosFontStack }}>⚠️ {loginError}</motion.div>}
           </div>
         </motion.div>
       </div>
@@ -725,39 +858,58 @@ export default function AdminPage() {
   const totalComments = adminComments.length;
   const totalMoments = adminMoments.length;
 
+  const today = new Date();
+  const todayMM = String(today.getMonth() + 1).padStart(2, "0");
+  const todayDD = String(today.getDate()).padStart(2, "0");
+  const todayKey = `${todayMM}-${todayDD}`;
+  const todayEventsCount = adminCalendarEvents.filter(ev => ev.dateKey === todayKey).length;
+  const readingBooksCount = adminBooks.filter(b => b.status === "reading").length;
+
   const tabs = [
     {
       id: "inbox" as const, label: "Inbox", count: pendingQuestionsCount,
-      icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="5" />
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+        </svg>
+      )
     },
     {
-      id: "calendar" as const, label: "Calendar", count: 0,
-      icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      id: "calendar" as const, label: "Calendar", count: todayEventsCount,
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="4" width="18" height="16" rx="5" />
+          <path d="M16 2v4M8 2v4M3 10h18" />
+        </svg>
+      )
     },
     {
       id: "comments" as const, label: "Comments", count: pendingCommentsCount,
-      icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+        </svg>
+      )
     },
     {
-      id: "moments" as const, label: "Moments", count: 0,
-      icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+      id: "moments" as const, label: "Moments", count: totalMoments,
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="6" />
+          <circle cx="9" cy="9" r="2.5" />
+          <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+        </svg>
+      )
     },
     {
-      id: "books" as const, label: "Books", count: 0,
-      icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 0-2.5-2.5z"/><path d="M6 6h10M6 10h10"/></svg>
-    },
-    {
-      id: "security" as const, label: "Security", count: 0,
-      icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      id: "books" as const, label: "Books", count: readingBooksCount,
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 0-2.5-2.5z" />
+        </svg>
+      )
     }
-  ];
-
-  const stats = [
-    { label: "Q&A", val: totalQuestions || "—", badge: pendingQuestionsCount, color: "#FF9500" },
-    { label: "Comments", val: totalComments || "—", badge: pendingCommentsCount, color: "#B47A3E" },
-    { label: "Moments", val: totalMoments || "—", badge: 0, color: "#10b981" },
-    { label: "Events", val: adminCalendarEvents.length || "—", badge: 0, color: "#007AFF" },
-    { label: "Books", val: adminBooks.length || "—", badge: 0, color: "#8e8e93" },
   ];
 
   const GlassCard = ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (
@@ -933,78 +1085,15 @@ export default function AdminPage() {
         }
       `}</style>
 
-      <div className="admin-layout">
-
-        {/* ===== SIDEBAR (Desktop) ===== */}
-        <aside className="admin-sidebar">
-          <div style={{ padding: "4px 12px 18px" }}>
-            <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "-0.03em" }}>Studio</div>
-            <div style={{ fontSize: "0.67rem", color: "var(--text-secondary)", fontWeight: "500", marginTop: "1px" }}>Ivan Affriandi</div>
-          </div>
-
-          {/* Stats grid */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5px", padding: "0 4px 16px", marginBottom: "4px" }}>
-            {stats.map(stat => (
-              <div key={stat.label} style={{ padding: "8px 8px", borderRadius: "10px", background: theme === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.025)", border: `0.5px solid ${theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}`, textAlign: "center", position: "relative" }}>
-                <div style={{ fontSize: "1rem", fontWeight: "800", color: "var(--text-primary)", lineHeight: "1" }}>{stat.val}</div>
-                <div style={{ fontSize: "0.52rem", fontWeight: "600", color: "var(--text-secondary)", marginTop: "2px" }}>{stat.label}</div>
-                {stat.badge > 0 && <div style={{ position: "absolute", top: "4px", right: "4px", width: "6px", height: "6px", borderRadius: "50%", backgroundColor: stat.color, boxShadow: `0 0 4px ${stat.color}` }} />}
-              </div>
-            ))}
-          </div>
-
-          <div style={{ fontSize: "0.52rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.07em", padding: "0 12px 6px", opacity: 0.5 }}>NAVIGATE</div>
-
-          {tabs.map(tab => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button key={tab.id} className="sidebar-nav-btn" onClick={() => setActiveTab(tab.id)} style={{ color: isActive ? "var(--text-primary)" : "var(--text-secondary)", background: isActive ? (theme === "dark" ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.045)") : "transparent", fontWeight: isActive ? "700" : "500", fontSize: "0.83rem" }}>
-                <span style={{ opacity: isActive ? 1 : 0.6 }}>{tab.icon}</span>
-                <span style={{ flex: 1 }}>{tab.label}</span>
-                {tab.count > 0 && <span style={{ fontSize: "0.58rem", fontWeight: "800", background: tab.id === "inbox" ? "#FF9500" : "#B47A3E", color: "#fff", padding: "1px 6px", borderRadius: "6px", minWidth: "16px", textAlign: "center" }}>{tab.count}</span>}
-              </button>
-            );
-          })}
-
-          <div style={{ flex: 1 }} />
-
-          <button onClick={handleLogout} className="sidebar-nav-btn" style={{ color: "#ef4444", fontSize: "0.8rem", fontWeight: "600", marginTop: "8px", borderTop: "1px solid rgba(150,150,150,0.08)", paddingTop: "14px", borderRadius: "0 0 12px 12px" }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Sign Out
-          </button>
-        </aside>
-
+      <div className="admin-layout" style={{ justifyContent: "center" }}>
         {/* ===== MAIN CONTENT ===== */}
         <main className="admin-main">
           <div className="admin-main-inner">
 
-            {/* Unified Studio header */}
-            <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={iosSpring} style={{ marginBottom: "1.2rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-                <div>
-                  <div style={{ fontSize: "1.05rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "-0.03em" }}>Studio</div>
-                  <div style={{ fontSize: "0.67rem", color: "var(--text-secondary)", fontWeight: "500" }}>Ivan Affriandi</div>
-                </div>
-                <button onClick={handleLogout} style={{ padding: "6px 12px", backgroundColor: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.14)", borderRadius: "20px", color: "#ef4444", fontSize: "0.68rem", fontWeight: "700", cursor: "pointer", fontFamily: iosFontStack, display: "flex", alignItems: "center", gap: "5px" }}>
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                  Sign Out
-                </button>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "6px" }}>
-                {stats.map(stat => (
-                  <div key={stat.label} style={{ padding: "8px 4px", borderRadius: "12px", background: theme === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.025)", border: `0.5px solid ${theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}`, textAlign: "center", position: "relative" }}>
-                    <div style={{ fontSize: "0.88rem", fontWeight: "800", color: "var(--text-primary)", lineHeight: "1" }}>{stat.val}</div>
-                    <div style={{ fontSize: "0.5rem", fontWeight: "600", color: "var(--text-secondary)", marginTop: "2px" }}>{stat.label}</div>
-                    {stat.badge > 0 && <div style={{ position: "absolute", top: "4px", right: "4px", width: "5px", height: "5px", borderRadius: "50%", backgroundColor: stat.color, boxShadow: `0 0 4px ${stat.color}` }} />}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-
             {/* Active section title */}
-            <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} transition={iosSpring} style={{ marginBottom: "1.2rem" }}>
-              <h2 style={{ fontSize: "1.15rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "-0.03em", margin: 0 }}>
-                {tabs.find(t => t.id === activeTab)?.label}
+            <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} transition={iosSpring} style={{ marginBottom: "1.5rem" }}>
+              <h2 style={{ fontSize: "1.25rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "-0.03em", margin: 0 }}>
+                {tabs.find(t => t.id === activeTab)?.label || "Security"}
               </h2>
             </motion.div>
 
@@ -1520,8 +1609,18 @@ export default function AdminPage() {
                         </div>
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                        <label style={{ fontSize: "0.6rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Review & Reflection</label>
-                        <textarea className="admin-form-input admin-auto-textarea" placeholder="Add book review when completed..." value={bookReview} onChange={(e) => setBookReview(e.target.value)} style={{ minHeight: "80px", resize: "none" }} />
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                          <label style={{ fontSize: "0.6rem", fontWeight: "800", color: "var(--text-secondary)", letterSpacing: "0.02em" }}>Review & Reflection</label>
+                          <div style={{ display: "flex", gap: "4px", background: "rgba(128,128,128,0.06)", padding: "2px", borderRadius: "6px", border: "1px solid rgba(128,128,128,0.1)" }}>
+                            <button type="button" onClick={() => applyFormat("b")} style={{ width: "22px", height: "22px", borderRadius: "4px", border: "none", background: "transparent", color: "var(--text-primary)", cursor: "pointer", fontWeight: "bold", fontSize: "0.7rem", display: "flex", alignItems: "center", justifyContent: "center" }} title="Bold">B</button>
+                            <button type="button" onClick={() => applyFormat("i")} style={{ width: "22px", height: "22px", borderRadius: "4px", border: "none", background: "transparent", color: "var(--text-primary)", cursor: "pointer", fontStyle: "italic", fontSize: "0.7rem", fontFamily: "serif", display: "flex", alignItems: "center", justifyContent: "center" }} title="Italic">I</button>
+                            <button type="button" onClick={() => applyFormat("u")} style={{ width: "22px", height: "22px", borderRadius: "4px", border: "none", background: "transparent", color: "var(--text-primary)", cursor: "pointer", textDecoration: "underline", fontSize: "0.7rem", display: "flex", alignItems: "center", justifyContent: "center" }} title="Underline">U</button>
+                            <button type="button" onClick={() => applyFormat("ul")} style={{ width: "22px", height: "22px", borderRadius: "4px", border: "none", background: "transparent", color: "var(--text-primary)", cursor: "pointer", fontSize: "0.7rem", display: "flex", alignItems: "center", justifyContent: "center" }} title="Bullet List">
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                            </button>
+                          </div>
+                        </div>
+                        <textarea ref={bookReviewRef} className="admin-form-input admin-auto-textarea" placeholder="Add book review when completed... (Supports HTML/Markdown formatting via toolbar)" value={bookReview} onChange={(e) => setBookReview(e.target.value)} style={{ minHeight: "120px", resize: "none" }} />
                       </div>
                       <motion.button type="submit" disabled={isSubmittingBook || !bookTitle.trim() || !bookAuthor.trim()}
                         whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}
@@ -1713,8 +1812,12 @@ export default function AdminPage() {
                           key={item.id}
                           layoutId={`ip-card-${item.id}`}
                           style={{
-                            background: theme === "dark" ? "rgba(239, 68, 68, 0.03)" : "rgba(239, 68, 68, 0.01)",
-                            border: "1px solid rgba(239, 68, 68, 0.12)",
+                            background: item.isSystem 
+                              ? (theme === "dark" ? "rgba(142, 142, 147, 0.05)" : "rgba(142, 142, 147, 0.03)")
+                              : (theme === "dark" ? "rgba(239, 68, 68, 0.03)" : "rgba(239, 68, 68, 0.01)"),
+                            border: item.isSystem
+                              ? "1px solid rgba(142, 142, 147, 0.16)"
+                              : "1px solid rgba(239, 68, 68, 0.12)",
                             borderRadius: "14px",
                             padding: "10px 14px",
                             display: "flex",
@@ -1725,9 +1828,9 @@ export default function AdminPage() {
                         >
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-                              <span style={{ fontSize: "0.78rem", fontWeight: 750, color: "#ef4444", fontFamily: "monospace" }}>{item.ip}</span>
-                              <span style={{ fontSize: "0.55rem", color: "var(--text-secondary)", background: "rgba(150,150,150,0.08)", padding: "2px 6px", borderRadius: "6px" }}>
-                                {item.blockedAt ? new Date(item.blockedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "Permanent"}
+                              <span style={{ fontSize: "0.78rem", fontWeight: 750, color: item.isSystem ? "var(--text-secondary)" : "#ef4444", fontFamily: "monospace" }}>{item.ip}</span>
+                              <span style={{ fontSize: "0.55rem", color: "var(--text-secondary)", background: "rgba(150,150,150,0.08)", padding: "2px 6px", borderRadius: "6px", fontWeight: "700" }}>
+                                {item.isSystem ? "System Default" : (item.blockedAt ? new Date(item.blockedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "Permanent")}
                               </span>
                             </div>
                             {item.note && (
@@ -1737,32 +1840,55 @@ export default function AdminPage() {
                             )}
                           </div>
 
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() => handleUnblockIP(item.id)}
-                            style={{
-                              width: "28px",
-                              height: "28px",
-                              borderRadius: "50%",
-                              border: "1px solid rgba(16, 185, 129, 0.2)",
-                              background: "rgba(16, 185, 129, 0.05)",
-                              color: "#10b981",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              cursor: "pointer"
-                            }}
-                            title="Unblock Connection"
-                          >
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M18 13V9a4 4 0 0 0-4-4H9" />
-                              <path d="M22 9l-4-4-4 4" />
-                              <path d="M2 13v4a4 4 0 0 0 4 4h9" />
-                              <path d="M22 17a5 5 0 0 1-5 5H6.5a2.5 2.5 0 0 1 0-5H20" />
-                              <circle cx="12" cy="12" r="3" />
-                            </svg>
-                          </motion.button>
+                          {item.isSystem ? (
+                            <div
+                              style={{
+                                width: "28px",
+                                height: "28px",
+                                borderRadius: "50%",
+                                border: "1px solid rgba(142, 142, 147, 0.15)",
+                                background: "rgba(142, 142, 147, 0.05)",
+                                color: "var(--text-secondary)",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                opacity: 0.65
+                              }}
+                              title="System Fallback Block (Permanent)"
+                            >
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                              </svg>
+                            </div>
+                          ) : (
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleUnblockIP(item.id)}
+                              style={{
+                                width: "28px",
+                                height: "28px",
+                                borderRadius: "50%",
+                                border: "1px solid rgba(16, 185, 129, 0.2)",
+                                background: "rgba(16, 185, 129, 0.05)",
+                                color: "#10b981",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: "pointer"
+                              }}
+                              title="Unblock Connection"
+                            >
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M18 13V9a4 4 0 0 0-4-4H9" />
+                                <path d="M22 9l-4-4-4 4" />
+                                <path d="M2 13v4a4 4 0 0 0 4 4h9" />
+                                <path d="M22 17a5 5 0 0 1-5 5H6.5a2.5 2.5 0 0 1 0-5H20" />
+                                <circle cx="12" cy="12" r="3" />
+                              </svg>
+                            </motion.button>
+                          )}
                         </motion.div>
                       ))
                     ) : (
@@ -1862,7 +1988,7 @@ export default function AdminPage() {
               <button
                 key={tab.id}
                 className="bottom-nav-btn"
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
                 style={{ color: isActive ? activeColor : inactiveColor }}
               >
                 {isActive && (
@@ -1871,7 +1997,7 @@ export default function AdminPage() {
                     transition={{ type: "spring", stiffness: 460, damping: 36 }}
                     style={{
                       position: "absolute",
-                      inset: "0px 1px",
+                      inset: "2px 2px",
                       borderRadius: "20px",
                       background: theme === "dark"
                         ? "rgba(255, 255, 255, 0.10)"
@@ -1891,30 +2017,24 @@ export default function AdminPage() {
                   {tab.count > 0 && (
                     <span style={{
                       position: "absolute",
-                      top: "-4px",
-                      right: "-6px",
-                      minWidth: "13px",
-                      height: "13px",
+                      top: "-5px",
+                      right: "-8px",
+                      minWidth: "14px",
+                      height: "14px",
                       borderRadius: "7px",
-                      backgroundColor: tab.id === "inbox" ? "#FF9500" : "#B47A3E",
+                      backgroundColor: "#FF3B30",
                       color: "#fff",
-                      fontSize: "0.42rem",
+                      fontSize: "0.45rem",
                       fontWeight: "800",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       padding: "0 2px",
                       boxSizing: "border-box",
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.15)",
                     }}>{tab.count}</span>
                   )}
                 </div>
-                <span style={{
-                  fontSize: "0.52rem",
-                  fontWeight: isActive ? "750" : "500",
-                  letterSpacing: "-0.01em",
-                  zIndex: 2,
-                  lineHeight: 1,
-                }}>{tab.label}</span>
               </button>
             );
           })}
@@ -1941,5 +2061,17 @@ export default function AdminPage() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function AdminPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "var(--bg-color)" }}>
+        <div style={{ width: "16px", height: "16px", borderRadius: "50%", border: "2px solid rgba(150,150,150,0.15)", borderTopColor: "var(--text-primary)", animation: "spin 0.8s linear infinite" }} />
+      </div>
+    }>
+      <AdminPageContent />
+    </Suspense>
   );
 }

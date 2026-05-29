@@ -33,7 +33,7 @@ if (!global._cachedCommentsMap) global._cachedCommentsMap = {};
 
 const RTDB_POSTS_URL = "https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app/blogger_posts.json";
 
-async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 1200): Promise<Response> {
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 10000): Promise<Response> {
   // Safe Promise.race timeout: we race the fetch query against a timeout reject.
   // We do NOT use AbortController signal here, as aborting server-side fetches inside Next.js 
   // Server Components can disrupt Next.js's internal streaming payload, causing client-side Turbopack crashes.
@@ -98,7 +98,7 @@ export async function getPosts(): Promise<BlogPost[]> {
 
     return posts;
   } catch (error) {
-    console.error("Error fetching Blogger posts:", error);
+    console.warn("Blogger posts fetch failed (using cache/fallback):", (error as Error)?.message ?? error);
     
     // Serve from global memory cache if present
     if (global._cachedPosts && global._cachedPosts.length > 0) {

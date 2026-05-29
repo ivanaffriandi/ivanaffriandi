@@ -159,6 +159,46 @@ export default function AboutSection() {
                     <div style={{ flexGrow: 1, borderBottom: "1px dotted var(--grid-line)", height: "1px", opacity: 0.5 }} />
                     <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-primary)", textDecoration: "none", borderBottom: "1px solid var(--text-primary)" }} className="minimal-link">@ivanaffriandi</a>
                   </div>
+
+                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", marginBottom: "0.75rem", fontSize: "0.9rem" }}>
+                    <span style={{ color: "var(--text-secondary)", fontWeight: "500", flexShrink: 0 }}>Weibo</span>
+                    <div style={{ flexGrow: 1, borderBottom: "1px dotted var(--grid-line)", height: "1px", opacity: 0.5 }} />
+                    <a href="https://weibo.com/u/7915776414" target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-primary)", textDecoration: "none", borderBottom: "1px solid var(--text-primary)" }} className="minimal-link">@ivanaffriandi</a>
+                  </div>
+                </div>
+
+                {/* Creative Philosophy Section */}
+                <div style={{ 
+                  borderTop: "1px solid var(--grid-line)", 
+                  paddingTop: "2rem", 
+                  marginTop: "2rem",
+                  display: "flex", 
+                  flexWrap: "wrap", 
+                  gap: "2.5rem", 
+                  maxWidth: "680px" 
+                }}>
+                  <div style={{ flex: "1 1 280px" }}>
+                    <h4 style={{ fontSize: "0.7rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-secondary)", margin: "0 0 10px 0" }}>
+                      Design Principles
+                    </h4>
+                    <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "8px", fontSize: "0.82rem", color: "var(--text-primary)", fontWeight: "500" }}>
+                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Stark, Functional Grid Systems</li>
+                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Analog Tactility in Digital Spaces</li>
+                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Wabi-Sabi Negative Space & Slow UX</li>
+                    </ul>
+                  </div>
+                  <div style={{ flex: "1 1 280px" }}>
+                    <h4 style={{ fontSize: "0.7rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-secondary)", margin: "0 0 10px 0" }}>
+                      Current Obsessions
+                    </h4>
+                    <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "8px", fontSize: "0.82rem", color: "var(--text-primary)", fontWeight: "500" }}>
+                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Crochet & Slow Handcraft</li>
+                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Journaling & Daily Reflections</li>
+                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Teapot Tea Rituals & Slow Mornings</li>
+                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Mycology & Wild Forest Foraging</li>
+                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Macro Analog Photography (Fujifilm)</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>

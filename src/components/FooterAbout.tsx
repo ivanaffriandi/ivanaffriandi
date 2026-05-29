@@ -50,7 +50,7 @@ export default function FooterAbout() {
     },
     {
       label: "In My Free Time",
-      pills: ["Book Reading", "Mushroom Hunting", "Macro Photography", "City Forest Walks", "Nature Observation", "Music"],
+      text: "I love getting lost in a good book, brewing the perfect teapot tea, taking slow intentional walks through the city forest, and spending peaceful evenings crocheting intricate small pieces, hand-weaving creativity and warmth stitch by stitch.",
     },
     {
       label: "Writing",
@@ -108,8 +108,7 @@ export default function FooterAbout() {
       width: 100%;
       background: var(--bg-color);
       border-top: none;
-      padding: 1.25rem 4vw 1.75rem;
-      box-sizing: border-box;
+      padding: 0.4rem 4vw 0.8rem;
       --fa-card-bg: rgba(128,128,128,0.04);
       --fa-card-border: rgba(128,128,128,0.1);
       --fa-card-shadow:
@@ -140,7 +139,7 @@ export default function FooterAbout() {
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.4rem;
       font-family: var(--font-sans);
     }
     .fa-card, .fa-carousel-card {
@@ -156,10 +155,10 @@ export default function FooterAbout() {
     .fa-card:hover { transform: translateY(-1px); box-shadow: var(--fa-card-shadow-hover); }
 
     /* Profile */
-    .fa-profile-card { display: flex; align-items: center; gap: 0.75rem; padding: 12px 14px; }
+    .fa-profile-card { display: flex; align-items: center; gap: 0.5rem; padding: 6px 10px; }
     .fa-avatar {
-      width: 46px; height: 46px; border-radius: 50%; overflow: hidden;
-      border: 1.5px solid var(--border-color); flex-shrink: 0;
+      width: 36px; height: 36px; border-radius: 50%; overflow: hidden;
+      border: 1px solid var(--border-color); flex-shrink: 0;
       transition: transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
     }
     .fa-avatar:hover { transform: scale(1.06) rotate(2deg); }
@@ -199,7 +198,7 @@ export default function FooterAbout() {
     /* Carousel card shared header */
     .fa-car-header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 14px 0;
+      padding: 6px 10px 0;
     }
     .fa-car-label {
       font-size: 0.58rem; font-weight: 700; text-transform: uppercase;
@@ -222,8 +221,8 @@ export default function FooterAbout() {
     .fa-arr:hover { border-color: var(--text-primary); }
 
     /* Bio carousel body */
-    .fa-bio-body { padding: 6px 14px 9px; min-height: 48px; }
-    .fa-bio-text { font-size: 0.83rem; line-height: 1.45; color: var(--text-primary); margin: 0; font-weight: 400; }
+    .fa-bio-body { padding: 2px 10px 6px; min-height: 38px; }
+    .fa-bio-text { font-size: 0.8rem; line-height: 1.4; color: var(--text-primary); margin: 0; font-weight: 400; }
 
     /* Skill / bio pills */
     .fa-pills { display: flex; flex-wrap: wrap; gap: 4px; }
@@ -248,7 +247,7 @@ export default function FooterAbout() {
     }
 
     /* Skill carousel body */
-    .fa-skill-body { padding: 6px 14px 9px; min-height: auto; }
+    .fa-skill-body { padding: 4px 10px 6px; min-height: auto; }
 
     /* Language pills with clean percentage badges */
     .fa-lang-pill {
@@ -331,14 +330,14 @@ export default function FooterAbout() {
       color: var(--text-primary);
       font-weight: 500;
       cursor: pointer;
-      padding: 5px 14px;
+      padding: 3px 8px;
       background-color: rgba(128,128,128,0.07);
       border-radius: 30px;
       font-family: var(--font-sans);
-      font-size: 0.76rem;
+      font-size: 0.65rem;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       transition: background-color 0.2s ease, transform 0.2s ease;
     }
     #footer-about-toggle.open {
@@ -418,6 +417,12 @@ export default function FooterAbout() {
                       <a href="https://x.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" className="fa-btn-icon" title="X">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M4 4l11.733 16h4.267l-11.733-16z"/><path d="M4 20l6.768-6.768m2.46-2.46l6.772-6.772"/>
+                        </svg>
+                      </a>
+                      <a href="https://weibo.com/u/7915776414" target="_blank" rel="noopener noreferrer" className="fa-btn-icon" title="Weibo">
+                        <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor">
+                          <path d="M10.878 1.093a4.23 4.23 0 0 1 4.031 1.305 4.22 4.22 0 0 1 .886 4.14v.001a.612.612 0 0 1-1.166-.377 3.01 3.01 0 0 0-3.495-3.873.611.611 0 1 1-.256-1.196M3.753 9.465c.548-1.11 1.972-1.74 3.233-1.411 1.304.338 1.971 1.568 1.437 2.764-.541 1.221-2.095 1.875-3.416 1.449-1.271-.411-1.812-1.67-1.254-2.802m2.658.567c.16.066.365-.009.458-.168.088-.16.03-.34-.129-.397-.156-.062-.353.013-.446.168-.09.154-.041.333.117.397m-1.607 1.314c.413.188.963.009 1.219-.4.252-.413.12-.883-.296-1.062-.41-.172-.94.005-1.194.402-.256.4-.135.874.271 1.06"/>
+                          <path d="m12.014 7.238.005.001c.919.285 1.941.974 1.939 2.188 0 2.007-2.895 4.535-7.246 4.535C3.393 13.962 0 12.352 0 9.708c0-1.385.876-2.985 2.384-4.493C4.4 3.199 6.751 2.28 7.634 3.165c.39.392.427 1.065.177 1.87-.132.405.38.182.38.182 1.63-.682 3.051-.722 3.57.02.278.397.252.951-.004 1.594-.116.293.035.34.257.407m-10.4 3.101c.172 1.738 2.46 2.936 5.109 2.674 2.647-.26 4.656-1.883 4.482-3.623-.17-1.738-2.458-2.937-5.107-2.674-2.647.263-4.656 1.883-4.484 3.623m11.681-6.484a2.06 2.06 0 0 0-1.962-.634.526.526 0 1 0 .219 1.031 1.008 1.008 0 0 1 1.17 1.296.528.528 0 0 0 1.005.325 2.06 2.06 0 0 0-.432-2.018"/>
                         </svg>
                       </a>
                     </div>

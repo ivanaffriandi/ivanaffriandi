@@ -1,10 +1,32 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup as firebaseSignIn, signOut as firebaseSignOut } from "firebase/auth";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut as firebaseSignOut
+} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Enforced real production keys directly to allow standard public browser connections to Firestore
-const hasFirebaseKeys = true;
+// Silence Firebase SDK connection warnings globally by filtering console outputs
+if (typeof window !== "undefined") {
+  const filterMsg = (args: any[]) =>
+    args.map(x => (typeof x === "string" ? x : (x?.message || x?.toString?.() || ""))).join(" ");
+
+  const originalWarn = console.warn;
+  console.warn = (...args: any[]) => {
+    const msg = filterMsg(args);
+    if (msg.includes("firestore") || msg.includes("Firestore")) return;
+    originalWarn(...args);
+  };
+
+  const originalError = console.error;
+  console.error = (...args: any[]) => {
+    const msg = filterMsg(args);
+    if (msg.includes("firestore") || msg.includes("Firestore") || msg.includes("Cloud Firestore")) return;
+    originalError(...args);
+  };
+}
 
 const firebaseConfig = {
   apiKey: "AIzaSyBVRIwhZ3CXTJLdbp4ma15XMXYfhWa_iPw",
@@ -20,22 +42,19 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
+provider.setCustomParameters({ prompt: "select_account" });
 
 export const signInWithGoogle = async () => {
-  if (!hasFirebaseKeys) {
-    console.warn("⚠️ No Firebase keys found. Using simulated login for testing UI.");
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    return {
-      user: { email: "hello@ivanaffriandi.com", displayName: "Ivan Affriandi", photoURL: "/profile.jpg" }
-    };
+  try {
+    const result = await signInWithPopup(auth, provider);
+    return result;
+  } catch (err: any) {
+    throw new Error(err?.message ?? "Firebase sign-in failed");
   }
-  return firebaseSignIn(auth, provider);
 };
 
-export const logOut = async () => {
-  if (!hasFirebaseKeys) return;
-  return firebaseSignOut(auth);
-};
+export const logOut = async () => firebaseSignOut(auth);
 
-export { app, auth, db, storage, hasFirebaseKeys };
+// Keep hasFirebaseKeys = true so callers don't need changing
+export const hasFirebaseKeys = true;
+export { app, auth, db, storage };
