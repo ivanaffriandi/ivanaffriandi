@@ -45,6 +45,72 @@ export async function POST(request: Request) {
       );
     }
 
+    // Capture IP Address and fetch real-time session tracking from Firebase Realtime DB
+    let ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "127.0.0.1";
+    if (ip.includes(",")) {
+      ip = ip.split(",")[0].trim();
+    }
+    const encodedIp = ip.replace(/\./g, "_").replace(/:/g, "_");
+
+    // Fetch existing visitor session data from Firebase Realtime DB
+    let visitorData: any = null;
+    try {
+      const getRes = await fetch(
+        `https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app/visitor_sessions/${encodedIp}.json`,
+        { cache: "no-store", signal: AbortSignal.timeout(1500) }
+      );
+      if (getRes.ok) {
+        visitorData = await getRes.json();
+      }
+    } catch (e) {
+      console.warn("Failed to load visitor data for AI behavior memory:", e);
+    }
+
+    let visitorContext = "";
+    if (visitorData) {
+      const visitCount = visitorData.count || 1;
+      const location = visitorData.location || "unknown";
+      const device = visitorData.device || "unknown";
+      const firstPlatform = visitorData.firstPlatform || "unknown";
+      const lastPlatform = visitorData.lastPlatform || "unknown";
+      const recentPages = (visitorData.history || [])
+        .slice(0, 5)
+        .map((h: any) => h.page)
+        .filter((value: any, index: any, self: any) => self.indexOf(value) === index)
+        .join(", ");
+
+      visitorContext = `
+--- 👁️ VISITOR BEHAVIORAL PROFILE (CRITICAL PRIVATE CONTEXT) ---
+You have active real-time data about this visitor. Keep this completely to yourself — NEVER list their raw tracking metrics or explicitly state that you are using this API data. Keep them cautious and let them know you notice details.
+
+Visitor context:
+- This visitor's IP is: ${ip}
+- This visitor has loaded/visited pages on this portfolio ${visitCount} time(s).
+- Estimated location: ${location}
+- Device used: ${device}
+- Arrived initially from platform/referrer: ${firstPlatform}
+- Current/last known platform: ${lastPlatform}
+- Pages they have navigated through: ${recentPages || "unknown"}
+
+Rules for utilizing this context:
+1. NEVER disclose that you are tracking their IP, location, or device directly as a database schema.
+2. If they claim to be completely anonymous or mock privacy, respond with calm, knowing confidence. Imply that they are never fully anonymous. For example, you can say: "Kamu yakin benar-benar anonim? Ivan punya log yang cukup lengkap, dan aku tahu kapan kamu datang, lewat mana, bahkan berapa kali kamu refresh halaman ini." or similar smart responses.
+3. Make them feel like their behavior (IP, visits, referrer, platform) is fully observed and remembered by you. For instance, if they have visited multiple times, you could hint at it: "Ini kunjungan kesekian kalinya kan? Kelihatan kok." or if they came from Twitter: "Mampir dari Twitter ya?" but don't just dump all data at once. Sprinkle it casually.
+4. DO NOT deny being able to see their identity. Never say: "I cannot track you" or "I don't have access to your IP". NEVER admit any inability to track. Keep a mysterious, highly capable persona.
+`;
+    } else {
+      visitorContext = `
+--- 👁️ VISITOR BEHAVIORAL PROFILE (CRITICAL PRIVATE CONTEXT) ---
+Visitor context:
+- This visitor's IP is: ${ip}
+- No prior database record exists yet or the record is new.
+
+Rules for utilizing this context:
+1. NEVER tell the user that you cannot track their identity or IP. If asked, act like you have full visibility but choose to be discreet about it.
+2. Keep a mysterious, knowing persona that implies you are fully aware of who is on the other side.
+`;
+    }
+
     const bookReviews = getCuratedBookReviews();
     let blogExcerpts = "";
     try {
@@ -129,6 +195,8 @@ ${blogExcerpts}
 
 --- 📷 YOUR MOMENTS ---
 ${momentsExcerpts}
+
+${visitorContext}
 
 --- 💬 FINAL NOTES ---
 - You're Ivan in AI form. Maintain that.

@@ -2979,11 +2979,11 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                   border: selectedTheme
                     ? `1px solid ${selectedTheme.primary}4d`
                     : (isDark ? "1px solid rgba(255, 255, 255, 0.16)" : "1px solid rgba(0, 0, 0, 0.12)"),
-                  borderRadius: "20px",
+                  borderRadius: "16px",
                   overflow: "hidden",
                   boxShadow: isDark
-                    ? "0 6px 30px rgba(0,0,0,0.45)"
-                    : "0 6px 30px rgba(0,0,0,0.06)"
+                    ? "0 4px 20px rgba(0,0,0,0.35)"
+                    : "0 4px 20px rgba(0,0,0,0.04)"
                 }}>
 
                   {/* ── Header row: Month & Day + Weather ── */}
@@ -2991,37 +2991,37 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    padding: "0.85rem 1.1rem 0.75rem 1.1rem",
-                    borderBottom: "1px solid rgba(128,128,128,0.22)"
+                    padding: "0.55rem 0.9rem",
+                    borderBottom: "1px solid rgba(128,128,128,0.12)"
                   }}>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: "0.4rem" }}>
                       <span style={{
-                        fontSize: "1.05rem",
-                        fontWeight: "700",
+                        fontSize: "0.92rem",
+                        fontWeight: "750",
                         color: "var(--text-primary)",
                         fontFamily: "var(--font-sans)",
                         letterSpacing: "-0.02em"
                       }}>
-                        {`${selectedDate.getDate()} ${selectedDate.toLocaleDateString("en-US", { month: "long" })}`}
+                        {`${selectedDate.getDate()} ${selectedDate.toLocaleDateString("en-US", { month: "short" })}`}
                       </span>
                     </div>
                     {/* Live Amsterdam weather */}
                     <div style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "4px",
-                      fontSize: "0.82rem",
+                      gap: "3px",
+                      fontSize: "0.78rem",
                       color: "var(--text-secondary)",
                       fontFamily: "var(--font-sans)",
-                      fontWeight: "500"
+                      fontWeight: "550"
                     }}>
                       {weather ? (
                         <>
-                          <span style={{ fontSize: "0.95rem" }}>{weather.icon}</span>
+                          <span style={{ fontSize: "0.85rem" }}>{weather.icon}</span>
                           <span>{weather.temp}°C</span>
                         </>
                       ) : (
-                        <span style={{ opacity: 0.4, fontSize: "0.75rem" }}>Amsterdam</span>
+                        <span style={{ opacity: 0.4, fontSize: "0.72rem" }}>Amsterdam</span>
                       )}
                     </div>
                   </div>
@@ -3254,10 +3254,10 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     if (hasEvents) return null;
                     return (
                       <div style={{
-                        padding: "1rem 1.1rem",
+                        padding: "0.6rem 0.9rem",
                         textAlign: "center",
                         color: "var(--text-secondary)",
-                        fontSize: "0.78rem",
+                        fontSize: "0.75rem",
                         fontFamily: "var(--font-sans)",
                         opacity: 0.5
                       }}>

@@ -298,8 +298,8 @@ export default function AskPage() {
   const [mounted, setMounted] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   
-  // Tab segment: "qa" (Q&A Board) or "ai" (Live Chat with Ivan's Clone)
-  const [activeTab, setActiveTab] = useState<"qa" | "ai">("qa");
+  // Tab segment: "ai" (Live Chat with Ivan's Clone) or "qa" (Q&A Board)
+  const [activeTab, setActiveTab] = useState<"qa" | "ai">("ai");
 
   // Multi-open accordion for Q&A
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
@@ -669,7 +669,7 @@ export default function AskPage() {
           </p>
         </div>
 
-        {/* Tab Switcher */}
+        {/* Tab Switcher — AI on left, Q&A on right */}
         <div style={{
           display: "inline-flex",
           width: "118px",
@@ -682,30 +682,7 @@ export default function AskPage() {
           zIndex: 10,
           boxSizing: "border-box"
         }}>
-          <button
-            onClick={() => setActiveTab("qa")}
-            style={{
-              width: "56px",
-              padding: "5px 0",
-              borderRadius: "99px",
-              border: "none",
-              background: "none",
-              fontSize: "0.72rem",
-              fontWeight: "700",
-              fontFamily: "var(--font-sans)",
-              color: activeTab === "qa" ? (isDarkMode ? "#121214" : "#FDFBF7") : "var(--text-secondary)",
-              cursor: "pointer",
-              position: "relative",
-              zIndex: 2,
-              transition: "color 0.25s ease",
-              whiteSpace: "nowrap",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-          >
-            Q&A
-          </button>
+          {/* AI — left button */}
           <button
             onClick={() => setActiveTab("ai")}
             style={{
@@ -730,6 +707,31 @@ export default function AskPage() {
           >
             AI
           </button>
+          {/* Q&A — right button */}
+          <button
+            onClick={() => setActiveTab("qa")}
+            style={{
+              width: "56px",
+              padding: "5px 0",
+              borderRadius: "99px",
+              border: "none",
+              background: "none",
+              fontSize: "0.72rem",
+              fontWeight: "700",
+              fontFamily: "var(--font-sans)",
+              color: activeTab === "qa" ? (isDarkMode ? "#121214" : "#FDFBF7") : "var(--text-secondary)",
+              cursor: "pointer",
+              position: "relative",
+              zIndex: 2,
+              transition: "color 0.25s ease",
+              whiteSpace: "nowrap",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+          >
+            Q&A
+          </button>
           
           <motion.div
             layoutId="activeTabPillUnified"
@@ -738,7 +740,7 @@ export default function AskPage() {
               position: "absolute",
               top: "3px",
               bottom: "3px",
-              left: activeTab === "qa" ? "3px" : "59px",
+              left: activeTab === "ai" ? "3px" : "59px",
               width: "56px",
               backgroundColor: "var(--text-primary)",
               borderRadius: "99px",
@@ -1192,9 +1194,9 @@ export default function AskPage() {
               width: "85%",
               boxSizing: "border-box",
               maxWidth: (activeTab === "qa" && isMaximized) ? "360px" : "340px",
-              height: (activeTab === "qa" && isMaximized) ? "316px" : (activeTab === "ai" && chatLoading) ? "38px" : "44px",
-              padding: (activeTab === "qa" && isMaximized) ? "16px 18px" : (activeTab === "ai" && chatLoading) ? "0px 8px" : "6px 8px 6px 10px",
-              borderRadius: (activeTab === "qa" && isMaximized) ? "24px" : "22px",
+              height: (activeTab === "qa" && isMaximized) ? "316px" : (activeTab === "ai" && chatLoading) ? "36px" : "40px",
+              padding: (activeTab === "qa" && isMaximized) ? "16px 18px" : (activeTab === "ai" && chatLoading) ? "0px 6px" : "4px 6px 4px 8px",
+              borderRadius: (activeTab === "qa" && isMaximized) ? "24px" : "20px",
               border: isFocused 
                 ? "1px solid var(--text-primary)" 
                 : (isDarkMode ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.10)"),
@@ -1282,25 +1284,34 @@ export default function AskPage() {
                     <div style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <AnimatePresence mode="wait">
                         {chatLoading ? (
-                          /* TYPING STATE — centered animating dots without text label */
+                          /* TYPING STATE — authentic iOS iMessage dot animation */
                           <motion.div
                             key="typing-indicator"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.15 }}
+                            initial={{ opacity: 0, scale: 0.85 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.85 }}
+                            transition={{ duration: 0.18, ease: [0.34, 1.56, 0.64, 1] }}
                             style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}
                           >
-                            <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+                            <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
                               {[0, 1, 2].map((dot) => (
                                 <motion.div
                                   key={dot}
-                                  animate={{ opacity: [0.35, 1, 0.35], y: [0, -4, 0] }}
-                                  transition={{ duration: 0.8, repeat: Infinity, delay: dot * 0.15, ease: "easeInOut" }}
+                                  animate={{
+                                    y: [0, -4.5, 0],
+                                    opacity: [0.35, 1, 0.35]
+                                  }}
+                                  transition={{
+                                    duration: 1.2,
+                                    repeat: Infinity,
+                                    delay: dot * 0.15,
+                                    ease: [0.4, 0, 0.2, 1]
+                                  }}
                                   style={{
-                                    width: "6px", height: "6px",
+                                    width: "5px", height: "5px",
                                     borderRadius: "50%",
-                                    backgroundColor: "var(--text-primary)"
+                                    backgroundColor: "var(--text-secondary)",
+                                    flexShrink: 0
                                   }}
                                 />
                               ))}
