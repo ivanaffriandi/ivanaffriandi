@@ -1297,20 +1297,17 @@ export default function AskPage() {
                               {[0, 1, 2].map((dot) => (
                                 <motion.div
                                   key={dot}
-                                  animate={{
-                                    y: [0, -4.5, 0],
-                                    opacity: [0.35, 1, 0.35]
-                                  }}
+                                  animate={{ opacity: [0.2, 1, 0.2] }}
                                   transition={{
-                                    duration: 1.2,
+                                    duration: 1.4,
                                     repeat: Infinity,
-                                    delay: dot * 0.15,
-                                    ease: [0.4, 0, 0.2, 1]
+                                    delay: dot * 0.22,
+                                    ease: "easeInOut"
                                   }}
                                   style={{
                                     width: "5px", height: "5px",
                                     borderRadius: "50%",
-                                    backgroundColor: "var(--text-secondary)",
+                                    backgroundColor: "var(--text-primary)",
                                     flexShrink: 0
                                   }}
                                 />

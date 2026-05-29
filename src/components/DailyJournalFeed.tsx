@@ -2974,8 +2974,10 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                 {/* Widget card */}
                 <div style={{
                   backgroundColor: selectedTheme
-                    ? (isDark ? `${selectedTheme.bgDark}fa` : `${selectedTheme.bgLight}fa`)
+                    ? (isDark ? "rgba(28, 28, 30, 0.88)" : "rgba(255, 255, 255, 0.78)")
                     : (isDark ? "rgba(28, 28, 30, 0.96)" : "rgba(255, 255, 255, 0.96)"),
+                  backdropFilter: selectedTheme ? "blur(20px)" : "none",
+                  WebkitBackdropFilter: selectedTheme ? "blur(20px)" : "none",
                   border: selectedTheme
                     ? `1px solid ${selectedTheme.primary}4d`
                     : (isDark ? "1px solid rgba(255, 255, 255, 0.16)" : "1px solid rgba(0, 0, 0, 0.12)"),
@@ -3035,49 +3037,62 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     const events = calendarEvents.filter(e => e.dateKey === dK || e.dateKey === fDK);
                     if (events.length === 0) return null;
 
-                    // Color palettes per event type — tailored dynamically for outstanding readability in both Light and Dark modes!
-                    const eventColors: Record<string, { bg: string; text: string }> = isDark ? {
-                      ivan:            { bg: "rgba(168,85,247,0.18)",  text: "#E9D8FD" },
-                      female:          { bg: "rgba(255,105,157,0.18)", text: "#FED7E2" },
-                      male:            { bg: "rgba(59,130,246,0.18)",  text: "#BEE3F8" },
-                      both:            { bg: "rgba(168,85,247,0.18)",  text: "#E9D8FD" },
-                      christmas:       { bg: "rgba(34,197,94,0.16)",   text: "#A7F3D0" },
-                      general_holiday: { bg: "rgba(249,115,22,0.16)",  text: "#FEEBC8" },
-                      independence:    { bg: "rgba(239,68,68,0.16)",   text: "#FED7D7" },
-                      idul_fitri:      { bg: "rgba(16,185,129,0.18)",  text: "#A7F3D0" },
-                      idul_adha:       { bg: "rgba(16,185,129,0.18)",  text: "#A7F3D0" },
-                      isra_miraj:      { bg: "rgba(99,102,241,0.18)",  text: "#C3DAFE" },
-                      waisak:          { bg: "rgba(234,179,8,0.18)",   text: "#FDE68A" },
-                      nyepi:           { bg: "rgba(20,184,166,0.18)",  text: "#A5F3FC" },
-                      maulid_nabi:     { bg: "rgba(16,185,129,0.18)",  text: "#A7F3D0" },
-                      islamic_new_year:{ bg: "rgba(99,102,241,0.18)",  text: "#C3DAFE" },
-                      chinese_new_year:{ bg: "rgba(239,68,68,0.18)",   text: "#FED7D7" },
-                    } : {
-                      ivan:            { bg: "rgba(147,112,219,0.13)", text: "#5B21B6" },
-                      female:          { bg: "rgba(255,105,157,0.11)", text: "#9D174D" },
-                      male:            { bg: "rgba(59,130,246,0.11)",  text: "#1E40AF" },
-                      both:            { bg: "rgba(168,85,247,0.11)",  text: "#6D28D9" },
-                      christmas:       { bg: "rgba(34,197,94,0.10)",   text: "#065F46" },
-                      general_holiday: { bg: "rgba(249,115,22,0.10)",  text: "#9A3412" },
-                      independence:    { bg: "rgba(239,68,68,0.10)",   text: "#991B1B" },
-                      idul_fitri:      { bg: "rgba(16,185,129,0.10)",  text: "#065F46" },
-                      idul_adha:       { bg: "rgba(16,185,129,0.10)",  text: "#065F46" },
-                      isra_miraj:      { bg: "rgba(99,102,241,0.10)",  text: "#3730A3" },
-                      waisak:          { bg: "rgba(234,179,8,0.10)",   text: "#78350F" },
-                      nyepi:           { bg: "rgba(20,184,166,0.10)",  text: "#075985" },
-                      maulid_nabi:     { bg: "rgba(16,185,129,0.10)",  text: "#065F46" },
-                      islamic_new_year:{ bg: "rgba(99,102,241,0.10)",  text: "#3730A3" },
-                      chinese_new_year:{ bg: "rgba(239,68,68,0.10)",   text: "#991B1B" },
+                    // Dynamic theme-aware event colors — uses selectedTheme.primary when active, falls back to per-type palettes
+                    const getEventColor = (evType: string): { bg: string; text: string; border: string } => {
+                      if (selectedTheme) {
+                        // Use the active theme's primary color for all events
+                        const p = selectedTheme.primary;
+                        return isDark
+                          ? { bg: `${p}28`, text: isDark ? `${p}ee` : p, border: `${p}45` }
+                          : { bg: `${p}18`, text: p, border: `${p}40` };
+                      }
+                      // Fallback per-type palette
+                      const dark: Record<string, { bg: string; text: string; border: string }> = {
+                        ivan:            { bg: "rgba(168,85,247,0.18)",  text: "#E9D8FD", border: "rgba(168,85,247,0.35)" },
+                        female:          { bg: "rgba(255,105,157,0.18)", text: "#FED7E2", border: "rgba(255,105,157,0.35)" },
+                        male:            { bg: "rgba(59,130,246,0.18)",  text: "#BEE3F8", border: "rgba(59,130,246,0.35)" },
+                        both:            { bg: "rgba(168,85,247,0.18)",  text: "#E9D8FD", border: "rgba(168,85,247,0.35)" },
+                        christmas:       { bg: "rgba(34,197,94,0.16)",   text: "#A7F3D0", border: "rgba(34,197,94,0.3)" },
+                        general_holiday: { bg: "rgba(249,115,22,0.16)",  text: "#FEEBC8", border: "rgba(249,115,22,0.35)" },
+                        independence:    { bg: "rgba(239,68,68,0.16)",   text: "#FED7D7", border: "rgba(239,68,68,0.35)" },
+                        idul_fitri:      { bg: "rgba(16,185,129,0.18)",  text: "#A7F3D0", border: "rgba(16,185,129,0.35)" },
+                        idul_adha:       { bg: "rgba(16,185,129,0.18)",  text: "#A7F3D0", border: "rgba(16,185,129,0.35)" },
+                        isra_miraj:      { bg: "rgba(99,102,241,0.18)",  text: "#C3DAFE", border: "rgba(99,102,241,0.35)" },
+                        waisak:          { bg: "rgba(234,179,8,0.18)",   text: "#FDE68A", border: "rgba(234,179,8,0.35)" },
+                        nyepi:           { bg: "rgba(20,184,166,0.18)",  text: "#A5F3FC", border: "rgba(20,184,166,0.35)" },
+                        maulid_nabi:     { bg: "rgba(16,185,129,0.18)",  text: "#A7F3D0", border: "rgba(16,185,129,0.35)" },
+                        islamic_new_year:{ bg: "rgba(99,102,241,0.18)",  text: "#C3DAFE", border: "rgba(99,102,241,0.35)" },
+                        chinese_new_year:{ bg: "rgba(239,68,68,0.18)",   text: "#FED7D7", border: "rgba(239,68,68,0.35)" },
+                      };
+                      const light: Record<string, { bg: string; text: string; border: string }> = {
+                        ivan:            { bg: "rgba(147,112,219,0.13)", text: "#5B21B6", border: "rgba(147,112,219,0.3)" },
+                        female:          { bg: "rgba(255,105,157,0.11)", text: "#9D174D", border: "rgba(255,105,157,0.3)" },
+                        male:            { bg: "rgba(59,130,246,0.11)",  text: "#1E40AF", border: "rgba(59,130,246,0.3)" },
+                        both:            { bg: "rgba(168,85,247,0.11)",  text: "#6D28D9", border: "rgba(168,85,247,0.3)" },
+                        christmas:       { bg: "rgba(34,197,94,0.10)",   text: "#065F46", border: "rgba(34,197,94,0.25)" },
+                        general_holiday: { bg: "rgba(249,115,22,0.10)",  text: "#9A3412", border: "rgba(249,115,22,0.28)" },
+                        independence:    { bg: "rgba(239,68,68,0.10)",   text: "#991B1B", border: "rgba(239,68,68,0.28)" },
+                        idul_fitri:      { bg: "rgba(16,185,129,0.10)",  text: "#065F46", border: "rgba(16,185,129,0.28)" },
+                        idul_adha:       { bg: "rgba(16,185,129,0.10)",  text: "#065F46", border: "rgba(16,185,129,0.28)" },
+                        isra_miraj:      { bg: "rgba(99,102,241,0.10)",  text: "#3730A3", border: "rgba(99,102,241,0.28)" },
+                        waisak:          { bg: "rgba(234,179,8,0.10)",   text: "#78350F", border: "rgba(234,179,8,0.28)" },
+                        nyepi:           { bg: "rgba(20,184,166,0.10)",  text: "#075985", border: "rgba(20,184,166,0.28)" },
+                        maulid_nabi:     { bg: "rgba(16,185,129,0.10)",  text: "#065F46", border: "rgba(16,185,129,0.28)" },
+                        islamic_new_year:{ bg: "rgba(99,102,241,0.10)",  text: "#3730A3", border: "rgba(99,102,241,0.28)" },
+                        chinese_new_year:{ bg: "rgba(239,68,68,0.10)",   text: "#991B1B", border: "rgba(239,68,68,0.28)" },
+                      };
+                      const palette = isDark ? dark : light;
+                      return palette[evType] ?? { bg: "rgba(128,128,128,0.09)", text: "var(--text-primary)", border: "rgba(128,128,128,0.2)" };
                     };
 
                     return (
                       <div style={{ padding: "0.4rem 0.6rem", display: "flex", flexDirection: "column", gap: "0.3rem" }}>
                         {events.map((ev, i) => {
-                          const c = eventColors[ev.type] ?? { bg: "rgba(128,128,128,0.09)", text: "var(--text-primary)" };
+                          const c = getEventColor(ev.type);
                           return (
                             <div key={ev.id} style={{
                               backgroundColor: c.bg,
-                              border: `1px solid ${c.text}25`,
+                              border: `1px solid ${c.border}`,
                               borderRadius: "10px",
                               padding: "0.4rem 0.65rem",
                               display: "flex",
@@ -3308,8 +3323,14 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
               marginTop: "0.2rem"
             }}>
               <div style={{
-                backgroundColor: isDark ? "rgba(28, 28, 30, 0.96)" : "rgba(255, 255, 255, 0.96)",
-                border: isDark ? "1px solid rgba(255, 255, 255, 0.16)" : "1px solid rgba(0, 0, 0, 0.12)",
+                backgroundColor: selectedTheme
+                  ? (isDark ? "rgba(28, 28, 30, 0.88)" : "rgba(255, 255, 255, 0.78)")
+                  : (isDark ? "rgba(28, 28, 30, 0.96)" : "rgba(255, 255, 255, 0.96)"),
+                backdropFilter: selectedTheme ? "blur(20px)" : "none",
+                WebkitBackdropFilter: selectedTheme ? "blur(20px)" : "none",
+                border: selectedTheme
+                  ? `1px solid ${selectedTheme.primary}4d`
+                  : (isDark ? "1px solid rgba(255, 255, 255, 0.16)" : "1px solid rgba(0, 0, 0, 0.12)"),
                 borderRadius: "20px",
                 padding: "1.2rem 1.2rem 1.2rem 0.8rem", // Perfect asymmetric padding to visually center card contents
                 boxShadow: isDark
@@ -3343,8 +3364,16 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     const rawText = post.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
                     const excerpt = rawText.length > 100 ? rawText.slice(0, 100) + "..." : rawText;
 
-                    // Dynamically compute high-contrast, premium, solid cycled colors inside card
+                    // Dynamically compute high-contrast, premium, theme-aware cycled colors inside card
                     const innerCardStyle = (() => {
+                      if (selectedTheme) {
+                        // Tint each card subtly with the active event/birthday theme color
+                        const p = selectedTheme.primary;
+                        const shade = index % 2 === 0 ? "0.055" : "0.03";
+                        return isDark
+                          ? { bg: `${p}${Math.round(parseFloat(shade) * 255).toString(16).padStart(2, '0')}`, border: `${p}22` }
+                          : { bg: `${p}11`, border: `${p}1e` };
+                      }
                       const lightColors = [
                         { bg: "rgba(242, 241, 238, 0.96)", border: "rgba(0, 0, 0, 0.08)" },
                         { bg: "rgba(235, 242, 235, 0.96)", border: "rgba(0, 0, 0, 0.07)" },
@@ -3353,9 +3382,9 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                       ];
                       const darkColors = [
                         { bg: "rgba(255, 255, 255, 0.045)", border: "rgba(255, 255, 255, 0.08)" },
-                        { bg: "rgba(34, 197, 94, 0.045)",    border: "rgba(34, 197, 94, 0.09)" },
-                        { bg: "rgba(239, 68, 68, 0.045)",     border: "rgba(239, 68, 68, 0.09)" },
-                        { bg: "rgba(234, 179, 8, 0.045)",     border: "rgba(234, 179, 8, 0.09)" },
+                        { bg: "rgba(255, 255, 255, 0.025)", border: "rgba(255, 255, 255, 0.06)" },
+                        { bg: "rgba(255, 255, 255, 0.045)", border: "rgba(255, 255, 255, 0.08)" },
+                        { bg: "rgba(255, 255, 255, 0.025)", border: "rgba(255, 255, 255, 0.06)" },
                       ];
                       const colors = isDark ? darkColors : lightColors;
                       return colors[index % colors.length];
@@ -3738,7 +3767,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
               {/* Single horizontally scrollable shelf — all books in one row */}
               {(() => {
                 const glassBg = selectedTheme
-                  ? (isDark ? `${selectedTheme.bgDark}fa` : `${selectedTheme.bgLight}fa`)
+                  ? (isDark ? "rgba(28, 28, 30, 0.88)" : "rgba(255, 255, 255, 0.78)")
                   : (isDark ? "rgba(32, 32, 38, 0.96)" : "rgba(255, 255, 255, 0.96)");
 
                 const glassBorder = selectedTheme
