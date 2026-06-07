@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePerformance } from "@/contexts/PerformanceContext";
 
 export default function AmsterdamClock() {
+  const { lowPerfMode } = usePerformance();
   const [time, setTime] = useState<string>("");
   const [tz, setTz] = useState<string>("CEST");
 
@@ -61,9 +63,9 @@ export default function AmsterdamClock() {
     };
 
     updateClock();
-    const interval = setInterval(updateClock, 1000);
+    const interval = setInterval(updateClock, lowPerfMode ? 15000 : 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [lowPerfMode]);
 
   return (
     <span style={{ 

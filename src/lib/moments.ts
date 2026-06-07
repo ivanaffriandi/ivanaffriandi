@@ -15,14 +15,19 @@ import { staticMoments } from "./localMoments";
 export interface MomentItem {
   id: string;
   url: string;
+  videoUrl?: string;
   title: string;
   story?: string;
   date: string;
   location: string;
   published: string;
-  storagePath?: string; // Tracks the location in Firebase Storage for deletion
+  storagePath?: string;
   showOnHomepage?: boolean;
   homepageOrder?: number;
+  permalink?: string;
+  mediaType?: "IMAGE" | "VIDEO" | "CAROUSEL_ALBUM";
+  likeCount?: number;
+  children?: { url: string; videoUrl?: string; mediaType?: string }[];
 }
 
 // Fallback logic for LocalStorage Base64 URLs if Firebase API Keys are missing locally
@@ -93,41 +98,155 @@ export async function addMoment(momentData: Omit<MomentItem, "id" | "published">
 }
 
 export async function getAllMoments(): Promise<MomentItem[]> {
-  if (hasFirebaseKeys) {
-    try {
-      const q = query(collection(db, "moments"), orderBy("published", "desc"));
-      
-      // Prevent UI hangs by using a non-rejecting race between Firestore query and a 1500ms timeout.
-      // This guarantees we never throw a rejected promise or cause Next.js dev overlay errors.
-      const result = await Promise.race([
-        getDocs(q)
-          .then(snap => ({ success: true as const, snap }))
-          .catch(err => {
-            console.warn("Firestore query failed:", err?.message || err);
-            return { success: false as const, snap: null };
-          }),
-        new Promise<{ success: false, snap: null }>(resolve => 
-          setTimeout(() => resolve({ success: false, snap: null }), 1500)
-        )
-      ]);
+  const token = process.env.INSTAGRAM_ACCESS_TOKEN;
 
-      if (result.success && result.snap) {
-        const items: MomentItem[] = [];
-        result.snap.forEach((doc) => {
-          items.push({ id: doc.id, ...doc.data() } as MomentItem);
-        });
-        if (items.length > 0) return items;
-      } else {
-        console.warn("Firebase query timed out or failed; falling back seamlessly to local moments.");
-      }
-    } catch (e) {
-      console.warn("Firebase read error, fallback to local:", e);
-    }
+  if (!token) {
+    console.warn("⚠️ [Instagram API] No INSTAGRAM_ACCESS_TOKEN found in environment variables.");
+    return staticMoments;
   }
 
-  const localList = getLocalMoments();
-  const fallbackList = localList.length > 0 ? localList : staticMoments;
-  return fallbackList.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
+  try {
+    const response = await fetch(
+      `https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,permalink,thumbnail_url,timestamp,like_count,children{media_url,thumbnail_url,media_type}&access_token=${token}`,
+      { next: { revalidate: 60 } } // Cache for 60 seconds (1 minute)
+    );
+
+    if (!response.ok) {
+      console.warn(`⚠️ [Instagram API] Failed to fetch Instagram media: ${response.statusText}`);
+      return staticMoments;
+    }
+
+    const data = await response.json();
+    if (!data.data || !Array.isArray(data.data)) {
+      return staticMoments;
+    }
+
+    const moments: MomentItem[] = data.data.map((item: any, index: number) => {
+      let dateString = "";
+      let publishedString = "";
+      try {
+        if (item.timestamp) {
+          const date = new Date(item.timestamp);
+          dateString = date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+          publishedString = date.toISOString();
+        }
+      } catch (e) {
+        const fallbackDate = new Date();
+        dateString = fallbackDate.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+        publishedString = fallbackDate.toISOString();
+      }
+
+      let title = "";
+      let story = "";
+      if (item.caption) {
+        const lines = item.caption.split("\n").map((l: string) => l.trim()).filter((l: string) => l.length > 0);
+        if (lines.length > 0) {
+          const firstLine = lines[0];
+          title = firstLine.length > 50 ? firstLine.substring(0, 47) + "..." : firstLine;
+          story = item.caption; // Keep full caption as story so they can read all of it
+        }
+      }
+
+      const isVideo = item.media_type === "VIDEO";
+      const imageUrl = isVideo ? (item.thumbnail_url || item.media_url) : item.media_url;
+
+      // Parse carousel children for CAROUSEL_ALBUM
+      let children: { url: string; videoUrl?: string; mediaType?: string }[] | undefined;
+      if (item.media_type === "CAROUSEL_ALBUM" && item.children?.data) {
+        children = item.children.data.map((child: any) => {
+          const isChildVideo = child.media_type === "VIDEO";
+          return {
+            url: isChildVideo ? (child.thumbnail_url || child.media_url) : child.media_url,
+            videoUrl: isChildVideo ? child.media_url : undefined,
+            mediaType: child.media_type,
+          };
+        });
+      }
+
+      return {
+        id: item.id || `IG-${index}`,
+        url: imageUrl,
+        videoUrl: isVideo ? item.media_url : undefined,
+        title: title,
+        story: story || undefined,
+        date: dateString,
+        location: "Instagram Feed",
+        published: publishedString,
+        permalink: item.permalink,
+        mediaType: item.media_type,
+        likeCount: typeof item.like_count === "number" ? item.like_count : undefined,
+        children: children,
+        showOnHomepage: index < 9,
+        homepageOrder: index
+      };
+    });
+
+    return moments.length > 0 ? moments : staticMoments;
+  } catch (error) {
+    console.error("❌ [Instagram API] Error fetching moments:", error);
+    return staticMoments;
+  }
+}
+
+export async function getInstagramStories(): Promise<MomentItem[]> {
+  const token = process.env.INSTAGRAM_ACCESS_TOKEN;
+  if (!token) {
+    console.warn("⚠️ [Instagram API] No INSTAGRAM_ACCESS_TOKEN found to fetch stories.");
+    return [];
+  }
+
+  try {
+    // Attempt to fetch live stories from Instagram Graph API (for Professional/Creator accounts)
+    const response = await fetch(
+      `https://graph.instagram.com/me/stories?fields=id,caption,media_type,media_url,permalink,thumbnail_url,timestamp&access_token=${token}`,
+      { next: { revalidate: 30 } } // 30s revalidation for fresh live stories
+    );
+
+    if (!response.ok) {
+      // Basic Display API doesn't support stories, this will fail gracefully.
+      console.warn(`⚠️ [Instagram API] Stories endpoint returned status ${response.status}. Professional account may be required.`);
+      return [];
+    }
+
+    const data = await response.json();
+    if (!data.data || !Array.isArray(data.data)) {
+      return [];
+    }
+
+    return data.data.map((item: any, index: number) => {
+      let dateString = "";
+      let publishedString = "";
+      try {
+        if (item.timestamp) {
+          const date = new Date(item.timestamp);
+          dateString = date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+          publishedString = date.toISOString();
+        }
+      } catch (e) {
+        const fallbackDate = new Date();
+        dateString = fallbackDate.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+        publishedString = fallbackDate.toISOString();
+      }
+
+      const isVideo = item.media_type === "VIDEO";
+      const imageUrl = isVideo ? (item.thumbnail_url || item.media_url) : item.media_url;
+
+      return {
+        id: item.id || `live-story-${index}`,
+        url: imageUrl,
+        videoUrl: isVideo ? item.media_url : undefined,
+        title: item.caption || "Live Story",
+        story: item.caption || "",
+        date: dateString,
+        location: "Instagram Story",
+        published: publishedString,
+        mediaType: item.media_type,
+      };
+    });
+  } catch (error) {
+    console.error("❌ [Instagram API] Error fetching live stories:", error);
+    return [];
+  }
 }
 
 export async function deleteMoment(id: string, storagePath?: string): Promise<boolean> {

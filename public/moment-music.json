@@ -1,0 +1,12 @@
+{
+  "_comment": "Map Instagram post IDs to music metadata. The 'url' can be a relative path to /music/ or a full URL.",
+  "_example": {
+    "INSTAGRAM_POST_ID_HERE": {
+      "title": "Song Title",
+      "artist": "Artist Name",
+      "url": "/music/song-filename.mp3",
+      "coverUrl": "/music/covers/song-cover.jpg"
+    }
+  },
+  "posts": {}
+}

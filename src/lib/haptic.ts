@@ -48,36 +48,6 @@ export function triggerLightClick() {
       navigator.vibrate(10); // Short mechanical tick (10ms)
     } catch (e) {}
   }
-
-  const ctx = getAudioContext();
-  if (!ctx) return;
-
-  try {
-    // Resume audio context if suspended (browser security)
-    if (ctx.state === "suspended") {
-      ctx.resume();
-    }
-
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = "sine";
-    // High-pitched short mechanical tick
-    osc.frequency.setValueAtTime(1200, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.03);
-
-    // Very soft volume to mimic subtle physical response
-    gain.gain.setValueAtTime(0.02, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.03);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.start();
-    osc.stop(ctx.currentTime + 0.03);
-  } catch (err) {
-    // Silently catch audio block errors
-  }
 }
 
 /**
@@ -89,33 +59,5 @@ export function triggerActionClick() {
     try {
       navigator.vibrate(22); // Slightly deeper tactile pop (22ms)
     } catch (e) {}
-  }
-
-  const ctx = getAudioContext();
-  if (!ctx) return;
-
-  try {
-    if (ctx.state === "suspended") {
-      ctx.resume();
-    }
-
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = "triangle"; // Slightly warmer timbre
-    osc.frequency.setValueAtTime(600, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.08);
-
-    // Medium volume tactile pop
-    gain.gain.setValueAtTime(0.06, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.08);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.start();
-    osc.stop(ctx.currentTime + 0.08);
-  } catch (err) {
-    // Silently catch audio block errors
   }
 }

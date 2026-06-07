@@ -1292,6 +1292,15 @@ function getISOWeek(date: Date): number {
 
 export default function DailyJournalFeed({ posts, moments = [], initialBooks = [] }: { posts: any[], moments?: any[], initialBooks?: BookItem[] }) {
   const { t, lang, isRtl } = useLanguage();
+  const locale = lang === "zh" ? "zh-CN" : lang === "ar" ? "ar-EG" : lang === "nl" ? "nl-NL" : "en-US";
+
+  // Helper to localize digits to Arabic-Indic characters (e.g. 1 -> ١, 2026 -> ٢٠٢٦) in Arabic mode
+  const localizeNumber = useCallback((n: number | string): string => {
+    if (lang !== "ar") return String(n);
+    const arabicDigits = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
+    return String(n).replace(/[0-9]/g, (w) => arabicDigits[+w]);
+  }, [lang]);
+
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(STATIC_SEEDED_EVENTS);
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
   const selectedTheme = getSelectedTheme(selectedDate, calendarEvents);
@@ -1393,18 +1402,15 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
   }, []);
 
 
-  // Sort all moments by published date descending, or fallback to aesthetic placeholders if empty
+  // Sort Instagram moments by published date descending. Empty stays empty so no random non-IG images appear.
   const displayMoments = useMemo(() => {
     if (moments.length > 0) {
       return [...moments]
+        .filter((moment: any) => typeof moment.url === "string" && moment.url.length > 0)
         .sort((a: any, b: any) => new Date(b.published || 0).getTime() - new Date(a.published || 0).getTime())
         .slice(0, 9);
     }
-    return Array.from({ length: 9 }).map((_, idx) => ({
-      id: `placeholder-${idx}`,
-      url: `https://picsum.photos/seed/${idx + 10}/300/300`,
-      title: `Moment ${idx + 1}`
-    }));
+    return [];
   }, [moments]);
 
   // Holiday and Sunday indicators computed globally
@@ -1723,7 +1729,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
       days.push(
         <div
           key={i}
-          className="calendar-day-cell"
+          className={`calendar-day-cell ${isToday && !isSelected ? "today-glow-pill" : ""}`}
           onClick={() => {
             selectAndCenterDate(date);
             setIsCalendarOpen(false);
@@ -1749,15 +1755,17 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
             color: isSelected
               ? "var(--bg-color)"
               : (isToday
-                ? "#ff3b30"
+                ? (selectedTheme ? selectedTheme.primary : "#ff3b30")
                 : (cellTheme
                   ? cellTheme.primary
                   : (hasPost ? "#B47A3E" : "var(--text-primary)"))),
             border: isSelected
               ? "none"
               : (cellTheme
-                ? `1px solid ${cellTheme.primary}45`
-                : (hasPost && !isSelected ? "1px solid rgba(180, 122, 62, 0.45)" : "none")),
+                ? `1.5px solid ${cellTheme.primary}60`
+                : (hasPost && !isSelected 
+                  ? "1.5px solid rgba(180, 122, 62, 0.75)" 
+                  : (isDark ? "1px solid rgba(255, 255, 255, 0.32)" : "1px solid rgba(0, 0, 0, 0.24)"))),
             boxShadow: isSelected
               ? (isDark
                 ? "0 4px 10px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2)"
@@ -1775,8 +1783,26 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
             position: "relative"
           }}
         >
+          {hasPost && (
+            <div
+              title="Contains journal entries"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: lang === "ar" ? "auto" : "7px",
+                right: lang === "ar" ? "7px" : "auto",
+                width: "5px",
+                height: "10px",
+                backgroundColor: isSelected ? "#ffffff" : (cellTheme ? cellTheme.primary : "#B47A3E"),
+                clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%)",
+                opacity: 0.95,
+                zIndex: 3
+              }}
+            />
+          )}
+
           <span style={{ position: "relative", zIndex: 2 }}>
-            {cellTheme && cellTheme.emoji.includes("🎂") ? "🎂" : i}
+            {cellTheme && cellTheme.emoji.includes("🎂") ? "🎂" : localizeNumber(i)}
           </span>
         </div>
       );
@@ -1805,6 +1831,55 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
         <BirthdayConfettiEffect type={selectedTheme.type} />
       )}
       <style>{`
+        @keyframes today-breathing-glow {
+          0% {
+            box-shadow: 0 0 6px rgba(180, 122, 62, 0.25), inset 0 0 3px rgba(180, 122, 62, 0.1);
+            border-color: rgba(180, 122, 62, 0.45) !important;
+            transform: scale(1);
+          }
+          50% {
+            box-shadow: 0 0 16px rgba(180, 122, 62, 0.8), inset 0 0 6px rgba(180, 122, 62, 0.3);
+            border-color: rgba(180, 122, 62, 0.85) !important;
+            transform: scale(1.03);
+          }
+          100% {
+            box-shadow: 0 0 6px rgba(180, 122, 62, 0.25), inset 0 0 3px rgba(180, 122, 62, 0.1);
+            border-color: rgba(180, 122, 62, 0.45) !important;
+            transform: scale(1);
+          }
+        }
+        @keyframes today-shimmer-sweep {
+          0% {
+            transform: translateX(-150%) skewX(-25deg);
+          }
+          100% {
+            transform: translateX(150%) skewX(-25deg);
+          }
+        }
+        .today-glow-pill {
+          position: relative !important;
+          overflow: hidden !important;
+          border-width: 1.5px !important;
+          border-style: solid !important;
+          animation: today-breathing-glow 3s infinite ease-in-out !important;
+        }
+        .today-glow-pill::after {
+          content: '' !important;
+          position: absolute !important;
+          top: 0 !important;
+          left: -50% !important;
+          width: 200% !important;
+          height: 100% !important;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent
+          ) !important;
+          animation: today-shimmer-sweep 2.5s infinite ease-in-out !important;
+          pointer-events: none !important;
+        }
+
         .blog-slider-section {
           margin-top: 2.8rem !important;
           padding-top: 1.8rem !important;
@@ -1838,12 +1913,12 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
         .date-strip-container {
           margin-left: calc(-4vw - 1.25rem) !important;
           margin-right: calc(-4vw - 1.25rem) !important;
-          padding-left: calc(50% - 25px) !important; /* Centering padding */
-          padding-right: calc(50% - 25px) !important; /* Centering padding */
+          padding-left: calc(50% - 26px) !important; /* Centering padding */
+          padding-right: calc(50% - 26px) !important; /* Centering padding */
           scroll-snap-type: x mandatory;
           /* Beautiful visual edge fade to prevent hard cuts on scroll */
-          mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent) !important;
-          -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent) !important;
+          mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent) !important;
+          -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent) !important;
         }
         @media (min-width: 768px) {
           .date-strip-container {
@@ -1952,6 +2027,11 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
             height: 40px !important;
             border-radius: 6px !important;
           }
+          .journal-post-card img.journal-thumbnail-img {
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: inherit !important;
+          }
           .moments-grid {
             grid-template-columns: repeat(3, 1fr) !important;
           }
@@ -1959,8 +2039,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
           .date-strip-container {
             margin-left: calc(-4vw - 0.65rem) !important;
             margin-right: calc(-4vw - 0.65rem) !important;
-            padding-left: calc(50% - 25px) !important;
-            padding-right: calc(50% - 25px) !important;
+            padding-left: calc(50% - 26px) !important;
+            padding-right: calc(50% - 26px) !important;
             padding-bottom: 0.2rem !important;
             margin-bottom: 0.15rem !important;
           }
@@ -2043,7 +2123,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
             >
               <AnimatePresence mode="wait" custom={scrollDirection}>
                 <motion.span
-                  key={selectedDate.toLocaleDateString("en-US", { weekday: "short" })}
+                  key={selectedDate.toLocaleDateString(locale, { weekday: "short" })}
                   custom={scrollDirection}
                   variants={{
                     initial: (direction: "forward" | "backward") => ({
@@ -2066,7 +2146,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                   exit="exit"
                   style={{ display: "inline-block", lineHeight: 1 }}
                 >
-                  {selectedDate.toLocaleDateString("en-US", { weekday: "short" })}
+                  {selectedDate.toLocaleDateString(locale, { weekday: "short" })}
                 </motion.span>
               </AnimatePresence>
             </h1>
@@ -2080,8 +2160,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                   style={{
                     padding: "6px 12px",
                     borderRadius: "16px",
-                    backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
-                    border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                    backgroundColor: isDark ? (selectedTheme ? `${selectedTheme.primary}20` : "rgba(255, 255, 255, 0.06)") : (selectedTheme ? `${selectedTheme.primary}12` : "rgba(0, 0, 0, 0.04)"),
+                    border: isDark ? (selectedTheme ? `1px solid ${selectedTheme.primary}45` : "1px solid rgba(255, 255, 255, 0.12)") : (selectedTheme ? `1px solid ${selectedTheme.primary}35` : "1px solid rgba(0, 0, 0, 0.08)"),
                     boxShadow: isDark
                       ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(0, 0, 0, 0.6)"
                       : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2px 0 rgba(0, 0, 0, 0.08)",
@@ -2092,7 +2172,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     fontFamily: "var(--font-sans)"
                   }}
                 >
-                  Today
+                  {t("today")}
                 </button>
               )}
 
@@ -2108,8 +2188,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     color: selectedTheme ? selectedTheme.primary : "var(--text-primary)",
                     cursor: "pointer",
                     padding: "6px 12px",
-                    backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
-                    border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                    backgroundColor: isDark ? (selectedTheme ? `${selectedTheme.primary}20` : "rgba(255, 255, 255, 0.06)") : (selectedTheme ? `${selectedTheme.primary}12` : "rgba(0, 0, 0, 0.04)"),
+                    border: isDark ? (selectedTheme ? `1px solid ${selectedTheme.primary}45` : "1px solid rgba(255, 255, 255, 0.12)") : (selectedTheme ? `1px solid ${selectedTheme.primary}35` : "1px solid rgba(0, 0, 0, 0.08)"),
                     boxShadow: isDark
                       ? "0 8px 20px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 0 rgba(0, 0, 0, 0.6)"
                       : "0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 #ffffff, inset 0 -2px 0 rgba(0, 0, 0, 0.08)",
@@ -2120,10 +2200,10 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
                     <span style={{ fontSize: "0.82rem", fontWeight: "600", fontFamily: "var(--font-sans)", letterSpacing: "-0.01em" }}>
-                      {selectedDate.toLocaleDateString("en-US", { month: "long" })}
+                      {selectedDate.toLocaleDateString(locale, { month: "long" })}
                     </span>
                     <span style={{ fontSize: "0.82rem", fontWeight: "400", opacity: 0.65, fontFamily: "var(--font-sans)", paddingTop: "0.5px" }}>
-                      {selectedDate.getFullYear()}
+                      {localizeNumber(selectedDate.getFullYear())}
                     </span>
                   </div>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: selectedTheme ? 0.9 : 0.6, color: selectedTheme ? selectedTheme.primary : "inherit", transform: isCalendarOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s ease" }}>
@@ -2149,16 +2229,16 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                           ? (selectedTheme ? selectedTheme.bgDark : "#141312")
                           : (selectedTheme ? selectedTheme.bgLight : "#FDFBF7"),
                         border: selectedTheme
-                          ? (isDark ? `1px solid rgba(255, 255, 255, 0.15)` : `1px solid rgba(180, 122, 62, 0.22)`)
-                          : (isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)"),
+                          ? (isDark ? `1.5px solid rgba(255, 255, 255, 0.22)` : `1.5px solid rgba(180, 122, 62, 0.45)`)
+                          : (isDark ? "1.5px solid rgba(255, 255, 255, 0.2)" : "1.5px solid rgba(0, 0, 0, 0.15)"),
                         borderRadius: "22px",
                         boxShadow: isDark
-                          ? "0 24px 60px -8px rgba(0, 0, 0, 0.7), 0 8px 24px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)"
-                          : (selectedTheme
-                            ? "0 20px 48px -8px rgba(0, 0, 0, 0.12), 0 8px 20px -4px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)"
-                            : "0 20px 48px -8px rgba(0, 0, 0, 0.1), 0 8px 20px -4px rgba(0, 0, 0, 0.05), inset 0 1px 0 #ffffff"),
+                          ? "0 28px 72px -10px rgba(0, 0, 0, 0.85), 0 10px 32px -6px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15)"
+                          : "0 24px 64px -10px rgba(0, 0, 0, 0.18), 0 8px 24px -6px rgba(0, 0, 0, 0.08), inset 0 1px 0 #ffffff",
                         padding: "1.1rem",
                         zIndex: 100,
+                        backdropFilter: "blur(20px)",
+                        WebkitBackdropFilter: "blur(20px)"
                       }}
                     >
                       {/* Calendar Header: Month Year + Chevrons */}
@@ -2218,8 +2298,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = isWheelPickerOpen ? "rgba(150, 150, 150, 0.08)" : "transparent"}
                         >
                           {isWheelPickerOpen
-                            ? `${MONTH_NAMES[tempMonth]} ${tempYear}`
-                            : calendarViewDate.toLocaleDateString(lang === "zh" ? "zh-CN" : lang === "ar" ? "ar-EG" : lang === "nl" ? "nl-NL" : "en-US", { month: "long", year: "numeric" })}
+                            ? `${MONTH_NAMES[tempMonth]} ${localizeNumber(tempYear)}`
+                            : calendarViewDate.toLocaleDateString(locale, { month: "long", year: "numeric" })}
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isWheelPickerOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s ease", opacity: 0.6 }}>
                             <polyline points="6 9 12 15 18 9"></polyline>
                           </svg>
@@ -2534,7 +2614,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
             scrollBehavior: "smooth",
             WebkitOverflowScrolling: "touch",
             transformStyle: "preserve-3d",
-            perspective: "500px"
+            perspective: "500px",
+            direction: lang === "ar" ? "rtl" : "ltr"
           }}>
             {stripDates.map((d, i) => {
               const isSelected = isSameDay(d, selectedDate);
@@ -2573,32 +2654,33 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
               const borderSelected = `1.5px solid ${activeColor}`;
 
               const borderUnselected = isSunday
-                ? "1px solid rgba(255, 59, 48, 0.55)"
+                ? "1.5px solid rgba(255, 59, 48, 0.75)"
                 : (isHoliday
-                  ? "1px solid rgba(255, 114, 111, 0.45)"
+                  ? "1.5px solid rgba(255, 114, 111, 0.65)"
                   : (pillTheme
                     ? pillTheme.borderUnselected
                     : (hasPost
-                      ? "1px solid rgba(180, 122, 62, 0.65)"
-                      : (selectedTheme ? selectedTheme.borderUnselected : (isDark ? "1px solid rgba(255, 255, 255, 0.22)" : "1px solid rgba(0, 0, 0, 0.16)")))));
+                      ? "1.5px solid rgba(180, 122, 62, 0.75)"
+                      : (selectedTheme ? selectedTheme.borderUnselected : (isDark ? "1.5px solid rgba(255, 255, 255, 0.38)" : "1.5px solid rgba(0, 0, 0, 0.28)")))));
 
               return (
                 <div
                   key={i}
-                  className="date-pill"
+                  className={`date-pill ${isToday && !isSelected ? "today-glow-pill" : ""}`}
                   data-selected={isSelected}
                   data-date={d.toDateString()}
                   onClick={() => selectAndCenterDate(d)}
                   title={pillTheme ? pillTheme.text : undefined}
                   style={{
+                    position: "relative",
                     flexShrink: 0,
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
                     cursor: "pointer",
-                    width: "50px",
-                    height: "70px",
+                    width: "52px",
+                    height: "72px",
                     borderRadius: "16px",
                     backgroundColor: isSelected ? bgSelected : bgUnselected,
                     border: isSelected ? borderSelected : borderUnselected,
@@ -2615,8 +2697,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                         ? "0 12px 28px -4px rgba(0, 0, 0, 0.45), 0 4px 10px -2px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2)"
                         : `0 12px 28px -4px rgba(0, 0, 0, 0.14), 0 4px 10px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.45)`)
                       : (isDark
-                        ? "0 2px 6px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05)"
-                        : "0 2px 6px rgba(0, 0, 0, 0.03), inset 0 1px 0 #ffffff"),
+                        ? "0 3px 9px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.09)"
+                        : "0 4px 10px rgba(0, 0, 0, 0.07), inset 0 1px 0 #ffffff"),
                     transition: "transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease"
                   }}
                 >
@@ -2627,10 +2709,11 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                       style={{
                         position: "absolute",
                         top: 0,
-                        left: "11px",
+                        left: lang === "ar" ? "auto" : "11px",
+                        right: lang === "ar" ? "11px" : "auto",
                         width: "8px",
                         height: "15px",
-                        backgroundColor: isSelected ? "var(--bg-color)" : (pillTheme ? pillTheme.primary : "#B47A3E"),
+                        backgroundColor: isSelected ? "#ffffff" : (pillTheme ? pillTheme.primary : "#B47A3E"),
                         clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%)",
                         opacity: 0.95,
                         transition: "all 0.2s ease",
@@ -2638,13 +2721,6 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                       }}
                     />
                   )}
-
-                  {/* Dot indicator area */}
-                  <div style={{ position: "absolute", top: "6px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {pillTheme ? null : isToday ? (
-                      <div style={{ width: "4px", height: "4px", borderRadius: "50%", backgroundColor: isSelected ? "var(--bg-color)" : sundayColor }} />
-                    ) : null}
-                  </div>
 
                   {/* Birthday cake replaces date numbers directly */}
                   {pillTheme && pillTheme.emoji && pillTheme.emoji.includes("🎂") ? (
@@ -2663,13 +2739,13 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     <span
                       className="date-pill-day-num"
                       style={{
-                        fontSize: "1.22rem",
-                        fontWeight: isSelected ? "750" : "600", // Slightly bolder for higher contrast when unselected
+                        fontSize: "1.3rem",
+                        fontWeight: isSelected ? "800" : "750",
                         lineHeight: 1,
                         marginTop: "10px"
                       }}
                     >
-                      {d.getDate()}
+                      {localizeNumber(d.getDate())}
                     </span>
                   )}
 
@@ -2678,14 +2754,14 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     style={{
                       fontSize: "0.6rem",
                       textTransform: "uppercase",
-                      fontWeight: isSelected ? "750" : "600",
-                      letterSpacing: "0.05em",
+                      fontWeight: isSelected ? "800" : "750",
+                      letterSpacing: 0,
                       marginTop: "6px",
-                      color: isSelected ? "var(--bg-color)" : (isToday ? sundayColor : (isSunday || isHoliday ? activeColor : "var(--text-secondary)")),
-                      opacity: isSelected ? 1 : (isSunday || isHoliday || isToday ? 1 : 0.85) // Significantly clearer unselected text color
+                      color: isSelected ? "var(--bg-color)" : (isToday ? sundayColor : (isSunday || isHoliday ? activeColor : "var(--text-primary)")),
+                      opacity: isSelected ? 1 : 0.9
                     }}
                   >
-                    {d.toLocaleDateString("en-US", { weekday: "short" })}
+                    {d.toLocaleDateString(locale, { weekday: "short" })}
                   </span>
                 </div>
               );
@@ -2729,7 +2805,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
               >
                 <AnimatePresence mode="wait" custom={scrollDirection}>
                   <motion.span
-                    key={selectedDate.toLocaleDateString("en-US", { weekday: "short" })}
+                    key={selectedDate.toLocaleDateString(locale, { weekday: "short" })}
                     custom={scrollDirection}
                     variants={{
                       initial: (direction: "forward" | "backward") => ({
@@ -2752,7 +2828,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     exit="exit"
                     style={{ display: "inline-block", lineHeight: 1 }}
                   >
-                    {selectedDate.toLocaleDateString("en-US", { weekday: "short" })}
+                    {selectedDate.toLocaleDateString(locale, { weekday: "short" })}
                   </motion.span>
                 </AnimatePresence>
               </h1>
@@ -2766,8 +2842,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     style={{
                       padding: "5px 10px",
                       borderRadius: "12px",
-                      backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
-                      border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                      backgroundColor: isDark ? (selectedTheme ? `${selectedTheme.primary}20` : "rgba(255, 255, 255, 0.06)") : (selectedTheme ? `${selectedTheme.primary}12` : "rgba(0, 0, 0, 0.04)"),
+                      border: isDark ? (selectedTheme ? `1px solid ${selectedTheme.primary}45` : "1px solid rgba(255, 255, 255, 0.12)") : (selectedTheme ? `1px solid ${selectedTheme.primary}35` : "1px solid rgba(0, 0, 0, 0.08)"),
                       boxShadow: isDark
                         ? "0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)"
                         : "0 4px 12px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff",
@@ -2778,7 +2854,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                       fontFamily: "var(--font-sans)"
                     }}
                   >
-                    Today
+                    {t("today")}
                   </button>
                 )}
 
@@ -2794,8 +2870,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                       color: selectedTheme ? selectedTheme.primary : "var(--text-primary)",
                       cursor: "pointer",
                       padding: "5px 10px",
-                      backgroundColor: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
-                      border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
+                      backgroundColor: isDark ? (selectedTheme ? `${selectedTheme.primary}20` : "rgba(255, 255, 255, 0.06)") : (selectedTheme ? `${selectedTheme.primary}12` : "rgba(0, 0, 0, 0.04)"),
+                      border: isDark ? (selectedTheme ? `1px solid ${selectedTheme.primary}45` : "1px solid rgba(255, 255, 255, 0.12)") : (selectedTheme ? `1px solid ${selectedTheme.primary}35` : "1px solid rgba(0, 0, 0, 0.08)"),
                       boxShadow: isDark
                         ? "0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)"
                         : "0 4px 12px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff",
@@ -2805,7 +2881,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     }}
                   >
                     <span style={{ fontSize: "0.75rem", fontWeight: "600" }}>
-                      {selectedDate.toLocaleDateString("en-US", { month: "short", year: "numeric" })}
+                      {selectedDate.toLocaleDateString(locale, { month: "short", year: "numeric" })}
                     </span>
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: isCalendarOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s ease" }}>
                       <polyline points="6 9 12 15 18 9"></polyline>
@@ -2829,13 +2905,17 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                           backgroundColor: isDark
                             ? (selectedTheme ? selectedTheme.bgDark : "#141312")
                             : (selectedTheme ? selectedTheme.bgLight : "#FDFBF7"),
-                          border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
-                          borderRadius: "18px",
+                          border: selectedTheme
+                            ? (isDark ? `1.5px solid rgba(255, 255, 255, 0.22)` : `1.5px solid rgba(180, 122, 62, 0.45)`)
+                            : (isDark ? "1.5px solid rgba(255, 255, 255, 0.2)" : "1.5px solid rgba(0, 0, 0, 0.15)"),
+                          borderRadius: "22px",
                           boxShadow: isDark
-                            ? "0 20px 48px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1)"
-                            : "0 20px 48px rgba(0, 0, 0, 0.08), inset 0 1px 0 #ffffff",
+                            ? "0 28px 72px -10px rgba(0, 0, 0, 0.85), 0 10px 32px -6px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15)"
+                            : "0 24px 64px -10px rgba(0, 0, 0, 0.18), 0 8px 24px -6px rgba(0, 0, 0, 0.08), inset 0 1px 0 #ffffff",
                           padding: "0.9rem",
                           zIndex: 100,
+                          backdropFilter: "blur(20px)",
+                          WebkitBackdropFilter: "blur(20px)"
                         }}
                       >
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
@@ -2859,7 +2939,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                             }}
                             style={{ fontWeight: "750", fontSize: "0.85rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "4px" }}
                           >
-                            {isWheelPickerOpen ? `${MONTH_NAMES[tempMonth]} ${tempYear}` : calendarViewDate.toLocaleDateString(lang === "zh" ? "zh-CN" : lang === "ar" ? "ar-EG" : lang === "nl" ? "nl-NL" : "en-US", { month: "short", year: "numeric" })}
+                            {isWheelPickerOpen ? `${MONTH_NAMES[tempMonth]} ${localizeNumber(tempYear)}` : calendarViewDate.toLocaleDateString(locale, { month: "short", year: "numeric" })}
                             <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ transform: isWheelPickerOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s ease", opacity: 0.6 }}>
                               <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
@@ -2973,6 +3053,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
               WebkitOverflowScrolling: "touch",
               transformStyle: "preserve-3d",
               perspective: "500px",
+              direction: lang === "ar" ? "rtl" : "ltr",
               width: "100%"
             }}
             >
@@ -2993,17 +3074,18 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                 const bgSelected = activeColor;
                 const bgUnselected = isSunday ? "rgba(255, 59, 48, 0.06)" : (isHoliday ? "rgba(255, 114, 111, 0.05)" : (pillTheme ? pillTheme.bgUnselected : (hasPost ? "rgba(180, 122, 62, 0.08)" : "rgba(150, 150, 150, 0.03)")));
                 const borderSelected = `1.5px solid ${activeColor}`;
-                const borderUnselected = isSunday ? "1px solid rgba(255, 59, 48, 0.55)" : (isHoliday ? "1px solid rgba(255, 114, 111, 0.45)" : (pillTheme ? pillTheme.borderUnselected : (hasPost ? "1px solid rgba(180, 122, 62, 0.65)" : (selectedTheme ? selectedTheme.borderUnselected : (isDark ? "1px solid rgba(255, 255, 255, 0.22)" : "1px solid rgba(0, 0, 0, 0.16)")))));
+                const borderUnselected = isSunday ? "1.5px solid rgba(255, 59, 48, 0.75)" : (isHoliday ? "1.5px solid rgba(255, 114, 111, 0.65)" : (pillTheme ? pillTheme.borderUnselected : (hasPost ? "1.5px solid rgba(180, 122, 62, 0.75)" : (selectedTheme ? selectedTheme.borderUnselected : (isDark ? "1.5px solid rgba(255, 255, 255, 0.38)" : "1.5px solid rgba(0, 0, 0, 0.28)")))));
 
                 return (
                   <div
                     key={i}
-                    className="date-pill"
+                    className={`date-pill ${isToday && !isSelected ? "today-glow-pill" : ""}`}
                     data-selected={isSelected}
                     data-date={d.toDateString()}
                     onClick={() => selectAndCenterDate(d)}
                     title={pillTheme ? pillTheme.text : undefined}
                     style={{
+                      position: "relative",
                       flexShrink: 0,
                       display: "flex",
                       flexDirection: "column",
@@ -3023,8 +3105,8 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                       scrollSnapAlign: "center",
                       transform: isSelected ? "translateY(-2px)" : "translateY(0)",
                       boxShadow: isSelected
-                        ? "0 4px 10px rgba(0, 0, 0, 0.15)"
-                        : "0 2px 4px rgba(0, 0, 0, 0.02)",
+                        ? "0 5px 14px rgba(0, 0, 0, 0.18)"
+                        : "0 3px 8px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.55)",
                       transition: "transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease"
                     }}
                   >
@@ -3034,10 +3116,11 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                         style={{
                           position: "absolute",
                           top: 0,
-                          left: "9px",
+                          left: lang === "ar" ? "auto" : "9px",
+                          right: lang === "ar" ? "9px" : "auto",
                           width: "6px",
                           height: "12px",
-                          backgroundColor: isSelected ? "var(--bg-color)" : (pillTheme ? pillTheme.primary : "#B47A3E"),
+                          backgroundColor: isSelected ? "#ffffff" : (pillTheme ? pillTheme.primary : "#B47A3E"),
                           clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%)",
                           opacity: 0.95,
                           zIndex: 3
@@ -3045,16 +3128,10 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                       />
                     )}
 
-                    <div style={{ position: "absolute", top: "4px" }}>
-                      {pillTheme ? null : isToday ? (
-                        <div style={{ width: "3px", height: "3px", borderRadius: "50%", backgroundColor: isSelected ? "var(--bg-color)" : sundayColor }} />
-                      ) : null}
-                    </div>
-
                     {pillTheme && pillTheme.emoji && pillTheme.emoji.includes("🎂") ? (
                       <span className="date-pill-day-num" style={{ fontSize: "1.15rem", lineHeight: 1, marginTop: "6px" }}>🎂</span>
                     ) : (
-                      <span className="date-pill-day-num" style={{ fontSize: "1.05rem", fontWeight: isSelected ? "750" : "600", lineHeight: 1, marginTop: "6px" }}>{d.getDate()}</span>
+                      <span className="date-pill-day-num" style={{ fontSize: "1.12rem", fontWeight: isSelected ? "800" : "750", lineHeight: 1, marginTop: "6px" }}>{localizeNumber(d.getDate())}</span>
                     )}
 
                     <span
@@ -3062,14 +3139,14 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                       style={{
                         fontSize: "0.55rem",
                         textTransform: "uppercase",
-                        fontWeight: isSelected ? "750" : "600",
-                        letterSpacing: "0.05em",
+                        fontWeight: isSelected ? "800" : "750",
+                        letterSpacing: 0,
                         marginTop: "4px",
-                        color: isSelected ? "var(--bg-color)" : (isToday ? sundayColor : (isSunday || isHoliday ? activeColor : "var(--text-secondary)")),
-                        opacity: isSelected ? 1 : (isSunday || isHoliday || isToday ? 1 : 0.85) // Significantly clearer unselected text color
+                        color: isSelected ? "var(--bg-color)" : (isToday ? sundayColor : (isSunday || isHoliday ? activeColor : "var(--text-primary)")),
+                        opacity: isSelected ? 1 : 0.9
                       }}
                     >
-                      {d.toLocaleDateString("en-US", { weekday: "short" })}
+                      {d.toLocaleDateString(locale, { weekday: "short" })}
                     </span>
                   </div>
                 );
@@ -3129,7 +3206,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                         fontFamily: "var(--font-sans)",
                         letterSpacing: "-0.02em"
                       }}>
-                        {`${selectedDate.getDate()} ${selectedDate.toLocaleDateString("en-US", { month: "short" })}`}
+                        {selectedDate.toLocaleDateString(locale, { day: "numeric", month: "short" })}
                       </span>
                     </div>
                     {/* Live Amsterdam weather */}
@@ -3303,7 +3380,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                           >
                             {filteredPosts.map((post, index) => {
                               const pubDate = parseBloggerDate(post.published);
-                              const timeStr = pubDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
+                              const timeStr = pubDate.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", hour12: false });
                               const rawText = post.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
                               const excerpt = rawText.length > 80 ? rawText.slice(0, 80) + "…" : rawText;
                               const matches = [...post.content.matchAll(/<img[^>]+src="([^">]+)"/g)];
@@ -3340,26 +3417,36 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
 
                                   {/* Title + excerpt */}
                                   <div style={{ flex: 1, minWidth: 0 }}>
-                                    <div style={{
-                                      fontSize: "0.84rem",
-                                      fontWeight: "600",
-                                      color: "var(--text-primary)",
-                                      fontFamily: "var(--font-sans)",
-                                      letterSpacing: "-0.01em",
-                                      whiteSpace: "nowrap",
-                                      overflow: "hidden",
-                                      textOverflow: "ellipsis"
-                                    }}>{post.title}</div>
-                                    <div style={{
-                                      fontSize: "0.72rem",
-                                      color: "var(--text-secondary)",
-                                      fontFamily: "var(--font-sans)",
-                                      marginTop: "1px",
-                                      whiteSpace: "nowrap",
-                                      overflow: "hidden",
-                                      textOverflow: "ellipsis",
-                                      opacity: 0.65
-                                    }}>{excerpt}</div>
+                                    <div
+                                      dir="auto"
+                                      style={{
+                                        fontSize: "0.84rem",
+                                        fontWeight: "600",
+                                        color: "var(--text-primary)",
+                                        fontFamily: "var(--font-sans)",
+                                        letterSpacing: "-0.01em",
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis"
+                                      }}
+                                    >
+                                      {post.title}
+                                    </div>
+                                    <div
+                                      dir="auto"
+                                      style={{
+                                        fontSize: "0.72rem",
+                                        color: "var(--text-secondary)",
+                                        fontFamily: "var(--font-sans)",
+                                        marginTop: "1px",
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        opacity: 0.65
+                                      }}
+                                    >
+                                      {excerpt}
+                                    </div>
                                   </div>
 
                                   {/* Thumbnail */}
@@ -3372,7 +3459,12 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                                       overflow: "hidden",
                                       backgroundColor: "rgba(128,128,128,0.06)"
                                     }}>
-                                      <img src={thumb} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "grayscale(100%)" }} />
+                                      <img
+                                        className="journal-thumbnail-img"
+                                        src={thumb}
+                                        alt=""
+                                        style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", filter: "grayscale(100%)", display: "block" }}
+                                      />
                                     </div>
                                   )}
                                 </Link>
@@ -3476,7 +3568,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                 <>
                   {journalDisplayed.map((post, index) => {
                     const pubDate = parseBloggerDate(post.published);
-                    const dateStr = pubDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                    const dateStr = pubDate.toLocaleDateString(locale, { month: "short", day: "numeric" });
                     const matches = [...post.content.matchAll(/<img[^>]+src="([^">]+)"/g)];
                     const imageUrls = matches.map((m: any) => m[1]);
                     const rawText = post.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -3503,37 +3595,19 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
 
                       if (selectedTheme) {
                         const p = selectedTheme.primary;
-                        if (!isDark) {
-                          // Blend distinct light background with theme primary color
-                          const blendColors = (baseHex: string, themeHex: string, ratio = 0.22) => {
-                            try {
-                              const cleanB = baseHex.replace("#", "");
-                              const cleanT = themeHex.replace("#", "");
-                              const br = parseInt(cleanB.substring(0, 2), 16);
-                              const bg = parseInt(cleanB.substring(2, 4), 16);
-                              const bb = parseInt(cleanB.substring(4, 6), 16);
-                              const tr = parseInt(cleanT.substring(0, 2), 16);
-                              const tg = parseInt(cleanT.substring(2, 4), 16);
-                              const tb = parseInt(cleanT.substring(4, 6), 16);
-                              const r = Math.round(br * (1 - ratio) + tr * ratio);
-                              const g = Math.round(bg * (1 - ratio) + tg * ratio);
-                              const b = Math.round(bb * (1 - ratio) + tb * ratio);
-                              return `rgb(${r}, ${g}, ${b})`;
-                            } catch (e) {
-                              return baseHex;
-                            }
-                          };
-                          return {
-                            bg: blendColors(base.bg, p, 0.22),
-                            border: `${p}3a`
-                          };
-                        } else {
-                          const shade = index % 2 === 0 ? "0.055" : "0.03";
-                          return {
-                            bg: `${p}${Math.round(parseFloat(shade) * 255).toString(16).padStart(2, '0')}`,
-                            border: `${p}22`
-                          };
-                        }
+                        // Premium gradient theme tint opacities
+                        const opacitiesBg = isDark 
+                          ? ["14", "1c", "24", "2c"] 
+                          : ["0c", "14", "1c", "24"];
+                        const opacitiesBorder = isDark 
+                          ? ["35", "45", "55", "65"] 
+                          : ["25", "32", "40", "4c"];
+                        
+                        const idx = index % opacitiesBg.length;
+                        return {
+                          bg: `${p}${opacitiesBg[idx]}`,
+                          border: `${p}${opacitiesBorder[idx]}`
+                        };
                       }
                       return base;
                     })();
@@ -3567,9 +3641,10 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                             position: "absolute",
                             top: "10px",
                             bottom: index === journalDisplayed.length - 1 ? "-16px" : "-10px",
-                            left: "20.25px", // Center exactly in the 42px left column
+                            left: lang === "ar" ? "auto" : "20.25px",
+                            right: lang === "ar" ? "20.25px" : "auto",
                             width: "1.5px",
-                            backgroundColor: "rgba(150,150,150,0.12)",
+                            backgroundColor: selectedTheme ? `${selectedTheme.primary}20` : "rgba(150,150,150,0.12)",
                             zIndex: 0
                           }} />
 
@@ -3588,9 +3663,9 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                               width: "10px",
                               height: "10px",
                               borderRadius: "50%",
-                              backgroundColor: "var(--text-primary)",
+                              backgroundColor: selectedTheme ? selectedTheme.primary : "var(--text-primary)",
                               border: "2.5px solid var(--bg-color)",
-                              boxShadow: "0 0 0 1px rgba(150,150,150,0.15)",
+                              boxShadow: selectedTheme ? `0 0 6px ${selectedTheme.primary}40` : "0 0 0 1px rgba(150,150,150,0.15)",
                               marginBottom: "0.4rem",
                               position: "relative",
                               zIndex: 2
@@ -3625,34 +3700,40 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                           >
                             {/* Text Section */}
                             <div style={{ flex: 1, minWidth: 0 }}>
-                              <h3 style={{
-                                fontSize: "0.92rem",
-                                fontWeight: "600",
-                                margin: "0 0 0.4rem 0",
-                                color: "var(--text-primary)",
-                                fontFamily: "var(--font-sans)",
-                                letterSpacing: "-0.01em",
-                                lineHeight: "1.3"
-                              }}>
+                              <h3
+                                dir="auto"
+                                style={{
+                                  fontSize: "0.92rem",
+                                  fontWeight: "600",
+                                  margin: "0 0 0.4rem 0",
+                                  color: "var(--text-primary)",
+                                  fontFamily: "var(--font-sans)",
+                                  letterSpacing: "-0.01em",
+                                  lineHeight: "1.3"
+                                }}
+                              >
                                 {post.title}
                               </h3>
                               <div style={{
                                 height: "1px",
-                                backgroundColor: "var(--text-secondary)",
-                                opacity: 0.12,
+                                backgroundColor: selectedTheme ? `${selectedTheme.primary}25` : "var(--text-secondary)",
+                                opacity: selectedTheme ? 1 : 0.12,
                                 margin: "0.4rem 0 0.45rem 0"
                               }} />
-                              <p style={{
-                                fontSize: "0.76rem",
-                                color: "var(--text-secondary)",
-                                margin: 0,
-                                lineHeight: "1.45",
-                                fontFamily: "var(--font-sans)",
-                                display: "-webkit-box",
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: "vertical",
-                                overflow: "hidden"
-                              }}>
+                              <p
+                                dir="auto"
+                                style={{
+                                  fontSize: "0.76rem",
+                                  color: "var(--text-secondary)",
+                                  margin: 0,
+                                  lineHeight: "1.45",
+                                  fontFamily: "var(--font-sans)",
+                                  display: "-webkit-box",
+                                  WebkitLineClamp: 2,
+                                  WebkitBoxOrient: "vertical",
+                                  overflow: "hidden"
+                                }}
+                              >
                                 {excerpt}
                               </p>
                             </div>
@@ -3670,13 +3751,16 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                                 backgroundColor: "rgba(150,150,150,0.04)",
                                 alignSelf: "center"
                               }}>
-                                <img 
+                                <img
+                                  className="journal-thumbnail-img"
                                   src={imageUrls[0]} 
                                   alt="" 
                                   style={{
                                     width: "100%",
                                     height: "100%",
                                     objectFit: "cover",
+                                    objectPosition: "center",
+                                    display: "block",
                                     filter: "grayscale(100%) contrast(1.08)"
                                   }} 
                                 />
@@ -3794,7 +3878,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                 border: "1px solid rgba(150,150,150,0.08)"
               }}
             >
-              {displayMoments.map((moment, idx) => (
+              {displayMoments.length > 0 && displayMoments.map((moment, idx) => (
                 <Link href="/moments" key={moment.id || idx} style={{
                   aspectRatio: "1/1",
                   backgroundColor: "rgba(150,150,150,0.04)",
@@ -3825,7 +3909,7 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                       filter: "grayscale(100%) contrast(1.1)",
                       transition: "transform 0.4s ease"
                     }}
-                    onError={(e) => { e.currentTarget.src = "/nature_hero.png"; }}
+                    onError={(e) => { e.currentTarget.src = "/images/moments/627657157_18090374564098563_1965153477745201663_n..webp"; }}
                   />
                 </Link>
               ))}
@@ -3972,11 +4056,10 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
       {mounted && typeof window !== "undefined" && createPortal(
         <AnimatePresence>
           {activeBook && (() => {
-            const modalBg = isDark ? "rgba(28, 28, 30, 0.85)" : "rgba(255, 255, 255, 0.9)";
+            const modalBg = isDark ? "#1C1C1E" : "#FFFFFF";
             const modalColor = isDark ? "#ffffff" : "#1c1c1e";
             const modalBorder = isDark ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)";
             const modalShadow = isDark ? "0 30px 60px rgba(0,0,0,0.65)" : "0 30px 60px rgba(0,0,0,0.15)";
-            const backdropBlur = "blur(30px) saturate(190%)";
             const separatorColor = isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.06)";
             const titleColor = isDark ? "#ffffff" : "#1c1c1e";
             const authorColor = isDark ? "#8e8e93" : "#6c6c70";
@@ -4020,8 +4103,6 @@ export default function DailyJournalFeed({ posts, moments = [], initialBooks = [
                     padding: "24px 20px 28px 20px",
                     boxShadow: modalShadow,
                     border: modalBorder,
-                    backdropFilter: backdropBlur,
-                    WebkitBackdropFilter: backdropBlur,
                     width: "100%",
                     maxWidth: "400px",
                     maxHeight: "85vh",

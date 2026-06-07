@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AboutSection() {
+  const { t, lang } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
 
   // Sync event listener so navigation click automatically opens the dropdown
@@ -28,6 +30,130 @@ export default function AboutSection() {
     };
   }, []);
 
+  const getAboutData = () => {
+    if (lang === "ar") {
+      return {
+        archiveNo: "الأرشيف الشخصي // رقم ٠٠١",
+        archiveSub: "المحفظة الإبداعية واليوميات",
+        quote: "\"العمل عند الحدود الهشة بين الدقة الهيكلية الصارمة والجمال البطيء والملموس لعيوب الـوابي-سابي.\"",
+        table: [
+          { label: "الدور", val: "مصمم UI/UX ومهندس برمجيات متكامل" },
+          { label: "الموقع", val: "جاكرتا، إندونيسيا (٦.٢٠٨٨° جنوباً، ١٠٦.٨٤٥٦° شرقاً)" },
+          { label: "البريد الإلكتروني", val: "hello@ivanaffriandi.com", link: "mailto:hello@ivanaffriandi.com" },
+          { label: "إنستغرام", val: "@ivanaffriandi", link: "https://instagram.com/ivanaffriandi" },
+          { label: "تويتر", val: "@ivanaffriandi", link: "https://x.com/ivanaffriandi" },
+          { label: "ويبو", val: "@ivanaffriandi", link: "https://weibo.com/u/7915776414" },
+        ],
+        principlesTitle: "مبادئ التصميم",
+        principles: [
+          "أنظمة شبكية صارمة وعملية",
+          "ملمس تناظري في المساحات الرقمية",
+          "مساحة سلبية بنمط وابي-سابي وتجربة مستخدم بطيئة",
+        ],
+        obsessionsTitle: "اهتمامات حالية",
+        obsessions: [
+          "الكروشيه والأشغال اليدوية البطيئة",
+          "التدوين والتأملات اليومية",
+          "طقوس إعداد الشاي والصباحات البطيئة",
+          "علم الفطريات والبحث عنها في الغابات البرية",
+          "التصوير التناظري الماكرو (فوجي فيلم)",
+        ],
+        bio: "إيفان أفرياندي مصمم UI/UX ومهندس برمجيات متكامل مقيم في جاكرتا، يصنع واجهات دقيقة وتجارب رقمية هادئة وأنظمة ويب متجاوبة.",
+      };
+    }
+    if (lang === "zh") {
+      return {
+        archiveNo: "个人档案 // No. 001",
+        archiveSub: "创意作品集与日记",
+        quote: "\"在严苛的结构精准与侘寂残缺之美那缓慢而温润的质感之间，探索那脆弱的分界线。\"",
+        table: [
+          { label: "角色", val: "UI/UX 设计师与全栈工程师" },
+          { label: "位置", val: "雅加达，印尼 (6.2088° S, 106.8456° E)" },
+          { label: "电子邮件", val: "hello@ivanaffriandi.com", link: "mailto:hello@ivanaffriandi.com" },
+          { label: "Instagram", val: "@ivanaffriandi", link: "https://instagram.com/ivanaffriandi" },
+          { label: "Twitter", val: "@ivanaffriandi", link: "https://x.com/ivanaffriandi" },
+          { label: "微博", val: "@ivanaffriandi", link: "https://weibo.com/u/7915776414" },
+        ],
+        principlesTitle: "设计原则",
+        principles: [
+          "严谨且实用的网格系统",
+          "数字空间中的模拟触感",
+          "侘寂留白与慢调用户体验",
+        ],
+        obsessionsTitle: "当前迷恋",
+        obsessions: [
+          "编织与慢调手工",
+          "日记与每日反思",
+          "茶道仪式与慢调清晨",
+          "真菌学与野外森林采摘",
+          "微距胶片摄影 (富士胶片)",
+        ],
+        bio: "胡宇轩伊万是一位居于雅加达的创意开发者、数字档案师和设计师，专注于构建沉浸式叙事空间、响应式网格系统和缓慢的数字作品。",
+      };
+    }
+    if (lang === "nl") {
+      return {
+        archiveNo: "Persoonlijk Archief // Nr. 001",
+        archiveSub: "Creatieve Portfolio & Dagboek",
+        quote: "\"Opererend op de fragiele grens tussen strakke structurele precisie en de trage, tactiele schoonheid van wabi-sabi imperfectie.\"",
+        table: [
+          { label: "Rol", val: "UI/UX Designer & Full-Stack Engineer" },
+          { label: "Locatie", val: "Jakarta, ID (6.2088° S, 106.8456° E)" },
+          { label: "E-mail", val: "hello@ivanaffriandi.com", link: "mailto:hello@ivanaffriandi.com" },
+          { label: "Instagram", val: "@ivanaffriandi", link: "https://instagram.com/ivanaffriandi" },
+          { label: "Twitter", val: "@ivanaffriandi", link: "https://x.com/ivanaffriandi" },
+          { label: "Weibo", val: "@ivanaffriandi", link: "https://weibo.com/u/7915776414" },
+        ],
+        principlesTitle: "Ontwerpprincipes",
+        principles: [
+          "Strakke, Functionele Rastersystemen",
+          "Analoge Tactiliteit in Digitale Ruimtes",
+          "Wabi-Sabi Negatieve Ruimte & Trage UX",
+        ],
+        obsessionsTitle: "Huidige obsessies",
+        obsessions: [
+          "Haken & Trage Handarbeid",
+          "Dagboek & Dagelijkse Reflecties",
+          "Theeceremonies & Trage Ochtenden",
+          "Mycologie & Wild Plukken in het Bos",
+          "Macro Analoge Fotografie (Fujifilm)",
+        ],
+        bio: "Ivan Affriandi is een Jakarta-gebaseerde creatieve ontwikkelaar, digitaal archivaris en ontwerper die meeslepende narratieve ruimtes, responsieve rastersystemen en langzame digitale artefacten maakt.",
+      };
+    }
+    // Default: en
+    return {
+      archiveNo: "Personal Archive // No. 001",
+      archiveSub: "Creative Portfolio & Journal",
+      quote: "\"Operating at the fragile boundary between stark structural precision and the slow, tactile beauty of wabi-sabi imperfection.\"",
+      table: [
+        { label: "Role", val: "UI/UX Designer & Full-Stack Engineer" },
+        { label: "Location", val: "Jakarta, ID (6.2088° S, 106.8456° E)" },
+        { label: "Email", val: "hello@ivanaffriandi.com", link: "mailto:hello@ivanaffriandi.com" },
+        { label: "Instagram", val: "@ivanaffriandi", link: "https://instagram.com/ivanaffriandi" },
+        { label: "Twitter", val: "@ivanaffriandi", link: "https://x.com/ivanaffriandi" },
+        { label: "Weibo", val: "@ivanaffriandi", link: "https://weibo.com/u/7915776414" },
+      ],
+      principlesTitle: "Design Principles",
+      principles: [
+        "Stark, Functional Grid Systems",
+        "Analog Tactility in Digital Spaces",
+        "Wabi-Sabi Negative Space & Slow UX",
+      ],
+      obsessionsTitle: "Current Obsessions",
+      obsessions: [
+        "Crochet & Slow Handcraft",
+        "Journaling & Daily Reflections",
+        "Teapot Tea Rituals & Slow Mornings",
+        "Mycology & Wild Forest Foraging",
+        "Macro Analog Photography (Fujifilm)",
+      ],
+      bio: "Ivan Affriandi is a Jakarta-based creative developer, digital archivist, and designer crafting immersive narrative spaces, responsive grid systems, and slow digital artifacts.",
+    };
+  };
+
+  const aboutData = getAboutData();
+
   return (
     <div id="about" style={{ borderTop: "1px solid var(--grid-line)", marginTop: "6rem", paddingTop: "4rem", paddingBottom: "4rem" }}>
       <button
@@ -48,11 +174,11 @@ export default function AboutSection() {
         className="about-toggle-btn"
       >
         <h2 style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", fontWeight: "600", margin: 0, letterSpacing: "-0.04em", lineHeight: "1" }}>
-          Ivan Affriandi
+          {t("name_full")}
         </h2>
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           <span style={{ fontSize: "0.85rem", fontWeight: "600", letterSpacing: "0.05em", color: "var(--text-secondary)" }}>
-            {isOpen ? "Close" : "About"}
+            {isOpen ? t("close") : t("about")}
           </span>
           <motion.svg 
             width="18" 
@@ -84,8 +210,8 @@ export default function AboutSection() {
               {/* Left Column: Simple Archive Labels and Hanko Seal */}
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1.5rem" }}>
                 <div style={{ fontSize: "0.85rem", lineHeight: "1.5", color: "var(--text-secondary)" }}>
-                  <div>Personal Archive // No. 001</div>
-                  <div style={{ opacity: 0.7 }}>Creative Portfolio & Journal</div>
+                  <div>{aboutData.archiveNo}</div>
+                  <div style={{ opacity: 0.7 }}>{aboutData.archiveSub}</div>
                 </div>
                 
                 {/* Hanko Archival Seal Stamp */}
@@ -120,51 +246,35 @@ export default function AboutSection() {
                     letterSpacing: "-0.01em",
                     maxWidth: "680px"
                   }}>
-                    "Operating at the fragile boundary between stark structural precision and the slow, tactile beauty of wabi-sabi imperfection."
+                    {aboutData.quote}
                   </p>
                 </blockquote>
 
                 <p style={{ fontSize: "1.05rem", fontWeight: "400", lineHeight: "1.6", color: "var(--text-secondary)", margin: 0, maxWidth: "680px" }}>
-                  Ivan Affriandi is a Jakarta-based creative developer, digital archivist, and designer crafting immersive narrative spaces, responsive grid systems, and slow digital artifacts.
+                  {aboutData.bio}
                 </p>
 
                 {/* Clean, Simple Table (No Brackets, Sans-serif) */}
                 <div style={{ display: "flex", flexDirection: "column", maxWidth: "680px", borderTop: "1px solid var(--grid-line)", paddingTop: "2rem" }}>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", marginBottom: "0.75rem", fontSize: "0.9rem" }}>
-                    <span style={{ color: "var(--text-secondary)", fontWeight: "500", flexShrink: 0 }}>Role</span>
-                    <div style={{ flexGrow: 1, borderBottom: "1px dotted var(--grid-line)", height: "1px", opacity: 0.5 }} />
-                    <span style={{ color: "var(--text-primary)" }}>Creative Developer & Archivist</span>
-                  </div>
-
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", marginBottom: "0.75rem", fontSize: "0.9rem" }}>
-                    <span style={{ color: "var(--text-secondary)", fontWeight: "500", flexShrink: 0 }}>Location</span>
-                    <div style={{ flexGrow: 1, borderBottom: "1px dotted var(--grid-line)", height: "1px", opacity: 0.5 }} />
-                    <span style={{ color: "var(--text-primary)" }}>Jakarta, ID (6.2088° S, 106.8456° E)</span>
-                  </div>
-
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", marginBottom: "0.75rem", fontSize: "0.9rem" }}>
-                    <span style={{ color: "var(--text-secondary)", fontWeight: "500", flexShrink: 0 }}>Email</span>
-                    <div style={{ flexGrow: 1, borderBottom: "1px dotted var(--grid-line)", height: "1px", opacity: 0.5 }} />
-                    <a href="mailto:hello@example.com" style={{ color: "var(--text-primary)", textDecoration: "none", borderBottom: "1px solid var(--text-primary)" }} className="minimal-link">hello@example.com</a>
-                  </div>
-
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", marginBottom: "0.75rem", fontSize: "0.9rem" }}>
-                    <span style={{ color: "var(--text-secondary)", fontWeight: "500", flexShrink: 0 }}>Instagram</span>
-                    <div style={{ flexGrow: 1, borderBottom: "1px dotted var(--grid-line)", height: "1px", opacity: 0.5 }} />
-                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-primary)", textDecoration: "none", borderBottom: "1px solid var(--text-primary)" }} className="minimal-link">@ivanaffriandi</a>
-                  </div>
-
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", marginBottom: "0.75rem", fontSize: "0.9rem" }}>
-                    <span style={{ color: "var(--text-secondary)", fontWeight: "500", flexShrink: 0 }}>Twitter</span>
-                    <div style={{ flexGrow: 1, borderBottom: "1px dotted var(--grid-line)", height: "1px", opacity: 0.5 }} />
-                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-primary)", textDecoration: "none", borderBottom: "1px solid var(--text-primary)" }} className="minimal-link">@ivanaffriandi</a>
-                  </div>
-
-                  <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", marginBottom: "0.75rem", fontSize: "0.9rem" }}>
-                    <span style={{ color: "var(--text-secondary)", fontWeight: "500", flexShrink: 0 }}>Weibo</span>
-                    <div style={{ flexGrow: 1, borderBottom: "1px dotted var(--grid-line)", height: "1px", opacity: 0.5 }} />
-                    <a href="https://weibo.com/u/7915776414" target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-primary)", textDecoration: "none", borderBottom: "1px solid var(--text-primary)" }} className="minimal-link">@ivanaffriandi</a>
-                  </div>
+                  {aboutData.table.map((row) => (
+                    <div key={row.label} style={{ display: "flex", alignItems: "baseline", gap: "0.5rem", marginBottom: "0.75rem", fontSize: "0.9rem" }}>
+                      <span style={{ color: "var(--text-secondary)", fontWeight: "500", flexShrink: 0 }}>{row.label}</span>
+                      <div style={{ flexGrow: 1, borderBottom: "1px dotted var(--grid-line)", height: "1px", opacity: 0.5 }} />
+                      {row.link ? (
+                        <a 
+                          href={row.link} 
+                          target={row.link.startsWith("mailto") ? undefined : "_blank"} 
+                          rel={row.link.startsWith("mailto") ? undefined : "noopener noreferrer"} 
+                          style={{ color: "var(--text-primary)", textDecoration: "none", borderBottom: "1px solid var(--text-primary)" }} 
+                          className="minimal-link"
+                        >
+                          {row.val}
+                        </a>
+                      ) : (
+                        <span style={{ color: "var(--text-primary)" }}>{row.val}</span>
+                      )}
+                    </div>
+                  ))}
                 </div>
 
                 {/* Creative Philosophy Section */}
@@ -179,24 +289,26 @@ export default function AboutSection() {
                 }}>
                   <div style={{ flex: "1 1 280px" }}>
                     <h4 style={{ fontSize: "0.7rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-secondary)", margin: "0 0 10px 0" }}>
-                      Design Principles
+                      {aboutData.principlesTitle}
                     </h4>
                     <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "8px", fontSize: "0.82rem", color: "var(--text-primary)", fontWeight: "500" }}>
-                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Stark, Functional Grid Systems</li>
-                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Analog Tactility in Digital Spaces</li>
-                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Wabi-Sabi Negative Space & Slow UX</li>
+                      {aboutData.principles.map((item) => (
+                        <li key={item} style={{ display: "flex", gap: "8px" }}>
+                          <span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> {item}
+                        </li>
+                      ))}
                     </ul>
                   </div>
                   <div style={{ flex: "1 1 280px" }}>
                     <h4 style={{ fontSize: "0.7rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-secondary)", margin: "0 0 10px 0" }}>
-                      Current Obsessions
+                      {aboutData.obsessionsTitle}
                     </h4>
                     <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: "8px", fontSize: "0.82rem", color: "var(--text-primary)", fontWeight: "500" }}>
-                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Crochet & Slow Handcraft</li>
-                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Journaling & Daily Reflections</li>
-                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Teapot Tea Rituals & Slow Mornings</li>
-                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Mycology & Wild Forest Foraging</li>
-                      <li style={{ display: "flex", gap: "8px" }}><span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> Macro Analog Photography (Fujifilm)</li>
+                      {aboutData.obsessions.map((item) => (
+                        <li key={item} style={{ display: "flex", gap: "8px" }}>
+                          <span style={{ color: "rgba(224, 60, 49, 0.75)" }}>•</span> {item}
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>

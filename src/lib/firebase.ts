@@ -5,25 +5,29 @@ import {
   signInWithPopup,
   signOut as firebaseSignOut
 } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, setLogLevel } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Silence Firebase SDK connection warnings globally by filtering console outputs
+// Silence Firebase SDK connection warnings globally by filtering console outputs on the client side
 if (typeof window !== "undefined") {
   const filterMsg = (args: any[]) =>
-    args.map(x => (typeof x === "string" ? x : (x?.message || x?.toString?.() || ""))).join(" ");
+    args.map(x => {
+      if (typeof x === "string") return x;
+      if (x instanceof Error) return x.stack || x.message;
+      return x?.message || x?.toString?.() || "";
+    }).join(" ");
 
   const originalWarn = console.warn;
   console.warn = (...args: any[]) => {
     const msg = filterMsg(args);
-    if (msg.includes("firestore") || msg.includes("Firestore")) return;
+    if (msg.includes("firestore") || msg.includes("Firestore") || msg.includes("Cloud Firestore") || msg.includes("connection failed") || msg.includes("Could not reach")) return;
     originalWarn(...args);
   };
 
   const originalError = console.error;
   console.error = (...args: any[]) => {
     const msg = filterMsg(args);
-    if (msg.includes("firestore") || msg.includes("Firestore") || msg.includes("Cloud Firestore")) return;
+    if (msg.includes("firestore") || msg.includes("Firestore") || msg.includes("Cloud Firestore") || msg.includes("connection failed") || msg.includes("Could not reach")) return;
     originalError(...args);
   };
 }
@@ -40,6 +44,9 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 const db = getFirestore(app);
+try {
+  setLogLevel("silent");
+} catch (e) {}
 const storage = getStorage(app);
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: "select_account" });

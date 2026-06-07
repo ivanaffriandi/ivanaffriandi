@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 // Snappy, premium spring physics page transition: fade + slight rise ala iOS
 const iosPageVariants: Variants = {
@@ -37,6 +37,17 @@ const iosPageVariants: Variants = {
 
 export default function Template({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // Prevent browser from trying to restore scroll position automatically
+      if ("scrollRestoration" in window.history) {
+        window.history.scrollRestoration = "manual";
+      }
+      // Force scroll to top immediately on navigation
+      window.scrollTo(0, 0);
+    }
+  }, [pathname]);
 
   return (
     <AnimatePresence mode="wait">

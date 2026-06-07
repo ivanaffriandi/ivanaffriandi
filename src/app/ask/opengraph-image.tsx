@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-export const alt = 'Ask Ivan — Ask me anything anonymously.';
+export const alt = 'Ask — Ask me anything.';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -56,18 +56,18 @@ export default async function Image() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{ width: '32px', height: '3px', background: '#e8e4dc', borderRadius: '2px', display: 'flex' }} />
             <span style={{ fontSize: '20px', fontWeight: 700, color: '#a09e9b', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-              Anonymous Q&amp;A
+              Interactive Q&amp;A
             </span>
           </div>
 
           {/* Main title */}
           <h1 style={{ fontSize: '120px', fontWeight: 900, letterSpacing: '-0.04em', color: '#f5f3ef', margin: 0, lineHeight: 0.95 }}>
-            Ask Ivan
+            Ask
           </h1>
 
           {/* Tagline */}
           <p style={{ fontSize: '30px', fontWeight: 500, color: '#a09e9b', margin: 0, letterSpacing: '-0.01em' }}>
-            Ask me anything anonymously — ivanaffriandi.com/ask
+            Ask me anything — ivanaffriandi.com/ask
           </p>
         </div>
       </div>

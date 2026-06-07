@@ -4,10 +4,22 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { GALLERY_ITEMS, type GalleryItem } from "@/lib/gallery";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function GalleryPage() {
+  const { lang } = useLanguage();
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null);
   const [items, setItems] = useState<GalleryItem[]>(GALLERY_ITEMS);
+
+  const galleryStrings = {
+    returnHome: lang === "ar" ? "← العودة إلى الرئيسية" : lang === "zh" ? "← 返回主页" : lang === "nl" ? "← Terug naar Home" : "← Return to Home",
+    sectionLabel: lang === "ar" ? "معرض مرئي" : lang === "zh" ? "视觉展览" : lang === "nl" ? "Visuele Galerij" : "Visual Gallery",
+    heading: lang === "ar" ? "الأرشيف المرئي" : lang === "zh" ? "视觉档案馆" : lang === "nl" ? "Visueel Archief" : "Visual Archive",
+    desc: lang === "ar" ? "فهرس مُنقّح من السجلات الفوتوغرافية التي تستكشف تقاطع البنية المعمارية، والهندسة الخرسانية الخام، والفضاءات الطبيعية الهادئة." : lang === "zh" ? "精心策划的摄影档案索引，探索建筑结构、原始混凝土几何与宁静自然空间之间的交汇。" : lang === "nl" ? "Een gecureerde index van fotografische records die het snijpunt verkennen van architecturale structuur, ruwe betongeometrie en stille natuurruimtes." : "A curated index of photographic records exploring the intersection of architectural structure, raw concrete geometry, and quiet natural spaces.",
+    location: lang === "ar" ? "الموقع" : lang === "zh" ? "位置" : lang === "nl" ? "Locatie" : "Location",
+    close: lang === "ar" ? "إغلاق" : lang === "zh" ? "关闭" : lang === "nl" ? "Sluiten" : "Close",
+    viewOnInstagram: lang === "ar" ? "عرض على إنستغرام →" : lang === "zh" ? "在 Instagram 上查看 →" : lang === "nl" ? "Bekijk op Instagram →" : "View on Instagram →",
+  };
 
   useEffect(() => {
     fetch("/api/instagram")
@@ -38,7 +50,7 @@ export default function GalleryPage() {
           }}
           className="minimal-link"
         >
-          &larr; Return to Home
+          {galleryStrings.returnHome}
         </Link>
       </div>
 
@@ -46,15 +58,15 @@ export default function GalleryPage() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "4rem", marginBottom: "5rem" }} className="feed-header-grid">
         <div>
           <span style={{ fontSize: "0.8rem", color: "var(--text-primary)", fontWeight: "600", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-            Visual Gallery
+            {galleryStrings.sectionLabel}
           </span>
         </div>
         <div>
           <h1 style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", fontWeight: "600", letterSpacing: "-0.04em", margin: "0 0 1.5rem 0", lineHeight: "1", color: "var(--text-primary)" }}>
-            Visual Archive
+            {galleryStrings.heading}
           </h1>
           <p style={{ fontSize: "1.15rem", color: "var(--text-secondary)", margin: 0, lineHeight: "1.6", maxWidth: "600px" }}>
-            A curated index of photographic records exploring the intersection of architectural structure, raw concrete geometry, and quiet natural spaces.
+            {galleryStrings.desc}
           </p>
         </div>
       </div>
@@ -88,6 +100,8 @@ export default function GalleryPage() {
             <img 
               src={item.url} 
               alt={item.title} 
+              decoding="async"
+              loading="lazy"
               style={{ 
                 width: "100%", 
                 height: "100%", 
@@ -197,6 +211,7 @@ export default function GalleryPage() {
                 <img 
                   src={selectedImage.url} 
                   alt={selectedImage.title} 
+                  decoding="async"
                   style={{ 
                     width: "100%", 
                     height: "100%", 
@@ -232,13 +247,13 @@ export default function GalleryPage() {
                       }}
                       className="instagram-permalink-link"
                     >
-                      View on Instagram &rarr;
+                      {galleryStrings.viewOnInstagram}
                     </a>
                   )}
                 </div>
                 
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.25rem", fontSize: "0.85rem" }}>
-                  <span style={{ color: "#9e9a93", fontSize: "0.75rem", textTransform: "uppercase" }}>Location</span>
+                  <span style={{ color: "#9e9a93", fontSize: "0.75rem", textTransform: "uppercase" }}>{galleryStrings.location}</span>
                   <span>{selectedImage.location}</span>
                 </div>
               </div>
@@ -260,7 +275,7 @@ export default function GalleryPage() {
                 letterSpacing: "0.05em"
               }}
             >
-              Close &times;
+              {galleryStrings.close} &times;
             </button>
           </motion.div>
         )}

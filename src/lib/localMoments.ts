@@ -1,4 +1,4 @@
-import { MomentItem } from "./moments";
+import type { MomentItem } from "./moments";
 
 const LOCAL_FILENAMES = [
   "489831318_18060819218098563_9042912996466521959_n..jpg",

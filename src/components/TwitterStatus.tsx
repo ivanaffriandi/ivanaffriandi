@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface TweetItem {
   id: string;
@@ -11,8 +12,19 @@ interface TweetItem {
 }
 
 export default function TwitterStatus() {
+  const { lang } = useLanguage();
   const [tweets, setTweets] = useState<TweetItem[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const strings = {
+    sectionTitle: lang === "ar" ? "آخر الملاحظات والأفكار" : lang === "zh" ? "最新笔记与思考" : lang === "nl" ? "Laatste Notities & Gedachten" : "Latest Notes & Thoughts",
+    loading: lang === "ar" ? "جاري استرداد آخر الأفكار..." : lang === "zh" ? "正在获取最新想法流..." : lang === "nl" ? "Ophalen van de laatste gedachtenstroom..." : "Retrieving latest thoughts stream...",
+    empty: lang === "ar" ? "قائمة الملاحظات فارغة حالياً." : lang === "zh" ? "笔记列表目前为空。" : lang === "nl" ? "Notitielijst is momenteel leeg." : "Notes list currently empty.",
+    justNow: lang === "ar" ? "للتو" : lang === "zh" ? "刚刚" : lang === "nl" ? "Zojuist" : "Just now",
+    minsAgo: (n: number) => lang === "ar" ? `منذ ${n} د.` : lang === "zh" ? `${n}分钟前` : lang === "nl" ? `${n}m geleden` : `${n}m ago`,
+    hoursAgo: (n: number) => lang === "ar" ? `منذ ${n} س.` : lang === "zh" ? `${n}小时前` : lang === "nl" ? `${n}u geleden` : `${n}h ago`,
+    recently: lang === "ar" ? "مؤخراً" : lang === "zh" ? "最近" : lang === "nl" ? "Onlangs" : "Recently",
+  };
 
   useEffect(() => {
     fetch("/api/twitter")
@@ -34,16 +46,17 @@ export default function TwitterStatus() {
       const diffMins = Math.floor(diffMs / 60000);
       const diffHours = Math.floor(diffMs / 3600000);
 
-      if (diffMins < 1) return "Just now";
-      if (diffMins < 60) return `${diffMins}m ago`;
-      if (diffHours < 24) return `${diffHours}h ago`;
+      if (diffMins < 1) return strings.justNow;
+      if (diffMins < 60) return strings.minsAgo(diffMins);
+      if (diffHours < 24) return strings.hoursAgo(diffHours);
       
-      return date.toLocaleDateString("en-US", {
+      const locale = lang === "zh" ? "zh-CN" : lang === "ar" ? "ar-EG" : lang === "nl" ? "nl-NL" : "en-US";
+      return date.toLocaleDateString(locale, {
         month: "short",
         day: "numeric"
       });
     } catch {
-      return "Recently";
+      return strings.recently;
     }
   };
 
@@ -67,7 +80,7 @@ export default function TwitterStatus() {
         borderBottom: "1px solid var(--grid-line)",
         paddingBottom: "0.5rem"
       }}>
-        Latest Notes & Thoughts
+        {strings.sectionTitle}
       </div>
 
       <AnimatePresence mode="wait">
@@ -85,7 +98,7 @@ export default function TwitterStatus() {
               padding: "1rem 0"
             }}
           >
-            Retrieving latest thoughts stream...
+            {strings.loading}
           </motion.div>
         ) : (
           <motion.div
@@ -158,7 +171,7 @@ export default function TwitterStatus() {
                 padding: "1rem 0",
                 borderLeft: "2px solid var(--grid-line)"
               }}>
-                "Notes list currently empty."
+                {strings.empty}
               </div>
             )}
           </motion.div>

@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Ask Ivan",
-  description: "Ask me anything anonymously.",
+  title: "Ask",
+  description: "Ask a question or chat with Ivan AI.",
   openGraph: {
-    title: "Ask Ivan",
-    description: "Ask me anything anonymously.",
+    title: "Ask",
+    description: "Ask a question or chat with Ivan AI.",
     url: "https://ivanaffriandi.com/ask",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ask Ivan",
-    description: "Ask me anything anonymously.",
+    title: "Ask",
+    description: "Ask a question or chat with Ivan AI.",
   }
 };
 

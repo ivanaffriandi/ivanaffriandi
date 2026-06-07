@@ -19,6 +19,22 @@ const fadeRise = {
 };
 const iosFontStack = '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
 
+type AdminTab = "inbox" | "calendar" | "comments" | "analytics" | "moments" | "books" | "security";
+
+function getSessionEntries(visitorSessions: Record<string, any>) {
+  return Object.entries(visitorSessions || {})
+    .map(([id, session]) => ({ id, ...(session || {}) }))
+    .sort((a: any, b: any) => new Date(b.lastSeen || 0).getTime() - new Date(a.lastSeen || 0).getTime());
+}
+
+function getTopCounts(items: string[]) {
+  const counts = items.filter(Boolean).reduce<Record<string, number>>((acc, item) => {
+    acc[item] = (acc[item] || 0) + 1;
+    return acc;
+  }, {});
+  return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+}
+
 function GlassModal({ isOpen, onClose, children, theme }: { isOpen: boolean; onClose: () => void; children: React.ReactNode; theme: string }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
@@ -80,7 +96,7 @@ function AdminPageContent() {
   const [loading, setLoading] = useState(true);
   const [loginError, setLoginError] = useState("");
 
-  const [activeTab, setActiveTab] = useState<"inbox" | "calendar" | "comments" | "moments" | "books" | "security">("comments");
+  const [activeTab, setActiveTab] = useState<AdminTab>("comments");
   const [inboxFilter, setInboxFilter] = useState<"all" | "pending" | "answered">("pending");
 
   // Blocked IPs state
@@ -385,8 +401,8 @@ function AdminPageContent() {
 
   const tabParam = searchParams.get("tab");
   useEffect(() => {
-    if (tabParam && ["inbox", "calendar", "comments", "moments", "books", "security"].includes(tabParam)) {
-      setActiveTab(tabParam as any);
+    if (tabParam && ["inbox", "calendar", "comments", "analytics", "books", "security"].includes(tabParam)) {
+      setActiveTab(tabParam as AdminTab);
     }
   }, [tabParam]);
 
@@ -401,7 +417,6 @@ function AdminPageContent() {
     if (isAuthenticated) {
       getAllCommentsForAdmin().then(setAdminComments).catch(err => console.error("Failed to load comments:", err));
       getAllQuestionsForAdmin().then(list => setAdminQuestions(list.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()))).catch(err => console.error("Failed to load questions:", err));
-      getAllMoments().then(setAdminMoments).catch(err => console.error("Failed to load moments:", err));
       getAllCalendarEvents().then(list => setAdminCalendarEvents(list.sort((a, b) => a.dateKey.localeCompare(b.dateKey)))).catch(err => console.error("Failed to load calendar:", err));
       getAllBooks().then(setAdminBooks).catch(err => console.error("Failed to load books:", err));
       loadBlockedIPs();
@@ -870,7 +885,6 @@ function AdminPageContent() {
   const pendingCommentsCount = adminComments.filter(c => !c.approved).length;
   const totalQuestions = adminQuestions.length;
   const totalComments = adminComments.length;
-  const totalMoments = adminMoments.length;
 
   const today = new Date();
   const todayMM = String(today.getMonth() + 1).padStart(2, "0");
@@ -878,6 +892,12 @@ function AdminPageContent() {
   const todayKey = `${todayMM}-${todayDD}`;
   const todayEventsCount = adminCalendarEvents.filter(ev => ev.dateKey === todayKey).length;
   const readingBooksCount = adminBooks.filter(b => b.status === "reading").length;
+  const analyticsSessions = getSessionEntries(visitorSessions);
+  const totalVisits = analyticsSessions.reduce((sum: number, session: any) => sum + (Number(session.count) || 0), 0);
+  const topPlatforms = getTopCounts(analyticsSessions.map((s: any) => s.lastPlatform || s.firstPlatform || "Direct / Bookmark"));
+  const topLocations = getTopCounts(analyticsSessions.map((s: any) => s.geo?.city || s.location || "Unknown Location"));
+  const topPages = getTopCounts(analyticsSessions.flatMap((s: any) => (Array.isArray(s.history) ? s.history : []).map((h: any) => h.page || s.lastPage || "/")));
+  const topDevices = getTopCounts(analyticsSessions.map((s: any) => s.deviceDetails?.deviceType || s.device || "Unknown Device"));
 
   const tabs = [
     {
@@ -907,12 +927,13 @@ function AdminPageContent() {
       )
     },
     {
-      id: "moments" as const, label: "Moments", count: totalMoments,
+      id: "analytics" as const, label: "Analytics", count: analyticsSessions.length,
       icon: (
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="6" />
-          <circle cx="9" cy="9" r="2.5" />
-          <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+          <path d="M3 3v18h18" />
+          <path d="M7 15l4-4 3 3 5-7" />
+          <path d="M18 7h-5" />
+          <path d="M18 7v5" />
         </svg>
       )
     },
@@ -1415,6 +1436,107 @@ function AdminPageContent() {
                 </motion.div>
               )}
 
+              {/* ---- ANALYTICS ---- */}
+              {activeTab === "analytics" && (
+                <motion.div key="analytics" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px", marginBottom: "1rem" }}>
+                    <span style={{ fontSize: "0.78rem", fontWeight: "700", color: "var(--text-secondary)" }}>Visitor Intelligence</span>
+                    <motion.button whileTap={{ scale: 0.96 }} onClick={loadVisitorSessions} style={{ width: "30px", height: "30px", borderRadius: "50%", border: "1px solid rgba(150,150,150,0.14)", background: "rgba(150,150,150,0.06)", color: "var(--text-primary)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }} title="Refresh analytics">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 16h6v6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 8h-6V2"/></svg>
+                    </motion.button>
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "8px", marginBottom: "12px" }}>
+                    {[
+                      ["Unique IP", analyticsSessions.length],
+                      ["Total loads", totalVisits],
+                      ["Questions", totalQuestions],
+                      ["Comments", totalComments],
+                    ].map(([label, value]) => (
+                      <GlassCard key={label} style={{ padding: "12px" }}>
+                        <div style={{ fontSize: "1.15rem", fontWeight: "850", color: "var(--text-primary)", letterSpacing: "-0.03em" }}>{value}</div>
+                        <div style={{ fontSize: "0.62rem", fontWeight: "750", color: "var(--text-secondary)", marginTop: "2px" }}>{label}</div>
+                      </GlassCard>
+                    ))}
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "8px", marginBottom: "14px" }}>
+                    {[
+                      ["Top platform", topPlatforms],
+                      ["Top city", topLocations],
+                      ["Top page", topPages],
+                      ["Top device", topDevices],
+                    ].map(([title, rows]) => (
+                      <GlassCard key={title as string} style={{ padding: "12px" }}>
+                        <div style={{ fontSize: "0.62rem", fontWeight: "850", color: "var(--text-secondary)", textTransform: "uppercase", marginBottom: "7px" }}>{title as string}</div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                          {(rows as [string, number][]).length > 0 ? (rows as [string, number][]).map(([name, count]) => (
+                            <div key={name} style={{ display: "flex", justifyContent: "space-between", gap: "8px", fontSize: "0.66rem" }}>
+                              <span style={{ color: "var(--text-primary)", fontWeight: "700", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{name}</span>
+                              <span style={{ color: "var(--text-secondary)", fontWeight: "800" }}>{count}</span>
+                            </div>
+                          )) : (
+                            <span style={{ fontSize: "0.66rem", color: "var(--text-secondary)" }}>No data yet</span>
+                          )}
+                        </div>
+                      </GlassCard>
+                    ))}
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    {analyticsSessions.length > 0 ? analyticsSessions.map((session: any) => {
+                      const details = session.deviceDetails || {};
+                      const geo = session.geo || {};
+                      const history = Array.isArray(session.history) ? session.history : [];
+                      return (
+                        <GlassCard key={session.id} style={{ padding: "12px" }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", alignItems: "flex-start", marginBottom: "8px" }}>
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ fontSize: "0.78rem", fontWeight: "850", color: "var(--text-primary)", fontFamily: "monospace", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{session.ip || session.id}</div>
+                              <div style={{ fontSize: "0.63rem", color: "var(--text-secondary)", marginTop: "2px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{session.location || "Unknown Location"}</div>
+                            </div>
+                            <span style={{ flexShrink: 0, fontSize: "0.58rem", fontWeight: "850", color: "#5AC8FA", background: "rgba(90,200,250,0.08)", border: "1px solid rgba(90,200,250,0.18)", borderRadius: "999px", padding: "3px 8px" }}>{session.count || 0}x</span>
+                          </div>
+
+                          <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "9px" }}>
+                            {[
+                              ["Platform", session.lastPlatform || session.firstPlatform],
+                              ["Page", session.lastPage],
+                              ["Browser", details.browser],
+                              ["OS", details.os],
+                              ["Device", details.deviceType || session.device],
+                              ["Brand", details.brand],
+                              ["Model", details.model],
+                              ["Provider", geo.provider || geo.isp || geo.org],
+                              ["ASN", geo.asn],
+                              ["TZ", geo.timezone],
+                            ].filter(([, value]) => value && value !== "Unknown").map(([label, value]) => (
+                              <span key={`${label}-${value}`} style={{ fontSize: "0.58rem", fontWeight: "750", color: "var(--text-secondary)", background: "rgba(150,150,150,0.07)", border: "1px solid rgba(150,150,150,0.1)", borderRadius: "7px", padding: "2px 6px" }}>{label}: {value}</span>
+                            ))}
+                          </div>
+
+                          {history.length > 0 && (
+                            <div style={{ borderTop: "1px solid rgba(150,150,150,0.1)", paddingTop: "8px", display: "flex", flexDirection: "column", gap: "5px", maxHeight: "130px", overflowY: "auto" }}>
+                              {history.slice(0, 8).map((hist: any, idx: number) => (
+                                <div key={`${hist.timestamp}-${idx}`} style={{ display: "flex", justifyContent: "space-between", gap: "8px", fontSize: "0.64rem" }}>
+                                  <span style={{ fontWeight: "750", color: "var(--text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{hist.page || "/"}</span>
+                                  <span style={{ color: "var(--text-secondary)", flexShrink: 0 }}>{hist.timestamp ? new Date(hist.timestamp).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }) : ""}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </GlassCard>
+                      );
+                    }) : (
+                      <div style={{ padding: "3rem 1rem", textAlign: "center", border: "1px dashed rgba(150,150,150,0.12)", borderRadius: "16px" }}>
+                        <p style={{ margin: 0, fontSize: "0.75rem", fontWeight: "750", color: "var(--text-primary)" }}>No analytics yet</p>
+                        <p style={{ margin: "2px 0 0", fontSize: "0.68rem", color: "var(--text-secondary)" }}>Visitor sessions will show up here.</p>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+
               {/* ---- MOMENTS ---- */}
               {activeTab === "moments" && (
                 <motion.div key="moments" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
@@ -1440,7 +1562,7 @@ function AdminPageContent() {
                         {momentPreviewUrl ? (
                           <>
                             <div style={{ width: "52px", height: "52px", borderRadius: "10px", overflow: "hidden", border: "1px solid rgba(150,150,150,0.15)", flexShrink: 0 }}>
-                              <img src={momentPreviewUrl} alt="preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                              <img src={momentPreviewUrl} alt="preview" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                             </div>
                             <div style={{ flex: 1, textAlign: "left" }}>
                               <div style={{ fontSize: "0.7rem", fontWeight: "700", color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "200px" }}>{momentFile?.name}</div>
@@ -1495,7 +1617,7 @@ function AdminPageContent() {
                       return m ? (
                         <div style={{ display: "flex", gap: "12px", alignItems: "center", padding: "10px 12px", backgroundColor: "rgba(150,150,150,0.04)", borderRadius: "12px", border: "1px solid rgba(150,150,150,0.08)", marginBottom: "14px" }}>
                           <div style={{ width: "52px", height: "52px", borderRadius: "10px", overflow: "hidden", flexShrink: 0, border: "1px solid rgba(150,150,150,0.15)" }}>
-                            <img src={m.url} alt="moment" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                            <img src={m.url} alt="moment" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                           </div>
                           <div>
                             <div style={{ fontSize: "0.72rem", fontWeight: "700", color: "var(--text-primary)" }}>Editing photo</div>
@@ -1544,7 +1666,7 @@ function AdminPageContent() {
                       <motion.div key={moment.id} layoutId={`mcard-${moment.id}`} className="admin-glass-card" style={{ display: "flex", gap: "12px", alignItems: "center", padding: "10px 12px" }}>
                         {/* Thumbnail */}
                         <div style={{ position: "relative", width: "56px", height: "56px", borderRadius: "10px", overflow: "hidden", border: moment.homepageOrder !== undefined ? "2px solid #B47A3E" : `1px solid ${theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(150,150,150,0.12)"}`, boxShadow: moment.homepageOrder !== undefined ? "0 0 8px rgba(180,122,98,0.3)" : "none", flexShrink: 0 }}>
-                          <img src={moment.url} alt="moment thumbnail" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          <img src={moment.url} alt="moment thumbnail" decoding="async" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         </div>
                         {/* Info */}
                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -1628,7 +1750,7 @@ function AdminPageContent() {
                               <motion.div key={i} onClick={() => selectSearchResult(result)} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
                                 style={{ display: "flex", gap: "8px", alignItems: "center", padding: "7px 10px", borderRadius: "10px", border: "1px solid rgba(150,150,150,0.12)", background: theme === "dark" ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.025)", cursor: "pointer" }}>
                                 {result.coverUrl ? (
-                                  <img src={result.coverUrl} alt="" style={{ width: "28px", height: "40px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }} />
+                                  <img src={result.coverUrl} alt="" decoding="async" loading="lazy" style={{ width: "28px", height: "40px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }} />
                                 ) : (
                                   <div style={{ width: "28px", height: "40px", borderRadius: "4px", background: "rgba(150,150,150,0.1)", flexShrink: 0 }} />
                                 )}
@@ -1717,7 +1839,7 @@ function AdminPageContent() {
                         {/* Cover thumbnail */}
                         <div style={{ width: "36px", height: "52px", borderRadius: "5px", overflow: "hidden", border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)"}`, flexShrink: 0, background: "rgba(150,150,150,0.06)" }}>
                           {book.coverUrl
-                            ? <img src={book.coverUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                            ? <img src={book.coverUrl} alt="" decoding="async" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
                             : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" opacity={0.3}><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h4"/></svg>
                               </div>
@@ -1994,7 +2116,7 @@ function AdminPageContent() {
               const theBook = adminBooks.find(b => b.id === coverSearchBookId);
               return theBook ? (
                 <div style={{ display: "flex", gap: "8px", alignItems: "center", padding: "8px 10px", backgroundColor: "rgba(150,150,150,0.04)", borderRadius: "10px", border: "1px solid rgba(150,150,150,0.08)", marginBottom: "12px" }}>
-                  {theBook.coverUrl && <img src={theBook.coverUrl} alt="" style={{ width: "28px", height: "40px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }} />}
+                  {theBook.coverUrl && <img src={theBook.coverUrl} alt="" decoding="async" style={{ width: "28px", height: "40px", objectFit: "cover", borderRadius: "4px", flexShrink: 0 }} />}
                   <div>
                     <div style={{ fontSize: "0.72rem", fontWeight: "700", color: "var(--text-primary)" }}>{theBook.title}</div>
                     <div style={{ fontSize: "0.6rem", color: "var(--text-secondary)" }}>{theBook.author}</div>
@@ -2021,7 +2143,7 @@ function AdminPageContent() {
                     style={{ display: "flex", flexDirection: "column", gap: "4px", cursor: result.coverUrl ? "pointer" : "default", opacity: result.coverUrl ? 1 : 0.4 }}>
                     <div style={{ aspectRatio: "2/3", borderRadius: "8px", overflow: "hidden", border: "1px solid rgba(150,150,150,0.15)", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
                       {result.coverUrl ? (
-                        <img src={result.coverUrl} alt={result.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        <img src={result.coverUrl} alt={result.title} decoding="async" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       ) : (
                         <div style={{ width: "100%", height: "100%", background: "rgba(150,150,150,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem", color: "var(--text-secondary)" }}>No cover</div>
                       )}

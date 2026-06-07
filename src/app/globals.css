@@ -2,6 +2,7 @@
   --bg-color: #FDFBF7; /* Beautiful warm Munken book paper */
   --bg-color-rgba: rgba(253, 251, 247, 0.75);
   --bg-glass: rgba(253, 251, 247, 0.45);
+  --bg-secondary: rgba(0,0,0,0.04);
   --text-primary: #181715; /* Elegant charcoal ink */
   --text-secondary: #6B6862; /* Soft sepia secondary text */
   --border-color: #E6E1D8; /* Warm book binder grid line */
@@ -33,6 +34,7 @@
     --bg-color: #141312; /* Volcanic bookplate base */
     --bg-color-rgba: rgba(20, 19, 18, 0.75);
     --bg-glass: rgba(20, 19, 18, 0.45);
+    --bg-secondary: rgba(255,255,255,0.05);
     --text-primary: #EBE6DC; /* Warm paper text */
     --text-secondary: #9B968E;
     --border-color: #2F2E2C;
@@ -1677,4 +1679,544 @@ html {
   scrollbar-width: none !important;  /* Firefox */
 }
 
+/* ==========================================================================
+   LOW SPEC / PERFORMANCE OVERRIDES (LANCAR MODE / SMOOTH MODE)
+   ========================================================================== */
+.low-perf-mode * {
+  /* Replace complex cubic-bezier and spring transitions with ultra-fast, cheap transitions or none */
+  transition: opacity 0.1s ease, background-color 0.1s ease, border-color 0.1s ease !important;
+  /* Disable hardware-intensive keyframe animations */
+  animation-duration: 0.001s !important;
+  animation-iteration-count: 1 !important;
+}
+
+/* Eliminate costly filter operations which cause layout/repaint jank on old mobile GPUs */
+.low-perf-mode img,
+.low-perf-mode div,
+.low-perf-mode button,
+.low-perf-mode header,
+.low-perf-mode footer {
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Simplify complex box-shadows to flat, cheap borders to save precious CPU/GPU fill rate */
+.low-perf-mode .bento-card,
+.low-perf-mode .journal-post-card,
+.low-perf-mode .date-pill,
+.low-perf-mode .calendar-day-cell,
+.low-perf-mode .today-btn,
+.low-perf-mode .month-picker-btn {
+  box-shadow: none !important;
+  transform: none !important;
+  border: 1px solid var(--grid-line) !important;
+}
+
+/* Preserve ambient wave toggle animation and avoid border in low performance mode */
+.low-perf-mode .ambient-wave-toggle {
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.low-perf-mode .ambient-wave-toggle .wave-bar {
+  animation-duration: 0.8s !important;
+  animation-iteration-count: infinite !important;
+}
+
+/* Replace expensive semi-transparent/glass background with solid flat color overlays */
+.low-perf-mode .bento-card {
+  background: var(--bg-color) !important;
+}
+
+/* Stop hover transformations that trigger layout reflow or scale-repaint storm on slow processors */
+.low-perf-mode .bento-card:hover,
+.low-perf-mode .journal-post-card:hover,
+.low-perf-mode .date-pill:hover,
+.low-perf-mode .calendar-day-cell:hover,
+.low-perf-mode .today-btn:hover,
+.low-perf-mode .month-picker-btn:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ==========================================================================
+   ARABIC LANGUAGE PERSISTENT LTR LAYOUT & RTL TYPOGRAPHY
+   ========================================================================== */
+[data-lang="ar"] {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Segoe UI Arabia", "Dubai", sans-serif !important;
+}
+
+[data-lang="ar"] p,
+[data-lang="ar"] span,
+[data-lang="ar"] a,
+[data-lang="ar"] label,
+[data-lang="ar"] button,
+[data-lang="ar"] strong,
+[data-lang="ar"] small,
+[data-lang="ar"] em,
+[data-lang="ar"] cite,
+[data-lang="ar"] time,
+[data-lang="ar"] h1,
+[data-lang="ar"] h2,
+[data-lang="ar"] h3,
+[data-lang="ar"] h4,
+[data-lang="ar"] h5,
+[data-lang="ar"] h6,
+[data-lang="ar"] li,
+[data-lang="ar"] input,
+[data-lang="ar"] textarea,
+[data-lang="ar"] .book-prose p,
+[data-lang="ar"] .book-prose li,
+[data-lang="ar"] .journal-post-card h3,
+[data-lang="ar"] .journal-post-card p,
+[data-lang="ar"] .date-pill-day-num,
+[data-lang="ar"] .date-pill-day-name,
+[data-lang="ar"] .journal-day-header,
+[data-lang="ar"] .month-picker-btn span,
+[data-lang="ar"] .today-btn,
+[data-lang="ar"] .book-title,
+[data-lang="ar"] .book-author,
+[data-lang="ar"] .catalog-title,
+[data-lang="ar"] .catalog-author {
+  direction: rtl !important;
+  text-align: right !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Segoe UI Arabia", "Dubai", sans-serif !important;
+  line-height: 1.62 !important;
+}
+
+/* ==========================================================================
+   CHINESE LANGUAGE TYPOGRAPHY OVERRIDES (APPLIED GLOBALLY)
+   ========================================================================== */
+[data-lang="zh"] {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif !important;
+}
+
+[data-lang="zh"] p,
+[data-lang="zh"] span,
+[data-lang="zh"] a,
+[data-lang="zh"] label,
+[data-lang="zh"] button,
+[data-lang="zh"] strong,
+[data-lang="zh"] small,
+[data-lang="zh"] em,
+[data-lang="zh"] h1,
+[data-lang="zh"] h2,
+[data-lang="zh"] h3,
+[data-lang="zh"] h4,
+[data-lang="zh"] h5,
+[data-lang="zh"] h6,
+[data-lang="zh"] li,
+[data-lang="zh"] input,
+[data-lang="zh"] textarea {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* ==========================================================================
+   BRUTE FORCE LTR LAYOUT STRUCTURE ENFORCEMENT
+   ========================================================================== */
+html, body,
+.layout-wrapper,
+.content-wrapper,
+.feed-split-layout,
+.feed-column,
+.timeline-post-link,
+.journal-post-card,
+.date-strip-container,
+.date-pill,
+.moments-grid,
+.journal-header-container,
+.month-picker-btn,
+.custom-calendar-popup,
+.calendar-day-cell,
+.journal-header-container + div,
+.daily-journal-feed-container,
+header, footer {
+  direction: ltr !important;
+}
+
+/* Arabic RTL Layout Overrides */
+[data-lang="ar"] .date-strip-container,
+[data-lang="ar"] .custom-calendar-popup {
+  direction: rtl !important;
+}
+
+/* ==========================================================================
+   INSTAGRAM STYLE MOMENTS FEED CARDS
+   ========================================================================== */
+.moments-ios-card {
+  display: flex !important;
+  gap: 16px !important;
+  background: transparent !important;
+  border-bottom: 1px solid rgba(150, 150, 150, 0.08) !important;
+  padding: 14px 4px !important;
+  width: 100% !important;
+  max-width: 600px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  align-items: flex-start !important;
+  cursor: pointer !important;
+  transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.moments-ios-card:hover {
+  background-color: rgba(150, 150, 150, 0.03) !important;
+  border-radius: 12px !important;
+}
+
+.moments-ios-card:last-child {
+  border-bottom: none !important;
+}
+
+.moments-ios-img-container {
+  width: 110px !important;
+  height: 110px !important;
+  flex-shrink: 0 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(150, 150, 150, 0.08) !important;
+  background-color: rgba(150, 150, 150, 0.02) !important;
+  position: relative !important;
+}
+
+.moments-ios-img {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  object-fit: cover !important;
+  filter: grayscale(100%) contrast(1.05) !important;
+  transition: filter 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.moments-ios-card:hover .moments-ios-img {
+  filter: grayscale(0%) contrast(1.02) !important;
+  transform: scale(1.04) !important;
+}
+
+.moments-ios-header {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  gap: 2px !important;
+}
+
+.moments-ios-title {
+  font-size: 0.96rem !important;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  letter-spacing: -0.015em !important;
+  line-height: 1.3 !important;
+  font-family: var(--font-sans) !important;
+  margin: 0 !important;
+}
+
+.moments-ios-story {
+  font-size: 0.82rem !important;
+  line-height: 1.45 !important;
+  color: var(--text-secondary) !important;
+  font-family: var(--font-sans) !important;
+  opacity: 0.85 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  margin: 2px 0 !important;
+}
+
+.moments-ios-meta {
+  font-size: 0.70rem !important;
+  color: var(--text-secondary) !important;
+  opacity: 0.55 !important;
+  font-family: var(--font-sans) !important;
+  font-weight: 500 !important;
+  margin-top: 4px !important;
+}
+
+@media (max-width: 768px) {
+  .moments-ios-card {
+    max-width: 100% !important;
+    padding: 12px 2px !important;
+    gap: 12px !important;
+  }
+  .moments-ios-img-container {
+    width: 95px !important;
+    height: 95px !important;
+  }
+}
+
+/* ==========================================================================
+   iOS PHOTOS STYLE GRID LAYOUT & HERO SECTION
+   ========================================================================== */
+.moments-ios-hero {
+  width: 100% !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  background-color: #ffffff !important;
+  border: 1px solid rgba(128, 128, 128, 0.15) !important;
+  cursor: pointer !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.035) !important;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  margin-top: 0.5rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .moments-ios-hero {
+    background-color: #1C1B1A !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.38) !important;
+  }
+}
+
+.moments-ios-hero:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.07) !important;
+  border-color: rgba(150, 150, 150, 0.22) !important;
+}
+
+.moments-ios-hero-img-wrap {
+  width: 100% !important;
+  height: 380px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  border-bottom: 1px solid rgba(150, 150, 150, 0.06) !important;
+}
+
+.moments-ios-hero-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  filter: grayscale(100%) contrast(1.05) !important;
+  transition: filter 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease !important;
+}
+
+.moments-ios-hero:hover .moments-ios-hero-img {
+  filter: grayscale(0%) contrast(1.02) !important;
+}
+
+.moments-ios-hero-info {
+  padding: 16px 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  background-color: rgba(150, 150, 150, 0.01) !important;
+  box-sizing: border-box !important;
+}
+
+.moments-ios-hero-title {
+  font-size: 1.05rem !important;
+  font-weight: 750 !important;
+  color: var(--text-primary) !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.3 !important;
+  font-family: var(--font-sans) !important;
+  margin: 0 !important;
+}
+
+.moments-ios-hero-meta {
+  font-size: 0.74rem !important;
+  color: var(--text-secondary) !important;
+  opacity: 0.65 !important;
+  font-family: var(--font-sans) !important;
+  font-weight: 500 !important;
+}
+
+.moments-ios-section-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-top: 0.85rem !important;
+  margin-bottom: 0.5rem !important;
+  padding: 0 4px !important;
+  font-family: var(--font-sans) !important;
+}
+
+.moments-ios-section-title {
+  font-size: 1.05rem !important;
+  font-weight: 750 !important;
+  color: var(--text-primary) !important;
+  letter-spacing: -0.02em !important;
+}
+
+.moments-ios-section-count {
+  font-size: 0.85rem !important;
+  color: var(--text-secondary) !important;
+  opacity: 0.65 !important;
+  font-weight: 500 !important;
+}
+
+.moments-ios-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+.moments-ios-grid-cell {
+  position: relative !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(150, 150, 150, 0.08) !important;
+  background-color: rgba(150, 150, 150, 0.02) !important;
+  cursor: pointer !important;
+  will-change: transform;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.moments-ios-grid-cell:hover {
+  transform: translateY(-2px) scale(1.015) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06) !important;
+}
+
+.moments-ios-grid-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  filter: grayscale(55%) contrast(1.02);
+  transition: filter 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  display: block !important;
+}
+
+.moments-ios-grid-cell:hover .moments-ios-grid-img {
+  filter: grayscale(0%) contrast(1.02) !important;
+  transform: scale(1.04) !important;
+}
+
+/* Active cell — full color, no filter override from hover */
+.moments-ios-grid-cell.active .moments-ios-grid-img {
+  filter: grayscale(0%) contrast(1.02) !important;
+}
+
+@media (max-width: 768px) {
+  .moments-ios-hero-img-wrap {
+    height: 280px !important;
+  }
+  .moments-ios-hero-date {
+    font-size: 1.35rem !important;
+  }
+  .moments-ios-hero-date-year {
+    font-size: 1.2rem !important;
+  }
+  .moments-ios-grid {
+    gap: 8px !important;
+  }
+  .moments-ios-grid-cell {
+    border-radius: 12px !important;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Moments page background: seamless integration ── */
+body.moments-page {
+  background-color: var(--bg-color) !important;
+  min-height: 100vh;
+}
+
+/* ── Moments cover section: transparent so it blends perfectly ── */
+.moments-cover-section {
+  background-color: transparent;
+  --moments-cover-bg: var(--bg-color);
+}
+
+/* ── Elevated moments card style — strong shadow for depth ── */
+.moments-gallery-card {
+  background-color: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.06) !important;
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.04),
+    0 8px 24px rgba(0,0,0,0.10),
+    0 24px 56px rgba(0,0,0,0.10) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .moments-gallery-card {
+    background-color: #1E1C1B !important;
+    border: 1px solid #2C2A28 !important;
+    box-shadow:
+      0 2px 6px rgba(0,0,0,0.3),
+      0 10px 32px rgba(0,0,0,0.45),
+      0 28px 64px rgba(0,0,0,0.5) !important;
+  }
+}
+
+/* Also handle JS-toggled dark class */
+.dark .moments-gallery-card {
+  background-color: #1E1C1B !important;
+  border: 1px solid #2C2A28 !important;
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.3),
+    0 10px 32px rgba(0,0,0,0.45),
+    0 28px 64px rgba(0,0,0,0.5) !important;
+}
+
+/* ── Hide scrollbar on highlights strip (retained for safety) ── */
+.moments-cover-section div::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Moments page: tighten page padding so footer gap is proportional ── */
+body.moments-page > div {
+  padding-bottom: 0.5rem !important;
+}
+
+/* ── Moments Modal Backdrop: Scrollable overlay container, fixed background ── */
+.moments-modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9000 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  overflow-y: auto !important;
+  padding: 48px 16px 80px 16px !important;
+  -webkit-overflow-scrolling: touch !important;
+  background-color: transparent !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .moments-modal-backdrop {
+    background-color: transparent !important;
+  }
+}
+
+.dark .moments-modal-backdrop {
+  background-color: transparent !important;
+}
+
+/* ── Hide global layout footer on moments page ── */
+body.moments-page .yunox-single-footer {
+  display: none !important;
+}
+
+body.moments-page .content-wrapper {
+  padding-bottom: 0 !important;
+}
+
+/* ── Local footer inside the moments drawer ── */
+.yunox-single-footer-local {
+  width: 100%;
+  padding: 0.75rem 0;
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--border-color);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+@media (max-width: 500px) {
+  .yunox-single-footer-local {
+    gap: 0.5rem !important;
+    font-size: 0.75rem !important;
+  }
+}
 

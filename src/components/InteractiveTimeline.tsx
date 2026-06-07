@@ -28,7 +28,7 @@ export default function InteractiveTimeline({ posts }: { posts: Post[] }) {
                 <Link href={`/blog/${post.id}`} className="timeline-card">
                   <div className="timeline-card-content">
                     <span className="timeline-card-meta">{fullDate}</span>
-                    <h2 className="timeline-card-title">{post.title}</h2>
+                    <h2 dir="auto" className="timeline-card-title">{post.title}</h2>
                   </div>
                   <div className="timeline-card-arrow">↗</div>
                 </Link>

@@ -3,26 +3,50 @@ import { NextResponse } from "next/server";
 const FIREBASE_DB_URL = "https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app/visitor_sessions";
 
 // Helper to parse User Agent
-function parseUserAgent(ua: string): string {
-  if (!ua) return "Unknown Device";
+function parseUserAgentDetails(ua: string) {
+  if (!ua) {
+    return {
+      label: "Unknown Device",
+      deviceType: "Unknown",
+      os: "Unknown OS",
+      browser: "Unknown Browser",
+      brand: "Unknown",
+      model: "Unknown",
+      isMobile: false,
+      isBot: false,
+    };
+  }
   
   let os = "Unknown OS";
   let browser = "Unknown Browser";
   let device = "Desktop";
+  let brand = "Unknown";
+  let model = "Unknown";
+  const isBot = /bot|crawler|spider|slurp|headless|preview|facebookexternalhit|whatsapp|telegram/i.test(ua);
 
   if (/android/i.test(ua)) {
     os = "Android";
     device = "Android Phone";
+    brand = /samsung/i.test(ua) ? "Samsung" : /pixel/i.test(ua) ? "Google" : /huawei/i.test(ua) ? "Huawei" : /xiaomi|redmi|miui/i.test(ua) ? "Xiaomi" : "Android";
+    const androidMatch = ua.match(/Android [^;]+;\s*([^;)]+)[;)]/i);
+    model = androidMatch?.[1]?.trim() || "Android Phone";
   } else if (/ipad/i.test(ua)) {
     os = "iOS";
     device = "iPad";
+    brand = "Apple";
+    model = "iPad";
   } else if (/iphone/i.test(ua)) {
     os = "iOS";
     device = "iPhone";
+    brand = "Apple";
+    model = "iPhone";
   } else if (/macintosh|mac os x/i.test(ua)) {
     os = "macOS";
+    brand = "Apple";
+    model = "Mac";
   } else if (/windows/i.test(ua)) {
     os = "Windows";
+    brand = "PC";
   } else if (/linux/i.test(ua)) {
     os = "Linux";
   }
@@ -39,7 +63,20 @@ function parseUserAgent(ua: string): string {
     browser = "Opera";
   }
 
-  return `${device} (${os} • ${browser})`;
+  return {
+    label: `${device} (${os} • ${browser})`,
+    deviceType: device,
+    os,
+    browser,
+    brand,
+    model,
+    isMobile: /android|iphone|ipad|mobile/i.test(ua),
+    isBot,
+  };
+}
+
+function parseUserAgent(ua: string): string {
+  return parseUserAgentDetails(ua).label;
 }
 
 // Smart platform detection
@@ -120,6 +157,20 @@ export async function POST(request: Request) {
     const city = request.headers.get("x-vercel-ip-city") || "";
 
     let location = "Unknown Location";
+    let geoDetails: any = {
+      country,
+      region,
+      city,
+      district: "",
+      timezone: "",
+      latitude: null,
+      longitude: null,
+      postalCode: "",
+      isp: "",
+      org: "",
+      asn: "",
+      provider: "",
+    };
     if (city || country) {
       const parts = [city, region, country].filter(Boolean);
       location = parts.join(", ");
@@ -134,6 +185,20 @@ export async function POST(request: Request) {
           if (geoData.status === "success") {
             const parts = [geoData.city, geoData.regionName, geoData.country].filter(Boolean);
             location = parts.join(", ");
+            geoDetails = {
+              country: geoData.country || "",
+              region: geoData.regionName || "",
+              city: geoData.city || "",
+              district: geoData.district || "",
+              timezone: geoData.timezone || "",
+              latitude: geoData.lat ?? null,
+              longitude: geoData.lon ?? null,
+              postalCode: geoData.zip || "",
+              isp: geoData.isp || "",
+              org: geoData.org || "",
+              asn: geoData.as || "",
+              provider: geoData.isp || geoData.org || geoData.as || "",
+            };
           }
         }
       } catch (err) {
@@ -142,6 +207,7 @@ export async function POST(request: Request) {
     }
 
     const platform = getPlatform(referrer, utmSource);
+    const userAgentDetails = parseUserAgentDetails(ua);
 
     // Update statistics
     const count = (existingData?.count || 0) + 1;
@@ -162,7 +228,12 @@ export async function POST(request: Request) {
       ip,
       count,
       location,
+      geo: {
+        ...(existingData?.geo || {}),
+        ...geoDetails,
+      },
       device,
+      deviceDetails: userAgentDetails,
       userAgent: ua,
       firstPlatform,
       firstReferrer,

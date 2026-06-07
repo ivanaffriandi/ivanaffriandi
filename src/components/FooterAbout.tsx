@@ -1,366 +1,451 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { usePathname } from "next/navigation";
 
+/* ─── Social icon SVGs ──────────────────────────────────────────────────── */
+function EmailIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+      <polyline points="22,6 12,13 2,6" />
+    </svg>
+  );
+}
 
+function InstagramIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    </svg>
+  );
+}
+
+function XIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.258 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
+    </svg>
+  );
+}
+
+function WeiboIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+      <path d="M10.878 1.093a4.23 4.23 0 0 1 4.031 1.305 4.225 4.225 0 0 1 .886 4.14v.001a.612.612 0 0 1-1.166-.377 3.01 3.01 0 0 0-3.495-3.873.611.611 0 1 1-.256-1.196Z"/>
+      <path fillRule="evenodd" d="M3.753 9.465c.548-1.11 1.972-1.74 3.233-1.411 1.304.338 1.971 1.568 1.437 2.764-.541 1.221-2.095 1.875-3.416 1.449-1.271-.411-1.812-1.67-1.254-2.802Zm2.658.567c.16.066.365-.009.458-.168.088-.16.03-.34-.129-.397-.156-.062-.353.013-.446.168-.09.154-.041.333.117.397Zm-1.607 1.314c.413.188.963.009 1.219-.4.252-.413.12-.883-.296-1.062-.41-.172-.94.005-1.194.402-.256.4-.135.874.271 1.06Z"/>
+      <path fillRule="evenodd" d="m12.014 7.238.005.001c.919.285 1.941.974 1.939 2.188 0 2.007-2.895 4.535-7.246 4.535C3.393 13.962 0 12.352 0 9.708c0-1.385.876-2.985 2.384-4.493C4.4 3.199 6.751 2.28 7.634 3.165c.39.392.427 1.065.177 1.87-.132.405.38.182.38.182 1.63-.682 3.051-.722 3.57.02.278.397.252.951-.004 1.594-.116.293.035.34.257.407Zm-10.4 3.101c.172 1.738 2.46 2.936 5.109 2.674 2.647-.26 4.656-1.883 4.482-3.623-.17-1.738-2.458-2.937-5.107-2.674-2.647.263-4.656 1.883-4.484 3.623Z"/>
+      <path d="M13.295 3.855a2.056 2.056 0 0 0-1.962-.634.526.526 0 1 0 .219 1.031 1.008 1.008 0 0 1 1.17 1.296.528.528 0 0 0 1.005.325 2.062 2.062 0 0 0-.432-2.018Z"/>
+    </svg>
+  );
+}
+
+/* ─── Arrow button for carousels ────────────────────────────────────────── */
+function ArrowBtn({ dir, onClick }: { dir: "prev" | "next"; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        width: 22, height: 22, borderRadius: "50%",
+        background: "var(--bg-secondary, rgba(150,150,150,0.08))",
+        border: "1px solid var(--border-color)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        cursor: "pointer", flexShrink: 0,
+        color: "var(--text-secondary)",
+      }}
+    >
+      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+        {dir === "prev"
+          ? <polyline points="15,18 9,12 15,6" />
+          : <polyline points="9,18 15,12 9,6" />}
+      </svg>
+    </button>
+  );
+}
+
+/* ─── Card with carousel header ─────────────────────────────────────────── */
+interface InfoCardProps {
+  labels: string[]; // dynamic labels matching slides
+  slides: React.ReactNode[];
+}
+
+function InfoCard({ labels, slides }: InfoCardProps) {
+  const [idx, setIdx] = useState(0);
+  const total = slides.length;
+  const prev = () => setIdx((i) => Math.max(0, i - 1));
+  const next = () => setIdx((i) => Math.min(total - 1, i + 1));
+
+  return (
+    <div style={{
+      border: "1px solid var(--border-color)",
+      borderRadius: 12,
+      overflow: "hidden",
+      background: "var(--bg-secondary, rgba(150,150,150,0.04))",
+      marginBottom: "0.6rem",
+    }}>
+      {/* Header */}
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0.5rem 0.75rem",
+        borderBottom: "1px solid var(--border-color)",
+      }}>
+        {/* Card Header dynamically displays the label for the active slide index */}
+        <span style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.06em", color: "var(--text-primary)", textTransform: "uppercase" }}>
+          {labels[idx] || ""}
+        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
+          {/* Dots */}
+          <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
+            {slides.map((_, i) => (
+              <div key={i} style={{
+                width: i === idx ? 12 : 4, height: 4,
+                borderRadius: 2,
+                background: i === idx ? "var(--text-primary)" : "var(--border-color)",
+                transition: "all 0.2s ease",
+              }} />
+            ))}
+          </div>
+          <ArrowBtn dir="prev" onClick={prev} />
+          <ArrowBtn dir="next" onClick={next} />
+        </div>
+      </div>
+      {/* Content */}
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={idx}
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -10 }}
+          transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          style={{ padding: "0.65rem 0.75rem" }}
+        >
+          {slides[idx]}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ─── Skill & Work Tags components ───────────────────────────────────────── */
+function SkillTag({ text }: { text: string }) {
+  const match = text.match(/^(.*?)\s*(\d+%)$/);
+  if (match) {
+    const [, name, percent] = match;
+    return (
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "5px",
+          padding: "3px 8px",
+          borderRadius: 20,
+          background: "var(--bg-secondary, rgba(150,150,150,0.07))",
+          border: "1px solid var(--border-color)",
+          fontSize: "0.7rem",
+          fontWeight: 600,
+          color: "var(--text-primary)",
+        }}
+      >
+        {name}
+        <span
+          style={{
+            fontSize: "0.62rem",
+            fontWeight: 700,
+            background: "rgba(128,128,128,0.18)",
+            padding: "1px 5px",
+            borderRadius: 8,
+            color: "var(--text-secondary)",
+          }}
+        >
+          {percent}
+        </span>
+      </span>
+    );
+  }
+
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        padding: "4px 9px",
+        borderRadius: 20,
+        background: "var(--bg-secondary, rgba(150,150,150,0.07))",
+        border: "1px solid var(--border-color)",
+        fontSize: "0.7rem",
+        fontWeight: 600,
+        color: "var(--text-primary)",
+      }}
+    >
+      {text}
+    </span>
+  );
+}
+
+function WorkTag({ label, link }: { label: string; link?: string }) {
+  if (link) {
+    return (
+      <a
+        href={link}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          display: "inline-block",
+          padding: "4px 9px",
+          borderRadius: 20,
+          background: "var(--bg-secondary, rgba(150,150,150,0.07))",
+          border: "1px solid var(--border-color)",
+          fontSize: "0.7rem",
+          fontWeight: 600,
+          color: "var(--text-primary)",
+          textDecoration: "none",
+          transition: "all 0.15s ease",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "var(--border-color)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "var(--bg-secondary, rgba(150,150,150,0.07))";
+        }}
+      >
+        {label}
+      </a>
+    );
+  }
+
+  return (
+    <span
+      style={{
+        display: "inline-block",
+        padding: "4px 9px",
+        borderRadius: 20,
+        background: "var(--bg-secondary, rgba(150,150,150,0.07))",
+        border: "1px solid var(--border-color)",
+        fontSize: "0.7rem",
+        fontWeight: 600,
+        color: "var(--text-primary)",
+      }}
+    >
+      {label}
+    </span>
+  );
+}
+
+function TagGrid({ tags }: { tags: string[] }) {
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
+      {tags.map((tag) => (
+        <SkillTag key={tag} text={tag} />
+      ))}
+    </div>
+  );
+}
+
+function chunkArray<T>(arr: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size));
+  }
+  return chunks;
+}
+
+/* ─── Main FooterAbout component ─────────────────────────────────────────── */
 export default function FooterAbout() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [isWeChatOpen, setIsWeChatOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [bioSlide, setBioSlide] = useState(0);
-  const [activeTab, setActiveTab] = useState(0);
-  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Brand hovers
+  const [emailHover, setEmailHover] = useState(false);
+  const [instagramHover, setInstagramHover] = useState(false);
+  const [xHover, setXHover] = useState(false);
+  const [weiboHover, setWeiboHover] = useState(false);
 
   useEffect(() => { setMounted(true); }, []);
+  useEffect(() => { setIsOpen(false); }, [pathname]);
 
+  // Lock body scroll when panel open
   useEffect(() => {
     if (isOpen) {
-      const t = setTimeout(() => {
-        window.scrollTo({
-          top: document.documentElement.scrollHeight,
-          behavior: "smooth",
-        });
-      }, 80); // scroll slightly after height starts expanding so it's perfectly synchronized and smooth!
-      return () => clearTimeout(t);
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
     }
+    return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        if (isWeChatOpen) setIsWeChatOpen(false);
-        else if (isOpen) setIsOpen(false);
-      }
+  const close = useCallback(() => setIsOpen(false), []);
+
+  /* ── Multilingual slide-specific titles ── */
+  const titles = (() => {
+    if (lang === "nl") return {
+      bio: "Bio",
+      freeTime: "Vrije Tijd",
+      writing: "Schrijven",
+      languages: "Talen",
+      works: "Projecten",
+      design: "Ontwerp",
+      frontend: "Frontend",
+      backend: "Backend",
+      tooling: "Tooling",
     };
-    document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
-  }, [isOpen, isWeChatOpen]);
+    if (lang === "ar") return {
+      bio: "السيرة الذاتية",
+      freeTime: "وقت الفراغ",
+      writing: "الكتابة",
+      languages: "اللغات",
+      works: "المشاريع",
+      design: "التصميم",
+      frontend: "واجهة أمامية",
+      backend: "واجهة خلفية",
+      tooling: "الأدوات",
+    };
+    if (lang === "zh") return {
+      bio: "简介",
+      freeTime: "消遣",
+      writing: "写作",
+      languages: "语言",
+      works: "作品",
+      design: "设计",
+      frontend: "前端",
+      backend: "后端",
+      tooling: "工具",
+    };
+    return {
+      bio: "Bio",
+      freeTime: "Free Time",
+      writing: "Writing",
+      languages: "Languages",
+      works: "Works",
+      design: "Design",
+      frontend: "Frontend",
+      backend: "Backend",
+      tooling: "Tooling",
+    };
+  })();
 
-  const BIO_SLIDES: Array<{
-    label: string;
-    text?: string;
-    pills?: string[];
-    languages?: { name: string; level: string; pct: number }[];
-  }> = [
-    {
-      label: "Introduction",
-      text: "Hey, I'm Ivan. I am a designer and developer who builds clean, functional websites. I care deeply about both the technical execution of the code and the visual refinement of the user interface.",
-    },
-    {
-      label: "In My Free Time",
-      text: "I love getting lost in a good book, brewing the perfect teapot tea, taking slow intentional walks through the city forest, and spending peaceful evenings crocheting intricate small pieces, hand-weaving creativity and warmth stitch by stitch.",
-    },
-    {
-      label: "Writing",
-      pills: ["Design Notes", "Minimal Living", "Daily Reflections", "Slow Essays", "Observations"],
-    },
-    {
-      label: "Languages",
-      languages: [
-        { name: "Indonesian", level: "Native",         pct: 100 },
-        { name: "English",    level: "Fluent",          pct: 92  },
-        { name: "Dutch",      level: "Fluent",          pct: 85  },
-        { name: "Arabic",     level: "Conversational",  pct: 55  },
-        { name: "Hebrew",     level: "Basic",           pct: 38  },
-        { name: "Chinese",    level: "Basic",           pct: 22  },
-      ],
-    },
+  const content = (() => {
+    if (lang === "nl") return {
+      subtitle: "UI/UX Designer & Full-Stack Engineer",
+      intro: "Hé, ik ben Ivan. Ik ben een ontwerper en ontwikkelaar die schone, functionele websites bouwt. Ik geef diep om zowel de technische uitvoering van de code als de visuele verfijning van de gebruikersinterface.",
+      freeTime: "Ik hou ervan om mezelf te verliezen in een goed boek, de perfecte theepot thee te zetten, langzame bewuste wandelingen te maken door het stadsbos, en vredige avonden door te brengen met het haken van ingewikkelde kleine stukjes, waarbij ik creativiteit en warmte steek voor steek handweef.",
+    };
+    if (lang === "ar") return {
+      subtitle: "مصمم UI/UX ومهندس برمجيات متكامل",
+      intro: "مرحباً، أنا إيفان. أنا مصمم ومطور أقوم ببناء مواقع ويب نظيفة وعملية. أهتم بشدة بكل من التنفيذ التقني للكود والتحسين البصري لواجهة المستخدم.",
+      freeTime: "أحب الضياع في كتاب جيد، وتحضير الشاي المثالي، والمشي البطيء والمتعمد في غابة المدينة، وقضاء أمسيات هادئة في حياكة قطع صغيرة معقدة بالكروشيه، لنسج الإبداع والدفء غرزة بغرزة.",
+    };
+    if (lang === "zh") return {
+      subtitle: "UI/UX 设计师与全栈工程师",
+      intro: "你好，我是Ivan。我是一位致力于构建简洁、实用网站的设计师兼开发者。我深切关注代码的技术执行以及用户界面的视觉精致度。",
+      freeTime: "我喜欢沉浸在好书中、冲泡一壶完美的茶、在城市森林中慢步慢走，以及度过宁静的夜晚，用钩针编织精致的小物件，一步一步编织创意与温暖。",
+    };
+    return {
+      subtitle: "UI/UX Designer & Full-Stack Engineer",
+      intro: "Hey, I'm Ivan. I am a designer and developer who builds clean, functional websites. I care deeply about both the technical execution of the code and the visual refinement of the user interface.",
+      freeTime: "I love getting lost in a good book, brewing the perfect teapot tea, taking slow intentional walks through the city forest, and spending peaceful evenings crocheting intricate small pieces, hand-weaving creativity and warmth stitch by stitch.",
+    };
+  })();
+
+  const worksList = [
+    { label: "SHÜ / EN Studio ↗", link: "https://shuenstudio.com" },
+    { label: "KVR Objects ↗", link: "https://kvr-objects.com" },
+    { label: "Full-Stack Consulting" },
+    { label: "Digital Product Design" },
+    { label: "Analog Photography Archive" },
   ];
 
-  const SKILL_GROUPS = [
-    {
-      label: "Works",
-      isWorks: true,
-      items: [
-        { name: "SHŪ / EN Studio", url: "https://shuenstudio.com" },
-        { name: "KVR Objects", url: "https://kvr-objects.com" },
-        { name: "Full-Stack Consulting", url: null },
-        { name: "Digital Product Design", url: null },
-      ],
-    },
-    {
-      label: "Design",
-      tags: ["UI/UX Design", "Figma", "Typography", "Design Systems", "Motion & Animation", "Brand Identity", "Prototyping", "Design Engineering", "Print & Packaging", "Spatial Design"],
-    },
-    {
-      label: "Frontend",
-      tags: ["React & Next.js", "TypeScript", "HTML5 & Semantic CSS", "Tailwind CSS", "Framer Motion", "WebGL / Three.js", "CSS Modules", "Responsive Web", "State Management", "Performance Optimization"],
-    },
-    {
-      label: "Backend",
-      tags: ["Node.js & Express", "Go / Python", "Firebase Firestore & RTDB", "RESTful APIs", "GraphQL", "PostgreSQL / Prisma", "Sanity / Headless CMS", "Serverless Functions", "Caching & Redis", "System Design"],
-    },
-    {
-      label: "Tooling",
-      tags: ["Git & GitHub", "Docker & Kubernetes", "Vite & Turbopack", "ESLint & Prettier", "CI/CD Actions", "Vercel / AWS", "Webpack & Babel", "Testing (Jest/Playwright)", "Shell Scripting", "Core Web Vitals"],
-    },
+  /* ─── INTRODUCTION slides ─── */
+  const personalSlides = [
+    // Slide 1: Bio
+    <div key="bio">
+      <p style={{ fontSize: "0.78rem", lineHeight: "1.52", color: "var(--text-secondary)", margin: 0 }}>
+        {content.intro}
+      </p>
+    </div>,
+
+    // Slide 2: Free Time
+    <div key="free">
+      <p style={{ fontSize: "0.78rem", lineHeight: "1.52", color: "var(--text-secondary)", margin: 0 }}>
+        {content.freeTime}
+      </p>
+    </div>,
+
+    // Slide 3: Writing
+    <div key="writing">
+      <TagGrid tags={["Design Notes", "Minimal Living", "Daily Reflections", "Slow Essays", "Observations"]} />
+    </div>,
+
+    // Slide 4: Languages
+    <div key="lang">
+      <TagGrid tags={["Indonesian 100%", "English 92%", "Dutch 85%", "Arabic 55%", "Hebrew 38%", "Chinese 22%"]} />
+    </div>,
   ];
 
-  const prevBio = () => setBioSlide((s) => (s - 1 + BIO_SLIDES.length) % BIO_SLIDES.length);
-  const nextBio = () => setBioSlide((s) => (s + 1) % BIO_SLIDES.length);
-  const prevTab = () => setActiveTab((t) => (t - 1 + SKILL_GROUPS.length) % SKILL_GROUPS.length);
-  const nextTab = () => setActiveTab((t) => (t + 1) % SKILL_GROUPS.length);
+  /* ─── WORKS slides ─── */
+  const professionalSlides = [
+    // Slide 1: Works
+    <div key="works">
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
+        {worksList.map((w) => (
+          <WorkTag key={w.label} label={w.label} link={w.link} />
+        ))}
+      </div>
+    </div>,
 
-  const CSS = `
-    .fa-panel {
-      width: 100%;
-      background: var(--bg-color);
-      border-top: none;
-      padding: 0.4rem 4vw 0.8rem;
-      --fa-card-bg: rgba(128,128,128,0.04);
-      --fa-card-border: rgba(128,128,128,0.1);
-      --fa-card-shadow:
-        -5px -5px 14px rgba(255,255,255,0.7),
-        5px 5px 14px rgba(160,175,190,0.18),
-        0 10px 24px -10px rgba(0,0,0,0.03);
-      --fa-card-shadow-hover:
-        -7px -7px 18px rgba(255,255,255,0.85),
-        7px 7px 18px rgba(160,175,190,0.28),
-        0 18px 36px -12px rgba(0,0,0,0.07);
-    }
-    @media (prefers-color-scheme: dark) {
-      .fa-panel {
-        --fa-card-bg: rgba(255,255,255,0.03);
-        --fa-card-border: rgba(255,255,255,0.07);
-        --fa-card-shadow:
-          -4px -4px 12px rgba(255,255,255,0.025),
-          4px 4px 12px rgba(0,0,0,0.45),
-          0 12px 32px -8px rgba(0,0,0,0.55);
-        --fa-card-shadow-hover:
-          -6px -6px 16px rgba(255,255,255,0.04),
-          6px 6px 16px rgba(0,0,0,0.6),
-          0 20px 42px -12px rgba(0,0,0,0.75);
-      }
-    }
-    .fa-wrap {
-      max-width: 640px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      font-family: var(--font-sans);
-    }
-    .fa-card, .fa-carousel-card {
-      background: var(--fa-card-bg);
-      border: 1px solid var(--fa-card-border);
-      border-radius: 18px;
-      box-shadow: var(--fa-card-shadow);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      overflow: hidden;
-      transition: box-shadow 0.3s ease, transform 0.3s ease;
-    }
-    .fa-card:hover { transform: translateY(-1px); box-shadow: var(--fa-card-shadow-hover); }
+    // Slide 2: Design
+    <div key="design">
+      <TagGrid tags={["UI/UX Design", "Figma", "Typography", "Design Systems", "Motion & Animation", "Brand Identity", "Prototyping", "Design Engineering", "Print & Packaging", "Spatial Design"]} />
+    </div>,
 
-    /* Profile */
-    .fa-profile-card { display: flex; align-items: center; gap: 0.5rem; padding: 6px 10px; }
-    .fa-avatar {
-      width: 36px; height: 36px; border-radius: 50%; overflow: hidden;
-      border: 1px solid var(--border-color); flex-shrink: 0;
-      transition: transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
-    }
-    .fa-avatar:hover { transform: scale(1.06) rotate(2deg); }
-    .fa-avatar img {
-      width: 100%; height: 100%; object-fit: cover;
-      pointer-events: none; user-select: none;
-      filter: grayscale(100%); transition: filter 0.3s ease;
-    }
-    .fa-avatar:hover img { filter: grayscale(0%); }
-    .fa-profile-info { flex: 1; min-width: 0; }
-    .fa-name { font-size: 0.92rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text-primary); margin: 0 0 1px; }
-    .fa-role { font-size: 0.7rem; font-weight: 500; color: var(--text-secondary); }
-    .fa-actions { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
+    // Slide 3: Frontend
+    <div key="frontend">
+      <TagGrid tags={["React & Next.js", "TypeScript", "HTML5 & Semantic CSS", "Tailwind CSS", "Framer Motion", "WebGL / Three.js", "CSS Modules", "Responsive Web", "State Management", "Performance Optimization"]} />
+    </div>,
 
-    /* WeChat pill */
-    .fa-btn-wechat {
-      padding: 0 11px; height: 28px; border-radius: 30px;
-      background: var(--text-primary); color: var(--bg-color);
-      border: 1px solid var(--text-primary);
-      font-size: 0.68rem; font-weight: 600; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 4px;
-      transition: all 0.22s ease; white-space: nowrap;
-    }
-    .fa-btn-wechat:hover, .fa-btn-wechat.active {
-      background: #07c160; border-color: #07c160; color: #fff; transform: translateY(-1px);
-    }
-    /* Circular icon buttons */
-    .fa-btn-icon {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: transparent; color: var(--text-primary);
-      border: 1px solid var(--border-color);
-      display: inline-flex; align-items: center; justify-content: center;
-      text-decoration: none; transition: all 0.2s ease; flex-shrink: 0; cursor: pointer;
-    }
-    .fa-btn-icon:hover { border-color: var(--text-primary); transform: translateY(-1px); }
+    // Slide 4: Backend
+    <div key="backend">
+      <TagGrid tags={["Node.js & Express", "Go / Python", "Firebase Firestore & RTDB", "RESTful APIs", "GraphQL", "PostgreSQL / Prisma", "Sanity / Headless CMS", "Serverless Functions", "Caching & Redis", "System Design"]} />
+    </div>,
 
-    /* Carousel card shared header */
-    .fa-car-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 6px 10px 0;
-    }
-    .fa-car-label {
-      font-size: 0.58rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.08em; color: var(--text-secondary);
-    }
-    .fa-car-nav { display: flex; align-items: center; gap: 5px; }
-    .fa-nav-dots { display: flex; gap: 3.5px; align-items: center; }
-    .fa-nav-dot {
-      width: 3.5px; height: 3.5px; border-radius: 50%;
-      background: var(--border-color); cursor: pointer; transition: all 0.24s ease;
-    }
-    .fa-nav-dot.on { background: var(--text-primary); transform: scale(1.3); }
-    .fa-arr {
-      width: 22px; height: 22px; border-radius: 50%;
-      border: 1px solid var(--border-color); background: transparent;
-      color: var(--text-primary);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.18s ease; flex-shrink: 0;
-    }
-    .fa-arr:hover { border-color: var(--text-primary); }
-
-    /* Bio carousel body */
-    .fa-bio-body { padding: 2px 10px 6px; min-height: 38px; }
-    .fa-bio-text { font-size: 0.8rem; line-height: 1.4; color: var(--text-primary); margin: 0; font-weight: 400; }
-
-    /* Skill / bio pills */
-    .fa-pills { display: flex; flex-wrap: wrap; gap: 4px; }
-    .fa-pill {
-      font-size: 0.65rem; font-weight: 500;
-      padding: 2.5px 7px; border-radius: 30px;
-      border: 1px solid var(--fa-card-border);
-      color: var(--text-secondary);
-      background: rgba(128,128,128,0.045);
-      letter-spacing: -0.01em; transition: all 0.18s ease;
-    }
-    .fa-pill:hover { color: var(--text-primary); border-color: var(--text-primary); }
-    .fa-bio-pill { font-size: 0.7rem; padding: 3.5px 9px; cursor: default; }
-    .fa-bio-pill:hover { color: var(--text-secondary); border-color: var(--fa-card-border); }
-    .fa-pill-link {
-      text-decoration: none; display: inline-flex; align-items: center; gap: 3px; cursor: pointer;
-    }
-    .fa-pill-link:hover {
-      background: var(--text-primary) !important;
-      color: var(--bg-color) !important;
-      border-color: var(--text-primary) !important;
-    }
-
-    /* Skill carousel body */
-    .fa-skill-body { padding: 4px 10px 6px; min-height: auto; }
-
-    /* Language pills with clean percentage badges */
-    .fa-lang-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      cursor: default;
-    }
-    .fa-lang-name {
-      font-weight: 500;
-      color: var(--text-primary);
-    }
-    .fa-lang-pct {
-      font-size: 0.62rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      background: rgba(128,128,128,0.08);
-      padding: 1.5px 5px;
-      border-radius: 6px;
-      letter-spacing: 0.02em;
-    }
-
-    /* WeChat Modal — minimal frameless redesign */
-    .fa-qr-backdrop {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 1.5rem;
-    }
-    .fa-qr-close-float {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);
-      color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: background 0.2s, transform 0.2s; backdrop-filter: blur(8px);
-      flex-shrink: 0;
-    }
-    .fa-qr-close-float:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
-    .fa-qr-card {
-      width: min(280px, 80vw);
-      height: min(280px, 80vw);
-      border-radius: 28px;
-      overflow: hidden;
-      background: #ffffff;
-      border: 1px solid rgba(0,0,0,0.06);
-      box-shadow: 0 24px 64px rgba(0,0,0,0.25);
-      position: relative;
-      padding: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-    }
-    .fa-qr-image {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .fa-qr-card {
-        background: #ffffff;
-        border-color: rgba(255,255,255,0.15);
-        box-shadow: 0 24px 64px rgba(0,0,0,0.7);
-      }
-    }
-
-    @media (max-width: 600px) {
-      .fa-wrap { gap: 0.875rem; }
-      .fa-profile-card { flex-wrap: wrap; }
-      .fa-actions { width: 100%; }
-      .fa-btn-wechat { flex: 1; justify-content: center; }
-    }
-    #footer-about-toggle {
-      background: none;
-      border: 1px solid var(--border-color);
-      color: var(--text-primary);
-      font-weight: 500;
-      cursor: pointer;
-      padding: 3px 8px;
-      background-color: rgba(128,128,128,0.07);
-      border-radius: 30px;
-      font-family: var(--font-sans);
-      font-size: 0.65rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      transition: background-color 0.2s ease, transform 0.2s ease;
-    }
-    #footer-about-toggle.open {
-      background-color: rgba(128,128,128,0.15);
-    }
-  `;
+    // Slide 5: Tooling
+    <div key="tooling">
+      <TagGrid tags={["Git & GitHub", "Docker & Kubernetes", "Vite & Turbopack", "ESLint & Prettier", "CI/CD Actions", "Vercel / AWS", "Webpack & Babel", "Testing (Jest/Playwright)", "Shell Scripting", "Core Web Vitals"]} />
+    </div>,
+  ];
 
   return (
     <>
-      <style>{CSS}</style>
+      {/* Trigger button — sits in center of footer grid, styled as compact pillbar */}
       <motion.button
         id="footer-about-toggle"
         className={isOpen ? "open" : ""}
-        onClick={() => setIsOpen(!isOpen)}
-        whileHover={{ scale: 1.03, opacity: 0.85 }}
+        onClick={() => setIsOpen((v) => !v)}
+        whileHover={{ scale: 1.04, background: "var(--border-color)" }}
         whileTap={{ scale: 0.96 }}
         transition={{ type: "spring", stiffness: 400, damping: 28 }}
+        style={{
+          background: "var(--bg-secondary, rgba(150,150,150,0.06))",
+          border: "1px solid var(--border-color)",
+          color: "var(--text-primary)",
+          fontWeight: 600, cursor: "pointer",
+          padding: "4px 11px",
+          borderRadius: 16,
+          fontFamily: "var(--font-sans)",
+          fontSize: "0.7rem",
+          display: "inline-flex", alignItems: "center", gap: 4,
+          boxShadow: "var(--shadow-inset)",
+          transition: "background-color 0.25s ease, border-color 0.25s ease",
+        }}
       >
         {t("about")}
         <motion.svg
-          width="13" height="13" viewBox="0 0 24 24"
+          width="10" height="10" viewBox="0 0 24 24"
           fill="none" stroke="currentColor" strokeWidth="2.8"
           strokeLinecap="round" strokeLinejoin="round"
           animate={{ rotate: isOpen ? 180 : 0 }}
@@ -370,205 +455,216 @@ export default function FooterAbout() {
         </motion.svg>
       </motion.button>
 
-      {mounted && typeof window !== "undefined" && document.body && createPortal(
+      {/* Portal — fixed bottom sheet */}
+      {mounted && createPortal(
         <AnimatePresence>
           {isOpen && (
-            <motion.div
-              ref={panelRef}
-              key="fa-panel"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-              style={{ overflow: "hidden", width: "100%" }}
-            >
-              <div className="fa-panel">
-                <div className="fa-wrap">
+            <>
+              {/* Backdrop */}
+              <motion.div
+                key="fa-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.22 }}
+                onClick={close}
+                style={{
+                  position: "fixed", inset: 0, zIndex: 8000,
+                  background: "rgba(0,0,0,0.35)",
+                  backdropFilter: "blur(3px)",
+                  WebkitBackdropFilter: "blur(3px)",
+                }}
+              />
 
-                  {/* Profile */}
-                  <div className="fa-card fa-profile-card">
-                    <div className="fa-avatar">
+              {/* Bottom sheet panel container */}
+              <div style={{
+                position: "fixed",
+                inset: 0,
+                zIndex: 8001,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "flex-end",
+                pointerEvents: "none",
+                padding: "12px",
+              }}>
+                <motion.div
+                  key="fa-panel"
+                  initial={{ y: "105%" }}
+                  animate={{ y: 0 }}
+                  exit={{ y: "105%" }}
+                  transition={{ type: "spring", stiffness: 340, damping: 38, mass: 0.85 }}
+                  style={{
+                    width: "100%",
+                    maxWidth: 420,
+                    maxHeight: "82vh",
+                    background: "var(--bg-color)",
+                    borderRadius: 22,
+                    border: "1px solid var(--border-color)",
+                    boxShadow: "0 -8px 48px rgba(0,0,0,0.18)",
+                    padding: "1.1rem 1.1rem calc(1.3rem + env(safe-area-inset-bottom, 0px))",
+                    overflowY: "auto",
+                    WebkitOverflowScrolling: "touch",
+                    pointerEvents: "auto",
+                    fontFamily: "var(--font-sans)",
+                  }}
+                >
+                  {/* Profile & Close Button row */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.85rem" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
                       <img
-                        src="/profile.jpg?v=2"
+                        src="/profile.jpg"
                         alt="Ivan Affriandi"
-                        draggable={false}
-                        onError={(e) => { e.currentTarget.src = "https://ui-avatars.com/api/?name=Ivan+A&background=random"; }}
+                        onError={(e) => { e.currentTarget.src = "/nature_hero.png"; }}
+                        style={{
+                          width: 50, height: 50, borderRadius: "50%",
+                          objectFit: "cover", flexShrink: 0,
+                          border: "2px solid var(--border-color)",
+                        }}
                       />
-                    </div>
-                    <div className="fa-profile-info">
-                      <h4 className="fa-name">Ivan Affriandi</h4>
-                      <p className="fa-role">Full-Stack Developer &amp; Designer</p>
-                    </div>
-                    <div className="fa-actions">
-                      <button onClick={() => setIsWeChatOpen(true)} className={`fa-btn-wechat${isWeChatOpen ? " active" : ""}`}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M8.22 2c-4.14 0-7.5 3.03-7.5 6.78 0 2.2 1.15 4.14 2.92 5.37l-.76 2.28 2.59-1.29c.86.25 1.78.39 2.75.39.29 0 .58-.02.87-.04-.26-.87-.41-1.78-.41-2.73 0-4.04 3.51-7.32 7.84-7.32.74 0 1.45.1 2.14.28C17.29 3.86 13.16 2 8.22 2zm-2.81 4.5c.62 0 1.13.5 1.13 1.13S6.03 8.75 5.41 8.75s-1.12-.5-1.12-1.12.5-1.13 1.12-1.13zm5.63 0c.62 0 1.12.5 1.12 1.13s-.5 1.12-1.12 1.12-1.13-.5-1.13-1.12.5-1.13 1.13-1.13zM16.12 9.5c-3.6 0-6.52 2.64-6.52 5.9 0 3.26 2.92 5.9 6.52 5.9.84 0 1.64-.12 2.39-.34l2.25 1.13-.66-1.98C22.17 19.04 23 17.36 23 15.4c0-3.26-2.92-5.9-6.88-5.9zm-2.06 3.94c.48 0 .88.4.88.88s-.4.88-.88.88-.88-.4-.88-.88.4-.88.88-.88zm4.13 0c.48 0 .87.4.87.88s-.39.88-.87.88c-.49 0-.88-.4-.88-.88s.4-.88.88-.88z"/>
-                        </svg>
-                        WeChat
-                      </button>
-                      <a href="mailto:hello@ivanaffriandi.com" className="fa-btn-icon" title="Email">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-                        </svg>
-                      </a>
-                      <a href="https://instagram.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" className="fa-btn-icon" title="Instagram">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
-                        </svg>
-                      </a>
-                      <a href="https://x.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" className="fa-btn-icon" title="X">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M4 4l11.733 16h4.267l-11.733-16z"/><path d="M4 20l6.768-6.768m2.46-2.46l6.772-6.772"/>
-                        </svg>
-                      </a>
-                      <a href="https://weibo.com/u/7915776414" target="_blank" rel="noopener noreferrer" className="fa-btn-icon" title="Weibo">
-                        <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor">
-                          <path d="M10.878 1.093a4.23 4.23 0 0 1 4.031 1.305 4.22 4.22 0 0 1 .886 4.14v.001a.612.612 0 0 1-1.166-.377 3.01 3.01 0 0 0-3.495-3.873.611.611 0 1 1-.256-1.196M3.753 9.465c.548-1.11 1.972-1.74 3.233-1.411 1.304.338 1.971 1.568 1.437 2.764-.541 1.221-2.095 1.875-3.416 1.449-1.271-.411-1.812-1.67-1.254-2.802m2.658.567c.16.066.365-.009.458-.168.088-.16.03-.34-.129-.397-.156-.062-.353.013-.446.168-.09.154-.041.333.117.397m-1.607 1.314c.413.188.963.009 1.219-.4.252-.413.12-.883-.296-1.062-.41-.172-.94.005-1.194.402-.256.4-.135.874.271 1.06"/>
-                          <path d="m12.014 7.238.005.001c.919.285 1.941.974 1.939 2.188 0 2.007-2.895 4.535-7.246 4.535C3.393 13.962 0 12.352 0 9.708c0-1.385.876-2.985 2.384-4.493C4.4 3.199 6.751 2.28 7.634 3.165c.39.392.427 1.065.177 1.87-.132.405.38.182.38.182 1.63-.682 3.051-.722 3.57.02.278.397.252.951-.004 1.594-.116.293.035.34.257.407m-10.4 3.101c.172 1.738 2.46 2.936 5.109 2.674 2.647-.26 4.656-1.883 4.482-3.623-.17-1.738-2.458-2.937-5.107-2.674-2.647.263-4.656 1.883-4.484 3.623m11.681-6.484a2.06 2.06 0 0 0-1.962-.634.526.526 0 1 0 .219 1.031 1.008 1.008 0 0 1 1.17 1.296.528.528 0 0 0 1.005.325 2.06 2.06 0 0 0-.432-2.018"/>
-                        </svg>
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Bio Carousel */}
-                  <div className="fa-carousel-card">
-                    <div className="fa-car-header">
-                      <span className="fa-car-label">{BIO_SLIDES[bioSlide].label}</span>
-                      <div className="fa-car-nav">
-                        <div className="fa-nav-dots">
-                          {BIO_SLIDES.map((_, i) => (
-                            <div key={i} className={`fa-nav-dot${bioSlide === i ? " on" : ""}`} onClick={() => setBioSlide(i)} />
-                          ))}
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--text-primary)", letterSpacing: "-0.01em" }}>
+                          Ivan Affriandi
                         </div>
-                        <button className="fa-arr" onClick={prevBio}><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-                        <button className="fa-arr" onClick={nextBio}><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+                        <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginTop: 1 }}>
+                          {content.subtitle}
+                        </div>
                       </div>
                     </div>
-                    <div className="fa-bio-body">
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          key={bioSlide}
-                          initial={{ opacity: 0, x: 10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -10 }}
-                          transition={{ duration: 0.16 }}
-                        >
-                          {BIO_SLIDES[bioSlide].languages ? (
-                            <div className="fa-pills">
-                              {BIO_SLIDES[bioSlide].languages!.map((lang) => (
-                                <div key={lang.name} className="fa-pill fa-lang-pill">
-                                  <span className="fa-lang-name">{lang.name}</span>
-                                  <span className="fa-lang-pct">{lang.pct}%</span>
-                                </div>
-                              ))}
-                            </div>
-                          ) : BIO_SLIDES[bioSlide].pills ? (
-                            <div className="fa-pills">
-                              {BIO_SLIDES[bioSlide].pills!.map((p) => (
-                                <span key={p} className="fa-pill fa-bio-pill">{p}</span>
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="fa-bio-text">{BIO_SLIDES[bioSlide].text}</p>
-                          )}
-                        </motion.div>
-                      </AnimatePresence>
-                    </div>
-                  </div>
 
-                  {/* Skills Carousel */}
-                  <div className="fa-carousel-card">
-                    <div className="fa-car-header">
-                      <span className="fa-car-label">{SKILL_GROUPS[activeTab].label}</span>
-                      <div className="fa-car-nav">
-                        <div className="fa-nav-dots">
-                          {SKILL_GROUPS.map((_, i) => (
-                            <div key={i} className={`fa-nav-dot${activeTab === i ? " on" : ""}`} onClick={() => setActiveTab(i)} />
-                          ))}
-                        </div>
-                        <button className="fa-arr" onClick={prevTab}><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-                        <button className="fa-arr" onClick={nextTab}><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-                      </div>
-                    </div>
-                    <div className="fa-skill-body">
-                      <AnimatePresence mode="wait">
-                        <motion.div
-                          key={activeTab}
-                          initial={{ opacity: 0, x: 10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -10 }}
-                          transition={{ duration: 0.16 }}
-                        >
-                          <div className="fa-pills">
-                            {SKILL_GROUPS[activeTab].isWorks && SKILL_GROUPS[activeTab].items ? (
-                              SKILL_GROUPS[activeTab].items!.map((item) =>
-                                item.url ? (
-                                  <a key={item.name} href={item.url} target="_blank" rel="noopener noreferrer" className="fa-pill fa-pill-link">
-                                    {item.name}
-                                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 7h10v10M7 17L17 7"/></svg>
-                                  </a>
-                                ) : (
-                                  <span key={item.name} className="fa-pill">{item.name}</span>
-                                )
-                              )
-                            ) : (
-                              SKILL_GROUPS[activeTab].tags?.map((t) => (
-                                <span key={t} className="fa-pill">{t}</span>
-                              ))
-                            )}
-                          </div>
-                        </motion.div>
-                      </AnimatePresence>
-                    </div>
-                  </div>
-
-                </div>
-
-                {/* WeChat QR Modal */}
-                <AnimatePresence>
-                  {isWeChatOpen && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="fa-qr-backdrop"
-                      onClick={() => setIsWeChatOpen(false)}
+                    {/* Close 'X' Button */}
+                    <button
+                      onClick={close}
+                      title="Close About Panel"
+                      style={{
+                        background: "var(--bg-secondary, rgba(150,150,150,0.08))",
+                        border: "1px solid var(--border-color)",
+                        cursor: "pointer",
+                        color: "var(--text-primary)",
+                        width: 30, height: 30,
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+                        transition: "all 0.2s ease",
+                        flexShrink: 0,
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "var(--border-color)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "var(--bg-secondary, rgba(150,150,150,0.08))";
+                      }}
                     >
-                      {/* Floating close button — outside the card */}
-                      <motion.button
-                        className="fa-qr-close-float"
-                        onClick={() => setIsWeChatOpen(false)}
-                        initial={{ opacity: 0, y: -8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
-                        transition={{ duration: 0.18 }}
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                        </svg>
-                      </motion.button>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    </button>
+                  </div>
 
-                      {/* QR card — only the code, no header/footer */}
-                      <motion.div
-                        className="fa-qr-card"
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.9, opacity: 0 }}
-                        transition={{ type: "spring", stiffness: 360, damping: 30 }}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <img
-                          src="/wechat_qr.png"
-                          alt="WeChat QR"
-                          className="fa-qr-image"
-                          draggable={false}
-                        />
-                      </motion.div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                  {/* Social buttons row */}
+                  <div style={{ display: "flex", gap: "0.4rem", marginBottom: "0.85rem", flexWrap: "wrap" }}>
+                    {/* Email primary pill */}
+                    <a
+                      href="mailto:hello@ivanaffriandi.com"
+                      title="Email"
+                      onMouseEnter={() => setEmailHover(true)}
+                      onMouseLeave={() => setEmailHover(false)}
+                      style={{
+                        display: "inline-flex", alignItems: "center", gap: 6,
+                        padding: "6px 12px", borderRadius: 20,
+                        background: emailHover ? "#D93025" : "var(--text-primary)",
+                        color: emailHover ? "#fff" : "var(--bg-color)",
+                        fontSize: "0.72rem", fontWeight: 700, border: "none",
+                        cursor: "pointer", flexShrink: 0,
+                        transition: "all 0.25s ease",
+                        textDecoration: "none",
+                      }}
+                    >
+                      <EmailIcon />
+                      Email
+                    </a>
+
+                    {/* Instagram Link */}
+                    <a
+                      href="https://instagram.com/ivanaffriandi"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Instagram"
+                      onMouseEnter={() => setInstagramHover(true)}
+                      onMouseLeave={() => setInstagramHover(false)}
+                      style={{
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        width: 32, height: 32, borderRadius: "50%",
+                        background: instagramHover ? "#E1306C" : "var(--bg-secondary, rgba(150,150,150,0.07))",
+                        border: "1px solid var(--border-color)",
+                        color: instagramHover ? "#fff" : "var(--text-secondary)",
+                        textDecoration: "none",
+                        flexShrink: 0,
+                        transition: "all 0.25s ease",
+                      }}
+                    >
+                      <InstagramIcon />
+                    </a>
+
+                    {/* X / Twitter Link */}
+                    <a
+                      href="https://x.com/ivanaffriandi"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="X / Twitter"
+                      onMouseEnter={() => setXHover(true)}
+                      onMouseLeave={() => setXHover(false)}
+                      style={{
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        width: 32, height: 32, borderRadius: "50%",
+                        background: xHover ? "#1DA1F2" : "var(--bg-secondary, rgba(150,150,150,0.07))",
+                        border: "1px solid var(--border-color)",
+                        color: xHover ? "#fff" : "var(--text-secondary)",
+                        textDecoration: "none",
+                        flexShrink: 0,
+                        transition: "all 0.25s ease",
+                      }}
+                    >
+                      <XIcon />
+                    </a>
+
+                    {/* Weibo Link */}
+                    <a
+                      href="https://weibo.com/u/7915776414"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Weibo"
+                      onMouseEnter={() => setWeiboHover(true)}
+                      onMouseLeave={() => setWeiboHover(false)}
+                      style={{
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        width: 32, height: 32, borderRadius: "50%",
+                        background: weiboHover ? "#E6162D" : "var(--bg-secondary, rgba(150,150,150,0.07))",
+                        border: "1px solid var(--border-color)",
+                        color: weiboHover ? "#fff" : "var(--text-secondary)",
+                        textDecoration: "none",
+                        flexShrink: 0,
+                        transition: "all 0.25s ease",
+                      }}
+                    >
+                      <WeiboIcon />
+                    </a>
+                  </div>
+
+                  {/* Two Main Cards: Introduction and Works (Dynamic headers match slide index!) */}
+                  <InfoCard
+                    labels={[titles.bio, titles.freeTime, titles.writing, titles.languages]}
+                    slides={personalSlides}
+                  />
+                  <InfoCard
+                    labels={[titles.works, titles.design, titles.frontend, titles.backend, titles.tooling]}
+                    slides={professionalSlides}
+                  />
+                </motion.div>
               </div>
-            </motion.div>
+            </>
           )}
         </AnimatePresence>,
         document.body

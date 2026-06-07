@@ -43,8 +43,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   // Dynamically update document dir and lang on change
   useEffect(() => {
     if (typeof window !== "undefined") {
-      document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+      document.documentElement.dir = "ltr"; // Always keep LTR layout structure
       document.documentElement.lang = lang;
+      document.documentElement.setAttribute("data-lang", lang);
     }
   }, [lang]);
 

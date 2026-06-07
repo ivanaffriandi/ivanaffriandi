@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { addQuestion, getAnsweredQuestions, QuestionItem } from "@/lib/questions";
 import confetti from "canvas-confetti";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { triggerLightClick, triggerActionClick } from "@/lib/haptic";
 
 const iosSpring = { type: "spring" as const, stiffness: 400, damping: 30 };
 const staggerContainer = {
@@ -326,21 +327,28 @@ export default function AskPage() {
   const [isMaximized, setIsMaximized] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const GREETING = "Hey. What's up?";
+  // Info popup & terms accordion state
+  const [showInfoPopup, setShowInfoPopup] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
 
-  // Live Chat clone states
-  const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "model"; content: string }>>([{ role: "model", content: GREETING }]);
+  // Live Chat clone states — starts EMPTY (welcome card shown instead)
+  const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "model"; content: string }>>([]);
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
   const [chatScrolled, setChatScrolled] = useState(false);
 
-  // Reset chat to initial greeting
+  // Derived: true when no conversation has started yet
+  const isWelcomeState = chatMessages.length === 0;
+
+  // Reset chat — returns to welcome screen
   const handleResetChat = () => {
-    setChatMessages([{ role: "model", content: GREETING }]);
+    triggerLightClick();
+    setChatMessages([]);
     setChatInput("");
     setChatScrolled(false);
+    setShowInfoPopup(false);
   };
 
   // Auto-scroll chat board — scrolls the container div to bottom
@@ -372,6 +380,7 @@ export default function AskPage() {
     const queryText = (textOverride || chatInput).trim();
     if (!queryText || chatLoading) return;
 
+    triggerLightClick();
     if (!textOverride) setChatInput("");
 
     const updatedMessages = [...chatMessages, { role: "user" as const, content: queryText }];
@@ -440,7 +449,7 @@ export default function AskPage() {
   // Load live answered Q&As & track mounting
   useEffect(() => {
     setMounted(true);
-    document.title = "Ask Ivan";
+    document.title = t("ask_ivan");
     const loadQAs = async () => {
       try {
         const data = await getAnsweredQuestions();
@@ -459,6 +468,7 @@ export default function AskPage() {
     if (e) e.preventDefault();
     if (!content.trim() || isSubmitting) return;
 
+    triggerActionClick();
     setIsSubmitting(true);
     setErrorMsg("");
 
@@ -648,17 +658,50 @@ export default function AskPage() {
       {/* ===== UNIFIED BRANDING & TAB SWITCHER ===== */}
       <div style={{ flexShrink: 0, paddingTop: "0.2rem" }}>
         <div style={{ marginBottom: "0.6rem" }}>
-          <h1 style={{ 
-            fontFamily: "var(--font-sans)",
-            fontSize: "clamp(1.4rem, 4vw, 2rem)", 
-            fontWeight: "800", 
-            margin: "0 0 0.2rem 0", 
-            letterSpacing: "-0.03em", 
-            lineHeight: "1.1", 
-            color: "var(--text-primary)" 
-          }}>
-            {t("ask_ivan")}
-          </h1>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "8px" }}>
+            <h1 style={{ 
+              fontFamily: "var(--font-sans)",
+              fontSize: "clamp(1.4rem, 4vw, 2rem)", 
+              fontWeight: "800", 
+              margin: "0 0 0.2rem 0", 
+              letterSpacing: "-0.03em", 
+              lineHeight: "1.1", 
+              color: "var(--text-primary)" 
+            }}>
+              {t("ask_ivan")}
+            </h1>
+            {/* ⓘ Info button — appears only after conversation starts */}
+            <AnimatePresence>
+              {!isWelcomeState && activeTab === "ai" && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 26 }}
+                  onClick={() => setShowInfoPopup(true)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "var(--text-secondary)",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                    marginTop: "4px",
+                    padding: "4px",
+                    borderRadius: "50%",
+                  }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.75 }}>
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="16" x2="12" y2="12" />
+                    <line x1="12" y1="8" x2="12.01" y2="8" />
+                  </svg>
+                </motion.button>
+              )}
+            </AnimatePresence>
+          </div>
           <p style={{ 
             fontSize: "0.82rem", 
             color: "var(--text-secondary)", 
@@ -686,7 +729,10 @@ export default function AskPage() {
         }}>
           {/* AI — left button */}
           <button
-            onClick={() => setActiveTab("ai")}
+            onClick={() => {
+              triggerLightClick();
+              setActiveTab("ai");
+            }}
             style={{
               width: "56px",
               padding: "5px 0",
@@ -711,7 +757,10 @@ export default function AskPage() {
           </button>
           {/* Q&A — right button */}
           <button
-            onClick={() => setActiveTab("qa")}
+            onClick={() => {
+              triggerLightClick();
+              setActiveTab("qa");
+            }}
             style={{
               width: "56px",
               padding: "5px 0",
@@ -811,110 +860,234 @@ export default function AskPage() {
                 contain: "layout style paint"
               }}
             >
-              <motion.div
-                variants={staggerContainer}
-                initial="initial"
-                animate="animate"
-                style={{ display: "flex", flexDirection: "column", gap: "0.65rem", width: "100%" }}
-              >
-                {chatMessages.map((msg, i) => {
-                  const isUser = msg.role === "user";
-                  const { cleanText, sources } = isUser ? { cleanText: msg.content, sources: [] } : parseSources(msg.content);
-                  return (
-                    <motion.div
-                      key={i}
-                      variants={fadeRise}
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: isUser ? "flex-end" : "flex-start",
-                        width: "100%"
-                      }}
-                    >
-                      <div style={{
-                        maxWidth: "82%",
-                        padding: "8px 12px",
-                        borderRadius: isUser ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
-                        backgroundColor: isUser
-                          ? "var(--text-primary)"
-                          : (isDarkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)"),
-                        border: isUser
-                          ? "none"
-                          : (isDarkMode ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.07)"),
-                        color: isUser ? "var(--bg-color)" : "var(--text-primary)",
+              <AnimatePresence mode="wait">
+                {isWelcomeState ? (
+                  /* ===== WELCOME CARD — shown before any conversation ===== */
+                  <motion.div
+                    key="welcome-card"
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ type: "spring", stiffness: 340, damping: 26 }}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      textAlign: "center",
+                      padding: "1.5rem 0.5rem 1rem",
+                      gap: "0.9rem",
+                      minHeight: "220px"
+                    }}
+                  >
+                    {/* Welcome heading */}
+                    <div style={{ marginBottom: "0.1rem" }}>
+                      <h2 style={{
                         fontFamily: "var(--font-sans)",
-                        fontSize: "0.81rem",
-                        lineHeight: "1.45",
-                        boxShadow: isUser
-                          ? "0 3px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.15)"
-                          : "0 2px 8px rgba(0,0,0,0.03)"
+                        fontSize: "1.55rem",
+                        fontWeight: "800",
+                        letterSpacing: "-0.03em",
+                        color: "var(--text-primary)",
+                        margin: 0,
+                        lineHeight: "1.1"
                       }}>
-                        {isUser ? (
-                          <span style={{ whiteSpace: "pre-wrap" }}>{cleanText}</span>
-                        ) : (
-                          // Render AI markdown: **bold**, *italic*, and newlines
-                          <span style={{ display: "block" }}>
-                            {cleanText.split(/\n/).map((line, li) => {
-                              const parts = line.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
-                              return (
-                                <span key={li}>
-                                  {li > 0 && <br />}
-                                  {parts.map((seg, si) => {
-                                    if (seg.startsWith("**") && seg.endsWith("**") && seg.length > 4)
-                                      return <strong key={si}>{seg.slice(2, -2)}</strong>;
-                                    if (seg.startsWith("*") && seg.endsWith("*") && seg.length > 2)
-                                      return <em key={si}>{seg.slice(1, -1)}</em>;
-                                    return <React.Fragment key={si}>{seg}</React.Fragment>;
-                                  })}
-                                </span>
-                              );
-                            })}
-                          </span>
+                        Hey there.
+                      </h2>
+                      <p style={{
+                        fontFamily: "var(--font-sans)",
+                        fontSize: "0.8rem",
+                        color: "var(--text-secondary)",
+                        margin: "0.38rem 0 0",
+                        fontWeight: 500,
+                        lineHeight: "1.45"
+                      }}>
+                        {t("ai_greeting")}
+                      </p>
+                    </div>
+
+                    {/* Collapsible About/Terms */}
+                    <div style={{
+                      width: "100%",
+                      maxWidth: "300px",
+                      borderRadius: "14px",
+                      border: isDarkMode ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.08)",
+                      overflow: "hidden",
+                      backgroundColor: isDarkMode ? "rgba(255,255,255,0.025)" : "rgba(0,0,0,0.022)",
+                      textAlign: "left"
+                    }}>
+                      <button
+                        onClick={() => setTermsOpen(o => !o)}
+                        style={{
+                          width: "100%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "9px 13px",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          fontFamily: "var(--font-sans)",
+                          fontSize: "0.68rem",
+                          fontWeight: "700",
+                          color: "var(--text-secondary)",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.05em"
+                        }}
+                      >
+                        <span>About this space</span>
+                        <motion.span
+                          animate={{ rotate: termsOpen ? 180 : 0 }}
+                          transition={{ duration: 0.2 }}
+                          style={{ display: "flex", alignItems: "center" }}
+                        >
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="6 9 12 15 18 9" />
+                          </svg>
+                        </motion.span>
+                      </button>
+                      <AnimatePresence initial={false}>
+                        {termsOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] }}
+                            style={{ overflow: "hidden" }}
+                          >
+                            <div style={{ padding: "0 13px 12px", display: "flex", flexDirection: "column", gap: "9px" }}>
+                              <div style={{ height: "1px", backgroundColor: "var(--text-primary)", opacity: 0.06, marginBottom: "2px" }} />
+                              {[
+                                { icon: "✦", label: "Ivan AI", desc: "Trained on Ivan's actual writing, book reviews & notes. It responds like him — not like a generic assistant." },
+                                { icon: "◎", label: "Q&A", desc: "Questions are reviewed and personally answered by Ivan before being published publicly." },
+                                { icon: "◈", label: "Privacy", desc: "Session data is collected for safety & moderation. Your identity is never shared publicly." }
+                              ].map(item => (
+                                <div key={item.label} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                                  <span style={{ fontSize: "0.6rem", color: "var(--text-secondary)", opacity: 0.45, paddingTop: "2px", flexShrink: 0 }}>{item.icon}</span>
+                                  <div>
+                                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.69rem", fontWeight: "700", color: "var(--text-primary)", display: "block" }}>{item.label}</span>
+                                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.66rem", color: "var(--text-secondary)", lineHeight: "1.4", display: "block" }}>{item.desc}</span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </motion.div>
                         )}
+                      </AnimatePresence>
+                    </div>
+
+                    {/* Suggested prompts */}
+                    <div style={{ width: "100%", maxWidth: "300px", textAlign: "left" }}>
+                      <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", color: "var(--text-secondary)", opacity: 0.5, textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: "700", margin: "0 0 7px" }}>Try asking</p>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                        {suggestedPrompts.slice(0, 3).map((prompt, idx) => (
+                          <motion.button
+                            key={idx}
+                            whileHover={{ scale: 1.01, backgroundColor: isDarkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)" }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => handleSendChat(undefined, prompt)}
+                            style={{
+                              width: "100%",
+                              textAlign: "left",
+                              padding: "7px 11px",
+                              borderRadius: "10px",
+                              border: isDarkMode ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.07)",
+                              backgroundColor: "transparent",
+                              color: "var(--text-primary)",
+                              fontFamily: "var(--font-sans)",
+                              fontSize: "0.73rem",
+                              fontWeight: "500",
+                              cursor: "pointer",
+                              lineHeight: "1.3",
+                              transition: "background-color 0.15s ease"
+                            }}
+                          >
+                            {prompt}
+                          </motion.button>
+                        ))}
                       </div>
-
-                      {/* Pillbar source links */}
-                      {!isUser && sources.length > 0 && (
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "6px", marginLeft: "4px", maxWidth: "82%" }}>
-                          {sources.map((src, idx) => (
-                            <a
-                              key={idx}
-                              href={src.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: "4px",
-                                padding: "4px 8px",
-                                borderRadius: "99px",
-                                backgroundColor: isDarkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
-                                border: isDarkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)",
-                                fontSize: "0.68rem",
-                                fontWeight: "600",
-                                color: "var(--text-secondary)",
-                                textDecoration: "none",
-                                cursor: "pointer",
-                              }}
-                            >
-                              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                <polyline points="15 3 21 3 21 9"></polyline>
-                                <line x1="10" y1="14" x2="21" y2="3"></line>
-                              </svg>
-                              <span>{src.title}</span>
-                            </a>
-                          ))}
-                        </div>
-                      )}
-                    </motion.div>
-                  );
-                })}
-
-                {/* NO typing bubble here — handled by capsule input below */}
-
-                <div ref={chatEndRef} />
-              </motion.div>
+                    </div>
+                    <div ref={chatEndRef} />
+                  </motion.div>
+                ) : (
+                  /* ===== NORMAL CHAT MESSAGES ===== */
+                  <motion.div
+                    key="chat-messages"
+                    variants={staggerContainer}
+                    initial="initial"
+                    animate="animate"
+                    style={{ display: "flex", flexDirection: "column", gap: "0.65rem", width: "100%" }}
+                  >
+                    {chatMessages.map((msg, i) => {
+                      const isUser = msg.role === "user";
+                      const { cleanText, sources } = isUser ? { cleanText: msg.content, sources: [] } : parseSources(msg.content);
+                      return (
+                        <motion.div
+                          key={i}
+                          variants={fadeRise}
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: isUser ? "flex-end" : "flex-start",
+                            width: "100%"
+                          }}
+                        >
+                          <div style={{
+                            maxWidth: "82%",
+                            padding: "8px 12px",
+                            borderRadius: isUser ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+                            backgroundColor: isUser
+                              ? "var(--text-primary)"
+                              : (isDarkMode ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)"),
+                            border: isUser
+                              ? "none"
+                              : (isDarkMode ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.07)"),
+                            color: isUser ? "var(--bg-color)" : "var(--text-primary)",
+                            fontFamily: "var(--font-sans)",
+                            fontSize: "0.81rem",
+                            lineHeight: "1.45",
+                            boxShadow: isUser
+                              ? "0 3px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.15)"
+                              : "0 2px 8px rgba(0,0,0,0.03)"
+                          }}>
+                            {isUser ? (
+                              <span style={{ whiteSpace: "pre-wrap" }}>{cleanText}</span>
+                            ) : (
+                              <span style={{ display: "block" }}>
+                                {cleanText.split(/\n/).map((line, li) => {
+                                  const parts = line.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
+                                  return (
+                                    <span key={li}>
+                                      {li > 0 && <br />}
+                                      {parts.map((seg, si) => {
+                                        if (seg.startsWith("**") && seg.endsWith("**") && seg.length > 4)
+                                          return <strong key={si}>{seg.slice(2, -2)}</strong>;
+                                        if (seg.startsWith("*") && seg.endsWith("*") && seg.length > 2)
+                                          return <em key={si}>{seg.slice(1, -1)}</em>;
+                                        return <React.Fragment key={si}>{seg}</React.Fragment>;
+                                      })}
+                                    </span>
+                                  );
+                                })}
+                              </span>
+                            )}
+                          </div>
+                          {!isUser && sources.length > 0 && (
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "6px", marginLeft: "4px", maxWidth: "82%" }}>
+                              {sources.map((src, idx) => (
+                                <a key={idx} href={src.url} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "4px", padding: "4px 8px", borderRadius: "99px", backgroundColor: isDarkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)", border: isDarkMode ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)", fontSize: "0.68rem", fontWeight: "600", color: "var(--text-secondary)", textDecoration: "none", cursor: "pointer" }}>
+                                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                  <span>{src.title}</span>
+                                </a>
+                              ))}
+                            </div>
+                          )}
+                        </motion.div>
+                      );
+                    })}
+                    <div ref={chatEndRef} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         ) : (
@@ -1153,8 +1326,8 @@ export default function AskPage() {
                       ))
                     ) : (
                       <div style={{ padding: "3rem 1rem", textAlign: "center", color: "var(--text-secondary)", border: "1px dashed var(--border-color)", borderRadius: "12px" }}>
-                        <p style={{ margin: 0, fontSize: "0.8rem", fontWeight: "500", color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>No questions answered yet</p>
-                        <p style={{ margin: "2px 0 0 0", fontSize: "0.7rem", color: "var(--text-secondary)", fontFamily: "var(--font-sans)" }}>Ask the first anonymous question!</p>
+                        <p style={{ margin: 0, fontSize: "0.8rem", fontWeight: "500", color: "var(--text-primary)", fontFamily: "var(--font-sans)" }}>{t("no_qa_yet")}</p>
+                        <p style={{ margin: "2px 0 0 0", fontSize: "0.7rem", color: "var(--text-secondary)", fontFamily: "var(--font-sans)" }}>{t("ask_first_anon")}</p>
                       </div>
                     )}
                   </motion.div>
@@ -1729,6 +1902,78 @@ export default function AskPage() {
               >
                 <span>✨ Question sent!</span>
               </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* ===== FLOATING INFO POPUP ===== */}
+          <AnimatePresence>
+            {showInfoPopup && (
+              <>
+                {/* Scrim */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                  onClick={() => setShowInfoPopup(false)}
+                  style={{
+                    position: "fixed",
+                    inset: 0,
+                    zIndex: 10001,
+                    backgroundColor: "rgba(0,0,0,0.22)",
+                    backdropFilter: "blur(5px)",
+                    WebkitBackdropFilter: "blur(5px)"
+                  }}
+                />
+                {/* Card */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.96, x: "-50%", y: "-47%" }}
+                  animate={{ opacity: 1, scale: 1, x: "-50%", y: "-55%" }}
+                  exit={{ opacity: 0, scale: 0.96, x: "-50%", y: "-47%" }}
+                  transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                  style={{
+                    position: "fixed",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    zIndex: 10002,
+                    width: "min(90vw, 315px)",
+                    backgroundColor: isDarkMode ? "rgba(26, 27, 31, 0.85)" : "rgba(253, 251, 247, 0.88)",
+                    backdropFilter: "blur(20px)",
+                    WebkitBackdropFilter: "blur(20px)",
+                    borderRadius: "22px",
+                    border: isDarkMode ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(0,0,0,0.08)",
+                    boxShadow: "0 24px 60px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.05)",
+                    overflow: "hidden",
+                    fontFamily: "var(--font-sans)"
+                  }}
+                >
+                  {/* Popup header */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "13px 15px 10px", borderBottom: isDarkMode ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.06)" }}>
+                    <span style={{ fontSize: "0.68rem", fontWeight: "800", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--text-primary)" }}>About this space</span>
+                    <button
+                      onClick={() => setShowInfoPopup(false)}
+                      style={{ width: "22px", height: "22px", borderRadius: "50%", border: "none", backgroundColor: isDarkMode ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.07)", color: "var(--text-secondary)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem", fontWeight: "700", padding: 0 }}
+                    >✕</button>
+                  </div>
+                  {/* Popup body */}
+                  <div style={{ padding: "12px 15px 15px", display: "flex", flexDirection: "column", gap: "10px" }}>
+                    {[
+                      { icon: "✦", label: "Ivan AI", desc: "Trained on Ivan's actual writing, book reviews & notes. Responds like him — not a generic assistant." },
+                      { icon: "◎", label: "Q&A", desc: "Questions are reviewed and personally answered by Ivan before being published." },
+                      { icon: "◈", label: "Privacy", desc: "Session data is collected for safety & moderation. Your identity is never shared publicly." }
+                    ].map(item => (
+                      <div key={item.label} style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
+                        <span style={{ fontSize: "0.62rem", color: "var(--text-secondary)", opacity: 0.4, paddingTop: "2px", flexShrink: 0 }}>{item.icon}</span>
+                        <div>
+                          <span style={{ fontSize: "0.71rem", fontWeight: "700", color: "var(--text-primary)", display: "block", marginBottom: "2px" }}>{item.label}</span>
+                          <span style={{ fontSize: "0.68rem", color: "var(--text-secondary)", lineHeight: "1.45", display: "block" }}>{item.desc}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              </>
             )}
           </AnimatePresence>
         </>,

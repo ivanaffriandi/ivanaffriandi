@@ -7,16 +7,18 @@ import { getFallbackBooks, getAllBooks } from "@/lib/books";
 import type { BookItem } from "@/lib/books";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { triggerLightClick, triggerActionClick } from "@/lib/haptic";
+import { getTranslation } from "@/lib/i18n";
 
 // iOS spring config for reactive interactions
 const iosSpring = { type: "spring" as const, stiffness: 380, damping: 28 };
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
-function formatDate(iso: string) {
+function formatDate(iso: string, lang: any = "en") {
   if (!iso) return "";
   const d = new Date(iso);
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const months = getTranslation("months", lang);
   return `${months[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
@@ -204,6 +206,8 @@ function SmartCover({ book, grayscale = true }: { book: BookItem; height?: numbe
       referrerPolicy="no-referrer"
       crossOrigin="anonymous"
       suppressHydrationWarning
+      decoding="async"
+      loading="lazy"
       style={{
         width: "100%", height: "100%",
         objectFit: "cover", display: "block",
@@ -228,7 +232,10 @@ function LibraryBookCard({ book, onClick }: { book: BookItem; onClick: () => voi
 
   return (
     <motion.div 
-      onClick={onClick}
+      onClick={() => {
+        triggerLightClick();
+        onClick();
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       whileTap={{ scale: 0.97 }}
@@ -259,50 +266,16 @@ function LibraryBookCard({ book, onClick }: { book: BookItem; onClick: () => voi
         <div style={{
           width: "100%", 
           aspectRatio: "2/3",
-          borderRadius: "4px 8px 8px 4px", 
+          borderRadius: "6px", 
           overflow: "hidden",
-          boxShadow: "0 8px 16px -4px rgba(0,0,0,0.2), 0 4px 8px -4px rgba(0,0,0,0.15), 1px 1px 0px rgba(255,255,255,0.08) inset",
+          boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
           position: "relative",
           backgroundColor: "rgba(128,128,128,0.06)",
-          transformStyle: "preserve-3d",
-          perspective: "1000px",
-          transform: hovered ? "scale(1.02) rotateY(-4deg)" : "scale(1) rotateY(0deg)",
+          transform: hovered ? "scale(1.02)" : "scale(1)",
           transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
         }}>
           <SmartCover book={book} grayscale />
           
-          {/* Outward edge highlight border */}
-          <div style={{
-            position: "absolute", inset: 0,
-            border: "1.5px solid rgba(0,0,0,0.18)",
-            borderLeft: "none",
-            borderRadius: "inherit",
-            pointerEvents: "none",
-            zIndex: 4
-          }} />
-
-          {/* 3D Page thickness simulation on the right edge */}
-          <div style={{
-            position: "absolute", right: 0, top: "2%", bottom: "2%", width: "2.5px",
-            background: "linear-gradient(to right, rgba(255,255,255,0.45) 0%, rgba(200,200,200,0.7) 100%)",
-            borderRadius: "0 4px 4px 0",
-            pointerEvents: "none",
-            zIndex: 3
-          }} />
-
-          {/* Hardcover binding hinge crease */}
-          <div style={{
-            position: "absolute", left: 0, top: 0, bottom: 0, width: "11%",
-            background: "linear-gradient(to right, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.05) 85%, transparent 100%)",
-            pointerEvents: "none",
-            zIndex: 3
-          }} />
-          <div style={{
-            position: "absolute", left: "10%", top: 0, bottom: 0, width: "1.5px",
-            background: "linear-gradient(to right, rgba(0,0,0,0.2) 0%, rgba(255,255,255,0.08) 100%)",
-            pointerEvents: "none",
-            zIndex: 3
-          }} />
           <div style={{
             position: "absolute", top: 6, right: 6,
             background: tag.color, color: "#fff",
@@ -392,7 +365,6 @@ export default function LibraryPage() {
   const [activeBook, setActiveBook] = useState<BookItem | null>(null);
   const [mounted, setMounted] = useState(false);
   const [isDark, setIsDark] = useState(false);
-  const [showInsights, setShowInsights] = useState(false);
   const [openTopReviewIdx, setOpenTopReviewIdx] = useState<number | null>(null);
   const [top5Colors, setTop5Colors] = useState<string[]>([
     "rgba(222, 56, 38, 1)", "rgba(14, 156, 228, 1)", "rgba(218, 44, 36, 1)",
@@ -675,79 +647,59 @@ export default function LibraryPage() {
         </div>
 
         <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-          {/* Dynamic Insights Toggle */}
-          <button
-            onClick={() => setShowInsights(!showInsights)}
-            style={{
-              padding: "5px 12px",
-              fontSize: "0.62rem",
-              fontWeight: "600",
-              fontFamily: "var(--font-sans)",
-              borderRadius: "12px",
-              border: "1px solid rgba(150,150,150,0.18)",
-              backgroundColor: showInsights ? "var(--text-primary)" : "transparent",
-              color: showInsights ? "var(--bg-color)" : "var(--text-primary)",
-              cursor: "pointer",
-              transition: "all 0.22s ease",
-              display: "flex",
-              alignItems: "center",
-              gap: "4px"
-            }}
-          >
-            <span>{t("insights")}</span>
-            <motion.svg
-              width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
-              animate={{ rotate: showInsights ? 180 : 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </motion.svg>
-          </button>
-
           {/* Minimalist Filter Toggle */}
           <div style={{
             display: "flex",
-            backgroundColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
+            backgroundColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.05)",
             padding: "2px",
-            borderRadius: "14px",
-            border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.05)",
+            borderRadius: "12px",
+            border: isDark ? "1px solid rgba(255, 255, 255, 0.05)" : "1px solid rgba(0, 0, 0, 0.03)",
             position: "relative",
+            isolation: "isolate",
           }}>
             {(["all", "reading", "completed"] as const).map(f => {
               const isActive = filter === f;
               return (
                 <button
                   key={f}
-                  onClick={() => setFilter(f)}
+                  onClick={() => {
+                    triggerLightClick();
+                    setFilter(f);
+                  }}
                   style={{
-                    padding: "5px 12px",
-                    fontSize: "0.64rem",
-                    fontWeight: "700",
+                    padding: "4px 10px",
+                    fontSize: "0.7rem",
+                    fontWeight: "600",
                     fontFamily: "var(--font-sans)",
-                    borderRadius: "11px",
+                    borderRadius: "9px",
                     border: "none",
                     background: "transparent",
                     color: isActive
-                      ? (isDark ? "#000000" : "#ffffff")
+                      ? "var(--bg-color)"
                       : "var(--text-secondary)",
                     cursor: "pointer",
                     position: "relative",
-                    transition: "color 0.22s cubic-bezier(0.16, 1, 0.3, 1)",
+                    transition: "color 0.25s ease",
                     textTransform: "capitalize",
                     outline: "none",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                 >
                   {isActive && (
                     <motion.div
                       layoutId="activeFilterPill"
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      transition={{ type: "spring", stiffness: 380, damping: 28 }}
                       style={{
                         position: "absolute",
                         inset: 0,
-                        borderRadius: "11px",
+                        borderRadius: "9px",
                         background: "var(--text-primary)",
                         zIndex: -1,
-                        boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+                        boxShadow: isDark
+                          ? "0 2px 8px rgba(0,0,0,0.4)"
+                          : "0 2px 8px rgba(0,0,0,0.12)",
                       }}
                     />
                   )}
@@ -759,166 +711,7 @@ export default function LibraryPage() {
         </div>
       </div>
 
-      {/* Dynamic Insights Panel */}
-      <AnimatePresence>
-        {mounted && showInsights && (
-          <motion.div
-            initial={{ height: 0, opacity: 0, marginBottom: 0 }}
-            animate={{ height: "auto", opacity: 1, marginBottom: "0.5rem" }}
-            exit={{ height: 0, opacity: 0, marginBottom: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 28 }}
-            style={{ overflow: "hidden" }}
-          >
-            <div style={{
-              background: "rgba(128,128,128,0.04)",
-              border: "1px solid rgba(128,128,128,0.08)",
-              borderRadius: "18px",
-              padding: "1.5rem",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.02), inset 0 1px 0 rgba(255,255,255,0.05)",
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
-              gap: "1.5rem"
-            }}>
-              {/* Inject CSS rules for the dashboard */}
-              <style>{`
-                .insight-reading-card:hover {
-                  background: rgba(128,128,128,0.08) !important;
-                  border-color: rgba(128,128,128,0.12) !important;
-                  transform: translateY(-1.5px);
-                }
-              `}</style>
 
-              {/* Column 1: Reading Goal */}
-              <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                <div>
-                  <h3 style={{ fontSize: "0.6rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-secondary)", margin: "0 0 10px 0" }}>
-                    {period.label} {t("reading_journey")}
-                  </h3>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontSize: "1.3rem", fontWeight: "800", color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
-                      {completedInPeriod} <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", fontWeight: "500" }}>/ {readingGoal} {t("books")}</span>
-                    </span>
-                  </div>
-                </div>
-
-                <div style={{ marginTop: "1.5rem" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.62rem", color: "var(--text-secondary)", marginBottom: "5px", fontWeight: "600" }}>
-                    <span>{t("complete_pct", { pct: Math.round((completedInPeriod / readingGoal) * 100) })}</span>
-                    <span>
-                      {completedInPeriod >= readingGoal
-                        ? completedInPeriod > readingGoal
-                          ? t("over_goal", { count: completedInPeriod - readingGoal })
-                          : t("goal_met")
-                        : t("more_to_go", { count: readingGoal - completedInPeriod })}
-                    </span>
-                  </div>
-                  <div style={{ height: "6px", backgroundColor: "rgba(150,150,150,0.1)", borderRadius: "3px", overflow: "hidden" }}>
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${Math.min(100, Math.round((completedInPeriod / readingGoal) * 100))}%` }}
-                      transition={{ type: "spring", stiffness: 80, damping: 15 }}
-                      style={{ height: "100%", background: "var(--text-primary)", borderRadius: "3px" }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Column 2: Library Composition (Languages) */}
-              <div>
-                <h3 style={{ fontSize: "0.6rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-secondary)", margin: "0 0 10px 0" }}>
-                  {t("lang_diversity")}
-                </h3>
-                <div style={{ height: "6px", display: "flex", borderRadius: "3px", overflow: "hidden", backgroundColor: "rgba(150,150,150,0.1)", marginBottom: "0.8rem" }}>
-                  {langData.map((item, idx) => (
-                    <div
-                      key={item.label}
-                      style={{
-                        width: `${item.pct}%`,
-                        height: "100%",
-                        backgroundColor: item.color,
-                        marginRight: idx < langData.length - 1 ? "1px" : 0
-                      }}
-                    />
-                  ))}
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-                  {langData.map(item => (
-                    <div key={item.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.65rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-                        <span style={{ width: "5px", height: "5px", borderRadius: "50%", backgroundColor: item.color }} />
-                        <span style={{ fontWeight: "600", color: "var(--text-primary)" }}>{item.label}</span>
-                        <span style={{ color: "var(--text-secondary)", opacity: 0.65 }}>({item.count} {t("books")})</span>
-                      </div>
-                      <span style={{ fontWeight: "700", color: "var(--text-secondary)" }}>{item.pct}%</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Column 3: Active Reads & Rating */}
-              <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                <div>
-                  <h3 style={{ fontSize: "0.6rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-secondary)", margin: "0 0 10px 0" }}>
-                    {t("currently_reading")}
-                  </h3>
-                  {readingBooks.length > 0 ? (
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxHeight: "120px", overflowY: "auto" }} className="hide-scrollbar">
-                      {readingBooks.map(book => (
-                        <div
-                          key={book.id}
-                          onClick={() => setActiveBook(book)}
-                          className="insight-reading-card"
-                          style={{
-                            display: "flex",
-                            gap: "8px",
-                            alignItems: "center",
-                            padding: "6px 8px",
-                            background: "rgba(128,128,128,0.04)",
-                            borderRadius: "10px",
-                            border: "1px solid rgba(128,128,128,0.06)",
-                            cursor: "pointer",
-                            transition: "all 0.2s ease-out"
-                          }}
-                        >
-                          <div style={{ width: "24px", aspectRatio: "2/3", borderRadius: "3px", overflow: "hidden", flexShrink: 0 }}>
-                            <SmartCover book={book} grayscale={false} />
-                          </div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: "0.65rem", fontWeight: "700", color: "var(--text-primary)", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis", lineHeight: "1.2" }}>{book.title}</div>
-                            <div style={{ display: "flex", alignItems: "center", gap: "5px", marginTop: "2px" }}>
-                              <div style={{ flex: 1, height: "3px", backgroundColor: "rgba(150,150,150,0.12)", borderRadius: "1.5px", overflow: "hidden" }}>
-                                <div style={{ width: `${book.progress || 0}%`, height: "100%", backgroundColor: "#f59e0b" }} />
-                              </div>
-                              <span style={{ fontSize: "0.55rem", fontWeight: "700", color: "#f59e0b", flexShrink: 0 }}>{book.progress || 0}%</span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div style={{ padding: "10px 0", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.3, marginBottom: "4px" }}>
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 0-2.5-2.5z"/>
-                      </svg>
-                      <span style={{ fontSize: "0.62rem", color: "var(--text-secondary)", opacity: 0.6, fontStyle: "italic" }}>
-                        {t("no_active_reads")}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(150,150,150,0.1)", paddingTop: "10px", marginTop: "10px" }}>
-                  <span style={{ fontSize: "0.62rem", fontWeight: "600", color: "var(--text-secondary)" }}>{t("avg_rating")}</span>
-                  <span style={{ fontSize: "0.78rem", fontWeight: "800", color: "#c9a84c", display: "inline-flex", alignItems: "center", gap: "2px" }}>
-                    ★ {avgRating}
-                  </span>
-                </div>
-              </div>
-
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Top 5 Books — pyramidal layout with Top 1 in center, Top 2/3 on sides, Top 4/5 on outer sides */}
       {mounted && displayTop5.length > 0 && (
@@ -930,7 +723,7 @@ export default function LibraryPage() {
               fontSize: "0.82rem", fontWeight: "700",
               color: "var(--text-primary)", letterSpacing: "-0.01em"
             }}>
-              Top Reads
+              {t("top_reads")}
             </span>
           </div>
 
@@ -1084,7 +877,7 @@ export default function LibraryPage() {
               letterSpacing: "-0.01em",
               fontFamily: "var(--font-sans)"
             }}>
-              Currently Reading <span style={{
+              {t("currently_reading")} <span style={{
                 fontSize: "0.72rem",
                 color: "#f59e0b",
                 fontWeight: "600",
@@ -1159,7 +952,7 @@ export default function LibraryPage() {
 
       {mounted && displayBooks.length === 0 ? (
         <div style={{ padding: "4rem", textAlign: "center", color: "var(--text-secondary)", fontSize: "0.8rem" }}>
-          No books found in this category.
+          {t("no_books_found")}
         </div>
       ) : (
         /* Genre Grouped List: horizontal scroll rows with see-all expand toggles */
@@ -1220,7 +1013,7 @@ export default function LibraryPage() {
                       onMouseEnter={(e) => e.currentTarget.style.opacity = "0.8"}
                       onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
                     >
-                      <span>{isExpanded ? "Show Less" : "See All"}</span>
+                      <span>{isExpanded ? t("show_less") : t("see_all")}</span>
                       <svg
                         width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
                         style={{ transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}
@@ -1249,6 +1042,7 @@ export default function LibraryPage() {
                           grid-template-columns: repeat(3, minmax(0, 1fr));
                           gap: 1rem 0.4rem;
                           padding: 10px 4px;
+                          contain: layout style;
                         }
                         @media (min-width: 600px) {
                           .genre-expanded-grid {
@@ -1305,11 +1099,10 @@ export default function LibraryPage() {
       {mounted && typeof window !== "undefined" && createPortal(
         <AnimatePresence>
           {activeBook && (() => {
-            const modalBg = isDark ? "rgba(28, 28, 30, 0.85)" : "rgba(255, 255, 255, 0.9)";
+            const modalBg = isDark ? "#1C1C1E" : "#FFFFFF";
             const modalColor = isDark ? "#ffffff" : "#1c1c1e";
             const modalBorder = isDark ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)";
             const modalShadow = isDark ? "0 30px 60px rgba(0,0,0,0.65)" : "0 30px 60px rgba(0,0,0,0.15)";
-            const backdropBlur = "blur(30px) saturate(190%)";
             const separatorColor = isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.06)";
             const titleColor = isDark ? "#ffffff" : "#1c1c1e";
             const authorColor = isDark ? "#8e8e93" : "#6c6c70";
@@ -1321,7 +1114,10 @@ export default function LibraryPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                onClick={() => setActiveBook(null)}
+                onClick={() => {
+                  triggerLightClick();
+                  setActiveBook(null);
+                }}
                 style={{
                   position: "fixed",
                   top: 0,
@@ -1353,8 +1149,6 @@ export default function LibraryPage() {
                     padding: "24px 20px 28px 20px",
                     boxShadow: modalShadow,
                     border: modalBorder,
-                    backdropFilter: backdropBlur,
-                    WebkitBackdropFilter: backdropBlur,
                     width: "100%",
                     maxWidth: "400px",
                     maxHeight: "85vh",
@@ -1368,7 +1162,10 @@ export default function LibraryPage() {
                 >
                   {/* iOS Close Button */}
                   <button 
-                    onClick={() => setActiveBook(null)}
+                    onClick={() => {
+                   triggerLightClick();
+                   setActiveBook(null);
+                 }}
                     style={{
                       position: "absolute",
                       top: "14px",
@@ -1451,7 +1248,11 @@ export default function LibraryPage() {
                       )}
                     </div>
                     <span style={{ fontSize: "0.72rem", color: authorColor, fontWeight: "600", letterSpacing: "-0.01em" }}>
-                      {activeBook.completedAt ? `Read ${formatDate(activeBook.completedAt)}` : activeBook.status === "reading" ? `Reading (${activeBook.progress}%)` : "To Read"}
+                      {activeBook.completedAt 
+                        ? t("read_on", { date: formatDate(activeBook.completedAt, lang) }) 
+                        : activeBook.status === "reading" 
+                          ? t("currently_reading_status", { progress: activeBook.progress ?? 0 }) 
+                          : t("to_read")}
                     </span>
                   </div>
 
@@ -1472,8 +1273,8 @@ export default function LibraryPage() {
                       __html: activeBook.review 
                         ? activeBook.review 
                         : activeBook.status === "reading" 
-                          ? `Currently reading — ${activeBook.progress ?? 0}% through. Review coming soon.` 
-                          : "No review written yet."
+                          ? t("currently_reading_review", { progress: activeBook.progress ?? 0 }) 
+                          : t("no_review_yet")
                     }}
                   />
 

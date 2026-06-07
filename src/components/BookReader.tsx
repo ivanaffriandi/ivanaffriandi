@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { addComment, getApprovedComments, CommentItem } from "@/lib/comments";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PostType {
   id: string;
@@ -16,44 +17,32 @@ interface PostType {
 }
 
 export default function BookReader({ post, initialComments = [] }: { post: PostType, initialComments?: any[] }) {
+  const { lang } = useLanguage();
   const [fontStyle, setFontStyle] = useState<"sans" | "serif" | "mono">("sans");
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [mode, setMode] = useState<"read" | "listen">("read");
+  const [mode, setMode] = useState<"read" | "photos">("read");
+  const [photoLayout, setPhotoLayout] = useState<"grid" | "list">("grid");
   const [currentTime, setCurrentTime] = useState<string>("");
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [comments, setComments] = useState<CommentItem[]>([]);
   const [commentText, setCommentText] = useState<string>("");
   const [isCommenting, setIsCommenting] = useState<boolean>(false);
   const [lightboxImg, setLightboxImg] = useState<{ src: string; index: number } | null>(null);
   const [mounted, setMounted] = useState(false);
 
-  // ─── ElevenLabs TTS state ────────────────────────────────────────────────
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
-  const [playbackRate, setPlaybackRate] = useState(1);
-  const [audioDuration, setAudioDuration] = useState(0);
-  const [audioCurrentTime, setAudioCurrentTime] = useState(0);
-  const audioUrlRef = useRef<string | null>(null);
+  const activeParagraphIndex = -1;
 
-  // ─── Fallback SpeechSynthesis state ──────────────────────────────────────
-  const [isBrowserFallback, setIsBrowserFallback] = useState(false);
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  // Helpers to check if the post title or content contains Arabic characters
+  const isArabicPost = useMemo(() => {
+    const hasArabicText = (text: string) => /[\u0600-\u06FF]/.test(text);
+    return hasArabicText(post.title || "") || hasArabicText(post.content || "");
+  }, [post.title, post.content]);
 
-  // ─── Dynamic paragraph tracking for audiobook sync ───────────────────────
-  const paragraphCharRangesRef = useRef<{ start: number; end: number }[]>([]);
-  const totalCharsRef = useRef<number>(0);
-
-  const activeParagraphIndex = useMemo(() => {
-    if (audioDuration <= 0 || audioCurrentTime <= 0) return -1;
-    const ratio = audioCurrentTime / audioDuration;
-    const virtualCharIndex = ratio * totalCharsRef.current;
-
-    const matchedIdx = paragraphCharRangesRef.current.findIndex(
-      (range) => virtualCharIndex >= range.start && virtualCharIndex <= range.end
-    );
-    return matchedIdx;
-  }, [audioCurrentTime, audioDuration]);
+  const getLocalizedDefaultCaption = () => {
+    if (lang === "ar") return "لحظة ملتقطة";
+    if (lang === "nl") return "Vastgelegd Moment";
+    if (lang === "zh") return "捕捉的瞬间";
+    return "Captured Moment";
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -177,6 +166,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
   // Extract images from post HTML and strip them from prose content
   const [cleanContent, setCleanContent] = useState(post.content);
   const [extractedImages, setExtractedImages] = useState<string[]>([]);
+  const [extractedCaptions, setExtractedCaptions] = useState<string[]>([]);
 
   // Calculate dynamic reading time based on total words (approx 200 words per minute)
   const readingTime = useMemo(() => {
@@ -185,19 +175,6 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     return Math.max(1, Math.ceil(words / 200));
   }, [post.content]);
 
-  // Randomised-but-stable EXIF-style metadata per image
-  const getPhotoMeta = (idx: number) => {
-    const cameras = ["Ricoh GR IIIx", "Fujifilm X100VI"];
-    const shutters = ["1/125s", "1/250s", "1/500s", "1/1000s"];
-    const apertures = ["f/2.8", "f/4.0", "f/5.6", "f/8.0"];
-    const isos = ["ISO 100", "ISO 200", "ISO 400", "ISO 800"];
-    return {
-      model: cameras[idx % cameras.length],
-      shutter: shutters[(idx + 1) % shutters.length],
-      aperture: apertures[(idx + 2) % apertures.length],
-      iso: isos[(idx + 3) % isos.length],
-    };
-  };
 
   // Parse raw text for speech synthesis
   const rawTextRef = useRef<string>("");
@@ -265,6 +242,11 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
       const parser = new DOMParser();
       const doc = parser.parseFromString(post.content, "text/html");
 
+      // Remove any <audio> elements so they are not rendered twice in cleanContent
+      doc.querySelectorAll("audio").forEach((audio) => {
+        audio.parentNode?.removeChild(audio);
+      });
+
       // Clean up Blogger collated images where multiple <img> tags are nested inside a single <a>
       doc.querySelectorAll("a").forEach((a) => {
         const aImgs = Array.from(a.querySelectorAll("img"));
@@ -288,7 +270,63 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         }
       });
 
-      const imgs = Array.from(doc.querySelectorAll("img")).map((img) => img.src).filter(Boolean);
+      // Extract images and their captions from Blogger content
+      const imgs: string[] = [];
+      const captions: string[] = [];
+
+      doc.querySelectorAll("img").forEach((img) => {
+        const src = img.src;
+        if (!src) return;
+
+        let caption = "";
+
+        // Check Case 1: Blogger's standard tr-caption-container table
+        const trContainer = img.closest(".tr-caption-container");
+        if (trContainer) {
+          const captionEl = trContainer.querySelector(".tr-caption");
+          if (captionEl) {
+            caption = captionEl.innerHTML.trim() || captionEl.textContent?.trim() || "";
+            captionEl.parentNode?.removeChild(captionEl);
+          }
+        }
+
+        // Check Case 2: Div wrapping image with a separate caption sibling/child
+        if (!caption) {
+          const parent = img.parentElement;
+          if (parent) {
+            const siblingCaption = parent.querySelector(".caption, .tr-caption, [class*='caption']");
+            if (siblingCaption && siblingCaption !== img) {
+              caption = siblingCaption.innerHTML.trim() || siblingCaption.textContent?.trim() || "";
+              siblingCaption.parentNode?.removeChild(siblingCaption);
+            }
+          }
+        }
+
+        // Clean the extracted caption: strip HTML tags but preserve clean text
+        const cleanCaption = caption.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim();
+
+        imgs.push(src);
+        captions.push(cleanCaption);
+      });
+
+      // Also let's clean up any empty table rows left behind in tr-caption-container tables
+      doc.querySelectorAll("table.tr-caption-container").forEach((table) => {
+        table.querySelectorAll("tr").forEach((tr) => {
+          if (tr.cells.length === 0 || Array.from(tr.cells).every(cell => !cell.textContent?.trim() && cell.querySelectorAll("img, video").length === 0)) {
+            tr.parentNode?.removeChild(tr);
+          }
+        });
+      });
+
+      // Remove tag lines (e.g. elements that contain "CREATIVE . RAW . PERSONAL" or similar tags)
+      doc.querySelectorAll("p, div, span").forEach((el) => {
+        const text = el.textContent?.trim().toUpperCase() || "";
+        const words = text.split(/\s*[\s\.\•\-\|\,\·\▪\•\◦\▪\▫\▪\•]\s*/).filter(Boolean);
+        const knownTags = ["CREATIVE", "RAW", "PERSONAL", "REFLECTIVE", "CALM", "GROWTH", "NOSTALGIC", "INSPIRED", "DEEP", "MINIMAL", "AESTHETICS", "AESTHETIC"];
+        if (words.length > 0 && words.length <= 5 && words.every(word => knownTags.includes(word))) {
+          el.parentNode?.removeChild(el);
+        }
+      });
 
       // Transform <video> elements to behave like Apple Live Photos
       doc.querySelectorAll("video").forEach((video) => {
@@ -517,284 +555,26 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         }
       });
 
-      let charAccumulator = 0;
-      const ranges: { start: number; end: number }[] = [];
       const textBlocks = doc.querySelectorAll("p, h1, h2, h3, h4, h5, h6, blockquote, li");
       textBlocks.forEach((el, idx) => {
-        const textLen = (el.textContent || "").trim().length;
-        if (textLen > 0) {
-          el.setAttribute("data-p-idx", String(idx));
-          ranges.push({ start: charAccumulator, end: charAccumulator + textLen });
-          charAccumulator += textLen;
-        }
+        el.setAttribute("data-p-idx", String(idx));
       });
-      paragraphCharRangesRef.current = ranges;
-      totalCharsRef.current = charAccumulator;
 
       setExtractedImages(imgs);
+      setExtractedCaptions(captions);
       setCleanContent(doc.body.innerHTML);
     } catch (err) {
       console.error("Error parsing content:", err);
       // Fallback: render original content safely
       setExtractedImages([]);
+      setExtractedCaptions([]);
       setCleanContent(post.content);
     }
   }, [mounted, post.content]);
 
-  // Timer for SpeechSynthesis fallback progress simulation
-  useEffect(() => {
-    if (!isBrowserFallback || !isPlaying) return;
-
-    const interval = setInterval(() => {
-      setAudioCurrentTime((prev) => {
-        const next = prev + 1 * playbackRate;
-        if (next >= audioDuration) {
-          clearInterval(interval);
-          return audioDuration;
-        }
-        return next;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [isBrowserFallback, isPlaying, playbackRate, audioDuration]);
-
-  // ─── ElevenLabs TTS / Browser Fallback handler ─────────────────────────────
-  const handleSetMode = async (targetMode: "read" | "listen") => {
-    if (targetMode === "read") {
-      // Stop audio and go back to read
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = "";
-      }
-      if (typeof window !== "undefined" && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
-      setIsPlaying(false);
-      setMode("read");
-      setAudioCurrentTime(0);
-      setAudioDuration(0);
-      setIsBrowserFallback(false);
-      return;
-    }
-
-    // ── Switch to listen mode ──
-    setMode("listen");
-    setIsLoadingAudio(true);
-
-    // Strip HTML to plain text
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = post.content;
-    const text = (tempDiv.textContent || tempDiv.innerText || "").trim();
-
-    if (!text) {
-      alert("No readable content found in this post.");
-      setIsLoadingAudio(false);
-      setMode("read");
-      return;
-    }
-
-    try {
-      const res = await fetch("/api/tts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: "Unknown error" }));
-        throw new Error(err.error || `HTTP ${res.status}`);
-      }
-
-      const blob = await res.blob();
-      // Revoke previous URL
-      if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
-      const url = URL.createObjectURL(blob);
-      audioUrlRef.current = url;
-      setAudioUrl(url);
-      setIsBrowserFallback(false);
-
-      // Play
-      if (!audioRef.current) audioRef.current = new Audio();
-      const audio = audioRef.current;
-      audio.src = url;
-      audio.playbackRate = playbackRate;
-
-      audio.onloadedmetadata = () => setAudioDuration(audio.duration);
-      audio.ontimeupdate = () => setAudioCurrentTime(audio.currentTime);
-      audio.onended = () => { setIsPlaying(false); setAudioCurrentTime(0); };
-      audio.onerror = () => { setIsPlaying(false); };
-
-      await audio.play();
-      setIsPlaying(true);
-    } catch (err: any) {
-      console.warn("[Listen] ElevenLabs failed, falling back to browser SpeechSynthesis:", err);
-
-      // Fallback to Browser SpeechSynthesis!
-      if (typeof window !== "undefined" && window.speechSynthesis) {
-        try {
-          window.speechSynthesis.cancel(); // cancel any active speech
-
-          // Detect language (simple client-side logic to match post content)
-          const lower = text.toLowerCase().slice(0, 1000);
-          const nlScore = (lower.match(/\b(de|het|een|van|in|is|dat|niet|zijn|ik|voor|op|te|met|maar|ook|aan|bij|door)\b/g) || []).length;
-          const idScore = (lower.match(/\b(yang|dan|di|ini|itu|dengan|untuk|dalam|tidak|juga|ke|pada|ada|saya|lebih|sudah|dari|bisa|akan|karena)\b/g) || []).length;
-          let lang = "en-US";
-          if (nlScore > idScore && nlScore > 2) lang = "nl-NL";
-          else if (idScore > nlScore && idScore > 2) lang = "id-ID";
-
-          const utterance = new SpeechSynthesisUtterance(text);
-          utterance.lang = lang;
-          utterance.rate = playbackRate;
-
-          // Try to select a high quality natural sounding voice if available in correct language
-          const voices = window.speechSynthesis.getVoices();
-          const matchingVoice = voices.find(v => v.lang.startsWith(lang.slice(0, 2)));
-          if (matchingVoice) utterance.voice = matchingVoice;
-
-          // Estimate duration (rough estimation: 150 words per minute -> 2.5 words per second)
-          const words = text.split(/\s+/).length;
-          const estimatedDuration = Math.max(10, (words / 2.5));
-          setAudioDuration(estimatedDuration);
-          setAudioCurrentTime(0);
-
-          setIsBrowserFallback(true);
-          setAudioUrl("browser-fallback"); // Show player bar
-
-          // Setup callbacks
-          utterance.onend = () => {
-            setIsPlaying(false);
-            setAudioCurrentTime(0);
-          };
-          utterance.onerror = (e) => {
-            console.error("SpeechSynthesis error:", e);
-            setIsPlaying(false);
-          };
-
-          // Store reference
-          utteranceRef.current = utterance;
-
-          // Speak. If blocked due to async call context, we catch it and wait for manual Play click.
-          window.speechSynthesis.speak(utterance);
-          setIsPlaying(true);
-        } catch (fallbackErr) {
-          console.warn("[Listen] Browser SpeechSynthesis speak blocked by async gesture constraint. Waiting for manual play.", fallbackErr);
-          setIsBrowserFallback(true);
-          setAudioUrl("browser-fallback");
-          setIsPlaying(false);
-        }
-      } else {
-        alert(`Couldn't load audio: ${err.message}`);
-        setMode("read");
-      }
-    } finally {
-      setIsLoadingAudio(false);
-    }
+  const handleSetMode = (targetMode: "read" | "photos") => {
+    setMode(targetMode);
   };
-
-  // Toggle pause / resume
-  const handleTogglePlay = () => {
-    if (isBrowserFallback) {
-      if (typeof window !== "undefined" && window.speechSynthesis) {
-        if (isPlaying) {
-          window.speechSynthesis.pause();
-          setIsPlaying(false);
-        } else {
-          if (window.speechSynthesis.paused) {
-            window.speechSynthesis.resume();
-            setIsPlaying(true);
-          } else if (utteranceRef.current) {
-            window.speechSynthesis.speak(utteranceRef.current);
-            setIsPlaying(true);
-          }
-        }
-      }
-      return;
-    }
-
-    if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      audioRef.current.play();
-      setIsPlaying(true);
-    }
-  };
-
-  // Change playback speed
-  const handleSetSpeed = (rate: number) => {
-    setPlaybackRate(rate);
-    if (isBrowserFallback) {
-      if (typeof window !== "undefined" && window.speechSynthesis && utteranceRef.current) {
-        utteranceRef.current.rate = rate;
-
-        // If speaking, restart to apply rate cleanly
-        if (window.speechSynthesis.speaking) {
-          window.speechSynthesis.cancel();
-          const tempDiv = document.createElement("div");
-          tempDiv.innerHTML = post.content;
-          const text = (tempDiv.textContent || tempDiv.innerText || "").trim();
-
-          const newUtterance = new SpeechSynthesisUtterance(text);
-          const lower = text.toLowerCase().slice(0, 1000);
-          const nlScore = (lower.match(/\b(de|het|een|van|in|is|dat|niet|zijn|ik|voor|op|te|met|maar|ook|aan|bij|door)\b/g) || []).length;
-          const idScore = (lower.match(/\b(yang|dan|di|ini|itu|dengan|untuk|dalam|tidak|juga|ke|pada|ada|saya|lebih|sudah|dari|bisa|akan|karena)\b/g) || []).length;
-          let lang = "en-US";
-          if (nlScore > idScore && nlScore > 2) lang = "nl-NL";
-          else if (idScore > nlScore && idScore > 2) lang = "id-ID";
-          newUtterance.lang = lang;
-          newUtterance.rate = rate;
-
-          const voices = window.speechSynthesis.getVoices();
-          const matchingVoice = voices.find(v => v.lang.startsWith(lang.slice(0, 2)) && v.localService);
-          if (matchingVoice) newUtterance.voice = matchingVoice;
-
-          newUtterance.onend = () => {
-            setIsPlaying(false);
-            setAudioCurrentTime(0);
-          };
-          newUtterance.onerror = () => setIsPlaying(false);
-
-          utteranceRef.current = newUtterance;
-          window.speechSynthesis.speak(newUtterance);
-          setIsPlaying(true);
-        }
-      }
-      return;
-    }
-
-    if (audioRef.current) audioRef.current.playbackRate = rate;
-  };
-
-  // Seek
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const t = Number(e.target.value);
-    setAudioCurrentTime(t);
-    if (isBrowserFallback) return;
-    if (audioRef.current) audioRef.current.currentTime = t;
-  };
-
-  // Format mm:ss
-  const fmt = (s: number) => {
-    const m = Math.floor(s / 60);
-    const sec = Math.floor(s % 60);
-    return `${m}:${sec.toString().padStart(2, "0")}`;
-  };
-
-  // Cleanup audio on unmount
-  useEffect(() => {
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = "";
-      }
-      if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
-      if (typeof window !== "undefined" && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
-    };
-  }, []);
 
   // Handle submitting a comment
   const handleSendComment = () => {
@@ -875,26 +655,27 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
     return `https:${url}`;
   };
 
-  // Compute theme colors dynamically
-  const getThemeStyles = () => {
-    if (theme === "light") {
-      return {
-        bg: "#ffffff",
-        text: "#111111",
-        textSecondary: "#666666",
-        border: "rgba(0, 0, 0, 0.1)"
-      };
-    }
-    // Dark Theme
-    return {
-      bg: "#151413",
-      text: "#e4e1db",
-      textSecondary: "#9e9a93",
-      border: "rgba(228, 225, 219, 0.15)"
-    };
-  };
+  // Determine if active reading theme is dark
+  const isCurrentThemeDark = useMemo(() => {
+    return theme === "dark";
+  }, [theme]);
 
-  const colors = getThemeStyles();
+  // Compute theme colors dynamically
+  const colors = useMemo(() => {
+    return theme === "light"
+      ? {
+          bg: "#ffffff",
+          text: "#111111",
+          textSecondary: "#666666",
+          border: "rgba(0, 0, 0, 0.1)"
+        }
+      : {
+          bg: "#151413",
+          text: "#e4e1db",
+          textSecondary: "#9e9a93",
+          border: "rgba(228, 225, 219, 0.15)"
+        };
+  }, [theme]);
 
   return (
     <div
@@ -905,14 +686,68 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         transition: "background-color 0.4s ease, color 0.4s ease",
         padding: "10.5rem 4vw 12rem 4vw", // More spacious top padding on desktop
         margin: "-6rem -4vw -6rem -4vw", // Bleeds up and down out of layout container padding
-        position: "relative"
+        position: "relative",
+        direction: "ltr",
+        textAlign: "left"
       }}
-      className="book-reader-container"
+      className={`book-reader-container ${!isArabicPost ? "non-arabic-post" : ""}`}
     >
       {/* Global CSS for book content media to prevent overflowing and hide footer on post details */}
       <style dangerouslySetInnerHTML={{
         __html: `
-        /* Cinematic Scroll Reveal Styles removed for absolute visual stability */
+        .book-reader-container {
+          direction: ltr !important;
+          text-align: left !important;
+        }
+
+        /* ── Apple iOS Scroll Fade-in Reveal ── */
+        .book-prose p, 
+        .book-prose h1, 
+        .book-prose h2, 
+        .book-prose h3, 
+        .book-prose h4, 
+        .book-prose h5, 
+        .book-prose h6, 
+        .book-prose blockquote, 
+        .book-prose li {
+          animation: ios-scroll-reveal linear both;
+          animation-timeline: view();
+          animation-range: entry 10% cover 30%;
+        }
+
+        @keyframes ios-scroll-reveal {
+          from {
+            opacity: 0.25;
+            transform: translateY(8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        /* Arabic RTL overrides bypass for Western (non-Arabic) content */
+        [data-lang="ar"] .non-arabic-post,
+        [data-lang="ar"] .non-arabic-post p,
+        [data-lang="ar"] .non-arabic-post span,
+        [data-lang="ar"] .non-arabic-post a,
+        [data-lang="ar"] .non-arabic-post h1,
+        [data-lang="ar"] .non-arabic-post h2,
+        [data-lang="ar"] .non-arabic-post h3,
+        [data-lang="ar"] .non-arabic-post h4,
+        [data-lang="ar"] .non-arabic-post h5,
+        [data-lang="ar"] .non-arabic-post h6,
+        [data-lang="ar"] .non-arabic-post li,
+        [data-lang="ar"] .non-arabic-post blockquote,
+        [data-lang="ar"] .non-arabic-post time,
+        [data-lang="ar"] .non-arabic-post div {
+          direction: ltr !important;
+          text-align: left !important;
+        }
+        [data-lang="ar"] .non-arabic-post .book-title,
+        [data-lang="ar"] .non-arabic-post .journal-date {
+          text-align: center !important;
+        }
 
         /* ─── Premium Audiobook Reader Highlights ─── */
         .book-prose-listening p, 
@@ -937,9 +772,9 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         .book-prose-listening [data-p-idx="${activeParagraphIndex}"] {
           opacity: 1 !important;
           filter: blur(0px) !important;
-          color: ${theme === "dark" ? "#ffffff" : "#111111"} !important;
+          color: ${colors.text} !important;
           transform: translateX(4px);
-          border-left-color: ${theme === "dark" ? "#ffffff" : "#111111"} !important;
+          border-left-color: ${colors.text} !important;
           padding-left: 12px !important;
         }
 
@@ -1000,20 +835,43 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           0%, 100% { opacity: 0.5; transform: scale(0.9); }
           50% { opacity: 1; transform: scale(1.1); }
         }
-        .book-prose p {
+         .book-prose p {
           word-break: break-word;
           overflow-wrap: break-word;
+          text-align: left !important;
+          direction: ltr !important;
+        }
+        .book-prose h1,
+        .book-prose h2,
+        .book-prose h3,
+        .book-prose h4,
+        .book-prose h5,
+        .book-prose h6,
+        .book-prose blockquote,
+        .book-prose li,
+        .book-prose span,
+        .book-prose a {
+          text-align: left !important;
+          direction: ltr !important;
+        }
+        .book-title {
+          text-align: center !important;
+          direction: ltr !important;
+        }
+        .journal-date {
+          text-align: center !important;
+          direction: ltr !important;
         }
         footer.yunox-single-footer {
           display: none !important;
         }
         .photo-cover-collage {
           width: 100%;
-          height: 220px !important;
+          height: 150px !important;
         }
         @media (min-width: 768px) {
           .photo-cover-collage {
-            height: 380px !important;
+            height: 260px !important;
           }
         }
 
@@ -1210,15 +1068,26 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   alt=""
                   style={{ width: "100%", aspectRatio: "1/1", objectFit: "cover", borderRadius: "2px", display: "block", pointerEvents: "none", userSelect: "none", WebkitUserDrag: "none" } as React.CSSProperties}
                 />
-                {/* iPhone-style EXIF row */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", color: "#888", display: "flex", gap: "8px" }}>
-                    <span>{getPhotoMeta(lightboxImg.index).shutter}</span>
-                    <span>{getPhotoMeta(lightboxImg.index).aperture}</span>
-                    <span>{getPhotoMeta(lightboxImg.index).iso}</span>
-                  </div>
-                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", fontWeight: "700", color: "#888", letterSpacing: "0.02em", textTransform: "uppercase" }}>
-                    {getPhotoMeta(lightboxImg.index).model}
+                {/* Custom caption & moment stamp row */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginTop: "2px" }}>
+                  <span style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "0.85rem",
+                    fontWeight: "500",
+                    color: "#333",
+                    lineHeight: "1.4"
+                  }}>
+                    {extractedCaptions[lightboxImg.index] || getLocalizedDefaultCaption()}
+                  </span>
+                  <span style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "0.62rem",
+                    fontWeight: "700",
+                    color: "#B47A3E",
+                    letterSpacing: "0.05em",
+                    textTransform: "uppercase"
+                  }}>
+                    Moment #{lightboxImg.index + 1}
                   </span>
                 </div>
                 <button
@@ -1237,256 +1106,578 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
 
 
       {/* Book Core Content Area */}
-      <article className="book-core-article">
+      <article className="book-core-article" style={{ direction: "ltr", textAlign: "left" }}>
         <div className="book-reader-split-layout">
           {/* Column 1: Post Content */}
           <div className="book-reader-col-post">
             {/* Elegant Rounded Journal Header */}
-            <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+            {/* Elegant Rounded Journal Header */}
+            {mode !== "photos" && (
+              <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
 
-              {/* ===== PREMIUM COVER COLLAGE GRID (above date) ===== */}
-              {extractedImages.length > 0 && (
-                <div
-                  className="photo-cover-collage"
-                  style={{
-                    width: "100%",
-                    height: "160px",
-                    borderRadius: "16px",
-                    overflow: "hidden",
-                    border: `1px solid ${colors.border}`,
-                    boxShadow: "0 8px 32px rgba(0,0,0,0.04)",
-                    backgroundColor: "rgba(150,150,150,0.08)",
-                    marginBottom: "1.25rem",
-                    position: "relative",
-                    display: extractedImages.length === 1 ? "block" : "grid",
-                    gap: "4px",
-                    // Grid layout based on number of images
-                    gridTemplateColumns:
-                      extractedImages.length === 2
-                        ? "1fr 1fr"
-                        : extractedImages.length === 3
-                          ? "2fr 1fr"
+                {/* ===== PREMIUM COVER COLLAGE GRID (above date) ===== */}
+                {extractedImages.length > 0 && (
+                  <div
+                    className="photo-cover-collage"
+                    style={{
+                      width: "100%",
+                      height: "160px",
+                      borderRadius: "16px",
+                      overflow: "hidden",
+                      border: `1px solid ${colors.border}`,
+                      boxShadow: "0 8px 32px rgba(0,0,0,0.04)",
+                      backgroundColor: "rgba(150,150,150,0.08)",
+                      marginBottom: "1.25rem",
+                      position: "relative",
+                      display: extractedImages.length === 1 ? "block" : "grid",
+                      gap: "4px",
+                      // Grid layout based on number of images
+                      gridTemplateColumns:
+                        extractedImages.length === 2
+                          ? "1fr 1fr"
+                          : extractedImages.length === 3
+                            ? "2fr 1fr"
+                            : extractedImages.length >= 4
+                              ? "1fr 1fr"
+                              : "none",
+                      gridTemplateRows:
+                        extractedImages.length === 3
+                          ? "1fr 1fr"
                           : extractedImages.length >= 4
                             ? "1fr 1fr"
                             : "none",
-                    gridTemplateRows:
-                      extractedImages.length === 3
-                        ? "1fr 1fr"
-                        : extractedImages.length >= 4
-                          ? "1fr 1fr"
-                          : "none",
-                  }}
-                >
-                  {extractedImages.slice(0, 4).map((src, idx) => {
-                    // Determine grid cell positions for 3 images case
-                    let gridStyle: React.CSSProperties = {
-                      position: "relative",
-                      width: "100%",
-                      height: "100%",
-                      overflow: "hidden",
-                      cursor: "pointer",
-                    };
-
-                    if (extractedImages.length === 3) {
-                      if (idx === 0) {
-                        gridStyle.gridRow = "span 2";
-                      } else if (idx === 1) {
-                        gridStyle.gridColumn = "2";
-                        gridStyle.gridRow = "1";
-                      } else if (idx === 2) {
-                        gridStyle.gridColumn = "2";
-                        gridStyle.gridRow = "2";
-                      }
-                    }
-
-                    const isLastCellWithMore = extractedImages.length > 4 && idx === 3;
-                    const extraCount = extractedImages.length - 4;
-
-                    return (
-                      <motion.div
-                        key={idx}
-                        whileHover={{ scale: 1.01 }}
-                        whileTap={{ scale: 0.995 }}
-                        onClick={() => setLightboxImg({ src, index: idx })}
-                        style={gridStyle}
-                      >
-                        <img
-                          src={src}
-                          alt={`Cover Photo ${idx + 1}`}
-                          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                        />
-
-                        {/* Dark gradient overlay */}
-                        <div style={{
-                          position: "absolute", inset: 0,
-                          background: "linear-gradient(to top, rgba(0,0,0,0.2) 0%, transparent 60%)",
-                        }} />
-
-                        {/* "+X More" Overlay for the 4th quadrant */}
-                        {isLastCellWithMore && (
-                          <div style={{
-                            position: "absolute", inset: 0,
-                            backgroundColor: "rgba(0, 0, 0, 0.45)",
-                            backdropFilter: "blur(6px)",
-                            WebkitBackdropFilter: "blur(6px)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            flexDirection: "column",
-                            color: "#ffffff",
-                            fontFamily: "var(--font-sans)",
-                            userSelect: "none"
-                          }}>
-                            <span style={{ fontSize: "1.6rem", fontWeight: "700", letterSpacing: "-0.02em" }}>
-                              +{extraCount}
-                            </span>
-                            <span style={{ fontSize: "0.6rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em", opacity: 0.8, marginTop: "2px" }}>
-                              Photos
-                            </span>
-                          </div>
-                        )}
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              )}
-
-
-              {/* Gold Date Indicator & Reading Time */}
-              <div
-                className="journal-date"
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "0.95rem",
-                  fontWeight: "600",
-                  color: "#B47A3E",
-                  marginBottom: "0.6rem",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "0.5rem",
-                  flexWrap: "wrap"
-                }}
-              >
-                <span>
-                  {(() => {
-                    const parts = post.published.substring(0, 10).split("-");
-                    const dateObj = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-                    return dateObj.toLocaleDateString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric"
-                    });
-                  })()}
-                </span>
-                <span style={{ opacity: 0.4 }}>•</span>
-                <span style={{ fontSize: "0.85rem", opacity: 0.8, fontWeight: "500" }}>
-                  {readingTime} min read
-                </span>
-              </div>
-
-              {/* Bold Centered Title */}
-              <h1
-                className="book-title"
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontWeight: "700",
-                  fontSize: "clamp(2rem, 7vw, 2.75rem)",
-                  lineHeight: "1.35", // More airy and majestic
-                  margin: "0 0 1.6rem 0", // Increased margin below title
-                  color: colors.text,
-                  letterSpacing: "-0.03em",
-                  wordBreak: "break-word",
-                  overflowWrap: "break-word"
-                }}
-              >
-                {post.title}
-              </h1>
-
-              {/* Symmetrical Capsule Tag Pills Row */}
-              <div
-                className="book-tags-row"
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  gap: "0.5rem",
-                  flexWrap: "wrap",
-                  marginBottom: "2.75rem" // Increased margin on desktop
-                }}
-              >
-                {computedTags.map((label) => (
-                  <span
-                    key={label}
-                    style={{
-                      backgroundColor: theme === "dark" ? "rgba(255,255,255,0.06)" : "#ffffff",
-                      border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.12)" : "#E2DDD5"}`,
-                      borderRadius: "20px",
-                      padding: "4px 12px",
-                      fontSize: "0.75rem",
-                      fontWeight: "500",
-                      color: colors.textSecondary,
-                      boxShadow: theme === "dark" ? "none" : "0 2px 6px rgba(0,0,0,0.02)",
-                      fontFamily: "var(--font-sans)"
                     }}
                   >
-                    {label}
+                    {extractedImages.slice(0, 4).map((src, idx) => {
+                      // Determine grid cell positions for 3 images case
+                      let gridStyle: React.CSSProperties = {
+                        position: "relative",
+                        width: "100%",
+                        height: "100%",
+                        overflow: "hidden",
+                        cursor: "pointer",
+                      };
+
+                      if (extractedImages.length === 3) {
+                        if (idx === 0) {
+                          gridStyle.gridRow = "span 2";
+                        } else if (idx === 1) {
+                          gridStyle.gridColumn = "2";
+                          gridStyle.gridRow = "1";
+                        } else if (idx === 2) {
+                          gridStyle.gridColumn = "2";
+                          gridStyle.gridRow = "2";
+                        }
+                      }
+
+                      const isLastCellWithMore = extractedImages.length > 4 && idx === 3;
+                      const extraCount = extractedImages.length - 4;
+
+                      return (
+                        <motion.div
+                          key={idx}
+                          whileHover={{ scale: 1.01 }}
+                          whileTap={{ scale: 0.995 }}
+                          onClick={() => setLightboxImg({ src, index: idx })}
+                          style={gridStyle}
+                        >
+                          <img
+                            src={src}
+                            alt={`Cover Photo ${idx + 1}`}
+                            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                          />
+
+                          {/* Dark gradient overlay */}
+                          <div style={{
+                            position: "absolute", inset: 0,
+                            background: "linear-gradient(to top, rgba(0,0,0,0.2) 0%, transparent 60%)",
+                          }} />
+
+                          {/* "+X More" Overlay for the 4th quadrant */}
+                          {isLastCellWithMore && (
+                            <div style={{
+                              position: "absolute", inset: 0,
+                              backgroundColor: "rgba(0, 0, 0, 0.45)",
+                              backdropFilter: "blur(6px)",
+                              WebkitBackdropFilter: "blur(6px)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              flexDirection: "column",
+                              color: "#ffffff",
+                              fontFamily: "var(--font-sans)",
+                              userSelect: "none"
+                            }}>
+                              <span style={{ fontSize: "1.6rem", fontWeight: "700", letterSpacing: "-0.02em" }}>
+                                +{extraCount}
+                              </span>
+                              <span style={{ fontSize: "0.6rem", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.08em", opacity: 0.8, marginTop: "2px" }}>
+                                Photos
+                              </span>
+                            </div>
+                          )}
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                )}
+
+
+                {/* Gold Date Indicator & Reading Time */}
+                <div
+                  className="journal-date"
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "0.95rem",
+                    fontWeight: "600",
+                    color: "#B47A3E",
+                    marginBottom: "0.6rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.5rem",
+                    flexWrap: "wrap"
+                  }}
+                >
+                  <span>
+                    {(() => {
+                      const parts = post.published.substring(0, 10).split("-");
+                      const dateObj = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                      return dateObj.toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric"
+                      });
+                    })()}
                   </span>
-                ))}
+                  <span style={{ opacity: 0.4 }}>•</span>
+                  <span style={{ fontSize: "0.85rem", opacity: 0.8, fontWeight: "500" }}>
+                    {readingTime} min read
+                  </span>
+                </div>
+
+                {/* Bold Centered Title */}
+                <h1
+                  className="book-title"
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontWeight: "700",
+                    fontSize: "clamp(2rem, 7vw, 2.75rem)",
+                    lineHeight: "1.35", // More airy and majestic
+                    margin: "0 0 1.6rem 0", // Increased margin below title
+                    color: colors.text,
+                    letterSpacing: "-0.03em",
+                    wordBreak: "break-word",
+                    overflowWrap: "break-word"
+                  }}
+                >
+                  {post.title}
+                </h1>
+
               </div>
+            )}
 
-            </div>
+            {/* Minimalist Photos Header & Switcher */}
+            {mode === "photos" && (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "2rem", marginTop: "1rem" }}>
+                <h1 className="book-title" style={{
+                  fontFamily: "var(--font-sans)",
+                  fontWeight: "600",
+                  fontSize: "1.5rem",
+                  letterSpacing: "-0.02em",
+                  color: colors.text,
+                  opacity: 0.9,
+                  margin: "0 0 4px 0",
+                  textAlign: "center"
+                }}>
+                  {lang === "ar" ? "لحظات" : lang === "nl" ? "Momenten" : lang === "zh" ? "瞬间" : "Moments"}
+                </h1>
+                <p className="journal-date" style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "0.85rem",
+                  color: colors.textSecondary,
+                  opacity: 0.6,
+                  margin: "0 0 1.25rem 0",
+                  textAlign: "center"
+                }}>
+                  {lang === "ar" ? "لحظات ملتقطة من هذا الإدخال" : lang === "nl" ? "Vastgelegte momenten van dit bericht" : lang === "zh" ? "此条目中捕捉的瞬间" : "Captured moments from this entry"}
+                </p>
 
-            {/* Dynamic Book Prose — images stripped, shown in grid above */}
-            <div
-              style={{
-                fontSize: "17px",
-                lineHeight: "1.75",
-                letterSpacing: fontStyle === "mono" ? "0" : "-0.01em",
-                fontFamily: fontStyle === "serif" ? "var(--font-serif)" : fontStyle === "mono" ? "monospace" : "var(--font-sans)",
-                wordBreak: "break-word"
-              }}
-              className={`book-prose prose-style-${fontStyle} ${mode === "listen" && isPlaying ? "book-prose-listening" : ""}`}
-              dangerouslySetInnerHTML={{ __html: cleanContent }}
-              onClick={(e) => {
-                const target = e.target as HTMLElement;
+                {/* Sleek iOS-style Grid / List Segmented Switcher */}
+                {extractedImages.length > 0 && (
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    height: "28px",
+                    backgroundColor: isCurrentThemeDark ? "#1c1b1a" : "#f0ece3",
+                    borderRadius: "14px",
+                    padding: "1.5px",
+                    border: isCurrentThemeDark ? "1px solid rgba(255, 255, 255, 0.05)" : "1px solid rgba(0, 0, 0, 0.03)",
+                    boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.04)",
+                    position: "relative"
+                  }}>
+                    <button
+                      onClick={() => setPhotoLayout("grid")}
+                      style={{
+                        height: "23px",
+                        lineHeight: "23px",
+                        padding: "0 10px",
+                        borderRadius: "11.5px",
+                        border: "none",
+                        backgroundColor: "transparent",
+                        color: photoLayout === "grid"
+                          ? (isCurrentThemeDark ? "#000000" : "#ffffff")
+                          : (isCurrentThemeDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"),
+                        fontSize: "0.7rem",
+                        fontWeight: "600",
+                        cursor: "pointer",
+                        transition: "color 0.2s ease",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        position: "relative",
+                        zIndex: 2
+                      }}
+                    >
+                      {photoLayout === "grid" && (
+                        <motion.div
+                          layoutId="photo-layout-highlight"
+                          style={{
+                            position: "absolute",
+                            inset: 0,
+                            backgroundColor: isCurrentThemeDark ? "#ffffff" : "#111111",
+                            borderRadius: "11.5px",
+                            zIndex: -1
+                          }}
+                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                      <svg style={{ position: "relative", zIndex: 3 }} width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="5" height="5" rx="0.5"/><rect x="10" y="3" width="5" height="5" rx="0.5"/><rect x="17" y="3" width="5" height="5" rx="0.5"/><rect x="3" y="10" width="5" height="5" rx="0.5"/><rect x="10" y="10" width="5" height="5" rx="0.5"/><rect x="17" y="10" width="5" height="5" rx="0.5"/><rect x="3" y="17" width="5" height="5" rx="0.5"/><rect x="10" y="17" width="5" height="5" rx="0.5"/><rect x="17" y="17" width="5" height="5" rx="0.5"/></svg>
+                      <span style={{ position: "relative", zIndex: 3 }}>
+                        {lang === "ar" ? "شبكة" : lang === "nl" ? "Raster" : lang === "zh" ? "网格" : "Grid"}
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => setPhotoLayout("list")}
+                      style={{
+                        height: "23px",
+                        lineHeight: "23px",
+                        padding: "0 10px",
+                        borderRadius: "11.5px",
+                        border: "none",
+                        backgroundColor: "transparent",
+                        color: photoLayout === "list"
+                          ? (isCurrentThemeDark ? "#000000" : "#ffffff")
+                          : (isCurrentThemeDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"),
+                        fontSize: "0.7rem",
+                        fontWeight: "600",
+                        cursor: "pointer",
+                        transition: "color 0.2s ease",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        position: "relative",
+                        zIndex: 2
+                      }}
+                    >
+                      {photoLayout === "list" && (
+                        <motion.div
+                          layoutId="photo-layout-highlight"
+                          style={{
+                            position: "absolute",
+                            inset: 0,
+                            backgroundColor: isCurrentThemeDark ? "#ffffff" : "#111111",
+                            borderRadius: "11.5px",
+                            zIndex: -1
+                          }}
+                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                      <svg style={{ position: "relative", zIndex: 3 }} width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></svg>
+                      <span style={{ position: "relative", zIndex: 3 }}>
+                        {lang === "ar" ? "قائمة" : lang === "nl" ? "Lijst" : lang === "zh" ? "列表" : "List"}
+                      </span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
+            {/* Dynamic Book Prose or Compiled Photos Grid */}
+            <AnimatePresence mode="wait">
+              {mode === "photos" ? (
+                <motion.div
+                  key="photos-layout"
+                  initial={{ opacity: 0, y: 15, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -15, scale: 0.98 }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ display: "flex", flexDirection: "column", gap: "2rem", marginTop: "1rem" }}
+                >
+                  {extractedImages.length > 0 ? (
+                    photoLayout === "grid" ? (
+                      /* ── iOS-style 3-column tight square grid ── */
+                      <div style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(3, 1fr)",
+                        gap: "3px",
+                        width: "100%",
+                        borderRadius: "18px",
+                        overflow: "hidden"
+                      }}>
+                        {extractedImages.map((src, idx) => (
+                          <motion.div
+                            key={idx}
+                            initial={{ opacity: 0, scale: 0.96 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true, margin: "-20px" }}
+                            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: idx * 0.03 }}
+                            whileHover={{ scale: 1.04, zIndex: 2 }}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={() => setLightboxImg({ src, index: idx })}
+                            style={{
+                              position: "relative",
+                              aspectRatio: "1 / 1",
+                              overflow: "hidden",
+                              cursor: "pointer",
+                              backgroundColor: isCurrentThemeDark ? "#1a1917" : "#e8e3db",
+                              transition: "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+                            }}
+                          >
+                            <img
+                              src={src}
+                              alt={`Moment ${idx + 1}`}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                                display: "block",
+                                transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)"
+                              }}
+                            />
+                            {/* Subtle hover darkening */}
+                            <div style={{
+                              position: "absolute",
+                              inset: 0,
+                              background: "rgba(0,0,0,0)",
+                              transition: "background 0.25s ease",
+                              pointerEvents: "none"
+                            }} />
+                            {/* Corner index badge */}
+                            <div style={{
+                              position: "absolute",
+                              top: "7px",
+                              left: "7px",
+                              background: "rgba(0,0,0,0.5)",
+                              backdropFilter: "blur(8px)",
+                              WebkitBackdropFilter: "blur(8px)",
+                              color: "#fff",
+                              fontSize: "0.55rem",
+                              fontWeight: "700",
+                              fontFamily: "var(--font-sans)",
+                              letterSpacing: "0.06em",
+                              padding: "2px 6px",
+                              borderRadius: "100px",
+                              opacity: 0.85
+                            }}>
+                              {idx + 1}
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    ) : (
+                      /* ── Premium editorial List layout ── */
+                      <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", width: "100%" }}>
+                        {extractedImages.map((src, idx) => (
+                          <motion.div
+                            key={idx}
+                            initial={{ opacity: 0, y: 24 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: "-30px" }}
+                            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: idx * 0.04 }}
+                            onClick={() => setLightboxImg({ src, index: idx })}
+                            style={{
+                              display: "flex",
+                              alignItems: "stretch",
+                              gap: "1.1rem",
+                              cursor: "pointer",
+                              borderRadius: "18px",
+                              overflow: "hidden",
+                              border: `1px solid ${colors.border}`,
+                              backgroundColor: isCurrentThemeDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+                              boxShadow: isCurrentThemeDark
+                                ? "0 2px 16px rgba(0,0,0,0.25)"
+                                : "0 2px 12px rgba(0,0,0,0.05)",
+                              transition: "box-shadow 0.3s ease, transform 0.3s ease"
+                            }}
+                            whileHover={{
+                              boxShadow: isCurrentThemeDark
+                                ? "0 8px 30px rgba(0,0,0,0.4)"
+                                : "0 8px 28px rgba(0,0,0,0.1)",
+                              y: -2
+                            }}
+                            whileTap={{ scale: 0.99 }}
+                          >
+                            {/* Square thumbnail */}
+                            <div style={{
+                              flexShrink: 0,
+                              width: "110px",
+                              aspectRatio: "1 / 1",
+                              overflow: "hidden",
+                              position: "relative"
+                            }}>
+                              <img
+                                src={src}
+                                alt={`Moment ${idx + 1}`}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                  display: "block",
+                                  transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)"
+                                }}
+                              />
+                            </div>
+                            {/* Text content */}
+                            <div style={{
+                              flex: 1,
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              padding: "1rem 1.1rem 1rem 0",
+                              gap: "6px"
+                            }}>
+                              <span style={{
+                                fontFamily: "var(--font-sans)",
+                                fontSize: "0.6rem",
+                                fontWeight: "700",
+                                textTransform: "uppercase",
+                                letterSpacing: "0.12em",
+                                color: "#B47A3E",
+                                opacity: 0.9
+                              }}>
+                                Moment {String(idx + 1).padStart(2, "0")}
+                              </span>
+                              <p style={{
+                                fontFamily: "var(--font-sans)",
+                                fontSize: "0.9rem",
+                                fontWeight: "500",
+                                lineHeight: "1.5",
+                                letterSpacing: "-0.01em",
+                                color: colors.text,
+                                margin: 0,
+                                display: "-webkit-box",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden"
+                              }}>
+                                {extractedCaptions[idx] || getLocalizedDefaultCaption()}
+                              </p>
+                              {/* Tap indicator */}
+                              <div style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "5px",
+                                marginTop: "4px"
+                              }}>
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={colors.textSecondary} strokeWidth="2.5">
+                                  <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                                </svg>
+                                <span style={{
+                                  fontFamily: "var(--font-sans)",
+                                  fontSize: "0.65rem",
+                                  color: colors.textSecondary,
+                                  opacity: 0.6,
+                                  fontWeight: "500"
+                                }}>
+                                  {lang === "ar" ? "اضغط للعرض" : lang === "nl" ? "Tik om te bekijken" : lang === "zh" ? "点击查看" : "Tap to view"}
+                                </span>
+                              </div>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    )
+                  ) : (
+                    <div style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "5rem 2rem",
+                      textAlign: "center",
+                      opacity: 0.6
+                    }}>
+                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "#B47A3E", marginBottom: "1rem" }}>
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                        <circle cx="12" cy="13" r="4" />
+                      </svg>
+                      <h3 style={{ fontFamily: "var(--font-sans)", fontSize: "1.1rem", fontWeight: "600", margin: "0 0 4px 0" }}>
+                        {lang === "ar" ? "لا توجد صور" : lang === "zh" ? "没有照片" : lang === "nl" ? "Geen foto's" : "No photos"}
+                      </h3>
+                      <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.8rem", margin: 0 }}>
+                        {lang === "ar" ? "لا توجد صور متوفرة في هذا الإدخال." : lang === "zh" ? "此条目中没有可用的照片。" : lang === "nl" ? "Er zijn geen foto's beschikbaar in dit bericht." : "There are no photos available in this entry."}
+                      </p>
+                    </div>
+                  )}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="story-layout"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  style={{
+                    fontSize: "17px",
+                    lineHeight: "1.75",
+                    letterSpacing: fontStyle === "mono" ? "0" : "-0.01em",
+                    fontFamily: fontStyle === "serif" ? "var(--font-serif)" : fontStyle === "mono" ? "monospace" : "var(--font-sans)",
+                    wordBreak: "break-word"
+                  }}
+                  className={`book-prose prose-style-${fontStyle}`}
+                  dangerouslySetInnerHTML={{ __html: cleanContent }}
+                  onClick={(e) => {
+                    const target = e.target as HTMLElement;
 
-                // ── Grid collage photo item click → lightbox ──
-                const photoItem = target.closest(".inline-photo-item") as HTMLElement | null;
-                if (photoItem) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  const img = photoItem.querySelector("img");
-                  if (img) {
-                    const src = img.src;
-                    const idx = extractedImages.indexOf(src);
-                    setLightboxImg({ src, index: idx !== -1 ? idx : 0 });
-                  }
-                  return;
-                }
-
-                // ── Fallback: Normal image click → lightbox ──
-                if (target.tagName === "IMG") {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  const src = (target as HTMLImageElement).src;
-                  const idx = extractedImages.indexOf(src);
-                  setLightboxImg({ src, index: idx !== -1 ? idx : 0 });
-                } else {
-                  const link = target.closest("a");
-                  if (link) {
-                    const img = link.querySelector("img");
-                    if (img) {
+                    // ── Grid collage photo item click → lightbox ──
+                    const photoItem = target.closest(".inline-photo-item") as HTMLElement | null;
+                    if (photoItem) {
                       e.preventDefault();
                       e.stopPropagation();
-                      const src = img.src;
+                      const img = photoItem.querySelector("img");
+                      if (img) {
+                        const src = img.src;
+                        const idx = extractedImages.indexOf(src);
+                        setLightboxImg({ src, index: idx !== -1 ? idx : 0 });
+                      }
+                      return;
+                    }
+
+                    // ── Fallback: Normal image click → lightbox ──
+                    if (target.tagName === "IMG") {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      const src = (target as HTMLImageElement).src;
                       const idx = extractedImages.indexOf(src);
                       setLightboxImg({ src, index: idx !== -1 ? idx : 0 });
+                    } else {
+                      const link = target.closest("a");
+                      if (link) {
+                        const img = link.querySelector("img");
+                        if (img) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const src = img.src;
+                          const idx = extractedImages.indexOf(src);
+                          setLightboxImg({ src, index: idx !== -1 ? idx : 0 });
+                        }
+                      }
                     }
-                  }
-                }
-              }}
-            />
+                  }}
+                />
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Column 2: Comment Section */}
@@ -1496,7 +1687,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             style={{
               marginTop: "4.5rem",
               paddingTop: "2.5rem",
-              borderTop: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}`
+              borderTop: `1px solid ${isCurrentThemeDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)"}`
             }}
           >
             <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.5rem" }}>
@@ -1506,16 +1697,16 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 gap: "8px",
                 height: "34px",
                 padding: "0 14px",
-                background: theme === "dark"
+                background: isCurrentThemeDark
                   ? "linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%)"
                   : "linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.65) 100%)",
                 backdropFilter: "blur(20px) saturate(190%)",
                 WebkitBackdropFilter: "blur(20px) saturate(190%)",
-                border: theme === "dark"
+                border: isCurrentThemeDark
                   ? "1px solid rgba(255, 255, 255, 0.2)"
                   : "1px solid rgba(0, 0, 0, 0.14)",
                 borderRadius: "17px",
-                boxShadow: theme === "dark"
+                boxShadow: isCurrentThemeDark
                   ? "inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(255, 255, 255, 0.05), 0 6px 20px -4px rgba(0, 0, 0, 0.4)"
                   : "inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(0, 0, 0, 0.02), 0 4px 16px -2px rgba(0, 0, 0, 0.05)"
               }}>
@@ -1523,7 +1714,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   fontFamily: "var(--font-sans)",
                   fontSize: "0.72rem",
                   fontWeight: "700",
-                  color: theme === "dark" ? "rgba(255, 255, 255, 0.9)" : "rgba(17, 17, 17, 0.85)",
+                  color: isCurrentThemeDark ? "rgba(255, 255, 255, 0.9)" : "rgba(17, 17, 17, 0.85)",
                   letterSpacing: "0.08em",
                   textTransform: "uppercase"
                 }}>
@@ -1533,7 +1724,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   fontFamily: "var(--font-sans)",
                   fontSize: "0.68rem",
                   fontWeight: "600",
-                  backgroundColor: theme === "dark" ? "rgba(180, 122, 62, 0.25)" : "rgba(180, 122, 62, 0.08)",
+                  backgroundColor: isCurrentThemeDark ? "rgba(180, 122, 62, 0.25)" : "rgba(180, 122, 62, 0.08)",
                   color: "#B47A3E",
                   padding: "1px 6px",
                   borderRadius: "100px",
@@ -1554,16 +1745,16 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       key={comment.id}
                       style={{
                         padding: "0.9rem 1.1rem",
-                        background: theme === "dark"
+                        background: isCurrentThemeDark
                           ? "linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%)"
                           : "linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.52) 100%)",
                         backdropFilter: "blur(24px) saturate(190%)",
                         WebkitBackdropFilter: "blur(24px) saturate(190%)",
-                        border: `1px solid ${theme === "dark" ? "rgba(255, 255, 255, 0.18)" : "rgba(0, 0, 0, 0.11)"}`,
+                        border: `1px solid ${isCurrentThemeDark ? "rgba(255, 255, 255, 0.18)" : "rgba(0, 0, 0, 0.11)"}`,
                         borderRadius: "16px",
                         marginBottom: "0.8rem",
                         opacity: comment.approved ? 1 : 0.65,
-                        boxShadow: theme === "dark"
+                        boxShadow: isCurrentThemeDark
                           ? "inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -1px 0 rgba(255, 255, 255, 0.05), 0 8px 32px -4px rgba(0, 0, 0, 0.35)"
                           : "inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(0, 0, 0, 0.02), 0 6px 20px -2px rgba(0, 0, 0, 0.04)",
                         transition: "all 0.2s ease"
@@ -1609,7 +1800,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                           style={{
                             fontSize: "0.84rem",
                             lineHeight: "1.48",
-                            color: theme === "dark" ? "rgba(255, 255, 255, 0.92)" : "rgba(17, 17, 17, 0.88)",
+                            color: isCurrentThemeDark ? "rgba(255, 255, 255, 0.92)" : "rgba(17, 17, 17, 0.88)",
                             fontFamily: "var(--font-sans)",
                             margin: 0,
                             letterSpacing: "-0.01em",
@@ -1625,15 +1816,15 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                             marginTop: "0.75rem",
                             marginLeft: "0.8rem",
                             padding: "0.55rem 0.8rem",
-                            background: theme === "dark"
+                            background: isCurrentThemeDark
                               ? "linear-gradient(135deg, rgba(180, 122, 62, 0.14) 0%, rgba(180, 122, 62, 0.05) 100%)"
                               : "linear-gradient(135deg, rgba(180, 122, 62, 0.1) 0%, rgba(180, 122, 62, 0.04) 100%)",
                             backdropFilter: "blur(12px)",
                             WebkitBackdropFilter: "blur(12px)",
                             borderRadius: "12px",
-                            border: `1px solid ${theme === "dark" ? "rgba(180, 122, 62, 0.32)" : "rgba(180, 122, 62, 0.22)"}`,
+                            border: `1px solid ${isCurrentThemeDark ? "rgba(180, 122, 62, 0.32)" : "rgba(180, 122, 62, 0.22)"}`,
                             borderLeft: "3px solid #B47A3E",
-                            boxShadow: theme === "dark"
+                            boxShadow: isCurrentThemeDark
                               ? "inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(255, 255, 255, 0.02), 0 4px 16px -2px rgba(0, 0, 0, 0.2)"
                               : "inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -1px 0 rgba(0, 0, 0, 0.01), 0 4px 12px -2px rgba(180, 122, 62, 0.03)"
                           }}>
@@ -1644,7 +1835,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                               backgroundImage: "url(/profile.jpg), url(/profile.png)",
                               backgroundSize: "cover",
                               backgroundPosition: "center",
-                              border: `1px solid ${theme === "dark" ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.12)"}`,
+                              border: `1px solid ${isCurrentThemeDark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.12)"}`,
                               flexShrink: 0
                             }} />
                             <div style={{ flex: 1 }}>
@@ -1655,7 +1846,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                                   fontWeight: "700",
                                   textTransform: "uppercase",
                                   letterSpacing: "0.04em",
-                                  backgroundColor: theme === "dark" ? "rgba(180, 122, 62, 0.2)" : "rgba(180, 122, 62, 0.1)",
+                                  backgroundColor: isCurrentThemeDark ? "rgba(180, 122, 62, 0.2)" : "rgba(180, 122, 62, 0.1)",
                                   color: "#B47A3E",
                                   padding: "1px 5px",
                                   borderRadius: "100px"
@@ -1663,7 +1854,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                                   Writer
                                 </span>
                               </div>
-                              <p style={{ margin: 0, fontSize: "0.8rem", lineHeight: "1.45", color: theme === "dark" ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.7)", opacity: 0.95 }}>
+                              <p style={{ margin: 0, fontSize: "0.8rem", lineHeight: "1.45", color: isCurrentThemeDark ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.7)", opacity: 0.95 }}>
                                 {comment.reply}
                               </p>
                             </div>
@@ -1733,22 +1924,22 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 style={{
                   display: "flex",
                   alignItems: isCommenting ? "flex-end" : "center",
-                  gap: isCommenting ? "10px" : "0.6rem",
-                  backgroundColor: theme === "dark"
-                    ? "rgba(18, 18, 18, 0.85)"
-                    : "rgba(255, 255, 255, 0.88)",
+                  gap: isCommenting ? "10px" : "0.5rem",
+                  backgroundColor: isCurrentThemeDark
+                    ? "#18181b"
+                    : "#ffffff",
                   backdropFilter: "blur(24px) saturate(190%)",
                   WebkitBackdropFilter: "blur(24px) saturate(190%)",
-                  border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
-                  borderRadius: isCommenting ? "18px" : "24px",
-                  padding: isCommenting ? "8px 10px 8px 14px" : "0 8px",
-                  color: theme === "dark" ? "#ffffff" : "#111111",
-                  boxShadow: theme === "dark"
+                  border: isCurrentThemeDark ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
+                  borderRadius: isCommenting ? "18px" : "20px",
+                  padding: isCommenting ? "8px 10px 8px 14px" : "0 6px",
+                  color: isCurrentThemeDark ? "#ffffff" : "#111111",
+                  boxShadow: isCurrentThemeDark
                     ? "0 18px 48px -8px rgba(0, 0, 0, 0.6), 0 8px 24px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)"
                     : "0 16px 36px -4px rgba(0, 0, 0, 0.12), 0 6px 16px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
                   width: isCommenting ? "400px" : "max-content",
                   maxWidth: "92vw",
-                  height: isCommenting ? "auto" : "48px",
+                  height: isCommenting ? "auto" : "40px",
                   boxSizing: "border-box",
                   overflow: "hidden"
                 }}
@@ -1882,14 +2073,14 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          width: "34px",
-                          height: "34px",
+                          width: "28px",
+                          height: "28px",
                           boxSizing: "border-box",
                           borderRadius: "50%",
-                          backgroundColor: theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "#ffffff",
-                          color: theme === "dark" ? "#ffffff" : "#111111",
-                          border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
-                          boxShadow: theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff",
+                          backgroundColor: isCurrentThemeDark ? "rgba(255, 255, 255, 0.08)" : "#ffffff",
+                          color: isCurrentThemeDark ? "#ffffff" : "#111111",
+                          border: isCurrentThemeDark ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
+                          boxShadow: isCurrentThemeDark ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff",
                           transition: "all 0.2s ease",
                           textDecoration: "none",
                           flexShrink: 0
@@ -1897,102 +2088,101 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         className="dock-icon-btn"
                         title="Back to Journal"
                       >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="m15 18-6-6 6-6" />
                         </svg>
                       </Link>
 
-                      {/* 2. Read / Listen Capsule */}
+                      {/* 2. Story / Photos Switcher Capsule */}
                       <div
                         style={{
                           display: "flex",
                           alignItems: "center",
-                          height: "34px",
+                          height: "30px",
                           boxSizing: "border-box",
-                          backgroundColor: theme === "dark" ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.04)",
-                          borderRadius: "17px",
-                          padding: "2px",
-                          border: theme === "dark" ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(0, 0, 0, 0.04)",
-                          boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.06)"
+                          backgroundColor: isCurrentThemeDark ? "#09090b" : "#f4f1ea",
+                          borderRadius: "15px",
+                          padding: "1.5px",
+                          border: isCurrentThemeDark ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(0, 0, 0, 0.04)",
+                          boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.06)",
+                          position: "relative"
                         }}
                       >
                         <button
                           onClick={() => handleSetMode("read")}
                           style={{
-                            height: "28px",
-                            lineHeight: "28px",
-                            padding: "0 15px",
-                            borderRadius: "14px",
+                            height: "25px",
+                            lineHeight: "25px",
+                            padding: "0 12px",
+                            borderRadius: "12.5px",
                             border: "none",
-                            backgroundColor: mode === "read"
-                              ? (theme === "dark" ? "#ffffff" : "#111111")
-                              : "transparent",
+                            backgroundColor: "transparent",
                             color: mode === "read"
-                              ? (theme === "dark" ? "#000000" : "#ffffff")
-                              : (theme === "dark" ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"),
-                            boxShadow: mode === "read"
-                              ? (theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.2)")
-                              : "none",
-                            fontSize: "0.82rem",
+                              ? (isCurrentThemeDark ? "#000000" : "#ffffff")
+                              : (isCurrentThemeDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"),
+                            fontSize: "0.78rem",
                             fontWeight: "600",
                             cursor: "pointer",
-                            transition: "all 0.2s ease"
+                            transition: "color 0.2s ease",
+                            position: "relative",
+                            zIndex: 2
                           }}
                         >
-                          Read
+                          {mode === "read" && (
+                            <motion.div
+                              layoutId="dock-mode-highlight"
+                              style={{
+                                position: "absolute",
+                                inset: 0,
+                                backgroundColor: isCurrentThemeDark ? "#ffffff" : "#111111",
+                                borderRadius: "12.5px",
+                                zIndex: -1,
+                                boxShadow: isCurrentThemeDark ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.2)"
+                              }}
+                              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                            />
+                          )}
+                          <span style={{ position: "relative", zIndex: 3 }}>
+                            {lang === "ar" ? "القصة" : lang === "zh" ? "故事" : lang === "nl" ? "Verhaal" : "Story"}
+                          </span>
                         </button>
                         <button
-                          onClick={() => handleSetMode("listen")}
+                          onClick={() => handleSetMode("photos")}
                           style={{
-                            height: "28px",
-                            lineHeight: "28px",
-                            padding: "0 15px",
-                            borderRadius: "14px",
+                            height: "25px",
+                            lineHeight: "25px",
+                            padding: "0 12px",
+                            borderRadius: "12.5px",
                             border: "none",
-                            backgroundColor: mode === "listen"
-                              ? (theme === "dark" ? "#ffffff" : "#111111")
-                              : "transparent",
-                            color: mode === "listen"
-                              ? (theme === "dark" ? "#000000" : "#ffffff")
-                              : (theme === "dark" ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"),
-                            boxShadow: mode === "listen"
-                              ? (theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.2)")
-                              : "none",
-                            fontSize: "0.82rem",
+                            backgroundColor: "transparent",
+                            color: mode === "photos"
+                              ? (isCurrentThemeDark ? "#000000" : "#ffffff")
+                              : (isCurrentThemeDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)"),
+                            fontSize: "0.78rem",
                             fontWeight: "600",
-                            cursor: isLoadingAudio ? "wait" : "pointer",
-                            transition: "all 0.2s ease",
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "5px",
-                            opacity: isLoadingAudio ? 0.7 : 1,
+                            cursor: "pointer",
+                            transition: "color 0.2s ease",
+                            position: "relative",
+                            zIndex: 2
                           }}
                         >
-                          {isLoadingAudio ? (
-                            <>
-                              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83">
-                                  <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite" />
-                                </path>
-                              </svg>
-                              Generating…
-                            </>
-                          ) : (
-                            <>
-                              Listen
-                              {isPlaying && (
-                                <span style={{ display: "inline-flex", gap: "1.5px", alignItems: "center" }}>
-                                  {[0, 1, 2].map(i => (
-                                    <span key={i} style={{
-                                      display: "inline-block", width: "2px", height: "8px",
-                                      backgroundColor: "currentColor", borderRadius: "1px",
-                                      animation: `tts-bar 0.8s ease-in-out ${i * 0.13}s infinite alternate`
-                                    }} />
-                                  ))}
-                                </span>
-                              )}
-                            </>
+                          {mode === "photos" && (
+                            <motion.div
+                              layoutId="dock-mode-highlight"
+                              style={{
+                                position: "absolute",
+                                inset: 0,
+                                backgroundColor: isCurrentThemeDark ? "#ffffff" : "#111111",
+                                borderRadius: "12.5px",
+                                zIndex: -1,
+                                boxShadow: isCurrentThemeDark ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.2)"
+                              }}
+                              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                            />
                           )}
+                          <span style={{ position: "relative", zIndex: 3 }}>
+                            {lang === "ar" ? "الصور" : lang === "zh" ? "照片" : lang === "nl" ? "Foto's" : "Photos"}
+                          </span>
                         </button>
                       </div>
                     </motion.div>
@@ -2024,24 +2214,24 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   }}
                   disabled={isCommenting && (!commentText.trim() || !tempName.trim())}
                   animate={{
-                    width: isCommenting ? "30px" : "34px",
-                    height: isCommenting ? "30px" : "34px",
+                    width: isCommenting ? "26px" : "28px",
+                    height: isCommenting ? "26px" : "28px",
                     backgroundColor: isCommenting
                       ? ((commentText.trim() && tempName.trim())
                         ? "#007aff"
-                        : (theme === "dark" ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.06)"))
-                      : (theme === "dark" ? "rgba(255, 255, 255, 0.08)" : "#ffffff"),
+                        : (isCurrentThemeDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.06)"))
+                      : (isCurrentThemeDark ? "rgba(255, 255, 255, 0.08)" : "#ffffff"),
                     color: isCommenting
                       ? ((commentText.trim() && tempName.trim())
                         ? "#ffffff"
-                        : (theme === "dark" ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.45)"))
-                      : (theme === "dark" ? "#ffffff" : "#111111"),
+                        : (isCurrentThemeDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.45)"))
+                      : (isCurrentThemeDark ? "#ffffff" : "#111111"),
                     border: isCommenting
                       ? "none"
-                      : (theme === "dark" ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)"),
+                      : (isCurrentThemeDark ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)"),
                     boxShadow: isCommenting
                       ? "none"
-                      : (theme === "dark" ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff")
+                      : (isCurrentThemeDark ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff")
                   }}
                   transition={{
                     layout: {
@@ -2073,7 +2263,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         animate={{ opacity: 1, rotate: 0, scale: 1 }}
                         exit={{ opacity: 0, rotate: 45, scale: 0.6 }}
                         transition={{ duration: 0.12 }}
-                        width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "translateY(-1px)" }}
+                        width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "translateY(-1px)" }}
                       >
                         <line x1="12" y1="19" x2="12" y2="5"></line>
                         <polyline points="5 12 12 5 19 12"></polyline>
@@ -2085,7 +2275,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         animate={{ opacity: 1, rotate: 0, scale: 1 }}
                         exit={{ opacity: 0, rotate: -45, scale: 0.6 }}
                         transition={{ duration: 0.12 }}
-                        width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                        width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
                       >
                         <path d="M12 21a9 9 0 1 0-9-9c0 1.48.36 2.89 1 4.15L3 21l4.85-1c1.26.64 2.67 1 4.15 1z" />
                       </motion.svg>
@@ -2096,145 +2286,6 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
             </motion.div>
           </div>
 
-          {/* ─── Audiobook Player Bar Centering Wrapper ──────────────────────── */}
-          <AnimatePresence>
-            {mode === "listen" && !isLoadingAudio && audioUrl && (
-              <div
-                style={{
-                  position: "fixed",
-                  bottom: "5.2rem", // Stacked beautifully above the floating dock (which is at 1.5rem)
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  zIndex: 9998,
-                  pointerEvents: "none",
-                  width: "min(480px, calc(100vw - 2rem))"
-                }}
-              >
-                <motion.div
-                  initial={{ opacity: 0, y: 12, scale: 0.96 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  style={{
-                    pointerEvents: "auto",
-                    width: "100%",
-                    backgroundColor: theme === "dark" ? "rgba(20,20,20,0.96)" : "rgba(255,255,255,0.97)",
-                    backdropFilter: "blur(20px)",
-                    WebkitBackdropFilter: "blur(20px)",
-                    borderRadius: "18px",
-                    border: theme === "dark" ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.08)",
-                    boxShadow: theme === "dark"
-                      ? "0 20px 48px rgba(0,0,0,0.7), 0 6px 16px rgba(0,0,0,0.5)"
-                      : "0 16px 40px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.07)",
-                    padding: "14px 16px",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "10px",
-                  }}
-                >
-                  {/* Top row: title + close */}
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0 }}>
-                      {/* Waveform icon */}
-                      <div style={{ display: "flex", gap: "2px", alignItems: "center", flexShrink: 0 }}>
-                        {[0, 1, 2, 3, 4].map(i => (
-                          <div key={i} style={{
-                            width: "2.5px",
-                            height: isPlaying ? `${8 + (i % 3) * 5}px` : "4px",
-                            backgroundColor: theme === "dark" ? "#ffffff" : "#111111",
-                            borderRadius: "1.5px",
-                            opacity: isPlaying ? 0.9 : 0.35,
-                            transition: "height 0.3s ease",
-                            animation: isPlaying ? `tts-bar 0.7s ease-in-out ${i * 0.1}s infinite alternate` : "none"
-                          }} />
-                        ))}
-                      </div>
-                      <span style={{ fontSize: "0.74rem", fontWeight: "600", color: theme === "dark" ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.85)", fontFamily: "var(--font-sans)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {post.title}
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => handleSetMode("read")}
-                      style={{ background: "none", border: "none", cursor: "pointer", padding: "2px", color: theme === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.4)", flexShrink: 0 }}
-                      title="Stop"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-                      </svg>
-                    </button>
-                  </div>
-
-                  {/* Progress bar */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <span style={{ fontSize: "0.65rem", fontFamily: "var(--font-sans)", color: theme === "dark" ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.4)", flexShrink: 0, minWidth: "28px" }}>
-                      {fmt(audioCurrentTime)}
-                    </span>
-                    <input
-                      type="range" min={0} max={audioDuration || 1} step={0.5}
-                      value={audioCurrentTime}
-                      onChange={handleSeek}
-                      style={{
-                        flex: 1, height: "3px", appearance: "none", WebkitAppearance: "none",
-                        backgroundColor: theme === "dark" ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)",
-                        borderRadius: "2px", cursor: "pointer", outline: "none",
-                        accentColor: theme === "dark" ? "#ffffff" : "#111111"
-                      } as React.CSSProperties}
-                    />
-                    <span style={{ fontSize: "0.65rem", fontFamily: "var(--font-sans)", color: theme === "dark" ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.4)", flexShrink: 0, minWidth: "28px", textAlign: "right" }}>
-                      {fmt(audioDuration)}
-                    </span>
-                  </div>
-
-                  {/* Controls row: speeds + pause/play */}
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    {/* Speed buttons */}
-                    <div style={{ display: "flex", gap: "5px" }}>
-                      {[0.8, 1, 1.2, 1.5].map(r => (
-                        <button key={r} onClick={() => handleSetSpeed(r)} style={{
-                          padding: "3px 8px", borderRadius: "8px", border: "none", cursor: "pointer",
-                          fontSize: "0.65rem", fontWeight: "600", fontFamily: "var(--font-sans)",
-                          backgroundColor: playbackRate === r
-                            ? (theme === "dark" ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.12)")
-                            : "transparent",
-                          color: playbackRate === r
-                            ? (theme === "dark" ? "#ffffff" : "#111111")
-                            : (theme === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.38)"),
-                          transition: "all 0.15s ease"
-                        }}>
-                          {r}x
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Pause / Play */}
-                    <button
-                      onClick={handleTogglePlay}
-                      style={{
-                        width: "38px", height: "38px", borderRadius: "50%", border: "none",
-                        backgroundColor: theme === "dark" ? "#ffffff" : "#111111",
-                        color: theme === "dark" ? "#000000" : "#ffffff",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        cursor: "pointer",
-                        boxShadow: theme === "dark" ? "0 4px 12px rgba(0,0,0,0.5)" : "0 4px 12px rgba(0,0,0,0.2)",
-                        flexShrink: 0
-                      }}
-                    >
-                      {isPlaying ? (
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                          <rect x="6" y="4" width="4" height="16" rx="1" />
-                          <rect x="14" y="4" width="4" height="16" rx="1" />
-                        </svg>
-                      ) : (
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                          <polygon points="5,3 19,12 5,21" />
-                        </svg>
-                      )}
-                    </button>
-                  </div>
-                </motion.div>
-              </div>
-            )}
-          </AnimatePresence>
         </>,
         document.body
       )}
