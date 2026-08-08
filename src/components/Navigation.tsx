@@ -73,6 +73,15 @@ export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileExpanded, setIsProfileExpanded] = useState(false);
   const [themeMode, setThemeMode] = useState<"light" | "dark">("dark");
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -354,122 +363,157 @@ export default function Navigation() {
       </header>
 
       {/* ── MOBILE DEDICATED TOP HEADER ── */}
-      <div className="mobile-header-bar">
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}>
-          <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-            <span
-              style={{
-                fontFamily: "var(--font-serif)",
-                fontWeight: 700,
-                fontSize: "1.05rem",
-                letterSpacing: "-0.02em",
-                color: "var(--text-primary)",
-              }}
-            >
-              Ivan Affriandi
-            </span>
-            <span
-              style={{
-                width: "6px",
-                height: "6px",
-                borderRadius: "50%",
-                backgroundColor: "#10B981",
-                marginLeft: "6px",
-                boxShadow: "0 0 8px #10B981",
-                display: "inline-block",
-              }}
-            />
+      {(() => {
+        const isHome = pathname === "/";
+        const isTransparentHeader = isHome && !scrolled && !isMenuOpen;
+        return (
+          <div
+            className="mobile-header-bar"
+            style={{
+              background: isTransparentHeader
+                ? "transparent"
+                : themeMode === "dark"
+                ? "rgba(10, 10, 10, 0.85)"
+                : "rgba(246, 246, 244, 0.88)",
+              backdropFilter: isTransparentHeader ? "none" : "blur(24px) saturate(1.8)",
+              WebkitBackdropFilter: isTransparentHeader ? "none" : "blur(24px) saturate(1.8)",
+              borderBottom: isTransparentHeader
+                ? "1px solid transparent"
+                : themeMode === "dark"
+                ? "1px solid rgba(255, 255, 255, 0.08)"
+                : "1px solid rgba(0, 0, 0, 0.08)",
+              transition: "background-color 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease",
+            }}
+          >
+            <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}>
+              <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+                <span
+                  style={{
+                    fontFamily: "var(--font-serif)",
+                    fontWeight: 700,
+                    fontSize: "1.05rem",
+                    letterSpacing: "-0.02em",
+                    color: isTransparentHeader ? "#FFFFFF" : "var(--text-primary)",
+                    textShadow: isTransparentHeader ? "0 2px 10px rgba(0,0,0,0.65)" : "none",
+                  }}
+                >
+                  Ivan Affriandi
+                </span>
+                <span
+                  style={{
+                    width: "6px",
+                    height: "6px",
+                    borderRadius: "50%",
+                    backgroundColor: "#10B981",
+                    marginLeft: "6px",
+                    boxShadow: "0 0 8px #10B981",
+                    display: "inline-block",
+                  }}
+                />
+              </div>
+            </Link>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+              {/* Quick Lang Switcher Pill */}
+              <button
+                onClick={cycleLang}
+                style={{
+                  background: isTransparentHeader ? "rgba(0,0,0,0.35)" : "rgba(255,255,255,0.08)",
+                  border: isTransparentHeader ? "1px solid rgba(255,255,255,0.3)" : "1px solid var(--border-color)",
+                  backdropFilter: isTransparentHeader ? "blur(10px)" : "none",
+                  borderRadius: "14px",
+                  padding: "4px 9px",
+                  fontSize: "0.68rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.08em",
+                  color: isTransparentHeader ? "#FFFFFF" : "var(--text-primary)",
+                  cursor: "pointer",
+                  textTransform: "uppercase",
+                }}
+              >
+                {lang.toUpperCase()}
+              </button>
+
+              {/* Theme Toggle Button */}
+              <button
+                onClick={toggleThemeMode}
+                title="Toggle theme"
+                style={{
+                  background: isTransparentHeader ? "rgba(0,0,0,0.35)" : "rgba(255,255,255,0.08)",
+                  border: isTransparentHeader ? "1px solid rgba(255,255,255,0.3)" : "1px solid var(--border-color)",
+                  backdropFilter: isTransparentHeader ? "blur(10px)" : "none",
+                  borderRadius: "50%",
+                  width: "32px",
+                  height: "32px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: isTransparentHeader ? "#FFFFFF" : "var(--text-primary)",
+                  cursor: "pointer",
+                }}
+              >
+                {themeMode === "dark" ? (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                  </svg>
+                ) : (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                  </svg>
+                )}
+              </button>
+
+              {/* Mobile Full Menu Toggle */}
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                style={{
+                  background: isMenuOpen
+                    ? "var(--text-primary)"
+                    : isTransparentHeader
+                    ? "rgba(0,0,0,0.35)"
+                    : "rgba(255,255,255,0.08)",
+                  color: isMenuOpen
+                    ? "var(--bg-color)"
+                    : isTransparentHeader
+                    ? "#FFFFFF"
+                    : "var(--text-primary)",
+                  border: isTransparentHeader ? "1px solid rgba(255,255,255,0.3)" : "1px solid var(--border-color)",
+                  backdropFilter: isTransparentHeader ? "blur(10px)" : "none",
+                  borderRadius: "50%",
+                  width: "32px",
+                  height: "32px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                {isMenuOpen ? (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                ) : (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
-        </Link>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-          {/* Quick Lang Switcher Pill */}
-          <button
-            onClick={cycleLang}
-            style={{
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid var(--border-color)",
-              borderRadius: "14px",
-              padding: "4px 9px",
-              fontSize: "0.68rem",
-              fontWeight: 700,
-              letterSpacing: "0.08em",
-              color: "var(--text-primary)",
-              cursor: "pointer",
-              textTransform: "uppercase",
-            }}
-          >
-            {lang.toUpperCase()}
-          </button>
-
-          {/* Theme Toggle Button */}
-          <button
-            onClick={toggleThemeMode}
-            title="Toggle theme"
-            style={{
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid var(--border-color)",
-              borderRadius: "50%",
-              width: "32px",
-              height: "32px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--text-primary)",
-              cursor: "pointer",
-            }}
-          >
-            {themeMode === "dark" ? (
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="5" />
-                <line x1="12" y1="1" x2="12" y2="3" />
-                <line x1="12" y1="21" x2="12" y2="23" />
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                <line x1="1" y1="12" x2="3" y2="12" />
-                <line x1="21" y1="12" x2="23" y2="12" />
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-              </svg>
-            ) : (
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-              </svg>
-            )}
-          </button>
-
-          {/* Mobile Full Menu Toggle */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            style={{
-              background: isMenuOpen ? "var(--text-primary)" : "rgba(255,255,255,0.08)",
-              color: isMenuOpen ? "var(--bg-color)" : "var(--text-primary)",
-              border: "1px solid var(--border-color)",
-              borderRadius: "50%",
-              width: "32px",
-              height: "32px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-            }}
-          >
-            {isMenuOpen ? (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            ) : (
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
-            )}
-          </button>
-        </div>
-      </div>
+        );
+      })()}
 
       {/* ── MOBILE FLOATING BOTTOM TAB BAR DOCK ── */}
       <div className="mobile-dock-nav">

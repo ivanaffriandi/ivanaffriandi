@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
     position: 'bottom-right',
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',

@@ -1657,9 +1657,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             width: 100%;
             max-width: 100%;
             min-width: unset;
-            height: 55vw;
-            min-height: 260px;
-            max-height: 360px;
+            height: 72vw;
+            min-height: 340px;
+            max-height: 480px;
             align-self: unset;
           }
 
@@ -1667,7 +1667,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
           /* ── HERO TEXT INSIDE LEFT PANEL ── */
           .pj-left-content {
-            padding: 1.5rem 1.25rem 2rem 1.25rem;
+            padding: 4.5rem 1.25rem 2rem 1.25rem;
           }
 
           .pj-title {

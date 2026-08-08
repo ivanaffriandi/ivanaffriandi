@@ -11,7 +11,9 @@ const IG_API_BASE = "https://graph.instagram.com";
  * https://developers.facebook.com/docs/instagram-basic-display-api/reference/media
  */
 export async function GET() {
-  const token = process.env.INSTAGRAM_ACCESS_TOKEN;
+  const token =
+    process.env.INSTAGRAM_ACCESS_TOKEN ||
+    "IGAAXAZAWn68ZBtBZAGFZAREw2cWozcThCa3R1aWhmSkR2Rm1GT3d6R3BIanR2U09saDllaUxNM2tMZAWFvWjJwa2U3R1hDVGVja3RZAcmNXSFBvWlFCUEtJYnBmSFVKN1ZA2TC1KYlNhVWFWWXl3bHFTejl6ZAnZAkQklGYzRZAX3JwSDcwcwZDZD";
 
   if (!token) {
     return NextResponse.json(
