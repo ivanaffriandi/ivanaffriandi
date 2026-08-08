@@ -51,7 +51,7 @@ export default async function Image() {
         }} />
 
         {/* Bottom content block */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', zIndex: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
           {/* Eyebrow label */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{ width: '32px', height: '3px', background: '#e8e4dc', borderRadius: '2px', display: 'flex' }} />

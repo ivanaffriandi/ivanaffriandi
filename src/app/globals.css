@@ -1,62 +1,88 @@
+/* ============================================================
+   TITANS OF MAVERICKS EDITORIAL DESIGN SYSTEM
+   Concept: Ultra-minimalist modern editorial, bold sans headlines, tall portrait focus, stark monochrome & sepia.
+   ============================================================ */
 :root {
-  --bg-color: #FDFBF7; /* Beautiful warm Munken book paper */
-  --bg-color-rgba: rgba(253, 251, 247, 0.75);
-  --bg-glass: rgba(253, 251, 247, 0.45);
-  --bg-secondary: rgba(0,0,0,0.04);
-  --text-primary: #181715; /* Elegant charcoal ink */
-  --text-secondary: #6B6862; /* Soft sepia secondary text */
-  --border-color: #E6E1D8; /* Warm book binder grid line */
-  --grid-line: #E6E1D8;
-  
-  /* Modern Raised "Timbul Ke Luar" Neumorphism Shadow */
-  --shadow-raised: 8px 8px 24px rgba(180, 165, 150, 0.12), -8px -8px 24px rgba(255, 255, 255, 0.95), 0 12px 32px rgba(0, 0, 0, 0.04);
-  
-  /* Pressed Pocket Neumorphism Shadow */
-  --shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.04), inset 0 -1px 0 rgba(255, 255, 255, 0.65);
-  
-  /* Dynamic Card Colors */
-  --card-bg-1: rgba(144, 164, 174, 0.06);
-  --card-bg-2: rgba(161, 136, 127, 0.06);
-  --card-bg-3: rgba(129, 199, 132, 0.06);
-  --card-bg-4: rgba(255, 183, 77, 0.06);
-  
-  --card-border-1: rgba(144, 164, 174, 0.2);
-  --card-border-2: rgba(161, 136, 127, 0.2);
-  --card-border-3: rgba(129, 199, 132, 0.2);
-  --card-border-4: rgba(255, 183, 77, 0.2);
+  /* Light Mode — Crisp Stark Off-White & Deep Ink */
+  --bg-color: #F6F6F4;
+  --bg-color-rgba: rgba(246, 246, 244, 0.96);
+  --bg-glass: rgba(240, 240, 238, 0.85);
+  --bg-secondary: #EBEBE8;
+  --bg-tertiary: #E0E0DC;
 
+  /* Typography — High-Contrast Dark Ink */
+  --text-primary: #121212;
+  --text-secondary: #525252;
+  --text-muted: #8A8A8A;
+
+  /* Borders — Hairline dividers */
+  --border-color: rgba(0, 0, 0, 0.12);
+  --border-subtle: rgba(0, 0, 0, 0.05);
+
+  /* Accent - Pure Monochrome Ink Dark */
+  --accent-color: #121212;
+  --accent-color-hover: #333333;
+  --accent-glow: rgba(0, 0, 0, 0.08);
+
+  /* Shadows — Minimalist drop shadow */
+  --shadow-raised: 0 16px 40px -12px rgba(0, 0, 0, 0.12);
+
+  /* Cards */
+  --card-bg-1: #FFFFFF;
+  --card-bg-2: #F0F0ED;
+  --card-border-1: rgba(0, 0, 0, 0.08);
+
+  /* Typography scale */
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-serif: var(--font-lora), 'Lora', Georgia, serif;
+  --font-serif: var(--font-lora), Georgia, serif;
+}
+
+/* Vertical Writing Mode Utility */
+.writing-vertical {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg-color: #141312; /* Volcanic bookplate base */
-    --bg-color-rgba: rgba(20, 19, 18, 0.75);
-    --bg-glass: rgba(20, 19, 18, 0.45);
-    --bg-secondary: rgba(255,255,255,0.05);
-    --text-primary: #EBE6DC; /* Warm paper text */
-    --text-secondary: #9B968E;
-    --border-color: #2F2E2C;
-    --grid-line: #2F2E2C;
-    
-    /* Dark Mode Neumorphism Raised Shadows */
-    --shadow-raised: 8px 8px 24px rgba(0, 0, 0, 0.35), -8px -8px 24px rgba(255, 255, 255, 0.02), 0 12px 32px rgba(0, 0, 0, 0.25);
-    
-    /* Dark Mode Pressed Inset Shadows */
-    --shadow-inset: inset 0 1.5px 3px rgba(0, 0, 0, 0.4), inset 0 -1px 0 rgba(255, 255, 255, 0.05);
-
-    /* Dark Mode Card Colors */
-    --card-bg-1: rgba(144, 164, 174, 0.12);
-    --card-bg-2: rgba(161, 136, 127, 0.12);
-    --card-bg-3: rgba(129, 199, 132, 0.12);
-    --card-bg-4: rgba(255, 183, 77, 0.12);
-  
-    --card-border-1: rgba(144, 164, 174, 0.3);
-    --card-border-2: rgba(161, 136, 127, 0.3);
-    --card-border-3: rgba(129, 199, 132, 0.3);
-    --card-border-4: rgba(255, 183, 77, 0.3);
+  :root:not([data-theme="light"]) {
+    --bg-color: #121212;
+    --bg-color-rgba: rgba(18, 18, 18, 0.96);
+    --bg-glass: rgba(22, 22, 22, 0.85);
+    --bg-secondary: #1C1C1C;
+    --bg-tertiary: #262626;
+    --text-primary: #F6F6F4;
+    --text-secondary: #A0A0A0;
+    --text-muted: #666666;
+    --border-color: rgba(255, 255, 255, 0.14);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --accent-color: #F6F6F4;
+    --accent-color-hover: #FFFFFF;
+    --accent-glow: rgba(255, 255, 255, 0.12);
+    --shadow-raised: 0 16px 40px -12px rgba(0, 0, 0, 0.6);
+    --card-bg-1: #1A1A1A;
+    --card-bg-2: #222222;
+    --card-border-1: rgba(255, 255, 255, 0.1);
   }
+}
+
+html[data-theme="dark"] {
+  --bg-color: #121212;
+  --bg-color-rgba: rgba(18, 18, 18, 0.96);
+  --bg-glass: rgba(22, 22, 22, 0.85);
+  --bg-secondary: #1C1C1C;
+  --bg-tertiary: #262626;
+  --text-primary: #F6F6F4;
+  --text-secondary: #A0A0A0;
+  --text-muted: #666666;
+  --border-color: rgba(255, 255, 255, 0.14);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --accent-color: #F6F6F4;
+  --accent-color-hover: #FFFFFF;
+  --accent-glow: rgba(255, 255, 255, 0.12);
+  --shadow-raised: 0 16px 40px -12px rgba(0, 0, 0, 0.6);
+  --card-bg-1: #1A1A1A;
+  --card-bg-2: #222222;
+  --card-border-1: rgba(255, 255, 255, 0.1);
 }
 
 /* Beautiful Literary Drop Cap */
@@ -104,6 +130,14 @@ html, body {
   outline: none !important;
 }
 
+.copyright-text {
+  display: inline-flex;
+  padding: 0;
+  margin: 0;
+  line-height: 1.2;
+  text-align: left;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -124,47 +158,12 @@ p {
 
 /* Background Grid Lines (4 Columns) */
 .bg-grid-lines {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1;
-  pointer-events: none;
-  background-image: 
-    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-    linear-gradient(to right, var(--grid-line) 1px, transparent 1px);
-  background-position: 
-    0% 0,
-    33.333% 0,
-    66.666% 0,
-    100% 0;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-}
-
-@media (min-width: 768px) {
-  .bg-grid-lines {
-    background-image: 
-      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-      linear-gradient(to right, var(--grid-line) 1px, transparent 1px);
-    background-position: 
-      0% 0,
-      25% 0,
-      50% 0,
-      75% 0,
-      100% 0;
-  }
+  display: none !important;
 }
 
 .layout-wrapper {
-  padding: 1rem 4vw;
-  max-width: 1100px;
+  padding: 0 5vw;
+  max-width: 1120px;
   margin: 0 auto;
   min-height: 100vh;
   display: flex;
@@ -176,6 +175,125 @@ p {
   display: flex;
   flex-direction: column;
   min-height: 0;
+}
+
+/* Homepage, Ask & About 2-column split: bypass layout-wrapper constraints */
+html:has(.ask-page-root),
+body:has(.ask-page-root),
+body:has(.ask-page-root) .layout-wrapper,
+body:has(.ask-page-root) .content-wrapper,
+body:has(.ask-page-root) main,
+body:has(.ask-page-root) main > div,
+html:has(.ask-page-container),
+body:has(.ask-page-container),
+body:has(.ask-page-container) .layout-wrapper,
+body:has(.ask-page-container) .content-wrapper,
+body:has(.ask-page-container) main,
+body:has(.ask-page-container) main > div,
+html:has(.pj-root),
+body:has(.pj-root),
+body:has(.pj-root) .layout-wrapper,
+body:has(.pj-root) .content-wrapper,
+body:has(.pj-root) main,
+body:has(.pj-root) main > div,
+html:has(.about-2col-root),
+body:has(.about-2col-root),
+body:has(.about-2col-root) .layout-wrapper,
+body:has(.about-2col-root) .content-wrapper,
+body:has(.about-2col-root) main,
+body:has(.about-2col-root) main > div,
+html:has(.about-root),
+body:has(.about-root),
+body:has(.about-root) .layout-wrapper,
+body:has(.about-root) .content-wrapper,
+body:has(.about-root) main,
+body:has(.about-root) main > div {
+  padding: 0 !important;
+  padding-top: 0 !important;
+  margin: 0 !important;
+  margin-top: 0 !important;
+  max-width: 100% !important;
+  transform: none !important;
+  will-change: auto !important;
+  filter: none !important;
+  perspective: none !important;
+  contain: none !important;
+  background-color: #000000 !important;
+}
+
+
+/* ============================================================
+   SPEC ROW SYSTEM — Polestar-inspired data rows
+   ============================================================ */
+.spec-section {
+  border-top: 1px solid var(--spec-divider);
+}
+
+.spec-row {
+  display: grid;
+  grid-template-columns: var(--spec-label-width) 1fr;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--spec-divider);
+  transition: background-color 0.15s ease;
+}
+
+.spec-row:hover {
+  background-color: rgba(255, 255, 255, 0.018);
+  margin: 0 -5vw;
+  padding-left: 5vw;
+  padding-right: 5vw;
+}
+
+.spec-label {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spec-value {
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  min-width: 0;
+}
+
+.spec-value-strong {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+/* ============================================================
+   SECTION HEADER — editorial divider + label
+   ============================================================ */
+.section-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 2rem 0 0.75rem 0;
+  display: block;
+}
+
+.section-title-lg {
+  font-size: clamp(1.6rem, 5vw, 2.5rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin: 0;
 }
 
 /* Header & Menu Button */
@@ -416,11 +534,13 @@ header {
 }
 
 .menu-link:hover {
-  border-color: var(--text-primary);
+  border-color: rgba(155,0,0,0.5);
+  color: #9b0000;
 }
 
 .menu-text {
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  color: inherit;
 }
 
 .menu-link:hover .menu-text {
@@ -1576,32 +1696,34 @@ html {
    ========================================================================== */
 
 .daily-journal-feed-container {
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 1.5rem 1.25rem;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .feed-split-layout {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0;
 }
 
 @media (min-width: 768px) {
   .daily-journal-feed-container {
-    max-width: 1100px;
-    padding: 2rem 0;
+    max-width: 100%;
+    padding: 0;
   }
   
   .feed-split-layout {
     flex-direction: row;
-    gap: 2.5rem;
+    gap: 3rem;
     align-items: flex-start;
   }
   
   .feed-column-left {
-    flex: 0 0 220px;
+    flex: 0 0 200px;
     min-width: 0;
+    position: sticky;
+    top: 72px;
   }
   
   .feed-column-middle {
@@ -1610,7 +1732,7 @@ html {
   }
   
   .feed-column-right {
-    flex: 0 0 300px;
+    flex: 0 0 260px;
     min-width: 0;
   }
 }
@@ -2217,6 +2339,95 @@ body.moments-page .content-wrapper {
   .yunox-single-footer-local {
     gap: 0.5rem !important;
     font-size: 0.75rem !important;
+  }
+}
+
+/* ==========================================================================
+   PREMIUM LINK ROWS — Blog post / entry list items
+   ========================================================================== */
+.link-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--spec-divider);
+  cursor: pointer;
+  gap: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.15s ease, padding 0.15s ease;
+  position: relative;
+}
+
+.link-row:first-child {
+  border-top: 1px solid var(--spec-divider);
+}
+
+.link-row:hover {
+  background-color: rgba(255,255,255,0.018);
+  padding-left: 0.6rem;
+  padding-right: 0.6rem;
+  margin: 0 -0.6rem;
+}
+
+.link-row-title {
+  font-size: 0.92rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-row-meta {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+/* Hero page section counter (01, 02, 03) */
+.section-counter {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   FOOTER RESPONSIVE & MOBILE UI CONTAINER ENHANCEMENTS
+   ============================================================ */
+@media (max-width: 767px) {
+  .yunox-single-footer {
+    display: none !important;
+  }
+}
+
+@media (max-width: 860px) {
+  /* Ensure page content has top spacing for mobile header and bottom spacing for floating dock */
+  .layout-wrapper,
+  .content-wrapper,
+  main {
+    margin-left: 0 !important;
+    padding-top: 56px !important;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Prevent text input auto-zoom on iOS */
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  textarea,
+  select {
+    font-size: 16px !important;
   }
 }
 

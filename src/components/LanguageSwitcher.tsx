@@ -40,11 +40,12 @@ export default function LanguageSwitcher() {
   if (!mounted) {
     return (
       <span style={{
-        fontFamily: "var(--font-sans)",
-        fontSize: "0.76rem",
-        fontWeight: "500",
-        color: "var(--text-primary)",
-        opacity: 0.4,
+        fontFamily: "monospace",
+        fontSize: "0.58rem",
+        fontWeight: "700",
+        letterSpacing: "0.1em",
+        color: "rgba(155,0,0,0.4)",
+        textTransform: "uppercase",
       }}>
         EN
       </span>
@@ -60,7 +61,7 @@ export default function LanguageSwitcher() {
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: "5px",
+        gap: "4px",
         background: "none",
         border: "none",
         cursor: "pointer",
@@ -70,15 +71,15 @@ export default function LanguageSwitcher() {
     >
       {/* Globe icon */}
       <svg
-        width="12"
-        height="12"
+        width="10"
+        height="10"
         viewBox="0 0 24 24"
         fill="none"
-        stroke="var(--text-primary)"
-        strokeWidth="1.8"
+        stroke="rgba(155,0,0,0.5)"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        style={{ opacity: 0.45, flexShrink: 0 }}
+        style={{ flexShrink: 0 }}
       >
         <circle cx="12" cy="12" r="10" />
         <line x1="2" y1="12" x2="22" y2="12" />
@@ -86,25 +87,27 @@ export default function LanguageSwitcher() {
       </svg>
 
       {/* Animated label */}
-      <div style={{ position: "relative", overflow: "hidden", height: "1.1rem" }}>
+      <div style={{ position: "relative", overflow: "hidden", height: "1rem" }}>
         <AnimatePresence mode="wait">
           <motion.span
             key={current.code}
-            initial={{ opacity: 0, y: 6 }}
+            initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.22, ease: "easeInOut" }}
+            exit={{ opacity: 0, y: -5 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
             style={{
               display: "inline-block",
-              fontFamily: "var(--font-sans)",
-              fontSize: "0.76rem",
-              fontWeight: "500",
-              color: "var(--text-primary)",
+              fontFamily: "monospace",
+              fontSize: "0.58rem",
+              fontWeight: "700",
+              letterSpacing: "0.1em",
+              color: "rgba(155,0,0,0.5)",
+              textTransform: "uppercase",
               whiteSpace: "nowrap",
               direction: current.rtl ? "rtl" : "ltr",
             }}
           >
-            {current.label}
+            {current.short}
           </motion.span>
         </AnimatePresence>
       </div>

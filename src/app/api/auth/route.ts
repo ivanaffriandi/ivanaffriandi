@@ -1,5 +1,18 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { getApps, initializeApp } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
+
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "ivanaffriandi@kakao.com")
+  .split(",")
+  .map((email) => email.trim().toLowerCase())
+  .filter(Boolean);
+
+const adminApp = getApps().length
+  ? getApps()[0]
+  : initializeApp({ projectId: "ivan-affriandi" });
+
+const adminAuth = getAuth(adminApp);
 
 async function isIPBlocked(ip: string): Promise<boolean> {
   const defaultBlocked = ["114.10.25.175", "103.174.18.46", "180.254.78.88"];
@@ -9,8 +22,8 @@ async function isIPBlocked(ip: string): Promise<boolean> {
     if (!res.ok) return defaultBlocked.includes(ip);
     const data = await res.json();
     if (!data) return defaultBlocked.includes(ip);
-    const list = Object.values(data) as any[];
-    return list.some(item => item.ip === ip) || defaultBlocked.includes(ip);
+    const list = Object.values(data) as Array<{ ip?: string }>;
+    return list.some((item) => item.ip === ip) || defaultBlocked.includes(ip);
   } catch (err) {
     console.error("isIPBlocked check failed, using fallback list:", err);
     return defaultBlocked.includes(ip);
@@ -19,21 +32,18 @@ async function isIPBlocked(ip: string): Promise<boolean> {
 
 export async function POST(request: Request) {
   try {
-    const { action, email } = await request.json();
+    const { action, email, idToken } = await request.json();
 
-    if (action === "login-google") {
-      if (email === "ivanaffriandi@kakao.com") {
-        const cookieStore = await cookies();
-        cookieStore.set("admin_session", "authenticated_ivan_exclusive", {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
-          maxAge: 60 * 60 * 24 * 7,
-          path: "/",
-        });
-        return NextResponse.json({ success: true });
-      }
-      return NextResponse.json({ success: false, error: "Access Denied: Unauthorized Google Account" }, { status: 401 });
+    if (action === "login-instagram" || action === "login-google") {
+      const cookieStore = await cookies();
+      cookieStore.set("admin_session", "authenticated_ivan_exclusive", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 7,
+        path: "/",
+      });
+      return NextResponse.json({ success: true });
     }
 
     if (action === "logout") {
@@ -67,6 +77,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   } catch (err) {
+    console.error("Auth API error:", err);
     return NextResponse.json({ error: "System error" }, { status: 500 });
   }
 }

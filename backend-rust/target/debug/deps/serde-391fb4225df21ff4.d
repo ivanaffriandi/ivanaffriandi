@@ -1,0 +1,14 @@
+/Users/ivanaffriandi/Ivan Affriandi/backend-rust/target/debug/deps/serde-391fb4225df21ff4.d: /Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs /Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs /Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs /Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs /Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs /Users/ivanaffriandi/Ivan\ Affriandi/backend-rust/target/debug/build/serde-39542fd5c4d1dd3c/out/private.rs
+
+/Users/ivanaffriandi/Ivan Affriandi/backend-rust/target/debug/deps/libserde-391fb4225df21ff4.rlib: /Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs /Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs /Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs /Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs /Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs /Users/ivanaffriandi/Ivan\ Affriandi/backend-rust/target/debug/build/serde-39542fd5c4d1dd3c/out/private.rs
+
+/Users/ivanaffriandi/Ivan Affriandi/backend-rust/target/debug/deps/libserde-391fb4225df21ff4.rmeta: /Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs /Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs /Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs /Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs /Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs /Users/ivanaffriandi/Ivan\ Affriandi/backend-rust/target/debug/build/serde-39542fd5c4d1dd3c/out/private.rs
+
+/Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs:
+/Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/integer128.rs:
+/Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/mod.rs:
+/Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/de.rs:
+/Users/ivanaffriandi/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/private/ser.rs:
+/Users/ivanaffriandi/Ivan\ Affriandi/backend-rust/target/debug/build/serde-39542fd5c4d1dd3c/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/ivanaffriandi/Ivan Affriandi/backend-rust/target/debug/build/serde-39542fd5c4d1dd3c/out

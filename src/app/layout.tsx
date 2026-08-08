@@ -13,6 +13,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { PerformanceProvider } from "@/contexts/PerformanceContext";
 import { AudioProvider } from "@/contexts/AudioContext";
 
+
 import "./globals.css";
 import "./footer.css";
 import fs from "fs";
@@ -58,8 +59,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ivanaffriandi.com"),
-  title: "Hello, Ivan!",
-  description: "Personal space of Ivan Affriandi — writing, moments, and thoughts.",
+  title: "Ivan Affriandi",
+  description: "Personal space of Ivan Affriandi — writing, Q&A, and thoughts.",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -67,7 +68,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Hello, Ivan!",
-    description: "Personal space of Ivan Affriandi — writing, moments, and thoughts.",
+    description: "Personal space of Ivan Affriandi — writing, Q&A, and thoughts.",
     url: "https://ivanaffriandi.com",
     siteName: "Hello, Ivan!",
     locale: "en_US",
@@ -76,7 +77,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Hello, Ivan!",
-    description: "Personal space of Ivan Affriandi — writing, moments, and thoughts.",
+    description: "Personal space of Ivan Affriandi — writing, Q&A, and thoughts.",
   }
 };
 
@@ -97,31 +98,12 @@ export default function RootLayout({
             <VisitorTracker />
             <BirthdayCelebration />
             <KonamiEasterEgg />
-            <div className="layout-wrapper" style={{ padding: "0 4vw" }}>
+            <div className="layout-wrapper" style={{ padding: 0 }}>
               <Navigation />
               
-              <main className="content-wrapper" style={{ minHeight: "calc(100vh - 160px)", paddingBottom: "0.25rem" }}>
+              <main className="content-wrapper" style={{ minHeight: "100vh" }}>
                 {children}
               </main>
-
-              <footer className="yunox-single-footer" style={{ 
-                width: "100%",
-                padding: "0.75rem 0 0.75rem 0",
-                marginTop: "0.5rem",
-                display: "grid",
-                gridTemplateColumns: "1fr auto 1fr",
-                alignItems: "center",
-                boxSizing: "border-box"
-              }}>
-                <CopyrightText />
-                
-                {/* About button sits in the center column, perfectly aligned with left/right text */}
-                <FooterAbout />
-                
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", fontSize: "0.78rem", color: "var(--text-secondary)", fontWeight: "500", fontFamily: "var(--font-sans)", letterSpacing: "0.01em" }}>
-                  <LanguageSwitcher />
-                </div>
-              </footer>
             </div>
           </LanguageProvider>
           </AudioProvider>

@@ -82,8 +82,8 @@ function InfoCard({ labels, slides }: InfoCardProps) {
 
   return (
     <div style={{
-      border: "1px solid var(--border-color)",
-      borderRadius: 12,
+      border: "1px solid var(--accent-color)",
+      borderRadius: "8px",
       overflow: "hidden",
       background: "var(--bg-secondary, rgba(150,150,150,0.04))",
       marginBottom: "0.6rem",
@@ -331,23 +331,23 @@ export default function FooterAbout() {
 
   const content = (() => {
     if (lang === "nl") return {
-      subtitle: "UI/UX Designer & Full-Stack Engineer",
-      intro: "Hé, ik ben Ivan. Ik ben een ontwerper en ontwikkelaar die schone, functionele websites bouwt. Ik geef diep om zowel de technische uitvoering van de code als de visuele verfijning van de gebruikersinterface.",
+      subtitle: "SYSTEM METRICS & ARCHIVE",
+      intro: "Deze ruimte dient als een digitaal archief en logboek, dat essays en Q&A-berichten in de loop van de tijd bijhoudt.",
       freeTime: "Ik hou ervan om mezelf te verliezen in een goed boek, de perfecte theepot thee te zetten, langzame bewuste wandelingen te maken door het stadsbos, en vredige avonden door te brengen met het haken van ingewikkelde kleine stukjes, waarbij ik creativiteit en warmte steek voor steek handweef.",
     };
     if (lang === "ar") return {
-      subtitle: "مصمم UI/UX ومهندس برمجيات متكامل",
-      intro: "مرحباً، أنا إيفان. أنا مصمم ومطور أقوم ببناء مواقع ويب نظيفة وعملية. أهتم بشدة بكل من التنفيذ التقني للكود والتحسين البصري لواجهة المستخدم.",
+      subtitle: "نظام المقاييس والأرشيف",
+      intro: "هذه المساحة تعمل كأرشيف رقمي وسجل يومي، لتتبع المقالات والأسئلة والأجوبة بمرور الوقت.",
       freeTime: "أحب الضياع في كتاب جيد، وتحضير الشاي المثالي، والمشي البطيء والمتعمد في غابة المدينة، وقضاء أمسيات هادئة في حياكة قطع صغيرة معقدة بالكروشيه، لنسج الإبداع والدفء غرزة بغرزة.",
     };
     if (lang === "zh") return {
-      subtitle: "UI/UX 设计师与全栈工程师",
-      intro: "你好，我是Ivan。我是一位致力于构建简洁、实用网站的设计师兼开发者。我深切关注代码的技术执行以及用户界面的视觉精致度。",
+      subtitle: "系统指标与归档",
+      intro: "本空间为一个数字归档和日志，记录随笔与问答。",
       freeTime: "我喜欢沉浸在好书中、冲泡一壶完美的茶、在城市森林中慢步慢走，以及度过宁静的夜晚，用钩针编织精致的小物件，一步一步编织创意与温暖。",
     };
     return {
-      subtitle: "UI/UX Designer & Full-Stack Engineer",
-      intro: "Hey, I'm Ivan. I am a designer and developer who builds clean, functional websites. I care deeply about both the technical execution of the code and the visual refinement of the user interface.",
+      subtitle: "SYSTEM METRICS & ARCHIVE",
+      intro: "This space serves as a digital archive and logbook, tracking essays, reads, and moments over time.",
       freeTime: "I love getting lost in a good book, brewing the perfect teapot tea, taking slow intentional walks through the city forest, and spending peaceful evenings crocheting intricate small pieces, hand-weaving creativity and warmth stitch by stitch.",
     };
   })();
@@ -421,39 +421,29 @@ export default function FooterAbout() {
 
   return (
     <>
-      {/* Trigger button — sits in center of footer grid, styled as compact pillbar */}
-      <motion.button
+      {/* Trigger button — minimal monospace text link */}
+      <button
         id="footer-about-toggle"
         className={isOpen ? "open" : ""}
         onClick={() => setIsOpen((v) => !v)}
-        whileHover={{ scale: 1.04, background: "var(--border-color)" }}
-        whileTap={{ scale: 0.96 }}
-        transition={{ type: "spring", stiffness: 400, damping: 28 }}
         style={{
-          background: "var(--bg-secondary, rgba(150,150,150,0.06))",
-          border: "1px solid var(--border-color)",
-          color: "var(--text-primary)",
-          fontWeight: 600, cursor: "pointer",
-          padding: "4px 11px",
-          borderRadius: 16,
-          fontFamily: "var(--font-sans)",
-          fontSize: "0.7rem",
-          display: "inline-flex", alignItems: "center", gap: 4,
-          boxShadow: "var(--shadow-inset)",
-          transition: "background-color 0.25s ease, border-color 0.25s ease",
+          background: "none",
+          border: "none",
+          color: isOpen ? "#9b0000" : "var(--text-muted)",
+          fontWeight: 700,
+          cursor: "pointer",
+          padding: "4px 8px",
+          fontFamily: "monospace",
+          fontSize: "0.58rem",
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+          transition: "color 0.2s ease",
         }}
+        onMouseEnter={(e) => { e.currentTarget.style.color = "#9b0000"; }}
+        onMouseLeave={(e) => { e.currentTarget.style.color = isOpen ? "#9b0000" : "var(--text-muted)"; }}
       >
-        {t("about")}
-        <motion.svg
-          width="10" height="10" viewBox="0 0 24 24"
-          fill="none" stroke="currentColor" strokeWidth="2.8"
-          strokeLinecap="round" strokeLinejoin="round"
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ type: "spring", stiffness: 380, damping: 28 }}
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </motion.svg>
-      </motion.button>
+        [ ABOUT ]
+      </button>
 
       {/* Portal — fixed bottom sheet */}
       {mounted && createPortal(
@@ -497,10 +487,10 @@ export default function FooterAbout() {
                     width: "100%",
                     maxWidth: 420,
                     maxHeight: "82vh",
-                    background: "var(--bg-color)",
-                    borderRadius: 22,
-                    border: "1px solid var(--border-color)",
-                    boxShadow: "0 -8px 48px rgba(0,0,0,0.18)",
+                    background: "#070709",
+                    borderRadius: "4px",
+                    border: "1px solid rgba(155,0,0,0.6)",
+                    boxShadow: "0 -12px 60px rgba(155,0,0,0.08), 0 -4px 20px rgba(0,0,0,0.4)",
                     padding: "1.1rem 1.1rem calc(1.3rem + env(safe-area-inset-bottom, 0px))",
                     overflowY: "auto",
                     WebkitOverflowScrolling: "touch",
@@ -513,17 +503,17 @@ export default function FooterAbout() {
                     <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
                       <img
                         src="/profile.jpg"
-                        alt="Ivan Affriandi"
+                        alt="System"
                         onError={(e) => { e.currentTarget.src = "/nature_hero.png"; }}
                         style={{
-                          width: 50, height: 50, borderRadius: "50%",
+                          width: 50, height: 50, borderRadius: "10px",
                           objectFit: "cover", flexShrink: 0,
-                          border: "2px solid var(--border-color)",
+                          border: "2px solid var(--accent-color)",
                         }}
                       />
                       <div style={{ minWidth: 0 }}>
                         <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--text-primary)", letterSpacing: "-0.01em" }}>
-                          Ivan Affriandi
+                          INDEX INFO
                         </div>
                         <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", marginTop: 1 }}>
                           {content.subtitle}
@@ -574,8 +564,8 @@ export default function FooterAbout() {
                       style={{
                         display: "inline-flex", alignItems: "center", gap: 6,
                         padding: "6px 12px", borderRadius: 20,
-                        background: emailHover ? "#D93025" : "var(--text-primary)",
-                        color: emailHover ? "#fff" : "var(--bg-color)",
+                        background: emailHover ? "var(--accent-color-hover)" : "var(--accent-color)",
+                        color: "#FFFFFF",
                         fontSize: "0.72rem", fontWeight: 700, border: "none",
                         cursor: "pointer", flexShrink: 0,
                         transition: "all 0.25s ease",

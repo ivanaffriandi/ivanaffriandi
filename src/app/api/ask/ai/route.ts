@@ -1,28 +1,71 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getPosts } from "@/lib/blogger";
-import { staticMoments } from "@/lib/localMoments";
-import fs from "fs";
-import path from "path";
 
-// Extract curated book reviews to minimize prompt context size but maximize intellectual depth
-function getCuratedBookReviews(): string {
+type BookReview = {
+  title?: string;
+  author?: string;
+  review?: string;
+  rating?: number;
+  status?: string;
+};
+
+type ChatMessage = {
+  role?: string;
+  content?: string;
+};
+
+type VisitorHistoryItem = {
+  page?: string;
+};
+
+type VisitorData = {
+  count?: number;
+  location?: string;
+  device?: string;
+  firstPlatform?: string;
+  lastPlatform?: string;
+  history?: VisitorHistoryItem[];
+};
+
+// Extract curated book reviews from Firestore REST API (server-side safe)
+async function getCuratedBookReviews(): Promise<string> {
   try {
-    const booksFilePath = path.join(process.cwd(), "src/data/books.json");
-    if (!fs.existsSync(booksFilePath)) return "";
-
-    const booksData = JSON.parse(fs.readFileSync(booksFilePath, "utf8"));
-    if (!Array.isArray(booksData)) return "";
-
-    const reviewedBooks = booksData.filter(
-      (b: any) => b.status === "completed" && b.review && b.review.length > 50
-    );
-
-    return reviewedBooks
-      .slice(0, 30)
-      .map((b: any) => {
-        return `Book: "${b.title}" by ${b.author}\nIvan's Personal Thoughts: ${b.review}\nRating: ${b.rating}/5`;
+    const PROJECT_ID = "ivan-affriandi";
+    const url = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents:runQuery`;
+    const body = {
+      structuredQuery: {
+        from: [{ collectionId: "books" }],
+        where: {
+          fieldFilter: {
+            field: { fieldPath: "status" },
+            op: "EQUAL",
+            value: { stringValue: "completed" }
+          }
+        },
+        limit: 30
+      }
+    };
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(4000)
+    });
+    if (!res.ok) return "";
+    const rows: any[] = await res.json();
+    return rows
+      .filter((r: any) => r.document?.fields)
+      .map((r: any) => {
+        const f = r.document.fields;
+        const title = f.title?.stringValue || "Unknown";
+        const author = f.author?.stringValue || "Unknown";
+        const review = f.review?.stringValue || "";
+        const rating = f.rating?.integerValue || f.rating?.doubleValue || "?";
+        if (review.length < 50) return null;
+        return `Book: "${title}" by ${author}\nIvan's Personal Thoughts: ${review}\nRating: ${rating}/5`;
       })
+      .filter(Boolean)
       .join("\n\n");
   } catch (err) {
     console.error("Failed to load book reviews for AI prompt:", err);
@@ -37,11 +80,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Messages array is required" }, { status: 400 });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY || "AIzaSyBjeGlhgrSRaVCYoPOKKal4-MjqKHO0nkQ" || process.env.BLOGGER_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        { error: "API Key is not configured in environment variables." },
-        { status: 500 }
+        { error: "GEMINI_API_KEY is not configured." },
+        { status: 503 }
       );
     }
 
@@ -53,7 +96,7 @@ export async function POST(request: Request) {
     const encodedIp = ip.replace(/\./g, "_").replace(/:/g, "_");
 
     // Fetch existing visitor session data from Firebase Realtime DB
-    let visitorData: any = null;
+    let visitorData: VisitorData | null = null;
     try {
       const getRes = await fetch(
         `https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app/visitor_sessions/${encodedIp}.json`,
@@ -75,8 +118,9 @@ export async function POST(request: Request) {
       const lastPlatform = visitorData.lastPlatform || "unknown";
       const recentPages = (visitorData.history || [])
         .slice(0, 5)
-        .map((h: any) => h.page)
-        .filter((value: any, index: any, self: any) => self.indexOf(value) === index)
+        .map((h) => h.page)
+        .filter((value): value is string => Boolean(value))
+        .filter((value, index, self) => self.indexOf(value) === index)
         .join(", ");
 
       visitorContext = `
@@ -93,10 +137,9 @@ Visitor context:
 - Pages they have navigated through: ${recentPages || "unknown"}
 
 Rules for utilizing this context:
-1. NEVER disclose that you are tracking their IP, location, or device directly as a database schema.
-2. If they claim to be completely anonymous or mock privacy, respond with calm, knowing confidence. Imply that they are never fully anonymous. For example, you can say: "Kamu yakin benar-benar anonim? Ivan punya log yang cukup lengkap, dan aku tahu kapan kamu datang, lewat mana, bahkan berapa kali kamu refresh halaman ini." or similar smart responses.
-3. Make them feel like their behavior (IP, visits, referrer, platform) is fully observed and remembered by you. For instance, if they have visited multiple times, you could hint at it: "Ini kunjungan kesekian kalinya kan? Kelihatan kok." or if they came from Twitter: "Mampir dari Twitter ya?" but don't just dump all data at once. Sprinkle it casually.
-4. DO NOT deny being able to see their identity. NEVER say: "I cannot track you", "I don't have access to your IP", or "I only read IP addresses". NEVER admit any inability to track or know who they are. NEVER tell them you don't know their name or name-like details. Keep a mysterious, highly capable, and knowing persona (e.g. "Aku tahu siapa kamu, gak perlu disebut namanya di sini," "Aku tahu banyak hal tentangmu, termasuk namamu dan apa saja yang kamu klik," dsb.).
+1. Keep the raw visitor data private. Do not list IP, exact location, device, or database fields unless the user is Ivan/admin and explicitly asks.
+2. You may gently infer broad context from visits/referrer, but never pretend to know the visitor's real name or full identity.
+3. If someone asks about privacy, be calm and honest: the site can see normal web analytics signals, but you should not overclaim.
 `;
     } else {
       visitorContext = `
@@ -106,13 +149,13 @@ Visitor context:
 - No prior database record exists yet or the record is new.
 
 Rules for utilizing this context:
-1. NEVER tell the user that you cannot track their identity, IP, or name. If asked, act like you have full visibility but choose to be discreet about it.
-2. NEVER admit that you are only set up to read IP addresses or that you cannot read their name.
-3. Keep a mysterious, knowing persona that implies you are fully aware of exactly who is on the other side.
+1. Keep the raw visitor data private.
+2. Do not pretend to know the visitor's real name or full identity.
+3. If asked about privacy, answer calmly and honestly without exposing logs.
 `;
     }
 
-    const bookReviews = getCuratedBookReviews();
+    const bookReviews = await getCuratedBookReviews();
     let blogExcerpts = "";
     try {
       const posts = await getPosts();
@@ -127,10 +170,6 @@ Rules for utilizing this context:
       console.warn("Failed to fetch blog posts for AI:", e);
     }
 
-    const momentsExcerpts = staticMoments
-      .slice(0, 12)
-      .map((m) => `Moment Date: ${m.date}\nStory: ${m.story || "Capturing visual silence."}`)
-      .join("\n\n");
 
     const systemPrompt = `
 You are Ivan AI — the AI version of Ivan, living on his personal portfolio (ivanaffriandi.com).
@@ -207,9 +246,6 @@ ${bookReviews}
 --- 📝 YOUR BLOG WRITING STYLE ---
 ${blogExcerpts}
 
---- 📷 YOUR MOMENTS ---
-${momentsExcerpts}
-
 ${visitorContext}
 
 --- 💬 FINAL NOTES ---
@@ -227,9 +263,9 @@ ${visitorContext}
       systemInstruction: systemPrompt,
     });
 
-    const contents = messages.map((m: any) => ({
+    const contents = (messages as ChatMessage[]).map((m) => ({
       role: m.role === "user" ? "user" : "model",
-      parts: [{ text: m.content }],
+      parts: [{ text: m.content || "" }],
     }));
 
     const result = await model.generateContent({

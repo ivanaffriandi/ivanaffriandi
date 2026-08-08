@@ -339,7 +339,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         video.style.width = "100%";
         video.style.height = "auto";
         video.style.display = "block";
-        video.style.borderRadius = "16px";
+        video.style.borderRadius = "8px";
         video.style.margin = "0";
 
         const wrapper = doc.createElement("div");
@@ -444,7 +444,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         container.style.height = isMobile ? "250px" : "420px";
 
         container.style.margin = "1.8rem 0 2.8rem 0";
-        container.style.borderRadius = "16px";
+        container.style.borderRadius = "8px";
         container.style.overflow = "hidden";
         container.style.gap = "4px";
         container.style.border = "1px solid rgba(150,150,150,0.12)";
@@ -664,16 +664,16 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
   const colors = useMemo(() => {
     return theme === "light"
       ? {
-          bg: "#ffffff",
-          text: "#111111",
-          textSecondary: "#666666",
-          border: "rgba(0, 0, 0, 0.1)"
+          bg: "#f7f5f0", // Warm paper color
+          text: "#1a1a1c",
+          textSecondary: "#5a5c66",
+          border: "rgba(0, 0, 0, 0.08)"
         }
       : {
-          bg: "#151413",
-          text: "#e4e1db",
-          textSecondary: "#9e9a93",
-          border: "rgba(228, 225, 219, 0.15)"
+          bg: "#0a0a0c", // Editorial Noir background
+          text: "#f8f9fa",
+          textSecondary: "#8a8d98",
+          border: "rgba(255, 255, 255, 0.08)"
         };
   }, [theme]);
 
@@ -698,32 +698,6 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         .book-reader-container {
           direction: ltr !important;
           text-align: left !important;
-        }
-
-        /* ── Apple iOS Scroll Fade-in Reveal ── */
-        .book-prose p, 
-        .book-prose h1, 
-        .book-prose h2, 
-        .book-prose h3, 
-        .book-prose h4, 
-        .book-prose h5, 
-        .book-prose h6, 
-        .book-prose blockquote, 
-        .book-prose li {
-          animation: ios-scroll-reveal linear both;
-          animation-timeline: view();
-          animation-range: entry 10% cover 30%;
-        }
-
-        @keyframes ios-scroll-reveal {
-          from {
-            opacity: 0.25;
-            transform: translateY(8px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
         }
 
         /* Arabic RTL overrides bypass for Western (non-Arabic) content */
@@ -781,7 +755,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
         .book-prose img, .book-prose iframe, .book-prose video {
           max-width: 100% !important;
           height: auto !important;
-          border-radius: 16px;
+          border-radius: 0px;
           margin: 1.5rem 0;
         }
         .book-prose img, .photo-cover-collage img {
@@ -793,7 +767,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           position: relative;
           width: 100%;
           margin: 1.5rem 0;
-          border-radius: 16px;
+          border-radius: 0px;
           overflow: hidden;
           box-shadow: 0 8px 24px rgba(0,0,0,0.04);
           border: 1px solid var(--border-color);
@@ -811,7 +785,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
           font-weight: 700;
           letter-spacing: 0.05em;
           padding: 4px 8px;
-          border-radius: 6px;
+          border-radius: 0px;
           display: flex;
           align-items: center;
           gap: 4px;
@@ -980,7 +954,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
 
           .floating-island-dock.is-commenting {
             padding: 8px 10px 8px 14px !important; /* Maximum compact iOS padding */
-            border-radius: 18px !important;
+            border-radius: 16px !important;
             width: calc(100vw - 2.5rem) !important;
           }
           
@@ -1056,7 +1030,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 onClick={(e) => e.stopPropagation()}
                 style={{
                   backgroundColor: "#fff",
-                  borderRadius: "4px",
+                  borderRadius: "8px",
                   padding: "12px 12px 16px 12px",
                   maxWidth: "340px", width: "100%",
                   boxShadow: "0 30px 80px rgba(0,0,0,0.5)",
@@ -1066,7 +1040,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 <img
                   src={lightboxImg.src}
                   alt=""
-                  style={{ width: "100%", aspectRatio: "1/1", objectFit: "cover", borderRadius: "2px", display: "block", pointerEvents: "none", userSelect: "none", WebkitUserDrag: "none" } as React.CSSProperties}
+                  style={{ width: "100%", aspectRatio: "1/1", objectFit: "cover", borderRadius: "8px", display: "block", pointerEvents: "none", userSelect: "none", WebkitUserDrag: "none" } as React.CSSProperties}
                 />
                 {/* Custom caption & moment stamp row */}
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginTop: "2px" }}>
@@ -1083,7 +1057,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     fontFamily: "var(--font-sans)",
                     fontSize: "0.62rem",
                     fontWeight: "700",
-                    color: "#B47A3E",
+                    color: "var(--accent-color)",
                     letterSpacing: "0.05em",
                     textTransform: "uppercase"
                   }}>
@@ -1121,16 +1095,16 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     className="photo-cover-collage"
                     style={{
                       width: "100%",
-                      height: "160px",
-                      borderRadius: "16px",
+                      height: extractedImages.length === 1 ? "380px" : "320px",
+                      borderRadius: "12px",
                       overflow: "hidden",
                       border: `1px solid ${colors.border}`,
-                      boxShadow: "0 8px 32px rgba(0,0,0,0.04)",
+                      boxShadow: "0 16px 48px rgba(0,0,0,0.12)",
                       backgroundColor: "rgba(150,150,150,0.08)",
-                      marginBottom: "1.25rem",
+                      marginBottom: "2rem",
                       position: "relative",
                       display: extractedImages.length === 1 ? "block" : "grid",
-                      gap: "4px",
+                      gap: "3px",
                       // Grid layout based on number of images
                       gridTemplateColumns:
                         extractedImages.length === 2
@@ -1230,7 +1204,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     fontFamily: "var(--font-sans)",
                     fontSize: "0.95rem",
                     fontWeight: "600",
-                    color: "#B47A3E",
+                    color: "var(--accent-color)",
                     marginBottom: "0.6rem",
                     display: "flex",
                     alignItems: "center",
@@ -1310,7 +1284,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     alignItems: "center",
                     height: "28px",
                     backgroundColor: isCurrentThemeDark ? "#1c1b1a" : "#f0ece3",
-                    borderRadius: "14px",
+                    borderRadius: "8px",
                     padding: "1.5px",
                     border: isCurrentThemeDark ? "1px solid rgba(255, 255, 255, 0.05)" : "1px solid rgba(0, 0, 0, 0.03)",
                     boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.04)",
@@ -1322,7 +1296,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         height: "23px",
                         lineHeight: "23px",
                         padding: "0 10px",
-                        borderRadius: "11.5px",
+                        borderRadius: "8px",
                         border: "none",
                         backgroundColor: "transparent",
                         color: photoLayout === "grid"
@@ -1346,7 +1320,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                             position: "absolute",
                             inset: 0,
                             backgroundColor: isCurrentThemeDark ? "#ffffff" : "#111111",
-                            borderRadius: "11.5px",
+                            borderRadius: "8px",
                             zIndex: -1
                           }}
                           transition={{ type: "spring", stiffness: 380, damping: 30 }}
@@ -1363,7 +1337,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         height: "23px",
                         lineHeight: "23px",
                         padding: "0 10px",
-                        borderRadius: "11.5px",
+                        borderRadius: "8px",
                         border: "none",
                         backgroundColor: "transparent",
                         color: photoLayout === "list"
@@ -1387,7 +1361,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                             position: "absolute",
                             inset: 0,
                             backgroundColor: isCurrentThemeDark ? "#ffffff" : "#111111",
-                            borderRadius: "11.5px",
+                            borderRadius: "8px",
                             zIndex: -1
                           }}
                           transition={{ type: "spring", stiffness: 380, damping: 30 }}
@@ -1422,7 +1396,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         gridTemplateColumns: "repeat(3, 1fr)",
                         gap: "3px",
                         width: "100%",
-                        borderRadius: "18px",
+                        borderRadius: "8px",
                         overflow: "hidden"
                       }}>
                         {extractedImages.map((src, idx) => (
@@ -1477,7 +1451,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                               fontFamily: "var(--font-sans)",
                               letterSpacing: "0.06em",
                               padding: "2px 6px",
-                              borderRadius: "100px",
+                              borderRadius: "8px",
                               opacity: 0.85
                             }}>
                               {idx + 1}
@@ -1501,7 +1475,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                               alignItems: "stretch",
                               gap: "1.1rem",
                               cursor: "pointer",
-                              borderRadius: "18px",
+                              borderRadius: "8px",
                               overflow: "hidden",
                               border: `1px solid ${colors.border}`,
                               backgroundColor: isCurrentThemeDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
@@ -1553,7 +1527,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                                 fontWeight: "700",
                                 textTransform: "uppercase",
                                 letterSpacing: "0.12em",
-                                color: "#B47A3E",
+                                color: "var(--accent-color)",
                                 opacity: 0.9
                               }}>
                                 Moment {String(idx + 1).padStart(2, "0")}
@@ -1608,7 +1582,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       textAlign: "center",
                       opacity: 0.6
                     }}>
-                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "#B47A3E", marginBottom: "1rem" }}>
+                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: "var(--accent-color)", marginBottom: "1rem" }}>
                         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
                         <circle cx="12" cy="13" r="4" />
                       </svg>
@@ -1705,7 +1679,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                 border: isCurrentThemeDark
                   ? "1px solid rgba(255, 255, 255, 0.2)"
                   : "1px solid rgba(0, 0, 0, 0.14)",
-                borderRadius: "17px",
+                borderRadius: "8px",
                 boxShadow: isCurrentThemeDark
                   ? "inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -1px 0 rgba(255, 255, 255, 0.05), 0 6px 20px -4px rgba(0, 0, 0, 0.4)"
                   : "inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(0, 0, 0, 0.02), 0 4px 16px -2px rgba(0, 0, 0, 0.05)"
@@ -1724,10 +1698,10 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   fontFamily: "var(--font-sans)",
                   fontSize: "0.68rem",
                   fontWeight: "600",
-                  backgroundColor: isCurrentThemeDark ? "rgba(180, 122, 62, 0.25)" : "rgba(180, 122, 62, 0.08)",
-                  color: "#B47A3E",
+                  backgroundColor: isCurrentThemeDark ? "rgba(225, 29, 72, 0.25)" : "rgba(225, 29, 72, 0.08)",
+                  color: "var(--accent-color)",
                   padding: "1px 6px",
-                  borderRadius: "100px",
+                  borderRadius: "8px",
                   letterSpacing: "0.02em"
                 }}>
                   {comments.length}
@@ -1751,7 +1725,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         backdropFilter: "blur(24px) saturate(190%)",
                         WebkitBackdropFilter: "blur(24px) saturate(190%)",
                         border: `1px solid ${isCurrentThemeDark ? "rgba(255, 255, 255, 0.18)" : "rgba(0, 0, 0, 0.11)"}`,
-                        borderRadius: "16px",
+                        borderRadius: "8px",
                         marginBottom: "0.8rem",
                         opacity: comment.approved ? 1 : 0.65,
                         boxShadow: isCurrentThemeDark
@@ -1785,10 +1759,10 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                             <span style={{
                               fontSize: "0.58rem",
                               fontWeight: "600",
-                              backgroundColor: "rgba(180, 122, 62, 0.08)",
-                              color: "#B47A3E",
+                              backgroundColor: "rgba(225, 29, 72, 0.08)",
+                              color: "var(--accent-color)",
                               padding: "1px 5px",
-                              borderRadius: "4px",
+                              borderRadius: "8px",
                               fontFamily: "var(--font-sans)",
                               letterSpacing: "0.02em"
                             }}>
@@ -1817,21 +1791,21 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                             marginLeft: "0.8rem",
                             padding: "0.55rem 0.8rem",
                             background: isCurrentThemeDark
-                              ? "linear-gradient(135deg, rgba(180, 122, 62, 0.14) 0%, rgba(180, 122, 62, 0.05) 100%)"
-                              : "linear-gradient(135deg, rgba(180, 122, 62, 0.1) 0%, rgba(180, 122, 62, 0.04) 100%)",
+                              ? "linear-gradient(135deg, rgba(225, 29, 72, 0.14) 0%, rgba(225, 29, 72, 0.05) 100%)"
+                              : "linear-gradient(135deg, rgba(225, 29, 72, 0.1) 0%, rgba(225, 29, 72, 0.04) 100%)",
                             backdropFilter: "blur(12px)",
                             WebkitBackdropFilter: "blur(12px)",
-                            borderRadius: "12px",
-                            border: `1px solid ${isCurrentThemeDark ? "rgba(180, 122, 62, 0.32)" : "rgba(180, 122, 62, 0.22)"}`,
-                            borderLeft: "3px solid #B47A3E",
+                            borderRadius: "8px",
+                            border: `1px solid ${isCurrentThemeDark ? "rgba(225, 29, 72, 0.32)" : "rgba(225, 29, 72, 0.22)"}`,
+                            borderLeft: "3px solid var(--accent-color)",
                             boxShadow: isCurrentThemeDark
                               ? "inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(255, 255, 255, 0.02), 0 4px 16px -2px rgba(0, 0, 0, 0.2)"
-                              : "inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -1px 0 rgba(0, 0, 0, 0.01), 0 4px 12px -2px rgba(180, 122, 62, 0.03)"
+                              : "inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -1px 0 rgba(0, 0, 0, 0.01), 0 4px 12px -2px rgba(225, 29, 72, 0.03)"
                           }}>
                             <div style={{
                               width: "22px",
                               height: "22px",
-                              borderRadius: "50%",
+                              borderRadius: "8px",
                               backgroundImage: "url(/profile.jpg), url(/profile.png)",
                               backgroundSize: "cover",
                               backgroundPosition: "center",
@@ -1840,18 +1814,16 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                             }} />
                             <div style={{ flex: 1 }}>
                               <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "0.15rem" }}>
-                                <span style={{ fontFamily: "var(--font-sans)", fontWeight: "600", fontSize: "0.8rem", color: colors.text }}>Ivan</span>
+                                <span style={{ fontFamily: "var(--font-sans)", fontWeight: "600", fontSize: "0.8rem", color: colors.text }}>SYS</span>
                                 <span style={{
                                   fontSize: "0.6rem",
                                   fontWeight: "700",
                                   textTransform: "uppercase",
-                                  letterSpacing: "0.04em",
-                                  backgroundColor: isCurrentThemeDark ? "rgba(180, 122, 62, 0.2)" : "rgba(180, 122, 62, 0.1)",
-                                  color: "#B47A3E",
                                   padding: "1px 5px",
-                                  borderRadius: "100px"
+                                  borderRadius: "8px",
+                                  fontFamily: "monospace"
                                 }}>
-                                  Writer
+                                  SYSTEM
                                 </span>
                               </div>
                               <p style={{ margin: 0, fontSize: "0.8rem", lineHeight: "1.45", color: isCurrentThemeDark ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.7)", opacity: 0.95 }}>
@@ -1931,7 +1903,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                   backdropFilter: "blur(24px) saturate(190%)",
                   WebkitBackdropFilter: "blur(24px) saturate(190%)",
                   border: isCurrentThemeDark ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(0, 0, 0, 0.08)",
-                  borderRadius: isCommenting ? "18px" : "20px",
+                  borderRadius: isCommenting ? "20px" : "9999px",
                   padding: isCommenting ? "8px 10px 8px 14px" : "0 6px",
                   color: isCurrentThemeDark ? "#ffffff" : "#111111",
                   boxShadow: isCurrentThemeDark
@@ -2076,7 +2048,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                           width: "28px",
                           height: "28px",
                           boxSizing: "border-box",
-                          borderRadius: "50%",
+                          borderRadius: "9999px",
                           backgroundColor: isCurrentThemeDark ? "rgba(255, 255, 255, 0.08)" : "#ffffff",
                           color: isCurrentThemeDark ? "#ffffff" : "#111111",
                           border: isCurrentThemeDark ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
@@ -2101,7 +2073,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                           height: "30px",
                           boxSizing: "border-box",
                           backgroundColor: isCurrentThemeDark ? "#09090b" : "#f4f1ea",
-                          borderRadius: "15px",
+                          borderRadius: "9999px",
                           padding: "1.5px",
                           border: isCurrentThemeDark ? "1px solid rgba(255, 255, 255, 0.06)" : "1px solid rgba(0, 0, 0, 0.04)",
                           boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.06)",
@@ -2114,7 +2086,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                             height: "25px",
                             lineHeight: "25px",
                             padding: "0 12px",
-                            borderRadius: "12.5px",
+                            borderRadius: "9999px",
                             border: "none",
                             backgroundColor: "transparent",
                             color: mode === "read"
@@ -2135,7 +2107,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                                 position: "absolute",
                                 inset: 0,
                                 backgroundColor: isCurrentThemeDark ? "#ffffff" : "#111111",
-                                borderRadius: "12.5px",
+                                borderRadius: "9999px",
                                 zIndex: -1,
                                 boxShadow: isCurrentThemeDark ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.2)"
                               }}
@@ -2152,7 +2124,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                             height: "25px",
                             lineHeight: "25px",
                             padding: "0 12px",
-                            borderRadius: "12.5px",
+                            borderRadius: "9999px",
                             border: "none",
                             backgroundColor: "transparent",
                             color: mode === "photos"
@@ -2173,7 +2145,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                                 position: "absolute",
                                 inset: 0,
                                 backgroundColor: isCurrentThemeDark ? "#ffffff" : "#111111",
-                                borderRadius: "12.5px",
+                                borderRadius: "9999px",
                                 zIndex: -1,
                                 boxShadow: isCurrentThemeDark ? "0 2px 8px rgba(0, 0, 0, 0.4)" : "0 2px 8px rgba(0, 0, 0, 0.2)"
                               }}
@@ -2247,7 +2219,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                     alignItems: "center",
                     justifyContent: "center",
                     boxSizing: "border-box",
-                    borderRadius: "50%",
+                    borderRadius: "9999px",
                     cursor: (isCommenting && (!commentText.trim() || !tempName.trim())) ? "default" : "pointer",
                     flexShrink: 0,
                     marginBottom: isCommenting ? "1px" : "0px"
