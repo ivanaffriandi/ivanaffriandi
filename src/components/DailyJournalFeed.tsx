@@ -742,7 +742,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           color: #555555 !important;
         }
 
-        .pj-right .right-page-header,
+        .pj-right .right-page-header {
+          border-bottom: none !important;
+          border-bottom-color: transparent !important;
+        }
+
         .pj-right .blog-tabs-header,
         .pj-right .prologue-nav-bar {
           border-bottom-color: rgba(0, 0, 0, 0.08) !important;
@@ -757,6 +761,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
         .pj-right .novel-intro-paragraph {
           color: #222222 !important;
+        }
+
+        .pj-right .novel-drop-cap::first-letter,
+        .novel-drop-cap::first-letter {
+          color: #000000 !important;
+          opacity: 1 !important;
         }
 
         .pj-right .imessage-bubble-incoming {
@@ -2138,10 +2148,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               {/* ── REGULAR JOURNAL VIEW ── */}
               {/* 1. INSTAGRAM MOMENTS */}
               <div className="ig-neat-carousel-wrap">
-<div className="section-label-header">
-                  <span>MOMENTS</span>
-                </div>
-
                 <div
                   className="ig-neat-row"
                   ref={igRowRef}
@@ -2176,7 +2182,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               <div className="novel-intro-wrap">
                 <div className="section-label-header">
                   <span>PROLOGUE</span>
-                  <span>LATE NIGHT AT THE DESK</span>
                 </div>
 
                 <div className="novel-intro-2col">
@@ -2188,13 +2193,14 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     <p className="novel-intro-paragraph">
                       I've spent a lot of time moving between things—building, making, reading, photographing, writing—and somewhere along the way I stopped treating that as a contradiction. The same mind that wants to understand how light refracts also wants to know why certain sentences land the way they do. Both feel like the same question, just wearing different clothes.
                     </p>
+                  </div>
+
+                  {/* RIGHT COLUMN: PARAGRAPH 3 & 2 B&W iOS iMESSAGE BUBBLES */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                     <p className="novel-intro-paragraph">
                       This place is where those things get to breathe. Not a portfolio, not quite a diary. Somewhere in between—a slow, honest record of what I'm paying attention to, and why.
                     </p>
-                  </div>
 
-                  {/* RIGHT COLUMN: 2 B&W iOS iMESSAGE BUBBLES */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                     <div className="imessage-chat-wrap" style={{ margin: 0 }}>
                       {/* Incoming Friend Message */}
                       <div className="imessage-row-incoming">
