@@ -701,6 +701,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
         /* ─────────────────────────────────────────────────────
            RIGHT COLUMN: SINGLE-SCREEN COMPACT EDITORIAL LAYOUT
+           HOMEPAGE RIGHT COLUMN IS PERMANENTLY LOCKED TO LIGHT MODE
         ───────────────────────────────────────────────────── */
         .pj-right {
           flex: 1;
@@ -715,6 +716,97 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           gap: 1.25rem;
           -webkit-overflow-scrolling: touch;
           scroll-behavior: smooth;
+          background: #FFFFFF !important;
+          color: #111111 !important;
+        }
+
+        /* PERMANENT LIGHT THEME OVERRIDES FOR HOMEPAGE RIGHT FEED */
+        .pj-right .right-page-title,
+        .pj-right .about-bio-headline,
+        .pj-right .about-work-title,
+        .pj-right .about-card-value,
+        .pj-right .blog-card-title,
+        .pj-right .prologue-nav-btn {
+          color: #111111 !important;
+        }
+
+        .pj-right .section-label-header,
+        .pj-right .section-label-sm,
+        .pj-right .mini-spec-title,
+        .pj-right .about-card-label,
+        .pj-right .imessage-sender-tag,
+        .pj-right .about-story-text,
+        .pj-right .about-work-desc,
+        .pj-right .blog-card-excerpt,
+        .pj-right .blog-card-meta {
+          color: #555555 !important;
+        }
+
+        .pj-right .right-page-header,
+        .pj-right .blog-tabs-header,
+        .pj-right .prologue-nav-bar {
+          border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+          border-top-color: rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .pj-right .novel-page-card {
+          background: #FAFAFA !important;
+          border: 1px solid rgba(0, 0, 0, 0.06) !important;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+        }
+
+        .pj-right .novel-intro-paragraph {
+          color: #222222 !important;
+        }
+
+        .pj-right .imessage-bubble-incoming {
+          background: #EAEAEA !important;
+          color: #111111 !important;
+        }
+
+        .pj-right .imessage-bubble-outgoing {
+          background: #111111 !important;
+          color: #FFFFFF !important;
+        }
+
+        .pj-right .blog-tab-item {
+          color: #777777 !important;
+        }
+
+        .pj-right .blog-tab-item:hover,
+        .pj-right .blog-tab-item.active {
+          color: #111111 !important;
+          background: rgba(0, 0, 0, 0.06) !important;
+        }
+
+        .pj-right .blog-grid-card {
+          background: #FFFFFF !important;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+        }
+
+        .pj-right .search-pill-container {
+          background: #EFEFEF !important;
+          border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .pj-right .search-pill-input {
+          color: #111111 !important;
+        }
+
+        .pj-right .search-pill-input::placeholder {
+          color: rgba(0, 0, 0, 0.45) !important;
+        }
+
+        .pj-right .action-pill-btn {
+          background: #111111 !important;
+          color: #FFFFFF !important;
+        }
+
+        .pj-right .about-pill-item,
+        .pj-right .about-pill-item-sm,
+        .pj-right .about-card-item {
+          background: rgba(0, 0, 0, 0.04) !important;
+          color: #111111 !important;
         }
 
         /* HIDE ALL SCROLLBAR INDICATORS ENTIRELY */
