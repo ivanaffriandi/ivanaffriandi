@@ -61,8 +61,8 @@ export async function GET() {
 const FALLBACK_INSTAGRAM_MEDIA = [
   {
     id: "ig_fall_1",
-    media_url: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgI41h8Kx-xJ8hX7b-7b7b7b7b7b/s1600/leather_journal_desk.png",
-    thumbnail_url: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgI41h8Kx-xJ8hX7b-7b7b7b7b7b/s1600/leather_journal_desk.png",
+    media_url: "/images/moments/489831318_18060819218098563_9042912996466521959_n..jpg",
+    thumbnail_url: "/images/moments/489831318_18060819218098563_9042912996466521959_n..jpg",
     caption: "Late night at the desk. Tactile objects and leather journals. #minimalism #design",
     permalink: "https://instagram.com/ivanaffriandi",
     media_type: "IMAGE",
@@ -70,27 +70,27 @@ const FALLBACK_INSTAGRAM_MEDIA = [
   },
   {
     id: "ig_fall_2",
-    media_url: "/images/beach_cliff_mono.png",
-    thumbnail_url: "/images/beach_cliff_mono.png",
-    caption: "Groen in de Buurt — morning reflections in Utrecht. #photography #blackandwhite",
+    media_url: "/images/moments/489981712_18060820535098563_7970226616275307425_n..jpg",
+    thumbnail_url: "/images/moments/489981712_18060820535098563_7970226616275307425_n..jpg",
+    caption: "Quiet studio moments & photography studies. #blackandwhite",
     permalink: "https://instagram.com/ivanaffriandi",
     media_type: "IMAGE",
     timestamp: "2026-07-28T14:30:00+0000"
   },
   {
     id: "ig_fall_3",
-    media_url: "/images/campfire_fire_mono.png",
-    thumbnail_url: "/images/campfire_fire_mono.png",
-    caption: "Midnight warmth. Simple moments by the fire. #slowliving",
+    media_url: "/images/moments/490264363_18060820598098563_7427301390244621778_n..jpg",
+    thumbnail_url: "/images/moments/490264363_18060820598098563_7427301390244621778_n..jpg",
+    caption: "Architectural geometries and monochrome light. #slowliving",
     permalink: "https://instagram.com/ivanaffriandi",
     media_type: "IMAGE",
     timestamp: "2026-07-25T20:15:00+0000"
   },
   {
     id: "ig_fall_4",
-    media_url: "/images/winter_trees_mono.png",
-    thumbnail_url: "/images/winter_trees_mono.png",
-    caption: "De Vensterbank. Utrecht in deep winter. #architecture #monochrome",
+    media_url: "/images/moments/490289674_18060831101098563_7940423172567879925_n..jpg",
+    thumbnail_url: "/images/moments/490289674_18060831101098563_7940423172567879925_n..jpg",
+    caption: "Tactile paper, notes & desk arrangement. #workspace",
     permalink: "https://instagram.com/ivanaffriandi",
     media_type: "IMAGE",
     timestamp: "2026-07-20T09:00:00+0000"
@@ -108,9 +108,36 @@ const FALLBACK_INSTAGRAM_MEDIA = [
     id: "ig_fall_6",
     media_url: "/images/ocean_hero_mono.png",
     thumbnail_url: "/images/ocean_hero_mono.png",
-    caption: "Horizon studies. Horizon & perspective. #journal #reflections",
+    caption: "Horizon studies. Perspective & quiet waters. #reflections",
     permalink: "https://instagram.com/ivanaffriandi",
     media_type: "IMAGE",
     timestamp: "2026-07-10T11:20:00+0000"
+  },
+  {
+    id: "ig_fall_7",
+    media_url: "/images/moments/490307779_18060821810098563_6672692916374320684_n..jpg",
+    thumbnail_url: "/images/moments/490307779_18060821810098563_6672692916374320684_n..jpg",
+    caption: "Light through shadows. Minimalist visual log. #photography",
+    permalink: "https://instagram.com/ivanaffriandi",
+    media_type: "IMAGE",
+    timestamp: "2026-07-05T18:00:00+0000"
+  },
+  {
+    id: "ig_fall_8",
+    media_url: "/images/moments/490494934_18060829358098563_6690275826446676296_n..jpg",
+    thumbnail_url: "/images/moments/490494934_18060829358098563_6690275826446676296_n..jpg",
+    caption: "Framing architecture and urban textures. #design",
+    permalink: "https://instagram.com/ivanaffriandi",
+    media_type: "IMAGE",
+    timestamp: "2026-07-01T10:00:00+0000"
+  },
+  {
+    id: "ig_fall_9",
+    media_url: "/images/moments/504834828_18066125465098563_815024945322165390_n..jpg",
+    thumbnail_url: "/images/moments/504834828_18066125465098563_815024945322165390_n..jpg",
+    caption: "Monochrome perspective & architectural curvature. #blackandwhite",
+    permalink: "https://instagram.com/ivanaffriandi",
+    media_type: "IMAGE",
+    timestamp: "2026-06-25T15:00:00+0000"
   }
 ];

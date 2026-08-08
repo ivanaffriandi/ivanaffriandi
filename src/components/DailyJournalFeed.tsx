@@ -1774,41 +1774,153 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             padding: 1.5rem 1.25rem 2rem !important;
           }
 
-          .blog-modal-content-body > p:first-of-type::first-letter,
-          .blog-modal-content-body > div:first-of-type::first-letter {
-            font-size: 2.4rem !important;
-          }
+        .mobile-construction-wrapper {
+          display: none;
         }
 
-        /* ── EXTRA SMALL PHONE (<430px) ── */
-        @media (max-width: 430px) {
-          .pj-left {
-            height: 52vw;
+        @media (max-width: 860px) {
+          .pj-root {
+            display: none !important;
           }
 
-          .pj-right {
-            padding: 1.25rem 1rem 3.5rem;
+          .mobile-construction-wrapper {
+            display: flex !important;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 120px);
+            padding: 2rem 1.25rem;
+            text-align: center;
+            box-sizing: border-box;
           }
 
-          .novel-intro-2col {
-            gap: 1.2rem !important;
+          .mobile-construction-card {
+            background: var(--bg-card, rgba(255, 255, 255, 0.04));
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+            border-radius: 24px;
+            padding: 2.5rem 1.75rem;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.25rem;
           }
 
-          .ig-neat-card {
-            width: 92px !important;
-            height: 118px !important;
+          .mobile-construction-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.4rem 0.95rem;
+            border-radius: 20px;
+            background: rgba(140, 42, 15, 0.12);
+            border: 1px solid rgba(140, 42, 15, 0.3);
+            color: var(--accent-color, #8C2A0F);
+            font-size: 0.66rem;
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
           }
 
-          .blog-grid-card {
-            grid-template-columns: 84px 1fr !important;
+          .mobile-pulse-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #10B981;
+            box-shadow: 0 0 8px #10B981;
+            display: inline-block;
           }
 
-          .blog-card-thumb-wrap {
-            width: 84px !important;
-            height: 60px !important;
+          .mobile-construction-title {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+            line-height: 1.15;
+          }
+
+          .mobile-construction-desc {
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+            margin: 0;
+          }
+
+          .mobile-construction-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            width: 100%;
+            margin-top: 0.5rem;
+          }
+
+          .mobile-construction-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 46px;
+            border-radius: 14px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            width: 100%;
+          }
+
+          .mobile-construction-btn.primary {
+            background: var(--text-primary);
+            color: var(--bg-color);
+          }
+
+          .mobile-construction-btn.secondary {
+            background: var(--bg-secondary, rgba(255, 255, 255, 0.08));
+            color: var(--text-primary);
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
           }
         }
       `}</style>
+
+      {/* ── MOBILE AVAILABLE SOON / UNDER CONSTRUCTION SCREEN ── */}
+      <div className="mobile-construction-wrapper">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="mobile-construction-card"
+        >
+          <div className="mobile-construction-badge">
+            <span className="mobile-pulse-dot" />
+            <span>AVAILABLE SOON</span>
+          </div>
+
+          <h1 className="mobile-construction-title">Under Construction</h1>
+
+          <p className="mobile-construction-desc">
+            The mobile version is currently under construction. For the full interactive journal, photography archives, and AI Q&A platform, please view this site on a desktop browser.
+          </p>
+
+          <div className="mobile-construction-links">
+            <a
+              href="https://instagram.com/ivanaffriandi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mobile-construction-btn primary"
+            >
+              <span>Instagram Gallery ↗</span>
+            </a>
+            <Link href="/ask" className="mobile-construction-btn secondary">
+              <span>Ask AI Q&A ↗</span>
+            </Link>
+            <Link href="/about" className="mobile-construction-btn secondary">
+              <span>About Ivan ↗</span>
+            </Link>
+          </div>
+        </motion.div>
+      </div>
 
       <div className="pj-root">
         {/* ── LEFT COLUMN: STICKY HERO ── */}

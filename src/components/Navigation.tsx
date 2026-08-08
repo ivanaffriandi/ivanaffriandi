@@ -180,9 +180,10 @@ export default function Navigation() {
           align-items: center;
           justify-content: space-between;
           padding: 2.5rem 0;
-          background: #000000;
+          background: transparent;
           box-sizing: border-box;
           border-right: none;
+          transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .desktop-nav-logo {
@@ -284,8 +285,8 @@ export default function Navigation() {
       <header
         className="desktop-nav-bar"
         style={{
-          background: pathname === "/" ? "#000000" : pathname === "/about" ? "#8C2A0F" : "#000000",
-          transition: "background-color 0.3s ease",
+          background: pathname === "/" ? "transparent" : pathname === "/about" ? "#8C2A0F" : "rgba(10, 10, 10, 0.95)",
+          transition: "background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
         <span className="desktop-nav-logo" style={{ cursor: "default", userSelect: "none" }}>
