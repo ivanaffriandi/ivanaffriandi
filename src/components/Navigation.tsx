@@ -237,21 +237,7 @@ export default function Navigation() {
           }
 
           .mobile-header-bar {
-            display: flex;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            z-index: 990;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1.25rem;
-            background: rgba(13, 13, 13, 0.88);
-            backdrop-filter: blur(24px) saturate(1.8);
-            -webkit-backdrop-filter: blur(24px) saturate(1.8);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            box-sizing: border-box;
+            display: none !important;
           }
 
           html[data-theme="light"] .mobile-header-bar {

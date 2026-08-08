@@ -97,8 +97,8 @@ const FALLBACK_INSTAGRAM_MEDIA = [
   },
   {
     id: "ig_fall_5",
-    media_url: "/images/defining_brand_mono.png",
-    thumbnail_url: "/images/defining_brand_mono.png",
+    media_url: "/images/moments/490362933_18060828515098563_4365648610343813957_n..jpg",
+    thumbnail_url: "/images/moments/490362933_18060828515098563_4365648610343813957_n..jpg",
     caption: "Sculptural forms and physical desk objects. #designsystem #3d",
     permalink: "https://instagram.com/ivanaffriandi",
     media_type: "IMAGE",
@@ -106,8 +106,8 @@ const FALLBACK_INSTAGRAM_MEDIA = [
   },
   {
     id: "ig_fall_6",
-    media_url: "/images/ocean_hero_mono.png",
-    thumbnail_url: "/images/ocean_hero_mono.png",
+    media_url: "/images/moments/491109336_18060820190098563_779269879364280171_n..jpg",
+    thumbnail_url: "/images/moments/491109336_18060820190098563_779269879364280171_n..jpg",
     caption: "Horizon studies. Perspective & quiet waters. #reflections",
     permalink: "https://instagram.com/ivanaffriandi",
     media_type: "IMAGE",

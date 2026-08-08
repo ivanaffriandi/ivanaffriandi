@@ -1788,136 +1788,126 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: calc(100vh - 120px);
-            padding: 2rem 1.25rem;
+            min-height: 85vh;
+            padding: 2.5rem 1.5rem;
             text-align: center;
             box-sizing: border-box;
           }
 
-          .mobile-construction-card {
-            background: var(--bg-card, rgba(255, 255, 255, 0.04));
-            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
-            border-radius: 24px;
-            padding: 2.5rem 1.75rem;
-            max-width: 420px;
-            width: 100%;
-            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.15);
+          .mobile-redirect-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1.25rem;
+            gap: 1.5rem;
+            max-width: 360px;
+            width: 100%;
           }
 
-          .mobile-construction-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.4rem 0.95rem;
-            border-radius: 20px;
-            background: rgba(140, 42, 15, 0.12);
-            border: 1px solid rgba(140, 42, 15, 0.3);
-            color: var(--accent-color, #8C2A0F);
-            font-size: 0.66rem;
-            font-weight: 800;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-          }
-
-          .mobile-pulse-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #10B981;
-            box-shadow: 0 0 8px #10B981;
-            display: inline-block;
-          }
-
-          .mobile-construction-title {
+          .mobile-brand-title {
             font-family: var(--font-serif);
             font-size: 2.2rem;
             font-weight: 700;
             color: var(--text-primary);
             margin: 0;
-            line-height: 1.15;
+            letter-spacing: -0.02em;
+          }
+
+          .mobile-subtitle-badge {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent-color, #8C2A0F);
+            margin-top: -0.5rem;
           }
 
           .mobile-construction-desc {
             font-family: var(--font-sans);
             font-size: 0.9rem;
-            line-height: 1.6;
-            color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+            line-height: 1.65;
+            color: var(--text-muted, rgba(255, 255, 255, 0.65));
             margin: 0;
           }
 
-          .mobile-construction-links {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            width: 100%;
-            margin-top: 0.5rem;
-          }
-
-          .mobile-construction-btn {
+          .mobile-contact-icons-row {
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 46px;
-            border-radius: 14px;
-            font-size: 0.82rem;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            text-decoration: none;
-            transition: all 0.25s ease;
-            width: 100%;
+            gap: 0.85rem;
+            margin-top: 0.5rem;
           }
 
-          .mobile-construction-btn.primary {
-            background: var(--text-primary);
-            color: var(--bg-color);
-          }
-
-          .mobile-construction-btn.secondary {
+          .mobile-icon-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
             background: var(--bg-secondary, rgba(255, 255, 255, 0.08));
-            color: var(--text-primary);
             border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+          }
+
+          .mobile-icon-btn:active {
+            transform: scale(0.92);
+            background: var(--border-color);
           }
         }
       `}</style>
 
-      {/* ── MOBILE AVAILABLE SOON / UNDER CONSTRUCTION SCREEN ── */}
+      {/* ── MOBILE AVAILABLE SOON / DESKTOP REDIRECT SCREEN ── */}
       <div className="mobile-construction-wrapper">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="mobile-construction-card"
+          className="mobile-redirect-container"
         >
-          <div className="mobile-construction-badge">
-            <span className="mobile-pulse-dot" />
-            <span>AVAILABLE SOON</span>
-          </div>
-
-          <h1 className="mobile-construction-title">Under Construction</h1>
+          <h1 className="mobile-brand-title">Ivan Affriandi</h1>
+          <div className="mobile-subtitle-badge">AVAILABLE SOON · UNDER CONSTRUCTION</div>
 
           <p className="mobile-construction-desc">
-            The mobile version is currently under construction. For the full interactive journal, photography archives, and AI Q&A platform, please view this site on a desktop browser.
+            This site is optimized exclusively for desktop screens. Please open on your computer to view the full interactive journal and portfolio.
           </p>
 
-          <div className="mobile-construction-links">
-            <a
-              href="https://instagram.com/ivanaffriandi"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mobile-construction-btn primary"
-            >
-              <span>Instagram Gallery ↗</span>
+          {/* CONTACT ICON BUTTONS */}
+          <div className="mobile-contact-icons-row">
+            {/* EMAIL */}
+            <a href="mailto:hello@ivanaffriandi.com" title="Email" className="mobile-icon-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
             </a>
-            <Link href="/ask" className="mobile-construction-btn secondary">
-              <span>Ask AI Q&A ↗</span>
-            </Link>
-            <Link href="/about" className="mobile-construction-btn secondary">
-              <span>About Ivan ↗</span>
-            </Link>
+
+            {/* INSTAGRAM */}
+            <a href="https://instagram.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" title="Instagram" className="mobile-icon-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+              </svg>
+            </a>
+
+            {/* X / TWITTER */}
+            <a href="https://x.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" title="X / Twitter" className="mobile-icon-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.258 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
+              </svg>
+            </a>
+
+            {/* WEIBO */}
+            <a href="https://weibo.com/u/7915776414" target="_blank" rel="noopener noreferrer" title="Weibo" className="mobile-icon-btn">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M10.878 1.093a4.23 4.23 0 0 1 4.031 1.305 4.225 4.225 0 0 1 .886 4.14v.001a.612.612 0 0 1-1.166-.377 3.01 3.01 0 0 0-3.495-3.873.611.611 0 1 1-.256-1.196Z"/>
+                <path fillRule="evenodd" d="M3.753 9.465c.548-1.11 1.972-1.74 3.233-1.411 1.304.338 1.971 1.568 1.437 2.764-.541 1.221-2.095 1.875-3.416 1.449-1.271-.411-1.812-1.67-1.254-2.802Zm2.658.567c.16.066.365-.009.458-.168.088-.16.03-.34-.129-.397-.156-.062-.353.013-.446.168-.09.154-.041.333.117.397Zm-1.607 1.314c.413.188.963.009 1.219-.4.252-.413.12-.883-.296-1.062-.41-.172-.94.005-1.194.402-.256.4-.135.874.271 1.06Z"/>
+                <path fillRule="evenodd" d="m12.014 7.238.005.001c.919.285 1.941.974 1.939 2.188 0 2.007-2.895 4.535-7.246 4.535C3.393 13.962 0 12.352 0 9.708c0-1.385.876-2.985 2.384-4.493C4.4 3.199 6.751 2.28 7.634 3.165c.39.392.427 1.065.177 1.87-.132.405.38.182.38.182 1.63-.682 3.051-.722 3.57.02.278.397.252.951-.004 1.594-.116.293.035.34.257.407Zm-10.4 3.101c.172 1.738 2.46 2.936 5.109 2.674 2.647-.26 4.656-1.883 4.482-3.623-.17-1.738-2.458-2.937-5.107-2.674-2.647.263-4.656 1.883-4.484 3.623Z"/>
+                <path d="M13.295 3.855a2.056 2.056 0 0 0-1.962-.634.526.526 0 1 0 .219 1.031 1.008 1.008 0 0 1 1.17 1.296.528.528 0 0 0 1.005.325 2.062 2.062 0 0 0-.432-2.018Z"/>
+              </svg>
+            </a>
           </div>
         </motion.div>
       </div>
