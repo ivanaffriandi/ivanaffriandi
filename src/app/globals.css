@@ -2418,8 +2418,8 @@ body.moments-page .content-wrapper {
   main,
   .pj-root {
     margin-left: 0 !important;
-    padding-top: 56px !important;
-    padding-bottom: 2rem !important;
+    padding-top: 68px !important;
+    padding-bottom: 2.5rem !important;
   }
 
   /* Prevent text input auto-zoom on iOS */

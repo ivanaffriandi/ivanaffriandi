@@ -241,18 +241,20 @@ export default function Navigation() {
             top: 0;
             left: 0;
             right: 0;
-            height: 56px;
+            height: 60px;
             z-index: 990;
             align-items: center;
             justify-content: space-between;
-            padding: 0 1.2rem;
-            background: #0A0A0A;
+            padding: 0 1.25rem;
+            background: rgba(13, 13, 13, 0.88);
+            backdrop-filter: blur(24px) saturate(1.8);
+            -webkit-backdrop-filter: blur(24px) saturate(1.8);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             box-sizing: border-box;
           }
 
           html[data-theme="light"] .mobile-header-bar {
-            background: #F6F6F4;
+            background: rgba(246, 246, 244, 0.88);
             border-bottom: 1px solid rgba(0, 0, 0, 0.08);
           }
         }

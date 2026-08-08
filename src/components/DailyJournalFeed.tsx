@@ -1649,34 +1649,41 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           .pj-root {
             flex-direction: column;
             overflow: visible;
+            padding: 0 0.5rem;
           }
 
-          /* ── HERO PHOTO PANEL ── */
+          /* ── HERO PHOTO FEATURED CARD ── */
           .pj-left {
             position: relative;
             width: 100%;
             max-width: 100%;
             min-width: unset;
-            height: 72vw;
-            min-height: 340px;
-            max-height: 480px;
+            height: 360px;
+            min-height: 320px;
+            max-height: 440px;
             align-self: unset;
+            border-radius: 24px !important;
+            overflow: hidden !important;
+            box-shadow: 0 14px 36px rgba(0, 0, 0, 0.25) !important;
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12)) !important;
+            margin-bottom: 0.5rem;
           }
 
           .pj-about-ig-grid { left: 0; height: 100%; }
 
           /* ── HERO TEXT INSIDE LEFT PANEL ── */
           .pj-left-content {
-            padding: 1.5rem 1.25rem 2rem 1.25rem;
+            padding: 1.6rem 1.35rem 1.6rem 1.35rem;
           }
 
           .pj-title {
-            font-size: clamp(2rem, 8vw, 3.5rem) !important;
+            font-size: clamp(1.8rem, 7vw, 2.8rem) !important;
+            line-height: 1.15 !important;
           }
 
           /* ── RIGHT JOURNAL FEED COLUMN ── */
           .pj-right {
-            padding: 1.5rem 1.1rem 3.5rem;
+            padding: 1rem 0.25rem 3.5rem;
             height: auto;
             justify-content: flex-start;
           }
@@ -1684,16 +1691,19 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           /* ── PAGE HEADER ── */
           .right-page-header {
             padding: 0 0 0.75rem 0;
+            flex-wrap: wrap;
+            gap: 0.75rem;
           }
 
           .right-page-title {
-            font-size: 1.4rem !important;
+            font-size: 1.5rem !important;
           }
 
           /* ── IG CAROUSEL ── */
           .ig-neat-card {
-            width: 105px !important;
-            height: 135px !important;
+            width: 120px !important;
+            height: 140px !important;
+            border-radius: 16px !important;
           }
 
           /* ── PROLOGUE 2-COLUMN STACKS VERTICAL ── */
