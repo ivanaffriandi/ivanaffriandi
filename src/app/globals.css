@@ -2412,19 +2412,14 @@ body.moments-page .content-wrapper {
 }
 
 @media (max-width: 860px) {
-  /* Ensure subpage content has top spacing for mobile header and bottom spacing for floating dock */
+  /* Ensure ALL mobile page content starts cleanly BELOW the top header bar (never behind it) */
   .layout-wrapper,
   .content-wrapper,
-  main {
+  main,
+  .pj-root {
     margin-left: 0 !important;
     padding-top: 56px !important;
-    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-
-  /* Homepage hero flows all the way to top 0px behind transparent header */
-  main:has(.pj-root),
-  .pj-root-wrapper {
-    padding-top: 0 !important;
+    padding-bottom: 2rem !important;
   }
 
   /* Prevent text input auto-zoom on iOS */

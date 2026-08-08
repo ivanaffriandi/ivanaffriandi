@@ -229,9 +229,6 @@ export default function Navigation() {
         .mobile-header-bar {
           display: none;
         }
-        .mobile-dock-nav {
-          display: none;
-        }
 
         @media (max-width: 860px) {
           .desktop-nav-bar {
@@ -248,46 +245,15 @@ export default function Navigation() {
             z-index: 990;
             align-items: center;
             justify-content: space-between;
-            padding: 0 1rem;
-            background: rgba(10, 10, 10, 0.82);
-            backdrop-filter: blur(20px) saturate(1.8);
-            -webkit-backdrop-filter: blur(20px) saturate(1.8);
+            padding: 0 1.2rem;
+            background: #0A0A0A;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             box-sizing: border-box;
           }
 
           html[data-theme="light"] .mobile-header-bar {
-            background: rgba(246, 246, 244, 0.88);
+            background: #F6F6F4;
             border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-          }
-
-          /* Floating Glass Bottom Tab Bar */
-          .mobile-dock-nav {
-            display: flex;
-            position: fixed;
-            bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 990;
-            width: calc(100% - 24px);
-            max-width: 440px;
-            height: 58px;
-            background: rgba(18, 18, 18, 0.90);
-            backdrop-filter: blur(28px) saturate(1.8);
-            -webkit-backdrop-filter: blur(28px) saturate(1.8);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 32px;
-            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
-            align-items: center;
-            justify-content: space-around;
-            padding: 0 6px;
-            box-sizing: border-box;
-          }
-
-          html[data-theme="light"] .mobile-dock-nav {
-            background: rgba(255, 255, 255, 0.92);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
           }
         }
 
@@ -363,270 +329,127 @@ export default function Navigation() {
       </header>
 
       {/* ── MOBILE DEDICATED TOP HEADER ── */}
-      {(() => {
-        const isHome = pathname === "/";
-        const isTransparentHeader = isHome && !scrolled && !isMenuOpen;
-        return (
-          <div
-            className="mobile-header-bar"
-            style={{
-              background: isTransparentHeader
-                ? "transparent"
-                : themeMode === "dark"
-                ? "rgba(10, 10, 10, 0.85)"
-                : "rgba(246, 246, 244, 0.88)",
-              backdropFilter: isTransparentHeader ? "none" : "blur(24px) saturate(1.8)",
-              WebkitBackdropFilter: isTransparentHeader ? "none" : "blur(24px) saturate(1.8)",
-              borderBottom: isTransparentHeader
-                ? "1px solid transparent"
-                : themeMode === "dark"
-                ? "1px solid rgba(255, 255, 255, 0.08)"
-                : "1px solid rgba(0, 0, 0, 0.08)",
-              transition: "background-color 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease",
-            }}
-          >
-            <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}>
-              <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-                <span
-                  style={{
-                    fontFamily: "var(--font-serif)",
-                    fontWeight: 700,
-                    fontSize: "1.05rem",
-                    letterSpacing: "-0.02em",
-                    color: isTransparentHeader ? "#FFFFFF" : "var(--text-primary)",
-                    textShadow: isTransparentHeader ? "0 2px 10px rgba(0,0,0,0.65)" : "none",
-                  }}
-                >
-                  Ivan Affriandi
-                </span>
-                <span
-                  style={{
-                    width: "6px",
-                    height: "6px",
-                    borderRadius: "50%",
-                    backgroundColor: "#10B981",
-                    marginLeft: "6px",
-                    boxShadow: "0 0 8px #10B981",
-                    display: "inline-block",
-                  }}
-                />
-              </div>
-            </Link>
-
-            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-              {/* Quick Lang Switcher Pill */}
-              <button
-                onClick={cycleLang}
-                style={{
-                  background: isTransparentHeader ? "rgba(0,0,0,0.35)" : "rgba(255,255,255,0.08)",
-                  border: isTransparentHeader ? "1px solid rgba(255,255,255,0.3)" : "1px solid var(--border-color)",
-                  backdropFilter: isTransparentHeader ? "blur(10px)" : "none",
-                  borderRadius: "14px",
-                  padding: "4px 9px",
-                  fontSize: "0.68rem",
-                  fontWeight: 700,
-                  letterSpacing: "0.08em",
-                  color: isTransparentHeader ? "#FFFFFF" : "var(--text-primary)",
-                  cursor: "pointer",
-                  textTransform: "uppercase",
-                }}
-              >
-                {lang.toUpperCase()}
-              </button>
-
-              {/* Theme Toggle Button */}
-              <button
-                onClick={toggleThemeMode}
-                title="Toggle theme"
-                style={{
-                  background: isTransparentHeader ? "rgba(0,0,0,0.35)" : "rgba(255,255,255,0.08)",
-                  border: isTransparentHeader ? "1px solid rgba(255,255,255,0.3)" : "1px solid var(--border-color)",
-                  backdropFilter: isTransparentHeader ? "blur(10px)" : "none",
-                  borderRadius: "50%",
-                  width: "32px",
-                  height: "32px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: isTransparentHeader ? "#FFFFFF" : "var(--text-primary)",
-                  cursor: "pointer",
-                }}
-              >
-                {themeMode === "dark" ? (
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="5" />
-                    <line x1="12" y1="1" x2="12" y2="3" />
-                    <line x1="12" y1="21" x2="12" y2="23" />
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                    <line x1="1" y1="12" x2="3" y2="12" />
-                    <line x1="21" y1="12" x2="23" y2="12" />
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                  </svg>
-                ) : (
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                  </svg>
-                )}
-              </button>
-
-              {/* Mobile Full Menu Toggle */}
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                style={{
-                  background: isMenuOpen
-                    ? "var(--text-primary)"
-                    : isTransparentHeader
-                    ? "rgba(0,0,0,0.35)"
-                    : "rgba(255,255,255,0.08)",
-                  color: isMenuOpen
-                    ? "var(--bg-color)"
-                    : isTransparentHeader
-                    ? "#FFFFFF"
-                    : "var(--text-primary)",
-                  border: isTransparentHeader ? "1px solid rgba(255,255,255,0.3)" : "1px solid var(--border-color)",
-                  backdropFilter: isTransparentHeader ? "blur(10px)" : "none",
-                  borderRadius: "50%",
-                  width: "32px",
-                  height: "32px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                {isMenuOpen ? (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                ) : (
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="3" y1="12" x2="21" y2="12" />
-                    <line x1="3" y1="6" x2="21" y2="6" />
-                    <line x1="3" y1="18" x2="21" y2="18" />
-                  </svg>
-                )}
-              </button>
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* ── MOBILE FLOATING BOTTOM TAB BAR DOCK ── */}
-      <div className="mobile-dock-nav">
-        {mobileTabs.map((tab) => {
-          const isActive = pathname === tab.href;
-          return (
-            <Link
-              key={tab.id}
-              href={tab.href}
-              style={{
-                position: "relative",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                flex: 1,
-                height: "100%",
-                textDecoration: "none",
-                color: isActive
-                  ? "var(--text-primary)"
-                  : "var(--text-muted, rgba(160, 160, 160, 0.7))",
-                zIndex: 1,
-              }}
-            >
-              <motion.div
-                whileTap={{ scale: 0.85 }}
-                transition={iosSpring}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: "3px",
-                }}
-              >
-                {tab.icon(isActive)}
-                <span
-                  style={{
-                    fontSize: "0.64rem",
-                    fontWeight: isActive ? 700 : 500,
-                    letterSpacing: "-0.01em",
-                    fontFamily: "var(--font-sans)",
-                  }}
-                >
-                  {tab.label}
-                </span>
-              </motion.div>
-
-              {/* Active Tab Spring Glow Pill */}
-              {isActive && (
-                <motion.div
-                  layoutId="activeMobileTab"
-                  transition={{ type: "spring", stiffness: 450, damping: 35 }}
-                  style={{
-                    position: "absolute",
-                    inset: "6px 8px",
-                    borderRadius: "22px",
-                    backgroundColor: "rgba(255, 255, 255, 0.1)",
-                    zIndex: -1,
-                  }}
-                />
-              )}
-            </Link>
-          );
-        })}
-
-        {/* Menu Tab inside Dock */}
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          style={{
-            position: "relative",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            flex: 1,
-            height: "100%",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            color: isMenuOpen
-              ? "var(--text-primary)"
-              : "var(--text-muted, rgba(160, 160, 160, 0.7))",
-            zIndex: 1,
-          }}
-        >
-          <motion.div
-            whileTap={{ scale: 0.85 }}
-            transition={iosSpring}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "3px",
-            }}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="7" height="7" />
-              <rect x="14" y="3" width="7" height="7" />
-              <rect x="14" y="14" width="7" height="7" />
-              <rect x="3" y="14" width="7" height="7" />
-            </svg>
+      <div
+        className="mobile-header-bar"
+        style={{
+          background: themeMode === "dark" ? "#0A0A0A" : "#F6F6F4",
+          borderBottom: themeMode === "dark" ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.08)",
+        }}
+      >
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}>
+          <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
             <span
               style={{
-                fontSize: "0.64rem",
-                fontWeight: isMenuOpen ? 700 : 500,
-                letterSpacing: "-0.01em",
-                fontFamily: "var(--font-sans)",
+                fontFamily: "var(--font-serif)",
+                fontWeight: 700,
+                fontSize: "1.05rem",
+                letterSpacing: "-0.02em",
+                color: "var(--text-primary)",
               }}
             >
-              Menu
+              Ivan Affriandi
             </span>
-          </motion.div>
-        </button>
+            <span
+              style={{
+                width: "6px",
+                height: "6px",
+                borderRadius: "50%",
+                backgroundColor: "#10B981",
+                marginLeft: "6px",
+                boxShadow: "0 0 8px #10B981",
+                display: "inline-block",
+              }}
+            />
+          </div>
+        </Link>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          {/* Quick Lang Switcher Pill */}
+          <button
+            onClick={cycleLang}
+            style={{
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid var(--border-color)",
+              borderRadius: "14px",
+              padding: "4px 9px",
+              fontSize: "0.68rem",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              color: "var(--text-primary)",
+              cursor: "pointer",
+              textTransform: "uppercase",
+            }}
+          >
+            {lang.toUpperCase()}
+          </button>
+
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleThemeMode}
+            title="Toggle theme"
+            style={{
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid var(--border-color)",
+              borderRadius: "50%",
+              width: "32px",
+              height: "32px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--text-primary)",
+              cursor: "pointer",
+            }}
+          >
+            {themeMode === "dark" ? (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="5" />
+                <line x1="12" y1="1" x2="12" y2="3" />
+                <line x1="12" y1="21" x2="12" y2="23" />
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                <line x1="1" y1="12" x2="3" y2="12" />
+                <line x1="21" y1="12" x2="23" y2="12" />
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+              </svg>
+            ) : (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            )}
+          </button>
+
+          {/* Mobile Full Side Menu Drawer Toggle */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            style={{
+              background: isMenuOpen ? "var(--text-primary)" : "rgba(255,255,255,0.08)",
+              color: isMenuOpen ? "var(--bg-color)" : "var(--text-primary)",
+              border: "1px solid var(--border-color)",
+              borderRadius: "50%",
+              width: "32px",
+              height: "32px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+            }}
+          >
+            {isMenuOpen ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            ) : (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* ── MOBILE FULLSCREEN DRAWER OVERLAY ── */}

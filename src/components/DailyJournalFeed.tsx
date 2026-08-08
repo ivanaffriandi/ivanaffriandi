@@ -1667,7 +1667,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
           /* ── HERO TEXT INSIDE LEFT PANEL ── */
           .pj-left-content {
-            padding: 4.5rem 1.25rem 2rem 1.25rem;
+            padding: 1.5rem 1.25rem 2rem 1.25rem;
           }
 
           .pj-title {
