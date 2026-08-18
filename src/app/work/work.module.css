@@ -1,18 +1,19 @@
 /* ============================================================
    IVAN AFFRIANDI PRO WORKSPACE (work.ivanaffriandi.com)
-   Pixel-Perfect Dribbble / Apple-Grade Light Frosted Aesthetics
+   Apple visionOS Spatial Glass Architecture — 100% Full Viewport
    ============================================================ */
 
 .workspaceRoot {
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
   width: 100vw;
-  background: linear-gradient(135deg, #bfdbfe 0%, #e0e7ff 25%, #fce7f3 65%, #fef3c7 100%);
+  width: 100dvw;
+  background: radial-gradient(circle at 20% 20%, #c7d2fe 0%, #e0e7ff 35%, #fce7f3 70%, #fef3c7 100%);
   background-attachment: fixed;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 16px;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Inter, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -23,53 +24,55 @@
 
 @media (max-width: 1024px) {
   .workspaceRoot {
-    padding: 12px;
-    height: 100vh;
+    padding: 8px;
+    height: auto;
+    min-height: 100vh;
     overflow-y: auto;
   }
 }
 
-/* ── MAIN FLOATING CANVAS CONTAINER ── */
+/* ── MAIN SPATIAL VISION OS GLASS CANVAS ── */
 .floatingCanvas {
   width: 100%;
-  max-width: 1440px;
-  height: 90vh;
-  height: 90dvh;
-  background: rgba(244, 245, 248, 0.82);
-  backdrop-filter: blur(50px);
-  -webkit-backdrop-filter: blur(50px);
-  border-radius: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  height: 100%;
+  max-width: 100%;
+  background: rgba(248, 249, 252, 0.75);
+  backdrop-filter: blur(60px) saturate(200%);
+  -webkit-backdrop-filter: blur(60px) saturate(200%);
+  border-radius: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
   box-shadow: 
-    0 30px 90px -20px rgba(79, 70, 229, 0.15),
-    0 10px 40px -10px rgba(0, 0, 0, 0.06),
-    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+    0 30px 100px -20px rgba(99, 102, 241, 0.18),
+    0 15px 50px -10px rgba(0, 0, 0, 0.08),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.04);
   display: flex;
-  padding: 24px;
-  gap: 20px;
+  padding: 20px;
+  gap: 18px;
   box-sizing: border-box;
   overflow: hidden;
 }
 
 @media (max-width: 1024px) {
   .floatingCanvas {
-    height: auto;
-    min-height: 90vh;
     flex-direction: column;
-    border-radius: 28px;
-    padding: 16px;
+    height: auto;
+    border-radius: 24px;
+    padding: 14px;
   }
 }
 
-/* ── LEFT FLOATING DOCK / RAIL ── */
+/* ── LEFT VISION OS SPATIAL DOCK RAIL ── */
 .dockRail {
-  width: 68px;
-  min-width: 68px;
+  width: 64px;
+  min-width: 64px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 0;
+  padding: 8px 0;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
@@ -82,28 +85,27 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .dockBrandLogo {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 1px #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #1c1c1e;
-  font-size: 18px;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dockBrandLogo:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transform: scale(1.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
 }
 
 .dockIconsStack {
@@ -116,28 +118,30 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03), inset 0 1px 1px #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #52525b;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dockIconBtn:hover {
-  background: #f4f4f5;
+  background: #ffffff;
   color: #000000;
-  transform: scale(1.06);
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .dockIconBtnActive {
   background: #000000 !important;
   color: #ffffff !important;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
-  transform: scale(1.06);
+  border-color: #000000 !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
+  transform: scale(1.08);
 }
 
 .dockBottomAvatar {
@@ -146,13 +150,17 @@
   border-radius: 50%;
   background: #ffffff;
   border: 2px solid #ffffff;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.dockBottomAvatar:hover {
+  transform: scale(1.08);
 }
 
 .dockBottomAvatar img {
@@ -163,29 +171,34 @@
 
 /* ── MIDDLE FEED COLUMN (CARDS QUEUE) ── */
 .feedColumn {
-  width: 390px;
-  min-width: 360px;
+  width: 380px;
+  min-width: 350px;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  height: 100%;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 @media (max-width: 1024px) {
   .feedColumn {
     width: 100%;
     min-width: unset;
+    max-width: unset;
+    height: auto;
   }
 }
 
 /* Search Bar Pill */
 .searchPillBox {
-  height: 52px;
-  min-height: 52px;
-  background: #ffffff;
-  border-radius: 26px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  height: 50px;
+  min-height: 50px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04), inset 0 1px 1px #ffffff;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -230,8 +243,9 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   padding-right: 4px;
+  height: 100%;
 }
 
 .cardsScrollFeed::-webkit-scrollbar {
@@ -239,20 +253,20 @@
 }
 
 .cardsScrollFeed::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.12);
   border-radius: 4px;
 }
 
 /* Feed White Card */
 .feedCard {
-  background: #ffffff;
-  border-radius: 28px;
-  border: 1px solid rgba(0, 0, 0, 0.03);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.03);
-  padding: 20px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03), inset 0 1px 1px #ffffff;
+  padding: 18px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
@@ -260,10 +274,12 @@
 
 .feedCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.07);
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.07);
 }
 
 .feedCardActive {
+  background: #ffffff !important;
   border: 1.5px solid #1c1c1e !important;
   box-shadow: 0 14px 36px rgba(0, 0, 0, 0.1) !important;
 }
@@ -285,19 +301,11 @@
   height: 36px;
   border-radius: 50%;
   overflow: hidden;
-  background: #f4f4f5;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
   font-size: 12px;
-  color: #52525b;
-}
-
-.cardAuthorAvatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .cardAuthorName {
@@ -314,8 +322,8 @@
 }
 
 .cardArrowIcon {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -330,11 +338,12 @@
 }
 
 .cardMainTitle {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
   color: #1c1c1e;
   letter-spacing: -0.2px;
   margin: 0;
+  line-height: 1.3;
 }
 
 .cardTimeSnippet {
@@ -357,7 +366,7 @@
   padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   position: relative;
   overflow: hidden;
 }
@@ -366,7 +375,6 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  z-index: 2;
 }
 
 .nestedWidgetBadge {
@@ -403,30 +411,17 @@
   margin: 0;
 }
 
-.nestedWidgetArt {
-  position: absolute;
-  right: -5px;
-  bottom: -5px;
-  width: 110px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 12px;
-  opacity: 0.9;
-  z-index: 1;
-}
-
 .nestedWidgetFooterPills {
   display: flex;
   align-items: center;
   gap: 6px;
-  z-index: 2;
 }
 
 .pillDark {
   background: #1c1c1e;
   color: #ffffff;
   border-radius: 999px;
-  padding: 6px 12px;
+  padding: 5px 12px;
   font-size: 10px;
   font-weight: 700;
   display: inline-flex;
@@ -440,7 +435,7 @@
   display: flex;
   align-items: center;
   gap: 3px;
-  height: 20px;
+  height: 18px;
   margin-top: 4px;
 }
 
@@ -455,18 +450,24 @@
   background: #86efac !important;
 }
 
-/* ── RIGHT DETAIL INSPECTOR CANVAS ── */
+/* ── RIGHT DETAIL INSPECTOR CANVAS (FLUID 100% WIDTH) ── */
 .detailCanvas {
   flex: 1;
-  background: #ffffff;
-  border-radius: 36px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
-  padding: 36px 40px;
+  min-width: 0; /* Crucial to prevent horizontal overflow/cutting */
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04), inset 0 1px 1px #ffffff;
+  padding: 30px 36px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 28px;
+  gap: 20px;
+  height: 100%;
   overflow-y: auto;
+  box-sizing: border-box;
 }
 
 @media (max-width: 1024px) {
@@ -480,50 +481,30 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  padding-bottom: 20px;
-}
-
-.btnActionTopText {
-  border: none;
-  background: transparent;
-  font-size: 12px;
-  font-weight: 700;
-  color: #71717a;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-}
-
-.btnActionTopText:hover {
-  color: #000000;
+  padding-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .detailAuthorHeader {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .detailAuthorAvatar {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   overflow: hidden;
-  background: #f4f4f5;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.detailAuthorAvatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .detailAuthorName {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
   color: #1c1c1e;
   margin: 0;
@@ -583,35 +564,52 @@
 .detailReadingBody {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   color: #27272a;
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 13.5px;
+  line-height: 1.65;
 }
 
 .detailGreeting {
   font-weight: 800;
   font-size: 15px;
   color: #1c1c1e;
+  margin: 0;
+}
+
+/* Responsive Specs Grid */
+.specsAdaptiveGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+
+.specItemCard {
+  background: #ffffff;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
 /* Attachments Row */
 .attachmentsRow {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-top: 10px;
+  margin-top: 4px;
 }
 
 .attachmentCard {
   background: #f8f8fa;
   border: 1px solid rgba(0, 0, 0, 0.05);
-  border-radius: 16px;
-  padding: 12px 18px;
+  border-radius: 14px;
+  padding: 10px 16px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -622,9 +620,9 @@
 }
 
 .attachmentIcon {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
   background: #ffffff;
   display: flex;
   align-items: center;
@@ -648,12 +646,12 @@
 /* Bottom Quick Input Box */
 .bottomQuickReplyBox {
   background: #f4f5f8;
-  border-radius: 24px;
-  padding: 12px 18px;
+  border-radius: 22px;
+  padding: 10px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
 }
 
 .quickReplyInput {

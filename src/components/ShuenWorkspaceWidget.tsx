@@ -403,19 +403,19 @@ export default function ShuenWorkspaceWidget() {
           </div>
 
           {/* Reading Body */}
-          <div className={styles.detailReadingBody} style={{ marginTop: '24px' }}>
+          <div className={styles.detailReadingBody} style={{ marginTop: '16px' }}>
             <p className={styles.detailGreeting}>
               Welcome back, Ivan.
             </p>
 
-            <p>
+            <p style={{ margin: 0 }}>
               Here is the executive overview for <strong>SHŪ / EN Studio</strong> and your linked creative workspace. All customer customization orders, lead times (17–20 workdays), leather crafting allocations, and logistics dispatchers are running in real-time.
             </p>
 
             {/* Bespoke Order Specs Breakdown */}
             {activeOrder && activeOrder.items && activeOrder.items[0]?.details && (
-              <div style={{ marginTop: '8px', padding: '20px', background: '#f8f8fa', borderRadius: '22px', border: '1px solid rgba(0,0,0,0.06)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+              <div style={{ marginTop: '6px', padding: '16px', background: 'rgba(244, 245, 248, 0.85)', borderRadius: '20px', border: '1px solid rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
                   <div>
                     <span style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.8px', color: '#1c1c1e', display: 'block' }}>
                       {activeOrder.invoice_id} — {activeOrder.shipping_details?.fullName}
@@ -429,11 +429,11 @@ export default function ShuenWorkspaceWidget() {
                   </span>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+                <div className={styles.specsAdaptiveGrid}>
                   {activeOrder.items[0].details.map((d: any, dIdx: number) => (
-                    <div key={dIdx} style={{ background: '#ffffff', padding: '10px 14px', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.04)', boxShadow: '0 2px 6px rgba(0,0,0,0.02)' }}>
-                      <span style={{ fontSize: '9px', fontWeight: 800, color: '#8e8e93', textTransform: 'uppercase', display: 'block', letterSpacing: '0.5px' }}>{d.label}</span>
-                      <span style={{ fontSize: '12px', fontWeight: 800, color: '#1c1c1e', marginTop: '2px', display: 'block' }}>{d.value}</span>
+                    <div key={dIdx} className={styles.specItemCard}>
+                      <span style={{ fontSize: '8.5px', fontWeight: 800, color: '#8e8e93', textTransform: 'uppercase', display: 'block', letterSpacing: '0.5px' }}>{d.label}</span>
+                      <span style={{ fontSize: '11.5px', fontWeight: 800, color: '#1c1c1e', marginTop: '2px', display: 'block' }}>{d.value}</span>
                     </div>
                   ))}
                 </div>
@@ -495,7 +495,7 @@ export default function ShuenWorkspaceWidget() {
               onClick={() => handleUpdateStatus(activeOrder.id, 'SHIPPED', resiInput || replyInput)}
               className={styles.btnReplyIcon} 
               title="Simpan &amp; Dispatch Resi"
-              style={{ background: '#1c1c1e', color: '#ffffff', borderRadius: '999px', padding: '8px 16px', height: '36px', fontSize: '11px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '6px' }}
+              style={{ background: '#1c1c1e', color: '#ffffff', borderRadius: '999px', padding: '8px 18px', height: '36px', fontSize: '11px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}
             >
               <span>Dispatch Resi</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
