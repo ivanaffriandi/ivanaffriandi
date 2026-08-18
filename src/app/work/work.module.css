@@ -1,7 +1,7 @@
 /* ============================================================
-   IVAN AFFRIANDI · CLAIRE EDITORIAL MAGAZINE GALLERY
+   IVAN AFFRIANDI · FLUXDESIGN EDITORIAL STUDIO PORTFOLIO
    (work.ivanaffriandi.com)
-   Vertical Rotated Sidebar · Staggered Offset Columns · Didot Numerals
+   Pixel-Accurate FluxDesign Architecture · Framer Motion · Clean Spatial Luxury
    ============================================================ */
 
 .scandinavianViewport {
@@ -11,241 +11,307 @@
   width: 100dvw;
   background-color: #ffffff;
   color: #111111;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Inter", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", "Inter", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  overflow-x: auto;
-  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
 }
 
-/* ── TOP HEADER BAR ── */
-.topNavBar {
+/* ── FULL-BLEED EDITORIAL CONTAINER ── */
+.editorialContainer {
+  max-width: 1320px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 36px 4vw 60px 4vw;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 32px 4vw 20px 4vw;
-  border-bottom: 1px solid #f0f0f0;
-  position: sticky;
-  top: 0;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(12px);
-  z-index: 50;
-}
-
-.navBrandLogo {
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #111111;
-  text-decoration: none;
-}
-
-.navMenuLinks {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  font-family: ui-monospace, monospace;
-}
-
-@media (max-width: 640px) {
-  .navMenuLinks {
-    display: none;
-  }
-}
-
-.navLink {
-  color: #555555;
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-.navLink:hover {
-  color: #000000;
-}
-
-.menuHamburger {
-  font-size: 14px;
-  color: #111111;
-  cursor: pointer;
-  padding: 4px 8px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  text-decoration: none;
-}
-
-/* ── MAIN HORIZONTAL EDITORIAL STAGE ── */
-.editorialStage {
-  display: flex;
-  padding: 40px 4vw 60px 4vw;
-  gap: 48px;
-  align-items: flex-start;
-  min-height: calc(100vh - 80px);
+  flex-direction: column;
+  gap: 44px;
   box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
-  .editorialStage {
-    flex-direction: column;
-    padding: 24px 20px 60px 20px;
-    gap: 36px;
+  .editorialContainer {
+    padding: 24px 20px 48px 20px;
+    gap: 32px;
   }
 }
 
-/* ── VERTICAL ROTATED LEFT TEXT COLUMN ── */
-.verticalTitleColumn {
-  width: 90px;
-  flex-shrink: 0;
+/* ── TOP HEADER ROW ── */
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.brandLogoTitle {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: #111111;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.registeredSymbol {
+  font-size: 10px;
+  font-weight: 600;
+  vertical-align: top;
+  margin-top: -4px;
+}
+
+/* Center Nav Tabs */
+.centerNavTabs {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+@media (max-width: 860px) {
+  .centerNavTabs {
+    display: none;
+  }
+}
+
+.navTabBtn {
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666666;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s ease;
+  position: relative;
+}
+
+.navTabBtn:hover {
+  color: #111111;
+}
+
+.navTabBtnActive {
+  font-weight: 800 !important;
+  color: #111111 !important;
+}
+
+/* Location & Live Clock Header Block */
+.headerLocationClock {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  padding-bottom: 24px;
+  align-items: flex-end;
+  font-size: 11.5px;
+  color: #88888e;
+  font-family: ui-monospace, monospace;
+}
+
+@media (max-width: 640px) {
+  .headerLocationClock {
+    display: none;
+  }
+}
+
+.locationText {
+  color: #555555;
+  font-weight: 600;
+}
+
+.clockTimeText {
+  font-weight: 700;
+  color: #111111;
+}
+
+/* Start a Project Direct Link */
+.startProjectLink {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111111;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color 0.15s ease;
+}
+
+.startProjectLink:hover {
+  color: #ef4444;
+}
+
+/* ── HERO SHOWCASE SECTION (FLUXDESIGN HERO) ── */
+.heroShowcaseSection {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 36px;
+  align-items: start;
 }
 
 @media (max-width: 768px) {
-  .verticalTitleColumn {
-    width: 100%;
-    padding-bottom: 0;
+  .heroShowcaseSection {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 }
 
-.verticalRotatedText {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  font-size: 32px;
-  font-weight: 400;
-  font-family: "Didot", "Bodoni MT", "Playfair Display", "Times New Roman", Georgia, serif;
-  line-height: 1.25;
+.sideOverviewLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #88888e;
+  font-family: ui-monospace, monospace;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.heroContentCluster {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 860px;
+}
+
+.projectMainHeading {
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -1.2px;
+  line-height: 1.08;
   color: #111111;
   margin: 0;
-  white-space: nowrap;
-  letter-spacing: -0.3px;
 }
 
 @media (max-width: 768px) {
-  .verticalRotatedText {
-    writing-mode: horizontal-tb;
-    transform: none;
-    font-size: 24px;
-    white-space: normal;
+  .projectMainHeading {
+    font-size: 32px;
+    letter-spacing: -0.8px;
   }
 }
 
-/* ── HORIZONTAL SCROLLING GALLERY STRIP ── */
-.galleryStrip {
-  display: flex;
-  gap: 44px;
-  align-items: flex-start;
-  flex: 1;
-  overflow-x: auto;
-  padding-bottom: 24px;
-  scrollbar-width: thin;
+.projectNarrativeBio {
+  font-size: 16.5px;
+  line-height: 1.6;
+  color: #3f3f46;
+  margin: 0;
+  font-weight: 450;
 }
 
 @media (max-width: 768px) {
-  .galleryStrip {
-    flex-direction: column;
-    gap: 48px;
-    width: 100%;
-    overflow-x: visible;
+  .projectNarrativeBio {
+    font-size: 14.5px;
   }
 }
 
-/* ── STAGGERED COLUMN CARDS ── */
-.staggerCardCol {
-  width: 330px;
-  flex-shrink: 0;
+/* ── 4-COLUMN METADATA BAR ── */
+.metadataGridRow {
+  display: grid;
+  grid-template-columns: 140px 1fr 1fr 1fr;
+  gap: 36px;
+  border-top: 1px solid #f0f0f2;
+  border-bottom: 1px solid #f0f0f2;
+  padding: 18px 0;
+  margin-top: 8px;
+}
+
+@media (max-width: 860px) {
+  .metadataGridRow {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+}
+
+.metaColItem {
   display: flex;
   flex-direction: column;
+  gap: 4px;
+}
+
+.metaColLabel {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #88888e;
+}
+
+.metaColVal {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111111;
+}
+
+/* ── 3-COLUMN PANORAMIC VISUAL GRID ── */
+.panoramicVisualGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .panoramicVisualGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+.panoramicCard {
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f7f7f9;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
   text-decoration: none;
   color: #111111;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
 }
 
-@media (max-width: 768px) {
-  .staggerCardCol {
-    width: 100%;
-    margin-top: 0 !important;
-  }
+.panoramicCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
 }
 
-.staggerCardCol:hover {
-  transform: translateY(-6px);
-}
-
-/* Column Stagger Offsets */
-.staggerOffsetLow {
-  margin-top: 70px;
-}
-
-.staggerOffsetHigh {
-  margin-top: 0px;
-}
-
-.staggerOffsetMid {
-  margin-top: 40px;
-}
-
-/* ── DIDOT LARGE COLUMN NUMBER ── */
-.columnNumeral {
-  font-size: 64px;
-  font-weight: 300;
-  font-family: "Didot", "Bodoni MT", "Playfair Display", "Times New Roman", Georgia, serif;
-  line-height: 1;
-  color: #111111;
-  margin: 0 0 16px 0;
-  letter-spacing: -1px;
-}
-
-/* ── EDITORIAL IMAGE PORTRAIT WRAPPER ── */
-.portraitImageWrap {
+.panoramicMediaBox {
   width: 100%;
-  height: 440px;
-  overflow: hidden;
-  background: #f4f4f6;
+  height: 420px;
   position: relative;
-  border-radius: 2px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  background: #111111;
 }
 
 @media (max-width: 768px) {
-  .portraitImageWrap {
-    height: 360px;
+  .panoramicMediaBox {
+    height: 320px;
   }
 }
 
-.portraitImageWrap img {
+.panoramicMediaBox img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.staggerCardCol:hover .portraitImageWrap img {
-  transform: scale(1.04);
+.panoramicCard:hover .panoramicMediaBox img {
+  transform: scale(1.03);
 }
 
-/* Interactive Slider within Portrait Card */
-.mailSliderContainer {
+/* Interactive Slider in Card 1 */
+.sliderWrapperBox {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   cursor: ew-resize;
   background: #18181b;
+  overflow: hidden;
 }
 
-.mailDarkImg {
+.sliderImgDark {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -253,7 +319,7 @@
   object-fit: cover;
 }
 
-.mailLightClip {
+.sliderClipLight {
   position: absolute;
   top: 0;
   left: 0;
@@ -263,124 +329,139 @@
   pointer-events: none;
 }
 
-.mailLightImg {
+.sliderImgLight {
   position: absolute;
   top: 0;
   left: 0;
-  width: 330px;
+  width: 400px;
   height: 100%;
   object-fit: cover;
 }
 
-.sliderDivider {
+.sliderDividerLine {
   position: absolute;
   top: 0;
   bottom: 0;
   width: 2px;
   background: #ffffff;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
   pointer-events: none;
 }
 
-.sliderThumbIcon {
+.sliderHandleBubble {
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: #ffffff;
   color: #111111;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 900;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   pointer-events: none;
 }
 
-/* ── EDITORIAL CAPTION BLOCK ── */
-.captionBlock {
-  padding-top: 14px;
+.cardFooterCaption {
+  padding: 16px 18px;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.captionTitle {
-  font-size: 13.5px;
-  font-weight: 700;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+.cardFooterTitle {
+  font-size: 14px;
+  font-weight: 800;
   color: #111111;
   margin: 0;
-  line-height: 1.4;
-}
-
-.captionSub {
-  font-size: 12px;
-  color: #555555;
-  line-height: 1.5;
-  margin: 0;
-}
-
-.captionDate {
-  font-size: 10.5px;
-  font-family: ui-monospace, monospace;
-  color: #888888;
-  margin-top: 4px;
-  font-weight: 600;
-}
-
-/* ── BOTTOM CLOCKS & TOUCH FOOTER ── */
-.bottomEditorialFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 4vw 32px 4vw;
-  border-top: 1px solid #f0f0f0;
+}
+
+.cardFooterSub {
+  font-size: 12px;
+  color: #666670;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* ── BOTTOM SEE MORE ACTION ── */
+.seeMoreRow {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 12px;
+}
+
+.seeMoreBtn {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #111111;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.2s ease;
+}
+
+.seeMoreBtn:hover {
+  transform: translateX(4px);
+}
+
+/* ── WORLD CLOCKS & FOOTER BAR ── */
+.bottomStudioFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f0f0f2;
+  padding-top: 24px;
   flex-wrap: wrap;
   gap: 16px;
   font-size: 11.5px;
+  color: #88888e;
 }
 
-.worldClocksInline {
+.worldClocksGroup {
   display: flex;
   gap: 20px;
   font-family: ui-monospace, monospace;
 }
 
-.clockUnit {
+.clockItem {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.clockUnitTime {
-  font-size: 14px;
+.clockItemTime {
+  font-size: 13.5px;
   font-weight: 800;
   color: #111111;
 }
 
-.clockUnitCity {
+.clockItemCity {
   font-size: 9px;
   color: #88888e;
   text-transform: uppercase;
 }
 
-.footerTouchLinks {
+.socialFooterLinks {
   display: flex;
   gap: 16px;
-  font-family: ui-monospace, monospace;
-  font-weight: 700;
-  text-transform: uppercase;
 }
 
-.footerTouchLink {
-  color: #111111;
+.socialFooterLink {
+  color: #555555;
   text-decoration: none;
+  font-weight: 600;
 }
 
-.footerTouchLink:hover {
-  text-decoration: underline;
+.socialFooterLink:hover {
+  color: #000000;
 }

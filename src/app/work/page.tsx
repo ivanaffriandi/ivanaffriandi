@@ -1,12 +1,16 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import styles from './work.module.css';
 
-export default function WorkClaireEditorialPortfolioPage() {
+type TabType = 'overview' | 'projects' | 'process' | 'archive';
+
+export default function WorkFluxDesignPortfolioPage() {
+  const [activeTab, setActiveTab] = useState<TabType>('projects');
   const [sliderPos, setSliderPos] = useState(50);
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
-  const mailCardRef = useRef<HTMLDivElement>(null);
+  const sliderBoxRef = useRef<HTMLDivElement>(null);
 
   const [timezones, setTimezones] = useState({
     jakarta: '--:--',
@@ -25,7 +29,7 @@ export default function WorkClaireEditorialPortfolioPage() {
           timeZone: tz,
           hour: '2-digit',
           minute: '2-digit',
-          hour12: false,
+          hour12: true,
         }).format(now);
       };
 
@@ -44,48 +48,167 @@ export default function WorkClaireEditorialPortfolioPage() {
   }, []);
 
   const handleSliderMove = (clientX: number) => {
-    if (!mailCardRef.current) return;
-    const rect = mailCardRef.current.getBoundingClientRect();
+    if (!sliderBoxRef.current) return;
+    const rect = sliderBoxRef.current.getBoundingClientRect();
     const x = clientX - rect.left;
     const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
     setSliderPos(percentage);
   };
 
+  const tabContents = {
+    overview: {
+      title: 'Work & Disciplines',
+      bio: 'Bridging physical bespoke leathercraft with real-time 3D WebGL environments and distributed cloud infrastructure. A hybrid practice merging tangible atelier materials with minimalist software engineering.',
+      services: 'Art Direction & Engineering',
+      duration: '2025 — Present',
+      client: 'Independent Studio',
+      direction: 'Physical & Digital Systems',
+    },
+    projects: {
+      title: 'Work',
+      bio: 'Exploring the intersection of physical bespoke leathercraft, procedural 3D WebGL environments, and distributed cloud email infrastructure. Built with uncompromising craft, fluid generative motion, and minimalist systems.',
+      services: 'Creative Technology & Atelier',
+      duration: 'August, 2026',
+      client: 'SHŪ / EN & Personal Labs',
+      direction: 'Digital Systems & Leather Goods',
+    },
+    process: {
+      title: 'Craft & Engineering Process',
+      bio: 'From pattern drafting and vegetable-tanned leather cutting in our Tangerang atelier to GLSL shader optimization, Three.js camera projection, and high-throughput AWS SES relay deployment on Oracle Cloud.',
+      services: 'Prototyping & Production',
+      duration: 'Continuous Iteration',
+      client: 'Direct to Collector',
+      direction: 'Bespoke Atelier Workflow',
+    },
+    archive: {
+      title: 'Systems Archive',
+      bio: 'A curated index of launched web applications, cross-platform Flutter mobile clients, Telegram concierge bots, and multi-sensory digital reading engines developed across 2025 and 2026.',
+      services: 'Full Architecture Index',
+      duration: '2025 — 2026',
+      client: 'Ecosystem Archive',
+      direction: 'Next.js 16 & Flutter',
+    },
+  };
+
+  const currentContent = tabContents[activeTab];
+
   return (
     <div className={styles.scandinavianViewport}>
-      {/* ── TOP HEADER ── */}
-      <header className={styles.topNavBar}>
-        <a href="https://ivanaffriandi.com" className={styles.navBrandLogo}>
-          IVAN AFFRIANDI
-        </a>
+      <div className={styles.editorialContainer}>
+        {/* ── TOP HEADER (FLUXDESIGN EXACT LAYOUT) ── */}
+        <header className={styles.headerRow}>
+          <a href="https://ivanaffriandi.com" className={styles.brandLogoTitle}>
+            Ivan Affriandi<span className={styles.registeredSymbol}>®</span>
+          </a>
 
-        <nav className={styles.navMenuLinks}>
-          <a href="https://ivanaffriandi.com/x" target="_blank" rel="noreferrer" className={styles.navLink}>STORIES</a>
-          <a href="#gallery" className={styles.navLink}>PROJECTS</a>
-          <a href="https://shuenstudio.com" target="_blank" rel="noreferrer" className={styles.navLink}>ATELIER</a>
-          <a href="mailto:ivan@ivanaffriandi.com" className={styles.navLink}>CONTACT</a>
-          <a href="mailto:ivan@ivanaffriandi.com" className={styles.menuHamburger}>☰</a>
-        </nav>
-      </header>
+          {/* Center Nav Tabs */}
+          <nav className={styles.centerNavTabs}>
+            <button
+              onClick={() => setActiveTab('overview')}
+              className={`${styles.navTabBtn} ${activeTab === 'overview' ? styles.navTabBtnActive : ''}`}
+            >
+              Overview
+            </button>
+            <button
+              onClick={() => setActiveTab('projects')}
+              className={`${styles.navTabBtn} ${activeTab === 'projects' ? styles.navTabBtnActive : ''}`}
+            >
+              Projects
+            </button>
+            <button
+              onClick={() => setActiveTab('process')}
+              className={`${styles.navTabBtn} ${activeTab === 'process' ? styles.navTabBtnActive : ''}`}
+            >
+              Process
+            </button>
+            <button
+              onClick={() => setActiveTab('archive')}
+              className={`${styles.navTabBtn} ${activeTab === 'archive' ? styles.navTabBtnActive : ''}`}
+            >
+              Archive
+            </button>
+          </nav>
 
-      {/* ── MAIN HORIZONTAL EDITORIAL STAGE ── */}
-      <main id="gallery" className={styles.editorialStage}>
-        {/* Vertical Left Title Column */}
-        <aside className={styles.verticalTitleColumn}>
-          <h1 className={styles.verticalRotatedText}>
-            Ivan Affriandi is an Indonesian based creative technologist &amp; founder, displaying artisanal craft &amp; digital systems.
-          </h1>
-        </aside>
+          {/* Location & Live Clock */}
+          <div className={styles.headerLocationClock}>
+            <span className={styles.locationText}>Tangerang, Indonesia</span>
+            <span className={styles.clockTimeText}>{timezones.jakarta} (WIB)</span>
+          </div>
 
-        {/* Horizontal Staggered Gallery Strip */}
-        <div className={styles.galleryStrip}>
-          {/* ── COLUMN 01: PRIVATE MAIL ENGINE (HIGH) ── */}
-          <div className={`${styles.staggerCardCol} ${styles.staggerOffsetHigh}`}>
-            <span className={styles.columnNumeral}>01</span>
+          {/* Start a Project Link */}
+          <a href="mailto:ivan@ivanaffriandi.com" className={styles.startProjectLink}>
+            Start a Project
+          </a>
+        </header>
 
+        {/* ── HERO SHOWCASE SECTION (FLUXDESIGN HERO) ── */}
+        <section className={styles.heroShowcaseSection}>
+          <div className={styles.sideOverviewLabel}>
+            → {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+          </div>
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              className={styles.heroContentCluster}
+            >
+              <h1 className={styles.projectMainHeading}>
+                {currentContent.title}
+              </h1>
+
+              <p className={styles.projectNarrativeBio}>
+                {currentContent.bio}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        </section>
+
+        {/* ── 4-COLUMN METADATA BAR (FLUXDESIGN METADATA) ── */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab + '-meta'}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className={styles.metadataGridRow}
+          >
+            <div className={styles.metaColItem}>
+              <span className={styles.metaColLabel}>Services &amp; Info</span>
+              <span className={styles.metaColVal}>{currentContent.services}</span>
+            </div>
+
+            <div className={styles.metaColItem}>
+              <span className={styles.metaColLabel}>Duration</span>
+              <span className={styles.metaColVal}>{currentContent.duration}</span>
+            </div>
+
+            <div className={styles.metaColItem}>
+              <span className={styles.metaColLabel}>Ventures</span>
+              <span className={styles.metaColVal}>{currentContent.client}</span>
+            </div>
+
+            <div className={styles.metaColItem}>
+              <span className={styles.metaColLabel}>Art Direction</span>
+              <span className={styles.metaColVal}>{currentContent.direction}</span>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* ── 3-COLUMN PANORAMIC VISUAL CARDS ── */}
+        <motion.div 
+          layout
+          className={styles.panoramicVisualGrid}
+        >
+          {/* Card 1: Private Mail Engine with Interactive Dark/Light Drag Slider */}
+          <div className={styles.panoramicCard}>
             <div
-              ref={mailCardRef}
-              className={styles.portraitImageWrap}
+              ref={sliderBoxRef}
+              className={styles.panoramicMediaBox}
               onMouseDown={() => setIsDraggingSlider(true)}
               onMouseUp={() => setIsDraggingSlider(false)}
               onMouseLeave={() => setIsDraggingSlider(false)}
@@ -97,189 +220,139 @@ export default function WorkClaireEditorialPortfolioPage() {
                 if (e.touches.length > 0) handleSliderMove(e.touches[0].clientX);
               }}
             >
-              {/* Background: Dark Mode */}
-              <img
-                src="/work-showcase/mail-dark.png"
-                alt="Mail Platform Dark Mode"
-                className={styles.mailDarkImg}
-              />
-
-              {/* Clipped: Light Mode */}
-              <div
-                className={styles.mailLightClip}
-                style={{ width: `${sliderPos}%` }}
-              >
+              <div className={styles.sliderWrapperBox}>
+                {/* Background: Dark Mode Image */}
                 <img
-                  src="/work-showcase/mail-light.png"
-                  alt="Mail Platform Light Mode"
-                  className={styles.mailLightImg}
+                  src="/work-showcase/mail-dark.png"
+                  alt="Private Mail Engine Dark Mode"
+                  className={styles.sliderImgDark}
                 />
-              </div>
 
-              {/* Divider Handle */}
-              <div
-                className={styles.sliderDivider}
-                style={{ left: `${sliderPos}%` }}
-              >
-                <div className={styles.sliderThumbIcon}>
-                  ↔
+                {/* Clipped: Light Mode Image */}
+                <div
+                  className={styles.sliderClipLight}
+                  style={{ width: `${sliderPos}%` }}
+                >
+                  <img
+                    src="/work-showcase/mail-light.png"
+                    alt="Private Mail Engine Light Mode"
+                    className={styles.sliderImgLight}
+                    style={{ width: sliderBoxRef.current?.clientWidth || 400 }}
+                  />
+                </div>
+
+                {/* Divider Line & Thumb */}
+                <div
+                  className={styles.sliderDividerLine}
+                  style={{ left: `${sliderPos}%` }}
+                >
+                  <div className={styles.sliderHandleBubble}>
+                    ↔
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className={styles.captionBlock}>
-              <h2 className={styles.captionTitle}>
-                Private Mail Platform · Dark &amp; Light
-              </h2>
-              <p className={styles.captionSub}>
-                Self-hosted infrastructure on Oracle Cloud with AWS SES &amp; automated 2048-bit DKIM. Drag slider to compare.
+            <div className={styles.cardFooterCaption}>
+              <h3 className={styles.cardFooterTitle}>
+                Private Mail Engine <span>↗</span>
+              </h3>
+              <p className={styles.cardFooterSub}>
+                Self-hosted infrastructure with AWS SES &amp; automated 2048-bit DKIM. Drag slider to compare Dark/Light modes.
               </p>
-              <span className={styles.captionDate}>18.8.2026</span>
             </div>
           </div>
 
-          {/* ── COLUMN 02: SHŪ / EN ATELIER (LOW / STAGGERED) ── */}
+          {/* Card 2: Atmospheric Digital Reader (/x) */}
+          <a
+            href="https://ivanaffriandi.com/x"
+            target="_blank"
+            rel="noreferrer"
+            className={styles.panoramicCard}
+          >
+            <div className={styles.panoramicMediaBox}>
+              <img
+                src="/work-showcase/reader-dark-woods.png"
+                alt="Atmospheric Digital Reader"
+              />
+            </div>
+
+            <div className={styles.cardFooterCaption}>
+              <h3 className={styles.cardFooterTitle}>
+                Atmospheric Digital Reader <span>↗</span>
+              </h3>
+              <p className={styles.cardFooterSub}>
+                Multi-sensory digital reading with procedural wind ambient soundscape synthesis and neural TTS audio.
+              </p>
+            </div>
+          </a>
+
+          {/* Card 3: SHŪ / EN Studio & 3D Configurator */}
           <a
             href="https://shuenstudio.com"
             target="_blank"
             rel="noreferrer"
-            className={`${styles.staggerCardCol} ${styles.staggerOffsetLow}`}
+            className={styles.panoramicCard}
           >
-            <span className={styles.columnNumeral}>02</span>
-
-            <div className={styles.portraitImageWrap}>
+            <div className={styles.panoramicMediaBox}>
               <img
                 src="https://images.unsplash.com/photo-1544816155-12df9643f363?w=800&auto=format&fit=crop&q=80"
-                alt="SHU / EN Leather Atelier"
+                alt="SHU / EN Bespoke Leather Goods"
               />
             </div>
 
-            <div className={styles.captionBlock}>
-              <h2 className={styles.captionTitle}>
-                SHŪ / EN Studio · Bespoke Leather Goods
-              </h2>
-              <p className={styles.captionSub}>
-                Handcrafted bespoke trifold journals, full-grain Nero leather, Japanese Moire linings &amp; solid 925 silver charms.
+            <div className={styles.cardFooterCaption}>
+              <h3 className={styles.cardFooterTitle}>
+                SHŪ / EN Studio · Leathercraft <span>↗</span>
+              </h3>
+              <p className={styles.cardFooterSub}>
+                Handcrafted bespoke trifold journals, vegetable-tanned Nero hides, solid silver hardware &amp; 3D WebGL customizer.
               </p>
-              <span className={styles.captionDate}>15.8.2026</span>
             </div>
           </a>
+        </motion.div>
 
-          {/* ── COLUMN 03: DIGITAL READER CHAPTER 02 (HIGH) ── */}
+        {/* ── BOTTOM SEE MORE ACTION ── */}
+        <div className={styles.seeMoreRow}>
           <a
-            href="https://ivanaffriandi.com/x"
+            href="https://shuenstudio.com"
             target="_blank"
             rel="noreferrer"
-            className={`${styles.staggerCardCol} ${styles.staggerOffsetHigh}`}
+            className={styles.seeMoreBtn}
           >
-            <span className={styles.columnNumeral}>03</span>
-
-            <div className={styles.portraitImageWrap}>
-              <img
-                src="/work-showcase/reader-dark-woods.png"
-                alt="Chapter 02: The Unconscious"
-              />
-            </div>
-
-            <div className={styles.captionBlock}>
-              <h2 className={styles.captionTitle}>
-                Chapter 02: The Unconscious · Digital Reader
-              </h2>
-              <p className={styles.captionSub}>
-                Minimalist high-contrast reading layout paired with generative wind ambient soundscapes.
-              </p>
-              <span className={styles.captionDate}>12.8.2026</span>
-            </div>
-          </a>
-
-          {/* ── COLUMN 04: 3D WEBGL CONFIGURATOR (LOW / STAGGERED) ── */}
-          <a
-            href="https://shuenstudio.com/po"
-            target="_blank"
-            rel="noreferrer"
-            className={`${styles.staggerCardCol} ${styles.staggerOffsetLow}`}
-          >
-            <span className={styles.columnNumeral}>04</span>
-
-            <div className={styles.portraitImageWrap}>
-              <img
-                src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&auto=format&fit=crop&q=80"
-                alt="3D WebGL Configurator"
-              />
-            </div>
-
-            <div className={styles.captionBlock}>
-              <h2 className={styles.captionTitle}>
-                Three.js 3D WebGL Configurator Engine
-              </h2>
-              <p className={styles.captionSub}>
-                Real-time procedural normal maps, live camera rigs, leather textures &amp; gold foil stamping.
-              </p>
-              <span className={styles.captionDate}>08.8.2026</span>
-            </div>
-          </a>
-
-          {/* ── COLUMN 05: DIGITAL READER CHAPTER 05 (HIGH) ── */}
-          <a
-            href="https://ivanaffriandi.com/x"
-            target="_blank"
-            rel="noreferrer"
-            className={`${styles.staggerCardCol} ${styles.staggerOffsetHigh}`}
-          >
-            <span className={styles.columnNumeral}>05</span>
-
-            <div className={styles.portraitImageWrap}>
-              <img
-                src="/work-showcase/reader-dark-fire.png"
-                alt="Chapter 05: Embers in the Woods"
-              />
-            </div>
-
-            <div className={styles.captionBlock}>
-              <h2 className={styles.captionTitle}>
-                Chapter 05: Embers in the Woods
-              </h2>
-              <p className={styles.captionSub}>
-                Warm amber dark mode typography with neural voice narration and reader telemetry.
-              </p>
-              <span className={styles.captionDate}>02.8.2026</span>
-            </div>
+            See More →
           </a>
         </div>
-      </main>
 
-      {/* ── BOTTOM CLOCKS & TOUCH FOOTER ── */}
-      <footer className={styles.bottomEditorialFooter}>
-        <div className={styles.worldClocksInline}>
-          <div className={styles.clockUnit}>
-            <span className={styles.clockUnitTime}>{timezones.jakarta}</span>
-            <span className={styles.clockUnitCity}>Jakarta (WIB)</span>
+        {/* ── WORLD CLOCKS & FOOTER BAR ── */}
+        <footer className={styles.bottomStudioFooter}>
+          <div className={styles.worldClocksGroup}>
+            <div className={styles.clockItem}>
+              <span className={styles.clockItemTime}>{timezones.copenhagen}</span>
+              <span className={styles.clockItemCity}>Copenhagen</span>
+            </div>
+            <div className={styles.clockItem}>
+              <span className={styles.clockItemTime}>{timezones.tokyo}</span>
+              <span className={styles.clockItemCity}>Tokyo</span>
+            </div>
+            <div className={styles.clockItem}>
+              <span className={styles.clockItemTime}>{timezones.newyork}</span>
+              <span className={styles.clockItemCity}>New York</span>
+            </div>
+            <div className={styles.clockItem}>
+              <span className={styles.clockItemTime}>{timezones.london}</span>
+              <span className={styles.clockItemCity}>London</span>
+            </div>
           </div>
-          <div className={styles.clockUnit}>
-            <span className={styles.clockUnitTime}>{timezones.copenhagen}</span>
-            <span className={styles.clockUnitCity}>Copenhagen</span>
-          </div>
-          <div className={styles.clockUnit}>
-            <span className={styles.clockUnitTime}>{timezones.tokyo}</span>
-            <span className={styles.clockUnitCity}>Tokyo</span>
-          </div>
-          <div className={styles.clockUnit}>
-            <span className={styles.clockUnitTime}>{timezones.newyork}</span>
-            <span className={styles.clockUnitCity}>New York</span>
-          </div>
-          <div className={styles.clockUnit}>
-            <span className={styles.clockUnitTime}>{timezones.london}</span>
-            <span className={styles.clockUnitCity}>London</span>
-          </div>
-        </div>
 
-        <div className={styles.footerTouchLinks}>
-          <a href="mailto:ivan@ivanaffriandi.com" className={styles.footerTouchLink}>Send an Email ↗</a>
-          <a href="https://shuenstudio.com" target="_blank" rel="noreferrer" className={styles.footerTouchLink}>SHŪ / EN Atelier ↗</a>
-          <a href="https://mail.ivanaffriandi.com" target="_blank" rel="noreferrer" className={styles.footerTouchLink}>Mail Platform ↗</a>
-          <a href="https://github.com/ivanaffriandi" target="_blank" rel="noreferrer" className={styles.footerTouchLink}>GitHub ↗</a>
-        </div>
-      </footer>
+          <div className={styles.socialFooterLinks}>
+            <a href="https://github.com/ivanaffriandi" target="_blank" rel="noreferrer" className={styles.socialFooterLink}>GitHub ↗</a>
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" className={styles.socialFooterLink}>Instagram ↗</a>
+            <a href="https://linkedin.com" target="_blank" rel="noreferrer" className={styles.socialFooterLink}>LinkedIn ↗</a>
+            <a href="https://x.com" target="_blank" rel="noreferrer" className={styles.socialFooterLink}>X.com ↗</a>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }
