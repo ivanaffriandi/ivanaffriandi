@@ -8,7 +8,7 @@ type TabType = 'overview' | 'projects' | 'skills' | 'process' | 'archive';
 
 export default function WorkIvanPortfolioPage() {
   const [activeTab, setActiveTab] = useState<TabType>('projects');
-  const [liveTime, setLiveTime] = useState('5:18 PM (WIB)');
+  const [liveTime, setLiveTime] = useState('5:28 PM (WIB)');
 
   // Real-time Indonesian WIB clock ticker
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function WorkIvanPortfolioPage() {
     skills: {
       headline: 'Core Capabilities & Technical Disciplines',
       narrative:
-        'A comprehensive index of engineering proficiencies, cloud infrastructure, bespoke physical leather craftsmanship, real-time 3D graphics, and system automation developed across professional and independent projects.',
+        'A kinetic masonry wall of engineering proficiencies, distributed cloud infrastructure, bespoke leather craftsmanship, real-time 3D shaders, and automated logistics engineered across dozens of production disciplines.',
       duration: 'Comprehensive Mastery',
       client: 'Full Stack & Atelier',
       artDirection: 'Multidisciplinary Engineering',
@@ -72,6 +72,73 @@ export default function WorkIvanPortfolioPage() {
   };
 
   const current = tabHeaders[activeTab];
+
+  // Brick Wall Marquee Rows
+  const row1 = [
+    { tag: '01 / ENGINE', name: 'Next.js 16 (Turbopack)' },
+    { tag: '02 / REACT', name: 'React 19 Server Components' },
+    { tag: '03 / LANGUAGE', name: 'TypeScript Strict Mode' },
+    { tag: '04 / ARCHITECTURE', name: 'App Router Proxies' },
+    { tag: '05 / ACTION', name: 'Next.js Server Actions' },
+    { tag: '06 / CSS', name: 'Vanilla CSS Modules' },
+    { tag: '07 / MOTION', name: 'Framer Motion Springs' },
+    { tag: '08 / SPEED', name: 'SSR & SSG Hybrid Caching' },
+  ];
+
+  const row2 = [
+    { tag: '09 / 3D WEBGL', name: 'Three.js 3D Engine' },
+    { tag: '10 / GRAPHICS', name: 'WebGL 2.0 Viewports' },
+    { tag: '11 / SHADER', name: 'GLSL Procedural Shaders' },
+    { tag: '12 / TEXTURE', name: 'Normal Map Generation' },
+    { tag: '13 / PROJECTION', name: 'Raycasting & Camera Rigs' },
+    { tag: '14 / CUSTOMIZER', name: 'Real-time 3D Configurator' },
+    { tag: '15 / AUDIO', name: 'Web Audio API Synthesis' },
+    { tag: '16 / SOUNDSCAPE', name: 'Generative Ambient Noise' },
+  ];
+
+  const row3 = [
+    { tag: '17 / CLOUD', name: 'Oracle Cloud OCI Compute VM' },
+    { tag: '18 / RELAY', name: 'AWS SES Outbound Engine' },
+    { tag: '19 / PROTOCOL', name: 'DKIM 2048-bit RSA Keys' },
+    { tag: '20 / SECURITY', name: 'SPF Strict Records' },
+    { tag: '21 / COMPLIANCE', name: 'DMARC Policy Enforcement' },
+    { tag: '22 / IDENTITY', name: 'BIMI Certificate Architecture' },
+    { tag: '23 / SERVER', name: 'Postfix & Node SMTP Daemons' },
+    { tag: '24 / ROUTING', name: 'Custom Envelope Return-Path' },
+  ];
+
+  const row4 = [
+    { tag: '25 / ATELIER', name: 'Bespoke Leather Pattern Drafting' },
+    { tag: '26 / LEATHER', name: 'Italian Vegetable-Tanned Nero Hides' },
+    { tag: '27 / PRICKING', name: 'French Pricking Iron Stitching' },
+    { tag: '28 / SEWING', name: 'Hand Saddle-Stitch Linen Thread' },
+    { tag: '29 / FINISHING', name: 'Wax Burnished Edge Creasing' },
+    { tag: '30 / LINING', name: 'Japanese Moire Silk Fabric' },
+    { tag: '31 / HARDWARE', name: 'Solid 925 Sterling Silver Casting' },
+    { tag: '32 / BINDING', name: 'Custom Cord Journal Binding' },
+  ];
+
+  const row5 = [
+    { tag: '33 / MOBILE', name: 'Flutter SDK & Engine' },
+    { tag: '34 / DART', name: 'Dart Multiplatform Architecture' },
+    { tag: '35 / CLIENT', name: 'iOS & Android Native Integration' },
+    { tag: '36 / CACHE', name: 'SQLite Offline-First Sync' },
+    { tag: '37 / BOT', name: 'Telegram Bot API Concierge' },
+    { tag: '38 / LOGISTICS', name: 'Biteship Airway Bill Tracking' },
+    { tag: '39 / PAYOUT', name: 'DOKU Settlement Engine' },
+    { tag: '40 / STRIPE', name: 'Stripe Payment Webhooks' },
+  ];
+
+  const row6 = [
+    { tag: '41 / 3D CAD', name: 'Blender Industrial Modeling' },
+    { tag: '42 / FABRICATION', name: 'Rapid 3D Prototyping' },
+    { tag: '43 / CONTAINERS', name: 'Docker & Docker Compose' },
+    { tag: '44 / LINUX', name: 'Ubuntu Server & systemd Daemons' },
+    { tag: '45 / PROXY', name: 'Cloudflare SSL Edge Proxy' },
+    { tag: '46 / MEMORY', name: 'Redis In-Memory Cache' },
+    { tag: '47 / DATABASE', name: 'PostgreSQL & Prisma ORM' },
+    { tag: '48 / TYPOGRAPHY', name: 'Minimalist Swiss Editorial Design' },
+  ];
 
   return (
     <div className={styles.scandinavianViewport}>
@@ -286,85 +353,79 @@ export default function WorkIvanPortfolioPage() {
           </>
         )}
 
-        {/* 2. SKILLS TAB VIEW (DEEP COMPREHENSIVE BREAKDOWN) */}
+        {/* 2. SKILLS TAB: KINETIC MULTI-ROW BRICK WALL MARQUEE */}
         {activeTab === 'skills' && (
-          <div className={styles.skillsTabContainer}>
-            {/* Category 1 */}
-            <div className={styles.skillCategoryBox}>
-              <h2 className={styles.skillCategoryHeader}>
-                <span>01 / Creative Tech &amp; Web</span>
-                <span>[STACK]</span>
-              </h2>
-              <ul className={styles.skillListUl}>
-                <li className={styles.skillItemLi}>
-                  <span className={styles.skillItemName}>Next.js 16 &amp; React 19</span>
-                  <span className={styles.skillItemDetail}>Turbopack, Server Actions, App Router proxies, SSR/SSG hybrid caching.</span>
-                </li>
-                <li className={styles.skillItemLi}>
-                  <span className={styles.skillItemName}>Three.js &amp; WebGL 2.0</span>
-                  <span className={styles.skillItemDetail}>Procedural normal mapping, GLSL fragment shaders, raycasting, camera rigs.</span>
-                </li>
-                <li className={styles.skillItemLi}>
-                  <span className={styles.skillItemName}>Web Audio API &amp; Generative Sound</span>
-                  <span className={styles.skillItemDetail}>Ambient noise synthesizers, binaural soundscapes, dynamic audio filters.</span>
-                </li>
-                <li className={styles.skillItemLi}>
-                  <span className={styles.skillItemName}>TypeScript &amp; Vanilla CSS Modules</span>
-                  <span className={styles.skillItemDetail}>Strict type-safe architecture, custom design token systems, Framer Motion springs.</span>
-                </li>
-              </ul>
+          <div className={styles.skillsBrickWallWrapper}>
+            {/* Row 1: Left */}
+            <div className={styles.brickRowTrack}>
+              <div className={styles.brickMarqueeLeft}>
+                {[...row1, ...row1, ...row1].map((b, idx) => (
+                  <div key={idx} className={styles.brickPill}>
+                    <span className={styles.brickCodeTag}>{b.tag}</span>
+                    <span>{b.name}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Category 2 */}
-            <div className={styles.skillCategoryBox}>
-              <h2 className={styles.skillCategoryHeader}>
-                <span>02 / Cloud &amp; Mail Infrastructure</span>
-                <span>[DEVOPS]</span>
-              </h2>
-              <ul className={styles.skillListUl}>
-                <li className={styles.skillItemLi}>
-                  <span className={styles.skillItemName}>Self-Hosted Mail Infrastructure</span>
-                  <span className={styles.skillItemDetail}>Oracle Cloud VM, Postfix/Node SMTP daemons, custom return-path relays.</span>
-                </li>
-                <li className={styles.skillItemLi}>
-                  <span className={styles.skillItemName}>AWS SES &amp; Security Protocol</span>
-                  <span className={styles.skillItemDetail}>DKIM 2048-bit RSA keys, SPF records, strict DMARC enforcement, BIMI certificates.</span>
-                </li>
-                <li className={styles.skillItemLi}>
-                  <span className={styles.skillItemName}>Docker &amp; Linux System Admin</span>
-                  <span className={styles.skillItemDetail}>Ubuntu Server orchestration, systemd background daemons, automated cron jobs.</span>
-                </li>
-                <li className={styles.skillItemLi}>
-                  <span className={styles.skillItemName}>Edge Proxy &amp; Databases</span>
-                  <span className={styles.skillItemDetail}>Cloudflare SSL edge rules, Redis in-memory cache, PostgreSQL, Prisma ORM.</span>
-                </li>
-              </ul>
+            {/* Row 2: Right */}
+            <div className={styles.brickRowTrack}>
+              <div className={styles.brickMarqueeRight}>
+                {[...row2, ...row2, ...row2].map((b, idx) => (
+                  <div key={idx} className={styles.brickPill}>
+                    <span className={styles.brickCodeTag}>{b.tag}</span>
+                    <span>{b.name}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Category 3 */}
-            <div className={styles.skillCategoryBox}>
-              <h2 className={styles.skillCategoryHeader}>
-                <span>03 / Physical Craft &amp; Atelier</span>
-                <span>[PHYSICAL]</span>
-              </h2>
-              <ul className={styles.skillListUl}>
-                <li className={styles.skillItemLi}>
-                  <span className={styles.skillItemName}>Bespoke Leather Pattern Drafting</span>
-                  <span className={styles.skillItemDetail}>Custom geometric layout design, Japanese Moire linings, saddle-stitching.</span>
-                </li>
-                <li className={styles.skillItemLi}>
-                  <span className={styles.skillItemName}>Vegetable-Tanned Italian Hides</span>
-                  <span className={styles.skillItemDetail}>Hand-burnished wax finishing, edge creasing, full-grain Nero leather selection.</span>
-                </li>
-                <li className={styles.skillItemLi}>
-                  <span className={styles.skillItemName}>Solid 925 Silver &amp; Hardware</span>
-                  <span className={styles.skillItemDetail}>Sterling silver charm casting, custom metal bindings, gold foil embossing.</span>
-                </li>
-                <li className={styles.skillItemLi}>
-                  <span className={styles.skillItemName}>3D CAD &amp; Rapid Fabrication</span>
-                  <span className={styles.skillItemDetail}>Blender industrial modeling, 3D printing prototyping, tactile product packaging.</span>
-                </li>
-              </ul>
+            {/* Row 3: Left */}
+            <div className={styles.brickRowTrack}>
+              <div className={styles.brickMarqueeLeft}>
+                {[...row3, ...row3, ...row3].map((b, idx) => (
+                  <div key={idx} className={styles.brickPill}>
+                    <span className={styles.brickCodeTag}>{b.tag}</span>
+                    <span>{b.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Row 4: Right */}
+            <div className={styles.brickRowTrack}>
+              <div className={styles.brickMarqueeRight}>
+                {[...row4, ...row4, ...row4].map((b, idx) => (
+                  <div key={idx} className={styles.brickPill}>
+                    <span className={styles.brickCodeTag}>{b.tag}</span>
+                    <span>{b.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Row 5: Left */}
+            <div className={styles.brickRowTrack}>
+              <div className={styles.brickMarqueeLeft}>
+                {[...row5, ...row5, ...row5].map((b, idx) => (
+                  <div key={idx} className={styles.brickPill}>
+                    <span className={styles.brickCodeTag}>{b.tag}</span>
+                    <span>{b.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Row 6: Right */}
+            <div className={styles.brickRowTrack}>
+              <div className={styles.brickMarqueeRight}>
+                {[...row6, ...row6, ...row6].map((b, idx) => (
+                  <div key={idx} className={styles.brickPill}>
+                    <span className={styles.brickCodeTag}>{b.tag}</span>
+                    <span>{b.name}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}

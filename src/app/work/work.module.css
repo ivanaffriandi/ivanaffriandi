@@ -1,7 +1,7 @@
 /* ============================================================
    IVAN'S WORK · FLUXDESIGN EDITORIAL STUDIO PORTFOLIO
    (work.ivanaffriandi.com)
-   3-Column Master Grid · Full Tab Views · Rich Skills & Projects
+   3-Column Master Grid · Multi-Row Kinetic Brick Wall Marquee
    ============================================================ */
 
 .scandinavianViewport {
@@ -207,7 +207,7 @@
 
 /* ── ROW 4: TAB VIEW CONTENTS ── */
 
-/* 1. PROJECTS TAB (3-Column Visual Cards + Secondary Projects) */
+/* 1. PROJECTS TAB */
 .imageCardCol1 {
   grid-column: 1 / 2;
   width: 100%;
@@ -348,69 +348,101 @@
   border-radius: 2px;
 }
 
-/* 2. SKILLS TAB (Deep Comprehensive Categories across 3 Columns) */
-.skillsTabContainer {
+/* ── 2. SKILLS TAB: KINETIC MULTI-ROW BRICK WALL MARQUEE ── */
+.skillsBrickWallWrapper {
   grid-column: 1 / 4;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
-  border-top: 1px solid #f0f0f2;
-  padding-top: 28px;
-}
-
-@media (max-width: 860px) {
-  .skillsTabContainer {
-    grid-template-columns: 1fr;
-  }
-}
-
-.skillCategoryBox {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  border-top: 1px solid #f0f0f2;
+  padding-top: 28px;
+  width: 100%;
+  overflow: hidden;
+  user-select: none;
 }
 
-.skillCategoryHeader {
-  font-size: 13px;
-  font-weight: 800;
+.brickRowTrack {
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+}
+
+.brickMarqueeLeft {
+  display: flex;
+  gap: 12px;
+  white-space: nowrap;
+  animation: scrollLeft 36s linear infinite;
+}
+
+.brickMarqueeRight {
+  display: flex;
+  gap: 12px;
+  white-space: nowrap;
+  animation: scrollRight 36s linear infinite;
+}
+
+.brickRowTrack:hover .brickMarqueeLeft,
+.brickRowTrack:hover .brickMarqueeRight {
+  animation-play-state: paused;
+}
+
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scrollRight {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.brickPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #fafafc;
+  border: 1px solid #e5e5ea;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #111111;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.brickPill:hover {
+  background: #111111;
+  color: #ffffff;
+  border-color: #111111;
+  transform: translateY(-2px);
+}
+
+.brickCodeTag {
+  font-size: 9px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: #777777;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #111111;
-  border-bottom: 1px solid #111111;
-  padding-bottom: 6px;
-  margin: 0;
-  display: flex;
-  justify-content: space-between;
 }
 
-.skillListUl {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.brickPill:hover .brickCodeTag {
+  color: #aaaaaa;
 }
 
-.skillItemLi {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.skillItemName {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: #111111;
-}
-
-.skillItemDetail {
-  font-size: 11.5px;
-  color: #666670;
-  line-height: 1.45;
-}
-
-/* 3. PROCESS & ARCHIVE TAB VIEWS */
+/* 3. PROCESS, OVERVIEW & ARCHIVE TAB BLOCKS */
 .fullWidthTabBlock {
   grid-column: 1 / 4;
   display: flex;
@@ -513,7 +545,7 @@
   font-weight: 600;
 }
 
-/* ── ROW 5: SEE MORE LINK (RIGHT ALIGNED UNDER COLUMN 3) ── */
+/* ── ROW 5: SEE MORE LINK ── */
 .seeMoreWrapper {
   grid-column: 3 / 4;
   display: flex;
