@@ -4,11 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './work.module.css';
 
-type TabType = 'overview' | 'work' | 'atelier' | 'archive';
+type TabType = 'overview' | 'projects' | 'process' | 'archive';
 
-export default function WorkIvanAffriandiStudioPage() {
-  const [activeTab, setActiveTab] = useState<TabType>('work');
-  const [liveTime, setLiveTime] = useState('4:46 PM (WIB)');
+export default function WorkIvanPortfolioPage() {
+  const [activeTab, setActiveTab] = useState<TabType>('projects');
+  const [liveTime, setLiveTime] = useState('12:42 PM (WIB)');
 
   useEffect(() => {
     const updateTime = () => {
@@ -29,40 +29,36 @@ export default function WorkIvanAffriandiStudioPage() {
 
   const tabData = {
     overview: {
-      headline: 'Creative Direction & Engineering',
+      headline: 'Creative Direction',
       narrative:
-        'A dual practice rooted in Tangerang, Indonesia. Pattern-cutting vegetable-tanned hides and solid 925 silver binding on the physical workbench, while engineering high-throughput SES mail relays, procedural Three.js shaders, and multi-sensory digital readers.',
-      services: 'Bespoke Atelier & Software Engineering',
+        'Bridging physical bespoke leathercraft with real-time 3D WebGL environments and distributed cloud infrastructure. A hybrid studio practice merging tactile atelier materials with fluid generative motion and precision software engineering.',
       duration: '2025 — Present',
-      ventures: 'Ivan Affriandi Ecosystem',
-      direction: 'Physical Goods & Digital Systems',
+      client: 'Independent Studio',
+      artDirection: 'Physical & Digital Systems',
     },
-    work: {
-      headline: 'Cyber-Artisanal Craft',
+    projects: {
+      headline: "Ivan's Work",
       narrative:
-        'Bridging tangible bespoke leathercraft with real-time 3D WebGL configurators and self-hosted cloud email infrastructure. Built at SHŪ / EN Studio with uncompromising craftsmanship, fluid generative motion, and minimalist distributed systems.',
-      services: 'Artisanal Atelier & Full-Stack Tech',
-      duration: 'May–August, 2026',
-      ventures: 'SHŪ / EN Studio · Mail Engine · /x Reader',
-      direction: 'Spatial Luxury & Next.js 16',
+        'Exploring the intersection of physical bespoke leathercraft, procedural 3D WebGL environments, and distributed cloud email infrastructure. Built with uncompromising craft, fluid generative motion, and minimalist systems.',
+      duration: '2025 — 2026',
+      client: 'SHŪ / EN & Personal Labs',
+      artDirection: 'Digital Systems & Physical Goods',
     },
-    atelier: {
-      headline: 'Physical Workbench & 3D WebGL',
+    process: {
+      headline: 'Craft & Engineering',
       narrative:
-        'Every leather journal is hand-skived from Italian Nero hides, saddle-stitched with bonded thread, and fitted with custom solid silver charms. Complemented by real-time Three.js 3D configurators for custom bespoke orders.',
-      services: 'Leather Atelier & Three.js Customizers',
-      duration: 'Continuous Craft',
-      ventures: 'SHŪ / EN Atelier & 3D WebGL',
-      direction: 'Bespoke Hardware & GLSL Shaders',
+        'From pattern drafting and vegetable-tanned leather cutting in our Tangerang atelier to GLSL shader optimization, Three.js camera projection, and high-throughput AWS SES relay deployment on Oracle Cloud VM.',
+      duration: 'Continuous Iteration',
+      client: 'Direct to Collector',
+      artDirection: 'Atelier Architecture',
     },
     archive: {
-      headline: 'Distributed Cloud & Mobile Systems',
+      headline: 'Systems Archive',
       narrative:
-        'Self-hosted private email platform deployed on Oracle Cloud VM with automated 2048-bit DKIM, atmospheric digital readers with neural voice narration, and automated Telegram concierge webhook bots.',
-      services: 'Infrastructure & Mobile Automation',
+        'A comprehensive repository of launched web applications, cross-platform Flutter mobile clients, atmospheric digital reading engines, and automated Telegram concierge bots engineered across 2025 and 2026.',
       duration: '2025 — 2026',
-      ventures: 'Mail Engine, Flutter & Telegram Bots',
-      direction: 'Cloud Architecture & Webhooks',
+      client: 'Ecosystem Archive',
+      artDirection: 'Next.js 16 & Flutter',
     },
   };
 
@@ -86,16 +82,16 @@ export default function WorkIvanAffriandiStudioPage() {
             Overview
           </button>
           <button
-            onClick={() => setActiveTab('work')}
-            className={`${styles.navItemBtn} ${activeTab === 'work' ? styles.navItemActive : ''}`}
+            onClick={() => setActiveTab('projects')}
+            className={`${styles.navItemBtn} ${activeTab === 'projects' ? styles.navItemActive : ''}`}
           >
-            Work
+            Projects
           </button>
           <button
-            onClick={() => setActiveTab('atelier')}
-            className={`${styles.navItemBtn} ${activeTab === 'atelier' ? styles.navItemActive : ''}`}
+            onClick={() => setActiveTab('process')}
+            className={`${styles.navItemBtn} ${activeTab === 'process' ? styles.navItemActive : ''}`}
           >
-            Atelier
+            Process
           </button>
           <button
             onClick={() => setActiveTab('archive')}
@@ -146,48 +142,48 @@ export default function WorkIvanAffriandiStudioPage() {
 
         {/* ── ROW 3: METADATA ROW (ALIGNED PRECISELY WITH EACH COLUMN) ── */}
         <div className={styles.metaCol1}>
-          <span className={styles.metaLabel}>Services &amp; Disciplines</span>
+          <span className={styles.metaLabel}>Services &amp; Info</span>
         </div>
 
         <div className={styles.metaCol2}>
           <div className={styles.metaItemCluster}>
-            <span className={styles.metaLabel}>Timeline</span>
+            <span className={styles.metaLabel}>Duration</span>
             <span className={styles.metaValue}>{current.duration}</span>
           </div>
 
           <div className={styles.metaItemCluster}>
-            <span className={styles.metaLabel}>Ventures</span>
-            <span className={styles.metaValue}>{current.ventures}</span>
+            <span className={styles.metaLabel}>Client</span>
+            <span className={styles.metaValue}>{current.client}</span>
           </div>
         </div>
 
         <div className={styles.metaCol3}>
           <span className={styles.metaLabel}>Art Direction</span>
-          <span className={styles.metaValue}>{current.direction}</span>
+          <span className={styles.metaValue}>{current.artDirection}</span>
         </div>
 
-        {/* ── ROW 4: THE 3 PANORAMIC IMAGES (EXACT MATCH & ALIGNMENT) ── */}
+        {/* ── ROW 4: THE 3 PANORAMIC IMAGES (MAIN WEB ASSETS) ── */}
         <a
-          href="https://shuenstudio.com"
+          href="https://mail.ivanaffriandi.com"
           target="_blank"
           rel="noreferrer"
           className={styles.imageCardCol1}
         >
           <img
-            src="/work-showcase/flux_denim.jpg"
-            alt="Physical Atelier & Motion Light"
+            src="/work-showcase/mail-dark.png"
+            alt="Private Mail Platform"
           />
         </a>
 
         <a
-          href="https://shuenstudio.com/po"
+          href="https://ivanaffriandi.com/x"
           target="_blank"
           rel="noreferrer"
           className={styles.imageCardCol2}
         >
           <img
-            src="/work-showcase/flux_hand.jpg"
-            alt="3D WebGL Configurator Light Refraction"
+            src="/work-showcase/reader-dark-woods.png"
+            alt="Atmospheric Digital Reader Chapter 02"
           />
         </a>
 
@@ -198,8 +194,8 @@ export default function WorkIvanAffriandiStudioPage() {
           className={styles.imageCardCol3}
         >
           <img
-            src="/work-showcase/flux_portrait.jpg"
-            alt="Atmospheric Digital Reader"
+            src="/work-showcase/reader-dark-fire.png"
+            alt="Atmospheric Digital Reader Chapter 05"
           />
         </a>
 
