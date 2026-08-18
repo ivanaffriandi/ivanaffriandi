@@ -1,7 +1,7 @@
 /* ============================================================
-   IVAN AFFRIANDI · EXACT 3-COLUMN MASTER GRID (FLUXDESIGN)
+   IVAN'S WORK · FLUXDESIGN EDITORIAL STUDIO PORTFOLIO
    (work.ivanaffriandi.com)
-   Precision Column Alignment · Identical Positioning & Typography
+   3-Column Master Grid · Full Tab Views · Rich Skills & Projects
    ============================================================ */
 
 .scandinavianViewport {
@@ -22,28 +22,28 @@
   flex-direction: column;
 }
 
-/* ── EXACT 3-COLUMN MASTER GRID CONTAINER ── */
+/* ── 3-COLUMN MASTER CONTAINER ── */
 .masterGridContainer {
   max-width: 1360px;
   width: 100%;
   margin: 0 auto;
-  padding: 40px 48px 60px 48px;
+  padding: 40px 48px 80px 48px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   column-gap: 24px;
-  row-gap: 48px;
+  row-gap: 40px;
   box-sizing: border-box;
 }
 
 @media (max-width: 860px) {
   .masterGridContainer {
     grid-template-columns: 1fr;
-    padding: 24px 20px 48px 20px;
-    row-gap: 32px;
+    padding: 24px 20px 60px 20px;
+    row-gap: 28px;
   }
 }
 
-/* ── ROW 1: HEADER (ALIGNED ACROSS 3 COLUMNS) ── */
+/* ── ROW 1: HEADER (ALIGNED PRECISELY ACROSS 3 COLUMNS) ── */
 .headerCol1 {
   grid-column: 1 / 2;
   display: flex;
@@ -51,7 +51,7 @@
 }
 
 .brandLogo {
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: -0.2px;
   color: #111111;
@@ -68,7 +68,7 @@
   grid-column: 2 / 3;
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 24px;
 }
 
 @media (max-width: 860px) {
@@ -104,79 +104,68 @@
   justify-content: space-between;
 }
 
-.locationClockBox {
-  display: flex;
-  flex-direction: column;
-  font-size: 11px;
-  line-height: 1.35;
-  color: #888888;
+.locationOnlyText {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #777777;
 }
 
-@media (max-width: 640px) {
-  .locationClockBox {
-    display: none;
-  }
-}
-
-.startProjectBtn {
+.liveClockHeader {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, monospace;
   color: #111111;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  text-decoration-thickness: 1px;
 }
 
-.startProjectBtn:hover {
-  color: #666666;
-}
-
-/* ── ROW 2: HERO TITLE & NARRATIVE (EXACT POSITIONING) ── */
+/* ── ROW 2: HERO TITLE & NARRATIVE (EXACT INDENT AT COL 2) ── */
 .heroCol1 {
   grid-column: 1 / 2;
   display: flex;
   align-items: flex-start;
-  padding-top: 8px;
+  padding-top: 6px;
 }
 
 .overviewLabel {
   font-size: 12px;
   font-weight: 450;
   color: #777777;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .heroCol23 {
   grid-column: 2 / 4;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
 .mainTitleHeading {
-  font-size: 46px;
-  font-weight: 450;
+  font-size: 44px;
+  font-weight: 500;
   letter-spacing: -0.025em;
-  line-height: 1.08;
+  line-height: 1.1;
   color: #111111;
   margin: 0;
 }
 
 @media (max-width: 768px) {
   .mainTitleHeading {
-    font-size: 32px;
+    font-size: 30px;
   }
 }
 
 .narrativeParagraph {
   font-size: 14.5px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: #3f3f46;
   margin: 0;
-  max-width: 720px;
+  max-width: 760px;
   font-weight: 400;
 }
 
-/* ── ROW 3: METADATA ROW (ALIGNED PRECISELY WITH COLUMNS) ── */
+/* ── ROW 3: METADATA ROW ── */
 .metaCol1 {
   grid-column: 1 / 2;
   display: flex;
@@ -216,14 +205,18 @@
   gap: 2px;
 }
 
-/* ── ROW 4: THE 3 PANORAMIC IMAGES (IDENTICAL SIZE & ALIGNMENT) ── */
+/* ── ROW 4: TAB VIEW CONTENTS ── */
+
+/* 1. PROJECTS TAB (3-Column Visual Cards + Secondary Projects) */
 .imageCardCol1 {
   grid-column: 1 / 2;
   width: 100%;
   height: 380px;
   overflow: hidden;
-  background: #f0f0f0;
+  background: #111111;
   position: relative;
+  text-decoration: none;
+  display: block;
 }
 
 .imageCardCol2 {
@@ -231,8 +224,10 @@
   width: 100%;
   height: 380px;
   overflow: hidden;
-  background: #f0f0f0;
+  background: #111111;
   position: relative;
+  text-decoration: none;
+  display: block;
 }
 
 .imageCardCol3 {
@@ -240,8 +235,10 @@
   width: 100%;
   height: 380px;
   overflow: hidden;
-  background: #f0f0f0;
+  background: #111111;
   position: relative;
+  text-decoration: none;
+  display: block;
 }
 
 @media (max-width: 860px) {
@@ -267,6 +264,253 @@
 .imageCardCol2:hover img,
 .imageCardCol3:hover img {
   transform: scale(1.02);
+}
+
+.cardOverlayInfo {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 14px;
+  background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+/* Secondary Projects Row */
+.secondaryProjectsRow {
+  grid-column: 1 / 4;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  border-top: 1px solid #f0f0f2;
+  padding-top: 28px;
+}
+
+@media (max-width: 860px) {
+  .secondaryProjectsRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.secondaryProjectCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-decoration: none;
+  color: #111111;
+  padding: 16px;
+  border: 1px solid #eeeeee;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+  background: #ffffff;
+}
+
+.secondaryProjectCard:hover {
+  border-color: #111111;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+
+.secondaryProjectTitle {
+  font-size: 13.5px;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.secondaryProjectDesc {
+  font-size: 12px;
+  color: #555555;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.secondaryProjectPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.miniPill {
+  font-size: 9px;
+  font-weight: 600;
+  font-family: ui-monospace, monospace;
+  background: #f5f5f7;
+  color: #333333;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+/* 2. SKILLS TAB (Deep Comprehensive Categories across 3 Columns) */
+.skillsTabContainer {
+  grid-column: 1 / 4;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  border-top: 1px solid #f0f0f2;
+  padding-top: 28px;
+}
+
+@media (max-width: 860px) {
+  .skillsTabContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+.skillCategoryBox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skillCategoryHeader {
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #111111;
+  border-bottom: 1px solid #111111;
+  padding-bottom: 6px;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.skillListUl {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skillItemLi {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.skillItemName {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.skillItemDetail {
+  font-size: 11.5px;
+  color: #666670;
+  line-height: 1.45;
+}
+
+/* 3. PROCESS & ARCHIVE TAB VIEWS */
+.fullWidthTabBlock {
+  grid-column: 1 / 4;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-top: 1px solid #f0f0f2;
+  padding-top: 28px;
+}
+
+.processStepGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 860px) {
+  .processStepGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.processCard {
+  border: 1px solid #eeeeee;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #ffffff;
+}
+
+.processNum {
+  font-size: 24px;
+  font-weight: 300;
+  font-family: ui-monospace, monospace;
+  color: #888888;
+}
+
+.processTitle {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.processText {
+  font-size: 12px;
+  color: #55555a;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Archive Data Table */
+.archiveTable {
+  display: flex;
+  flex-direction: column;
+}
+
+.archiveRowItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f0;
+  text-decoration: none;
+  color: #111111;
+  transition: background 0.15s ease;
+}
+
+.archiveRowItem:hover {
+  padding-left: 6px;
+  background: #fafafa;
+}
+
+.archiveLeftCol {
+  flex: 1.2;
+}
+
+.archiveItemTitle {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.archiveItemSubtitle {
+  font-size: 11.5px;
+  color: #777777;
+  margin: 2px 0 0 0;
+}
+
+.archivePillStack {
+  flex: 1;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.archiveYearLabel {
+  font-size: 11.5px;
+  font-family: ui-monospace, monospace;
+  color: #888888;
+  font-weight: 600;
 }
 
 /* ── ROW 5: SEE MORE LINK (RIGHT ALIGNED UNDER COLUMN 3) ── */

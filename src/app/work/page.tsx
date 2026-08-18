@@ -4,12 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './work.module.css';
 
-type TabType = 'overview' | 'projects' | 'process' | 'archive';
+type TabType = 'overview' | 'projects' | 'skills' | 'process' | 'archive';
 
 export default function WorkIvanPortfolioPage() {
   const [activeTab, setActiveTab] = useState<TabType>('projects');
-  const [liveTime, setLiveTime] = useState('12:42 PM (WIB)');
+  const [liveTime, setLiveTime] = useState('5:18 PM (WIB)');
 
+  // Real-time Indonesian WIB clock ticker
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -27,9 +28,9 @@ export default function WorkIvanPortfolioPage() {
     return () => clearInterval(timer);
   }, []);
 
-  const tabData = {
+  const tabHeaders = {
     overview: {
-      headline: 'Creative Direction',
+      headline: 'Creative Direction & Studio Ethos',
       narrative:
         'Bridging physical bespoke leathercraft with real-time 3D WebGL environments and distributed cloud infrastructure. A hybrid studio practice merging tactile atelier materials with fluid generative motion and precision software engineering.',
       duration: '2025 — Present',
@@ -37,32 +38,40 @@ export default function WorkIvanPortfolioPage() {
       artDirection: 'Physical & Digital Systems',
     },
     projects: {
-      headline: "Ivan's Work",
+      headline: 'Spatial Systems & Bespoke Craft',
       narrative:
         'Exploring the intersection of physical bespoke leathercraft, procedural 3D WebGL environments, and distributed cloud email infrastructure. Built with uncompromising craft, fluid generative motion, and minimalist systems.',
       duration: '2025 — 2026',
       client: 'SHŪ / EN & Personal Labs',
       artDirection: 'Digital Systems & Physical Goods',
     },
-    process: {
-      headline: 'Craft & Engineering',
+    skills: {
+      headline: 'Core Capabilities & Technical Disciplines',
       narrative:
-        'From pattern drafting and vegetable-tanned leather cutting in our Tangerang atelier to GLSL shader optimization, Three.js camera projection, and high-throughput AWS SES relay deployment on Oracle Cloud VM.',
-      duration: 'Continuous Iteration',
+        'A comprehensive index of engineering proficiencies, cloud infrastructure, bespoke physical leather craftsmanship, real-time 3D graphics, and system automation developed across professional and independent projects.',
+      duration: 'Comprehensive Mastery',
+      client: 'Full Stack & Atelier',
+      artDirection: 'Multidisciplinary Engineering',
+    },
+    process: {
+      headline: 'Craft & Engineering Methodology',
+      narrative:
+        'From hand-drafting pattern geometries and cutting vegetable-tanned hides in our Tangerang workshop to writing GLSL procedural normal shaders, Three.js camera projection, and deploying high-throughput email relays on Oracle Cloud VM.',
+      duration: 'Iterative Practice',
       client: 'Direct to Collector',
       artDirection: 'Atelier Architecture',
     },
     archive: {
-      headline: 'Systems Archive',
+      headline: 'Systems Archive & Changelog',
       narrative:
-        'A comprehensive repository of launched web applications, cross-platform Flutter mobile clients, atmospheric digital reading engines, and automated Telegram concierge bots engineered across 2025 and 2026.',
+        'A chronological repository of launched full-stack web applications, cross-platform Flutter mobile clients, atmospheric digital reading engines, and automated Telegram concierge bots engineered across 2025 and 2026.',
       duration: '2025 — 2026',
-      client: 'Ecosystem Archive',
-      artDirection: 'Next.js 16 & Flutter',
+      client: 'Ecosystem Catalog',
+      artDirection: 'Full Architecture',
     },
   };
 
-  const current = tabData[activeTab];
+  const current = tabHeaders[activeTab];
 
   return (
     <div className={styles.scandinavianViewport}>
@@ -70,7 +79,7 @@ export default function WorkIvanPortfolioPage() {
         {/* ── ROW 1: HEADER (ALIGNED PRECISELY ACROSS 3 COLUMNS) ── */}
         <div className={styles.headerCol1}>
           <a href="https://ivanaffriandi.com" className={styles.brandLogo}>
-            Ivan Affriandi<sup>®</sup>
+            Ivan&apos;s Work<sup>®</sup>
           </a>
         </div>
 
@@ -88,6 +97,12 @@ export default function WorkIvanPortfolioPage() {
             Projects
           </button>
           <button
+            onClick={() => setActiveTab('skills')}
+            className={`${styles.navItemBtn} ${activeTab === 'skills' ? styles.navItemActive : ''}`}
+          >
+            Skills
+          </button>
+          <button
             onClick={() => setActiveTab('process')}
             className={`${styles.navItemBtn} ${activeTab === 'process' ? styles.navItemActive : ''}`}
           >
@@ -102,14 +117,8 @@ export default function WorkIvanPortfolioPage() {
         </div>
 
         <div className={styles.headerCol3}>
-          <div className={styles.locationClockBox}>
-            <span>Tangerang, Indonesia</span>
-            <span>{liveTime}</span>
-          </div>
-
-          <a href="mailto:ivan@ivanaffriandi.com" className={styles.startProjectBtn}>
-            Start a Project
-          </a>
+          <span className={styles.locationOnlyText}>Tangerang, Indonesia</span>
+          <span className={styles.liveClockHeader}>{liveTime}</span>
         </div>
 
         {/* ── ROW 2: HERO TITLE & NARRATIVE (EXACT INDENT AT COL 2) ── */}
@@ -140,7 +149,7 @@ export default function WorkIvanPortfolioPage() {
           </AnimatePresence>
         </div>
 
-        {/* ── ROW 3: METADATA ROW (ALIGNED PRECISELY WITH EACH COLUMN) ── */}
+        {/* ── ROW 3: METADATA ROW ── */}
         <div className={styles.metaCol1}>
           <span className={styles.metaLabel}>Services &amp; Info</span>
         </div>
@@ -152,7 +161,7 @@ export default function WorkIvanPortfolioPage() {
           </div>
 
           <div className={styles.metaItemCluster}>
-            <span className={styles.metaLabel}>Client</span>
+            <span className={styles.metaLabel}>Client / Studio</span>
             <span className={styles.metaValue}>{current.client}</span>
           </div>
         </div>
@@ -162,42 +171,314 @@ export default function WorkIvanPortfolioPage() {
           <span className={styles.metaValue}>{current.artDirection}</span>
         </div>
 
-        {/* ── ROW 4: THE 3 PANORAMIC IMAGES (MAIN WEB ASSETS) ── */}
-        <a
-          href="https://mail.ivanaffriandi.com"
-          target="_blank"
-          rel="noreferrer"
-          className={styles.imageCardCol1}
-        >
-          <img
-            src="/work-showcase/mail-dark.png"
-            alt="Private Mail Platform"
-          />
-        </a>
+        {/* ── ROW 4: DYNAMIC TAB VIEW CONTENTS ── */}
 
-        <a
-          href="https://ivanaffriandi.com/x"
-          target="_blank"
-          rel="noreferrer"
-          className={styles.imageCardCol2}
-        >
-          <img
-            src="/work-showcase/reader-dark-woods.png"
-            alt="Atmospheric Digital Reader Chapter 02"
-          />
-        </a>
+        {/* 1. PROJECTS TAB VIEW */}
+        {activeTab === 'projects' && (
+          <>
+            <a
+              href="https://mail.ivanaffriandi.com"
+              target="_blank"
+              rel="noreferrer"
+              className={styles.imageCardCol1}
+            >
+              <img
+                src="/work-showcase/mail-dark.png"
+                alt="Private Mail Platform"
+              />
+              <div className={styles.cardOverlayInfo}>
+                <span>Private Mail Engine</span>
+                <span>Oracle VM + SES ↗</span>
+              </div>
+            </a>
 
-        <a
-          href="https://ivanaffriandi.com/x"
-          target="_blank"
-          rel="noreferrer"
-          className={styles.imageCardCol3}
-        >
-          <img
-            src="/work-showcase/reader-dark-fire.png"
-            alt="Atmospheric Digital Reader Chapter 05"
-          />
-        </a>
+            <a
+              href="https://ivanaffriandi.com/x"
+              target="_blank"
+              rel="noreferrer"
+              className={styles.imageCardCol2}
+            >
+              <img
+                src="/work-showcase/reader-dark-woods.png"
+                alt="Atmospheric Digital Reader Chapter 02"
+              />
+              <div className={styles.cardOverlayInfo}>
+                <span>Chapter 02: Unconscious</span>
+                <span>Digital Reader /x ↗</span>
+              </div>
+            </a>
+
+            <a
+              href="https://ivanaffriandi.com/x"
+              target="_blank"
+              rel="noreferrer"
+              className={styles.imageCardCol3}
+            >
+              <img
+                src="/work-showcase/reader-dark-fire.png"
+                alt="Atmospheric Digital Reader Chapter 05"
+              />
+              <div className={styles.cardOverlayInfo}>
+                <span>Chapter 05: Embers</span>
+                <span>Voice Audio &amp; Reader ↗</span>
+              </div>
+            </a>
+
+            {/* Secondary Project Cards Strip */}
+            <div className={styles.secondaryProjectsRow}>
+              <a
+                href="https://shuenstudio.com"
+                target="_blank"
+                rel="noreferrer"
+                className={styles.secondaryProjectCard}
+              >
+                <h3 className={styles.secondaryProjectTitle}>
+                  SHŪ / EN Leather Goods Atelier <span>↗</span>
+                </h3>
+                <p className={styles.secondaryProjectDesc}>
+                  Handcrafted bespoke leather journals made from Italian vegetable-tanned Nero hides, Japanese Moire linings, and solid 925 silver charms.
+                </p>
+                <div className={styles.secondaryProjectPills}>
+                  <span className={styles.miniPill}>Full-Grain Nero Hide</span>
+                  <span className={styles.miniPill}>Solid 925 Silver</span>
+                  <span className={styles.miniPill}>Tangerang Atelier</span>
+                </div>
+              </a>
+
+              <a
+                href="https://shuenstudio.com/po"
+                target="_blank"
+                rel="noreferrer"
+                className={styles.secondaryProjectCard}
+              >
+                <h3 className={styles.secondaryProjectTitle}>
+                  3D WebGL Configurator Engine <span>↗</span>
+                </h3>
+                <p className={styles.secondaryProjectDesc}>
+                  Real-time procedural normal maps, live Three.js camera projection, leather texture switching, and gold foil embossing customizer.
+                </p>
+                <div className={styles.secondaryProjectPills}>
+                  <span className={styles.miniPill}>Three.js</span>
+                  <span className={styles.miniPill}>WebGL 2.0</span>
+                  <span className={styles.miniPill}>GLSL Shaders</span>
+                </div>
+              </a>
+
+              <a
+                href="https://shuenstudio.com"
+                target="_blank"
+                rel="noreferrer"
+                className={styles.secondaryProjectCard}
+              >
+                <h3 className={styles.secondaryProjectTitle}>
+                  shuen-bot Logistics &amp; Concierge <span>↗</span>
+                </h3>
+                <p className={styles.secondaryProjectDesc}>
+                  Automated dispatch webhooks, Biteship courier airway bill sync, Telegram order concierge, and DOKU/Stripe payment settlement.
+                </p>
+                <div className={styles.secondaryProjectPills}>
+                  <span className={styles.miniPill}>Node.js</span>
+                  <span className={styles.miniPill}>Telegram API</span>
+                  <span className={styles.miniPill}>Webhooks</span>
+                </div>
+              </a>
+            </div>
+          </>
+        )}
+
+        {/* 2. SKILLS TAB VIEW (DEEP COMPREHENSIVE BREAKDOWN) */}
+        {activeTab === 'skills' && (
+          <div className={styles.skillsTabContainer}>
+            {/* Category 1 */}
+            <div className={styles.skillCategoryBox}>
+              <h2 className={styles.skillCategoryHeader}>
+                <span>01 / Creative Tech &amp; Web</span>
+                <span>[STACK]</span>
+              </h2>
+              <ul className={styles.skillListUl}>
+                <li className={styles.skillItemLi}>
+                  <span className={styles.skillItemName}>Next.js 16 &amp; React 19</span>
+                  <span className={styles.skillItemDetail}>Turbopack, Server Actions, App Router proxies, SSR/SSG hybrid caching.</span>
+                </li>
+                <li className={styles.skillItemLi}>
+                  <span className={styles.skillItemName}>Three.js &amp; WebGL 2.0</span>
+                  <span className={styles.skillItemDetail}>Procedural normal mapping, GLSL fragment shaders, raycasting, camera rigs.</span>
+                </li>
+                <li className={styles.skillItemLi}>
+                  <span className={styles.skillItemName}>Web Audio API &amp; Generative Sound</span>
+                  <span className={styles.skillItemDetail}>Ambient noise synthesizers, binaural soundscapes, dynamic audio filters.</span>
+                </li>
+                <li className={styles.skillItemLi}>
+                  <span className={styles.skillItemName}>TypeScript &amp; Vanilla CSS Modules</span>
+                  <span className={styles.skillItemDetail}>Strict type-safe architecture, custom design token systems, Framer Motion springs.</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Category 2 */}
+            <div className={styles.skillCategoryBox}>
+              <h2 className={styles.skillCategoryHeader}>
+                <span>02 / Cloud &amp; Mail Infrastructure</span>
+                <span>[DEVOPS]</span>
+              </h2>
+              <ul className={styles.skillListUl}>
+                <li className={styles.skillItemLi}>
+                  <span className={styles.skillItemName}>Self-Hosted Mail Infrastructure</span>
+                  <span className={styles.skillItemDetail}>Oracle Cloud VM, Postfix/Node SMTP daemons, custom return-path relays.</span>
+                </li>
+                <li className={styles.skillItemLi}>
+                  <span className={styles.skillItemName}>AWS SES &amp; Security Protocol</span>
+                  <span className={styles.skillItemDetail}>DKIM 2048-bit RSA keys, SPF records, strict DMARC enforcement, BIMI certificates.</span>
+                </li>
+                <li className={styles.skillItemLi}>
+                  <span className={styles.skillItemName}>Docker &amp; Linux System Admin</span>
+                  <span className={styles.skillItemDetail}>Ubuntu Server orchestration, systemd background daemons, automated cron jobs.</span>
+                </li>
+                <li className={styles.skillItemLi}>
+                  <span className={styles.skillItemName}>Edge Proxy &amp; Databases</span>
+                  <span className={styles.skillItemDetail}>Cloudflare SSL edge rules, Redis in-memory cache, PostgreSQL, Prisma ORM.</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Category 3 */}
+            <div className={styles.skillCategoryBox}>
+              <h2 className={styles.skillCategoryHeader}>
+                <span>03 / Physical Craft &amp; Atelier</span>
+                <span>[PHYSICAL]</span>
+              </h2>
+              <ul className={styles.skillListUl}>
+                <li className={styles.skillItemLi}>
+                  <span className={styles.skillItemName}>Bespoke Leather Pattern Drafting</span>
+                  <span className={styles.skillItemDetail}>Custom geometric layout design, Japanese Moire linings, saddle-stitching.</span>
+                </li>
+                <li className={styles.skillItemLi}>
+                  <span className={styles.skillItemName}>Vegetable-Tanned Italian Hides</span>
+                  <span className={styles.skillItemDetail}>Hand-burnished wax finishing, edge creasing, full-grain Nero leather selection.</span>
+                </li>
+                <li className={styles.skillItemLi}>
+                  <span className={styles.skillItemName}>Solid 925 Silver &amp; Hardware</span>
+                  <span className={styles.skillItemDetail}>Sterling silver charm casting, custom metal bindings, gold foil embossing.</span>
+                </li>
+                <li className={styles.skillItemLi}>
+                  <span className={styles.skillItemName}>3D CAD &amp; Rapid Fabrication</span>
+                  <span className={styles.skillItemDetail}>Blender industrial modeling, 3D printing prototyping, tactile product packaging.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {/* 3. PROCESS TAB VIEW */}
+        {activeTab === 'process' && (
+          <div className={styles.fullWidthTabBlock}>
+            <div className={styles.processStepGrid}>
+              <div className={styles.processCard}>
+                <span className={styles.processNum}>01</span>
+                <h3 className={styles.processTitle}>Material &amp; Architecture Discovery</h3>
+                <p className={styles.processText}>
+                  Selecting vegetable-tanned hides from Tuscany and drafting geometric patterns alongside Next.js component system architecture.
+                </p>
+              </div>
+              <div className={styles.processCard}>
+                <span className={styles.processNum}>02</span>
+                <h3 className={styles.processTitle}>Precision Atelier &amp; Shader Engineering</h3>
+                <p className={styles.processText}>
+                  Hand saddle-stitching leather journals while compiling procedural Three.js GLSL shaders for real-time 3D customizer previewing.
+                </p>
+              </div>
+              <div className={styles.processCard}>
+                <span className={styles.processNum}>03</span>
+                <h3 className={styles.processTitle}>Cloud Deployment &amp; Collector Delivery</h3>
+                <p className={styles.processText}>
+                  Configuring high-throughput AWS SES email relays, DKIM keys, and shipping physical bespoke leather journals worldwide.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 4. OVERVIEW TAB VIEW */}
+        {activeTab === 'overview' && (
+          <div className={styles.fullWidthTabBlock}>
+            <div className={styles.secondaryProjectsRow}>
+              <div className={styles.secondaryProjectCard}>
+                <h3 className={styles.secondaryProjectTitle}>Cross-Disciplinary Studio Ethos</h3>
+                <p className={styles.secondaryProjectDesc}>
+                  We believe true luxury lies in the tension between the physical and digital. A handcrafted leather journal gains timeless character with age, while a high-performance web system provides frictionless utility.
+                </p>
+              </div>
+              <div className={styles.secondaryProjectCard}>
+                <h3 className={styles.secondaryProjectTitle}>Software Philosophy</h3>
+                <p className={styles.secondaryProjectDesc}>
+                  Minimalist, self-hosted, and uncompromising. We avoid bloated corporate dependencies in favor of clean Linux infrastructure, strict type safety, and International Typographic Style aesthetics.
+                </p>
+              </div>
+              <div className={styles.secondaryProjectCard}>
+                <h3 className={styles.secondaryProjectTitle}>Direct Collector Engagement</h3>
+                <p className={styles.secondaryProjectDesc}>
+                  Operating from our Tangerang atelier, every leather item is cut, stitched, and finished individually with full transparency into production telemetry and delivery tracking.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 5. ARCHIVE TAB VIEW */}
+        {activeTab === 'archive' && (
+          <div className={styles.fullWidthTabBlock}>
+            <div className={styles.archiveTable}>
+              <a href="https://mail.ivanaffriandi.com" target="_blank" rel="noreferrer" className={styles.archiveRowItem}>
+                <div className={styles.archiveLeftCol}>
+                  <h3 className={styles.archiveItemTitle}>Private Mail Engine</h3>
+                  <p className={styles.archiveItemSubtitle}>Self-hosted Oracle Cloud VM, AWS SES relay, automated DKIM 2048-bit keys.</p>
+                </div>
+                <div className={styles.archivePillStack}>
+                  <span className={styles.miniPill}>Next.js 16</span>
+                  <span className={styles.miniPill}>AWS SES</span>
+                  <span className={styles.miniPill}>Docker</span>
+                </div>
+                <span className={styles.archiveYearLabel}>2026</span>
+              </a>
+
+              <a href="https://ivanaffriandi.com/x" target="_blank" rel="noreferrer" className={styles.archiveRowItem}>
+                <div className={styles.archiveLeftCol}>
+                  <h3 className={styles.archiveItemTitle}>Atmospheric Digital Reader (/x)</h3>
+                  <p className={styles.archiveItemSubtitle}>High-contrast reading interface with Web Audio ambient generative wind synthesis.</p>
+                </div>
+                <div className={styles.archivePillStack}>
+                  <span className={styles.miniPill}>Web Audio API</span>
+                  <span className={styles.miniPill}>Typography</span>
+                </div>
+                <span className={styles.archiveYearLabel}>2026</span>
+              </a>
+
+              <a href="https://shuenstudio.com" target="_blank" rel="noreferrer" className={styles.archiveRowItem}>
+                <div className={styles.archiveLeftCol}>
+                  <h3 className={styles.archiveItemTitle}>SHŪ / EN Bespoke Leather Atelier</h3>
+                  <p className={styles.archiveItemSubtitle}>Handcrafted trifold leather goods with vegetable-tanned Nero hides and silver charms.</p>
+                </div>
+                <div className={styles.archivePillStack}>
+                  <span className={styles.miniPill}>Leathercraft</span>
+                  <span className={styles.miniPill}>925 Silver</span>
+                </div>
+                <span className={styles.archiveYearLabel}>2026</span>
+              </a>
+
+              <a href="https://shuenstudio.com/po" target="_blank" rel="noreferrer" className={styles.archiveRowItem}>
+                <div className={styles.archiveLeftCol}>
+                  <h3 className={styles.archiveItemTitle}>3D WebGL Configurator Engine</h3>
+                  <p className={styles.archiveItemSubtitle}>Real-time procedural normal maps and gold foil embossing customizer.</p>
+                </div>
+                <div className={styles.archivePillStack}>
+                  <span className={styles.miniPill}>Three.js</span>
+                  <span className={styles.miniPill}>GLSL</span>
+                </div>
+                <span className={styles.archiveYearLabel}>2025</span>
+              </a>
+            </div>
+          </div>
+        )}
 
         {/* ── ROW 5: SEE MORE LINK (RIGHT-ALIGNED UNDER COLUMN 3) ── */}
         <div className={styles.seeMoreWrapper}>
@@ -207,7 +488,7 @@ export default function WorkIvanPortfolioPage() {
             rel="noreferrer"
             className={styles.seeMoreLink}
           >
-            See More →
+            Visit SHŪ / EN Atelier →
           </a>
         </div>
       </div>
