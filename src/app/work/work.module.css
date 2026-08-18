@@ -1,619 +1,613 @@
 /* ============================================================
-   IVAN AFFRIANDI MASTER WORKSPACE HUB (work.ivanaffriandi.com)
-   Ultra-Luxury Cyber-Artisanal Glassmorphism & Executive OS
+   IVAN AFFRIANDI PRO WORKSPACE OS (work.ivanaffriandi.com)
+   Apple macOS Native Dark Pro Workspace Architecture
    ============================================================ */
 
-.workspaceRoot {
-  min-height: 100vh;
-  min-height: 100dvh;
-  background-color: #09090b;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(212, 175, 55, 0.06) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.04) 0px, transparent 50%),
-    radial-gradient(at 50% 100%, rgba(255, 255, 255, 0.02) 0px, transparent 60%);
-  color: #ffffff;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, sans-serif;
+.workspaceApp {
+  display: flex;
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  background-color: #000000;
+  color: #f5f5f7;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding-bottom: 80px;
+  overflow: hidden;
+  user-select: none;
 }
 
-/* ── HEADER BAR ── */
-.headerBar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
+/* ── LEFT macOS SIDEBAR ── */
+.sidebar {
+  width: 280px;
+  min-width: 280px;
+  background: rgba(18, 18, 20, 0.85);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
-  padding: 16px 24px;
-  background: rgba(9, 9, 11, 0.75);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px 16px;
+  z-index: 20;
 }
 
-@media (min-width: 768px) {
-  .headerBar {
-    padding: 18px 48px;
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
   }
 }
 
-.brandCluster {
+.sidebarHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* User Profile Row */
+.userProfileRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4af37, #f59e0b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 14px;
+  color: #000000;
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.3);
+  position: relative;
+}
+
+.onlinePulse {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #34d399;
+  border: 2px solid #121214;
+}
+
+.userMeta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.userName {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userRole {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: ui-monospace, monospace;
+}
+
+/* Sidebar Nav Section */
+.navSectionTitle {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: rgba(255, 255, 255, 0.3);
+  padding: 0 10px;
+  margin-bottom: 6px;
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.navItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+.navItemActive {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navItemLeading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navItemBadge {
+  font-size: 10px;
+  font-weight: 800;
+  font-family: ui-monospace, monospace;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: #d4af37;
+}
+
+/* Sidebar Telemetry Footer */
+.telemetryBox {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.telemetryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.telemetryLabel {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.telemetryValue {
+  color: #34d399;
+  font-family: ui-monospace, monospace;
+  font-weight: 700;
+}
+
+/* ── MAIN WORKSPACE AREA ── */
+.workspaceMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #000000;
+}
+
+/* Top Command Bar */
+.commandBar {
+  height: 56px;
+  min-height: 56px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(18, 18, 20, 0.7);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 15;
+}
+
+.commandLeft {
   display: flex;
   align-items: center;
   gap: 14px;
 }
 
-.brandAvatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #d4af37, #b8860b);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  color: #000000;
-  font-size: 13px;
-  letter-spacing: -0.5px;
-  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
-}
-
-.brandTitle {
+.commandTitle {
   font-size: 15px;
   font-weight: 700;
-  letter-spacing: -0.3px;
   color: #ffffff;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 0;
 }
 
-.badgePill {
-  font-size: 10px;
-  font-family: ui-monospace, monospace;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.brandSub {
-  font-size: 11px;
+.commandSub {
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.4);
   font-family: ui-monospace, monospace;
-  margin: 2px 0 0 0;
 }
 
-/* Nav Pills */
-.navPills {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.navPillBtn {
-  border: none;
-  background: transparent;
-  padding: 8px 16px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.6);
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.navPillBtn:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.navPillBtnActive {
-  background: #ffffff !important;
-  color: #000000 !important;
-  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.15);
-}
-
-.navPillBtnActiveGold {
-  background: linear-gradient(135deg, #d4af37, #f59e0b) !important;
-  color: #000000 !important;
-  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.35);
-}
-
-/* ── MAIN CONTAINER ── */
-.mainContainer {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 32px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-@media (min-width: 768px) {
-  .mainContainer {
-    padding: 48px 48px;
-  }
-}
-
-/* Studio Hero Card */
-.studioHeroCard {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 28px;
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.5);
-}
-
-@media (min-width: 768px) {
-  .studioHeroCard {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 32px 40px;
-  }
-}
-
-.studioMeta {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-
-.studioLogoBox {
-  width: 58px;
-  height: 58px;
-  border-radius: 18px;
-  background: rgba(212, 175, 55, 0.1);
-  border: 1px solid rgba(212, 175, 55, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: Georgia, serif;
-  font-weight: 900;
-  font-size: 24px;
-  color: #d4af37;
-  box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.1);
-}
-
-.studioTitleRow {
+.commandRight {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.studioTitle {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  margin: 0;
-  color: #ffffff;
-}
-
-.liveIndicator {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #34d399;
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  padding: 3px 10px;
-  border-radius: 999px;
-}
-
-.liveDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #34d399;
-  box-shadow: 0 0 8px #34d399;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.85); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-.studioSubtitle {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
-  font-family: ui-monospace, monospace;
-  margin: 4px 0 0 0;
-}
-
-.studioActions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.btnSecondary {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.05);
-  color: #ffffff;
-  padding: 10px 18px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btnSecondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
-.btnPrimary {
-  border: none;
-  background: #ffffff;
-  color: #000000;
-  padding: 10px 22px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 800;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
-  transition: all 0.2s ease;
-}
-
-.btnPrimary:hover {
-  background: #f0f0f0;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 25px rgba(255, 255, 255, 0.3);
-}
-
-/* ── METRICS GRID ── */
-.metricsGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-}
-
-@media (min-width: 1024px) {
-  .metricsGrid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-  }
-}
-
-.metricCard {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 22px;
-  padding: 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.metricCard:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
-}
-
-.metricLabel {
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.metricValue {
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing: -0.5px;
-  color: #ffffff;
-  margin: 2px 0;
-  font-variant-numeric: tabular-nums;
-}
-
-.metricValueGold {
-  color: #d4af37 !important;
-}
-
-.metricValueCyan {
-  color: #38bdf8 !important;
-}
-
-.metricValueEmerald {
-  color: #34d399 !important;
-}
-
-.metricFooter {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.35);
-  font-weight: 500;
-}
-
-/* ── ORDERS SECTION ── */
-.ordersCard {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 28px;
-  padding: 26px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-@media (min-width: 768px) {
-  .ordersCard {
-    padding: 36px;
-  }
-}
-
-.ordersHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.ordersHeading {
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: -0.3px;
-  margin: 0;
-}
-
-.ordersSubheading {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.45);
-  margin: 4px 0 0 0;
-}
-
-.orderList {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.orderItem {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 20px;
-  padding: 18px 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  transition: all 0.2s ease;
-}
-
-.orderItem:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
-.orderItemActive {
-  background: rgba(255, 255, 255, 0.07) !important;
-  border-color: rgba(212, 175, 55, 0.4) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-}
-
-.orderMainRow {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-@media (min-width: 768px) {
-  .orderMainRow {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-}
-
-.orderIdentity {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.orderThumb {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: ui-monospace, monospace;
-  font-size: 11px;
-  font-weight: 800;
-  color: #d4af37;
-}
-
-.orderInvoiceTitle {
-  font-size: 14px;
-  font-weight: 800;
-  color: #ffffff;
-}
-
-.orderCustomer {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.55);
-}
-
-.orderSummaryMeta {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.4);
-  margin-top: 2px;
-}
-
-.orderControlRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.statusPill {
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-}
-
-.statusPaid {
-  background: rgba(56, 189, 248, 0.15);
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  color: #38bdf8;
-}
-
-.statusProduction {
-  background: rgba(212, 175, 55, 0.15);
-  border: 1px solid rgba(212, 175, 55, 0.35);
-  color: #d4af37;
-}
-
-.statusShipped {
-  background: rgba(52, 211, 153, 0.15);
-  border: 1px solid rgba(52, 211, 153, 0.35);
-  color: #34d399;
-}
-
-.btnManage {
+.btnActionApple {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #ffffff;
   padding: 6px 14px;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 700;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   transition: all 0.15s ease;
 }
 
-.btnManage:hover {
-  background: rgba(255, 255, 255, 0.15);
+.btnActionApple:hover {
+  background: rgba(255, 255, 255, 0.14);
 }
 
-/* Expanded Drawer */
-.orderDrawer {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 16px;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
+.btnActionApplePrimary {
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  font-weight: 700;
 }
 
-@media (min-width: 768px) {
-  .orderDrawer {
-    grid-template-columns: 1fr 1fr;
+.btnActionApplePrimary:hover {
+  background: #e5e5ea;
+}
+
+/* ── 2-PANE WORKSPACE BODY ── */
+.workspaceBody {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Left Master Pane (Metrics & Orders List) */
+.masterPane {
+  width: 480px;
+  min-width: 400px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(12, 12, 14, 0.6);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 20px;
+  gap: 20px;
+}
+
+@media (max-width: 1100px) {
+  .masterPane {
+    width: 100%;
+    min-width: unset;
+    border-right: none;
   }
 }
 
-.specLabel {
+/* Metrics Row */
+.miniMetricsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.miniMetricCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.miniMetricLabel {
   font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.miniMetricVal {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
+.miniMetricValGold {
+  color: #d4af37;
+}
+
+/* Filter Chips Bar */
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.filterChip {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.filterChipActive {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Order Master Cards */
+.orderCardItem {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.orderCardItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.orderCardItemActive {
+  background: rgba(212, 175, 55, 0.06) !important;
+  border-color: rgba(212, 175, 55, 0.4) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.orderCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.orderCardInvoice {
+  font-size: 13px;
+  font-weight: 800;
+  color: #ffffff;
+  font-family: ui-monospace, monospace;
+}
+
+.orderStatusBadge {
+  font-size: 9px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: rgba(255, 255, 255, 0.4);
-  margin-bottom: 4px;
+  letter-spacing: 0.6px;
+  padding: 3px 8px;
+  border-radius: 999px;
 }
 
-.specValue {
-  font-size: 12px;
+.statusBadgePaid {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.statusBadgeProduction {
+  background: rgba(212, 175, 55, 0.15);
+  color: #d4af37;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.statusBadgeShipped {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+
+.orderCardCustomer {
+  font-size: 13px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
 }
 
-.resiInputGroup {
+.orderCardItemsSummary {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.orderCardFooter {
   display: flex;
-  gap: 8px;
-  margin-top: 6px;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 8px;
+  font-size: 11px;
 }
 
-.resiInput {
+.orderCardPrice {
+  font-weight: 800;
+  color: #d4af37;
+  font-variant-numeric: tabular-nums;
+}
+
+.orderCardCourier {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ── RIGHT DETAIL INSPECTOR PANE ── */
+.detailPane {
+  flex: 1;
+  background: #000000;
+  overflow-y: auto;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (max-width: 1100px) {
+  .detailPane {
+    display: none;
+  }
+}
+
+.emptyInspector {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.3);
+  gap: 12px;
+  font-size: 13px;
+  font-family: ui-monospace, monospace;
+}
+
+/* Detail Card Box */
+.detailBox {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.detailBoxHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 12px;
+}
+
+.detailBoxTitle {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  margin: 0;
+  color: #ffffff;
+}
+
+/* Bespoke Specs Grid */
+.specsTableGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.specCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.specCellLabel {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #d4af37;
+}
+
+.specCellValue {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Dispatch Box */
+.dispatchRow {
+  display: flex;
+  gap: 10px;
+}
+
+.dispatchInput {
   flex: 1;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  padding: 8px 12px;
-  font-size: 12px;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 13px;
   color: #ffffff;
   outline: none;
   font-family: ui-monospace, monospace;
 }
 
-.resiInput:focus {
+.dispatchInput:focus {
   border-color: #d4af37;
   background: rgba(255, 255, 255, 0.09);
 }
 
-.btnDispatch {
+.btnDispatchApple {
   background: #34d399;
-  border: none;
   color: #000000;
-  padding: 8px 16px;
-  border-radius: 10px;
-  font-size: 11px;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 12px;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.btnDispatch:hover {
+.btnDispatchApple:hover {
   background: #10b981;
 }
 
-.actionBtnGroup {
+.statusBarActions {
   display: flex;
   gap: 8px;
-  margin-top: 10px;
-  flex-wrap: wrap;
+  margin-top: 6px;
 }
 
-.btnStatusAction {
-  background: rgba(255, 255, 255, 0.05);
+.btnStatusPill {
+  background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.8);
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 7px 14px;
+  border-radius: 10px;
+  font-size: 11px;
   font-weight: 700;
   cursor: pointer;
 }
 
-.btnStatusAction:hover {
-  background: rgba(255, 255, 255, 0.1);
+.btnStatusPill:hover {
+  background: rgba(255, 255, 255, 0.12);
   color: #ffffff;
 }

@@ -5,108 +5,139 @@ import ShuenWorkspaceWidget from '@/components/ShuenWorkspaceWidget';
 import styles from './work.module.css';
 
 export default function WorkPage() {
-  const [activeProject, setActiveProject] = useState<'shuen' | 'personal' | 'ventures'>('shuen');
+  const [activeModule, setActiveModule] = useState<'shuen' | 'personal' | 'ventures'>('shuen');
 
   return (
-    <div className={styles.workspaceRoot}>
-      {/* ── TOP EXECUTIVE APP BAR ── */}
-      <header className={styles.headerBar}>
-        <div className={styles.brandCluster}>
-          <div className={styles.brandAvatar}>
-            IA
+    <div className={styles.workspaceApp}>
+      {/* ── LEFT macOS SIDEBAR ── */}
+      <aside className={styles.sidebar}>
+        <div className={styles.sidebarHeader}>
+          {/* User Profile */}
+          <div className={styles.userProfileRow}>
+            <div className={styles.userAvatar}>
+              IA
+              <span className={styles.onlinePulse} />
+            </div>
+            <div className={styles.userMeta}>
+              <span className={styles.userName}>Ivan Affriandi</span>
+              <span className={styles.userRole}>Master Operating Hub</span>
+            </div>
           </div>
+
+          {/* Navigation Section */}
           <div>
-            <h1 className={styles.brandTitle}>
-              Ivan Affriandi
-              <span className={styles.badgePill}>
-                Workspace Hub
-              </span>
-            </h1>
-            <p className={styles.brandSub}>work.ivanaffriandi.com</p>
+            <div className={styles.navSectionTitle}>Active Workspaces</div>
+            <div className={styles.navList}>
+              <button
+                onClick={() => setActiveModule('shuen')}
+                className={`${styles.navItem} ${activeModule === 'shuen' ? styles.navItemActive : ''}`}
+              >
+                <div className={styles.navItemLeading}>
+                  <span style={{ fontSize: '15px' }}>🧵</span>
+                  <span>SHŪ / EN Studio</span>
+                </div>
+                <span className={styles.navItemBadge}>LIVE</span>
+              </button>
+
+              <button
+                onClick={() => setActiveModule('personal')}
+                className={`${styles.navItem} ${activeModule === 'personal' ? styles.navItemActive : ''}`}
+              >
+                <div className={styles.navItemLeading}>
+                  <span style={{ fontSize: '15px' }}>✍️</span>
+                  <span>Personal Space</span>
+                </div>
+              </button>
+
+              <button
+                onClick={() => setActiveModule('ventures')}
+                className={`${styles.navItem} ${activeModule === 'ventures' ? styles.navItemActive : ''}`}
+              >
+                <div className={styles.navItemLeading}>
+                  <span style={{ fontSize: '15px' }}>🔮</span>
+                  <span>Ventures</span>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Project Selector Pills */}
-        <div className={styles.navPills}>
-          <button
-            onClick={() => setActiveProject('shuen')}
-            className={`${styles.navPillBtn} ${activeProject === 'shuen' ? styles.navPillBtnActiveGold : ''}`}
-          >
-            SHŪ / EN Studio
-          </button>
-          <button
-            onClick={() => setActiveProject('personal')}
-            className={`${styles.navPillBtn} ${activeProject === 'personal' ? styles.navPillBtnActive : ''}`}
-          >
-            Personal Space
-          </button>
-          <button
-            onClick={() => setActiveProject('ventures')}
-            className={`${styles.navPillBtn} ${activeProject === 'ventures' ? styles.navPillBtnActive : ''}`}
-          >
-            Ventures
-          </button>
+        {/* Telemetry Footer */}
+        <div className={styles.telemetryBox}>
+          <div className={styles.telemetryRow}>
+            <span className={styles.telemetryLabel}>PostgreSQL DB</span>
+            <span className={styles.telemetryValue}>ONLINE (3ms)</span>
+          </div>
+          <div className={styles.telemetryRow}>
+            <span className={styles.telemetryLabel}>DOKU Gateway</span>
+            <span className={styles.telemetryValue}>HEALTHY</span>
+          </div>
+          <div className={styles.telemetryRow}>
+            <span className={styles.telemetryLabel}>Logistics JNE/J&amp;T</span>
+            <span className={styles.telemetryValue}>CONNECTED</span>
+          </div>
         </div>
-      </header>
+      </aside>
 
-      {/* ── MAIN CONTENT CONTAINER ── */}
-      <main className={styles.mainContainer}>
-        {activeProject === 'shuen' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '20px' }}>
-              <div>
-                <p style={{ fontSize: '11px', fontFamily: 'ui-monospace, monospace', textTransform: 'uppercase', letterSpacing: '1px', color: '#d4af37', margin: '0 0 6px 0', fontWeight: 700 }}>
-                  E-Commerce &amp; Bespoke Leather Atelier
-                </p>
-                <h2 style={{ fontSize: '28px', fontWeight: 900, letterSpacing: '-0.5px', margin: 0 }}>
-                  SHŪ / EN Studio Control Center
-                </h2>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <a
-                  href="https://shuenstudio.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  className={styles.btnSecondary}
-                >
-                  Live Storefront ↗
-                </a>
-                <a
-                  href="https://shuenstudio.com/po"
-                  target="_blank"
-                  rel="noreferrer"
-                  className={styles.btnSecondary}
-                >
-                  3D Configurator ↗
-                </a>
-              </div>
-            </div>
+      {/* ── MAIN WORKSPACE AREA ── */}
+      <main className={styles.workspaceMain}>
+        {/* Top Command Bar */}
+        <header className={styles.commandBar}>
+          <div className={styles.commandLeft}>
+            <span className={styles.commandTitle}>
+              {activeModule === 'shuen' ? 'SHŪ / EN Studio' : activeModule === 'personal' ? 'Personal Space' : 'Ventures'}
+              <span className={styles.badgePill}>v2.6 OS</span>
+            </span>
+            <span className={styles.commandSub}>work.ivanaffriandi.com</span>
+          </div>
 
-            {/* Live Interactive SH-EN Management Widget */}
-            <ShuenWorkspaceWidget apiUrl="https://shuenstudio.com" apiKey="shuen_master_sec_2026_ivan_work_hub" />
+          <div className={styles.commandRight}>
+            <a
+              href="https://shuenstudio.com"
+              target="_blank"
+              rel="noreferrer"
+              className={styles.btnActionApple}
+            >
+              Storefront ↗
+            </a>
+            <a
+              href="https://shuenstudio.com/po"
+              target="_blank"
+              rel="noreferrer"
+              className={styles.btnActionApple}
+            >
+              3D Configurator ↗
+            </a>
+            <a
+              href="https://shuenstudio.com/admin"
+              target="_blank"
+              rel="noreferrer"
+              className={`${styles.btnActionApple} ${styles.btnActionApplePrimary}`}
+            >
+              Open Studio Admin ↗
+            </a>
+          </div>
+        </header>
+
+        {/* Workspace Body */}
+        {activeModule === 'shuen' && (
+          <ShuenWorkspaceWidget apiUrl="https://shuenstudio.com" apiKey="shuen_master_sec_2026_ivan_work_hub" />
+        )}
+
+        {activeModule === 'personal' && (
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.4)', flexDirection: 'column', gap: '16px' }}>
+            <h3 style={{ fontSize: '20px', color: '#ffffff', margin: 0 }}>Ivan Affriandi — Personal Blog &amp; Thoughts</h3>
+            <p style={{ maxWidth: '400px', textAlign: 'center', fontSize: '13px' }}>Manage essays, daily journals, reader book analytics, and feedback.</p>
+            <a href="https://ivanaffriandi.com" target="_blank" rel="noreferrer" className={`${styles.btnActionApple} ${styles.btnActionApplePrimary}`}>
+              Open ivanaffriandi.com ↗
+            </a>
           </div>
         )}
 
-        {activeProject === 'personal' && (
-          <div className={styles.studioHeroCard} style={{ textAlign: 'center', padding: '60px 20px', flexDirection: 'column', justifyContent: 'center' }}>
-            <h3 style={{ fontSize: '22px', fontWeight: 800, margin: 0 }}>Ivan Affriandi — Personal Space &amp; Archive</h3>
-            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', maxWidth: '480px', margin: '12px auto' }}>
-              Main portfolio, daily reflections, philosophical essays, and interactive visitor analytics.
-            </p>
-            <div style={{ marginTop: '16px' }}>
-              <a href="https://ivanaffriandi.com" target="_blank" rel="noreferrer" className={styles.btnPrimary}>
-                Open ivanaffriandi.com ↗
-              </a>
-            </div>
-          </div>
-        )}
-
-        {activeProject === 'ventures' && (
-          <div className={styles.studioHeroCard} style={{ textAlign: 'center', padding: '60px 20px', flexDirection: 'column', justifyContent: 'center' }}>
-            <h3 style={{ fontSize: '22px', fontWeight: 800, margin: 0 }}>Upcoming Projects &amp; Ventures</h3>
-            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', maxWidth: '480px', margin: '12px auto' }}>
-              Connected microservices and business ventures will populate here automatically.
-            </p>
+        {activeModule === 'ventures' && (
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.4)', flexDirection: 'column', gap: '16px' }}>
+            <h3 style={{ fontSize: '20px', color: '#ffffff', margin: 0 }}>Ventures &amp; Creative Labs</h3>
+            <p style={{ maxWidth: '400px', textAlign: 'center', fontSize: '13px' }}>Upcoming products, startups, and creative projects will populate here.</p>
           </div>
         )}
       </main>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ShuenStudioClient, ShuenHubOverview, ShuenOrder } from '@/lib/shuenClient';
 import styles from '@/app/work/work.module.css';
 
@@ -17,7 +17,9 @@ export default function ShuenWorkspaceWidget({
   const [data, setData] = useState<{ overview: ShuenHubOverview; orders: ShuenOrder[] } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedOrder, setSelectedOrder] = useState<ShuenOrder | null>(null);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [filterTab, setFilterTab] = useState<'ALL' | 'PRODUCTION' | 'SHIPPED' | 'PAID'>('ALL');
+  const [searchQuery, setSearchQuery] = useState('');
   const [resiInput, setResiInput] = useState('');
   const [updating, setUpdating] = useState(false);
 
@@ -27,6 +29,10 @@ export default function ShuenWorkspaceWidget({
     try {
       const res = await client.getHubData();
       setData({ overview: res.overview, orders: res.orders });
+      if (res.orders.length > 0 && !selectedOrderId) {
+        setSelectedOrderId(res.orders[0].id);
+        setResiInput(res.orders[0].tracking_number || '');
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to connect to SHŪ / EN Studio API');
     } finally {
@@ -36,7 +42,7 @@ export default function ShuenWorkspaceWidget({
 
   useEffect(() => {
     loadData();
-    const interval = setInterval(loadData, 15000); // 15s live polling
+    const interval = setInterval(loadData, 12000);
     return () => clearInterval(interval);
   }, []);
 
@@ -45,9 +51,6 @@ export default function ShuenWorkspaceWidget({
     try {
       await client.updateOrder(orderId, { status, trackingNumber });
       await loadData();
-      if (selectedOrder && selectedOrder.id === orderId) {
-        setSelectedOrder((prev: ShuenOrder | null) => prev ? { ...prev, status, tracking_number: trackingNumber || prev.tracking_number } : null);
-      }
     } catch (err: any) {
       alert(`Error: ${err.message}`);
     } finally {
@@ -55,218 +58,311 @@ export default function ShuenWorkspaceWidget({
     }
   };
 
+  const filteredOrders = useMemo(() => {
+    if (!data?.orders) return [];
+    return data.orders.filter((order) => {
+      const statusUpper = String(order.status).toUpperCase();
+      const matchesFilter = filterTab === 'ALL' || 
+        (filterTab === 'PRODUCTION' && (statusUpper === 'PRODUCTION' || statusUpper === 'PROCESSING')) ||
+        (filterTab === 'SHIPPED' && (statusUpper === 'SHIPPED' || statusUpper === 'DELIVERED')) ||
+        (filterTab === 'PAID' && (statusUpper === 'PAID' || statusUpper === 'SUCCESS'));
+
+      const search = searchQuery.toLowerCase();
+      const matchesSearch = !search || 
+        (order.invoice_id && order.invoice_id.toLowerCase().includes(search)) ||
+        (order.user_email && order.user_email.toLowerCase().includes(search)) ||
+        (order.shipping_details?.fullName && order.shipping_details.fullName.toLowerCase().includes(search));
+
+      return matchesFilter && matchesSearch;
+    });
+  }, [data?.orders, filterTab, searchQuery]);
+
+  const selectedOrder = useMemo(() => {
+    if (!data?.orders || !selectedOrderId) return null;
+    return data.orders.find(o => o.id === selectedOrderId) || null;
+  }, [data?.orders, selectedOrderId]);
+
   if (loading && !data) {
     return (
-      <div className={styles.studioHeroCard} style={{ textAlign: 'center', justifyContent: 'center', padding: '60px 20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
-          <div style={{ width: '20px', height: '20px', border: '2px solid rgba(212,175,55,0.2)', borderTop: '2px solid #d4af37', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-          <span style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.7)', letterSpacing: '0.5px' }}>Connecting to Live Studio Database...</span>
-        </div>
+      <div className={styles.emptyInspector}>
+        <div style={{ width: '24px', height: '24px', border: '2px solid rgba(212,175,55,0.2)', borderTop: '2px solid #d4af37', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+        <span>Initializing Studio Telemetry Gateway...</span>
       </div>
     );
   }
 
   if (error && !data) {
     return (
-      <div className={styles.studioHeroCard} style={{ borderColor: 'rgba(239, 68, 68, 0.3)', background: 'rgba(239, 68, 68, 0.05)' }}>
-        <div>
-          <p style={{ color: '#f87171', fontWeight: 800, fontSize: '14px', margin: 0 }}>Studio Engine Connection Offline</p>
-          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '12px', margin: '4px 0 0 0' }}>{error}</p>
-        </div>
-        <button onClick={loadData} className={styles.btnSecondary} style={{ borderColor: 'rgba(239, 68, 68, 0.4)' }}>
+      <div className={styles.detailBox} style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+        <p style={{ color: '#f87171', fontWeight: 800, margin: 0 }}>Studio Engine Connection Error</p>
+        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '12px', margin: '4px 0 12px 0' }}>{error}</p>
+        <button onClick={loadData} className={styles.btnActionApple}>
           Retry Connection
         </button>
       </div>
     );
   }
 
-  const { overview, orders } = data!;
+  const { overview } = data!;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
-      {/* ── STUDIO HERO CARD ── */}
-      <div className={styles.studioHeroCard}>
-        <div className={styles.studioMeta}>
-          <div className={styles.studioLogoBox}>
-            SH
+    <div className={styles.workspaceBody}>
+      {/* ── LEFT MASTER PANE (METRICS & ORDER QUEUE) ── */}
+      <div className={styles.masterPane}>
+        {/* Holographic Mini Metrics */}
+        <div className={styles.miniMetricsGrid}>
+          <div className={styles.miniMetricCard}>
+            <span className={styles.miniMetricLabel}>Studio Omzet</span>
+            <span className={`${styles.miniMetricVal} ${styles.miniMetricValGold}`}>
+              Rp {overview.totalRevenue.toLocaleString('id-ID')}
+            </span>
+            <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)' }}>{overview.paidOrdersCount} Paid Orders</span>
           </div>
-          <div>
-            <div className={styles.studioTitleRow}>
-              <h2 className={styles.studioTitle}>SHŪ / EN Studio</h2>
-              <div className={styles.liveIndicator}>
-                <span className={styles.liveDot} />
-                Live Engine
-              </div>
-            </div>
-            <p className={styles.studioSubtitle}>shuenstudio.com · Connected to PostgreSQL, DOKU &amp; Logistics</p>
+
+          <div className={styles.miniMetricCard}>
+            <span className={styles.miniMetricLabel}>In Crafting</span>
+            <span className={styles.miniMetricVal}>
+              {overview.pendingCraftingCount}
+            </span>
+            <span style={{ fontSize: '10px', color: '#d4af37' }}>Lead time: 17–20d</span>
+          </div>
+
+          <div className={styles.miniMetricCard}>
+            <span className={styles.miniMetricLabel}>Shipped</span>
+            <span className={styles.miniMetricVal} style={{ color: '#34d399' }}>
+              {overview.shippedOrdersCount}
+            </span>
+            <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)' }}>JNE &amp; J&amp;T</span>
+          </div>
+
+          <div className={styles.miniMetricCard}>
+            <span className={styles.miniMetricLabel}>Quota Batch 1</span>
+            <span className={styles.miniMetricVal} style={{ color: '#38bdf8' }}>
+              {overview.preorderQuotaPercent}%
+            </span>
+            <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)' }}>Capacity Allocation</span>
           </div>
         </div>
 
-        <div className={styles.studioActions}>
-          <button onClick={loadData} className={styles.btnSecondary}>
-            ↻ Live Sync
+        {/* Filter Chips Bar */}
+        <div className={styles.filterBar}>
+          <button
+            onClick={() => setFilterTab('ALL')}
+            className={`${styles.filterChip} ${filterTab === 'ALL' ? styles.filterChipActive : ''}`}
+          >
+            All ({data?.orders.length || 0})
           </button>
-          <a href="https://shuenstudio.com/admin" target="_blank" rel="noreferrer" className={styles.btnPrimary}>
-            Open Full Studio Admin ↗
-          </a>
-        </div>
-      </div>
-
-      {/* ── METRICS GRID ── */}
-      <div className={styles.metricsGrid}>
-        <div className={styles.metricCard}>
-          <span className={styles.metricLabel}>Total Revenue</span>
-          <span className={`${styles.metricValue} ${styles.metricValueGold}`}>
-            Rp {overview.totalRevenue.toLocaleString('id-ID')}
-          </span>
-          <span className={styles.metricFooter}>{overview.paidOrdersCount} Paid Orders</span>
-        </div>
-
-        <div className={styles.metricCard}>
-          <span className={styles.metricLabel}>In Crafting</span>
-          <span className={styles.metricValue}>
-            {overview.pendingCraftingCount}
-          </span>
-          <span className={styles.metricFooter}>Lead time: 17–20 Workdays</span>
+          <button
+            onClick={() => setFilterTab('PRODUCTION')}
+            className={`${styles.filterChip} ${filterTab === 'PRODUCTION' ? styles.filterChipActive : ''}`}
+          >
+            Crafting ({overview.pendingCraftingCount})
+          </button>
+          <button
+            onClick={() => setFilterTab('SHIPPED')}
+            className={`${styles.filterChip} ${filterTab === 'SHIPPED' ? styles.filterChipActive : ''}`}
+          >
+            Shipped ({overview.shippedOrdersCount})
+          </button>
+          <button
+            onClick={() => setFilterTab('PAID')}
+            className={`${styles.filterChip} ${filterTab === 'PAID' ? styles.filterChipActive : ''}`}
+          >
+            Paid ({overview.paidOrdersCount})
+          </button>
         </div>
 
-        <div className={styles.metricCard}>
-          <span className={styles.metricLabel}>Shipped &amp; Done</span>
-          <span className={`${styles.metricValue} ${styles.metricValueEmerald}`}>
-            {overview.shippedOrdersCount}
-          </span>
-          <span className={styles.metricFooter}>Via JNE &amp; J&amp;T Express</span>
-        </div>
+        {/* Search Box */}
+        <input
+          type="text"
+          placeholder="Search customer, invoice, or email..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className={styles.dispatchInput}
+          style={{ padding: '8px 12px', fontSize: '12px' }}
+        />
 
-        <div className={styles.metricCard}>
-          <span className={styles.metricLabel}>Pre-Order Quota</span>
-          <span className={`${styles.metricValue} ${styles.metricValueCyan}`}>
-            {overview.preorderQuotaPercent}%
-          </span>
-          <span className={styles.metricFooter}>Batch 1 Allocation</span>
-        </div>
-      </div>
-
-      {/* ── ORDERS CARD ── */}
-      <div className={styles.ordersCard}>
-        <div className={styles.ordersHeader}>
-          <div>
-            <h3 className={styles.ordersHeading}>Recent Bespoke Orders</h3>
-            <p className={styles.ordersSubheading}>Live customer customization queue and courier airway bill dispatch</p>
-          </div>
-          <span className={styles.badgePill}>{orders.length} orders</span>
-        </div>
-
-        {orders.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '48px 20px', color: 'rgba(255,255,255,0.4)', fontSize: '13px', fontFamily: 'ui-monospace, monospace' }}>
-            No incoming customer orders recorded yet.
-          </div>
-        ) : (
-          <div className={styles.orderList}>
-            {orders.map((order) => {
-              const isSelected = selectedOrder?.id === order.id;
+        {/* Orders List Queue */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {filteredOrders.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '36px 12px', color: 'rgba(255,255,255,0.3)', fontSize: '12px', fontFamily: 'ui-monospace, monospace' }}>
+              No matching bespoke orders found.
+            </div>
+          ) : (
+            filteredOrders.map((order) => {
+              const isSelected = selectedOrderId === order.id;
               const statusUpper = String(order.status).toUpperCase();
               return (
                 <div
                   key={order.id}
-                  className={`${styles.orderItem} ${isSelected ? styles.orderItemActive : ''}`}
+                  onClick={() => {
+                    setSelectedOrderId(order.id);
+                    setResiInput(order.tracking_number || '');
+                  }}
+                  className={`${styles.orderCardItem} ${isSelected ? styles.orderCardItemActive : ''}`}
                 >
-                  <div className={styles.orderMainRow}>
-                    <div className={styles.orderIdentity}>
-                      <div className={styles.orderThumb}>
-                        SHU
-                      </div>
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span className={styles.orderInvoiceTitle}>{order.invoice_id || order.id}</span>
-                          <span className={styles.orderCustomer}>· {order.shipping_details?.fullName || order.user_email}</span>
-                        </div>
-                        <p className={styles.orderSummaryMeta}>
-                          {order.items.map((it: any) => `${it.title} (${it.quantity}x)`).join(', ')} · Rp {order.total_amount.toLocaleString('id-ID')}
-                        </p>
-                      </div>
-                    </div>
+                  <div className={styles.orderCardHeader}>
+                    <span className={styles.orderCardInvoice}>{order.invoice_id || order.id}</span>
+                    <span className={`${styles.orderStatusBadge} ${
+                      statusUpper === 'PAID' || statusUpper === 'SUCCESS' ? styles.statusBadgePaid :
+                      statusUpper === 'PRODUCTION' ? styles.statusBadgeProduction :
+                      statusUpper === 'SHIPPED' ? styles.statusBadgeShipped :
+                      styles.badgePill
+                    }`}>
+                      {order.status}
+                    </span>
+                  </div>
 
-                    <div className={styles.orderControlRow}>
-                      <span className={`${styles.statusPill} ${
-                        statusUpper === 'PAID' || statusUpper === 'SUCCESS' ? styles.statusPaid :
-                        statusUpper === 'PRODUCTION' ? styles.statusProduction :
-                        statusUpper === 'SHIPPED' ? styles.statusShipped :
-                        styles.badgePill
-                      }`}>
-                        {order.status}
-                      </span>
-                      <button
-                        onClick={() => {
-                          setSelectedOrder(isSelected ? null : order);
-                          setResiInput(order.tracking_number || '');
-                        }}
-                        className={styles.btnManage}
-                      >
-                        {isSelected ? 'Close' : 'Manage'}
-                      </button>
+                  <div>
+                    <div className={styles.orderCardCustomer}>
+                      {order.shipping_details?.fullName || order.user_email}
+                    </div>
+                    <div className={styles.orderCardItemsSummary}>
+                      {order.items.map((it: any) => `${it.title} (${it.quantity}x)`).join(', ')}
                     </div>
                   </div>
 
-                  {/* Expanded Management Drawer */}
-                  {isSelected && (
-                    <div className={styles.orderDrawer}>
-                      <div>
-                        <div style={{ marginBottom: '12px' }}>
-                          <div className={styles.specLabel}>Delivery Address &amp; Contact</div>
-                          <div className={styles.specValue}>{order.shipping_details?.fullName} ({order.shipping_details?.phone || 'No phone'})</div>
-                          <div className={styles.specValue} style={{ opacity: 0.8 }}>{order.shipping_details?.address || 'Standard Address'}</div>
-                          <div className={styles.specValue} style={{ opacity: 0.6 }}>{order.shipping_details?.city}, {order.shipping_details?.province} ({order.shipping_details?.zipCode})</div>
-                        </div>
-                        <div>
-                          <div className={styles.specLabel}>Courier Method</div>
-                          <div className={styles.specValue} style={{ color: '#d4af37', fontWeight: 800 }}>{order.courier || 'JNE / J&T'}</div>
-                        </div>
-                      </div>
-
-                      <div>
-                        <div>
-                          <div className={styles.specLabel}>Airway Bill / Nomor Resi (JNE / J&amp;T)</div>
-                          <div className={styles.resiInputGroup}>
-                            <input
-                              type="text"
-                              placeholder="e.g. JNE1029384756"
-                              value={resiInput}
-                              onChange={(e) => setResiInput(e.target.value)}
-                              className={styles.resiInput}
-                            />
-                            <button
-                              disabled={updating}
-                              onClick={() => handleUpdateStatus(order.id, 'SHIPPED', resiInput)}
-                              className={styles.btnDispatch}
-                            >
-                              Dispatch Resi
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className={styles.actionBtnGroup}>
-                          <button
-                            disabled={updating}
-                            onClick={() => handleUpdateStatus(order.id, 'PRODUCTION')}
-                            className={styles.btnStatusAction}
-                          >
-                            Mark In Crafting
-                          </button>
-                          <button
-                            disabled={updating}
-                            onClick={() => handleUpdateStatus(order.id, 'DELIVERED')}
-                            className={styles.btnStatusAction}
-                          >
-                            Mark Delivered
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  <div className={styles.orderCardFooter}>
+                    <span className={styles.orderCardPrice}>
+                      Rp {Number(order.total_amount || 0).toLocaleString('id-ID')}
+                    </span>
+                    <span className={styles.orderCardCourier}>
+                      {order.courier || 'JNE / J&T'}
+                    </span>
+                  </div>
                 </div>
               );
-            })}
+            })
+          )}
+        </div>
+      </div>
+
+      {/* ── RIGHT DETAIL INSPECTOR PANE ── */}
+      <div className={styles.detailPane}>
+        {selectedOrder ? (
+          <>
+            {/* Header Identity Box */}
+            <div className={styles.detailBox}>
+              <div className={styles.detailBoxHeader}>
+                <div>
+                  <h3 className={styles.detailBoxTitle}>{selectedOrder.invoice_id || selectedOrder.id}</h3>
+                  <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', margin: '2px 0 0 0', fontFamily: 'ui-monospace, monospace' }}>
+                    Created: {new Date(selectedOrder.created_at).toLocaleString('id-ID')}
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {selectedOrder.shipping_details?.phone && (
+                    <a
+                      href={`https://wa.me/${selectedOrder.shipping_details.phone.replace(/\D/g, '')}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={styles.btnActionApple}
+                    >
+                      💬 WhatsApp Customer
+                    </a>
+                  )}
+                  <a
+                    href="https://shuenstudio.com/admin"
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.btnActionApple}
+                  >
+                    Open in Full Admin ↗
+                  </a>
+                </div>
+              </div>
+
+              {/* Bespoke Specification Cards */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.8px', color: 'rgba(255,255,255,0.4)' }}>
+                  Bespoke Configuration Breakdown
+                </span>
+
+                {selectedOrder.items.map((item: any, iIdx: number) => (
+                  <div key={iIdx} style={{ background: 'rgba(255,255,255,0.02)', padding: '16px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                      <span style={{ fontWeight: 800, fontSize: '13px', color: '#ffffff' }}>{item.title}</span>
+                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#d4af37' }}>Rp {Number(item.price || 0).toLocaleString('id-ID')} ({item.quantity}x)</span>
+                    </div>
+
+                    {item.details && item.details.length > 0 && (
+                      <div className={styles.specsTableGrid}>
+                        {item.details.map((d: any, dIdx: number) => (
+                          <div key={dIdx} className={styles.specCell}>
+                            <span className={styles.specCellLabel}>{d.label}</span>
+                            <span className={styles.specCellValue}>{d.value || '-'}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Logistics & Airway Bill Dispatcher Box */}
+            <div className={styles.detailBox}>
+              <div className={styles.detailBoxHeader}>
+                <h3 className={styles.detailBoxTitle}>Logistics &amp; Courier Airway Bill</h3>
+                <span style={{ fontSize: '12px', fontWeight: 800, color: '#d4af37' }}>
+                  {selectedOrder.courier || 'JNE / J&T Express'}
+                </span>
+              </div>
+
+              <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>
+                <div><strong style={{ color: '#ffffff' }}>{selectedOrder.shipping_details?.fullName}</strong> ({selectedOrder.shipping_details?.phone || 'No phone'})</div>
+                <div>{selectedOrder.shipping_details?.address || 'Standard Address'}</div>
+                <div style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  {selectedOrder.shipping_details?.city}, {selectedOrder.shipping_details?.province} ({selectedOrder.shipping_details?.zipCode})
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.8px', color: 'rgba(255,255,255,0.4)', marginBottom: '6px' }}>
+                  Input Nomor Resi (JNE / J&amp;T)
+                </label>
+                <div className={styles.dispatchRow}>
+                  <input
+                    type="text"
+                    placeholder="e.g. JNE1092837465 / JNT9281726354"
+                    value={resiInput}
+                    onChange={(e) => setResiInput(e.target.value)}
+                    className={styles.dispatchInput}
+                  />
+                  <button
+                    disabled={updating}
+                    onClick={() => handleUpdateStatus(selectedOrder.id, 'SHIPPED', resiInput)}
+                    className={styles.btnDispatchApple}
+                  >
+                    Dispatch Resi
+                  </button>
+                </div>
+              </div>
+
+              <div className={styles.statusBarActions}>
+                <button
+                  disabled={updating}
+                  onClick={() => handleUpdateStatus(selectedOrder.id, 'PRODUCTION')}
+                  className={styles.btnStatusPill}
+                >
+                  Mark In Crafting (17–20d)
+                </button>
+                <button
+                  disabled={updating}
+                  onClick={() => handleUpdateStatus(selectedOrder.id, 'DELIVERED')}
+                  className={styles.btnStatusPill}
+                >
+                  Mark Delivered
+                </button>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className={styles.emptyInspector}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+              📦
+            </div>
+            <span>Select an order from the queue to inspect details &amp; dispatch airway bill.</span>
           </div>
         )}
       </div>
