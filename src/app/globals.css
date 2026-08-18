@@ -202,7 +202,13 @@ body:has(.about-2col-root) .layout-wrapper,
 body:has(.about-2col-root) .content-wrapper,
 body:has(.about-2col-root) main,
 body:has(.about-2col-root) main > div,
-html:has([class*="portfolioRoot"]),
+html:has([class*="scandinavianViewport"]),
+body:has([class*="scandinavianViewport"]),
+body:has([class*="scandinavianViewport"]) .layout-wrapper,
+body:has([class*="scandinavianViewport"]) .content-wrapper,
+body:has([class*="scandinavianViewport"]) main,
+body:has([class*="scandinavianViewport"]) main > div,
+html:has([class*="portfolioRoot"]), 
 body:has([class*="portfolioRoot"]),
 body:has([class*="portfolioRoot"]) .layout-wrapper,
 body:has([class*="portfolioRoot"]) .content-wrapper,
@@ -2460,3 +2466,6 @@ body.moments-page .content-wrapper {
 
 
 body:has([class*="portfolioRoot"]) .desktop-nav-bar, body:has([class*="portfolioRoot"]) .mobile-nav-bar, body:has([class*="portfolioRoot"]) aside { display: none !important; width: 0 !important; }
+
+
+body:has([class*="scandinavianViewport"]) .desktop-nav-bar, body:has([class*="scandinavianViewport"]) .mobile-nav-bar, body:has([class*="scandinavianViewport"]) aside, body:has([class*="scandinavianViewport"]) header.desktop-nav-bar { display: none !important; width: 0 !important; height: 0 !important; visibility: hidden !important; }

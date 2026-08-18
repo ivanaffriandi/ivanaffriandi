@@ -84,16 +84,6 @@ export default function WorkScandinavianPortfolioPage() {
       image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&auto=format&fit=crop&q=80',
     },
     {
-      id: 'universe',
-      category: 'WEBGL',
-      name: 'Ivan Affriandi Universe & Gemini AI',
-      shortDesc: 'Personal brand ecosystem with multilingual support (EN/NL/ZH/AR) and Google Gemini AI Q&A.',
-      disciplines: ['NEXT.JS 16', 'GEMINI 2.5 AI', 'TURBOPACK'],
-      year: '2026',
-      url: 'https://ivanaffriandi.com',
-      image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&auto=format&fit=crop&q=80',
-    },
-    {
       id: 'book',
       category: 'WEBGL',
       name: 'Multi-Sensory Interactive Book Core',
@@ -122,6 +112,26 @@ export default function WorkScandinavianPortfolioPage() {
       year: '2025',
       url: 'https://ivanaffriandi.com',
       image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'equilibrium',
+      category: 'WEBGL',
+      name: 'Equilibrium Academy Engine',
+      shortDesc: 'Interactive digital learning environment & creative engineering curriculum.',
+      disciplines: ['TYPESCRIPT', 'SYSTEMS ARCHITECTURE', 'EDUCATIONAL TECH'],
+      year: '2025',
+      url: 'https://ivanaffriandi.com',
+      image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'essays',
+      category: 'ATELIER',
+      name: 'Cyber-Artisanal Craft & Design Theory',
+      shortDesc: 'Comprehensive publications on the convergence of physical leathercraft with generative 3D web systems.',
+      disciplines: ['SWISS TYPOGRAPHY', 'PUBLICATIONS', 'DESIGN THEORY'],
+      year: '2025 – 2026',
+      url: 'https://ivanaffriandi.com',
+      image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&auto=format&fit=crop&q=80',
     },
   ];
 
