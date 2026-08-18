@@ -1018,22 +1018,22 @@ function AdminPageContent() {
           overflow-y: auto;
         }
 
-        /* === GLASS CARD === */
+        /* === LUXURY GLASS CARD === */
         .admin-glass-card {
-          padding: 14px 16px;
-          border-radius: 18px;
-          border: 1px solid rgba(0, 0, 0, 0.09);
-          backdrop-filter: blur(24px) saturate(190%);
-          -webkit-backdrop-filter: blur(24px) saturate(190%);
-          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 6px 20px -2px rgba(0, 0, 0, 0.04);
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.52) 100%);
+          padding: 18px 20px;
+          border-radius: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          backdrop-filter: blur(28px) saturate(190%);
+          -webkit-backdrop-filter: blur(28px) saturate(190%);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 10px 32px -4px rgba(0, 0, 0, 0.5);
+          background: linear-gradient(145deg, rgba(28, 28, 32, 0.78) 0%, rgba(16, 16, 20, 0.88) 100%);
+          transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+          margin-bottom: 12px;
         }
-        @media (prefers-color-scheme: dark) {
-          .admin-glass-card {
-            border-color: rgba(255, 255, 255, 0.14);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 8px 32px -4px rgba(0, 0, 0, 0.35);
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
-          }
+        .admin-glass-card:hover {
+          border-color: rgba(255, 255, 255, 0.2);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 14px 44px -4px rgba(0, 0, 0, 0.65);
+          transform: translateY(-2px);
         }
 
         /* === LAYOUT === */
@@ -1073,7 +1073,7 @@ function AdminPageContent() {
         .admin-main-inner {
           max-width: 680px;
           margin: 0 auto;
-          padding: 1.5rem 1.2rem 7rem 1.2rem;
+          padding: 2rem 1.5rem 140px 1.5rem; max-width: 740px;
         }
 
         /* === GLOBAL FOOTER HIDING === */
@@ -1124,8 +1124,7 @@ function AdminPageContent() {
         @media (min-width: 768px) {
           .admin-sidebar { display: none !important; }
           .admin-main-inner {
-            padding: 2rem 2rem 7rem 2rem;
-            max-width: 680px;
+            padding: 2.5rem 2rem 150px 2rem; max-width: 740px;
           }
         }
       `}</style>
@@ -1172,7 +1171,7 @@ function AdminPageContent() {
                               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                             </motion.button>
                           </div>
-                          <p style={{ margin: "0 0 8px 0", fontSize: "0.84rem", color: "var(--text-primary)", lineHeight: "1.45", fontWeight: "600", letterSpacing: "-0.01em" }}>"{q.content}"</p>
+                          <p style={{ margin: "0 0 8px 0", fontSize: "0.95rem", color: "#ffffff", lineHeight: "1.55", fontWeight: "650", letterSpacing: "-0.01em" }}>"{q.content}"</p>
                           {(q.name || q.ip || q.location || q.device || activePlatform || session) && (
                             <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginBottom: "10px" }}>
                               {q.name && <span style={{ fontSize: "0.6rem", fontWeight: "600", backgroundColor: theme === "dark" ? "rgba(10,132,255,0.15)" : "rgba(0,122,255,0.06)", color: theme === "dark" ? "#64D2FF" : "#007AFF", border: `0.5px solid ${theme === "dark" ? "rgba(10,132,255,0.3)" : "rgba(0,122,255,0.14)"}`, padding: "2px 6px", borderRadius: "6px" }}>👤 {q.name}</span>}
@@ -1252,7 +1251,22 @@ function AdminPageContent() {
                           </div>
                         )}
                         {!q.answered && answeringQuestionId !== q.id && (
-                          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => { setAnsweringQuestionId(q.id); setAnswerText(""); }} style={{ padding: "5px 12px", marginTop: "2px", backgroundColor: "rgba(150,150,150,0.04)", border: "1px solid rgba(150,150,150,0.08)", borderRadius: "20px", color: "var(--text-primary)", fontSize: "0.65rem", fontWeight: "750", cursor: "pointer", fontFamily: iosFontStack }}>Reply anonymously</motion.button>
+                          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => { setAnsweringQuestionId(q.id); setAnswerText(""); }} style={{
+    padding: "6px 14px",
+    marginTop: "6px",
+    backgroundColor: "#ffffff",
+    border: "none",
+    borderRadius: "20px",
+    color: "#000000",
+    fontSize: "0.68rem",
+    fontWeight: "800",
+    cursor: "pointer",
+    fontFamily: iosFontStack,
+    boxShadow: "0 2px 10px rgba(255,255,255,0.15)",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "5px"
+  }}>Reply anonymously</motion.button>
                         )}
                         {answeringQuestionId === q.id && (
                           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "6px", overflow: "hidden" }}>
