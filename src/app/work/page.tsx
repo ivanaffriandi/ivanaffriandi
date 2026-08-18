@@ -1,11 +1,62 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ShuenWorkspaceWidget from '@/components/ShuenWorkspaceWidget';
+import WorkSecurityGate from '@/components/WorkSecurityGate';
 import styles from './work.module.css';
 
 export default function WorkPage() {
   const [activeModule, setActiveModule] = useState<'shuen' | 'personal' | 'ventures'>('shuen');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  const checkAuthStatus = async () => {
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'check' }),
+      });
+      const data = await res.json();
+      setIsAuthenticated(Boolean(data.authenticated));
+    } catch {
+      setIsAuthenticated(false);
+    } finally {
+      setCheckingAuth(false);
+    }
+  };
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const handleLockEnclave = async () => {
+    try {
+      await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'logout' }),
+      });
+    } catch {
+      // ignore
+    } finally {
+      setIsAuthenticated(false);
+    }
+  };
+
+  if (checkingAuth) {
+    return (
+      <div style={{ minHeight: '100dvh', background: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.4)', gap: '12px', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif' }}>
+        <div style={{ width: '20px', height: '20px', border: '2px solid rgba(212,175,55,0.2)', borderTop: '2px solid #d4af37', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+        <span>Authenticating Security Enclave...</span>
+      </div>
+    );
+  }
+
+  // If not authenticated, render military-grade Apple Security Gate
+  if (!isAuthenticated) {
+    return <WorkSecurityGate onAuthenticated={() => setIsAuthenticated(true)} />;
+  }
 
   return (
     <div className={styles.workspaceApp}>
@@ -116,12 +167,20 @@ export default function WorkPage() {
             >
               Open Studio Admin ↗
             </a>
+            <button
+              onClick={handleLockEnclave}
+              className={styles.btnActionApple}
+              style={{ color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.3)' }}
+              title="Lock Enclave session"
+            >
+              🔒 Lock
+            </button>
           </div>
         </header>
 
         {/* Workspace Body */}
         {activeModule === 'shuen' && (
-          <ShuenWorkspaceWidget apiUrl="https://shuenstudio.com" apiKey="shuen_master_sec_2026_ivan_work_hub" />
+          <ShuenWorkspaceWidget />
         )}
 
         {activeModule === 'personal' && (

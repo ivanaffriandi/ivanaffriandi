@@ -32,7 +32,32 @@ async function isIPBlocked(ip: string): Promise<boolean> {
 
 export async function POST(request: Request) {
   try {
-    const { action, email, idToken } = await request.json();
+    const body = await request.json().catch(() => ({}));
+    const { action, passcode, email, idToken } = body;
+
+    // 1. Verify Master Passcode (for work.ivanaffriandi.com)
+    if (action === "verify-master-passcode") {
+      const validPasscodes = [
+        process.env.MASTER_WORKSPACE_PASSCODE || "2026",
+        "shuen2026",
+        "ivan2026",
+        "030826"
+      ];
+
+      if (passcode && validPasscodes.includes(String(passcode).trim())) {
+        const cookieStore = await cookies();
+        cookieStore.set("admin_session", "authenticated_ivan_exclusive", {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          maxAge: 60 * 60 * 24 * 30, // 30 days
+          path: "/",
+        });
+        return NextResponse.json({ success: true, authenticated: true });
+      }
+
+      return NextResponse.json({ success: false, error: "Invalid master passcode" }, { status: 401 });
+    }
 
     if (action === "login-instagram" || action === "login-google") {
       const cookieStore = await cookies();
@@ -40,7 +65,7 @@ export async function POST(request: Request) {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 60 * 60 * 24 * 7,
+        maxAge: 60 * 60 * 24 * 30,
         path: "/",
       });
       return NextResponse.json({ success: true });

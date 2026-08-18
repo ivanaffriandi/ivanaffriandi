@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -265,6 +266,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const [subSubmitted, setSubSubmitted] = useState<boolean>(false);
   const [mounted, setMounted] = useState<boolean>(false);
   const [isMobileScreen, setIsMobileScreen] = useState<boolean>(false);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setMounted(true);
@@ -329,12 +331,53 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     });
   }, [sortedPosts, activeFilter, searchQuery]);
 
+  const router = useRouter();
   const selectedPost = selectedPostIndex !== null ? sortedPosts[selectedPostIndex] : null;
 
-  const fallbackHero = "/images/ocean_hero_mono.png";
+  const fallbackHero = "/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg";
   const fallbackBrand = "/images/defining_brand_mono.png";
 
-  // Hero photos (capped at 7 posts)
+  const fallbackCovers = useMemo(() => [
+    "/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg",
+    "/images/moments/539303572_18073420046098563_1129254407547625674_n..webp",
+    "/images/moments/598943412_18085107533098563_2022381096122126117_n..webp",
+    "/images/moments/489831318_18060819218098563_9042912996466521959_n..jpg",
+    "/images/moments/515043142_18068610035098563_4316722369364790783_n..jpg",
+    "/images/moments/608079301_18086400239098563_3466106499873906770_n..webp",
+  ], []);
+
+  // Flipboard Deck containing EXCLUSIVELY BLOG POSTS for mobile
+  const flipboardCards = useMemo(() => {
+    if (sortedPosts.length === 0) {
+      return [{
+        id: "fallback",
+        category: "01 / 01 · JOURNAL",
+        date: "2026",
+        title: "Ivan Affriandi",
+        excerpt: "Crafting digital experiences, thoughtful software, and visual moments.",
+        img: fallbackCovers[0],
+        post: null,
+      }];
+    }
+
+    const limited = sortedPosts.slice(0, 10);
+    return limited.map((p, idx) => {
+      const extracted = extractCoverImage(p.content);
+      const isBadImg = !extracted || extracted.includes("ocean_hero_mono.png");
+      const cover = isBadImg ? fallbackCovers[idx % fallbackCovers.length] : extracted;
+      return {
+        id: p.id,
+        category: `${String(idx + 1).padStart(2, "0")} / ${String(limited.length).padStart(2, "0")} · JOURNAL`,
+        date: p.published ? getRelativeTimeString(p.published) : "ESSAY",
+        title: p.title,
+        excerpt: stripHtml(p.content || "").slice(0, 135) + "…",
+        img: cover,
+        post: p,
+      };
+    });
+  }, [sortedPosts, fallbackCovers]);
+
+  // Backward-compatible hero posts for desktop
   const heroPosts = useMemo(() => {
     const limitedPosts = sortedPosts.slice(0, 7);
     const withImg = limitedPosts.filter((p) => extractCoverImage(p.content));
@@ -345,20 +388,55 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
       img: extractCoverImage(p.content)!,
       post: p,
     }));
-  }, [sortedPosts]);
+  }, [sortedPosts, fallbackHero]);
 
+  const currentFlipCard = flipboardCards[heroIndex % flipboardCards.length];
   const currentHero = heroPosts[heroIndex % heroPosts.length];
 
-  // Auto-cycle hero photo every 6s
+  const [touchStartPos, setTouchStartPos] = useState<{ x: number; y: number } | null>(null);
+  const mobileScrollRef = React.useRef<HTMLDivElement>(null);
+
+  const handleHeroTouchStart = (e: React.TouchEvent) => {
+    setTouchStartPos({
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+    });
+  };
+
+  const handleHeroTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStartPos) return;
+    const diffX = touchStartPos.x - e.changedTouches[0].clientX;
+    const diffY = touchStartPos.y - e.changedTouches[0].clientY;
+
+    if (Math.abs(diffX) > 40 || Math.abs(diffY) > 40) {
+      if (Math.abs(diffX) > Math.abs(diffY)) {
+        // Horizontal swipe → change card
+        if (diffX > 0) {
+          setHeroIndex((prev) => (prev + 1) % flipboardCards.length);
+        } else {
+          setHeroIndex((prev) => (prev - 1 + flipboardCards.length) % flipboardCards.length);
+        }
+      } else if (diffY < -40) {
+        // Swipe DOWN (finger moving down) → open top panel
+        setMobileDrawerOpen(true);
+      } else if (diffY > 40 && mobileDrawerOpen) {
+        // Swipe UP when panel is open → close panel
+        setMobileDrawerOpen(false);
+      }
+    }
+    setTouchStartPos(null);
+  };
+
+  // Auto-cycle hero photo / flipboard cards every 6s
   const advanceHero = useCallback(() => {
-    setHeroIndex((prev) => (prev + 1) % heroPosts.length);
-  }, [heroPosts.length]);
+    setHeroIndex((prev) => (prev + 1) % flipboardCards.length);
+  }, [flipboardCards.length]);
 
   useEffect(() => {
-    if (heroPosts.length <= 1) return;
+    if (flipboardCards.length <= 1) return;
     const t = setInterval(advanceHero, 6000);
     return () => clearInterval(t);
-  }, [advanceHero, heroPosts.length]);
+  }, [advanceHero, flipboardCards.length]);
 
   // Instagram gallery state
   const [igMedia, setIgMedia] = useState<any[]>([]);
@@ -716,18 +794,18 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           gap: 1.25rem;
           -webkit-overflow-scrolling: touch;
           scroll-behavior: smooth;
-          background: #FFFFFF !important;
-          color: #111111 !important;
+          background: var(--bg-color, #FFFFFF);
+          color: var(--text-primary, #111111);
         }
 
-        /* PERMANENT LIGHT THEME OVERRIDES FOR HOMEPAGE RIGHT FEED */
+        /* EDITORIAL THEME OVERRIDES FOR HOMEPAGE RIGHT FEED */
         .pj-right .right-page-title,
         .pj-right .about-bio-headline,
         .pj-right .about-work-title,
         .pj-right .about-card-value,
         .pj-right .blog-card-title,
         .pj-right .prologue-nav-btn {
-          color: #111111 !important;
+          color: var(--text-primary, #111111);
         }
 
         .pj-right .section-label-header,
@@ -739,84 +817,84 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .pj-right .about-work-desc,
         .pj-right .blog-card-excerpt,
         .pj-right .blog-card-meta {
-          color: #555555 !important;
+          color: var(--text-secondary, #555555);
         }
 
         .pj-right .right-page-header {
-          border-bottom: none !important;
-          border-bottom-color: transparent !important;
+          border-bottom: none;
+          border-bottom-color: transparent;
         }
 
         .pj-right .blog-tabs-header,
         .pj-right .prologue-nav-bar {
-          border-bottom-color: rgba(0, 0, 0, 0.08) !important;
-          border-top-color: rgba(0, 0, 0, 0.08) !important;
+          border-bottom-color: var(--border-color, rgba(0, 0, 0, 0.08));
+          border-top-color: var(--border-color, rgba(0, 0, 0, 0.08));
         }
 
         .pj-right .novel-page-card {
-          background: #FAFAFA !important;
-          border: 1px solid rgba(0, 0, 0, 0.06) !important;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+          background: var(--card-bg-1, #FAFAFA);
+          border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.06));
+          box-shadow: var(--shadow-raised, 0 4px 20px rgba(0, 0, 0, 0.02));
         }
 
         .pj-right .novel-intro-paragraph {
-          color: #222222 !important;
+          color: var(--text-primary, #222222);
         }
 
         .pj-right .novel-drop-cap::first-letter,
         .novel-drop-cap::first-letter {
-          color: #000000 !important;
-          opacity: 1 !important;
+          color: var(--text-primary, #000000);
+          opacity: 1;
         }
 
         .pj-right .imessage-bubble-incoming {
-          background: #EAEAEA !important;
-          color: #111111 !important;
+          background: var(--bg-secondary, #EAEAEA);
+          color: var(--text-primary, #111111);
         }
 
         .pj-right .imessage-bubble-outgoing {
-          background: #111111 !important;
-          color: #FFFFFF !important;
+          background: var(--text-primary, #111111);
+          color: var(--bg-color, #FFFFFF);
         }
 
         .pj-right .blog-tab-item {
-          color: #777777 !important;
+          color: var(--text-muted, #777777);
         }
 
         .pj-right .blog-tab-item:hover,
         .pj-right .blog-tab-item.active {
-          color: #111111 !important;
-          background: rgba(0, 0, 0, 0.06) !important;
+          color: var(--text-primary, #111111);
+          background: var(--border-subtle, rgba(0, 0, 0, 0.06));
         }
 
         .pj-right .blog-grid-card {
-          background: #FFFFFF !important;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+          background: var(--card-bg-1, #FFFFFF);
+          border-bottom: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.06));
         }
 
         .pj-right .search-pill-container {
-          background: #EFEFEF !important;
-          border: 1px solid rgba(0, 0, 0, 0.08) !important;
+          background: var(--bg-secondary, #EFEFEF);
+          border: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
         }
 
         .pj-right .search-pill-input {
-          color: #111111 !important;
+          color: var(--text-primary, #111111);
         }
 
         .pj-right .search-pill-input::placeholder {
-          color: rgba(0, 0, 0, 0.45) !important;
+          color: var(--text-muted, rgba(0, 0, 0, 0.45));
         }
 
         .pj-right .action-pill-btn {
-          background: #111111 !important;
-          color: #FFFFFF !important;
+          background: var(--text-primary, #111111);
+          color: var(--bg-color, #FFFFFF);
         }
 
         .pj-right .about-pill-item,
         .pj-right .about-pill-item-sm,
         .pj-right .about-card-item {
-          background: rgba(0, 0, 0, 0.04) !important;
-          color: #111111 !important;
+          background: var(--bg-secondary, rgba(0, 0, 0, 0.04));
+          color: var(--text-primary, #111111);
         }
 
         /* HIDE ALL SCROLLBAR INDICATORS ENTIRELY */
@@ -1753,102 +1831,163 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
            PREMIUM MOBILE LAYOUT — full reflow below 860px
            ───────────────────────────────────────────────── */
         @media (max-width: 860px) {
-          /* ── ROOT LAYOUT ── */
+          /* ── ROOT LAYOUT (NATURAL SINGLE-COLUMN FLOW ON MOBILE) ── */
           .pj-root {
-            flex-direction: column;
-            overflow: visible;
-            padding: 0 0.5rem;
+            display: flex !important;
+            flex-direction: column !important;
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            right: auto !important;
+            bottom: auto !important;
+            height: auto !important;
+            min-height: 100vh !important;
+            width: 100vw !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            background: var(--bg-color, #121212) !important;
           }
 
-          /* ── HERO PHOTO FEATURED CARD ── */
+          /* ── HERO PHOTO FEATURED CARD (TOP BANNER ON MOBILE) ── */
           .pj-left {
-            position: relative;
-            width: 100%;
-            max-width: 100%;
-            min-width: unset;
-            height: 360px;
-            min-height: 320px;
-            max-height: 440px;
-            align-self: unset;
-            border-radius: 24px !important;
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            right: auto !important;
+            bottom: auto !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            height: 72vh !important;
+            min-height: 480px !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+            border: none !important;
             overflow: hidden !important;
-            box-shadow: 0 14px 36px rgba(0, 0, 0, 0.25) !important;
-            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12)) !important;
-            margin-bottom: 0.5rem;
+            flex-shrink: 0 !important;
           }
 
           .pj-about-ig-grid { left: 0; height: 100%; }
 
           /* ── HERO TEXT INSIDE LEFT PANEL ── */
           .pj-left-content {
-            padding: 1.6rem 1.35rem 1.6rem 1.35rem;
+            position: absolute !important;
+            inset: 0 !important;
+            width: 100vw !important;
+            height: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: flex-end !important;
+            padding: 3.5rem 1.4rem calc(1.8rem + env(safe-area-inset-bottom, 0px)) 1.4rem !important;
+            box-sizing: border-box !important;
+            z-index: 10 !important;
           }
 
           .pj-title {
             font-size: clamp(1.8rem, 7vw, 2.8rem) !important;
-            line-height: 1.15 !important;
+            line-height: 1.1 !important;
           }
 
-          /* ── RIGHT JOURNAL FEED COLUMN ── */
+          /* ── EDITORIAL CONTENT FEED (FLOWS UNDERNEATH HERO ON MOBILE) ── */
           .pj-right {
-            padding: 1rem 0.25rem 3.5rem;
-            height: auto;
-            justify-content: flex-start;
+            display: block !important;
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            right: auto !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            max-height: none !important;
+            height: auto !important;
+            background: var(--bg-color, #121212) !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            color: var(--text-primary, #FFFFFF) !important;
+            border-radius: 0 !important;
+            overflow-y: visible !important;
+            box-sizing: border-box !important;
+            z-index: 1 !important;
+            padding: 1.5rem 1.25rem 3.5rem !important;
+            box-shadow: none !important;
           }
 
           /* ── PAGE HEADER ── */
           .right-page-header {
-            padding: 0 0 0.75rem 0;
+            padding: 0 0 1rem 0;
             flex-wrap: wrap;
             gap: 0.75rem;
           }
 
           .right-page-title {
-            font-size: 1.5rem !important;
+            color: var(--text-primary, #FFFFFF) !important;
+            font-size: 1.6rem !important;
           }
 
           /* ── IG CAROUSEL ── */
           .ig-neat-card {
-            width: 120px !important;
-            height: 140px !important;
-            border-radius: 16px !important;
+            width: 110px !important;
+            height: 130px !important;
+            border-radius: 14px !important;
           }
 
           /* ── PROLOGUE 2-COLUMN STACKS VERTICAL ── */
           .novel-intro-2col {
             grid-template-columns: 1fr !important;
-            gap: 1.5rem !important;
+            gap: 1.25rem !important;
           }
 
           .novel-intro-paragraph {
-            font-size: 0.88rem !important;
+            font-size: 0.94rem !important;
+            line-height: 1.72 !important;
+            color: var(--text-primary, #F6F6F4) !important;
           }
 
           .novel-drop-cap::first-letter {
-            font-size: 2.6rem !important;
+            font-size: 2.8rem !important;
+            color: var(--text-primary, #FFFFFF) !important;
           }
 
           /* ── iMESSAGE BUBBLES NARROW ── */
-          .imessage-bubble-incoming,
+          .imessage-bubble-incoming {
+            background: var(--bg-secondary, rgba(255, 255, 255, 0.08)) !important;
+            color: var(--text-primary, #FFFFFF) !important;
+            font-size: 0.88rem !important;
+            max-width: 90% !important;
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1)) !important;
+          }
+
           .imessage-bubble-outgoing {
-            font-size: 0.85rem !important;
+            background: var(--text-primary, #FFFFFF) !important;
+            color: var(--bg-color, #121212) !important;
+            font-size: 0.88rem !important;
             max-width: 90% !important;
           }
 
           /* ── CHAPTERS LIST ── */
           .blog-grid-card {
-            grid-template-columns: 100px 1fr !important;
+            background: var(--card-bg-1, #1A1A1A) !important;
+            border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08)) !important;
+            border-radius: 12px !important;
+            padding: 1rem !important;
+            grid-template-columns: 76px 1fr !important;
             gap: 0.85rem !important;
-            padding: 0.85rem 0 !important;
+            margin-bottom: 0.75rem !important;
           }
 
           .blog-card-thumb-wrap {
-            width: 100px !important;
-            height: 72px !important;
+            width: 76px !important;
+            height: 64px !important;
           }
 
           .blog-card-title {
-            font-size: 0.84rem !important;
+            color: var(--text-primary, #FFFFFF) !important;
+            font-size: 0.92rem !important;
+            font-weight: 700 !important;
+          }
+
+          .blog-card-meta {
+            color: var(--text-muted, rgba(255, 255, 255, 0.5)) !important;
           }
 
           .blog-card-excerpt {
@@ -1857,7 +1996,18 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
           /* ── SECTION LABELS ── */
           .section-label-header {
+            color: var(--text-muted, rgba(255, 255, 255, 0.5)) !important;
             font-size: 0.55rem !important;
+            letter-spacing: 0.2em !important;
+          }
+
+          .search-pill-container {
+            background: var(--bg-secondary, rgba(255, 255, 255, 0.06)) !important;
+            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12)) !important;
+          }
+
+          .search-pill-input {
+            color: var(--text-primary, #FFFFFF) !important;
           }
 
           /* ── BLOG TABS ── */
@@ -1867,220 +2017,138 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           }
 
           /* ── MODAL ── */
+          /* ── FULL-SCREEN BOTTOM SHEET MODAL ON MOBILE ── */
+          .modal-bg {
+            align-items: flex-end !important;
+            padding: 0 !important;
+          }
+
           .modal-inner {
             grid-template-columns: 1fr !important;
-            height: 92vh !important;
-            border-radius: 16px !important;
-            max-width: calc(100vw - 2rem) !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            height: 94vh !important;
+            height: 94dvh !important;
+            border-radius: 20px 20px 0 0 !important;
+            margin: 0 !important;
+            overflow-y: auto !important;
           }
 
           .modal-photo {
-            min-height: 220px !important;
+            min-height: 280px !important;
+            max-height: 45vw !important;
           }
 
           .modal-body {
-            padding: 1.5rem 1.25rem 2rem !important;
+            padding: 1.5rem 1.25rem 3rem !important;
+            background: var(--bg-color, #FFFFFF);
           }
+        }
 
+        /* ── MOBILE CONTAINER & DARK BRUTALIST THEME ── */
         .mobile-construction-wrapper {
           display: none !important;
         }
-
-        .pj-root {
-          display: flex !important;
-        }
-
-        @media (max-width: 860px) {
-          .pj-root {
-            display: none !important;
-          }
-
-          .mobile-construction-wrapper {
-            display: flex !important;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 85vh;
-            padding: 2.5rem 1.5rem;
-            text-align: center;
-            box-sizing: border-box;
-          }
-
-          .mobile-redirect-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            max-width: 360px;
-            width: 100%;
-          }
-
-          .mobile-brand-title {
-            font-family: var(--font-serif);
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin: 0;
-            letter-spacing: -0.02em;
-          }
-
-          .mobile-subtitle-badge {
-            font-size: 0.68rem;
-            font-weight: 700;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--accent-color, #8C2A0F);
-            margin-top: -0.5rem;
-          }
-
-          .mobile-construction-desc {
-            font-family: var(--font-sans);
-            font-size: 0.9rem;
-            line-height: 1.65;
-            color: var(--text-muted, rgba(255, 255, 255, 0.65));
-            margin: 0;
-          }
-
-          .mobile-contact-icons-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.85rem;
-            margin-top: 0.5rem;
-          }
-
-          .mobile-icon-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: var(--bg-secondary, rgba(255, 255, 255, 0.08));
-            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
-            color: var(--text-primary);
-            text-decoration: none;
-            transition: all 0.2s ease;
-          }
-
-          .mobile-icon-btn:active {
-            transform: scale(0.92);
-            background: var(--border-color);
-          }
-        }
       `}</style>
 
-      {/* ── MOBILE AVAILABLE SOON / DESKTOP REDIRECT SCREEN (STRICTLY ISOLATED TO MOBILE SCREENS <= 860px) ── */}
-      {isMobileScreen && (
-        <div className="mobile-construction-wrapper">
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="mobile-redirect-container"
-          >
-            <h1 className="mobile-brand-title">Ivan Affriandi</h1>
-            <div className="mobile-subtitle-badge">AVAILABLE SOON · UNDER CONSTRUCTION</div>
-
-            <p className="mobile-construction-desc">
-              This site is optimized exclusively for desktop screens. Please open on your computer to view the full interactive journal and portfolio.
-            </p>
-
-            {/* CONTACT ICON BUTTONS */}
-            <div className="mobile-contact-icons-row">
-              {/* EMAIL */}
-              <a href="mailto:hello@ivanaffriandi.com" title="Email" className="mobile-icon-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                  <polyline points="22,6 12,13 2,6" />
-                </svg>
-              </a>
-
-              {/* INSTAGRAM */}
-              <a href="https://instagram.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" title="Instagram" className="mobile-icon-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                </svg>
-              </a>
-
-              {/* X / TWITTER */}
-              <a href="https://x.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" title="X / Twitter" className="mobile-icon-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.258 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
-                </svg>
-              </a>
-
-              {/* WEIBO */}
-              <a href="https://weibo.com/u/7915776414" target="_blank" rel="noopener noreferrer" title="Weibo" className="mobile-icon-btn">
-                <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M10.878 1.093a4.23 4.23 0 0 1 4.031 1.305 4.225 4.225 0 0 1 .886 4.14v.001a.612.612 0 0 1-1.166-.377 3.01 3.01 0 0 0-3.495-3.873.611.611 0 1 1-.256-1.196Z"/>
-                  <path fillRule="evenodd" d="M3.753 9.465c.548-1.11 1.972-1.74 3.233-1.411 1.304.338 1.971 1.568 1.437 2.764-.541 1.221-2.095 1.875-3.416 1.449-1.271-.411-1.812-1.67-1.254-2.802Zm2.658.567c.16.066.365-.009.458-.168.088-.16.03-.34-.129-.397-.156-.062-.353.013-.446.168-.09.154-.041.333.117.397Zm-1.607 1.314c.413.188.963.009 1.219-.4.252-.413.12-.883-.296-1.062-.41-.172-.94.005-1.194.402-.256.4-.135.874.271 1.06Z"/>
-                  <path fillRule="evenodd" d="m12.014 7.238.005.001c.919.285 1.941.974 1.939 2.188 0 2.007-2.895 4.535-7.246 4.535C3.393 13.962 0 12.352 0 9.708c0-1.385.876-2.985 2.384-4.493C4.4 3.199 6.751 2.28 7.634 3.165c.39.392.427 1.065.177 1.87-.132.405.38.182.38.182 1.63-.682 3.051-.722 3.57.02.278.397.252.951-.004 1.594-.116.293.035.34.257.407Zm-10.4 3.101c.172 1.738 2.46 2.936 5.109 2.674 2.647-.26 4.656-1.883 4.482-3.623-.17-1.738-2.458-2.937-5.107-2.674-2.647.263-4.656 1.883-4.484 3.623Z"/>
-                  <path d="M13.295 3.855a2.056 2.056 0 0 0-1.962-.634.526.526 0 1 0 .219 1.031 1.008 1.008 0 0 1 1.17 1.296.528.528 0 0 0 1.005.325 2.062 2.062 0 0 0-.432-2.018Z"/>
-                </svg>
-              </a>
-            </div>
-          </motion.div>
-        </div>
-      )}
-
-      <div className="pj-root">
-        {/* ── LEFT COLUMN: STICKY HERO ── */}
-        <div className="pj-left" onClick={advanceHero}>
-          <div style={{ position: "absolute", inset: 0 }}>
-            {heroPosts.map((item, idx) => (
+      <div className="pj-root" ref={mobileScrollRef}>
+        {/* ── FULLSCREEN HERO CARD DECK ── */}
+        <div
+          className="pj-left"
+          onTouchStart={handleHeroTouchStart}
+          onTouchEnd={handleHeroTouchEnd}
+        >
+          <AnimatePresence mode="popLayout">
+            <motion.div
+              key={heroIndex}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                width: "100%",
+                height: "100%",
+              }}
+            >
               <div
-                key={item.img + idx}
                 className="pj-photo-layer"
                 style={{
-                  backgroundImage: `url(${item.img})`,
-                  opacity: idx === heroIndex ? 1 : 0,
-                  zIndex: idx === heroIndex ? 1 : 0,
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  width: "100%",
+                  height: "100%",
+                  backgroundImage: `url(${currentFlipCard.img})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                  opacity: 1,
+                  zIndex: 1,
                 }}
               />
-            ))}
 
-            <div className="pj-overlay" />
+              <div
+                className="pj-overlay"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  width: "100%",
+                  height: "100%",
+                  background: "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.92) 100%)",
+                  zIndex: 2,
+                }}
+              />
 
-            <div className="pj-left-content">
-              {currentHero.post?.published && (
-                <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.75)", display: "block", marginBottom: "0.4rem" }}>
-                  {getRelativeTimeString(currentHero.post.published)}
-                </span>
-              )}
-              <h1 className="pj-title">{currentHero.title}</h1>
-
-              {currentHero.post && (
-                <p className="pj-excerpt">
-                  {stripHtml(currentHero.post.content).slice(0, 145)}…
-                </p>
-              )}
-
-              {heroPosts.length > 1 && (
-                <div className="pj-dots">
-                  {heroPosts.map((_, i) => (
-                    <div
-                      key={i}
-                      className={`pj-dot${i === heroIndex ? " active" : ""}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setHeroIndex(i);
-                      }}
-                    />
-                  ))}
+              <div className="pj-left-content">
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                  <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
+                    {currentFlipCard.category}
+                  </span>
+                  <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.6)" }}>
+                    {currentFlipCard.date}
+                  </span>
                 </div>
-              )}
-            </div>
 
-            {currentHero.post && (
+                <h1 className="pj-title">{currentFlipCard.title}</h1>
+
+                <p className="pj-excerpt">
+                  {currentFlipCard.excerpt}
+                </p>
+
+                {flipboardCards.length > 1 && (
+                  <div className="pj-dots" style={{ marginTop: "1.4rem" }}>
+                    {flipboardCards.map((_, i) => (
+                      <div
+                        key={i}
+                        className={`pj-dot${i === (heroIndex % flipboardCards.length) ? " active" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setHeroIndex(i);
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <button
                 className="pj-read-btn"
                 onClick={(e) => {
                   e.stopPropagation();
-                  const idx = sortedPosts.findIndex((p) => p.id === currentHero.post.id);
-                  if (idx !== -1) setSelectedPostIndex(idx);
+                  if (currentFlipCard.post) {
+                    const idx = sortedPosts.findIndex((p) => p.id === currentFlipCard.post.id);
+                    if (idx !== -1) setSelectedPostIndex(idx);
+                  }
                 }}
               >
                 READ
@@ -2089,11 +2157,201 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   <polyline points="12 5 19 12 12 19" />
                 </svg>
               </button>
-            )}
-          </div>
+
+              {/* ── SCROLL DOWN HINT ── */}
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "calc(1rem + env(safe-area-inset-bottom, 0px))",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  zIndex: 20,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "3px",
+                  opacity: 0.55,
+                  pointerEvents: "none",
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
 
-        {/* ── RIGHT COLUMN: JOURNAL FEED ── */}
+        {/* ── MOBILE TOP SLIDE-DOWN PANEL (Gallery, Prologue, Chapters) ── */}
+        {isMobileScreen && (
+          <AnimatePresence>
+            {mobileDrawerOpen && (
+              <>
+                {/* Tap outside to close */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => setMobileDrawerOpen(false)}
+                  style={{
+                    position: "fixed", inset: 0, zIndex: 1000,
+                    background: "rgba(0,0,0,0.35)",
+                  }}
+                />
+                {/* Panel slides down from top */}
+                <motion.div
+                  className="pj-right"
+                  initial={{ y: "-100%" }}
+                  animate={{ y: 0 }}
+                  exit={{ y: "-100%" }}
+                  transition={{ duration: 0.4, ease: [0.32, 0.72, 0, 1] }}
+                >
+                  {/* Spacer behind navbar */}
+                  <div style={{ height: "54px" }} />
+
+                  <div style={{ padding: "0 1.25rem 1.5rem" }}>
+                    {/* Header row */}
+                    <div style={{
+                      display: "flex", alignItems: "center",
+                      justifyContent: "space-between",
+                      marginBottom: "1.25rem",
+                      paddingTop: "0.5rem",
+                    }}>
+                      <span style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)" }}>
+                        IVAN’S JOURNAL
+                      </span>
+                      <button
+                        onClick={() => setMobileDrawerOpen(false)}
+                        style={{
+                          background: "rgba(255,255,255,0.08)",
+                          border: "1px solid rgba(255,255,255,0.12)",
+                          cursor: "pointer",
+                          width: "30px", height: "30px", borderRadius: "50%",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          color: "rgba(255,255,255,0.7)", fontSize: "0.78rem",
+                        }}
+                      >✕</button>
+                    </div>
+
+                    {/* ── MOMENTS (IG Gallery compact) ── */}
+                    <div style={{ marginBottom: "1.5rem" }}>
+                      <div style={{
+                        fontSize: "0.48rem", fontWeight: 800, letterSpacing: "0.25em",
+                        textTransform: "uppercase", color: "rgba(255,255,255,0.3)",
+                        marginBottom: "0.65rem",
+                      }}>MOMENTS</div>
+                      <div
+                        ref={igRowRef}
+                        style={{ overflowX: "auto", display: "flex", gap: "0.5rem", scrollbarWidth: "none" }}
+                      >
+                        {instagramItems.slice(0, 14).map((item) => (
+                          <div
+                            key={item.id}
+                            onClick={() => {
+                              setMobileDrawerOpen(false);
+                              if (item.rawIg) setSelectedIgItem(item);
+                              else if (item.permalink) window.open(item.permalink, "_blank", "noopener,noreferrer");
+                            }}
+                            style={{
+                              flexShrink: 0, width: "80px", height: "80px",
+                              borderRadius: "10px", overflow: "hidden", cursor: "pointer",
+                              border: "1px solid rgba(255,255,255,0.08)",
+                            }}
+                          >
+                            <div className="ig-b-w-container" style={{ width: "100%", height: "100%" }}>
+                              <img src={item.img} alt={item.title} className="ig-b-w-img"
+                                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* ── PROLOGUE (compact) ── */}
+                    <div style={{
+                      marginBottom: "1.5rem",
+                      paddingTop: "1rem",
+                      borderTop: "1px solid rgba(255,255,255,0.07)",
+                    }}>
+                      <div style={{
+                        fontSize: "0.48rem", fontWeight: 800, letterSpacing: "0.25em",
+                        textTransform: "uppercase", color: "rgba(255,255,255,0.3)",
+                        marginBottom: "0.65rem",
+                      }}>PROLOGUE</div>
+                      <p style={{
+                        fontSize: "0.9rem", lineHeight: 1.6,
+                        color: "rgba(255,255,255,0.7)", margin: 0,
+                        fontFamily: "var(--font-serif, Georgia, serif)", fontStyle: "italic",
+                        display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden",
+                      }}>
+                        Somewhere past midnight, with the city going quiet outside and a cup of tea slowly going cold beside the keyboard, things tend to get clearer. Not a portfolio, not quite a diary—a slow, honest record of what I’m paying attention to, and why.
+                      </p>
+                    </div>
+
+                    {/* ── ALL CHAPTERS ── */}
+                    <div style={{ paddingTop: "1rem", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+                      <div style={{
+                        display: "flex", alignItems: "center",
+                        justifyContent: "space-between", marginBottom: "0.75rem",
+                      }}>
+                        <div style={{
+                          fontSize: "0.48rem", fontWeight: 800, letterSpacing: "0.25em",
+                          textTransform: "uppercase", color: "rgba(255,255,255,0.3)",
+                        }}>ALL CHAPTERS</div>
+                        <div style={{ display: "flex", gap: "0.3rem" }}>
+                          {yearFilters.map((y) => (
+                            <button key={y} onClick={() => setActiveFilter(y)} style={{
+                              background: y === activeFilter ? "rgba(255,255,255,0.18)" : "transparent",
+                              border: "1px solid rgba(255,255,255,0.14)",
+                              borderRadius: "4px",
+                              color: y === activeFilter ? "#FFFFFF" : "rgba(255,255,255,0.4)",
+                              fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.08em",
+                              padding: "0.2rem 0.5rem", cursor: "pointer", textTransform: "uppercase",
+                            }}>{y}</button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {filteredPosts.slice(0, 8).map((post) => {
+                        const img = extractCoverImage(post.content);
+                        const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
+                        return (
+                          <div
+                            key={post.id}
+                            onClick={() => { setSelectedPostIndex(postIdx); setMobileDrawerOpen(false); }}
+                            style={{
+                              display: "grid", gridTemplateColumns: "64px 1fr", gap: "0.75rem",
+                              padding: "0.75rem 0",
+                              borderBottom: "1px solid rgba(255,255,255,0.05)",
+                              cursor: "pointer",
+                              alignItems: "center",
+                            }}
+                          >
+                            <div style={{ width: "64px", height: "48px", borderRadius: "8px", overflow: "hidden", flexShrink: 0 }}>
+                              <img src={img || fallbackHero} alt={post.title}
+                                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", filter: "grayscale(30%)" }} />
+                            </div>
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ fontSize: "0.52rem", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", marginBottom: "0.2rem" }}>
+                                {getRelativeTimeString(post.published)}
+                              </div>
+                              <h3 style={{ fontSize: "0.88rem", fontWeight: 700, lineHeight: 1.3, color: "#FFFFFF", margin: 0, overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                                {post.title}
+                              </h3>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+        )}
+
+        {/* Desktop pj-right (hidden on mobile via CSS) */}
         <div className="pj-right">
           <div className="pj-journal-feed-wrap">
             {/* Simple Page Header with IG, Email, Search & About button */}
@@ -2188,17 +2446,17 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   {/* LEFT COLUMN: ATMOSPHERIC NARRATIVE */}
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.95rem" }}>
                     <p className="novel-intro-paragraph novel-drop-cap">
-                      Somewhere past midnight, with the city going quiet outside and a cup of tea slowly going cold beside the keyboard, things tend to get clearer. The kind of clarity that only shows up when the noise settles and you're left alone with whatever's been sitting at the back of your mind.
+                      Somewhere past midnight, with the city going quiet outside and a cup of tea slowly going cold beside the keyboard, things tend to get clearer. The kind of clarity that only shows up when the noise settles and you&apos;re left alone with whatever&apos;s been sitting at the back of your mind.
                     </p>
                     <p className="novel-intro-paragraph">
-                      I've spent a lot of time moving between things—building, making, reading, photographing, writing—and somewhere along the way I stopped treating that as a contradiction. The same mind that wants to understand how light refracts also wants to know why certain sentences land the way they do. Both feel like the same question, just wearing different clothes.
+                      I&apos;ve spent a lot of time moving between things—building, making, reading, photographing, writing—and somewhere along the way I stopped treating that as a contradiction. The same mind that wants to understand how light refracts also wants to know why certain sentences land the way they do. Both feel like the same question, just wearing different clothes.
                     </p>
                   </div>
 
                   {/* RIGHT COLUMN: PARAGRAPH 3 & 2 B&W iOS iMESSAGE BUBBLES */}
                   <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                     <p className="novel-intro-paragraph">
-                      This place is where those things get to breathe. Not a portfolio, not quite a diary. Somewhere in between—a slow, honest record of what I'm paying attention to, and why.
+                      This place is where those things get to breathe. Not a portfolio, not quite a diary. Somewhere in between—a slow, honest record of what I&apos;m paying attention to, and why.
                     </p>
 
                     <div className="imessage-chat-wrap" style={{ margin: 0 }}>
@@ -2208,7 +2466,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           FRIEND
                         </span>
                         <div className="imessage-bubble-incoming">
-                          "Wait, so what is this exactly? A blog? A portfolio? I can't tell."
+                          &ldquo;Wait, so what is this exactly? A blog? A portfolio? I can&apos;t tell.&rdquo;
                         </div>
                       </div>
 
@@ -2218,13 +2476,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           IVAN
                         </span>
                         <div className="imessage-bubble-outgoing">
-                          "Neither, really. Think of it as a running tab — things I notice, things I make, things I can't stop thinking about. Some of it matters a lot. Some of it is just a mushroom I found interesting."
+                          &ldquo;Neither, really. Think of it as a running tab — things I notice, things I make, things I can&apos;t stop thinking about. Some of it matters a lot. Some of it is just a mushroom I found interesting.&rdquo;
                         </div>
                       </div>
                     </div>
 
                     <p className="novel-intro-paragraph" style={{ opacity: 0.72, fontSize: "0.82rem", fontStyle: "italic", borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))", paddingTop: "0.75rem", marginTop: "0.25rem" }}>
-                      Pull up a chair. The tea's still warm, probably.
+                      Pull up a chair. The tea&apos;s still warm, probably.
                     </p>
                   </div>
                 </div>
@@ -2296,6 +2554,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         </div>
       </div>
 
+
       {/* ── INSTAGRAM POST DETAIL MODAL ── */}
       <AnimatePresence>
         {selectedIgItem && (
@@ -2349,7 +2608,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         )}
       </AnimatePresence>
 
-      {/* ── BLOG POST READER MODAL ── */}
+      {/* ── BLOG POST READER MODAL (MOBILE: FULL-SCREEN BOTTOM SHEET) ── */}
       <AnimatePresence>
         {selectedPost && (
           <motion.div
@@ -2361,12 +2620,14 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           >
             <motion.div
               className="modal-inner"
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ duration: 0.25 }}
+              initial={{ y: "100%", opacity: 1 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "100%", opacity: 1 }}
+              transition={{ duration: 0.38, ease: [0.32, 0.72, 0, 1] }}
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Drag handle */}
+              <div style={{ position: "absolute", top: "10px", left: "50%", transform: "translateX(-50%)", width: "36px", height: "4px", borderRadius: "99px", background: "rgba(0,0,0,0.18)", zIndex: 2 }} />
               <div
                 className="modal-photo"
                 style={{ backgroundImage: `url(${extractCoverImage(selectedPost.content) || fallbackHero})` }}
@@ -2379,7 +2640,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     ✕
                   </button>
                 </div>
-                <h2 style={{ fontSize: "1.8rem", fontWeight: 700, lineHeight: 1.22, marginBottom: "1.5rem", wordBreak: "break-word", letterSpacing: "-0.02em" }}>
+                <h2 style={{ fontSize: "1.65rem", fontWeight: 700, lineHeight: 1.22, marginBottom: "1.5rem", wordBreak: "break-word", letterSpacing: "-0.02em" }}>
                   {selectedPost.title}
                 </h2>
                 <div
@@ -2544,7 +2805,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         bottom: 0,
                         width: "100%",
                         height: "100%",
-                        backgroundImage: `url("/images/ocean_hero_mono.png")`,
+                        backgroundImage: `url("/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg")`,
                         backgroundSize: "cover",
                         backgroundPosition: "center bottom",
                         filter: "grayscale(100%) contrast(1.15)",

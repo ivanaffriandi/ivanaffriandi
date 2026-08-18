@@ -1,19 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { ShuenStudioClient, ShuenHubOverview, ShuenOrder } from '@/lib/shuenClient';
+import { ShuenHubOverview, ShuenOrder } from '@/lib/shuenClient';
 import styles from '@/app/work/work.module.css';
 
-interface ShuenWorkspaceWidgetProps {
-  apiKey?: string;
-  apiUrl?: string;
-}
-
-export default function ShuenWorkspaceWidget({
-  apiKey = 'shuen_master_sec_2026_ivan_work_hub',
-  apiUrl = 'https://shuenstudio.com',
-}: ShuenWorkspaceWidgetProps) {
-  const [client] = useState(() => new ShuenStudioClient({ apiKey, baseUrl: apiUrl }));
+export default function ShuenWorkspaceWidget() {
   const [data, setData] = useState<{ overview: ShuenHubOverview; orders: ShuenOrder[] } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,11 +18,16 @@ export default function ShuenWorkspaceWidget({
     setLoading(true);
     setError(null);
     try {
-      const res = await client.getHubData();
-      setData({ overview: res.overview, orders: res.orders });
-      if (res.orders.length > 0 && !selectedOrderId) {
-        setSelectedOrderId(res.orders[0].id);
-        setResiInput(res.orders[0].tracking_number || '');
+      const res = await fetch('/api/work/hub', { cache: 'no-store' });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
+      const json = await res.json();
+      setData({ overview: json.overview, orders: json.orders || [] });
+      if (json.orders && json.orders.length > 0 && !selectedOrderId) {
+        setSelectedOrderId(json.orders[0].id);
+        setResiInput(json.orders[0].tracking_number || '');
       }
     } catch (err: any) {
       setError(err.message || 'Failed to connect to SHŪ / EN Studio API');
@@ -49,7 +45,20 @@ export default function ShuenWorkspaceWidget({
   const handleUpdateStatus = async (orderId: string, status: 'PAID' | 'PRODUCTION' | 'SHIPPED' | 'DELIVERED', trackingNumber?: string) => {
     setUpdating(true);
     try {
-      await client.updateOrder(orderId, { status, trackingNumber });
+      const res = await fetch('/api/work/hub', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update_order',
+          orderId,
+          status,
+          trackingNumber,
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
       await loadData();
     } catch (err: any) {
       alert(`Error: ${err.message}`);
@@ -86,7 +95,7 @@ export default function ShuenWorkspaceWidget({
     return (
       <div className={styles.emptyInspector}>
         <div style={{ width: '24px', height: '24px', border: '2px solid rgba(212,175,55,0.2)', borderTop: '2px solid #d4af37', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-        <span>Initializing Studio Telemetry Gateway...</span>
+        <span>Initializing Encrypted Studio Telemetry Gateway...</span>
       </div>
     );
   }

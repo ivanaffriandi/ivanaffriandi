@@ -237,12 +237,18 @@ export default function Navigation() {
           }
 
           .mobile-header-bar {
-            display: none !important;
-          }
-
-          html[data-theme="light"] .mobile-header-bar {
-            background: rgba(246, 246, 244, 0.88);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            display: flex !important;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 54px;
+            z-index: 1000;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.25rem;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease;
           }
         }
 
@@ -250,8 +256,8 @@ export default function Navigation() {
         .mobile-drawer-overlay {
           position: fixed;
           inset: 0;
-          z-index: 9999;
-          background: #0D0D0D;
+          z-index: 99999;
+          background: #080808;
           color: #FFFFFF;
           display: flex;
           flex-direction: column;
@@ -259,11 +265,6 @@ export default function Navigation() {
           padding: 1.5rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
           box-sizing: border-box;
           overflow-y: auto;
-        }
-
-        html[data-theme="light"] .mobile-drawer-overlay {
-          background: #F6F6F4;
-          color: #121212;
         }
       `}</style>
 
@@ -321,107 +322,71 @@ export default function Navigation() {
       <div
         className="mobile-header-bar"
         style={{
-          background: themeMode === "dark" ? "#0A0A0A" : "#F6F6F4",
-          borderBottom: themeMode === "dark" ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(0, 0, 0, 0.08)",
+          background: pathname === "/" ? "transparent" : "#080808",
+          borderBottom: pathname === "/" ? "none" : "1px solid rgba(255, 255, 255, 0.1)",
         }}
       >
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.6rem", textDecoration: "none" }}>
-          <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+        {pathname !== "/" ? (
+          <Link href="/" style={{ display: "flex", alignItems: "center", gap: "0.4rem", textDecoration: "none", color: "#FFFFFF" }}>
+            <span style={{ fontSize: "0.75rem", letterSpacing: "0.12em", fontWeight: 700, textTransform: "uppercase", color: "#FFFFFF" }}>
+              PREVIOUS
+            </span>
+          </Link>
+        ) : (
+          <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
             <span
               style={{
-                fontFamily: "var(--font-serif)",
-                fontWeight: 700,
-                fontSize: "1.05rem",
-                letterSpacing: "-0.02em",
-                color: "var(--text-primary)",
+                fontFamily: "var(--font-sans, sans-serif)",
+                fontWeight: 800,
+                fontSize: "0.95rem",
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: "#FFFFFF",
+                textShadow: "0 2px 12px rgba(0,0,0,0.6)",
               }}
             >
-              Ivan Affriandi
+              Ivan
             </span>
-            <span
-              style={{
-                width: "6px",
-                height: "6px",
-                borderRadius: "50%",
-                backgroundColor: "#10B981",
-                marginLeft: "6px",
-                boxShadow: "0 0 8px #10B981",
-                display: "inline-block",
-              }}
-            />
-          </div>
-        </Link>
+          </Link>
+        )}
 
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-          {/* Quick Lang Switcher Pill */}
-          <button
-            onClick={cycleLang}
-            style={{
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid var(--border-color)",
-              borderRadius: "14px",
-              padding: "4px 9px",
-              fontSize: "0.68rem",
-              fontWeight: 700,
-              letterSpacing: "0.08em",
-              color: "var(--text-primary)",
-              cursor: "pointer",
-              textTransform: "uppercase",
-            }}
-          >
-            {lang.toUpperCase()}
-          </button>
+          {/* Subpages show lang pill if needed, Homepage HAS NO LANG BUTTON AT ALL */}
+          {pathname !== "/" && (
+            <button
+              onClick={cycleLang}
+              style={{
+                background: "rgba(255,255,255,0.08)",
+                border: "1px solid rgba(255,255,255,0.16)",
+                borderRadius: "14px",
+                padding: "4px 9px",
+                fontSize: "0.65rem",
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                color: "#FFFFFF",
+                cursor: "pointer",
+                textTransform: "uppercase",
+              }}
+            >
+              {lang.toUpperCase()}
+            </button>
+          )}
 
-          {/* Theme Toggle Button */}
-          <button
-            onClick={toggleThemeMode}
-            title="Toggle theme"
-            style={{
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid var(--border-color)",
-              borderRadius: "50%",
-              width: "32px",
-              height: "32px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "var(--text-primary)",
-              cursor: "pointer",
-            }}
-          >
-            {themeMode === "dark" ? (
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="5" />
-                <line x1="12" y1="1" x2="12" y2="3" />
-                <line x1="12" y1="21" x2="12" y2="23" />
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                <line x1="1" y1="12" x2="3" y2="12" />
-                <line x1="21" y1="12" x2="23" y2="12" />
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-              </svg>
-            ) : (
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-              </svg>
-            )}
-          </button>
-
-          {/* Mobile Full Side Menu Drawer Toggle */}
+          {/* Minimalist Double Parallel Horizontal Line Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            title="Toggle Menu"
             style={{
-              background: isMenuOpen ? "var(--text-primary)" : "rgba(255,255,255,0.08)",
-              color: isMenuOpen ? "var(--bg-color)" : "var(--text-primary)",
-              border: "1px solid var(--border-color)",
-              borderRadius: "50%",
-              width: "32px",
-              height: "32px",
+              background: isMenuOpen ? "#FFFFFF" : "transparent",
+              color: isMenuOpen ? "#000000" : "#FFFFFF",
+              border: "none",
+              width: "36px",
+              height: "36px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
+              borderRadius: "4px",
               transition: "all 0.2s ease",
             }}
           >
@@ -431,10 +396,9 @@ export default function Navigation() {
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             ) : (
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="18" x2="21" y2="18" />
+              <svg width="22" height="12" viewBox="0 0 22 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
+                <line x1="0" y1="2" x2="22" y2="2" />
+                <line x1="0" y1="10" x2="22" y2="10" />
               </svg>
             )}
           </button>
@@ -446,139 +410,175 @@ export default function Navigation() {
         {isMenuOpen && (
           <motion.div
             className="mobile-drawer-overlay"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+            style={{
+              background: "#080808",
+              color: "#FFFFFF",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "1.2rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom, 0px))",
+              boxSizing: "border-box",
+              textAlign: "center",
+            }}
           >
-            {/* Drawer Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border-color)", paddingBottom: "1rem" }}>
-              <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: "1.1rem", fontWeight: 600 }}>
-                Ivan Affriandi
+            {/* Top Bar: Brand Logo & Close X Button */}
+            <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: "0.85rem", fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase", color: "#FFFFFF" }}>
+                IVAN™
               </span>
               <button
                 onClick={() => setIsMenuOpen(false)}
                 style={{
-                  background: "var(--bg-secondary)",
-                  border: "1px solid var(--border-color)",
-                  color: "var(--text-primary)",
-                  borderRadius: "50%",
-                  width: "34px",
-                  height: "34px",
+                  background: "transparent",
+                  border: "none",
+                  color: "rgba(255, 255, 255, 0.8)",
+                  fontSize: "0.78rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.08em",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
+                  gap: "0.35rem",
                   cursor: "pointer",
+                  padding: "6px",
                 }}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <span>close</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               </button>
             </div>
 
-            {/* Navigation Big Links */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", margin: "2rem 0" }}>
+            {/* Center Main Navigation Links (Clean Elegant Centered Font like Image 1 & 2) */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.4rem", margin: "auto 0", width: "100%", alignItems: "center" }}>
               <Link
                 href="/"
                 onClick={() => setIsMenuOpen(false)}
                 style={{
-                  fontSize: "2.2rem",
-                  fontFamily: "var(--font-serif)",
-                  color: pathname === "/" ? "var(--accent-color, #FFFFFF)" : "var(--text-primary)",
+                  fontSize: "2.1rem",
+                  fontWeight: 600,
+                  fontFamily: "var(--font-sans, sans-serif)",
+                  color: pathname === "/" ? "#FFFFFF" : "rgba(255, 255, 255, 0.5)",
                   textDecoration: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
+                  transition: "color 0.2s ease",
+                  letterSpacing: "-0.01em",
                 }}
               >
-                <span>{t("nav_home") || "Home"}</span>
-                <span style={{ fontSize: "0.8rem", opacity: 0.4 }}>01</span>
+                Home
               </Link>
               <Link
                 href="/ask"
                 onClick={() => setIsMenuOpen(false)}
                 style={{
-                  fontSize: "2.2rem",
-                  fontFamily: "var(--font-serif)",
-                  color: pathname === "/ask" ? "var(--accent-color, #FFFFFF)" : "var(--text-primary)",
+                  fontSize: "2.1rem",
+                  fontWeight: 600,
+                  fontFamily: "var(--font-sans, sans-serif)",
+                  color: pathname === "/ask" ? "#FFFFFF" : "rgba(255, 255, 255, 0.5)",
                   textDecoration: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
+                  transition: "color 0.2s ease",
+                  letterSpacing: "-0.01em",
                 }}
               >
-                <span>{t("nav_ask") || "Ask Q&A"}</span>
-                <span style={{ fontSize: "0.8rem", opacity: 0.4 }}>02</span>
+                Ask Q&amp;A
               </Link>
               <Link
                 href="/about"
                 onClick={() => setIsMenuOpen(false)}
                 style={{
-                  fontSize: "2.2rem",
-                  fontFamily: "var(--font-serif)",
-                  color: pathname === "/about" ? "var(--accent-color, #FFFFFF)" : "var(--text-primary)",
+                  fontSize: "2.1rem",
+                  fontWeight: 600,
+                  fontFamily: "var(--font-sans, sans-serif)",
+                  color: pathname === "/about" ? "#FFFFFF" : "rgba(255, 255, 255, 0.5)",
                   textDecoration: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
+                  transition: "color 0.2s ease",
+                  letterSpacing: "-0.01em",
                 }}
               >
-                <span>About</span>
-                <span style={{ fontSize: "0.8rem", opacity: 0.4 }}>03</span>
+                About Ivan
               </Link>
+              <Link
+                href="/about#prologue"
+                onClick={() => setIsMenuOpen(false)}
+                style={{
+                  fontSize: "2.1rem",
+                  fontWeight: 600,
+                  fontFamily: "var(--font-sans, sans-serif)",
+                  color: "rgba(255, 255, 255, 0.5)",
+                  textDecoration: "none",
+                  transition: "color 0.2s ease",
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                Prologue
+              </Link>
+
+              {/* Search Bar / Hairline Input inside Menu (like Image 1) */}
+              <div style={{ width: "80%", maxWidth: "280px", margin: "1.2rem 0 0.5rem 0", position: "relative", borderBottom: "1px solid rgba(255,255,255,0.2)", paddingBottom: "0.4rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <input
+                  type="text"
+                  placeholder="Search journal..."
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const query = e.currentTarget.value;
+                      setIsMenuOpen(false);
+                      if (query) window.location.href = `/?search=${encodeURIComponent(query)}`;
+                    }
+                  }}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    outline: "none",
+                    color: "#FFFFFF",
+                    fontSize: "0.8rem",
+                    width: "85%",
+                    fontFamily: "var(--font-sans)",
+                  }}
+                />
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "rgba(255,255,255,0.5)" }}>
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              </div>
+
+              {/* Manifesto Quote (like Image 1) */}
+              <p style={{ fontSize: "0.74rem", lineHeight: 1.6, color: "rgba(255,255,255,0.45)", maxWidth: "260px", margin: "0 auto", fontStyle: "italic", fontFamily: "var(--font-serif, Georgia, serif)" }}>
+                Crafting high-performance web applications and thoughtful digital experiences in a human dimension.
+              </p>
             </div>
 
-            {/* Controls & Footer Info */}
-            <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "1.25rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.8rem", opacity: 0.7 }}>Appearance</span>
-                <button
-                  onClick={toggleThemeMode}
-                  style={{
-                    background: "var(--bg-secondary)",
-                    border: "1px solid var(--border-color)",
-                    borderRadius: "16px",
-                    padding: "6px 14px",
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    color: "var(--text-primary)",
-                    cursor: "pointer",
-                  }}
-                >
-                  {themeMode.toUpperCase()} MODE
-                </button>
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "0.8rem", opacity: 0.7 }}>Language</span>
-                <button
-                  onClick={cycleLang}
-                  style={{
-                    background: "var(--bg-secondary)",
-                    border: "1px solid var(--border-color)",
-                    borderRadius: "16px",
-                    padding: "6px 14px",
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    color: "var(--text-primary)",
-                    cursor: "pointer",
-                  }}
-                >
-                  {lang.toUpperCase()}
-                </button>
-              </div>
+            {/* Bottom Controls & Footer Metadata */}
+            <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "0.85rem", alignItems: "center", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "1rem" }}>
+              <button
+                onClick={cycleLang}
+                style={{
+                  background: "rgba(255,255,255,0.1)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  borderRadius: "14px",
+                  padding: "4px 14px",
+                  fontSize: "0.68rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
+                  color: "#FFFFFF",
+                  cursor: "pointer",
+                }}
+              >
+                {lang.toUpperCase()}
+              </button>
 
               {isAdminPage && (
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.5rem" }}>
-                  <span style={{ fontSize: "0.8rem", color: "#FF3B30" }}>Admin Session</span>
+                <div style={{ margin: "0.2rem 0" }}>
                   <SignOutButton />
                 </div>
               )}
 
-              <div style={{ marginTop: "1rem", fontSize: "0.7rem", opacity: 0.4, textAlign: "center" }}>
-                © 2026 IVAN AFFRIANDI · ALL RIGHTS RESERVED
+              <div style={{ fontSize: "0.62rem", letterSpacing: "0.12em", color: "rgba(255,255,255,0.35)", textTransform: "uppercase" }}>
+                JAKARTA, INDONESIA · © 2026 IVAN AFFRIANDI
               </div>
             </div>
           </motion.div>
