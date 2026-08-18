@@ -1,404 +1,428 @@
 /* ============================================================
-   IVAN AFFRIANDI · SPATIAL PORTFOLIO & WORK ARCHIVE
-   Pure Apple visionOS Spatial Glass Architecture (No Flat Elements)
+   IVAN AFFRIANDI · BRUTALIST EDITORIAL PORTFOLIO (work.ivanaffriandi.com)
+   Awwwards & FWA-Grade High-Fashion Monochrome Architecture
    ============================================================ */
 
-.spatialViewport {
+.portfolioRoot {
   min-height: 100vh;
   min-height: 100dvh;
   width: 100vw;
-  background: 
-    radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.18) 0%, transparent 40%),
-    radial-gradient(circle at 85% 20%, rgba(236, 72, 153, 0.15) 0%, transparent 45%),
-    radial-gradient(circle at 50% 80%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
-    #09090b;
-  background-attachment: fixed;
-  color: #f4f4f5;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, sans-serif;
+  background-color: #070708;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding: 40px 24px 80px 24px;
-  box-sizing: border-box;
   overflow-x: hidden;
   position: relative;
 }
 
+.mainContainer {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 32px 100px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  box-sizing: border-box;
+}
+
 @media (max-width: 768px) {
-  .spatialViewport {
-    padding: 20px 14px 60px 14px;
+  .mainContainer {
+    padding: 0 20px 60px 20px;
+    gap: 50px;
   }
 }
 
-.spatialContainer {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 36px;
-  position: relative;
-  z-index: 2;
-}
-
-/* ── VISION OS SPATIAL FLOATING NAVBAR ── */
-.spatialNav {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(40px) saturate(200%);
-  -webkit-backdrop-filter: blur(40px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  padding: 8px 18px;
+/* ── EDITORIAL TOP NAVBAR ── */
+.topNav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 
-    0 20px 50px -10px rgba(0, 0, 0, 0.5),
-    inset 0 1px 1px rgba(255, 255, 255, 0.25);
-  position: sticky;
-  top: 20px;
-  z-index: 50;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 32px 0 24px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.spatialNavBrand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.brandLogo {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.8px;
+  color: #ffffff;
   text-decoration: none;
-  color: #ffffff;
-}
-
-.navAvatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
-  background: #18181b;
   display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.navAvatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.navBrandTitle {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: -0.2px;
-  color: #ffffff;
-}
-
-.navBrandRole {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.45);
-  font-family: ui-monospace, SFMono-Regular, monospace;
-}
-
-.navSegmentedPills {
-  display: flex;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 4px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  align-items: baseline;
   gap: 2px;
 }
 
-.navPillBtn {
-  background: transparent;
-  border: none;
+.brandLogoDot {
+  color: #ef4444;
+}
+
+.navLinksGroup {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+@media (max-width: 640px) {
+  .navLinksGroup {
+    gap: 16px;
+  }
+}
+
+.navLinkItem {
   color: rgba(255, 255, 255, 0.6);
-  padding: 6px 16px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.navPillBtn:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.navPillBtnActive {
-  background: rgba(255, 255, 255, 0.15) !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.3);
-}
-
-.navRightActions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btnVisionAction {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-  padding: 7px 16px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
-  transition: all 0.2s ease;
-}
-
-.btnVisionAction:hover {
-  background: rgba(255, 255, 255, 0.16);
-  transform: translateY(-1px);
-}
-
-/* ── HERO HEADER SPATIAL GLASS PANEL ── */
-.spatialHeroPanel {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(50px) saturate(180%);
-  -webkit-backdrop-filter: blur(50px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 36px;
-  padding: 48px;
-  box-shadow: 
-    0 30px 80px -20px rgba(0, 0, 0, 0.6),
-    inset 0 1px 1px rgba(255, 255, 255, 0.15);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 40px;
-  position: relative;
-  overflow: hidden;
-}
-
-@media (max-width: 900px) {
-  .spatialHeroPanel {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 28px;
-    gap: 28px;
-  }
-}
-
-.heroLeftContent {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  z-index: 2;
-}
-
-.spatialBadgeLive {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-  color: #34d399;
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  width: fit-content;
-}
-
-.heroMainHeading {
-  font-size: 44px;
-  font-weight: 800;
-  letter-spacing: -1.2px;
-  line-height: 1.1;
-  color: #ffffff;
-  margin: 0;
-}
-
-@media (max-width: 768px) {
-  .heroMainHeading {
-    font-size: 32px;
-  }
-}
-
-.heroBioText {
-  font-size: 16px;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.7);
-  max-width: 620px;
-  margin: 0;
-}
-
-.heroTagGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.spatialSkillTag {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.85);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-}
-
-.heroRightAvatarCard {
-  width: 220px;
-  height: 220px;
-  border-radius: 32px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 
-    0 20px 50px rgba(0, 0, 0, 0.4),
-    inset 0 1px 1px rgba(255, 255, 255, 0.25);
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  flex-shrink: 0;
-}
-
-.heroRightAvatarCard img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* ── SECTION HEADER ── */
-.sectionHeaderBox {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-top: 12px;
-}
-
-.sectionTitle {
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: #ffffff;
-  margin: 0;
-}
-
-.sectionSubtitle {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.45);
-  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  letter-spacing: -0.1px;
 }
 
-/* ── 3D SPATIAL PROJECTS GRID ── */
-.spatialProjectGrid {
+.navLinkItem:hover {
+  color: #ffffff;
+}
+
+/* ── 3-COLUMN EDITORIAL VISUAL SHOWCASE HEADER ── */
+.visualShowcaseGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+  grid-template-columns: 1.1fr 1fr 1.3fr;
+  gap: 18px;
+  margin-top: 10px;
 }
 
 @media (max-width: 900px) {
-  .spatialProjectGrid {
+  .visualShowcaseGrid {
     grid-template-columns: 1fr;
   }
 }
 
-.spatialCardLarge {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 30px;
-  padding: 32px;
-  box-shadow: 
-    0 24px 60px -15px rgba(0, 0, 0, 0.5),
-    inset 0 1px 1px rgba(255, 255, 255, 0.18);
+.showcaseCard {
+  background: #121214;
+  border-radius: 18px;
+  overflow: hidden;
+  height: 240px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.showcaseCard:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.showcaseCard img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.showcaseCard:hover img {
+  transform: scale(1.05);
+}
+
+.showcaseCardOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.8) 100%);
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px;
+}
+
+.showcaseBadge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #a1a1aa;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+
+.showcaseTitle {
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 2px 0 0 0;
+}
+
+/* ── HERO MONUMENTAL HEADLINE SECTION ── */
+.heroSection {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin-top: 10px;
+}
+
+.heroGreetingSub {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+
+.monumentalHeadline {
+  font-size: 82px;
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -2.5px;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0;
+}
+
+.headlineSerifItalic {
+  font-family: "Georgia", "Merriweather", "Playfair Display", serif;
+  font-style: italic;
+  font-weight: 400;
+  text-transform: lowercase;
+  letter-spacing: -1px;
+  color: #ffffff;
+  margin: 0 10px;
+}
+
+@media (max-width: 900px) {
+  .monumentalHeadline {
+    font-size: 48px;
+    letter-spacing: -1.5px;
+  }
+}
+
+@media (max-width: 500px) {
+  .monumentalHeadline {
+    font-size: 36px;
+    letter-spacing: -1px;
+  }
+}
+
+.heroSplitRow {
+  display: flex;
   justify-content: space-between;
-  gap: 24px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  align-items: flex-start;
+  gap: 40px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 800px) {
+  .heroSplitRow {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.heroManifestoText {
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 480px;
+  margin: 0;
+}
+
+.heroActionGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+@media (max-width: 800px) {
+  .heroActionGroup {
+    align-items: flex-start;
+  }
+}
+
+.heroActionText {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: right;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+@media (max-width: 800px) {
+  .heroActionText {
+    text-align: left;
+  }
+}
+
+.btnDiscussPill {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #ffffff;
+  padding: 12px 28px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btnDiscussPill:hover {
+  background: #e4e4e7;
+  transform: scale(1.04);
+}
+
+/* ── WORKS & VENTURES LIST TABLE ── */
+.worksTableSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.worksTableRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-decoration: none;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.worksTableRow:hover {
+  padding-left: 12px;
+  padding-right: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.worksTableNameCluster {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+}
+
+.worksTableIndex {
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+
+.worksTableTitle {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
+  margin: 0;
+  color: #ffffff;
+  transition: color 0.2s ease;
+}
+
+.worksTableRow:hover .worksTableTitle {
+  color: #ef4444;
+}
+
+.worksTableSub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 4px 0 0 0;
+}
+
+.worksTableAction {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  transition: color 0.2s ease;
+}
+
+.worksTableRow:hover .worksTableAction {
+  color: #ffffff;
+}
+
+/* ── FEATURED HERO RED MOCKUP STAGE ── */
+.featuredHeroStage {
+  background: #0d0d10;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
   position: relative;
   overflow: hidden;
 }
 
-.spatialCardLarge:hover {
-  transform: translateY(-4px);
-  border-color: rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 
-    0 30px 80px -15px rgba(99, 102, 241, 0.2),
-    inset 0 1px 1px rgba(255, 255, 255, 0.3);
+@media (max-width: 768px) {
+  .featuredHeroStage {
+    padding: 24px;
+  }
 }
 
-.cardTopRow {
+.stageHeader {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: flex-end;
 }
 
-.cardCategoryBadge {
-  font-size: 11px;
-  font-weight: 800;
+.stageTitle {
+  font-size: 32px;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: #a78bfa;
-  font-family: ui-monospace, SFMono-Regular, monospace;
+  letter-spacing: -0.8px;
+  margin: 0;
 }
 
-.cardTitle {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.4px;
+.stageBanner {
+  background: #ef4444;
+  border-radius: 20px;
+  padding: 40px;
   color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 280px;
+  box-shadow: 0 20px 50px rgba(239, 68, 68, 0.25);
+  position: relative;
+}
+
+.stageBannerBadge {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.stageBannerHeading {
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin: 0;
+  line-height: 1;
+}
+
+.stageBannerSub {
+  font-size: 15px;
+  opacity: 0.85;
+  max-width: 500px;
   margin: 8px 0 0 0;
 }
 
-.cardDescription {
-  font-size: 14px;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.65);
-  margin: 10px 0 0 0;
-}
-
-.cardTechStackRow {
+.stageBannerLinks {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 14px;
+  gap: 12px;
+  margin-top: 20px;
 }
 
-.cardTechPill {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  padding: 4px 10px;
-  font-size: 11px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.75);
-}
-
-.cardActionLinksRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.btnCardLink {
-  background: #ffffff;
-  color: #000000;
-  padding: 8px 16px;
+.btnBannerAction {
+  background: #000000;
+  color: #ffffff;
+  padding: 10px 22px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 800;
@@ -409,102 +433,122 @@
   transition: all 0.2s ease;
 }
 
-.btnCardLink:hover {
-  background: #e4e4e7;
-  transform: translateY(-1px);
+.btnBannerAction:hover {
+  background: #1c1c1e;
+  transform: translateY(-2px);
 }
 
-.btnCardLinkSecondary {
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+/* ── SERVICES / EXPERTISE SECTION ── */
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
 }
 
-.btnCardLinkSecondary:hover {
-  background: rgba(255, 255, 255, 0.15);
+@media (max-width: 900px) {
+  .servicesGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
-/* ── ACTIVITIES & TIMELINE GLASS CONTAINER ── */
-.timelineGlassContainer {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 30px;
-  padding: 36px;
-  box-shadow: 
-    0 24px 60px -15px rgba(0, 0, 0, 0.5),
-    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+.serviceCard {
+  background: #0e0e11;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  justify-content: space-between;
+  min-height: 240px;
+  transition: all 0.3s ease;
 }
 
-.timelineItem {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+.serviceCard:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
 }
 
-.timelineItem:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.timelineDateBadge {
+.serviceCardIndex {
   font-size: 12px;
-  font-weight: 800;
-  color: #38bdf8;
+  font-weight: 900;
+  color: #ef4444;
   font-family: ui-monospace, SFMono-Regular, monospace;
-  min-width: 90px;
-  padding-top: 2px;
 }
 
-.timelineContent {
-  flex: 1;
-}
-
-.timelineTitle {
-  font-size: 15px;
+.serviceCardTitle {
+  font-size: 20px;
   font-weight: 800;
-  color: #ffffff;
+  letter-spacing: -0.3px;
+  margin: 12px 0 0 0;
+}
+
+.serviceCardDesc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 8px 0 0 0;
+}
+
+/* ── CONTACT & FOOTER ── */
+.contactSection {
+  background: #0d0d10;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  padding: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.contactTitle {
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  text-transform: uppercase;
   margin: 0;
 }
 
-.timelineDesc {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.6);
-  line-height: 1.5;
-  margin: 4px 0 0 0;
+.contactSubtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 6px 0 0 0;
 }
 
-/* ── SPATIAL FOOTER ── */
-.spatialFooter {
+.contactButtonsGroup {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24px 8px 0 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.4);
-  font-family: ui-monospace, SFMono-Regular, monospace;
+  gap: 14px;
   flex-wrap: wrap;
-  gap: 12px;
 }
 
-.footerLinks {
-  display: flex;
-  gap: 16px;
-}
-
-.footerLinkItem {
-  color: rgba(255, 255, 255, 0.6);
+.btnContactLarge {
+  background: #ffffff;
+  color: #000000;
+  padding: 14px 32px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 900;
   text-decoration: none;
-  transition: color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.footerLinkItem:hover {
+.btnContactLarge:hover {
+  background: #ef4444;
   color: #ffffff;
+  transform: scale(1.05);
+}
+
+.btnContactSecondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btnContactSecondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(1.05);
 }

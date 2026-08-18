@@ -1,270 +1,274 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './work.module.css';
 
-export default function WorkPortfolioPage() {
-  const [filterCategory, setFilterCategory] = useState<'ALL' | 'ATELIER' | 'SYSTEMS' | 'WRITING'>('ALL');
-
-  const projects = [
+export default function WorkEditorialPortfolioPage() {
+  const works = [
     {
-      id: 'shuen',
-      category: 'ATELIER',
-      categoryLabel: 'Physical Craft × Generative 3D',
-      title: 'SHŪ / EN Studio · Bespoke Leather Goods',
-      description: 'An artisanal leather atelier and luxury e-commerce experience powered by real-time 3D WebGL customization engine, responsive pricing matrix, and dedicated logistics pipeline.',
-      techStack: ['Three.js', 'WebGL', 'Next.js 16', 'PostgreSQL', 'DOKU Engine', 'Biteship Logistics'],
-      primaryLink: { label: 'Storefront', url: 'https://shuenstudio.com' },
-      secondaryLink: { label: '3D Configurator', url: 'https://shuenstudio.com/po' },
+      index: '01',
+      title: 'SHŪ / EN Studio',
+      subtitle: 'Bespoke Leather Goods & Real-Time 3D WebGL Configurator',
+      linkText: 'Explore Atelier',
+      linkUrl: 'https://shuenstudio.com',
     },
     {
-      id: 'mail',
-      category: 'SYSTEMS',
-      categoryLabel: 'Distributed Infrastructure',
-      title: 'Private Email Engine & SES Platform',
-      description: 'A custom-engineered mail platform with automated DKIM 2048-bit RSA key rotation, SES deliverability monitor (99.98% inbox rate), and macOS-inspired web client.',
-      techStack: ['AWS SES', 'DKIM 2048-bit', 'Docker', 'Oracle Cloud VM', 'Next.js 16', 'Tailwind CSS'],
-      primaryLink: { label: 'Open Webmail', url: 'https://mail.ivanaffriandi.com' },
-      secondaryLink: null,
+      index: '02',
+      title: 'Private Mail Engine',
+      subtitle: 'Self-Hosted High-Deliverability Infrastructure & DKIM 2048-bit',
+      linkText: 'Open Webmail',
+      linkUrl: 'https://mail.ivanaffriandi.com',
     },
     {
-      id: 'essays',
-      category: 'WRITING',
-      categoryLabel: 'Design & Engineering Writing',
-      title: 'Essays on Modern Craft & Computation',
-      description: 'Longform writings and critical reflections on Swiss minimalist design, spatial computing paradigms, web performance, and the synergy of digital code with physical leathercraft.',
-      techStack: ['Swiss Typography', 'Design Systems', 'Editorial Layout', 'Minimalism'],
-      primaryLink: { label: 'Read Essays', url: 'https://ivanaffriandi.com' },
-      secondaryLink: { label: 'Ask AI', url: 'https://ivanaffriandi.com/ask' },
+      index: '03',
+      title: 'Interactive Book Core',
+      subtitle: 'Multi-Sensory Digital Reader with Ambient Audio & Realtime Telemetry',
+      linkText: 'Read Interactive Book',
+      linkUrl: 'https://ivanaffriandi.com/x',
     },
     {
-      id: 'book',
-      category: 'SYSTEMS',
-      categoryLabel: 'Interactive Multimedia Core',
-      title: 'Multi-Sensory Book & Reader Analytics',
-      description: 'An experimental digital reading platform featuring ambient soundscapes, neural text-to-speech audio narration, and real-time reader session analytics.',
-      techStack: ['Web Audio API', 'TTS Synthesis', 'Realtime Telemetry', 'Next.js'],
-      primaryLink: { label: 'Explore Interactive Book', url: 'https://ivanaffriandi.com/x' },
-      secondaryLink: null,
+      index: '04',
+      title: 'Essays & Architecture',
+      subtitle: 'Publications on Swiss Minimalism, Spatial Computing & Software Craft',
+      linkText: 'Read Publications',
+      linkUrl: 'https://ivanaffriandi.com',
     },
   ];
 
-  const filteredProjects = projects.filter(p => filterCategory === 'ALL' || p.category === filterCategory);
-
-  const timelineItems = [
+  const services = [
     {
-      date: 'AUG 2026',
-      title: 'SHŪ / EN Studio v2.6 Launch',
-      description: 'Shipped real-time 3D leather configurator, DOKU payment integration, and Biteship courier tracking engine.',
+      index: '01',
+      title: 'Spatial & Web Engineering',
+      desc: 'Developing high-performance 3D WebGL configurators, fluid spatial interfaces, and next-generation Next.js applications with zero bloat.',
     },
     {
-      date: 'JUL 2026',
-      title: 'Private Mail Platform & DKIM 2048-bit Infrastructure',
-      description: 'Built and deployed self-hosted mail platform with high deliverability scoring on Oracle Cloud VM.',
+      index: '02',
+      title: 'Bespoke Physical Atelier',
+      desc: 'Crafting luxury leather goods, bespoke trifold journals, custom embossing, and silver hardware integration with artisanal precision.',
     },
     {
-      date: 'MAY 2026',
-      title: 'Apple visionOS Spatial Web Experiments',
-      description: 'Authored spatial glass interface concepts with high-depth specular refraction and fluid tactile responsiveness.',
-    },
-    {
-      date: '2025 – 2026',
-      title: 'Bespoke Atelier Leathercraft Inception',
-      description: 'Established the physical leather workshop in Tangerang, developing trifold patterns, cord finishes, and custom charm hardware.',
+      index: '03',
+      title: 'Cloud & Systems Architecture',
+      desc: 'Architecting dedicated cloud instances, DKIM 2048-bit private mail relays, PostgreSQL clusters, and enterprise payment webhooks.',
     },
   ];
 
   return (
-    <div className={styles.spatialViewport}>
-      <div className={styles.spatialContainer}>
-        {/* ── TOP VISION OS SPATIAL NAVBAR ── */}
-        <header className={styles.spatialNav}>
-          <a href="https://ivanaffriandi.com" className={styles.spatialNavBrand}>
-            <div className={styles.navAvatar}>
-              <img src="/profile.jpg" alt="Ivan Affriandi" onError={(e) => { (e.target as HTMLImageElement).src = 'https://github.com/ivanaffriandi.png'; }} />
-            </div>
-            <div>
-              <div className={styles.navBrandTitle}>Ivan Affriandi</div>
-              <div className={styles.navBrandRole}>work.ivanaffriandi.com</div>
-            </div>
+    <div className={styles.portfolioRoot}>
+      <div className={styles.mainContainer}>
+        {/* ── TOP EDITORIAL NAVBAR ── */}
+        <header className={styles.topNav}>
+          <a href="https://ivanaffriandi.com" className={styles.brandLogo}>
+            Ivan<span className={styles.brandLogoDot}>.</span>
           </a>
 
-          {/* Filter Segmented Pills */}
-          <div className={styles.navSegmentedPills}>
-            <button
-              onClick={() => setFilterCategory('ALL')}
-              className={`${styles.navPillBtn} ${filterCategory === 'ALL' ? styles.navPillBtnActive : ''}`}
-            >
-              All Works
-            </button>
-            <button
-              onClick={() => setFilterCategory('ATELIER')}
-              className={`${styles.navPillBtn} ${filterCategory === 'ATELIER' ? styles.navPillBtnActive : ''}`}
-            >
-              Atelier
-            </button>
-            <button
-              onClick={() => setFilterCategory('SYSTEMS')}
-              className={`${styles.navPillBtn} ${filterCategory === 'SYSTEMS' ? styles.navPillBtnActive : ''}`}
-            >
-              Systems
-            </button>
-            <button
-              onClick={() => setFilterCategory('WRITING')}
-              className={`${styles.navPillBtn} ${filterCategory === 'WRITING' ? styles.navPillBtnActive : ''}`}
-            >
-              Writing
-            </button>
+          <nav className={styles.navLinksGroup}>
+            <a href="#works" className={styles.navLinkItem}>Works</a>
+            <a href="#services" className={styles.navLinkItem}>Capabilities</a>
+            <a href="https://shuenstudio.com" target="_blank" rel="noreferrer" className={styles.navLinkItem}>Atelier ↗</a>
+            <a href="#contact" className={styles.navLinkItem}>Contact</a>
+          </nav>
+        </header>
+
+        {/* ── 3-COLUMN EDITORIAL VISUAL SHOWCASE ── */}
+        <section className={styles.visualShowcaseGrid}>
+          {/* Card 1: 3D Atelier Object */}
+          <div className={styles.showcaseCard}>
+            <img 
+              src="https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&auto=format&fit=crop&q=80" 
+              alt="Bespoke Leather Atelier" 
+            />
+            <div className={styles.showcaseCardOverlay}>
+              <span className={styles.showcaseBadge}>Physical Craft</span>
+              <h4 className={styles.showcaseTitle}>SHŪ / EN Leather Goods</h4>
+            </div>
           </div>
 
-          <div className={styles.navRightActions}>
-            <a href="https://ivanaffriandi.com" className={styles.btnVisionAction}>
-              <span>Personal Space</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          {/* Card 2: Minimalist Hardware / Textures */}
+          <div className={styles.showcaseCard}>
+            <img 
+              src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&auto=format&fit=crop&q=80" 
+              alt="Artisanal Texture" 
+            />
+            <div className={styles.showcaseCardOverlay}>
+              <span className={styles.showcaseBadge}>Material Studio</span>
+              <h4 className={styles.showcaseTitle}>Moire &amp; Nero Leather</h4>
+            </div>
+          </div>
+
+          {/* Card 3: MacBook / 3D Configurator Stage */}
+          <div className={styles.showcaseCard}>
+            <img 
+              src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=80" 
+              alt="High-Performance Computation" 
+            />
+            <div className={styles.showcaseCardOverlay}>
+              <span className={styles.showcaseBadge}>Digital Engine</span>
+              <h4 className={styles.showcaseTitle}>WebGL 3D Configurator</h4>
+            </div>
+          </div>
+        </section>
+
+        {/* ── MONUMENTAL EDITORIAL HERO HEADLINE ── */}
+        <section className={styles.heroSection}>
+          <div className={styles.heroGreetingSub}>
+            (HELLO, I&apos;M IVAN AFFRIANDI)
+          </div>
+
+          <h1 className={styles.monumentalHeadline}>
+            CREATIVE <span className={styles.headlineSerifItalic}>end</span> TECHNOLOGIST
+          </h1>
+
+          <div className={styles.heroSplitRow}>
+            <p className={styles.heroManifestoText}>
+              I bridge the tangible world of bespoke physical leathercraft with the precision of spatial web engineering, distributed cloud systems, and uncompromising minimalist aesthetics.
+            </p>
+
+            <div className={styles.heroActionGroup}>
+              <div className={styles.heroActionText}>
+                Based in Indonesia. Available for creative direction, technical architecture, and bespoke commissions worldwide.
+              </div>
+              <a href="#contact" className={styles.btnDiscussPill}>
+                <span>Let&apos;s discuss</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="7" y1="17" x2="17" y2="7" />
+                  <polyline points="7 7 17 7 17 17" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* ── FEATURED HERO RED MOCKUP STAGE ── */}
+        <section className={styles.featuredHeroStage}>
+          <div className={styles.stageHeader}>
+            <h2 className={styles.stageTitle}>Featured Atelier Project</h2>
+            <span style={{ fontSize: '12px', color: '#a1a1aa', fontFamily: 'ui-monospace, monospace' }}>01 / 04</span>
+          </div>
+
+          <div className={styles.stageBanner}>
+            <div>
+              <span className={styles.stageBannerBadge}>LIVE FLAGSHIP VENTURE</span>
+              <h3 className={styles.stageBannerHeading}>SHŪ / EN Studio</h3>
+              <p className={styles.stageBannerSub}>
+                Artisanal bespoke leather goods with real-time 3D WebGL customization, dynamic pricing calculations, DOKU payment gateway, and integrated courier tracking.
+              </p>
+            </div>
+
+            <div className={styles.stageBannerLinks}>
+              <a href="https://shuenstudio.com" target="_blank" rel="noreferrer" className={styles.btnBannerAction}>
+                <span>Live Storefront</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="7" y1="17" x2="17" y2="7" />
+                  <polyline points="7 7 17 7 17 17" />
+                </svg>
+              </a>
+              <a href="https://shuenstudio.com/po" target="_blank" rel="noreferrer" className={styles.btnBannerAction} style={{ background: '#ffffff', color: '#000000' }}>
+                <span>3D Configurator</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="7" y1="17" x2="17" y2="7" />
+                  <polyline points="7 7 17 7 17 17" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* ── WORKS & VENTURES LIST TABLE ── */}
+        <section id="works" className={styles.worksTableSection}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '1px solid rgba(255,255,255,0.15)', paddingBottom: '16px' }}>
+            <h2 style={{ fontSize: '16px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>
+              Selected Works &amp; Ventures
+            </h2>
+            <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', fontFamily: 'ui-monospace, monospace' }}>
+              (2025 — 2026)
+            </span>
+          </div>
+
+          <div>
+            {works.map((item) => (
+              <a
+                key={item.index}
+                href={item.linkUrl}
+                target="_blank"
+                rel="noreferrer"
+                className={styles.worksTableRow}
+              >
+                <div className={styles.worksTableNameCluster}>
+                  <span className={styles.worksTableIndex}>({item.index})</span>
+                  <div>
+                    <h3 className={styles.worksTableTitle}>{item.title}</h3>
+                    <p className={styles.worksTableSub}>{item.subtitle}</p>
+                  </div>
+                </div>
+
+                <div className={styles.worksTableAction}>
+                  <span>{item.linkText}</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="7" y1="17" x2="17" y2="7" />
+                    <polyline points="7 7 17 7 17 17" />
+                  </svg>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        {/* ── SERVICES / CAPABILITIES SECTION ── */}
+        <section id="services">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '1px solid rgba(255,255,255,0.15)', paddingBottom: '16px', marginBottom: '24px' }}>
+            <h2 style={{ fontSize: '16px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', margin: 0 }}>
+              Capabilities &amp; Core Disciplines
+            </h2>
+            <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', fontFamily: 'ui-monospace, monospace' }}>
+              SERVICES
+            </span>
+          </div>
+
+          <div className={styles.servicesGrid}>
+            {services.map((s) => (
+              <div key={s.index} className={styles.serviceCard}>
+                <div>
+                  <span className={styles.serviceCardIndex}>({s.index})</span>
+                  <h3 className={styles.serviceCardTitle}>{s.title}</h3>
+                  <p className={styles.serviceCardDesc}>{s.desc}</p>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', marginTop: '20px', fontFamily: 'ui-monospace, monospace' }}>
+                  <span>EXPERTISE READY</span>
+                  <span>→</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── CONTACT & COMMISSION DESK ── */}
+        <section id="contact" className={styles.contactSection}>
+          <div>
+            <h2 className={styles.contactTitle}>Let&apos;s start creating together.</h2>
+            <p className={styles.contactSubtitle}>
+              Open for bespoke leather commissions, spatial web engineering, and architecture consulting.
+            </p>
+          </div>
+
+          <div className={styles.contactButtonsGroup}>
+            <a href="https://wa.me/6281234567890" target="_blank" rel="noreferrer" className={styles.btnContactLarge}>
+              <span>WhatsApp Direct</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7" />
+                <polyline points="7 7 17 7 17 17" />
+              </svg>
+            </a>
+            <a href="mailto:ivan@ivanaffriandi.com" className={`${styles.btnContactLarge} ${styles.btnContactSecondary}`}>
+              <span>Email Me</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="7" y1="17" x2="17" y2="7" />
                 <polyline points="7 7 17 7 17 17" />
               </svg>
             </a>
           </div>
-        </header>
-
-        {/* ── SPATIAL HERO IDENTITY PANEL ── */}
-        <section className={styles.spatialHeroPanel}>
-          <div className={styles.heroLeftContent}>
-            <div className={styles.spatialBadgeLive}>
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
-              <span>ACTIVE CREATIVE TECHNOLOGIST &amp; ATELIER FOUNDER</span>
-            </div>
-
-            <h1 className={styles.heroMainHeading}>
-              Engineering digital systems &amp; crafting physical objects.
-            </h1>
-
-            <p className={styles.heroBioText}>
-              I build spatial interfaces, robust distributed platforms, and bespoke physical leather goods. Founder of <strong>SHŪ / EN Studio</strong>. Dedicated to uncompromising minimalism, tactile excellence, and ultra-high performance.
-            </p>
-
-            <div className={styles.heroTagGrid}>
-              <span className={styles.spatialSkillTag}>Spatial Web Design</span>
-              <span className={styles.spatialSkillTag}>Three.js &amp; WebGL</span>
-              <span className={styles.spatialSkillTag}>Next.js 16</span>
-              <span className={styles.spatialSkillTag}>AWS SES &amp; Distributed Mail</span>
-              <span className={styles.spatialSkillTag}>Physical Atelier Craft</span>
-              <span className={styles.spatialSkillTag}>PostgreSQL &amp; Cloudflare</span>
-            </div>
-          </div>
-
-          <div className={styles.heroRightAvatarCard}>
-            <img src="/profile.jpg" alt="Ivan Affriandi" onError={(e) => { (e.target as HTMLImageElement).src = 'https://github.com/ivanaffriandi.png'; }} />
-          </div>
         </section>
-
-        {/* ── SELECTED PROJECTS SECTION ── */}
-        <div>
-          <div className={styles.sectionHeaderBox}>
-            <div>
-              <h2 className={styles.sectionTitle}>Featured Works &amp; Ventures</h2>
-              <span className={styles.sectionSubtitle}>Selected commercial products, open engines &amp; physical atelier creations</span>
-            </div>
-          </div>
-
-          <div className={styles.spatialProjectGrid} style={{ marginTop: '20px' }}>
-            {filteredProjects.map((project) => (
-              <div key={project.id} className={styles.spatialCardLarge}>
-                <div>
-                  <div className={styles.cardTopRow}>
-                    <span className={styles.cardCategoryBadge}>{project.categoryLabel}</span>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="7" y1="17" x2="17" y2="7" />
-                      <polyline points="7 7 17 7 17 17" />
-                    </svg>
-                  </div>
-
-                  <h3 className={styles.cardTitle}>{project.title}</h3>
-                  <p className={styles.cardDescription}>{project.description}</p>
-
-                  <div className={styles.cardTechStackRow}>
-                    {project.techStack.map((tech, tIdx) => (
-                      <span key={tIdx} className={styles.cardTechPill}>{tech}</span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className={styles.cardActionLinksRow}>
-                  {project.primaryLink && (
-                    <a
-                      href={project.primaryLink.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={styles.btnCardLink}
-                    >
-                      <span>{project.primaryLink.label}</span>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="7" y1="17" x2="17" y2="7" />
-                        <polyline points="7 7 17 7 17 17" />
-                      </svg>
-                    </a>
-                  )}
-
-                  {project.secondaryLink && (
-                    <a
-                      href={project.secondaryLink.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className={`${styles.btnCardLink} ${styles.btnCardLinkSecondary}`}
-                    >
-                      <span>{project.secondaryLink.label}</span>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="7" y1="17" x2="17" y2="7" />
-                        <polyline points="7 7 17 7 17 17" />
-                      </svg>
-                    </a>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── ACTIVITIES & MILESTONES SECTION ── */}
-        <div>
-          <div className={styles.sectionHeaderBox}>
-            <div>
-              <h2 className={styles.sectionTitle}>Activities &amp; Engineering Chronicle</h2>
-              <span className={styles.sectionSubtitle}>Timeline of launches, infrastructure milestones &amp; atelier experiments</span>
-            </div>
-          </div>
-
-          <div className={styles.timelineGlassContainer} style={{ marginTop: '20px' }}>
-            {timelineItems.map((item, idx) => (
-              <div key={idx} className={styles.timelineItem}>
-                <div className={styles.timelineDateBadge}>{item.date}</div>
-                <div className={styles.timelineContent}>
-                  <h4 className={styles.timelineTitle}>{item.title}</h4>
-                  <p className={styles.timelineDesc}>{item.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── SPATIAL FOOTER ── */}
-        <footer className={styles.spatialFooter}>
-          <div>
-            © 2026 Ivan Affriandi. All rights reserved.
-          </div>
-          <div className={styles.footerLinks}>
-            <a href="https://shuenstudio.com" target="_blank" rel="noreferrer" className={styles.footerLinkItem}>
-              SHŪ / EN Studio ↗
-            </a>
-            <a href="https://mail.ivanaffriandi.com" target="_blank" rel="noreferrer" className={styles.footerLinkItem}>
-              Mail Platform ↗
-            </a>
-            <a href="https://ivanaffriandi.com/about" target="_blank" rel="noreferrer" className={styles.footerLinkItem}>
-              About ↗
-            </a>
-          </div>
-        </footer>
       </div>
     </div>
   );
