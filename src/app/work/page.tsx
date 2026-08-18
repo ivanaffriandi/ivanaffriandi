@@ -2,58 +2,47 @@
 
 import React, { useState } from 'react';
 import ShuenWorkspaceWidget from '@/components/ShuenWorkspaceWidget';
+import styles from './work.module.css';
 
 export default function WorkPage() {
   const [activeProject, setActiveProject] = useState<'shuen' | 'personal' | 'ventures'>('shuen');
 
   return (
-    <div className="min-h-screen bg-[#0d0d0f] text-white selection:bg-amber-500/30 selection:text-amber-200">
+    <div className={styles.workspaceRoot}>
       {/* ── TOP EXECUTIVE APP BAR ── */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0d0d0f]/80 backdrop-blur-2xl px-6 md:px-12 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center font-black text-black text-xs shadow-[0_0_20px_rgba(251,191,36,0.3)]">
+      <header className={styles.headerBar}>
+        <div className={styles.brandCluster}>
+          <div className={styles.brandAvatar}>
             IA
           </div>
           <div>
-            <h1 className="font-bold text-sm tracking-tight text-white flex items-center gap-2">
+            <h1 className={styles.brandTitle}>
               Ivan Affriandi
-              <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-white/10 text-white/70 border border-white/10">
+              <span className={styles.badgePill}>
                 Workspace Hub
               </span>
             </h1>
-            <p className="text-[11px] text-white/40 font-mono">work.ivanaffriandi.com</p>
+            <p className={styles.brandSub}>work.ivanaffriandi.com</p>
           </div>
         </div>
 
         {/* Project Selector Pills */}
-        <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-white/5 border border-white/10">
+        <div className={styles.navPills}>
           <button
             onClick={() => setActiveProject('shuen')}
-            className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeProject === 'shuen'
-                ? 'bg-amber-400 text-black shadow-lg'
-                : 'text-white/60 hover:text-white hover:bg-white/5'
-            }`}
+            className={`${styles.navPillBtn} ${activeProject === 'shuen' ? styles.navPillBtnActiveGold : ''}`}
           >
             SHŪ / EN Studio
           </button>
           <button
             onClick={() => setActiveProject('personal')}
-            className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeProject === 'personal'
-                ? 'bg-white text-black shadow-lg'
-                : 'text-white/60 hover:text-white hover:bg-white/5'
-            }`}
+            className={`${styles.navPillBtn} ${activeProject === 'personal' ? styles.navPillBtnActive : ''}`}
           >
             Personal Space
           </button>
           <button
             onClick={() => setActiveProject('ventures')}
-            className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeProject === 'ventures'
-                ? 'bg-white text-black shadow-lg'
-                : 'text-white/60 hover:text-white hover:bg-white/5'
-            }`}
+            className={`${styles.navPillBtn} ${activeProject === 'ventures' ? styles.navPillBtnActive : ''}`}
           >
             Ventures
           </button>
@@ -61,20 +50,24 @@ export default function WorkPage() {
       </header>
 
       {/* ── MAIN CONTENT CONTAINER ── */}
-      <main className="max-w-7xl mx-auto px-6 md:px-12 py-10">
+      <main className={styles.mainContainer}>
         {activeProject === 'shuen' && (
-          <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/10 pb-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '20px' }}>
               <div>
-                <p className="text-xs font-mono uppercase tracking-widest text-amber-400 mb-1">E-Commerce &amp; Bespoke Atelier</p>
-                <h2 className="text-3xl font-extrabold tracking-tight">SHŪ / EN Studio Control Center</h2>
+                <p style={{ fontSize: '11px', fontFamily: 'ui-monospace, monospace', textTransform: 'uppercase', letterSpacing: '1px', color: '#d4af37', margin: '0 0 6px 0', fontWeight: 700 }}>
+                  E-Commerce &amp; Bespoke Leather Atelier
+                </p>
+                <h2 style={{ fontSize: '28px', fontWeight: 900, letterSpacing: '-0.5px', margin: 0 }}>
+                  SHŪ / EN Studio Control Center
+                </h2>
               </div>
-              <div className="flex items-center gap-2">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <a
                   href="https://shuenstudio.com"
                   target="_blank"
                   rel="noreferrer"
-                  className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold transition-all"
+                  className={styles.btnSecondary}
                 >
                   Live Storefront ↗
                 </a>
@@ -82,7 +75,7 @@ export default function WorkPage() {
                   href="https://shuenstudio.com/po"
                   target="_blank"
                   rel="noreferrer"
-                  className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold transition-all"
+                  className={styles.btnSecondary}
                 >
                   3D Configurator ↗
                 </a>
@@ -95,13 +88,13 @@ export default function WorkPage() {
         )}
 
         {activeProject === 'personal' && (
-          <div className="p-12 rounded-[28px] bg-neutral-900/60 border border-white/10 text-center space-y-4">
-            <h3 className="text-xl font-bold">Ivan Affriandi — Personal Blog &amp; Archive</h3>
-            <p className="text-sm text-white/50 max-w-md mx-auto">
-              Main portfolio, daily reflections, book reading system, and interactive visitor analytics.
+          <div className={styles.studioHeroCard} style={{ textAlign: 'center', padding: '60px 20px', flexDirection: 'column', justifyContent: 'center' }}>
+            <h3 style={{ fontSize: '22px', fontWeight: 800, margin: 0 }}>Ivan Affriandi — Personal Space &amp; Archive</h3>
+            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', maxWidth: '480px', margin: '12px auto' }}>
+              Main portfolio, daily reflections, philosophical essays, and interactive visitor analytics.
             </p>
-            <div className="pt-4 flex justify-center gap-3">
-              <a href="https://ivanaffriandi.com" target="_blank" rel="noreferrer" className="px-5 py-2.5 rounded-full bg-white text-black font-bold text-xs hover:bg-white/90 transition-all">
+            <div style={{ marginTop: '16px' }}>
+              <a href="https://ivanaffriandi.com" target="_blank" rel="noreferrer" className={styles.btnPrimary}>
                 Open ivanaffriandi.com ↗
               </a>
             </div>
@@ -109,10 +102,10 @@ export default function WorkPage() {
         )}
 
         {activeProject === 'ventures' && (
-          <div className="p-12 rounded-[28px] bg-neutral-900/60 border border-white/10 text-center space-y-4">
-            <h3 className="text-xl font-bold">Upcoming Projects &amp; Ventures</h3>
-            <p className="text-sm text-white/50 max-w-md mx-auto">
-              Add more modules and workspaces here as your creative ecosystem expands.
+          <div className={styles.studioHeroCard} style={{ textAlign: 'center', padding: '60px 20px', flexDirection: 'column', justifyContent: 'center' }}>
+            <h3 style={{ fontSize: '22px', fontWeight: 800, margin: 0 }}>Upcoming Projects &amp; Ventures</h3>
+            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', maxWidth: '480px', margin: '12px auto' }}>
+              Connected microservices and business ventures will populate here automatically.
             </p>
           </div>
         )}
