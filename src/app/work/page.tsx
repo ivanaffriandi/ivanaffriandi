@@ -1,240 +1,271 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import ShuenWorkspaceWidget from '@/components/ShuenWorkspaceWidget';
-import WorkSecurityGate from '@/components/WorkSecurityGate';
+import React, { useState } from 'react';
 import styles from './work.module.css';
 
-export default function WorkPage() {
-  const [activeTab, setActiveTab] = useState<'orders' | 'metrics' | 'products' | 'telemetry'>('orders');
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [checkingAuth, setCheckingAuth] = useState(true);
+export default function WorkPortfolioPage() {
+  const [filterCategory, setFilterCategory] = useState<'ALL' | 'ATELIER' | 'SYSTEMS' | 'WRITING'>('ALL');
 
-  const checkAuthStatus = async () => {
-    try {
-      const res = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'check' }),
-      });
-      const data = await res.json();
-      setIsAuthenticated(Boolean(data.authenticated));
-    } catch {
-      setIsAuthenticated(false);
-    } finally {
-      setCheckingAuth(false);
-    }
-  };
+  const projects = [
+    {
+      id: 'shuen',
+      category: 'ATELIER',
+      categoryLabel: 'Physical Craft × Generative 3D',
+      title: 'SHŪ / EN Studio · Bespoke Leather Goods',
+      description: 'An artisanal leather atelier and luxury e-commerce experience powered by real-time 3D WebGL customization engine, responsive pricing matrix, and dedicated logistics pipeline.',
+      techStack: ['Three.js', 'WebGL', 'Next.js 16', 'PostgreSQL', 'DOKU Engine', 'Biteship Logistics'],
+      primaryLink: { label: 'Storefront', url: 'https://shuenstudio.com' },
+      secondaryLink: { label: '3D Configurator', url: 'https://shuenstudio.com/po' },
+    },
+    {
+      id: 'mail',
+      category: 'SYSTEMS',
+      categoryLabel: 'Distributed Infrastructure',
+      title: 'Private Email Engine & SES Platform',
+      description: 'A custom-engineered mail platform with automated DKIM 2048-bit RSA key rotation, SES deliverability monitor (99.98% inbox rate), and macOS-inspired web client.',
+      techStack: ['AWS SES', 'DKIM 2048-bit', 'Docker', 'Oracle Cloud VM', 'Next.js 16', 'Tailwind CSS'],
+      primaryLink: { label: 'Open Webmail', url: 'https://mail.ivanaffriandi.com' },
+      secondaryLink: null,
+    },
+    {
+      id: 'essays',
+      category: 'WRITING',
+      categoryLabel: 'Design & Engineering Writing',
+      title: 'Essays on Modern Craft & Computation',
+      description: 'Longform writings and critical reflections on Swiss minimalist design, spatial computing paradigms, web performance, and the synergy of digital code with physical leathercraft.',
+      techStack: ['Swiss Typography', 'Design Systems', 'Editorial Layout', 'Minimalism'],
+      primaryLink: { label: 'Read Essays', url: 'https://ivanaffriandi.com' },
+      secondaryLink: { label: 'Ask AI', url: 'https://ivanaffriandi.com/ask' },
+    },
+    {
+      id: 'book',
+      category: 'SYSTEMS',
+      categoryLabel: 'Interactive Multimedia Core',
+      title: 'Multi-Sensory Book & Reader Analytics',
+      description: 'An experimental digital reading platform featuring ambient soundscapes, neural text-to-speech audio narration, and real-time reader session analytics.',
+      techStack: ['Web Audio API', 'TTS Synthesis', 'Realtime Telemetry', 'Next.js'],
+      primaryLink: { label: 'Explore Interactive Book', url: 'https://ivanaffriandi.com/x' },
+      secondaryLink: null,
+    },
+  ];
 
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
+  const filteredProjects = projects.filter(p => filterCategory === 'ALL' || p.category === filterCategory);
 
-  const handleLockEnclave = async () => {
-    try {
-      await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'logout' }),
-      });
-    } catch {
-      // ignore
-    } finally {
-      setIsAuthenticated(false);
-    }
-  };
-
-  if (checkingAuth) {
-    return (
-      <div style={{ minHeight: '100dvh', background: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.4)', gap: '12px', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif' }}>
-        <div style={{ width: '20px', height: '20px', border: '2px solid rgba(212,175,55,0.2)', borderTop: '2px solid #d4af37', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-        <span>Authenticating Security Enclave...</span>
-      </div>
-    );
-  }
-
-  // If not authenticated, render military-grade Apple Security Gate
-  if (!isAuthenticated) {
-    return <WorkSecurityGate onAuthenticated={() => setIsAuthenticated(true)} />;
-  }
+  const timelineItems = [
+    {
+      date: 'AUG 2026',
+      title: 'SHŪ / EN Studio v2.6 Launch',
+      description: 'Shipped real-time 3D leather configurator, DOKU payment integration, and Biteship courier tracking engine.',
+    },
+    {
+      date: 'JUL 2026',
+      title: 'Private Mail Platform & DKIM 2048-bit Infrastructure',
+      description: 'Built and deployed self-hosted mail platform with high deliverability scoring on Oracle Cloud VM.',
+    },
+    {
+      date: 'MAY 2026',
+      title: 'Apple visionOS Spatial Web Experiments',
+      description: 'Authored spatial glass interface concepts with high-depth specular refraction and fluid tactile responsiveness.',
+    },
+    {
+      date: '2025 – 2026',
+      title: 'Bespoke Atelier Leathercraft Inception',
+      description: 'Established the physical leather workshop in Tangerang, developing trifold patterns, cord finishes, and custom charm hardware.',
+    },
+  ];
 
   return (
-    <div className={styles.workspaceRoot}>
-      {/* ── MAIN SWISS VISION OS CANVAS ── */}
-      <main className={styles.floatingCanvas}>
-        {/* ── LEFT SWISS DOCK RAIL ── */}
-        <aside className={styles.dockRail}>
-          <div className={styles.dockTopGroup}>
-            {/* Ivan Affriandi Monogram */}
-            <div className={styles.dockBrandLogo} title="Ivan Affriandi OS">
-              IA
+    <div className={styles.spatialViewport}>
+      <div className={styles.spatialContainer}>
+        {/* ── TOP VISION OS SPATIAL NAVBAR ── */}
+        <header className={styles.spatialNav}>
+          <a href="https://ivanaffriandi.com" className={styles.spatialNavBrand}>
+            <div className={styles.navAvatar}>
+              <img src="/profile.jpg" alt="Ivan Affriandi" onError={(e) => { (e.target as HTMLImageElement).src = 'https://github.com/ivanaffriandi.png'; }} />
+            </div>
+            <div>
+              <div className={styles.navBrandTitle}>Ivan Affriandi</div>
+              <div className={styles.navBrandRole}>work.ivanaffriandi.com</div>
+            </div>
+          </a>
+
+          {/* Filter Segmented Pills */}
+          <div className={styles.navSegmentedPills}>
+            <button
+              onClick={() => setFilterCategory('ALL')}
+              className={`${styles.navPillBtn} ${filterCategory === 'ALL' ? styles.navPillBtnActive : ''}`}
+            >
+              All Works
+            </button>
+            <button
+              onClick={() => setFilterCategory('ATELIER')}
+              className={`${styles.navPillBtn} ${filterCategory === 'ATELIER' ? styles.navPillBtnActive : ''}`}
+            >
+              Atelier
+            </button>
+            <button
+              onClick={() => setFilterCategory('SYSTEMS')}
+              className={`${styles.navPillBtn} ${filterCategory === 'SYSTEMS' ? styles.navPillBtnActive : ''}`}
+            >
+              Systems
+            </button>
+            <button
+              onClick={() => setFilterCategory('WRITING')}
+              className={`${styles.navPillBtn} ${filterCategory === 'WRITING' ? styles.navPillBtnActive : ''}`}
+            >
+              Writing
+            </button>
+          </div>
+
+          <div className={styles.navRightActions}>
+            <a href="https://ivanaffriandi.com" className={styles.btnVisionAction}>
+              <span>Personal Space</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7" />
+                <polyline points="7 7 17 7 17 17" />
+              </svg>
+            </a>
+          </div>
+        </header>
+
+        {/* ── SPATIAL HERO IDENTITY PANEL ── */}
+        <section className={styles.spatialHeroPanel}>
+          <div className={styles.heroLeftContent}>
+            <div className={styles.spatialBadgeLive}>
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
+              <span>ACTIVE CREATIVE TECHNOLOGIST &amp; ATELIER FOUNDER</span>
             </div>
 
-            {/* Circular Action Icons */}
-            <div className={styles.dockIconsStack}>
-              {/* Orders & Crafting Desk */}
-              <button
-                onClick={() => setActiveTab('orders')}
-                className={`${styles.dockIconBtn} ${activeTab === 'orders' ? styles.dockIconBtnActive : ''}`}
-                title="Bespoke Orders & Crafting Desk"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="m7.5 4.27 9 5.15" />
-                  <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
-                  <path d="m3.3 7 8.7 5 8.7-5" />
-                  <path d="M12 22V12" />
-                </svg>
-              </button>
+            <h1 className={styles.heroMainHeading}>
+              Engineering digital systems &amp; crafting physical objects.
+            </h1>
 
-              {/* Metrics & Revenue */}
-              <button
-                onClick={() => setActiveTab('metrics')}
-                className={`${styles.dockIconBtn} ${activeTab === 'metrics' ? styles.dockIconBtnActive : ''}`}
-                title="Studio Revenue & Metrics"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="20" x2="18" y2="10" />
-                  <line x1="12" y1="20" x2="12" y2="4" />
-                  <line x1="6" y1="20" x2="6" y2="14" />
-                </svg>
-              </button>
+            <p className={styles.heroBioText}>
+              I build spatial interfaces, robust distributed platforms, and bespoke physical leather goods. Founder of <strong>SHŪ / EN Studio</strong>. Dedicated to uncompromising minimalism, tactile excellence, and ultra-high performance.
+            </p>
 
-              {/* Products & Catalog */}
-              <button
-                onClick={() => setActiveTab('products')}
-                className={`${styles.dockIconBtn} ${activeTab === 'products' ? styles.dockIconBtnActive : ''}`}
-                title="Products & Catalog Matrix"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="7" height="7" />
-                  <rect x="14" y="3" width="7" height="7" />
-                  <rect x="14" y="14" width="7" height="7" />
-                  <rect x="3" y="14" width="7" height="7" />
-                </svg>
-              </button>
-
-              {/* Telemetry & System Health */}
-              <button
-                onClick={() => setActiveTab('telemetry')}
-                className={`${styles.dockIconBtn} ${activeTab === 'telemetry' ? styles.dockIconBtnActive : ''}`}
-                title="Server Telemetry & Connections"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
-                </svg>
-              </button>
+            <div className={styles.heroTagGrid}>
+              <span className={styles.spatialSkillTag}>Spatial Web Design</span>
+              <span className={styles.spatialSkillTag}>Three.js &amp; WebGL</span>
+              <span className={styles.spatialSkillTag}>Next.js 16</span>
+              <span className={styles.spatialSkillTag}>AWS SES &amp; Distributed Mail</span>
+              <span className={styles.spatialSkillTag}>Physical Atelier Craft</span>
+              <span className={styles.spatialSkillTag}>PostgreSQL &amp; Cloudflare</span>
             </div>
           </div>
 
-          {/* Ivan's Profile Avatar */}
-          <div
-            onClick={handleLockEnclave}
-            className={styles.dockBottomAvatar}
-            title="Ivan Affriandi (Click to Lock)"
-          >
+          <div className={styles.heroRightAvatarCard}>
             <img src="/profile.jpg" alt="Ivan Affriandi" onError={(e) => { (e.target as HTMLImageElement).src = 'https://github.com/ivanaffriandi.png'; }} />
-            <div className={styles.avatarPulseBadge} />
           </div>
-        </aside>
+        </section>
 
-        {/* ── WORKSPACE CORE CONTENT ── */}
-        {activeTab === 'orders' && <ShuenWorkspaceWidget />}
-
-        {activeTab === 'metrics' && (
-          <div style={{ flex: 1, background: 'rgba(255,255,255,0.94)', borderRadius: '24px', padding: '32px', display: 'flex', flexDirection: 'column', gap: '24px', overflowY: 'auto' }}>
+        {/* ── SELECTED PROJECTS SECTION ── */}
+        <div>
+          <div className={styles.sectionHeaderBox}>
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: 800, margin: 0 }}>SHŪ / EN Executive Revenue &amp; Capacity</h3>
-              <p style={{ fontSize: '12px', color: '#a1a1aa', margin: '4px 0 0 0' }}>Real-time aggregated telemetry from PostgreSQL &amp; DOKU gateway.</p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
-              <div style={{ background: '#f8f8fa', padding: '20px', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.04)' }}>
-                <span style={{ fontSize: '10px', fontWeight: 800, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Total Studio Gross</span>
-                <div style={{ fontSize: '24px', fontWeight: 900, color: '#18181b', marginTop: '6px' }}>Rp 374,000</div>
-                <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 700 }}>● Live Synced</span>
-              </div>
-
-              <div style={{ background: '#f8f8fa', padding: '20px', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.04)' }}>
-                <span style={{ fontSize: '10px', fontWeight: 800, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Pre-Order Batch 1 Quota</span>
-                <div style={{ fontSize: '24px', fontWeight: 900, color: '#18181b', marginTop: '6px' }}>10% Allocated</div>
-                <div style={{ width: '100%', height: '6px', background: '#e4e4e7', borderRadius: '999px', marginTop: '8px', overflow: 'hidden' }}>
-                  <div style={{ width: '10%', height: '100%', background: '#18181b' }} />
-                </div>
-              </div>
-
-              <div style={{ background: '#f8f8fa', padding: '20px', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.04)' }}>
-                <span style={{ fontSize: '10px', fontWeight: 800, color: '#a1a1aa', textTransform: 'uppercase', letterSpacing: '0.8px' }}>Crafting Lead Time</span>
-                <div style={{ fontSize: '24px', fontWeight: 900, color: '#18181b', marginTop: '6px' }}>17–20 Days</div>
-                <span style={{ fontSize: '11px', color: '#71717a' }}>Tangerang Leather Atelier</span>
-              </div>
+              <h2 className={styles.sectionTitle}>Featured Works &amp; Ventures</h2>
+              <span className={styles.sectionSubtitle}>Selected commercial products, open engines &amp; physical atelier creations</span>
             </div>
           </div>
-        )}
 
-        {activeTab === 'products' && (
-          <div style={{ flex: 1, background: 'rgba(255,255,255,0.94)', borderRadius: '24px', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px', overflowY: 'auto' }}>
-            <div>
-              <h3 style={{ fontSize: '18px', fontWeight: 800, margin: 0 }}>Product Catalog &amp; Customization Matrix</h3>
-              <p style={{ fontSize: '12px', color: '#a1a1aa', margin: '4px 0 0 0' }}>Manage 3D configurator active collections &amp; base pricing.</p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-              <div style={{ background: '#f8f8fa', padding: '20px', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.04)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className={styles.spatialProjectGrid} style={{ marginTop: '20px' }}>
+            {filteredProjects.map((project) => (
+              <div key={project.id} className={styles.spatialCardLarge}>
                 <div>
-                  <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 800 }}>A6 Trifold Leather Journal</h4>
-                  <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#71717a' }}>Bespoke 3D Configurator · Moire Fabric</p>
-                  <span style={{ fontSize: '13px', fontWeight: 900, color: '#18181b', marginTop: '8px', display: 'block' }}>From Rp 289,000</span>
-                </div>
-                <a href="https://shuenstudio.com/po" target="_blank" rel="noreferrer" className={styles.btnSwissPill}>
-                  Open 3D ↗
-                </a>
-              </div>
+                  <div className={styles.cardTopRow}>
+                    <span className={styles.cardCategoryBadge}>{project.categoryLabel}</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="7" y1="17" x2="17" y2="7" />
+                      <polyline points="7 7 17 7 17 17" />
+                    </svg>
+                  </div>
 
-              <div style={{ background: '#f8f8fa', padding: '20px', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.04)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 800 }}>A5 Bifold Archive Journal</h4>
-                  <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#71717a' }}>Executive Atelier Series · Full Grain</p>
-                  <span style={{ fontSize: '13px', fontWeight: 900, color: '#18181b', marginTop: '8px', display: 'block' }}>From Rp 349,000</span>
+                  <h3 className={styles.cardTitle}>{project.title}</h3>
+                  <p className={styles.cardDescription}>{project.description}</p>
+
+                  <div className={styles.cardTechStackRow}>
+                    {project.techStack.map((tech, tIdx) => (
+                      <span key={tIdx} className={styles.cardTechPill}>{tech}</span>
+                    ))}
+                  </div>
                 </div>
-                <a href="https://shuenstudio.com" target="_blank" rel="noreferrer" className={styles.btnSwissPill}>
-                  Storefront ↗
-                </a>
+
+                <div className={styles.cardActionLinksRow}>
+                  {project.primaryLink && (
+                    <a
+                      href={project.primaryLink.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={styles.btnCardLink}
+                    >
+                      <span>{project.primaryLink.label}</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7" />
+                        <polyline points="7 7 17 7 17 17" />
+                      </svg>
+                    </a>
+                  )}
+
+                  {project.secondaryLink && (
+                    <a
+                      href={project.secondaryLink.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`${styles.btnCardLink} ${styles.btnCardLinkSecondary}`}
+                    >
+                      <span>{project.secondaryLink.label}</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7" />
+                        <polyline points="7 7 17 7 17 17" />
+                      </svg>
+                    </a>
+                  )}
+                </div>
               </div>
-            </div>
+            ))}
           </div>
-        )}
+        </div>
 
-        {activeTab === 'telemetry' && (
-          <div style={{ flex: 1, background: 'rgba(255,255,255,0.94)', borderRadius: '24px', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px', overflowY: 'auto' }}>
+        {/* ── ACTIVITIES & MILESTONES SECTION ── */}
+        <div>
+          <div className={styles.sectionHeaderBox}>
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: 800, margin: 0 }}>System Telemetry &amp; API Gateways</h3>
-              <p style={{ fontSize: '12px', color: '#a1a1aa', margin: '4px 0 0 0' }}>Live connection health across Oracle VM, Vercel Edge &amp; Cloudflare.</p>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div style={{ background: '#f8f8fa', padding: '16px 20px', borderRadius: '14px', border: '1px solid rgba(0,0,0,0.04)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontWeight: 700, fontSize: '13px' }}>PostgreSQL Primary Database</span>
-                <span style={{ color: '#10b981', fontWeight: 800, fontSize: '12px', fontFamily: 'ui-monospace, monospace' }}>ONLINE (2ms)</span>
-              </div>
-
-              <div style={{ background: '#f8f8fa', padding: '16px 20px', borderRadius: '14px', border: '1px solid rgba(0,0,0,0.04)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontWeight: 700, fontSize: '13px' }}>DOKU Payment Webhook Gateway</span>
-                <span style={{ color: '#10b981', fontWeight: 800, fontSize: '12px', fontFamily: 'ui-monospace, monospace' }}>HEALTHY · 200 OK</span>
-              </div>
-
-              <div style={{ background: '#f8f8fa', padding: '16px 20px', borderRadius: '14px', border: '1px solid rgba(0,0,0,0.04)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontWeight: 700, fontSize: '13px' }}>Biteship Logistics Gateway (JNE &amp; J&amp;T)</span>
-                <span style={{ color: '#10b981', fontWeight: 800, fontSize: '12px', fontFamily: 'ui-monospace, monospace' }}>CONNECTED</span>
-              </div>
-
-              <div style={{ background: '#f8f8fa', padding: '16px 20px', borderRadius: '14px', border: '1px solid rgba(0,0,0,0.04)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontWeight: 700, fontSize: '13px' }}>AWS SES Mail &amp; DKIM 2048-bit Signing</span>
-                <span style={{ color: '#10b981', fontWeight: 800, fontSize: '12px', fontFamily: 'ui-monospace, monospace' }}>ACTIVE · 99.98%</span>
-              </div>
+              <h2 className={styles.sectionTitle}>Activities &amp; Engineering Chronicle</h2>
+              <span className={styles.sectionSubtitle}>Timeline of launches, infrastructure milestones &amp; atelier experiments</span>
             </div>
           </div>
-        )}
-      </main>
+
+          <div className={styles.timelineGlassContainer} style={{ marginTop: '20px' }}>
+            {timelineItems.map((item, idx) => (
+              <div key={idx} className={styles.timelineItem}>
+                <div className={styles.timelineDateBadge}>{item.date}</div>
+                <div className={styles.timelineContent}>
+                  <h4 className={styles.timelineTitle}>{item.title}</h4>
+                  <p className={styles.timelineDesc}>{item.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── SPATIAL FOOTER ── */}
+        <footer className={styles.spatialFooter}>
+          <div>
+            © 2026 Ivan Affriandi. All rights reserved.
+          </div>
+          <div className={styles.footerLinks}>
+            <a href="https://shuenstudio.com" target="_blank" rel="noreferrer" className={styles.footerLinkItem}>
+              SHŪ / EN Studio ↗
+            </a>
+            <a href="https://mail.ivanaffriandi.com" target="_blank" rel="noreferrer" className={styles.footerLinkItem}>
+              Mail Platform ↗
+            </a>
+            <a href="https://ivanaffriandi.com/about" target="_blank" rel="noreferrer" className={styles.footerLinkItem}>
+              About ↗
+            </a>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }
