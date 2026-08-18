@@ -127,7 +127,15 @@ export default function Navigation() {
     };
   }, [isMenuOpen]);
 
-  if (pathname?.startsWith("/work")) {
+  const [isWorkDomain, setIsWorkDomain] = useState(false);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (window.location.hostname.startsWith("work.") || window.location.pathname.startsWith("/work")) {
+        setIsWorkDomain(true);
+      }
+    }
+  }, []);
+  if (pathname?.startsWith("/work") || isWorkDomain) {
     return null;
   }
 

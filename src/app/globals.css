@@ -202,7 +202,13 @@ body:has(.about-2col-root) .layout-wrapper,
 body:has(.about-2col-root) .content-wrapper,
 body:has(.about-2col-root) main,
 body:has(.about-2col-root) main > div,
-html:has([class*="spatialApp"]),
+html:has([class*="portfolioRoot"]),
+body:has([class*="portfolioRoot"]),
+body:has([class*="portfolioRoot"]) .layout-wrapper,
+body:has([class*="portfolioRoot"]) .content-wrapper,
+body:has([class*="portfolioRoot"]) main,
+body:has([class*="portfolioRoot"]) main > div,
+html:has([class*="spatialApp"]), 
 body:has([class*="spatialApp"]),
 body:has([class*="spatialApp"]) .layout-wrapper,
 body:has([class*="spatialApp"]) .content-wrapper,
@@ -2451,3 +2457,6 @@ body.moments-page .content-wrapper {
 }
 
 
+
+
+body:has([class*="portfolioRoot"]) .desktop-nav-bar, body:has([class*="portfolioRoot"]) .mobile-nav-bar, body:has([class*="portfolioRoot"]) aside { display: none !important; width: 0 !important; }
