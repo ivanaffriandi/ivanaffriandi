@@ -1,7 +1,7 @@
 /* ============================================================
-   IVAN AFFRIANDI · FLUXDESIGN EDITORIAL STUDIO PORTFOLIO
+   IVAN AFFRIANDI · EXACT FLUXDESIGN ARCHITECTURE & COLOR GRADING
    (work.ivanaffriandi.com)
-   Pixel-Accurate FluxDesign Architecture · Framer Motion · Clean Spatial Luxury
+   1:1 Pixel Accuracy · Harmonious Filmic Palette · Pure White Canvas
    ============================================================ */
 
 .scandinavianViewport {
@@ -22,62 +22,59 @@
   flex-direction: column;
 }
 
-/* ── FULL-BLEED EDITORIAL CONTAINER ── */
+/* ── EXACT FLUXDESIGN CONTAINER ── */
 .editorialContainer {
-  max-width: 1320px;
+  max-width: 1300px;
   width: 100%;
   margin: 0 auto;
-  padding: 36px 4vw 60px 4vw;
+  padding: 44px 56px 64px 56px;
   display: flex;
   flex-direction: column;
-  gap: 44px;
+  gap: 52px;
   box-sizing: border-box;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 860px) {
   .editorialContainer {
     padding: 24px 20px 48px 20px;
-    gap: 32px;
+    gap: 36px;
   }
 }
 
-/* ── TOP HEADER ROW ── */
+/* ── EXACT TOP HEADER BAR (NO BORDERS, CLEAN SPACING) ── */
 .headerRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 24px;
-  flex-wrap: wrap;
-  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .brandLogoTitle {
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: -0.3px;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
   color: #111111;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 2px;
 }
 
 .registeredSymbol {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
-  vertical-align: top;
-  margin-top: -4px;
+  vertical-align: super;
+  margin-left: 1px;
 }
 
 /* Center Nav Tabs */
 .centerNavTabs {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 32px;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 800px) {
   .centerNavTabs {
     display: none;
   }
@@ -86,13 +83,12 @@
 .navTabBtn {
   background: none;
   border: none;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12.5px;
+  font-weight: 450;
   color: #666666;
   cursor: pointer;
   padding: 0;
   transition: color 0.15s ease;
-  position: relative;
 }
 
 .navTabBtn:hover {
@@ -101,17 +97,23 @@
 
 .navTabBtnActive {
   font-weight: 800 !important;
-  color: #111111 !important;
+  color: #000000 !important;
 }
 
-/* Location & Live Clock Header Block */
+/* Right Cluster: Location Clock + Start a Project */
+.rightHeaderCluster {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
 .headerLocationClock {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  font-size: 11.5px;
-  color: #88888e;
-  font-family: ui-monospace, monospace;
+  align-items: flex-start;
+  font-size: 11px;
+  line-height: 1.35;
+  color: #777777;
 }
 
 @media (max-width: 640px) {
@@ -120,67 +122,58 @@
   }
 }
 
-.locationText {
-  color: #555555;
-  font-weight: 600;
-}
-
-.clockTimeText {
-  font-weight: 700;
-  color: #111111;
-}
-
-/* Start a Project Direct Link */
 .startProjectLink {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 12.5px;
+  font-weight: 600;
   color: #111111;
   text-decoration: underline;
-  text-underline-offset: 4px;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
   transition: color 0.15s ease;
 }
 
 .startProjectLink:hover {
-  color: #ef4444;
+  color: #777777;
 }
 
-/* ── HERO SHOWCASE SECTION (FLUXDESIGN HERO) ── */
-.heroShowcaseSection {
+/* ── HERO SHOWCASE STAGE (EXACT 2-COLUMN SPLIT) ── */
+.heroShowcaseStage {
   display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 36px;
+  grid-template-columns: 130px 1fr;
+  gap: 32px;
   align-items: start;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
-  .heroShowcaseSection {
+  .heroShowcaseStage {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 12px;
   }
 }
 
 .sideOverviewLabel {
   font-size: 12px;
-  font-weight: 600;
-  color: #88888e;
-  font-family: ui-monospace, monospace;
+  font-weight: 450;
+  color: #666666;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  padding-top: 6px;
 }
 
 .heroContentCluster {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 860px;
+  max-width: 820px;
 }
 
 .projectMainHeading {
-  font-size: 48px;
-  font-weight: 800;
-  letter-spacing: -1.2px;
-  line-height: 1.08;
+  font-size: 44px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
   color: #111111;
   margin: 0;
 }
@@ -188,36 +181,29 @@
 @media (max-width: 768px) {
   .projectMainHeading {
     font-size: 32px;
-    letter-spacing: -0.8px;
   }
 }
 
 .projectNarrativeBio {
-  font-size: 16.5px;
+  font-size: 15px;
   line-height: 1.6;
   color: #3f3f46;
   margin: 0;
-  font-weight: 450;
+  font-weight: 400;
+  max-width: 760px;
+}
+
+/* ── EXACT 4-COLUMN METADATA BAR ── */
+.metadataGridRow {
+  display: grid;
+  grid-template-columns: 130px 1fr 1fr 1fr;
+  gap: 32px;
+  width: 100%;
+  box-sizing: border-box;
+  padding-top: 16px;
 }
 
 @media (max-width: 768px) {
-  .projectNarrativeBio {
-    font-size: 14.5px;
-  }
-}
-
-/* ── 4-COLUMN METADATA BAR ── */
-.metadataGridRow {
-  display: grid;
-  grid-template-columns: 140px 1fr 1fr 1fr;
-  gap: 36px;
-  border-top: 1px solid #f0f0f2;
-  border-bottom: 1px solid #f0f0f2;
-  padding: 18px 0;
-  margin-top: 8px;
-}
-
-@media (max-width: 860px) {
   .metadataGridRow {
     grid-template-columns: 1fr 1fr;
     gap: 20px;
@@ -227,239 +213,141 @@
 .metaColItem {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .metaColLabel {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: #88888e;
+  font-size: 11px;
+  font-weight: 450;
+  color: #777777;
 }
 
 .metaColVal {
-  font-size: 13px;
-  font-weight: 700;
-  color: #111111;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #444444;
 }
 
-/* ── 3-COLUMN PANORAMIC VISUAL GRID ── */
+/* ── EXACT 3-COLUMN PANORAMIC VISUAL GRID ── */
 .panoramicVisualGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 1fr 1.25fr;
   gap: 24px;
-  align-items: stretch;
+  align-items: start;
+  width: 100%;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 860px) {
   .panoramicVisualGrid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 20px;
   }
 }
 
 .panoramicCard {
-  border-radius: 4px;
   overflow: hidden;
-  background: #f7f7f9;
   display: flex;
   flex-direction: column;
   position: relative;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
   text-decoration: none;
   color: #111111;
+  border-radius: 0;
 }
 
-.panoramicCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
-}
-
-.panoramicMediaBox {
+/* Card 1 & 2: Portrait Aspect Ratio (3 / 4) */
+.portraitMediaBox {
   width: 100%;
-  height: 420px;
+  aspect-ratio: 3 / 3.8;
+  overflow: hidden;
+  background: #eaeaea;
   position: relative;
-  overflow: hidden;
-  background: #111111;
 }
 
-@media (max-width: 768px) {
-  .panoramicMediaBox {
-    height: 320px;
-  }
-}
-
-.panoramicMediaBox img {
+.portraitMediaBox img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  display: block;
+  filter: contrast(0.96) brightness(1.02) saturate(0.9);
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease;
 }
 
-.panoramicCard:hover .panoramicMediaBox img {
+.panoramicCard:hover .portraitMediaBox img {
   transform: scale(1.03);
+  filter: contrast(1) brightness(1) saturate(1);
 }
 
-/* Interactive Slider in Card 1 */
-.sliderWrapperBox {
-  position: absolute;
-  inset: 0;
+/* Card 3: Landscape Aspect Ratio (16 / 12) */
+.landscapeMediaBox {
   width: 100%;
-  height: 100%;
-  cursor: ew-resize;
-  background: #18181b;
+  aspect-ratio: 16 / 11.8;
   overflow: hidden;
+  background: #eaeaea;
+  position: relative;
 }
 
-.sliderImgDark {
-  position: absolute;
-  inset: 0;
+.landscapeMediaBox img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+  filter: contrast(0.96) brightness(1.02) saturate(0.9);
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease;
 }
 
-.sliderClipLight {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  overflow: hidden;
-  width: 100%;
-  pointer-events: none;
+.panoramicCard:hover .landscapeMediaBox img {
+  transform: scale(1.03);
+  filter: contrast(1) brightness(1) saturate(1);
 }
 
-.sliderImgLight {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 400px;
-  height: 100%;
-  object-fit: cover;
-}
-
-.sliderDividerLine {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: #ffffff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-  pointer-events: none;
-}
-
-.sliderHandleBubble {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #ffffff;
-  color: #111111;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 900;
-  pointer-events: none;
-}
-
-.cardFooterCaption {
-  padding: 16px 18px;
-  background: #ffffff;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.cardFooterTitle {
-  font-size: 14px;
-  font-weight: 800;
-  color: #111111;
-  margin: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.cardFooterSub {
-  font-size: 12px;
-  color: #666670;
-  line-height: 1.45;
-  margin: 0;
-}
-
-/* ── BOTTOM SEE MORE ACTION ── */
+/* ── EXACT SEE MORE LINK (BELOW CARD 3) ── */
 .seeMoreRow {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding-top: 12px;
+  padding-top: 14px;
 }
 
 .seeMoreBtn {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #111111;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #333333;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  transition: transform 0.2s ease;
+  gap: 4px;
+  transition: transform 0.2s ease, color 0.15s ease;
 }
 
 .seeMoreBtn:hover {
-  transform: translateX(4px);
+  color: #000000;
+  transform: translateX(3px);
 }
 
-/* ── WORLD CLOCKS & FOOTER BAR ── */
+/* ── COMPACT BOTTOM FOOTER ── */
 .bottomStudioFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid #f0f0f2;
+  border-top: 1px solid #f2f2f2;
   padding-top: 24px;
+  margin-top: 12px;
   flex-wrap: wrap;
   gap: 16px;
-  font-size: 11.5px;
-  color: #88888e;
-}
-
-.worldClocksGroup {
-  display: flex;
-  gap: 20px;
-  font-family: ui-monospace, monospace;
-}
-
-.clockItem {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.clockItemTime {
-  font-size: 13.5px;
-  font-weight: 800;
-  color: #111111;
-}
-
-.clockItemCity {
-  font-size: 9px;
-  color: #88888e;
-  text-transform: uppercase;
+  font-size: 11px;
+  color: #888888;
 }
 
 .socialFooterLinks {
   display: flex;
-  gap: 16px;
+  gap: 18px;
 }
 
 .socialFooterLink {
-  color: #555555;
+  color: #666666;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 500;
+  transition: color 0.15s ease;
 }
 
 .socialFooterLink:hover {
