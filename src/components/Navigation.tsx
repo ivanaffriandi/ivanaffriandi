@@ -127,6 +127,10 @@ export default function Navigation() {
     };
   }, [isMenuOpen]);
 
+  if (pathname?.startsWith("/work")) {
+    return null;
+  }
+
   const isAdminPage = pathname === "/admin" || pathname === "/hq-panel" || pathname === "/x";
 
   const mobileTabs = [

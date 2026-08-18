@@ -202,6 +202,25 @@ body:has(.about-2col-root) .layout-wrapper,
 body:has(.about-2col-root) .content-wrapper,
 body:has(.about-2col-root) main,
 body:has(.about-2col-root) main > div,
+html:has([class*="spatialApp"]),
+body:has([class*="spatialApp"]),
+body:has([class*="spatialApp"]) .layout-wrapper,
+body:has([class*="spatialApp"]) .content-wrapper,
+body:has([class*="spatialApp"]) main,
+html:has([class*="workSecurityGate"]),
+body:has([class*="workSecurityGate"]),
+body:has([class*="workSecurityGate"]) .layout-wrapper,
+body:has([class*="workSecurityGate"]) .content-wrapper,
+body:has([class*="workSecurityGate"]) main {
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: 100vw !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
 html:has(.about-root),
 body:has(.about-root),
 body:has(.about-root) .layout-wrapper,
