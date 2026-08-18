@@ -46,9 +46,9 @@ export default function WorkScandinavianPortfolioPage() {
     {
       id: 'shuen',
       category: 'ATELIER',
-      name: 'SHŪ / EN Studio · Bespoke Leather Goods',
-      shortDesc: 'Artisanal physical leather atelier & luxury e-commerce with real-time checkout & logistics dispatch.',
-      disciplines: ['BESPOKE LEATHER', 'PHYSICAL ATELIER', 'COMMERCE'],
+      name: 'SHŪ / EN Studio',
+      shortDesc: 'Handcrafted bespoke leather atelier & direct luxury e-commerce with real-time checkout.',
+      disciplines: ['Leather Atelier', 'Full-Grain', 'Commerce'],
       year: '2026',
       url: 'https://shuenstudio.com',
       image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&auto=format&fit=crop&q=80',
@@ -57,8 +57,8 @@ export default function WorkScandinavianPortfolioPage() {
       id: 'configurator',
       category: 'WEBGL',
       name: 'SHŪ / EN 3D WebGL Configurator',
-      shortDesc: 'Real-time 3D procedural texturing engine with live leather finishes, custom cords & foil emboss preview.',
-      disciplines: ['THREE.JS', 'WEBGL', 'PROCEDURAL SHADERS'],
+      shortDesc: 'Interactive 3D procedural texturing tool with custom cords, leather swatches & foil embossing.',
+      disciplines: ['Three.js', 'WebGL', 'Procedural 3D'],
       year: '2026',
       url: 'https://shuenstudio.com/po',
       image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&auto=format&fit=crop&q=80',
@@ -67,8 +67,8 @@ export default function WorkScandinavianPortfolioPage() {
       id: 'mobile',
       category: 'MOBILE',
       name: 'SHŪ / EN Atelier Mobile App',
-      shortDesc: 'Cross-platform mobile application for bespoke order crafting queues and client VIP concierge.',
-      disciplines: ['FLUTTER', 'DART', 'IOS & ANDROID SDK'],
+      shortDesc: 'Cross-platform mobile app for artisan order queues, customer CRM & VIP order tracking.',
+      disciplines: ['Flutter', 'Dart', 'iOS & Android'],
       year: '2026',
       url: 'https://shuenstudio.com',
       image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80',
@@ -76,9 +76,9 @@ export default function WorkScandinavianPortfolioPage() {
     {
       id: 'mail',
       category: 'CLOUD',
-      name: 'Private Mail Engine & SES Infrastructure',
-      shortDesc: 'Dedicated self-hosted email infrastructure with automated DKIM 2048-bit RSA keys & 99.98% deliverability.',
-      disciplines: ['AWS SES', 'DKIM 2048-BIT', 'DOCKER', 'ORACLE CLOUD'],
+      name: 'Private Mail Platform & SES Relay',
+      shortDesc: 'Self-hosted email engine with automated DKIM 2048-bit RSA keys & 99.98% delivery rate.',
+      disciplines: ['AWS SES', 'DKIM 2048', 'Docker', 'Oracle VM'],
       year: '2026',
       url: 'https://mail.ivanaffriandi.com',
       image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&auto=format&fit=crop&q=80',
@@ -87,8 +87,8 @@ export default function WorkScandinavianPortfolioPage() {
       id: 'book',
       category: 'WEBGL',
       name: 'Multi-Sensory Interactive Book Core',
-      shortDesc: 'Experimental digital reader integrating Web Audio ambient soundscapes and neural TTS narration.',
-      disciplines: ['WEB AUDIO API', 'TTS SYNTHESIS', 'TELEMETRY'],
+      shortDesc: 'Experimental digital reader featuring ambient soundscapes and neural voice narration.',
+      disciplines: ['Web Audio API', 'Neural TTS', 'Next.js 16'],
       year: '2026',
       url: 'https://ivanaffriandi.com/x',
       image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&auto=format&fit=crop&q=80',
@@ -96,9 +96,9 @@ export default function WorkScandinavianPortfolioPage() {
     {
       id: 'bot',
       category: 'CLOUD',
-      name: 'shuen-bot Automated Concierge',
-      shortDesc: 'Telegram and WhatsApp bot integrations for automated order status notifications & courier airway bills.',
-      disciplines: ['NODE.JS', 'TELEGRAM API', 'BITESHIP WEBHOOKS'],
+      name: 'shuen-bot Automated Dispatcher',
+      shortDesc: 'Telegram and WhatsApp bot integrations for instant order tracking and airway bill alerts.',
+      disciplines: ['Node.js', 'Telegram API', 'Courier Webhooks'],
       year: '2026',
       url: 'https://shuenstudio.com',
       image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
@@ -106,9 +106,9 @@ export default function WorkScandinavianPortfolioPage() {
     {
       id: 'kvr',
       category: 'ATELIER',
-      name: 'KVR Objects & Industrial 3D Modeling',
-      shortDesc: 'CAD industrial product design, 3D printing prototyping, and physical hardware fabrication.',
-      disciplines: ['BLENDER', 'CAD MODELING', 'HARDWARE FABRICATION'],
+      name: 'KVR Objects & Industrial 3D',
+      shortDesc: 'CAD industrial product modeling, 3D printing prototypes & custom solid metal hardware.',
+      disciplines: ['Blender CAD', '3D Prototyping', 'Hardware'],
       year: '2025',
       url: 'https://ivanaffriandi.com',
       image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&auto=format&fit=crop&q=80',
@@ -117,8 +117,8 @@ export default function WorkScandinavianPortfolioPage() {
       id: 'equilibrium',
       category: 'WEBGL',
       name: 'Equilibrium Academy Engine',
-      shortDesc: 'Interactive digital learning environment & creative engineering curriculum.',
-      disciplines: ['TYPESCRIPT', 'SYSTEMS ARCHITECTURE', 'EDUCATIONAL TECH'],
+      shortDesc: 'Interactive learning platform and curriculum for modern creative engineering.',
+      disciplines: ['TypeScript', 'System Design', 'Education'],
       year: '2025',
       url: 'https://ivanaffriandi.com',
       image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80',
@@ -127,8 +127,8 @@ export default function WorkScandinavianPortfolioPage() {
       id: 'essays',
       category: 'ATELIER',
       name: 'Cyber-Artisanal Craft & Design Theory',
-      shortDesc: 'Comprehensive publications on the convergence of physical leathercraft with generative 3D web systems.',
-      disciplines: ['SWISS TYPOGRAPHY', 'PUBLICATIONS', 'DESIGN THEORY'],
+      shortDesc: 'Essays on merging traditional leather crafting techniques with interactive 3D web code.',
+      disciplines: ['Editorial', 'Design Theory', 'Minimalism'],
       year: '2025 – 2026',
       url: 'https://ivanaffriandi.com',
       image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&auto=format&fit=crop&q=80',
@@ -142,39 +142,39 @@ export default function WorkScandinavianPortfolioPage() {
   const skillsMatrix = [
     {
       number: '01',
-      title: 'Physical Leather Atelier & Craft',
-      desc: 'Bespoke patternmaking, vegetable tanned Nero & Moire leathercraft, cord stitching, custom solid silver hardware, and gold foil embossing.',
-      tags: ['Pattern Drafting', 'Full-Grain Leather', 'Atelier Craft', 'Silver Hardware', 'Custom Emboss'],
+      title: 'Physical Leather Craft',
+      desc: 'Bespoke pattern drafting, vegetable tanned Nero & Moire leather, custom cord binding, solid 925 silver charms, and gold foil embossing.',
+      tags: ['Pattern Drafting', 'Full-Grain Leather', 'Atelier Craft', 'Solid Silver', 'Embossing'],
     },
     {
       number: '02',
-      title: 'Real-Time 3D & WebGL Systems',
-      desc: 'Building responsive 3D WebGL configurators, Three.js shaders, lighting rigs, procedural textures, and fluid interaction physics.',
+      title: 'Real-Time 3D & WebGL',
+      desc: 'Building responsive 3D WebGL product configurators, procedural shaders, studio lighting rigs, and smooth interaction physics.',
       tags: ['Three.js', 'WebGL', 'GLSL Shaders', '3D Configurator', 'Blender CAD'],
     },
     {
       number: '03',
       title: 'Frontend & UI Engineering',
-      desc: 'Next.js 16 App Router, React 19, Turbopack, Tailwind CSS, Framer Motion, and Swiss minimalist optical typography.',
+      desc: 'Crafting clean, responsive web apps using Next.js 16 App Router, React 19, TypeScript, Tailwind CSS, and Framer Motion.',
       tags: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
     },
     {
       number: '04',
-      title: 'Cross-Platform Mobile (Flutter)',
-      desc: 'Developing native-performing iOS and Android applications with Flutter & Dart for bespoke customer queues and live studio telemetry.',
-      tags: ['Flutter', 'Dart', 'iOS & Android SDK', 'State Management', 'Mobile UX'],
+      title: 'Mobile Apps (Flutter)',
+      desc: 'Developing snappy iOS and Android mobile apps with Flutter & Dart for workshop queue management and client VIP concierge.',
+      tags: ['Flutter', 'Dart', 'iOS & Android SDK', 'State Management', 'Mobile UI'],
     },
     {
       number: '05',
-      title: 'Distributed Cloud & Mail Engine',
-      desc: 'Self-hosted Dockerized mail platforms with AWS SES, automated DKIM 2048-bit key rotation, PostgreSQL databases, and Cloudflare DNS.',
+      title: 'Cloud Infrastructure & Mail',
+      desc: 'Self-hosted Dockerized mail platform with AWS SES, automated DKIM 2048-bit keys, PostgreSQL databases, and Cloudflare DNS.',
       tags: ['AWS SES', 'DKIM 2048-bit', 'Docker', 'PostgreSQL', 'Oracle Cloud VM'],
     },
     {
       number: '06',
-      title: 'Generative AI & Audio Synthesis',
-      desc: 'Multi-modal LLM integrations (Google Gemini 2.5), Web Audio API ambient sound synthesis, and automated neural TTS narration.',
-      tags: ['Google Gemini 2.5', 'Web Audio API', 'Neural TTS', 'Realtime Telemetry', 'Python'],
+      title: 'AI & Audio Synthesis',
+      desc: 'Multi-modal LLM integrations with Google Gemini, Web Audio API soundscapes, and neural text-to-speech audio synthesis.',
+      tags: ['Google Gemini', 'Web Audio API', 'Neural TTS', 'Live Telemetry', 'Python'],
     },
   ];
 
@@ -207,19 +207,19 @@ export default function WorkScandinavianPortfolioPage() {
           </nav>
         </header>
 
-        {/* ── CASUAL INTERACTIVE HERO HEADLINE ── */}
+        {/* ── CASUAL HERO SECTION ── */}
         <section className={styles.heroSection}>
           <div className={styles.heroTagRow}>
             <span>●</span>
-            <span>CREATIVE ENGINEERING · PHYSICAL ATELIER · DISTRIBUTED SYSTEMS</span>
+            <span>AVAILABLE FOR SELECT COMMISSIONS &amp; ENGINEERING PROJECTS</span>
           </div>
 
           <h1 className={styles.heroMainHeadline}>
-            What Ivan builds, designs &amp; <span className={styles.highlightUnderline}>obsesses over</span>.
+            Things I make, tinker with, and care about.
           </h1>
 
           <p className={styles.heroBioText}>
-            I bridge the tactile world of physical bespoke leathercraft with real-time 3D WebGL engines, distributed cloud infrastructure, and uncompromising minimalist software design. Founder of <strong>SHŪ / EN Studio</strong>.
+            I spend my time between two worlds: handcrafting bespoke leather goods in my studio, and engineering fast, beautiful web apps and cloud systems on my laptop. Founder of <strong>SHŪ / EN Studio</strong>.
           </p>
 
           <div className={styles.heroMetaRow}>
@@ -238,7 +238,7 @@ export default function WorkScandinavianPortfolioPage() {
               </a>
             </div>
 
-            <div style={{ fontSize: '12px', color: '#777777', fontWeight: 600 }}>
+            <div style={{ fontSize: '11.5px', color: '#88888e', fontWeight: 600 }}>
               BASED IN INDONESIA · COMMISSIONS WORLDWIDE
             </div>
           </div>
@@ -246,8 +246,8 @@ export default function WorkScandinavianPortfolioPage() {
           {/* Hero Visual Architectural Pavilion */}
           <div className={styles.heroVisualContainer}>
             <img 
-              src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1400&auto=format&fit=crop&q=80" 
-              alt="Scandinavian Minimalist Architecture" 
+              src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1200&auto=format&fit=crop&q=80" 
+              alt="Scandinavian Minimalist Studio" 
             />
           </div>
         </section>
@@ -257,10 +257,10 @@ export default function WorkScandinavianPortfolioPage() {
           <div className={styles.sectionHeaderBox}>
             <h2 className={styles.sectionTitle}>
               <span>●</span>
-              Selected Projects &amp; Ventures
+              Featured Projects &amp; Products
             </h2>
             <span className={styles.sectionSubtitle}>
-              Interactive catalogue of physical goods, 3D engines &amp; cloud systems
+              A quick look at the main things I&apos;ve built recently
             </span>
           </div>
 
@@ -328,10 +328,10 @@ export default function WorkScandinavianPortfolioPage() {
                 <AnimatePresence>
                   {hoveredProjectId === project.id && (
                     <motion.div
-                      initial={{ opacity: 0, scale: 0.9 }}
+                      initial={{ opacity: 0, scale: 0.92 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.2 }}
+                      exit={{ opacity: 0, scale: 0.92 }}
+                      transition={{ duration: 0.18 }}
                       className={styles.floatingPreviewCard}
                     >
                       <img src={project.image} alt={project.name} />
@@ -348,10 +348,10 @@ export default function WorkScandinavianPortfolioPage() {
           <div className={styles.sectionHeaderBox}>
             <h2 className={styles.sectionTitle}>
               <span>●</span>
-              Core Disciplines &amp; Technical Capabilities
+              What I actually do day-to-day
             </h2>
             <span className={styles.sectionSubtitle}>
-              Full architectural depth across physical crafting and digital engineering
+              Across physical crafting and software engineering
             </span>
           </div>
 
@@ -375,15 +375,15 @@ export default function WorkScandinavianPortfolioPage() {
           </div>
         </section>
 
-        {/* ── CHRONICLE & NEWS SECTION ── */}
+        {/* ── CHRONICLE & RELEASES ── */}
         <section>
           <div className={styles.sectionHeaderBox}>
             <h2 className={styles.sectionTitle}>
               <span>●</span>
-              Chronicle &amp; Releases
+              Recent Chronicle &amp; Releases
             </h2>
             <span className={styles.sectionSubtitle}>
-              A record of launched products, systems &amp; writings
+              A quick timeline of things I&apos;ve shipped
             </span>
           </div>
 
@@ -404,11 +404,11 @@ export default function WorkScandinavianPortfolioPage() {
           </div>
         </section>
 
-        {/* ── GET IN TOUCH MASSIVE LINK ── */}
+        {/* ── GET IN TOUCH SECTION (WARM & CASUAL) ── */}
         <section id="contact" className={styles.getInTouchBox}>
-          <span className={styles.getInTouchHeading}>HAVE AN IDEA OR BESPOKE INQUIRY?</span>
+          <span className={styles.getInTouchHeading}>HAVE AN IDEA OR WANT TO COMMISSION A PIECE?</span>
           <a href="mailto:ivan@ivanaffriandi.com" className={styles.getInTouchLink}>
-            Get in touch ↗
+            Let&apos;s get in touch ↗
           </a>
         </section>
 
