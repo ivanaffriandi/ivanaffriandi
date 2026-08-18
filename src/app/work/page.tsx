@@ -8,7 +8,7 @@ type TabType = 'overview' | 'projects' | 'skills' | 'process' | 'archive';
 
 export default function WorkIvanPortfolioPage() {
   const [activeTab, setActiveTab] = useState<TabType>('projects');
-  const [liveTime, setLiveTime] = useState('5:28 PM (WIB)');
+  const [liveTime, setLiveTime] = useState('5:40 PM (WIB)');
 
   // Real-time Indonesian WIB clock ticker
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function WorkIvanPortfolioPage() {
     skills: {
       headline: 'Core Capabilities & Technical Disciplines',
       narrative:
-        'A kinetic masonry wall of engineering proficiencies, distributed cloud infrastructure, bespoke leather craftsmanship, real-time 3D shaders, and automated logistics engineered across dozens of production disciplines.',
+        'A kinetic typographic stream of engineering proficiencies, cloud infrastructure, bespoke leather craftsmanship, real-time 3D shaders, and automated logistics engineered across dozens of production disciplines.',
       duration: 'Comprehensive Mastery',
       client: 'Full Stack & Atelier',
       artDirection: 'Multidisciplinary Engineering',
@@ -73,71 +73,71 @@ export default function WorkIvanPortfolioPage() {
 
   const current = tabHeaders[activeTab];
 
-  // Brick Wall Marquee Rows
+  // Pure Typography Stream Rows (No Boxes)
   const row1 = [
-    { tag: '01 / ENGINE', name: 'Next.js 16 (Turbopack)' },
-    { tag: '02 / REACT', name: 'React 19 Server Components' },
-    { tag: '03 / LANGUAGE', name: 'TypeScript Strict Mode' },
-    { tag: '04 / ARCHITECTURE', name: 'App Router Proxies' },
-    { tag: '05 / ACTION', name: 'Next.js Server Actions' },
-    { tag: '06 / CSS', name: 'Vanilla CSS Modules' },
-    { tag: '07 / MOTION', name: 'Framer Motion Springs' },
-    { tag: '08 / SPEED', name: 'SSR & SSG Hybrid Caching' },
+    { num: '01', title: 'Next.js 16 (Turbopack)' },
+    { num: '02', title: 'React 19 Server Components' },
+    { num: '03', title: 'TypeScript Strict Mode' },
+    { num: '04', title: 'App Router Proxies' },
+    { num: '05', title: 'Next.js Server Actions' },
+    { num: '06', title: 'Vanilla CSS Modules' },
+    { num: '07', title: 'Framer Motion Springs' },
+    { num: '08', title: 'SSR & SSG Hybrid Caching' },
   ];
 
   const row2 = [
-    { tag: '09 / 3D WEBGL', name: 'Three.js 3D Engine' },
-    { tag: '10 / GRAPHICS', name: 'WebGL 2.0 Viewports' },
-    { tag: '11 / SHADER', name: 'GLSL Procedural Shaders' },
-    { tag: '12 / TEXTURE', name: 'Normal Map Generation' },
-    { tag: '13 / PROJECTION', name: 'Raycasting & Camera Rigs' },
-    { tag: '14 / CUSTOMIZER', name: 'Real-time 3D Configurator' },
-    { tag: '15 / AUDIO', name: 'Web Audio API Synthesis' },
-    { tag: '16 / SOUNDSCAPE', name: 'Generative Ambient Noise' },
+    { num: '09', title: 'Three.js 3D Engine' },
+    { num: '10', title: 'WebGL 2.0 Viewports' },
+    { num: '11', title: 'GLSL Procedural Shaders' },
+    { num: '12', title: 'Normal Map Generation' },
+    { num: '13', title: 'Raycasting & Camera Rigs' },
+    { num: '14', title: 'Real-time 3D Configurator' },
+    { num: '15', title: 'Web Audio API Synthesis' },
+    { num: '16', title: 'Generative Ambient Noise' },
   ];
 
   const row3 = [
-    { tag: '17 / CLOUD', name: 'Oracle Cloud OCI Compute VM' },
-    { tag: '18 / RELAY', name: 'AWS SES Outbound Engine' },
-    { tag: '19 / PROTOCOL', name: 'DKIM 2048-bit RSA Keys' },
-    { tag: '20 / SECURITY', name: 'SPF Strict Records' },
-    { tag: '21 / COMPLIANCE', name: 'DMARC Policy Enforcement' },
-    { tag: '22 / IDENTITY', name: 'BIMI Certificate Architecture' },
-    { tag: '23 / SERVER', name: 'Postfix & Node SMTP Daemons' },
-    { tag: '24 / ROUTING', name: 'Custom Envelope Return-Path' },
+    { num: '17', title: 'Oracle Cloud OCI Compute VM' },
+    { num: '18', title: 'AWS SES Outbound Engine' },
+    { num: '19', title: 'DKIM 2048-bit RSA Keys' },
+    { num: '20', title: 'SPF Strict Records' },
+    { num: '21', title: 'DMARC Policy Enforcement' },
+    { num: '22', title: 'BIMI Certificate Architecture' },
+    { num: '23', title: 'Postfix & Node SMTP Daemons' },
+    { num: '24', title: 'Custom Envelope Return-Path' },
   ];
 
   const row4 = [
-    { tag: '25 / ATELIER', name: 'Bespoke Leather Pattern Drafting' },
-    { tag: '26 / LEATHER', name: 'Italian Vegetable-Tanned Nero Hides' },
-    { tag: '27 / PRICKING', name: 'French Pricking Iron Stitching' },
-    { tag: '28 / SEWING', name: 'Hand Saddle-Stitch Linen Thread' },
-    { tag: '29 / FINISHING', name: 'Wax Burnished Edge Creasing' },
-    { tag: '30 / LINING', name: 'Japanese Moire Silk Fabric' },
-    { tag: '31 / HARDWARE', name: 'Solid 925 Sterling Silver Casting' },
-    { tag: '32 / BINDING', name: 'Custom Cord Journal Binding' },
+    { num: '25', title: 'Bespoke Leather Pattern Drafting' },
+    { num: '26', title: 'Italian Vegetable-Tanned Nero Hides' },
+    { num: '27', title: 'French Pricking Iron Stitching' },
+    { num: '28', title: 'Hand Saddle-Stitch Linen Thread' },
+    { num: '29', title: 'Wax Burnished Edge Creasing' },
+    { num: '30', title: 'Japanese Moire Silk Fabric' },
+    { num: '31', title: 'Solid 925 Sterling Silver Casting' },
+    { num: '32', title: 'Custom Cord Journal Binding' },
   ];
 
   const row5 = [
-    { tag: '33 / MOBILE', name: 'Flutter SDK & Engine' },
-    { tag: '34 / DART', name: 'Dart Multiplatform Architecture' },
-    { tag: '35 / CLIENT', name: 'iOS & Android Native Integration' },
-    { tag: '36 / CACHE', name: 'SQLite Offline-First Sync' },
-    { tag: '37 / BOT', name: 'Telegram Bot API Concierge' },
-    { tag: '38 / LOGISTICS', name: 'Biteship Airway Bill Tracking' },
-    { tag: '39 / PAYOUT', name: 'DOKU Settlement Engine' },
-    { tag: '40 / STRIPE', name: 'Stripe Payment Webhooks' },
+    { num: '33', title: 'Flutter SDK & Engine' },
+    { num: '34', title: 'Dart Multiplatform Architecture' },
+    { num: '35', title: 'iOS & Android Native Integration' },
+    { num: '36', title: 'SQLite Offline-First Sync' },
+    { num: '37', title: 'Telegram Bot API Concierge' },
+    { num: '38', title: 'Biteship Airway Bill Tracking' },
+    { num: '39', title: 'DOKU Settlement Engine' },
+    { num: '40', title: 'Stripe Payment Webhooks' },
   ];
 
   const row6 = [
-    { tag: '41 / 3D CAD', name: 'Blender Industrial Modeling' },
-    { tag: '42 / FABRICATION', name: 'Rapid 3D Prototyping' },
-    { tag: '43 / CONTAINERS', name: 'Docker & Docker Compose' },
-    { tag: '44 / LINUX', name: 'Ubuntu Server & systemd Daemons' },
-    { tag: '45 / PROXY', name: 'Cloudflare SSL Edge Proxy' },
-    { tag: '46 / MEMORY', name: 'Redis In-Memory Cache' },
-    { tag: '47 / DATABASE', name: 'PostgreSQL & Prisma ORM' },
-    { tag: '48 / TYPOGRAPHY', name: 'Minimalist Swiss Editorial Design' },
+    { num: '41', title: 'Blender Industrial Modeling' },
+    { num: '42', title: 'Rapid 3D Prototyping' },
+    { num: '43', title: 'Docker & Docker Compose' },
+    { num: '44', title: 'Ubuntu Server & systemd Daemons' },
+    { num: '45', title: 'Cloudflare SSL Edge Proxy' },
+    { num: '46', title: 'Redis In-Memory Cache' },
+    { num: '47', title: 'PostgreSQL & Prisma ORM' },
+    { num: '48', title: 'Minimalist Swiss Editorial Design' },
   ];
 
   return (
@@ -353,76 +353,82 @@ export default function WorkIvanPortfolioPage() {
           </>
         )}
 
-        {/* 2. SKILLS TAB: KINETIC MULTI-ROW BRICK WALL MARQUEE */}
+        {/* 2. SKILLS TAB: PURE TYPOGRAPHY KINETIC MARQUEE (NO BOXES) */}
         {activeTab === 'skills' && (
-          <div className={styles.skillsBrickWallWrapper}>
+          <div className={styles.skillsPureTypographyWrapper}>
             {/* Row 1: Left */}
-            <div className={styles.brickRowTrack}>
-              <div className={styles.brickMarqueeLeft}>
-                {[...row1, ...row1, ...row1].map((b, idx) => (
-                  <div key={idx} className={styles.brickPill}>
-                    <span className={styles.brickCodeTag}>{b.tag}</span>
-                    <span>{b.name}</span>
+            <div className={styles.kineticRowTrack}>
+              <div className={styles.kineticMarqueeLeft}>
+                {[...row1, ...row1, ...row1].map((item, idx) => (
+                  <div key={idx} className={styles.pureTextItem}>
+                    <span className={styles.pureTextIndex}>{item.num}</span>
+                    <span>{item.title}</span>
+                    <span className={styles.pureTextBullet}>/</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Row 2: Right */}
-            <div className={styles.brickRowTrack}>
-              <div className={styles.brickMarqueeRight}>
-                {[...row2, ...row2, ...row2].map((b, idx) => (
-                  <div key={idx} className={styles.brickPill}>
-                    <span className={styles.brickCodeTag}>{b.tag}</span>
-                    <span>{b.name}</span>
+            <div className={styles.kineticRowTrack}>
+              <div className={styles.kineticMarqueeRight}>
+                {[...row2, ...row2, ...row2].map((item, idx) => (
+                  <div key={idx} className={styles.pureTextItem}>
+                    <span className={styles.pureTextIndex}>{item.num}</span>
+                    <span>{item.title}</span>
+                    <span className={styles.pureTextBullet}>/</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Row 3: Left */}
-            <div className={styles.brickRowTrack}>
-              <div className={styles.brickMarqueeLeft}>
-                {[...row3, ...row3, ...row3].map((b, idx) => (
-                  <div key={idx} className={styles.brickPill}>
-                    <span className={styles.brickCodeTag}>{b.tag}</span>
-                    <span>{b.name}</span>
+            <div className={styles.kineticRowTrack}>
+              <div className={styles.kineticMarqueeLeft}>
+                {[...row3, ...row3, ...row3].map((item, idx) => (
+                  <div key={idx} className={styles.pureTextItem}>
+                    <span className={styles.pureTextIndex}>{item.num}</span>
+                    <span>{item.title}</span>
+                    <span className={styles.pureTextBullet}>/</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Row 4: Right */}
-            <div className={styles.brickRowTrack}>
-              <div className={styles.brickMarqueeRight}>
-                {[...row4, ...row4, ...row4].map((b, idx) => (
-                  <div key={idx} className={styles.brickPill}>
-                    <span className={styles.brickCodeTag}>{b.tag}</span>
-                    <span>{b.name}</span>
+            <div className={styles.kineticRowTrack}>
+              <div className={styles.kineticMarqueeRight}>
+                {[...row4, ...row4, ...row4].map((item, idx) => (
+                  <div key={idx} className={styles.pureTextItem}>
+                    <span className={styles.pureTextIndex}>{item.num}</span>
+                    <span>{item.title}</span>
+                    <span className={styles.pureTextBullet}>/</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Row 5: Left */}
-            <div className={styles.brickRowTrack}>
-              <div className={styles.brickMarqueeLeft}>
-                {[...row5, ...row5, ...row5].map((b, idx) => (
-                  <div key={idx} className={styles.brickPill}>
-                    <span className={styles.brickCodeTag}>{b.tag}</span>
-                    <span>{b.name}</span>
+            <div className={styles.kineticRowTrack}>
+              <div className={styles.kineticMarqueeLeft}>
+                {[...row5, ...row5, ...row5].map((item, idx) => (
+                  <div key={idx} className={styles.pureTextItem}>
+                    <span className={styles.pureTextIndex}>{item.num}</span>
+                    <span>{item.title}</span>
+                    <span className={styles.pureTextBullet}>/</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Row 6: Right */}
-            <div className={styles.brickRowTrack}>
-              <div className={styles.brickMarqueeRight}>
-                {[...row6, ...row6, ...row6].map((b, idx) => (
-                  <div key={idx} className={styles.brickPill}>
-                    <span className={styles.brickCodeTag}>{b.tag}</span>
-                    <span>{b.name}</span>
+            <div className={styles.kineticRowTrack}>
+              <div className={styles.kineticMarqueeRight}>
+                {[...row6, ...row6, ...row6].map((item, idx) => (
+                  <div key={idx} className={styles.pureTextItem}>
+                    <span className={styles.pureTextIndex}>{item.num}</span>
+                    <span>{item.title}</span>
+                    <span className={styles.pureTextBullet}>/</span>
                   </div>
                 ))}
               </div>
