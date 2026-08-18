@@ -1,61 +1,56 @@
 /* ============================================================
-   IVAN AFFRIANDI PRO WORKSPACE (work.ivanaffriandi.com)
-   Apple visionOS Spatial Glass Architecture — 100% Full Viewport
+   IVAN AFFRIANDI WORKSPACE OS (work.ivanaffriandi.com)
+   Swiss Minimalist & Apple visionOS Spatial Glass Architecture
    ============================================================ */
 
 .workspaceRoot {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   width: 100vw;
   width: 100dvw;
   height: 100vh;
   height: 100dvh;
-  background: radial-gradient(circle at 20% 20%, #c7d2fe 0%, #e0e7ff 35%, #fce7f3 70%, #fef3c7 100%);
+  background: radial-gradient(circle at 15% 15%, #dbeafe 0%, #e0e7ff 30%, #fce7f3 65%, #fef3c7 100%);
   background-attachment: fixed;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 16px;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Inter, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #1c1c1e;
+  color: #18181b;
   overflow: hidden;
-  z-index: 999;
+  z-index: 9999;
 }
 
 @media (max-width: 1024px) {
   .workspaceRoot {
     padding: 8px;
-    overflow-y: auto;
     position: relative;
     height: auto;
     min-height: 100vh;
+    overflow-y: auto;
   }
 }
 
-/* ── MAIN SPATIAL VISION OS GLASS CANVAS ── */
+/* ── MAIN SWISS VISION OS CANVAS ── */
 .floatingCanvas {
   width: 100%;
   height: 100%;
-  max-width: 100%;
-  background: rgba(248, 249, 252, 0.75);
-  backdrop-filter: blur(60px) saturate(200%);
-  -webkit-backdrop-filter: blur(60px) saturate(200%);
-  border-radius: 36px;
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: rgba(250, 250, 252, 0.76);
+  backdrop-filter: blur(50px) saturate(190%);
+  -webkit-backdrop-filter: blur(50px) saturate(190%);
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
   box-shadow: 
-    0 30px 100px -20px rgba(99, 102, 241, 0.18),
-    0 15px 50px -10px rgba(0, 0, 0, 0.08),
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.95),
-    inset 0 -1px 1px rgba(0, 0, 0, 0.04);
+    0 24px 80px -20px rgba(99, 102, 241, 0.15),
+    0 10px 40px -10px rgba(0, 0, 0, 0.05),
+    inset 0 1px 2px rgba(255, 255, 255, 0.95);
   display: flex;
-  padding: 20px;
-  gap: 18px;
+  padding: 16px;
+  gap: 16px;
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -64,20 +59,20 @@
   .floatingCanvas {
     flex-direction: column;
     height: auto;
-    border-radius: 24px;
-    padding: 14px;
+    border-radius: 20px;
+    padding: 12px;
   }
 }
 
-/* ── LEFT VISION OS SPATIAL DOCK RAIL ── */
+/* ── LEFT SWISS DOCK RAIL ── */
 .dockRail {
-  width: 64px;
-  min-width: 64px;
+  width: 60px;
+  min-width: 60px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 0;
+  padding: 6px 0;
   height: 100%;
   box-sizing: border-box;
 }
@@ -96,73 +91,74 @@
 }
 
 .dockBrandLogo {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(255, 255, 255, 1);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05), inset 0 1px 1px #ffffff;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: #18181b;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1c1c1e;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s ease;
 }
 
 .dockBrandLogo:hover {
-  transform: scale(1.08);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
+  transform: scale(1.06);
 }
 
 .dockIconsStack {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .dockIconBtn {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03), inset 0 1px 1px #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #52525b;
+  color: #71717a;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dockIconBtn:hover {
   background: #ffffff;
-  color: #000000;
-  transform: scale(1.08);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  color: #18181b;
+  transform: scale(1.06);
 }
 
 .dockIconBtnActive {
-  background: #000000 !important;
+  background: #18181b !important;
   color: #ffffff !important;
-  border-color: #000000 !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
-  transform: scale(1.08);
+  border-color: #18181b !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
+  transform: scale(1.06);
 }
 
 .dockBottomAvatar {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: #ffffff;
   border: 2px solid #ffffff;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  position: relative;
   transition: all 0.2s ease;
 }
 
@@ -176,14 +172,25 @@
   object-fit: cover;
 }
 
-/* ── MIDDLE FEED COLUMN (CARDS QUEUE) ── */
+.avatarPulseBadge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #10b981;
+  border: 2px solid #ffffff;
+}
+
+/* ── MIDDLE QUEUE COLUMN ── */
 .feedColumn {
-  width: 380px;
-  min-width: 340px;
-  max-width: 390px;
+  width: 360px;
+  min-width: 330px;
+  max-width: 380px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   height: 100%;
   overflow: hidden;
   box-sizing: border-box;
@@ -200,16 +207,16 @@
 
 /* Search Bar Pill */
 .searchPillBox {
-  height: 50px;
-  min-height: 50px;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 25px;
+  height: 46px;
+  min-height: 46px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 23px;
   border: 1px solid rgba(255, 255, 255, 1);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04), inset 0 1px 1px #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 18px;
+  padding: 0 16px;
   gap: 10px;
 }
 
@@ -220,28 +227,39 @@
   outline: none;
   font-size: 13px;
   font-weight: 500;
-  color: #1c1c1e;
+  color: #18181b;
 }
 
 .searchInput::placeholder {
-  color: #8e8e93;
+  color: #a1a1aa;
 }
 
-.searchFilterBtn {
+/* Filter Segmented Control */
+.filterSegmentRow {
+  display: flex;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 3px;
+  border-radius: 12px;
+  gap: 2px;
+}
+
+.filterSegmentBtn {
+  flex: 1;
   border: none;
   background: transparent;
+  padding: 5px 8px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 700;
   color: #71717a;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  border-radius: 8px;
+  transition: all 0.15s ease;
 }
 
-.searchFilterBtn:hover {
-  background: #f4f4f5;
-  color: #000000;
+.filterSegmentBtnActive {
+  background: #ffffff;
+  color: #18181b;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 /* Scrollable Cards Feed */
@@ -250,8 +268,8 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding-right: 4px;
+  gap: 10px;
+  padding-right: 2px;
   height: 100%;
 }
 
@@ -260,35 +278,34 @@
 }
 
 .cardsScrollFeed::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.1);
   border-radius: 4px;
 }
 
-/* Feed White Card */
-.feedCard {
+/* Swiss Minimalist Order Card */
+.swissOrderCard {
   background: rgba(255, 255, 255, 0.92);
-  border-radius: 26px;
+  border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 1);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03), inset 0 1px 1px #ffffff;
-  padding: 18px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.feedCard:hover {
+.swissOrderCard:hover {
   transform: translateY(-2px);
   background: #ffffff;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.07);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
-.feedCardActive {
+.swissOrderCardActive {
   background: #ffffff !important;
-  border: 1.5px solid #1c1c1e !important;
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.1) !important;
+  border: 1.5px solid #18181b !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08) !important;
 }
 
 .cardHeaderRow {
@@ -297,181 +314,83 @@
   justify-content: space-between;
 }
 
-.cardAuthorCluster {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.cardAuthorAvatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
+.cardInvoiceText {
+  font-family: ui-monospace, SFMono-Regular, monospace;
   font-size: 12px;
+  font-weight: 800;
+  color: #18181b;
 }
 
-.cardAuthorName {
+.statusPill {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.statusPillPaid {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.statusPillProduction {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.statusPillShipped {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.cardCustomerRow {
   font-size: 13px;
   font-weight: 700;
-  color: #1c1c1e;
-  line-height: 1.2;
+  color: #18181b;
 }
 
-.cardAuthorSub {
-  font-size: 11px;
-  color: #8e8e93;
-  line-height: 1.2;
+.cardItemsRow {
+  font-size: 11.5px;
+  color: #71717a;
 }
 
-.cardArrowIcon {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
+.cardFooterRow {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #a1a1aa;
-  transition: all 0.2s ease;
-}
-
-.feedCard:hover .cardArrowIcon {
-  color: #1c1c1e;
-  transform: translate(2px, -2px);
-}
-
-.cardMainTitle {
-  font-size: 14px;
-  font-weight: 800;
-  color: #1c1c1e;
-  letter-spacing: -0.2px;
-  margin: 0;
-  line-height: 1.3;
-}
-
-.cardTimeSnippet {
+  justify-content: space-between;
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+  padding-top: 8px;
   font-size: 11px;
-  color: #8e8e93;
+}
+
+.cardPriceVal {
+  font-weight: 800;
+  color: #18181b;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardCourierVal {
+  color: #a1a1aa;
   font-weight: 600;
 }
 
-.cardBodySnippet {
-  font-size: 12px;
-  color: #52525b;
-  line-height: 1.4;
-  margin: 0;
-}
-
-/* Nested Product / Route Preview Widget inside Card */
-.nestedMediaWidget {
-  background: #fbf5ef;
-  border-radius: 20px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  position: relative;
-  overflow: hidden;
-}
-
-.nestedWidgetHeader {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.nestedWidgetBadge {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #1c1c1e;
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 9px;
-  font-weight: 800;
-  line-height: 1;
-}
-
-.nestedWidgetBadge span {
-  font-size: 7px;
-  font-weight: 500;
-  opacity: 0.8;
-}
-
-.nestedWidgetTitleBox h4 {
-  font-size: 12px;
-  font-weight: 800;
-  color: #1c1c1e;
-  margin: 0;
-}
-
-.nestedWidgetTitleBox p {
-  font-size: 10px;
-  color: #71717a;
-  margin: 0;
-}
-
-.nestedWidgetFooterPills {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.pillDark {
-  background: #1c1c1e;
-  color: #ffffff;
-  border-radius: 999px;
-  padding: 5px 12px;
-  font-size: 10px;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  border: none;
-}
-
-/* Audio Waveform / Quota Progress Bar */
-.waveformBarBox {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  height: 18px;
-  margin-top: 4px;
-}
-
-.waveBar {
-  flex: 1;
-  height: 100%;
-  background: #e4e4e7;
-  border-radius: 4px;
-}
-
-.waveBarActive {
-  background: #86efac !important;
-}
-
-/* ── RIGHT DETAIL INSPECTOR CANVAS (FLUID 100% WIDTH) ── */
+/* ── RIGHT DETAIL INSPECTOR CANVAS ── */
 .detailCanvas {
   flex: 1;
   min-width: 0;
   background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
-  border-radius: 30px;
+  border-radius: 24px;
   border: 1px solid rgba(255, 255, 255, 1);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04), inset 0 1px 1px #ffffff;
-  padding: 28px 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+  padding: 24px 28px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 18px;
+  gap: 16px;
   height: 100%;
   overflow-y: auto;
   box-sizing: border-box;
@@ -483,7 +402,7 @@
   }
 }
 
-.detailCanvasTopBar {
+.detailTopBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -493,204 +412,171 @@
   gap: 10px;
 }
 
-.detailAuthorHeader {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.detailAuthorAvatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-}
-
-.detailAuthorName {
-  font-size: 14px;
-  font-weight: 800;
-  color: #1c1c1e;
-  margin: 0;
-}
-
-.detailAuthorRole {
-  font-size: 11px;
-  color: #8e8e93;
-  margin: 2px 0 0 0;
-}
-
-.detailTopActionsGroup {
+.detailStudioTitle {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.btnRoundAction {
-  width: 34px;
-  height: 34px;
+.studioPulseDot {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #f4f4f5;
-  border: none;
-  color: #52525b;
+  background: #10b981;
+}
+
+.detailRightActions {
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  gap: 8px;
 }
 
-.btnRoundAction:hover {
-  background: #e4e4e7;
-  color: #000000;
-}
-
-.btnPillReply {
+.btnSwissPill {
   background: #f4f4f5;
   border: none;
   border-radius: 999px;
-  padding: 7px 16px;
+  padding: 7px 14px;
   font-size: 11.5px;
   font-weight: 700;
-  color: #1c1c1e;
+  color: #18181b;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  text-decoration: none;
+  transition: all 0.15s ease;
 }
 
-.btnPillReply:hover {
+.btnSwissPill:hover {
   background: #e4e4e7;
 }
 
-/* Detail Reading Body */
-.detailReadingBody {
+.btnSwissPillPrimary {
+  background: #18181b;
+  color: #ffffff;
+}
+
+.btnSwissPillPrimary:hover {
+  background: #27272a;
+}
+
+/* Order Master Stepper */
+.stepperRow {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  color: #27272a;
-  font-size: 13px;
-  line-height: 1.6;
+  gap: 6px;
+  margin-top: 4px;
 }
 
-.detailGreeting {
-  font-weight: 800;
-  font-size: 15px;
-  color: #1c1c1e;
-  margin: 0;
+.stepperBtn {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: #f8f8fa;
+  font-size: 11px;
+  font-weight: 700;
+  color: #71717a;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
 }
 
-/* Responsive Specs Grid */
-.specsAdaptiveGrid {
+.stepperBtn:hover {
+  background: #f0f0f4;
+  color: #18181b;
+}
+
+.stepperBtnActive {
+  background: #18181b !important;
+  color: #ffffff !important;
+  border-color: #18181b !important;
+}
+
+/* Bespoke Specs Grid */
+.specsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 8px;
   width: 100%;
 }
 
-.specItemCard {
-  background: #ffffff;
-  padding: 8px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-}
-
-/* Attachments Row */
-.attachmentsRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 2px;
-}
-
-.attachmentCard {
+.specCard {
   background: #f8f8fa;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  border-radius: 12px;
-  padding: 8px 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
-.attachmentCard:hover {
-  background: #f0f0f4;
-  border-color: rgba(0, 0, 0, 0.1);
-}
-
-.attachmentIcon {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #1c1c1e;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-}
-
-.attachmentTitle {
-  font-size: 11.5px;
+.specCardLabel {
+  font-size: 8.5px;
   font-weight: 800;
-  color: #1c1c1e;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  display: block;
 }
 
-.attachmentSize {
-  font-size: 9.5px;
-  color: #8e8e93;
-  font-family: ui-monospace, monospace;
+.specCardVal {
+  font-size: 12px;
+  font-weight: 800;
+  color: #18181b;
+  margin-top: 2px;
+  display: block;
 }
 
-/* Bottom Quick Input Box */
-.bottomQuickReplyBox {
+/* Shipping Customer Box */
+.customerInfoBox {
+  background: #f8f8fa;
+  border-radius: 16px;
+  padding: 14px 16px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  font-size: 12px;
+  line-height: 1.5;
+  color: #52525b;
+}
+
+/* Quick Dispatch Bar */
+.dispatchBar {
   background: #f4f5f8;
-  border-radius: 20px;
-  padding: 8px 14px;
+  border-radius: 18px;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
 }
 
-.quickReplyInput {
+.dispatchInput {
   flex: 1;
   border: none;
   background: transparent;
   outline: none;
   font-size: 12.5px;
-  font-weight: 500;
-  color: #1c1c1e;
+  font-weight: 600;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: #18181b;
 }
 
-.quickReplyInput::placeholder {
+.dispatchInput::placeholder {
   color: #a1a1aa;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 400;
 }
 
-.quickReplyIcons {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.btnReplyIcon {
+.btnDispatch {
+  background: #18181b;
+  color: #ffffff;
   border: none;
-  background: transparent;
-  color: #71717a;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 11.5px;
+  font-weight: 800;
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
 }
 
-.btnReplyIcon:hover {
-  color: #000000;
+.btnDispatch:hover {
+  background: #27272a;
 }
