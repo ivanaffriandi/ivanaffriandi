@@ -1,7 +1,7 @@
 /* ============================================================
-   IVAN AFFRIANDI · REFINED MINIMALIST SCANDINAVIAN PORTFOLIO
+   IVAN AFFRIANDI · ORGANIZED SWISS CHAOS / BRUTALIST EDITORIAL
    (work.ivanaffriandi.com)
-   Harmonious Proportions · Interactive Comparison Slider · Zero Bloat
+   Full-Bleed 100% Width · Asymmetric High-Contrast Grid
    ============================================================ */
 
 .scandinavianViewport {
@@ -10,8 +10,8 @@
   min-height: 100vh;
   min-height: 100dvh;
   background-color: #ffffff;
-  color: #1a1a1e;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  color: #111111;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Arial", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
@@ -20,56 +20,68 @@
   overflow-x: hidden;
 }
 
-/* ── CONTAINER WRAPPER (BALANCED COMPACT WIDTH) ── */
+/* ── FULL-BLEED EDITORIAL CONTAINER (EDGE-TO-EDGE) ── */
 .editorialContainer {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 40px 24px 80px 24px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 32px 4vw 80px 4vw;
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: 56px;
   box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
   .editorialContainer {
-    padding: 24px 16px 60px 16px;
-    gap: 36px;
+    padding: 20px 4vw 60px 4vw;
+    gap: 40px;
   }
 }
 
-/* ── HEADER ROW ── */
+/* ── SWISS BRUTALIST TOP BAR ── */
 .headerRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #f0f0f2;
-  padding-bottom: 18px;
+  border-bottom: 2px solid #111111;
+  padding-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .brandLogoBox {
   display: flex;
-  flex-direction: column;
+  align-items: baseline;
+  gap: 12px;
 }
 
 .brandLogoTitle {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: -0.2px;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: -0.4px;
+  text-transform: uppercase;
   color: #111111;
   text-decoration: none;
-  line-height: 1.2;
 }
 
 .brandLogoSub {
-  font-size: 11.5px;
-  color: #88888e;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  color: #777777;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .navLinksGroup {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 20px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 @media (max-width: 640px) {
@@ -79,173 +91,186 @@
 }
 
 .navLinkItem {
-  color: #66666e;
-  font-size: 12.5px;
-  font-weight: 500;
+  color: #111111;
   text-decoration: none;
-  transition: color 0.15s ease;
+  transition: opacity 0.15s ease;
 }
 
 .navLinkItem:hover {
-  color: #000000;
+  text-decoration: underline;
 }
 
-/* ── CASUAL HERO SECTION (BALANCED SCALE) ── */
+/* ── SWISS CHAOS HERO SECTION ── */
 .heroSection {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
+  border-bottom: 1px solid #111111;
+  padding-bottom: 40px;
 }
 
 .heroTagRow {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
   font-size: 11px;
-  font-weight: 600;
-  color: #16a34a;
-  letter-spacing: 0.2px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-family: ui-monospace, monospace;
+  color: #666666;
+}
+
+.statusIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #15803d;
+  font-weight: 800;
 }
 
 .heroMainHeadline {
-  font-size: 38px;
-  font-weight: 800;
-  letter-spacing: -1px;
-  line-height: 1.15;
+  font-size: clamp(32px, 4.5vw, 64px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
   color: #111111;
   margin: 0;
-  max-width: 760px;
+  text-transform: none;
+  max-width: 1300px;
 }
 
-@media (max-width: 768px) {
-  .heroMainHeadline {
-    font-size: 28px;
-    letter-spacing: -0.6px;
+/* Asymmetric 2-Column Bio & Quick Links */
+.heroSplitGrid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .heroSplitGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 }
 
 .heroBioText {
-  font-size: 15.5px;
-  line-height: 1.65;
-  color: #4a4a52;
-  max-width: 720px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: #333333;
   margin: 0;
+  font-weight: 500;
 }
 
-@media (max-width: 768px) {
-  .heroBioText {
-    font-size: 14px;
-  }
-}
-
-/* Location & Social Pills */
-.heroMetaRow {
+.heroQuickLinksBox {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding-top: 12px;
+  flex-direction: column;
+  gap: 10px;
+  border-left: 2px solid #111111;
+  padding-left: 20px;
+}
+
+@media (max-width: 860px) {
+  .heroQuickLinksBox {
+    border-left: none;
+    border-top: 1px solid #e5e5e5;
+    padding-left: 0;
+    padding-top: 16px;
+  }
 }
 
 .socialRow {
   display: flex;
-  align-items: center;
-  gap: 8px;
   flex-wrap: wrap;
+  gap: 8px;
 }
 
 .socialPill {
-  background: #f7f7f9;
-  border: 1px solid #eaeaea;
-  color: #333338;
-  padding: 5px 12px;
-  border-radius: 999px;
+  background: #111111;
+  color: #ffffff;
+  padding: 6px 14px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   text-decoration: none;
+  font-family: ui-monospace, monospace;
   transition: all 0.15s ease;
 }
 
 .socialPill:hover {
-  background: #111111;
-  color: #ffffff;
-  border-color: #111111;
+  background: #ef4444;
 }
 
-/* ── HERO VISUAL BANNER ── */
-.heroVisualContainer {
-  width: 100%;
-  height: 300px;
-  border-radius: 8px;
-  overflow: hidden;
-  position: relative;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+.atelierStamp {
+  font-size: 11px;
+  font-weight: 700;
+  color: #666666;
+  font-family: ui-monospace, monospace;
+  text-transform: uppercase;
 }
 
-@media (max-width: 768px) {
-  .heroVisualContainer {
-    height: 190px;
-  }
-}
-
-.heroVisualContainer img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.heroVisualContainer:hover img {
-  transform: scale(1.02);
-}
-
-/* ── SECTION HEADER ── */
+/* ── SWISS SECTION HEADER ── */
 .sectionHeaderBox {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  border-bottom: 1px solid #111111;
+  align-items: flex-end;
+  border-bottom: 2px solid #111111;
   padding-bottom: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 18px;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.sectionTitle {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.4px;
-  color: #111111;
-  margin: 0;
+.sectionTitleCluster {
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: 12px;
+}
+
+.sectionIndexNum {
+  font-size: 13px;
+  font-weight: 900;
+  font-family: ui-monospace, monospace;
+  color: #888888;
+}
+
+.sectionTitle {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  color: #111111;
+  margin: 0;
+  text-transform: uppercase;
 }
 
 .sectionSubtitle {
   font-size: 12px;
-  color: #88888e;
+  font-weight: 600;
+  color: #777777;
+  font-family: ui-monospace, monospace;
+  text-transform: uppercase;
 }
 
-/* ── SPOTLIGHT COMPARISON SLIDER (MAIL PLATFORM DARK / LIGHT) ── */
-.comparisonWrapper {
+/* ── FEATURE #1: INTERACTIVE COMPARISON SLIDER (MAIL PLATFORM) ── */
+.comparisonSection {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .comparisonBox {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 10;
-  border-radius: 8px;
+  aspect-ratio: 16 / 9.5;
+  border-radius: 4px;
   overflow: hidden;
   user-select: none;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
-  border: 1px solid #eaeaea;
+  border: 2px solid #111111;
   background: #111111;
   cursor: ew-resize;
+  box-shadow: 6px 6px 0px #111111;
 }
 
 .comparisonImageDark {
@@ -281,7 +306,7 @@
   bottom: 0;
   width: 2px;
   background: #ffffff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
   pointer-events: none;
 }
 
@@ -289,114 +314,111 @@
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: #ffffff;
   color: #111111;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: 900;
   pointer-events: none;
 }
 
-.comparisonFooterMeta {
+.comparisonMetaRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 12px;
-  color: #777780;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
+  font-family: ui-monospace, monospace;
+  font-size: 11.5px;
+  font-weight: 700;
 }
 
 .modeBadgeGroup {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
-.modeBadgeDark {
-  background: #18181b;
-  color: #f4f4f5;
-  font-size: 10px;
-  font-weight: 700;
+.modeBadge {
+  background: #111111;
+  color: #ffffff;
   padding: 3px 8px;
-  border-radius: 4px;
-}
-
-.modeBadgeLight {
-  background: #f4f4f5;
-  color: #18181b;
-  border: 1px solid #e4e4e7;
   font-size: 10px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 4px;
 }
 
-/* ── SPOTLIGHT BLOG / READER 2-CARD SHOWCASE ── */
+/* ── FEATURE #2: ATMOSPHERIC DIGITAL READER (2-COLUMN POSTER GRID) ── */
 .readerGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 24px;
 }
 
 @media (max-width: 768px) {
   .readerGrid {
     grid-template-columns: 1fr;
+    gap: 18px;
   }
 }
 
 .readerCard {
-  border: 1px solid #e8e8ec;
-  border-radius: 8px;
-  overflow: hidden;
+  border: 2px solid #111111;
   background: #ffffff;
   text-decoration: none;
   color: #111111;
-  transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 4px 4px 0px #111111;
 }
 
 .readerCard:hover {
-  border-color: #111111;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px #111111;
 }
 
-.readerImageWrapper {
+.readerImageWrap {
   width: 100%;
   aspect-ratio: 16 / 10;
   overflow: hidden;
   background: #111111;
+  border-bottom: 2px solid #111111;
 }
 
-.readerImageWrapper img {
+.readerImageWrap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.6s ease;
 }
 
-.readerCard:hover .readerImageWrapper img {
+.readerCard:hover .readerImageWrap img {
   transform: scale(1.03);
 }
 
-.readerCardContent {
-  padding: 14px 16px;
+.readerCardBody {
+  padding: 16px 20px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
-.readerCardTitle {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #111111;
+.readerCardTag {
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #888888;
+}
+
+.readerCardHeadline {
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: -0.2px;
   margin: 0;
   display: flex;
   justify-content: space-between;
@@ -404,316 +426,230 @@
 }
 
 .readerCardDesc {
-  font-size: 11.5px;
-  color: #666670;
-  margin: 0;
-  line-height: 1.5;
-}
-
-/* Category Filter Tabs */
-.filterTabsRow {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-
-.filterTabBtn {
-  background: #f4f4f6;
-  border: 1px solid transparent;
-  color: #666670;
-  padding: 5px 12px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.filterTabBtn:hover {
-  background: #e8e8ed;
-  color: #111111;
-}
-
-.filterTabBtnActive {
-  background: #111111 !important;
-  color: #ffffff !important;
-}
-
-/* ── PROJECTS INTERACTIVE TABLE WITH FLOATING HOVER PREVIEW ── */
-.projectsTable {
-  display: flex;
-  flex-direction: column;
-}
-
-.projectRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 0;
-  border-bottom: 1px solid #f0f0f2;
-  text-decoration: none;
-  color: #111111;
-  position: relative;
-  transition: all 0.15s ease;
-}
-
-.projectRow:hover {
-  background-color: #fafafc;
-  padding-left: 8px;
-  padding-right: 8px;
-}
-
-.projectNameCluster {
-  flex: 1.2;
-}
-
-.projectNameTitle {
-  font-size: 13.5px;
-  font-weight: 700;
-  letter-spacing: -0.1px;
-  margin: 0;
-  color: #111111;
-}
-
-.projectDescShort {
-  font-size: 11.5px;
-  color: #777780;
-  margin: 2px 0 0 0;
-}
-
-.projectCategoryPills {
-  display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
-  flex: 1.3;
-}
-
-.disciplinePill {
-  font-size: 8.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  padding: 3px 8px;
-  border-radius: 999px;
-  border: 1px solid #e2e2e6;
-  color: #666670;
-  background: #ffffff;
-}
-
-.projectYear {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: #99999e;
-  font-family: ui-monospace, monospace;
-  width: 45px;
-  text-align: right;
-}
-
-.projectArrow {
-  width: 24px;
-  text-align: right;
-  color: #b0b0b8;
-  transition: transform 0.2s ease, color 0.2s ease;
   font-size: 13px;
+  line-height: 1.5;
+  color: #444444;
+  margin: 0;
 }
 
-.projectRow:hover .projectArrow {
-  color: #111111;
-  transform: translateX(3px);
-}
-
-/* Floating Hover Preview Card */
-.floatingPreviewCard {
-  width: 140px;
-  height: 90px;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
-  border: 1px solid #ffffff;
-  position: absolute;
-  right: 40px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
-  pointer-events: none;
-}
-
-.floatingPreviewCard img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* ── DISCIPLINES & SKILLS COMPACT GRID ── */
-.skillsSectionGrid {
+/* ── FEATURE #3: ASYMMETRIC BENTO GRID (ATELIER + 3D CONFIGURATOR) ── */
+.bentoGridRow {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
 }
 
-@media (max-width: 800px) {
-  .skillsSectionGrid {
+@media (max-width: 860px) {
+  .bentoGridRow {
     grid-template-columns: 1fr;
   }
 }
 
-.skillCard {
-  border: 1px solid #e8e8ec;
-  border-radius: 6px;
-  padding: 18px;
-  background: #fafafc;
+.bentoCard {
+  border: 2px solid #111111;
+  background: #fafafb;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  transition: all 0.15s ease;
+  justify-content: space-between;
+  gap: 16px;
+  text-decoration: none;
+  color: #111111;
+  box-shadow: 4px 4px 0px #111111;
+  transition: all 0.2s ease;
 }
 
-.skillCard:hover {
-  border-color: #111111;
+.bentoCard:hover {
   background: #ffffff;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+  transform: translate(-2px, -2px);
+  box-shadow: 8px 8px 0px #111111;
 }
 
-.skillCardHeader {
+.bentoHeaderRow {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
 }
 
-.skillCardNumber {
-  font-size: 10px;
+.bentoCardTitle {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.3px;
+  margin: 0;
+}
+
+.bentoCardTag {
+  font-family: ui-monospace, monospace;
+  font-size: 10.5px;
   font-weight: 800;
-  color: #99999e;
+  text-transform: uppercase;
+  color: #666666;
+}
+
+.bentoCardDesc {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #333333;
+  margin: 0;
+}
+
+.bentoPillsWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.bentoMiniPill {
+  background: #ffffff;
+  border: 1px solid #111111;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  text-transform: uppercase;
   font-family: ui-monospace, monospace;
 }
 
-.skillCardTitle {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #111111;
-  margin: 0;
-}
-
-.skillCardDesc {
-  font-size: 12px;
-  line-height: 1.5;
-  color: #555560;
-  margin: 0;
-}
-
-.skillPillsWrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 2px;
-}
-
-.techMiniPill {
-  background: #ffffff;
-  border: 1px solid #e0e0e6;
-  border-radius: 4px;
-  padding: 2px 7px;
-  font-size: 9.5px;
-  font-weight: 600;
-  color: #44444c;
-}
-
-/* ── CHRONICLE & NEWS ── */
-.chronicleList {
+/* ── COMPACT SWISS ARCHIVE TABLE ── */
+.archiveTable {
   display: flex;
   flex-direction: column;
 }
 
-.chronicleRow {
+.archiveRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f2;
+  padding: 16px 0;
+  border-bottom: 1px solid #e5e5e5;
   text-decoration: none;
   color: #111111;
   transition: all 0.15s ease;
+  position: relative;
 }
 
-.chronicleRow:hover {
-  padding-left: 6px;
-  background: #fafafc;
+.archiveRow:hover {
+  padding-left: 8px;
+  padding-right: 8px;
+  background: #fafafa;
 }
 
-.chronicleDate {
-  font-size: 11px;
-  font-weight: 600;
-  color: #88888e;
-  font-family: ui-monospace, monospace;
-  width: 90px;
+.archiveColName {
+  flex: 1.5;
 }
 
-.chronicleTitle {
+.archiveTitle {
+  font-size: 14.5px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.archiveDesc {
+  font-size: 12px;
+  color: #666666;
+  margin: 2px 0 0 0;
+}
+
+.archiveColStack {
   flex: 1;
-  font-size: 12.5px;
-  font-weight: 500;
-  color: #222228;
-}
-
-.chronicleArrow {
-  font-size: 12px;
-  color: #88888e;
-}
-
-/* ── GET IN TOUCH SECTION (WARM & CASUAL) ── */
-.getInTouchBox {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 0 30px 0;
-  border-top: 1px solid #f0f0f2;
-  border-bottom: 1px solid #f0f0f2;
-  text-align: center;
-  gap: 12px;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.getInTouchHeading {
-  font-size: 12px;
+.archiveStackBadge {
+  font-size: 9px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: #88888e;
+  padding: 2px 6px;
+  border: 1px solid #d0d0d0;
+  font-family: ui-monospace, monospace;
 }
 
-.getInTouchLink {
-  font-size: 32px;
+.archiveYear {
+  font-size: 12px;
   font-weight: 800;
-  letter-spacing: -0.6px;
+  font-family: ui-monospace, monospace;
+  width: 40px;
+  text-align: right;
+}
+
+.archiveArrow {
+  width: 24px;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* ── MASSIVE SWISS TOUCHPOINT FOOTER ── */
+.contactTouchBox {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-top: 2px solid #111111;
+  border-bottom: 2px solid #111111;
+  padding: 48px 0 40px 0;
+}
+
+.contactHeadline {
+  font-size: clamp(28px, 4vw, 56px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
   color: #111111;
-  text-decoration: underline;
-  text-underline-offset: 6px;
-  text-decoration-thickness: 2px;
+  margin: 0;
+}
+
+.contactDirectRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.contactBtnDark {
+  background: #111111;
+  color: #ffffff;
+  padding: 12px 24px;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-family: ui-monospace, monospace;
+  box-shadow: 4px 4px 0px #ef4444;
   transition: all 0.15s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
 }
 
-@media (max-width: 600px) {
-  .getInTouchLink {
-    font-size: 24px;
-  }
+.contactBtnDark:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #ef4444;
 }
 
-.getInTouchLink:hover {
-  color: #ef4444;
+.contactBtnOutline {
+  background: #ffffff;
+  color: #111111;
+  border: 2px solid #111111;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-family: ui-monospace, monospace;
+  box-shadow: 4px 4px 0px #111111;
+  transition: all 0.15s ease;
 }
 
-/* ── WORLD CLOCKS TICKER ROW ── */
+.contactBtnOutline:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #111111;
+}
+
+/* ── WORLD CLOCKS TICKER ── */
 .worldClocksGrid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
-  text-align: center;
-  border-bottom: 1px solid #f0f0f2;
-  padding-bottom: 18px;
+  gap: 16px;
+  border-bottom: 2px solid #111111;
+  padding-bottom: 24px;
 }
 
 @media (max-width: 768px) {
@@ -729,43 +665,45 @@
 }
 
 .clockTime {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
+  font-size: 22px;
+  font-weight: 900;
+  font-family: ui-monospace, monospace;
+  letter-spacing: -0.5px;
   color: #111111;
-  font-family: ui-monospace, SFMono-Regular, monospace;
 }
 
 .clockCity {
-  font-size: 9px;
-  font-weight: 700;
+  font-size: 9.5px;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: #88888e;
+  font-family: ui-monospace, monospace;
+  color: #777777;
 }
 
-/* ── FOOTER ── */
+/* ── SWISS MINIMAL FOOTER ── */
 .scandinavianFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 11.5px;
-  color: #88888e;
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+  text-transform: uppercase;
+  color: #666666;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 12px;
 }
 
 .footerLinksRow {
   display: flex;
-  gap: 18px;
+  gap: 16px;
 }
 
 .footerLink {
-  color: #555560;
+  color: #111111;
   text-decoration: none;
-  font-weight: 500;
 }
 
 .footerLink:hover {
-  color: #000000;
+  text-decoration: underline;
 }

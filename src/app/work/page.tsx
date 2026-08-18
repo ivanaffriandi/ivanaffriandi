@@ -1,13 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import styles from './work.module.css';
 
-export default function WorkScandinavianPortfolioPage() {
-  const [activeFilter, setActiveFilter] = useState<'ALL' | 'ATELIER' | 'WEBGL' | 'CLOUD' | 'MOBILE'>('ALL');
-  const [hoveredProjectId, setHoveredProjectId] = useState<string | null>(null);
-  
+export default function WorkOrganizedSwissPortfolioPage() {
   // Interactive Dark/Light Slider Position (0 to 100%)
   const [sliderPos, setSliderPos] = useState(50);
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
@@ -63,217 +59,103 @@ export default function WorkScandinavianPortfolioPage() {
     }
   };
 
-  const projects = [
+  const archives = [
     {
-      id: 'shuen',
-      category: 'ATELIER',
-      name: 'SHŪ / EN Studio',
-      shortDesc: 'Handcrafted bespoke leather atelier & luxury e-commerce with real-time checkout.',
-      disciplines: ['Leather Atelier', 'Full-Grain', 'Commerce'],
+      name: 'SHŪ / EN Mobile App',
+      desc: 'Cross-platform Flutter & Dart mobile experience for workshop queues & client VIP orders.',
+      stack: ['Flutter', 'Dart', 'iOS & Android'],
       year: '2026',
       url: 'https://shuenstudio.com',
-      image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&auto=format&fit=crop&q=80',
     },
     {
-      id: 'configurator',
-      category: 'WEBGL',
-      name: 'SHŪ / EN 3D WebGL Configurator',
-      shortDesc: 'Interactive 3D procedural texturing tool with custom cords, leather swatches & foil embossing.',
-      disciplines: ['Three.js', 'WebGL', 'Procedural 3D'],
-      year: '2026',
-      url: 'https://shuenstudio.com/po',
-      image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&auto=format&fit=crop&q=80',
-    },
-    {
-      id: 'mail',
-      category: 'CLOUD',
-      name: 'Private Mail Platform & SES Engine',
-      shortDesc: 'Self-hosted email platform with automated DKIM 2048-bit RSA keys & 99.98% delivery rate.',
-      disciplines: ['AWS SES', 'DKIM 2048', 'Dark & Light Mode', 'Docker'],
-      year: '2026',
-      url: 'https://mail.ivanaffriandi.com',
-      image: '/work-showcase/mail-dark.png',
-    },
-    {
-      id: 'book',
-      category: 'WEBGL',
-      name: 'Multi-Sensory Interactive Book Core',
-      shortDesc: 'Experimental digital reader featuring ambient soundscapes and neural voice narration.',
-      disciplines: ['Web Audio API', 'Neural TTS', 'Next.js 16'],
-      year: '2026',
-      url: 'https://ivanaffriandi.com/x',
-      image: '/work-showcase/reader-dark-woods.png',
-    },
-    {
-      id: 'mobile',
-      category: 'MOBILE',
-      name: 'SHŪ / EN Atelier Mobile App',
-      shortDesc: 'Cross-platform mobile app for artisan order queues, customer CRM & VIP order tracking.',
-      disciplines: ['Flutter', 'Dart', 'iOS & Android'],
+      name: 'shuen-bot Concierge',
+      desc: 'Automated Telegram & WhatsApp dispatcher for instant order tracking & courier airway bills.',
+      stack: ['Node.js', 'Telegram API', 'Webhooks'],
       year: '2026',
       url: 'https://shuenstudio.com',
-      image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80',
     },
     {
-      id: 'bot',
-      category: 'CLOUD',
-      name: 'shuen-bot Automated Dispatcher',
-      shortDesc: 'Telegram and WhatsApp bot integrations for instant order tracking and airway bill alerts.',
-      disciplines: ['Node.js', 'Telegram API', 'Courier Webhooks'],
-      year: '2026',
-      url: 'https://shuenstudio.com',
-      image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
-    },
-    {
-      id: 'kvr',
-      category: 'ATELIER',
-      name: 'KVR Objects & Industrial 3D',
-      shortDesc: 'CAD industrial product modeling, 3D printing prototypes & custom solid metal hardware.',
-      disciplines: ['Blender CAD', '3D Prototyping', 'Hardware'],
+      name: 'KVR Objects & 3D Fabrication',
+      desc: 'CAD industrial product modeling, 3D printing prototyping, and custom solid metal hardware.',
+      stack: ['Blender CAD', '3D Prototyping', 'Hardware'],
       year: '2025',
       url: 'https://ivanaffriandi.com',
-      image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&auto=format&fit=crop&q=80',
     },
     {
-      id: 'equilibrium',
-      category: 'WEBGL',
       name: 'Equilibrium Academy Engine',
-      shortDesc: 'Interactive learning platform and curriculum for modern creative engineering.',
-      disciplines: ['TypeScript', 'System Design', 'Education'],
+      desc: 'Interactive digital learning environment and creative engineering curriculum.',
+      stack: ['TypeScript', 'Next.js', 'Education'],
       year: '2025',
       url: 'https://ivanaffriandi.com',
-      image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80',
     },
-    {
-      id: 'essays',
-      category: 'ATELIER',
-      name: 'Cyber-Artisanal Craft & Design Theory',
-      shortDesc: 'Essays on merging traditional leather crafting techniques with interactive 3D web code.',
-      disciplines: ['Editorial', 'Design Theory', 'Minimalism'],
-      year: '2025 – 2026',
-      url: 'https://ivanaffriandi.com',
-      image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&auto=format&fit=crop&q=80',
-    },
-  ];
-
-  const filteredProjects = projects.filter(
-    (p) => activeFilter === 'ALL' || p.category === activeFilter
-  );
-
-  const skillsMatrix = [
-    {
-      number: '01',
-      title: 'Physical Leather Craft',
-      desc: 'Bespoke pattern drafting, vegetable tanned Nero & Moire leather, custom cord binding, solid 925 silver charms, and gold foil embossing.',
-      tags: ['Pattern Drafting', 'Full-Grain Leather', 'Atelier Craft', 'Solid Silver', 'Embossing'],
-    },
-    {
-      number: '02',
-      title: 'Real-Time 3D & WebGL',
-      desc: 'Building responsive 3D WebGL product configurators, procedural shaders, studio lighting rigs, and smooth interaction physics.',
-      tags: ['Three.js', 'WebGL', 'GLSL Shaders', '3D Configurator', 'Blender CAD'],
-    },
-    {
-      number: '03',
-      title: 'Frontend & UI Engineering',
-      desc: 'Crafting clean, responsive web apps using Next.js 16 App Router, React 19, TypeScript, Tailwind CSS, and Framer Motion.',
-      tags: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
-    },
-    {
-      number: '04',
-      title: 'Mobile Apps (Flutter)',
-      desc: 'Developing snappy iOS and Android mobile apps with Flutter & Dart for workshop queue management and client VIP concierge.',
-      tags: ['Flutter', 'Dart', 'iOS & Android SDK', 'State Management', 'Mobile UI'],
-    },
-    {
-      number: '05',
-      title: 'Cloud Infrastructure & Mail',
-      desc: 'Self-hosted Dockerized mail platform with AWS SES, automated DKIM 2048-bit keys, PostgreSQL databases, and Cloudflare DNS.',
-      tags: ['AWS SES', 'DKIM 2048-bit', 'Docker', 'PostgreSQL', 'Oracle Cloud VM'],
-    },
-    {
-      number: '06',
-      title: 'AI & Audio Synthesis',
-      desc: 'Multi-modal LLM integrations with Google Gemini, Web Audio API soundscapes, and neural text-to-speech audio synthesis.',
-      tags: ['Google Gemini', 'Web Audio API', 'Neural TTS', 'Live Telemetry', 'Python'],
-    },
-  ];
-
-  const chronicles = [
-    { date: '18.08.2026', title: 'SHŪ / EN Studio v2.6 with Bespoke 3D WebGL Configurator Deployed', url: 'https://shuenstudio.com/po' },
-    { date: '02.08.2026', title: 'Self-Hosted Mail Infrastructure with Automated DKIM 2048-bit Signing', url: 'https://mail.ivanaffriandi.com' },
-    { date: '15.07.2026', title: 'Spatial UI Interaction Models & Ambient Audio Soundscape Lab', url: 'https://ivanaffriandi.com/x' },
-    { date: '28.05.2026', title: 'The Architecture of Cyber-Artisanal Craft (Publication)', url: 'https://ivanaffriandi.com' },
-    { date: '10.03.2026', title: 'Tangerang Leather Atelier Custom Patternmaking System', url: 'https://shuenstudio.com' },
   ];
 
   return (
     <div className={styles.scandinavianViewport}>
       <div className={styles.editorialContainer}>
-        {/* ── TOP HEADER ROW ── */}
+        {/* ── TOP SWISS BAR ── */}
         <header className={styles.headerRow}>
           <div className={styles.brandLogoBox}>
             <a href="https://ivanaffriandi.com" className={styles.brandLogoTitle}>
-              Ivan Affriandi — Studio
+              Ivan Affriandi
             </a>
-            <span className={styles.brandLogoSub}>Creative Technologist &amp; Founder</span>
+            <span className={styles.brandLogoSub}>Studio · Tangerang / Worldwide</span>
           </div>
 
           <nav className={styles.navLinksGroup}>
-            <a href="#mail-showcase" className={styles.navLinkItem}>Mail Engine ↗</a>
-            <a href="#reader-showcase" className={styles.navLinkItem}>Reader Core ↗</a>
-            <a href="#projects" className={styles.navLinkItem}>Projects</a>
-            <a href="#disciplines" className={styles.navLinkItem}>Disciplines</a>
-            <a href="#contact" className={styles.navLinkItem}>Contact</a>
+            <a href="#mail-engine" className={styles.navLinkItem}>01 / Mail</a>
+            <a href="#reader-core" className={styles.navLinkItem}>02 / Reader</a>
+            <a href="#atelier-3d" className={styles.navLinkItem}>03 / Atelier &amp; 3D</a>
+            <a href="#archive" className={styles.navLinkItem}>04 / Archive</a>
+            <a href="#contact" className={styles.navLinkItem}>05 / Contact</a>
           </nav>
         </header>
 
-        {/* ── CASUAL HERO SECTION ── */}
+        {/* ── SWISS CHAOS HERO STATEMENT ── */}
         <section className={styles.heroSection}>
           <div className={styles.heroTagRow}>
-            <span>●</span>
-            <span>AVAILABLE FOR SELECT COMMISSIONS &amp; ENGINEERING PROJECTS</span>
+            <span className={styles.statusIndicator}>● OPEN FOR SELECT COMMISSIONS &amp; CODE PROJECTS</span>
+            <span>INDEX 2025 — 2026</span>
           </div>
 
           <h1 className={styles.heroMainHeadline}>
-            Things I make, tinker with, and care about.
+            Handmade leather goods in the physical world. High-performance software in the digital one.
           </h1>
 
-          <p className={styles.heroBioText}>
-            I spend my time between two worlds: handcrafting bespoke leather goods in my studio, and engineering fast, beautiful web apps and cloud systems on my laptop. Founder of <strong>SHŪ / EN Studio</strong>.
-          </p>
+          <div className={styles.heroSplitGrid}>
+            <p className={styles.heroBioText}>
+              Hey, I&apos;m Ivan. I run <strong>SHŪ / EN Studio</strong> where I design bespoke leather journals, pattern cut raw vegetable-tanned hides, and build real-time 3D WebGL customizers. When I step away from the workbench, I deploy private self-hosted email infrastructure and tinker with multi-sensory reading experiences.
+            </p>
 
-          <div className={styles.heroMetaRow}>
-            <div className={styles.socialRow}>
-              <a href="https://github.com/ivanaffriandi" target="_blank" rel="noreferrer" className={styles.socialPill}>
-                GitHub ↗
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noreferrer" className={styles.socialPill}>
-                Instagram ↗
-              </a>
-              <a href="https://linkedin.com" target="_blank" rel="noreferrer" className={styles.socialPill}>
-                LinkedIn ↗
-              </a>
-              <a href="https://x.com" target="_blank" rel="noreferrer" className={styles.socialPill}>
-                X / Twitter ↗
-              </a>
-            </div>
-
-            <div style={{ fontSize: '11.5px', color: '#88888e', fontWeight: 600 }}>
-              BASED IN INDONESIA · COMMISSIONS WORLDWIDE
+            <div className={styles.heroQuickLinksBox}>
+              <span className={styles.atelierStamp}>CONNECT &amp; EXPLORE ↗</span>
+              <div className={styles.socialRow}>
+                <a href="https://github.com/ivanaffriandi" target="_blank" rel="noreferrer" className={styles.socialPill}>
+                  GitHub
+                </a>
+                <a href="https://instagram.com" target="_blank" rel="noreferrer" className={styles.socialPill}>
+                  Instagram
+                </a>
+                <a href="https://linkedin.com" target="_blank" rel="noreferrer" className={styles.socialPill}>
+                  LinkedIn
+                </a>
+                <a href="https://x.com" target="_blank" rel="noreferrer" className={styles.socialPill}>
+                  X.com
+                </a>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* ── SPOTLIGHT #1: PRIVATE MAIL PLATFORM (INTERACTIVE DARK / LIGHT SLIDER) ── */}
-        <section id="mail-showcase" className={styles.comparisonWrapper}>
+        {/* ── FEATURE #1: PRIVATE MAIL PLATFORM (INTERACTIVE COMPARISON SLIDER) ── */}
+        <section id="mail-engine" className={styles.comparisonSection}>
           <div className={styles.sectionHeaderBox}>
-            <h2 className={styles.sectionTitle}>
-              <span>●</span>
-              Private Mail Platform · UI Comparison
-            </h2>
+            <div className={styles.sectionTitleCluster}>
+              <span className={styles.sectionIndexNum}>01</span>
+              <h2 className={styles.sectionTitle}>Private Mail Engine — Dark vs Light</h2>
+            </div>
             <span className={styles.sectionSubtitle}>
-              Drag the slider to compare Dark &amp; Light modes
+              Drag slider to inspect interface · Self-hosted on Oracle Cloud
             </span>
           </div>
 
@@ -321,24 +203,24 @@ export default function WorkScandinavianPortfolioPage() {
             </div>
           </div>
 
-          <div className={styles.comparisonFooterMeta}>
+          <div className={styles.comparisonMetaRow}>
             <div className={styles.modeBadgeGroup}>
-              <span className={styles.modeBadgeLight}>◧ Light Mode ({Math.round(sliderPos)}%)</span>
-              <span className={styles.modeBadgeDark}>◨ Dark Mode ({100 - Math.round(sliderPos)}%)</span>
+              <span className={styles.modeBadge}>LIGHT MODE ({Math.round(sliderPos)}%)</span>
+              <span className={styles.modeBadge}>DARK MODE ({100 - Math.round(sliderPos)}%)</span>
             </div>
-            <span>Self-hosted email interface running on Oracle Cloud VM &amp; AWS SES relay</span>
+            <span>AWS SES Relay · DKIM 2048-bit RSA · 99.98% Deliverability · Docker</span>
           </div>
         </section>
 
-        {/* ── SPOTLIGHT #2: INTERACTIVE DIGITAL BOOK READER (2 CHAPTER CARDS) ── */}
-        <section id="reader-showcase">
+        {/* ── FEATURE #2: ATMOSPHERIC DIGITAL READER (2-POSTER GRID) ── */}
+        <section id="reader-core">
           <div className={styles.sectionHeaderBox}>
-            <h2 className={styles.sectionTitle}>
-              <span>●</span>
-              Interactive Digital Reader &amp; Soundscapes
-            </h2>
+            <div className={styles.sectionTitleCluster}>
+              <span className={styles.sectionIndexNum}>02</span>
+              <h2 className={styles.sectionTitle}>Atmospheric Digital Reader</h2>
+            </div>
             <span className={styles.sectionSubtitle}>
-              Two visual explorations from my interactive book project
+              Multi-sensory digital reading with soundscape audio synthesis
             </span>
           </div>
 
@@ -349,18 +231,19 @@ export default function WorkScandinavianPortfolioPage() {
               rel="noreferrer"
               className={styles.readerCard}
             >
-              <div className={styles.readerImageWrapper}>
+              <div className={styles.readerImageWrap}>
                 <img
                   src="/work-showcase/reader-dark-woods.png"
                   alt="Chapter 2: The Unconscious"
                 />
               </div>
-              <div className={styles.readerCardContent}>
-                <h3 className={styles.readerCardTitle}>
-                  Chapter 2: The Unconscious <span>↗</span>
+              <div className={styles.readerCardBody}>
+                <span className={styles.readerCardTag}>CHAPTER 02 · AUDIO-FIRST EXPERIMENT</span>
+                <h3 className={styles.readerCardHeadline}>
+                  The Unconscious <span>↗</span>
                 </h3>
                 <p className={styles.readerCardDesc}>
-                  Minimalist high-contrast reading layout with procedural wind ambient soundscape synthesis.
+                  High-contrast Swiss editorial reader paired with generative wind audio synthesis for immersive nocturnal reading sessions.
                 </p>
               </div>
             </a>
@@ -371,182 +254,140 @@ export default function WorkScandinavianPortfolioPage() {
               rel="noreferrer"
               className={styles.readerCard}
             >
-              <div className={styles.readerImageWrapper}>
+              <div className={styles.readerImageWrap}>
                 <img
                   src="/work-showcase/reader-dark-fire.png"
                   alt="Chapter 5: Embers in the Woods"
                 />
               </div>
-              <div className={styles.readerCardContent}>
-                <h3 className={styles.readerCardTitle}>
-                  Chapter 5: Embers in the Woods <span>↗</span>
+              <div className={styles.readerCardBody}>
+                <span className={styles.readerCardTag}>CHAPTER 05 · VOICE SYNTHESIS</span>
+                <h3 className={styles.readerCardHeadline}>
+                  Embers in the Woods <span>↗</span>
                 </h3>
                 <p className={styles.readerCardDesc}>
-                  Warm amber typography mode with audio narration and live reader telemetry tracking.
+                  Warm amber dark mode typography integrated with real-time reader telemetry and neural text-to-speech narration.
                 </p>
               </div>
             </a>
           </div>
         </section>
 
-        {/* ── ALL PROJECTS WITH LIVE HOVER PREVIEWS & FILTER TABS ── */}
-        <section id="projects">
+        {/* ── FEATURE #3: ASYMMETRIC BENTO (ATELIER & 3D WEBGL ENGINE) ── */}
+        <section id="atelier-3d">
           <div className={styles.sectionHeaderBox}>
-            <h2 className={styles.sectionTitle}>
-              <span>●</span>
-              Featured Projects &amp; Products
-            </h2>
+            <div className={styles.sectionTitleCluster}>
+              <span className={styles.sectionIndexNum}>03</span>
+              <h2 className={styles.sectionTitle}>Bespoke Atelier &amp; 3D Configurator</h2>
+            </div>
             <span className={styles.sectionSubtitle}>
-              A quick look at the main things I&apos;ve built recently
+              Physical leather goods paired with real-time Three.js shaders
             </span>
           </div>
 
-          {/* Filter Category Pills */}
-          <div className={styles.filterTabsRow}>
-            <button
-              onClick={() => setActiveFilter('ALL')}
-              className={`${styles.filterTabBtn} ${activeFilter === 'ALL' ? styles.filterTabBtnActive : ''}`}
+          <div className={styles.bentoGridRow}>
+            {/* Left Bento: Physical Atelier */}
+            <a
+              href="https://shuenstudio.com"
+              target="_blank"
+              rel="noreferrer"
+              className={styles.bentoCard}
             >
-              All Works ({projects.length})
-            </button>
-            <button
-              onClick={() => setActiveFilter('ATELIER')}
-              className={`${styles.filterTabBtn} ${activeFilter === 'ATELIER' ? styles.filterTabBtnActive : ''}`}
-            >
-              Physical Atelier
-            </button>
-            <button
-              onClick={() => setActiveFilter('WEBGL')}
-              className={`${styles.filterTabBtn} ${activeFilter === 'WEBGL' ? styles.filterTabBtnActive : ''}`}
-            >
-              WebGL &amp; 3D Web
-            </button>
-            <button
-              onClick={() => setActiveFilter('CLOUD')}
-              className={`${styles.filterTabBtn} ${activeFilter === 'CLOUD' ? styles.filterTabBtnActive : ''}`}
-            >
-              Cloud &amp; Mail
-            </button>
-            <button
-              onClick={() => setActiveFilter('MOBILE')}
-              className={`${styles.filterTabBtn} ${activeFilter === 'MOBILE' ? styles.filterTabBtnActive : ''}`}
-            >
-              Mobile (Flutter)
-            </button>
-          </div>
-
-          {/* Projects Interactive Table */}
-          <div className={styles.projectsTable}>
-            {filteredProjects.map((project) => (
-              <a
-                key={project.id}
-                href={project.url}
-                target="_blank"
-                rel="noreferrer"
-                onMouseEnter={() => setHoveredProjectId(project.id)}
-                onMouseLeave={() => setHoveredProjectId(null)}
-                className={styles.projectRow}
-              >
-                <div className={styles.projectNameCluster}>
-                  <h3 className={styles.projectNameTitle}>{project.name}</h3>
-                  <p className={styles.projectDescShort}>{project.shortDesc}</p>
-                </div>
-
-                <div className={styles.projectCategoryPills}>
-                  {project.disciplines.map((d, dIdx) => (
-                    <span key={dIdx} className={styles.disciplinePill}>{d}</span>
-                  ))}
-                </div>
-
-                <span className={styles.projectYear}>{project.year}</span>
-                <span className={styles.projectArrow}>→</span>
-
-                {/* Floating Hover Image Preview */}
-                <AnimatePresence>
-                  {hoveredProjectId === project.id && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.92 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.92 }}
-                      transition={{ duration: 0.18 }}
-                      className={styles.floatingPreviewCard}
-                    >
-                      <img src={project.image} alt={project.name} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </a>
-            ))}
-          </div>
-        </section>
-
-        {/* ── COMPLETE SKILLS & DISCIPLINES MATRIX ── */}
-        <section id="disciplines">
-          <div className={styles.sectionHeaderBox}>
-            <h2 className={styles.sectionTitle}>
-              <span>●</span>
-              What I actually do day-to-day
-            </h2>
-            <span className={styles.sectionSubtitle}>
-              Across physical crafting and software engineering
-            </span>
-          </div>
-
-          <div className={styles.skillsSectionGrid}>
-            {skillsMatrix.map((skill) => (
-              <div key={skill.number} className={styles.skillCard}>
-                <div className={styles.skillCardHeader}>
-                  <h3 className={styles.skillCardTitle}>{skill.title}</h3>
-                  <span className={styles.skillCardNumber}>{skill.number}</span>
-                </div>
-
-                <p className={styles.skillCardDesc}>{skill.desc}</p>
-
-                <div className={styles.skillPillsWrap}>
-                  {skill.tags.map((tag, tIdx) => (
-                    <span key={tIdx} className={styles.techMiniPill}>{tag}</span>
-                  ))}
-                </div>
+              <div className={styles.bentoHeaderRow}>
+                <h3 className={styles.bentoCardTitle}>SHŪ / EN Studio</h3>
+                <span className={styles.bentoCardTag}>ATELIER COMMERCE ↗</span>
               </div>
-            ))}
+              <p className={styles.bentoCardDesc}>
+                Handcrafted bespoke leather journals, vegetable-tanned Nero hides, Japanese Moire fabric linings, custom cord bindings, and solid 925 silver charms crafted at our Tangerang workshop.
+              </p>
+              <div className={styles.bentoPillsWrap}>
+                <span className={styles.bentoMiniPill}>Vegetable Tanned</span>
+                <span className={styles.bentoMiniPill}>Solid Silver</span>
+                <span className={styles.bentoMiniPill}>Custom Emboss</span>
+                <span className={styles.bentoMiniPill}>DOKU Gateway</span>
+              </div>
+            </a>
+
+            {/* Right Bento: 3D WebGL Configurator */}
+            <a
+              href="https://shuenstudio.com/po"
+              target="_blank"
+              rel="noreferrer"
+              className={styles.bentoCard}
+            >
+              <div className={styles.bentoHeaderRow}>
+                <h3 className={styles.bentoCardTitle}>3D WebGL Customizer</h3>
+                <span className={styles.bentoCardTag}>THREE.JS SHADERS ↗</span>
+              </div>
+              <p className={styles.bentoCardDesc}>
+                Procedural 3D normal mapping engine letting clients customize leather textures, cord colors, and gold foil embossing with live interactive camera rigs.
+              </p>
+              <div className={styles.bentoPillsWrap}>
+                <span className={styles.bentoMiniPill}>Three.js</span>
+                <span className={styles.bentoMiniPill}>WebGL 2.0</span>
+                <span className={styles.bentoMiniPill}>GLSL Shaders</span>
+                <span className={styles.bentoMiniPill}>Live Pricing</span>
+              </div>
+            </a>
           </div>
         </section>
 
-        {/* ── CHRONICLE & RELEASES ── */}
-        <section>
+        {/* ── COMPACT SWISS ARCHIVE TABLE ── */}
+        <section id="archive">
           <div className={styles.sectionHeaderBox}>
-            <h2 className={styles.sectionTitle}>
-              <span>●</span>
-              Recent Chronicle &amp; Releases
-            </h2>
+            <div className={styles.sectionTitleCluster}>
+              <span className={styles.sectionIndexNum}>04</span>
+              <h2 className={styles.sectionTitle}>Selected Systems &amp; Experiments</h2>
+            </div>
             <span className={styles.sectionSubtitle}>
-              A quick timeline of things I&apos;ve shipped
+              Mobile apps, automation bots &amp; CAD engineering
             </span>
           </div>
 
-          <div className={styles.chronicleList}>
-            {chronicles.map((item, idx) => (
+          <div className={styles.archiveTable}>
+            {archives.map((item, idx) => (
               <a
                 key={idx}
                 href={item.url}
                 target="_blank"
                 rel="noreferrer"
-                className={styles.chronicleRow}
+                className={styles.archiveRow}
               >
-                <span className={styles.chronicleDate}>{item.date}</span>
-                <span className={styles.chronicleTitle}>{item.title}</span>
-                <span className={styles.chronicleArrow}>↗</span>
+                <div className={styles.archiveColName}>
+                  <h3 className={styles.archiveTitle}>{item.name}</h3>
+                  <p className={styles.archiveDesc}>{item.desc}</p>
+                </div>
+
+                <div className={styles.archiveColStack}>
+                  {item.stack.map((s, sIdx) => (
+                    <span key={sIdx} className={styles.archiveStackBadge}>{s}</span>
+                  ))}
+                </div>
+
+                <span className={styles.archiveYear}>{item.year}</span>
+                <span className={styles.archiveArrow}>→</span>
               </a>
             ))}
           </div>
         </section>
 
-        {/* ── GET IN TOUCH SECTION (WARM & CASUAL) ── */}
-        <section id="contact" className={styles.getInTouchBox}>
-          <span className={styles.getInTouchHeading}>HAVE AN IDEA OR WANT TO COMMISSION A PIECE?</span>
-          <a href="mailto:ivan@ivanaffriandi.com" className={styles.getInTouchLink}>
-            Let&apos;s get in touch ↗
-          </a>
+        {/* ── MASSIVE SWISS TOUCHPOINT FOOTER ── */}
+        <section id="contact" className={styles.contactTouchBox}>
+          <h2 className={styles.contactHeadline}>
+            Have an idea, want to commission bespoke leatherwork, or talk engineering?
+          </h2>
+
+          <div className={styles.contactDirectRow}>
+            <a href="mailto:ivan@ivanaffriandi.com" className={styles.contactBtnDark}>
+              Send an Email ↗
+            </a>
+            <a href="https://shuenstudio.com" target="_blank" rel="noreferrer" className={styles.contactBtnOutline}>
+              Visit SHŪ / EN Studio ↗
+            </a>
+            <a href="https://mail.ivanaffriandi.com" target="_blank" rel="noreferrer" className={styles.contactBtnOutline}>
+              Open Mail Platform ↗
+            </a>
+          </div>
         </section>
 
         {/* ── WORLD CLOCKS TICKER ROW ── */}
@@ -573,15 +414,15 @@ export default function WorkScandinavianPortfolioPage() {
           </div>
         </section>
 
-        {/* ── FOOTER ── */}
+        {/* ── SWISS MINIMAL FOOTER ── */}
         <footer className={styles.scandinavianFooter}>
           <div>
-            © 2026 Ivan Affriandi. All rights reserved.
+            © 2026 IVAN AFFRIANDI. ALL RIGHTS RESERVED.
           </div>
           <div className={styles.footerLinksRow}>
-            <a href="https://shuenstudio.com" target="_blank" rel="noreferrer" className={styles.footerLink}>SHŪ / EN Studio ↗</a>
-            <a href="https://mail.ivanaffriandi.com" target="_blank" rel="noreferrer" className={styles.footerLink}>Mail Platform ↗</a>
-            <a href="https://ivanaffriandi.com/about" target="_blank" rel="noreferrer" className={styles.footerLink}>About ↗</a>
+            <a href="https://shuenstudio.com" target="_blank" rel="noreferrer" className={styles.footerLink}>SHŪ / EN Studio</a>
+            <a href="https://mail.ivanaffriandi.com" target="_blank" rel="noreferrer" className={styles.footerLink}>Mail Platform</a>
+            <a href="https://ivanaffriandi.com/x" target="_blank" rel="noreferrer" className={styles.footerLink}>Digital Reader</a>
           </div>
         </footer>
       </div>
