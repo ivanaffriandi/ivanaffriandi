@@ -1,0 +1,18 @@
+import { getPosts } from "@/lib/blogger";
+import DailyJournalFeed from "@/components/DailyJournalFeed";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Journal & Essays · Ivan Affriandi",
+  description: "Quiet thoughts, essays on software craft, typography, sartorial tailoring, and life.",
+};
+
+export default async function BlogPage() {
+  const posts = await getPosts();
+
+  return (
+    <div style={{ minHeight: "100vh", backgroundColor: "var(--bg-color)" }}>
+      <DailyJournalFeed posts={posts} />
+    </div>
+  );
+}

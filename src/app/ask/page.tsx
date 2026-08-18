@@ -329,16 +329,16 @@ export default function AskPage() {
         .ask-page-container {
           position: fixed !important;
           top: 0 !important;
-          left: 54px !important;
+          left: 0 !important;
           right: 0 !important;
           bottom: 0 !important;
-          width: calc(100vw - 54px) !important;
+          width: 100vw !important;
           height: 100vh !important;
           background: #09090b;
           color: #FFFFFF;
           font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
           display: grid !important;
-          grid-template-columns: 390px 1fr !important;
+          grid-template-columns: 440px 1fr !important;
           overflow: hidden !important;
           box-sizing: border-box !important;
           z-index: 100 !important;
@@ -367,7 +367,7 @@ export default function AskPage() {
           display: flex;
           flex-direction: column;
           gap: 0.9rem;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 0.5rem;
           padding-bottom: 1.1rem;
         }
 
@@ -515,7 +515,7 @@ export default function AskPage() {
           flex-direction: column;
           height: 100%;
           justify-content: flex-end;
-          padding: 2.4rem 1.8rem;
+          padding: 2.4rem 2rem 2.4rem 5rem;
           box-sizing: border-box;
           color: #FFFFFF;
         }
@@ -746,20 +746,6 @@ export default function AskPage() {
                 ✕
               </button>
             )}
-          </div>
-
-          {/* Categories Filter Bar */}
-          <div className="ask-filter-row">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`ask-filter-chip ${selectedCategory === cat.id ? "active" : ""}`}
-              >
-                {cat.label}
-              </button>
-            ))}
           </div>
         </div>
 

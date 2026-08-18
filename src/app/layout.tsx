@@ -90,7 +90,23 @@ export default function RootLayout({
   // avatarSrc is computed once at module load (see top of file)
 
   return (
-    <html lang="en" className={`${inter.variable} ${lora.variable} ${merriweather.variable} ${playfairDisplay.variable}`}>
+    <html lang="en" className={`${inter.variable} ${lora.variable} ${merriweather.variable} ${playfairDisplay.variable}`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('ivan_theme');
+                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  var activeTheme = saved || (prefersDark ? 'dark' : 'light');
+                  document.documentElement.setAttribute('data-theme', activeTheme);
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body>
         <PerformanceProvider>
           <AudioProvider>
