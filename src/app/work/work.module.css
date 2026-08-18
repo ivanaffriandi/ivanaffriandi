@@ -2,12 +2,16 @@
    IVAN AFFRIANDI · SCANDINAVIAN ARCHITECTURAL STUDIO PORTFOLIO
    (work.ivanaffriandi.com)
    Henning Larsen / Scandinavian Clean Editorial Aesthetic
+   100% Viewport Escape & Zero Cutoff Architecture
    ============================================================ */
 
 .scandinavianViewport {
-  min-height: 100vh;
-  min-height: 100dvh;
+  position: fixed;
+  inset: 0;
   width: 100vw;
+  width: 100dvw;
+  height: 100vh;
+  height: 100dvh;
   background-color: #0c0d0e;
   background-image: 
     radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
@@ -17,10 +21,11 @@
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Arial", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding: 40px 16px 80px 16px;
+  padding: 40px 16px 100px 16px;
   box-sizing: border-box;
   overflow-x: hidden;
-  position: relative;
+  overflow-y: auto;
+  z-index: 99999;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -28,7 +33,7 @@
 
 @media (max-width: 768px) {
   .scandinavianViewport {
-    padding: 16px 8px 60px 8px;
+    padding: 20px 10px 80px 10px;
   }
 }
 
@@ -46,6 +51,7 @@
   margin-bottom: 24px;
   letter-spacing: 0.2px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  text-align: center;
 }
 
 /* ── MAIN SCANDINAVIAN PURE WHITE CANVAS ── */
