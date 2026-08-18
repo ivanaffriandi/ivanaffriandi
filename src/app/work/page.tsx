@@ -4,11 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './work.module.css';
 
-type TabType = 'overview' | 'projects' | 'process' | 'archive';
+type TabType = 'overview' | 'work' | 'atelier' | 'archive';
 
-export default function WorkFluxDesignExactMasterPage() {
-  const [activeTab, setActiveTab] = useState<TabType>('projects');
-  const [liveTime, setLiveTime] = useState('12:42 PM (CET)');
+export default function WorkIvanAffriandiStudioPage() {
+  const [activeTab, setActiveTab] = useState<TabType>('work');
+  const [liveTime, setLiveTime] = useState('4:46 PM (WIB)');
 
   useEffect(() => {
     const updateTime = () => {
@@ -29,36 +29,40 @@ export default function WorkFluxDesignExactMasterPage() {
 
   const tabData = {
     overview: {
-      headline: 'Creative Direction',
+      headline: 'Creative Direction & Engineering',
       narrative:
-        'Bridging tangible bespoke leathercraft with real-time 3D WebGL environments and distributed cloud infrastructure. A multidisciplinary practice focused on fluid generative motion, precision engineering, and timeless minimalism.',
-      duration: 'May–Present, 2026',
-      client: 'Independent Studio',
-      artDirection: 'Physical & Digital Systems',
+        'A dual practice rooted in Tangerang, Indonesia. Pattern-cutting vegetable-tanned hides and solid 925 silver binding on the physical workbench, while engineering high-throughput SES mail relays, procedural Three.js shaders, and multi-sensory digital readers.',
+      services: 'Bespoke Atelier & Software Engineering',
+      duration: '2025 — Present',
+      ventures: 'Ivan Affriandi Ecosystem',
+      direction: 'Physical Goods & Digital Systems',
     },
-    projects: {
-      headline: 'Virtual Worlds',
+    work: {
+      headline: 'Cyber-Artisanal Craft',
       narrative:
-        'Exploring immersive digital landscapes where reality blurs with the imagined. Virtual Worlds invites viewers into luminous environments of shifting forms, fluid light, and human presence redefined through layered, generative motion and dreamlike textures.',
+        'Bridging tangible bespoke leathercraft with real-time 3D WebGL configurators and self-hosted cloud email infrastructure. Built at SHŪ / EN Studio with uncompromising craftsmanship, fluid generative motion, and minimalist distributed systems.',
+      services: 'Artisanal Atelier & Full-Stack Tech',
       duration: 'May–August, 2026',
-      client: 'Aster Studio',
-      artDirection: 'Digital Design',
+      ventures: 'SHŪ / EN Studio · Mail Engine · /x Reader',
+      direction: 'Spatial Luxury & Next.js 16',
     },
-    process: {
-      headline: 'Craft & Engineering',
+    atelier: {
+      headline: 'Physical Workbench & 3D WebGL',
       narrative:
-        'From hand-drafting pattern geometries and cutting vegetable-tanned hides in our workshop to writing GLSL procedural normal shaders, Three.js camera projection, and deploying high-throughput email relays on Oracle Cloud VM.',
-      duration: 'Iterative Practice',
-      client: 'Direct to Collector',
-      artDirection: 'Atelier Architecture',
+        'Every leather journal is hand-skived from Italian Nero hides, saddle-stitched with bonded thread, and fitted with custom solid silver charms. Complemented by real-time Three.js 3D configurators for custom bespoke orders.',
+      services: 'Leather Atelier & Three.js Customizers',
+      duration: 'Continuous Craft',
+      ventures: 'SHŪ / EN Atelier & 3D WebGL',
+      direction: 'Bespoke Hardware & GLSL Shaders',
     },
     archive: {
-      headline: 'Systems Archive',
+      headline: 'Distributed Cloud & Mobile Systems',
       narrative:
-        'A comprehensive repository of launched full-stack applications, cross-platform Flutter mobile clients, ambient soundscape reading engines, and automated Telegram concierge bots engineered across 2025 and 2026.',
+        'Self-hosted private email platform deployed on Oracle Cloud VM with automated 2048-bit DKIM, atmospheric digital readers with neural voice narration, and automated Telegram concierge webhook bots.',
+      services: 'Infrastructure & Mobile Automation',
       duration: '2025 — 2026',
-      client: 'Ecosystem Catalog',
-      artDirection: 'Full Architecture',
+      ventures: 'Mail Engine, Flutter & Telegram Bots',
+      direction: 'Cloud Architecture & Webhooks',
     },
   };
 
@@ -70,7 +74,7 @@ export default function WorkFluxDesignExactMasterPage() {
         {/* ── ROW 1: HEADER (ALIGNED PRECISELY ACROSS 3 COLUMNS) ── */}
         <div className={styles.headerCol1}>
           <a href="https://ivanaffriandi.com" className={styles.brandLogo}>
-            FluxDesign<sup>®</sup>
+            Ivan Affriandi<sup>®</sup>
           </a>
         </div>
 
@@ -82,16 +86,16 @@ export default function WorkFluxDesignExactMasterPage() {
             Overview
           </button>
           <button
-            onClick={() => setActiveTab('projects')}
-            className={`${styles.navItemBtn} ${activeTab === 'projects' ? styles.navItemActive : ''}`}
+            onClick={() => setActiveTab('work')}
+            className={`${styles.navItemBtn} ${activeTab === 'work' ? styles.navItemActive : ''}`}
           >
-            Projects
+            Work
           </button>
           <button
-            onClick={() => setActiveTab('process')}
-            className={`${styles.navItemBtn} ${activeTab === 'process' ? styles.navItemActive : ''}`}
+            onClick={() => setActiveTab('atelier')}
+            className={`${styles.navItemBtn} ${activeTab === 'atelier' ? styles.navItemActive : ''}`}
           >
-            Process
+            Atelier
           </button>
           <button
             onClick={() => setActiveTab('archive')}
@@ -103,7 +107,7 @@ export default function WorkFluxDesignExactMasterPage() {
 
         <div className={styles.headerCol3}>
           <div className={styles.locationClockBox}>
-            <span>Sofia, Bulgaria</span>
+            <span>Tangerang, Indonesia</span>
             <span>{liveTime}</span>
           </div>
 
@@ -142,47 +146,62 @@ export default function WorkFluxDesignExactMasterPage() {
 
         {/* ── ROW 3: METADATA ROW (ALIGNED PRECISELY WITH EACH COLUMN) ── */}
         <div className={styles.metaCol1}>
-          <span className={styles.metaLabel}>Services &amp; Info</span>
+          <span className={styles.metaLabel}>Services &amp; Disciplines</span>
         </div>
 
         <div className={styles.metaCol2}>
           <div className={styles.metaItemCluster}>
-            <span className={styles.metaLabel}>Duration</span>
+            <span className={styles.metaLabel}>Timeline</span>
             <span className={styles.metaValue}>{current.duration}</span>
           </div>
 
           <div className={styles.metaItemCluster}>
-            <span className={styles.metaLabel}>Client</span>
-            <span className={styles.metaValue}>{current.client}</span>
+            <span className={styles.metaLabel}>Ventures</span>
+            <span className={styles.metaValue}>{current.ventures}</span>
           </div>
         </div>
 
         <div className={styles.metaCol3}>
           <span className={styles.metaLabel}>Art Direction</span>
-          <span className={styles.metaValue}>{current.artDirection}</span>
+          <span className={styles.metaValue}>{current.direction}</span>
         </div>
 
         {/* ── ROW 4: THE 3 PANORAMIC IMAGES (EXACT MATCH & ALIGNMENT) ── */}
-        <div className={styles.imageCardCol1}>
+        <a
+          href="https://shuenstudio.com"
+          target="_blank"
+          rel="noreferrer"
+          className={styles.imageCardCol1}
+        >
           <img
             src="/work-showcase/flux_denim.jpg"
-            alt="Denim Silhouette Motion"
+            alt="Physical Atelier & Motion Light"
           />
-        </div>
+        </a>
 
-        <div className={styles.imageCardCol2}>
+        <a
+          href="https://shuenstudio.com/po"
+          target="_blank"
+          rel="noreferrer"
+          className={styles.imageCardCol2}
+        >
           <img
             src="/work-showcase/flux_hand.jpg"
-            alt="Hand Sky Light Refraction"
+            alt="3D WebGL Configurator Light Refraction"
           />
-        </div>
+        </a>
 
-        <div className={styles.imageCardCol3}>
+        <a
+          href="https://ivanaffriandi.com/x"
+          target="_blank"
+          rel="noreferrer"
+          className={styles.imageCardCol3}
+        >
           <img
             src="/work-showcase/flux_portrait.jpg"
-            alt="Ethereal Portrait Windblown"
+            alt="Atmospheric Digital Reader"
           />
-        </div>
+        </a>
 
         {/* ── ROW 5: SEE MORE LINK (RIGHT-ALIGNED UNDER COLUMN 3) ── */}
         <div className={styles.seeMoreWrapper}>
