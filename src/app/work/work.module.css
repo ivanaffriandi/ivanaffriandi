@@ -1,7 +1,7 @@
 /* ============================================================
    IVAN AFFRIANDI · REFINED MINIMALIST SCANDINAVIAN PORTFOLIO
    (work.ivanaffriandi.com)
-   Harmonious Proportions · Casual Human Copy · Zero Bloat
+   Harmonious Proportions · Interactive Comparison Slider · Zero Bloat
    ============================================================ */
 
 .scandinavianViewport {
@@ -173,7 +173,7 @@
   border-color: #111111;
 }
 
-/* ── HERO VISUAL BANNER (COMPACT & CLEAN) ── */
+/* ── HERO VISUAL BANNER ── */
 .heroVisualContainer {
   width: 100%;
   height: 300px;
@@ -207,7 +207,7 @@
   align-items: baseline;
   border-bottom: 1px solid #111111;
   padding-bottom: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   flex-wrap: wrap;
   gap: 8px;
 }
@@ -226,6 +226,188 @@
 .sectionSubtitle {
   font-size: 12px;
   color: #88888e;
+}
+
+/* ── SPOTLIGHT COMPARISON SLIDER (MAIL PLATFORM DARK / LIGHT) ── */
+.comparisonWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.comparisonBox {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 8px;
+  overflow: hidden;
+  user-select: none;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+  border: 1px solid #eaeaea;
+  background: #111111;
+  cursor: ew-resize;
+}
+
+.comparisonImageDark {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.comparisonClipContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  overflow: hidden;
+  width: 100%;
+  pointer-events: none;
+}
+
+.comparisonImageLight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.comparisonDividerLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+.comparisonHandleThumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #111111;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  pointer-events: none;
+}
+
+.comparisonFooterMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #777780;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.modeBadgeGroup {
+  display: flex;
+  gap: 8px;
+}
+
+.modeBadgeDark {
+  background: #18181b;
+  color: #f4f4f5;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.modeBadgeLight {
+  background: #f4f4f5;
+  color: #18181b;
+  border: 1px solid #e4e4e7;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+/* ── SPOTLIGHT BLOG / READER 2-CARD SHOWCASE ── */
+.readerGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .readerGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.readerCard {
+  border: 1px solid #e8e8ec;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #ffffff;
+  text-decoration: none;
+  color: #111111;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.readerCard:hover {
+  border-color: #111111;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+}
+
+.readerImageWrapper {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #111111;
+}
+
+.readerImageWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.readerCard:hover .readerImageWrapper img {
+  transform: scale(1.03);
+}
+
+.readerCardContent {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.readerCardTitle {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #111111;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.readerCardDesc {
+  font-size: 11.5px;
+  color: #666670;
+  margin: 0;
+  line-height: 1.5;
 }
 
 /* Category Filter Tabs */

@@ -1,12 +1,18 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './work.module.css';
 
 export default function WorkScandinavianPortfolioPage() {
   const [activeFilter, setActiveFilter] = useState<'ALL' | 'ATELIER' | 'WEBGL' | 'CLOUD' | 'MOBILE'>('ALL');
   const [hoveredProjectId, setHoveredProjectId] = useState<string | null>(null);
+  
+  // Interactive Dark/Light Slider Position (0 to 100%)
+  const [sliderPos, setSliderPos] = useState(50);
+  const [isDraggingSlider, setIsDraggingSlider] = useState(false);
+  const compareBoxRef = useRef<HTMLDivElement>(null);
+
   const [timezones, setTimezones] = useState({
     jakarta: '--:--',
     copenhagen: '--:--',
@@ -42,12 +48,27 @@ export default function WorkScandinavianPortfolioPage() {
     return () => clearInterval(timer);
   }, []);
 
+  // Comparison slider mouse/touch drag handlers
+  const handleSliderMove = (clientX: number) => {
+    if (!compareBoxRef.current) return;
+    const rect = compareBoxRef.current.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+    setSliderPos(percentage);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length > 0) {
+      handleSliderMove(e.touches[0].clientX);
+    }
+  };
+
   const projects = [
     {
       id: 'shuen',
       category: 'ATELIER',
       name: 'SHŪ / EN Studio',
-      shortDesc: 'Handcrafted bespoke leather atelier & direct luxury e-commerce with real-time checkout.',
+      shortDesc: 'Handcrafted bespoke leather atelier & luxury e-commerce with real-time checkout.',
       disciplines: ['Leather Atelier', 'Full-Grain', 'Commerce'],
       year: '2026',
       url: 'https://shuenstudio.com',
@@ -64,24 +85,14 @@ export default function WorkScandinavianPortfolioPage() {
       image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&auto=format&fit=crop&q=80',
     },
     {
-      id: 'mobile',
-      category: 'MOBILE',
-      name: 'SHŪ / EN Atelier Mobile App',
-      shortDesc: 'Cross-platform mobile app for artisan order queues, customer CRM & VIP order tracking.',
-      disciplines: ['Flutter', 'Dart', 'iOS & Android'],
-      year: '2026',
-      url: 'https://shuenstudio.com',
-      image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80',
-    },
-    {
       id: 'mail',
       category: 'CLOUD',
-      name: 'Private Mail Platform & SES Relay',
-      shortDesc: 'Self-hosted email engine with automated DKIM 2048-bit RSA keys & 99.98% delivery rate.',
-      disciplines: ['AWS SES', 'DKIM 2048', 'Docker', 'Oracle VM'],
+      name: 'Private Mail Platform & SES Engine',
+      shortDesc: 'Self-hosted email platform with automated DKIM 2048-bit RSA keys & 99.98% delivery rate.',
+      disciplines: ['AWS SES', 'DKIM 2048', 'Dark & Light Mode', 'Docker'],
       year: '2026',
       url: 'https://mail.ivanaffriandi.com',
-      image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&auto=format&fit=crop&q=80',
+      image: '/work-showcase/mail-dark.png',
     },
     {
       id: 'book',
@@ -91,7 +102,17 @@ export default function WorkScandinavianPortfolioPage() {
       disciplines: ['Web Audio API', 'Neural TTS', 'Next.js 16'],
       year: '2026',
       url: 'https://ivanaffriandi.com/x',
-      image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=600&auto=format&fit=crop&q=80',
+      image: '/work-showcase/reader-dark-woods.png',
+    },
+    {
+      id: 'mobile',
+      category: 'MOBILE',
+      name: 'SHŪ / EN Atelier Mobile App',
+      shortDesc: 'Cross-platform mobile app for artisan order queues, customer CRM & VIP order tracking.',
+      disciplines: ['Flutter', 'Dart', 'iOS & Android'],
+      year: '2026',
+      url: 'https://shuenstudio.com',
+      image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80',
     },
     {
       id: 'bot',
@@ -199,10 +220,10 @@ export default function WorkScandinavianPortfolioPage() {
           </div>
 
           <nav className={styles.navLinksGroup}>
+            <a href="#mail-showcase" className={styles.navLinkItem}>Mail Engine ↗</a>
+            <a href="#reader-showcase" className={styles.navLinkItem}>Reader Core ↗</a>
             <a href="#projects" className={styles.navLinkItem}>Projects</a>
             <a href="#disciplines" className={styles.navLinkItem}>Disciplines</a>
-            <a href="https://shuenstudio.com" target="_blank" rel="noreferrer" className={styles.navLinkItem}>Atelier ↗</a>
-            <a href="https://mail.ivanaffriandi.com" target="_blank" rel="noreferrer" className={styles.navLinkItem}>Mail Engine ↗</a>
             <a href="#contact" className={styles.navLinkItem}>Contact</a>
           </nav>
         </header>
@@ -242,13 +263,129 @@ export default function WorkScandinavianPortfolioPage() {
               BASED IN INDONESIA · COMMISSIONS WORLDWIDE
             </div>
           </div>
+        </section>
 
-          {/* Hero Visual Architectural Pavilion */}
-          <div className={styles.heroVisualContainer}>
-            <img 
-              src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1200&auto=format&fit=crop&q=80" 
-              alt="Scandinavian Minimalist Studio" 
+        {/* ── SPOTLIGHT #1: PRIVATE MAIL PLATFORM (INTERACTIVE DARK / LIGHT SLIDER) ── */}
+        <section id="mail-showcase" className={styles.comparisonWrapper}>
+          <div className={styles.sectionHeaderBox}>
+            <h2 className={styles.sectionTitle}>
+              <span>●</span>
+              Private Mail Platform · UI Comparison
+            </h2>
+            <span className={styles.sectionSubtitle}>
+              Drag the slider to compare Dark &amp; Light modes
+            </span>
+          </div>
+
+          {/* Interactive Slide Comparison Box */}
+          <div
+            ref={compareBoxRef}
+            className={styles.comparisonBox}
+            onMouseDown={() => setIsDraggingSlider(true)}
+            onMouseUp={() => setIsDraggingSlider(false)}
+            onMouseLeave={() => setIsDraggingSlider(false)}
+            onMouseMove={(e) => {
+              if (isDraggingSlider) handleSliderMove(e.clientX);
+            }}
+            onClick={(e) => handleSliderMove(e.clientX)}
+            onTouchMove={handleTouchMove}
+          >
+            {/* Background: Dark Mode Image */}
+            <img
+              src="/work-showcase/mail-dark.png"
+              alt="Mail Platform Dark Mode"
+              className={styles.comparisonImageDark}
             />
+
+            {/* Clipped Foreground: Light Mode Image */}
+            <div
+              className={styles.comparisonClipContainer}
+              style={{ width: `${sliderPos}%` }}
+            >
+              <img
+                src="/work-showcase/mail-light.png"
+                alt="Mail Platform Light Mode"
+                className={styles.comparisonImageLight}
+                style={{ width: compareBoxRef.current?.clientWidth || '100%' }}
+              />
+            </div>
+
+            {/* Draggable Divider Line & Handle */}
+            <div
+              className={styles.comparisonDividerLine}
+              style={{ left: `${sliderPos}%` }}
+            >
+              <div className={styles.comparisonHandleThumb}>
+                ↔
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.comparisonFooterMeta}>
+            <div className={styles.modeBadgeGroup}>
+              <span className={styles.modeBadgeLight}>◧ Light Mode ({Math.round(sliderPos)}%)</span>
+              <span className={styles.modeBadgeDark}>◨ Dark Mode ({100 - Math.round(sliderPos)}%)</span>
+            </div>
+            <span>Self-hosted email interface running on Oracle Cloud VM &amp; AWS SES relay</span>
+          </div>
+        </section>
+
+        {/* ── SPOTLIGHT #2: INTERACTIVE DIGITAL BOOK READER (2 CHAPTER CARDS) ── */}
+        <section id="reader-showcase">
+          <div className={styles.sectionHeaderBox}>
+            <h2 className={styles.sectionTitle}>
+              <span>●</span>
+              Interactive Digital Reader &amp; Soundscapes
+            </h2>
+            <span className={styles.sectionSubtitle}>
+              Two visual explorations from my interactive book project
+            </span>
+          </div>
+
+          <div className={styles.readerGrid}>
+            <a
+              href="https://ivanaffriandi.com/x"
+              target="_blank"
+              rel="noreferrer"
+              className={styles.readerCard}
+            >
+              <div className={styles.readerImageWrapper}>
+                <img
+                  src="/work-showcase/reader-dark-woods.png"
+                  alt="Chapter 2: The Unconscious"
+                />
+              </div>
+              <div className={styles.readerCardContent}>
+                <h3 className={styles.readerCardTitle}>
+                  Chapter 2: The Unconscious <span>↗</span>
+                </h3>
+                <p className={styles.readerCardDesc}>
+                  Minimalist high-contrast reading layout with procedural wind ambient soundscape synthesis.
+                </p>
+              </div>
+            </a>
+
+            <a
+              href="https://ivanaffriandi.com/x"
+              target="_blank"
+              rel="noreferrer"
+              className={styles.readerCard}
+            >
+              <div className={styles.readerImageWrapper}>
+                <img
+                  src="/work-showcase/reader-dark-fire.png"
+                  alt="Chapter 5: Embers in the Woods"
+                />
+              </div>
+              <div className={styles.readerCardContent}>
+                <h3 className={styles.readerCardTitle}>
+                  Chapter 5: Embers in the Woods <span>↗</span>
+                </h3>
+                <p className={styles.readerCardDesc}>
+                  Warm amber typography mode with audio narration and live reader telemetry tracking.
+                </p>
+              </div>
+            </a>
           </div>
         </section>
 
