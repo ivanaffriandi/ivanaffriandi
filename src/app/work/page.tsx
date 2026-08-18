@@ -6,7 +6,7 @@ import styles from './work.module.css';
 
 type TabType = 'overview' | 'projects' | 'process' | 'archive';
 
-export default function WorkFluxDesignExactPortfolioPage() {
+export default function WorkFluxDesignExactMasterPage() {
   const [activeTab, setActiveTab] = useState<TabType>('projects');
   const [liveTime, setLiveTime] = useState('12:42 PM (CET)');
 
@@ -33,7 +33,7 @@ export default function WorkFluxDesignExactPortfolioPage() {
       narrative:
         'Bridging tangible bespoke leathercraft with real-time 3D WebGL environments and distributed cloud infrastructure. A multidisciplinary practice focused on fluid generative motion, precision engineering, and timeless minimalism.',
       duration: 'May–Present, 2026',
-      client: 'Independent Atelier',
+      client: 'Independent Studio',
       artDirection: 'Physical & Digital Systems',
     },
     projects: {
@@ -41,7 +41,7 @@ export default function WorkFluxDesignExactPortfolioPage() {
       narrative:
         'Exploring immersive digital landscapes where reality blurs with the imagined. Virtual Worlds invites viewers into luminous environments of shifting forms, fluid light, and human presence redefined through layered, generative motion and dreamlike textures.',
       duration: 'May–August, 2026',
-      client: 'Aster Studio & Labs',
+      client: 'Aster Studio',
       artDirection: 'Digital Design',
     },
     process: {
@@ -66,172 +66,135 @@ export default function WorkFluxDesignExactPortfolioPage() {
 
   return (
     <div className={styles.scandinavianViewport}>
-      <div className={styles.editorialContainer}>
-        {/* ── TOP HEADER BAR (EXACT FLUXDESIGN MATCH) ── */}
-        <header className={styles.headerRow}>
-          <a href="https://ivanaffriandi.com" className={styles.brandLogoTitle}>
-            Ivan Affriandi<span className={styles.registeredSymbol}>®</span>
+      <div className={styles.masterGridContainer}>
+        {/* ── ROW 1: HEADER (ALIGNED PRECISELY ACROSS 3 COLUMNS) ── */}
+        <div className={styles.headerCol1}>
+          <a href="https://ivanaffriandi.com" className={styles.brandLogo}>
+            FluxDesign<sup>®</sup>
           </a>
+        </div>
 
-          {/* Center Navigation Tabs */}
-          <nav className={styles.centerNavTabs}>
-            <button
-              onClick={() => setActiveTab('overview')}
-              className={`${styles.navTabBtn} ${activeTab === 'overview' ? styles.navTabBtnActive : ''}`}
-            >
-              Overview
-            </button>
-            <button
-              onClick={() => setActiveTab('projects')}
-              className={`${styles.navTabBtn} ${activeTab === 'projects' ? styles.navTabBtnActive : ''}`}
-            >
-              Projects
-            </button>
-            <button
-              onClick={() => setActiveTab('process')}
-              className={`${styles.navTabBtn} ${activeTab === 'process' ? styles.navTabBtnActive : ''}`}
-            >
-              Process
-            </button>
-            <button
-              onClick={() => setActiveTab('archive')}
-              className={`${styles.navTabBtn} ${activeTab === 'archive' ? styles.navTabBtnActive : ''}`}
-            >
-              Archive
-            </button>
-          </nav>
+        <div className={styles.headerCol2}>
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={`${styles.navItemBtn} ${activeTab === 'overview' ? styles.navItemActive : ''}`}
+          >
+            Overview
+          </button>
+          <button
+            onClick={() => setActiveTab('projects')}
+            className={`${styles.navItemBtn} ${activeTab === 'projects' ? styles.navItemActive : ''}`}
+          >
+            Projects
+          </button>
+          <button
+            onClick={() => setActiveTab('process')}
+            className={`${styles.navItemBtn} ${activeTab === 'process' ? styles.navItemActive : ''}`}
+          >
+            Process
+          </button>
+          <button
+            onClick={() => setActiveTab('archive')}
+            className={`${styles.navItemBtn} ${activeTab === 'archive' ? styles.navItemActive : ''}`}
+          >
+            Archive
+          </button>
+        </div>
 
-          {/* Right Cluster: Location Clock + Start a Project */}
-          <div className={styles.rightHeaderCluster}>
-            <div className={styles.headerLocationClock}>
-              <span>Tangerang, Indonesia</span>
-              <span>{liveTime}</span>
-            </div>
-
-            <a href="mailto:ivan@ivanaffriandi.com" className={styles.startProjectLink}>
-              Start a Project
-            </a>
+        <div className={styles.headerCol3}>
+          <div className={styles.locationClockBox}>
+            <span>Sofia, Bulgaria</span>
+            <span>{liveTime}</span>
           </div>
-        </header>
 
-        {/* ── HERO SHOWCASE STAGE (EXACT 2-COLUMN SPLIT) ── */}
-        <section className={styles.heroShowcaseStage}>
-          <div className={styles.sideOverviewLabel}>
+          <a href="mailto:ivan@ivanaffriandi.com" className={styles.startProjectBtn}>
+            Start a Project
+          </a>
+        </div>
+
+        {/* ── ROW 2: HERO TITLE & NARRATIVE (EXACT INDENT AT COL 2) ── */}
+        <div className={styles.heroCol1}>
+          <span className={styles.overviewLabel}>
             → {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-          </div>
+          </span>
+        </div>
 
+        <div className={styles.heroCol23}>
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              className={styles.heroContentCluster}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}
             >
-              <h1 className={styles.projectMainHeading}>
+              <h1 className={styles.mainTitleHeading}>
                 {current.headline}
               </h1>
 
-              <p className={styles.projectNarrativeBio}>
+              <p className={styles.narrativeParagraph}>
                 {current.narrative}
               </p>
             </motion.div>
           </AnimatePresence>
-        </section>
+        </div>
 
-        {/* ── EXACT 4-COLUMN METADATA BAR ── */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab + '-meta'}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className={styles.metadataGridRow}
-          >
-            <div className={styles.metaColItem}>
-              <span className={styles.metaColLabel}>Services &amp; Info</span>
-            </div>
+        {/* ── ROW 3: METADATA ROW (ALIGNED PRECISELY WITH EACH COLUMN) ── */}
+        <div className={styles.metaCol1}>
+          <span className={styles.metaLabel}>Services &amp; Info</span>
+        </div>
 
-            <div className={styles.metaColItem}>
-              <span className={styles.metaColLabel}>Duration</span>
-              <span className={styles.metaColVal}>{current.duration}</span>
-            </div>
-
-            <div className={styles.metaColItem}>
-              <span className={styles.metaColLabel}>Client</span>
-              <span className={styles.metaColVal}>{current.client}</span>
-            </div>
-
-            <div className={styles.metaColItem}>
-              <span className={styles.metaColLabel}>Art Direction</span>
-              <span className={styles.metaColVal}>{current.artDirection}</span>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* ── EXACT 3-COLUMN PANORAMIC VISUAL GRID ── */}
-        <motion.div 
-          layout
-          className={styles.panoramicVisualGrid}
-        >
-          {/* Card 1: Left Portrait (Atmospheric Motion & Denim Silhouette) */}
-          <div className={styles.panoramicCard}>
-            <div className={styles.portraitMediaBox}>
-              <img
-                src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=900&auto=format&fit=crop&q=85"
-                alt="Atmospheric Silhouette and Light Motion"
-              />
-            </div>
+        <div className={styles.metaCol2}>
+          <div className={styles.metaItemCluster}>
+            <span className={styles.metaLabel}>Duration</span>
+            <span className={styles.metaValue}>{current.duration}</span>
           </div>
 
-          {/* Card 2: Center Portrait (Reaching Hand & Sky Refractions) */}
-          <div className={styles.panoramicCard}>
-            <div className={styles.portraitMediaBox}>
-              <img
-                src="https://images.unsplash.com/photo-1534447677768-be436bb09401?w=900&auto=format&fit=crop&q=85"
-                alt="Hand Reaching Sky Prism Refraction"
-              />
-            </div>
+          <div className={styles.metaItemCluster}>
+            <span className={styles.metaLabel}>Client</span>
+            <span className={styles.metaValue}>{current.client}</span>
           </div>
+        </div>
 
-          {/* Card 3: Right Landscape (Filmic Ethereal Portrait with Windblown Hair) */}
-          <div className={styles.panoramicCard}>
-            <div className={styles.landscapeMediaBox}>
-              <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=900&auto=format&fit=crop&q=85"
-                alt="Cinematic Ethereal Portrait"
-              />
-            </div>
-          </div>
-        </motion.div>
+        <div className={styles.metaCol3}>
+          <span className={styles.metaLabel}>Art Direction</span>
+          <span className={styles.metaValue}>{current.artDirection}</span>
+        </div>
 
-        {/* ── EXACT SEE MORE LINK (BELOW CARD 3) ── */}
-        <div className={styles.seeMoreRow}>
+        {/* ── ROW 4: THE 3 PANORAMIC IMAGES (EXACT MATCH & ALIGNMENT) ── */}
+        <div className={styles.imageCardCol1}>
+          <img
+            src="/work-showcase/flux_denim.jpg"
+            alt="Denim Silhouette Motion"
+          />
+        </div>
+
+        <div className={styles.imageCardCol2}>
+          <img
+            src="/work-showcase/flux_hand.jpg"
+            alt="Hand Sky Light Refraction"
+          />
+        </div>
+
+        <div className={styles.imageCardCol3}>
+          <img
+            src="/work-showcase/flux_portrait.jpg"
+            alt="Ethereal Portrait Windblown"
+          />
+        </div>
+
+        {/* ── ROW 5: SEE MORE LINK (RIGHT-ALIGNED UNDER COLUMN 3) ── */}
+        <div className={styles.seeMoreWrapper}>
           <a
             href="https://shuenstudio.com"
             target="_blank"
             rel="noreferrer"
-            className={styles.seeMoreBtn}
+            className={styles.seeMoreLink}
           >
             See More →
           </a>
         </div>
-
-        {/* ── COMPACT BOTTOM FOOTER ── */}
-        <footer className={styles.bottomStudioFooter}>
-          <div>
-            © 2026 Ivan Affriandi. All rights reserved.
-          </div>
-
-          <div className={styles.socialFooterLinks}>
-            <a href="https://shuenstudio.com" target="_blank" rel="noreferrer" className={styles.socialFooterLink}>SHŪ / EN Studio ↗</a>
-            <a href="https://mail.ivanaffriandi.com" target="_blank" rel="noreferrer" className={styles.socialFooterLink}>Mail Platform ↗</a>
-            <a href="https://ivanaffriandi.com/x" target="_blank" rel="noreferrer" className={styles.socialFooterLink}>Digital Reader ↗</a>
-            <a href="https://github.com/ivanaffriandi" target="_blank" rel="noreferrer" className={styles.socialFooterLink}>GitHub ↗</a>
-          </div>
-        </footer>
       </div>
     </div>
   );
