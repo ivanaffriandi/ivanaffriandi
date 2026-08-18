@@ -1,7 +1,7 @@
 /* ============================================================
-   IVAN AFFRIANDI · MULTI-COLUMN ARCHITECTURAL STUDIO CANVAS
+   IVAN AFFRIANDI · ULTRA-REFINED COMPACT SPATIAL STUDIO CANVAS
    (work.ivanaffriandi.com)
-   Compact Refined Scale · Expansive 2-Column Spatial Grid
+   Petite Minimalist Scale · Expansive 2-Column Swiss Grid
    ============================================================ */
 
 .scandinavianViewport {
@@ -20,22 +20,22 @@
   overflow-x: hidden;
 }
 
-/* ── EXPANSIVE STUDIO CONTAINER ── */
+/* ── EXPANSIVE COMPACT STUDIO CONTAINER ── */
 .editorialContainer {
   width: 100%;
-  max-width: 1360px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 28px 32px 64px 32px;
+  padding: 20px 3vw 48px 3vw;
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  gap: 24px;
   box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
   .editorialContainer {
-    padding: 18px 16px 48px 16px;
-    gap: 28px;
+    padding: 14px 14px 36px 14px;
+    gap: 20px;
   }
 }
 
@@ -45,19 +45,19 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid #111111;
-  padding-bottom: 14px;
+  padding-bottom: 10px;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
 }
 
 .brandLogoBox {
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  gap: 8px;
 }
 
 .brandLogoTitle {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: -0.2px;
   text-transform: uppercase;
@@ -66,7 +66,7 @@
 }
 
 .brandLogoSub {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   font-family: ui-monospace, SFMono-Regular, monospace;
   color: #777777;
@@ -76,9 +76,9 @@
 .navLinksGroup {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 14px;
   font-family: ui-monospace, SFMono-Regular, monospace;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -104,61 +104,61 @@
 .heroSection {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
-  gap: 32px;
+  gap: 24px;
   border-bottom: 1px solid #e5e5e5;
-  padding-bottom: 28px;
+  padding-bottom: 18px;
   align-items: start;
 }
 
 @media (max-width: 860px) {
   .heroSection {
     grid-template-columns: 1fr;
-    gap: 18px;
+    gap: 14px;
   }
 }
 
 .heroLeftCluster {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .heroStatusBadge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 10.5px;
+  gap: 5px;
+  font-size: 9.5px;
   font-weight: 800;
   color: #15803d;
   font-family: ui-monospace, monospace;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.3px;
 }
 
 .heroMainHeadline {
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 800;
-  letter-spacing: -0.6px;
-  line-height: 1.18;
+  letter-spacing: -0.4px;
+  line-height: 1.2;
   color: #111111;
   margin: 0;
 }
 
 @media (max-width: 768px) {
   .heroMainHeadline {
-    font-size: 21px;
+    font-size: 17px;
   }
 }
 
 .heroRightCluster {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 }
 
 .heroBioText {
-  font-size: 13.5px;
-  line-height: 1.6;
+  font-size: 12.5px;
+  line-height: 1.55;
   color: #44444c;
   margin: 0;
 }
@@ -166,15 +166,15 @@
 .socialRow {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 5px;
 }
 
 .socialPill {
   background: #f4f4f6;
   border: 1px solid #e2e2e6;
   color: #111111;
-  padding: 4px 10px;
-  font-size: 10.5px;
+  padding: 3px 8px;
+  font-size: 9.5px;
   font-weight: 700;
   text-transform: uppercase;
   text-decoration: none;
@@ -189,52 +189,52 @@
   border-color: #111111;
 }
 
-/* ── MULTI-COLUMN SPATIAL WORKSPACE (2 COLUMNS OF RICH CARDS) ── */
+/* ── MULTI-COLUMN SPATIAL WORKSPACE (2 COLUMNS) ── */
 .spatialWorkGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 28px;
+  gap: 20px;
   align-items: start;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 900px) {
   .spatialWorkGrid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 18px;
   }
 }
 
 .columnStack {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 20px;
 }
 
-/* ── SPATIAL CARD CONTAINER ── */
+/* ── COMPACT SPATIAL CARD CONTAINER ── */
 .spatialCard {
   border: 1px solid #111111;
   background: #ffffff;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 3px 3px 0px #111111;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 2px 2px 0px #111111;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .spatialCard:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px #111111;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #111111;
 }
 
 .cardHeaderBar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 14px;
+  padding: 8px 12px;
   background: #fafafc;
   border-bottom: 1px solid #111111;
   font-family: ui-monospace, monospace;
-  font-size: 10.5px;
+  font-size: 9.5px;
   font-weight: 800;
   text-transform: uppercase;
 }
@@ -246,7 +246,7 @@
 .cardTitle {
   color: #111111;
   margin: 0;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
 }
 
@@ -254,7 +254,7 @@
 .comparisonBox {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9.5;
   overflow: hidden;
   user-select: none;
   background: #111111;
@@ -295,7 +295,7 @@
   bottom: 0;
   width: 2px;
   background: #ffffff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
   pointer-events: none;
 }
 
@@ -303,30 +303,30 @@
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: #ffffff;
   color: #111111;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 900;
   pointer-events: none;
 }
 
 .cardBody {
-  padding: 14px 16px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .cardDesc {
-  font-size: 12.5px;
-  line-height: 1.55;
+  font-size: 11.5px;
+  line-height: 1.5;
   color: #44444c;
   margin: 0;
 }
@@ -336,29 +336,29 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
-  padding-top: 4px;
+  gap: 6px;
+  padding-top: 2px;
 }
 
 .pillGroup {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 4px;
 }
 
 .miniPill {
   background: #f4f4f6;
   border: 1px solid #dcdce0;
-  font-size: 9px;
+  font-size: 8.5px;
   font-weight: 700;
-  padding: 2px 6px;
+  padding: 1px 5px;
   font-family: ui-monospace, monospace;
   text-transform: uppercase;
   color: #333338;
 }
 
 .cardActionLink {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 800;
   font-family: ui-monospace, monospace;
   color: #111111;
@@ -419,14 +419,14 @@
 }
 
 .readerMiniInfo {
-  padding: 10px 12px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .readerMiniTitle {
-  font-size: 11.5px;
+  font-size: 10.5px;
   font-weight: 800;
   margin: 0;
   display: flex;
@@ -434,16 +434,16 @@
 }
 
 .readerMiniSub {
-  font-size: 10px;
+  font-size: 9px;
   color: #77777a;
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 /* ── FULL ATELIER / 3D MEDIA PREVIEW CARDS ── */
 .cardMediaHero {
   width: 100%;
-  height: 180px;
+  height: 140px;
   overflow: hidden;
   border-bottom: 1px solid #111111;
   background: #111111;
@@ -464,9 +464,9 @@
 .archiveSection {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   border-top: 1px solid #111111;
-  padding-top: 24px;
+  padding-top: 18px;
 }
 
 .archiveHeader {
@@ -476,7 +476,7 @@
 }
 
 .archiveHeaderTitle {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 800;
   text-transform: uppercase;
   margin: 0;
@@ -486,7 +486,7 @@
 .archiveGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
+  gap: 10px;
 }
 
 @media (max-width: 800px) {
@@ -498,10 +498,10 @@
 .archiveMiniCard {
   border: 1px solid #e2e2e6;
   background: #fafafc;
-  padding: 12px 14px;
+  padding: 9px 11px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   text-decoration: none;
   color: #111111;
   transition: all 0.15s ease;
@@ -514,7 +514,7 @@
 }
 
 .archiveMiniName {
-  font-size: 12.5px;
+  font-size: 11.5px;
   font-weight: 700;
   margin: 0;
   display: flex;
@@ -522,20 +522,20 @@
 }
 
 .archiveMiniDesc {
-  font-size: 11px;
+  font-size: 10px;
   color: #666670;
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 /* ── COMPACT TOUCHPOINT & WORLD CLOCKS ── */
 .touchpointGrid {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
-  gap: 20px;
+  gap: 16px;
   border-top: 1px solid #111111;
   border-bottom: 1px solid #111111;
-  padding: 24px 0;
+  padding: 16px 0;
   align-items: center;
 }
 
@@ -546,23 +546,23 @@
 }
 
 .touchHeadline {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 800;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
   margin: 0;
 }
 
 .touchActionsRow {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .touchBtnPrimary {
   background: #111111;
   color: #ffffff;
-  padding: 8px 16px;
-  font-size: 11px;
+  padding: 6px 12px;
+  font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
   text-decoration: none;
@@ -573,15 +573,15 @@
 
 .touchBtnPrimary:hover {
   transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0px #ef4444;
+  box-shadow: 3px 3px 0px #ef4444;
 }
 
 .touchBtnSecondary {
   background: #ffffff;
   color: #111111;
   border: 1px solid #111111;
-  padding: 7px 14px;
-  font-size: 11px;
+  padding: 5px 11px;
+  font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
   text-decoration: none;
@@ -597,9 +597,9 @@
 .worldClocksGrid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
+  gap: 10px;
   border-bottom: 1px solid #e5e5e5;
-  padding-bottom: 16px;
+  padding-bottom: 12px;
 }
 
 @media (max-width: 768px) {
@@ -611,19 +611,19 @@
 .clockCard {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .clockTime {
-  font-size: 17px;
+  font-size: 14.5px;
   font-weight: 800;
   font-family: ui-monospace, monospace;
-  letter-spacing: -0.4px;
+  letter-spacing: -0.3px;
   color: #111111;
 }
 
 .clockCity {
-  font-size: 8.5px;
+  font-size: 8px;
   font-weight: 800;
   text-transform: uppercase;
   font-family: ui-monospace, monospace;
@@ -635,18 +635,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   font-family: ui-monospace, monospace;
   text-transform: uppercase;
   color: #88888e;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .footerLinksRow {
   display: flex;
-  gap: 14px;
+  gap: 12px;
 }
 
 .footerLink {
