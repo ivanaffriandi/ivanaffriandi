@@ -2085,12 +2085,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   bottom: 0,
                   width: "100%",
                   height: "100%",
-                  backgroundImage: `url(${currentFlipCard.img})`,
+                  backgroundImage: `url(${selectedPost ? (extractCoverImage(selectedPost.content) || fallbackHero) : currentFlipCard.img})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   backgroundRepeat: "no-repeat",
                   opacity: 1,
                   zIndex: 1,
+                  transition: "background-image 0.4s ease-out",
                 }}
               />
 
@@ -2112,20 +2113,20 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               <div className="pj-left-content">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
                   <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
-                    {currentFlipCard.category}
+                    {selectedPost ? `JOURNAL · ${formatDate(selectedPost.published, locale)}` : currentFlipCard.category}
                   </span>
                   <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.6)" }}>
-                    {currentFlipCard.date}
+                    {selectedPost ? getRelativeTimeString(selectedPost.published) : currentFlipCard.date}
                   </span>
                 </div>
 
-                <h1 className="pj-title">{currentFlipCard.title}</h1>
+                <h1 className="pj-title">{selectedPost ? selectedPost.title : currentFlipCard.title}</h1>
 
                 <p className="pj-excerpt">
-                  {currentFlipCard.excerpt}
+                  {selectedPost ? stripHtml(selectedPost.content).slice(0, 140) + "…" : currentFlipCard.excerpt}
                 </p>
 
-                {flipboardCards.length > 1 && (
+                {!selectedPost && flipboardCards.length > 1 && (
                   <div className="pj-dots" style={{ marginTop: "1.4rem" }}>
                     {flipboardCards.map((_, i) => (
                       <div
@@ -2145,13 +2146,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 className="pj-read-btn"
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (currentFlipCard.post) {
+                  if (selectedPost) {
+                    setSelectedPostIndex(null);
+                  } else if (currentFlipCard.post) {
                     const idx = sortedPosts.findIndex((p) => p.id === currentFlipCard.post.id);
                     if (idx !== -1) setSelectedPostIndex(idx);
                   }
                 }}
               >
-                READ
+                {selectedPost ? "← ALL CHAPTERS" : "READ"}
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
@@ -2403,152 +2406,328 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               </div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", flex: 1 }}>
-              {/* ── REGULAR JOURNAL VIEW ── */}
-              {/* 1. INSTAGRAM MOMENTS */}
-              <div className="ig-neat-carousel-wrap">
-                <div
-                  className="ig-neat-row"
-                  ref={igRowRef}
-                  onMouseEnter={() => setIsHoveringIg(true)}
-                  onMouseLeave={() => setIsHoveringIg(false)}
+              {selectedPost ? (
+                /* ── SPLIT SCREEN IN-PLACE ARTICLE READER ── */
+                <motion.div
+                  key={selectedPost.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 16 }}
+                  transition={{ duration: 0.28, ease: "easeOut" }}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "1.6rem",
+                    width: "100%",
+                    maxWidth: "800px",
+                    paddingBottom: "5rem",
+                  }}
                 >
-                  {instagramItems.map((item) => (
+                  {/* Top Minimalist Navigation Bar */}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      borderBottom: "1px solid var(--border-subtle, rgba(0,0,0,0.08))",
+                      paddingBottom: "0.9rem",
+                    }}
+                  >
+                    <button
+                      onClick={() => setSelectedPostIndex(null)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "var(--text-primary)",
+                        fontSize: "0.74rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.45rem",
+                        cursor: "pointer",
+                        padding: 0,
+                        transition: "opacity 0.2s ease",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.6")}
+                      onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+                    >
+                      <span style={{ fontSize: "0.95rem", lineHeight: 1 }}>←</span> BACK TO JOURNAL
+                    </button>
+
                     <div
-                      key={item.id}
-                      className="ig-neat-card"
-                      onClick={() => {
-                        if (item.rawIg) {
-                          setSelectedIgItem(item);
-                        } else if (item.permalink) {
-                          window.open(item.permalink, "_blank", "noopener,noreferrer");
-                        }
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.65rem",
+                        fontSize: "0.68rem",
+                        fontWeight: 600,
+                        color: "var(--text-muted)",
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
                       }}
                     >
-                      <div className="ig-b-w-container">
-                        <img
-                          src={item.img}
-                          alt={item.title}
-                          className="ig-b-w-img"
-                        />
-                      </div>
+                      <span>{formatDate(selectedPost.published, locale)}</span>
+                      <span>·</span>
+                      <span>IVAN AFFRIANDI</span>
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* ── PROLOGUE WITH 2-COLUMN LAYOUT & iMESSAGE BUBBLES ── */}
-              <div className="novel-intro-wrap">
-                <div className="section-label-header">
-                  <span>PROLOGUE</span>
-                </div>
-
-                <div className="novel-intro-2col">
-                  {/* LEFT COLUMN: ATMOSPHERIC NARRATIVE */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.95rem" }}>
-                    <p className="novel-intro-paragraph novel-drop-cap">
-                      Somewhere past midnight, with the city going quiet outside and a cup of tea slowly going cold beside the keyboard, things tend to get clearer. The kind of clarity that only shows up when the noise settles and you&apos;re left alone with whatever&apos;s been sitting at the back of your mind.
-                    </p>
-                    <p className="novel-intro-paragraph">
-                      I&apos;ve spent a lot of time moving between things—building, making, reading, photographing, writing—and somewhere along the way I stopped treating that as a contradiction. The same mind that wants to understand how light refracts also wants to know why certain sentences land the way they do. Both feel like the same question, just wearing different clothes.
-                    </p>
                   </div>
 
-                  {/* RIGHT COLUMN: PARAGRAPH 3 & 2 B&W iOS iMESSAGE BUBBLES */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                    <p className="novel-intro-paragraph">
-                      This place is where those things get to breathe. Not a portfolio, not quite a diary. Somewhere in between—a slow, honest record of what I&apos;m paying attention to, and why.
-                    </p>
+                  {/* Big Editorial Title */}
+                  <h1
+                    style={{
+                      fontSize: "2.1rem",
+                      fontWeight: 800,
+                      lineHeight: 1.2,
+                      letterSpacing: "-0.03em",
+                      color: "var(--text-primary)",
+                      margin: "0.25rem 0 0",
+                    }}
+                  >
+                    {selectedPost.title}
+                  </h1>
 
-                    <div className="imessage-chat-wrap" style={{ margin: 0 }}>
-                      {/* Incoming Friend Message */}
-                      <div className="imessage-row-incoming">
-                        <span className="imessage-sender-tag" style={{ marginLeft: "0.6rem" }}>
-                          FRIEND
-                        </span>
-                        <div className="imessage-bubble-incoming">
-                          &ldquo;Wait, so what is this exactly? A blog? A portfolio? I can&apos;t tell.&rdquo;
-                        </div>
-                      </div>
+                  {/* Editorial Full Content Body */}
+                  <div
+                    className="blog-modal-content-body novel-article-reader"
+                    style={{
+                      fontSize: "1.02rem",
+                      lineHeight: 1.85,
+                      color: "var(--text-primary)",
+                    }}
+                    dangerouslySetInnerHTML={{ __html: selectedPost.content }}
+                  />
 
-                      {/* Outgoing Ivan Message */}
-                      <div className="imessage-row-outgoing">
-                        <span className="imessage-sender-tag" style={{ marginRight: "0.6rem" }}>
-                          IVAN
-                        </span>
-                        <div className="imessage-bubble-outgoing">
-                          &ldquo;Neither, really. Think of it as a running tab — things I notice, things I make, things I can&apos;t stop thinking about. Some of it matters a lot. Some of it is just a mushroom I found interesting.&rdquo;
-                        </div>
-                      </div>
-                    </div>
-
-                    <p className="novel-intro-paragraph" style={{ opacity: 0.72, fontSize: "0.82rem", fontStyle: "italic", borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))", paddingTop: "0.75rem", marginTop: "0.25rem" }}>
-                      Pull up a chair. The tea&apos;s still warm, probably.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* 2. ELEGANT GRID LAYOUT FOR CHAPTERS WITH YEAR TABS */}
-              <div className="blog-section-wrap">
-                <div className="blog-tabs-header">
-                  <div className="section-label-header" style={{ marginBottom: 0 }}>
-                    <span>CHAPTERS {searchQuery ? `(${filteredPosts.length})` : ""}</span>
-                  </div>
-
-                  {/* YEAR FILTER TABS (YYYY) */}
-                  <div className="blog-tabs-list">
-                    {yearFilters.map((y) => (
+                  {/* Bottom Navigation Between Chapters */}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))",
+                      paddingTop: "1.5rem",
+                      marginTop: "2.5rem",
+                    }}
+                  >
+                    {selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? (
                       <button
-                        key={y}
-                        className={`blog-tab-item${y === activeFilter ? " active" : ""}`}
                         onClick={() => {
-                          setActiveFilter(y);
-                          if (blogRowRef.current) {
-                            blogRowRef.current.scrollTo({ left: 0, behavior: "smooth" });
-                          }
+                          setSelectedPostIndex(selectedPostIndex + 1);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: "var(--text-muted)",
+                          cursor: "pointer",
+                          fontSize: "0.72rem",
+                          fontWeight: 700,
+                          letterSpacing: "0.06em",
+                          textTransform: "uppercase",
                         }}
                       >
-                        {y}
+                        ← PREVIOUS CHAPTER
                       </button>
-                    ))}
-                  </div>
-                </div>
+                    ) : (
+                      <div />
+                    )}
 
-                {/* VERTICAL LIST LAYOUT — photo LEFT, text RIGHT, novel style */}
-                <div className="blog-grid-layout" ref={blogRowRef}>
-                  {filteredPosts.map((post) => {
-                    const img = extractCoverImage(post.content);
-                    const excerpt = stripHtml(post.content).slice(0, 160) + "…";
-                    const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
-                    const relativeTime = getRelativeTimeString(post.published);
+                    <button
+                      onClick={() => setSelectedPostIndex(null)}
+                      style={{
+                        background: "var(--bg-secondary, rgba(0,0,0,0.05))",
+                        border: "1px solid var(--border-subtle, rgba(0,0,0,0.1))",
+                        borderRadius: "16px",
+                        padding: "6px 14px",
+                        color: "var(--text-primary)",
+                        cursor: "pointer",
+                        fontSize: "0.68rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      ALL CHAPTERS
+                    </button>
 
-                    return (
-                      <div
-                        key={post.id}
-                        className="blog-grid-card"
-                        onClick={() => setSelectedPostIndex(postIdx)}
+                    {selectedPostIndex !== null && selectedPostIndex > 0 ? (
+                      <button
+                        onClick={() => {
+                          setSelectedPostIndex(selectedPostIndex - 1);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: "var(--text-muted)",
+                          cursor: "pointer",
+                          fontSize: "0.72rem",
+                          fontWeight: 700,
+                          letterSpacing: "0.06em",
+                          textTransform: "uppercase",
+                        }}
                       >
-                        {/* LEFT: compact thumbnail */}
-                        <div className="blog-card-thumb-wrap">
-                          <div className="ig-b-w-container" style={{ width: "100%", height: "100%" }}>
+                        NEXT CHAPTER →
+                      </button>
+                    ) : (
+                      <div />
+                    )}
+                  </div>
+                </motion.div>
+              ) : (
+                /* ── REGULAR OVERVIEW JOURNAL VIEW ── */
+                <>
+                  {/* 1. INSTAGRAM MOMENTS */}
+                  <div className="ig-neat-carousel-wrap">
+                    <div
+                      className="ig-neat-row"
+                      ref={igRowRef}
+                      onMouseEnter={() => setIsHoveringIg(true)}
+                      onMouseLeave={() => setIsHoveringIg(false)}
+                    >
+                      {instagramItems.map((item) => (
+                        <div
+                          key={item.id}
+                          className="ig-neat-card"
+                          onClick={() => {
+                            if (item.rawIg) {
+                              setSelectedIgItem(item);
+                            } else if (item.permalink) {
+                              window.open(item.permalink, "_blank", "noopener,noreferrer");
+                            }
+                          }}
+                        >
+                          <div className="ig-b-w-container">
                             <img
-                              src={img || fallbackHero}
-                              alt={post.title}
-                              className="blog-b-w-img"
+                              src={item.img}
+                              alt={item.title}
+                              className="ig-b-w-img"
                             />
                           </div>
                         </div>
-                        {/* RIGHT: text info with novel-style excerpt */}
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.18rem", minWidth: 0 }}>
-                          <div className="blog-card-date">{relativeTime ? relativeTime : formatDate(post.published, locale)}</div>
-                          <h3 className="blog-card-title">{post.title}</h3>
-                          <p className="blog-card-excerpt">{excerpt}</p>
-                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* ── PROLOGUE WITH 2-COLUMN LAYOUT & iMESSAGE BUBBLES ── */}
+                  <div className="novel-intro-wrap">
+                    <div className="section-label-header">
+                      <span>PROLOGUE</span>
+                    </div>
+
+                    <div className="novel-intro-2col">
+                      {/* LEFT COLUMN: ATMOSPHERIC NARRATIVE */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.95rem" }}>
+                        <p className="novel-intro-paragraph novel-drop-cap">
+                          Somewhere past midnight, with the city going quiet outside and a cup of tea slowly going cold beside the keyboard, things tend to get clearer. The kind of clarity that only shows up when the noise settles and you&apos;re left alone with whatever&apos;s been sitting at the back of your mind.
+                        </p>
+                        <p className="novel-intro-paragraph">
+                          I&apos;ve spent a lot of time moving between things—building, making, reading, photographing, writing—and somewhere along the way I stopped treating that as a contradiction. The same mind that wants to understand how light refracts also wants to know why certain sentences land the way they do. Both feel like the same question, just wearing different clothes.
+                        </p>
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
+
+                      {/* RIGHT COLUMN: PARAGRAPH 3 & 2 B&W iOS iMESSAGE BUBBLES */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                        <p className="novel-intro-paragraph">
+                          This place is where those things get to breathe. Not a portfolio, not quite a diary. Somewhere in between—a slow, honest record of what I&apos;m paying attention to, and why.
+                        </p>
+
+                        <div className="imessage-chat-wrap" style={{ margin: 0 }}>
+                          {/* Incoming Friend Message */}
+                          <div className="imessage-row-incoming">
+                            <span className="imessage-sender-tag" style={{ marginLeft: "0.6rem" }}>
+                              FRIEND
+                            </span>
+                            <div className="imessage-bubble-incoming">
+                              &ldquo;Wait, so what is this exactly? A blog? A portfolio? I can&apos;t tell.&rdquo;
+                            </div>
+                          </div>
+
+                          {/* Outgoing Ivan Message */}
+                          <div className="imessage-row-outgoing">
+                            <span className="imessage-sender-tag" style={{ marginRight: "0.6rem" }}>
+                              IVAN
+                            </span>
+                            <div className="imessage-bubble-outgoing">
+                              &ldquo;Neither, really. Think of it as a running tab — things I notice, things I make, things I can&apos;t stop thinking about. Some of it matters a lot. Some of it is just a mushroom I found interesting.&rdquo;
+                            </div>
+                          </div>
+                        </div>
+
+                        <p className="novel-intro-paragraph" style={{ opacity: 0.72, fontSize: "0.82rem", fontStyle: "italic", borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))", paddingTop: "0.75rem", marginTop: "0.25rem" }}>
+                          Pull up a chair. The tea&apos;s still warm, probably.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 2. ELEGANT GRID LAYOUT FOR CHAPTERS WITH YEAR TABS */}
+                  <div className="blog-section-wrap">
+                    <div className="blog-tabs-header">
+                      <div className="section-label-header" style={{ marginBottom: 0 }}>
+                        <span>CHAPTERS {searchQuery ? `(${filteredPosts.length})` : ""}</span>
+                      </div>
+
+                      {/* YEAR FILTER TABS (YYYY) */}
+                      <div className="blog-tabs-list">
+                        {yearFilters.map((y) => (
+                          <button
+                            key={y}
+                            className={`blog-tab-item${y === activeFilter ? " active" : ""}`}
+                            onClick={() => {
+                              setActiveFilter(y);
+                              if (blogRowRef.current) {
+                                blogRowRef.current.scrollTo({ left: 0, behavior: "smooth" });
+                              }
+                            }}
+                          >
+                            {y}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* VERTICAL LIST LAYOUT — photo LEFT, text RIGHT, novel style */}
+                    <div className="blog-grid-layout" ref={blogRowRef}>
+                      {filteredPosts.map((post) => {
+                        const img = extractCoverImage(post.content);
+                        const excerpt = stripHtml(post.content).slice(0, 160) + "…";
+                        const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
+                        const relativeTime = getRelativeTimeString(post.published);
+
+                        return (
+                          <div
+                            key={post.id}
+                            className="blog-grid-card"
+                            onClick={() => {
+                              setSelectedPostIndex(postIdx);
+                              window.scrollTo({ top: 0, behavior: "smooth" });
+                            }}
+                          >
+                            {/* LEFT: compact thumbnail */}
+                            <div className="blog-card-thumb-wrap">
+                              <div className="ig-b-w-container" style={{ width: "100%", height: "100%" }}>
+                                <img
+                                  src={img || fallbackHero}
+                                  alt={post.title}
+                                  className="blog-b-w-img"
+                                />
+                              </div>
+                            </div>
+                            {/* RIGHT: text info with novel-style excerpt */}
+                            <div style={{ display: "flex", flexDirection: "column", gap: "0.18rem", minWidth: 0 }}>
+                              <div className="blog-card-date">{relativeTime ? relativeTime : formatDate(post.published, locale)}</div>
+                              <h3 className="blog-card-title">{post.title}</h3>
+                              <p className="blog-card-excerpt">{excerpt}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -2602,51 +2781,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     VIEW ON INSTAGRAM ↗
                   </a>
                 )}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── BLOG POST READER MODAL (MOBILE: FULL-SCREEN BOTTOM SHEET) ── */}
-      <AnimatePresence>
-        {selectedPost && (
-          <motion.div
-            className="modal-bg"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedPostIndex(null)}
-          >
-            <motion.div
-              className="modal-inner"
-              initial={{ y: "100%", opacity: 1 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: "100%", opacity: 1 }}
-              transition={{ duration: 0.38, ease: [0.32, 0.72, 0, 1] }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Drag handle */}
-              <div style={{ position: "absolute", top: "10px", left: "50%", transform: "translateX(-50%)", width: "36px", height: "4px", borderRadius: "99px", background: "rgba(0,0,0,0.18)", zIndex: 2 }} />
-              <div
-                className="modal-photo"
-                style={{ backgroundImage: `url(${extractCoverImage(selectedPost.content) || fallbackHero})` }}
-              />
-              <div className="modal-body">
-                <div className="modal-head">
-                  <span>IVAN AFFRIANDI</span>
-                  <span>{formatDate(selectedPost.published, locale)}</span>
-                  <button className="modal-close" onClick={() => setSelectedPostIndex(null)}>
-                    ✕
-                  </button>
-                </div>
-                <h2 style={{ fontSize: "1.65rem", fontWeight: 700, lineHeight: 1.22, marginBottom: "1.5rem", wordBreak: "break-word", letterSpacing: "-0.02em" }}>
-                  {selectedPost.title}
-                </h2>
-                <div
-                  className="blog-modal-content-body"
-                  dangerouslySetInnerHTML={{ __html: selectedPost.content }}
-                />
               </div>
             </motion.div>
           </motion.div>
