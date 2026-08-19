@@ -36,27 +36,31 @@ function wrapInEmailBoilerplate(contentHtml: string, previewText: string = ''): 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="light dark" />
-  <meta name="supported-color-schemes" content="light dark" />
+  <meta name="color-scheme" content="light only" />
+  <meta name="supported-color-schemes" content="light only" />
   <title>Ivan Affriandi</title>
   <style type="text/css">
     /* Base resets */
+    :root {
+      color-scheme: light only;
+      supported-color-schemes: light only;
+    }
     body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
     table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
     img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
-    body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; background-color: #F8F9FA; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; background-color: #F7F5F0 !important; color: #1C1917 !important; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
     
-    /* Dark mode enhancements */
+    /* Permanent Paper Mode (Strict consistency in both Light and Dark OS modes) */
     @media (prefers-color-scheme: dark) {
-      body, .email-bg { background-color: #0c0c0e !important; }
-      .email-card { background-color: #141417 !important; border-color: rgba(255, 255, 255, 0.08) !important; box-shadow: 0 12px 40px rgba(0,0,0,0.6) !important; }
-      .text-primary { color: #f4f4f5 !important; }
-      .text-secondary { color: #a1a1aa !important; }
-      .text-muted { color: #71717a !important; }
-      .divider-line { background-color: rgba(255, 255, 255, 0.08) !important; }
-      .callout-box { background-color: #1a1a1e !important; border-color: rgba(255, 255, 255, 0.1) !important; }
-      .cta-button { background-color: #f4f4f5 !important; color: #09090b !important; }
-      .tag-pill { background-color: rgba(255, 255, 255, 0.08) !important; color: #d4d4d8 !important; }
+      body, .email-bg { background-color: #F7F5F0 !important; color: #1C1917 !important; }
+      .email-card { background-color: #FFFFFF !important; border-color: rgba(0, 0, 0, 0.08) !important; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important; color: #1C1917 !important; }
+      .text-primary { color: #1C1917 !important; }
+      .text-secondary { color: #44403C !important; }
+      .text-muted { color: #78716C !important; }
+      .divider-line { background-color: #E7E2D8 !important; border-color: #E7E2D8 !important; }
+      .callout-box { background-color: #F5F2EB !important; border-color: #E7E2D8 !important; }
+      .cta-button { background-color: #1C1917 !important; color: #FFFFFF !important; }
+      .tag-pill { background-color: #E7E2D8 !important; color: #44403C !important; }
     }
 
     /* Mobile adjustments */
@@ -68,13 +72,13 @@ function wrapInEmailBoilerplate(contentHtml: string, previewText: string = ''): 
     }
   </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #F8F9FA; -webkit-font-smoothing: antialiased;">
+<body style="margin: 0; padding: 0; background-color: #F7F5F0; color: #1C1917; -webkit-font-smoothing: antialiased;">
   <!-- Hidden preview snippet -->
-  <div style="display: none; font-size: 1px; color: #F8F9FA; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;">
+  <div style="display: none; font-size: 1px; color: #F7F5F0; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;">
     ${previewText}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
   </div>
 
-  <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-bg" style="background-color: #F8F9FA;">
+  <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-bg" style="background-color: #F7F5F0;">
     <tr>
       <td align="center" style="padding: 36px 16px 52px 16px;">
         <!-- Container max-width 560px -->
@@ -84,20 +88,20 @@ function wrapInEmailBoilerplate(contentHtml: string, previewText: string = ''): 
           <tr>
             <td align="left" style="padding-bottom: 16px; padding-left: 4px;">
               <a href="https://ivanaffriandi.com" target="_blank" style="text-decoration: none; display: inline-block;">
-                <span class="text-primary" style="font-size: 13.5px; font-weight: 700; color: #111827; letter-spacing: -0.02em;">
+                <span class="text-primary" style="font-size: 13.5px; font-weight: 700; color: #1C1917; letter-spacing: -0.02em;">
                   Ivan Affriandi
                 </span>
-                <span class="text-muted" style="font-size: 12px; color: #71717A; margin-left: 6px; font-weight: 400;">
+                <span class="text-muted" style="font-size: 12px; color: #78716C; margin-left: 6px; font-weight: 400;">
                   · Notes
                 </span>
               </a>
             </td>
           </tr>
 
-          <!-- MAIN CARD WRAPPER -->
+          <!-- MAIN CARD WRAPPER (PERMANENT PAPER MODE: WARM TACTILE LETTERHEAD) -->
           <tr>
             <td>
-              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-card" style="background-color: #FFFFFF; border-radius: 24px; border: 1px solid rgba(0, 0, 0, 0.06); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); overflow: hidden; padding: 36px 32px;">
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-card" style="background-color: #FFFFFF; border-radius: 24px; border: 1px solid rgba(0, 0, 0, 0.08); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); overflow: hidden; padding: 36px 32px;">
                 <tr>
                   <td>
                     ${contentHtml}
@@ -112,10 +116,10 @@ function wrapInEmailBoilerplate(contentHtml: string, previewText: string = ''): 
             <td align="left" style="padding-top: 22px; padding-left: 4px;">
               <table border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
-                  <td align="left" class="text-muted" style="font-size: 11.5px; color: #71717A; line-height: 1.6;">
-                    Sent from <a href="https://ivanaffriandi.com" style="color: #71717A; text-decoration: underline;">ivanaffriandi.com</a>. Hit reply anytime.
-                    <span style="color: #A1A1AA; margin: 0 6px;">·</span>
-                    <a href="https://ivanaffriandi.com/api/newsletter?action=unsubscribe" style="color: #71717A; text-decoration: underline;">Unsubscribe</a>
+                  <td align="left" class="text-muted" style="font-size: 11.5px; color: #78716C; line-height: 1.6;">
+                    Sent from <a href="https://ivanaffriandi.com" style="color: #78716C; text-decoration: underline;">ivanaffriandi.com</a>. Hit reply anytime.
+                    <span style="color: #A8A29E; margin: 0 6px;">·</span>
+                    <a href="https://ivanaffriandi.com/api/newsletter?action=unsubscribe" style="color: #78716C; text-decoration: underline;">Unsubscribe</a>
                   </td>
                 </tr>
               </table>
