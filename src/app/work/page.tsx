@@ -163,6 +163,14 @@ export default function WorkIvanPortfolioPage() {
           <span className={styles.overviewLabel}>
             → {activeTab === 'archive' ? 'Services & Log' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
           </span>
+
+          {activeTab === 'about' && (
+            <img
+              src="/ivan-head.png"
+              alt="Affriandi, Ivan"
+              className={styles.aboutCol1Photo}
+            />
+          )}
         </div>
 
         <div className={styles.heroCol23}>
@@ -175,34 +183,9 @@ export default function WorkIvanPortfolioPage() {
               transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
               style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
             >
-              {activeTab === 'about' ? (
-                <h1
-                  className={styles.mainTitleHeading}
-                  style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'nowrap' }}
-                >
-                  <img
-                    src="/ivan-head.png"
-                    alt="Affriandi, Ivan"
-                    width={40}
-                    height={40}
-                    style={{
-                      width: '40px',
-                      height: '40px',
-                      objectFit: 'contain',
-                      display: 'inline-block',
-                      flexShrink: 0,
-                      borderRadius: 0,
-                      border: 'none',
-                      background: 'transparent',
-                    }}
-                  />
-                  <span>Affriandi, Ivan</span>
-                </h1>
-              ) : (
-                <h1 className={styles.mainTitleHeading}>
-                  {current.headline}
-                </h1>
-              )}
+              <h1 className={styles.mainTitleHeading}>
+                {current.headline}
+              </h1>
 
               <p className={styles.narrativeParagraph}>
                 {current.narrative}
