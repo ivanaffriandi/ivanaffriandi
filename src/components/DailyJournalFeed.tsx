@@ -2626,8 +2626,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 <span>JOURNAL</span>
               </button>
             ) : (
-              <Link
-                href="/"
+              <a
+                href="https://ivanaffriandi.com"
                 title="Return to Homepage"
                 className="mobile-home-btn"
               >
@@ -2636,7 +2636,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   <polyline points="9 22 9 12 15 12 15 22" />
                 </svg>
                 <span>HOME</span>
-              </Link>
+              </a>
             )}
 
             {/* Right: Q&A Button + Search Button */}
