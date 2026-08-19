@@ -55,6 +55,13 @@ function stripImagesFromHtml(html: string): string {
   return clean;
 }
 
+function getReadingTime(html: string): number {
+  if (!html) return 1;
+  const text = html.replace(/<[^>]*>/g, " ");
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 180));
+}
+
 function getRelativeTimeString(dateStr: string): string {
   if (!dateStr) return "";
   const date = new Date(dateStr);
@@ -365,6 +372,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const fallbackBrand = "/images/defining_brand_mono.png";
 
   const [postPhotoIndex, setPostPhotoIndex] = useState<number>(0);
+  const [readerFont, setReaderFont] = useState<"serif" | "sans">("serif");
+  const [readerSize, setReaderSize] = useState<"sm" | "md" | "lg">("md");
+  const [copiedLink, setCopiedLink] = useState<boolean>(false);
+  const [readingProgress, setReadingProgress] = useState<number>(0);
 
   const selectedPostImages = useMemo(() => {
     if (!selectedPost || !selectedPost.content) return [];
@@ -374,6 +385,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
   useEffect(() => {
     setPostPhotoIndex(0);
+    setReadingProgress(0);
     if (selectedPostIndex !== null) {
       window.scrollTo({ top: 0, left: 0, behavior: "instant" });
       const rightCol = document.querySelector(".pj-right");
@@ -382,6 +394,27 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
       if (wrapEl) wrapEl.scrollTo({ top: 0, left: 0, behavior: "instant" });
     }
   }, [selectedPostIndex]);
+
+  // Track article reading scroll progress
+  useEffect(() => {
+    if (!selectedPost) {
+      setReadingProgress(0);
+      return;
+    }
+    const rightCol = document.querySelector(".pj-right");
+    if (!rightCol) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = rightCol;
+      const total = scrollHeight - clientHeight;
+      if (total > 0) {
+        setReadingProgress(Math.min(100, Math.max(0, (scrollTop / total) * 100)));
+      }
+    };
+
+    rightCol.addEventListener("scroll", handleScroll);
+    return () => rightCol.removeEventListener("scroll", handleScroll);
+  }, [selectedPost]);
 
   const fallbackCovers = useMemo(() => [
     "/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg",
@@ -1478,9 +1511,64 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           word-break: break-word;
         }
 
+        /* ── EDITORIAL NOVEL ARTICLE READER ── */
+        .novel-article-reader {
+          font-family: var(--font-lora, var(--font-merriweather, Georgia, serif));
+          font-size: 1.14rem;
+          line-height: 1.96;
+          color: var(--text-primary, #111111);
+          letter-spacing: -0.003em;
+          word-break: break-word;
+          transition: font-family 0.2s ease, font-size 0.2s ease;
+        }
+
+        .novel-article-reader.font-sans {
+          font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif);
+          line-height: 1.86;
+          letter-spacing: -0.01em;
+        }
+
+        .novel-article-reader.size-sm { font-size: 1.02rem; line-height: 1.88; }
+        .novel-article-reader.size-md { font-size: 1.14rem; line-height: 1.96; }
+        .novel-article-reader.size-lg { font-size: 1.26rem; line-height: 2.04; }
+
         .novel-article-reader p {
-          margin: 0 0 1.25rem 0 !important;
-          line-height: 1.88 !important;
+          margin: 0 0 1.6rem 0 !important;
+          color: inherit;
+        }
+
+        .novel-article-reader blockquote {
+          border-left: 2.5px solid var(--text-primary, #111111);
+          margin: 2.2rem 0;
+          padding: 0.6rem 0 0.6rem 1.4rem;
+          font-style: italic;
+          opacity: 0.92;
+          font-size: 1.14em;
+          line-height: 1.75;
+          background: var(--bg-secondary, rgba(125,125,125,0.03));
+          border-radius: 0 8px 8px 0;
+        }
+
+        .novel-article-reader h2,
+        .novel-article-reader h3,
+        .novel-article-reader h4 {
+          font-family: var(--font-sans, -apple-system, sans-serif);
+          font-weight: 700;
+          letter-spacing: -0.02em;
+          color: var(--text-primary, #111111);
+          margin: 2.5rem 0 1rem 0;
+          line-height: 1.35;
+        }
+
+        .novel-article-reader a {
+          color: var(--text-primary, #111111);
+          text-decoration: underline;
+          text-underline-offset: 4px;
+          transition: opacity 0.2s ease;
+        }
+
+        .novel-article-reader a:hover {
+          opacity: 0.7;
         }
 
         .novel-article-reader p:empty,
@@ -1502,12 +1590,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .blog-modal-content-body > p:first-of-type::first-letter,
         .blog-modal-content-body > div:first-of-type > p:first-of-type::first-letter,
         .blog-modal-content-body > div:first-of-type::first-letter {
-          font-family: var(--font-serif, Georgia, "Times New Roman", serif) !important;
-          font-size: 3.4rem !important;
+          font-family: var(--font-serif, var(--font-playfair, Georgia, serif)) !important;
+          font-size: 3.5rem !important;
           float: left !important;
-          line-height: 0.82 !important;
-          margin-right: 0.65rem !important;
-          margin-top: 0.12rem !important;
+          line-height: 0.8 !important;
+          margin-right: 0.75rem !important;
+          margin-top: 0.14rem !important;
+          margin-bottom: -0.1rem !important;
           font-weight: 700 !important;
           color: var(--text-primary, #111111) !important;
           text-transform: uppercase !important;
@@ -2589,6 +2678,32 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
         {/* Desktop pj-right (hidden on mobile via CSS) */}
         <div className={`pj-right${!selectedPost ? " fit-screen" : ""}`}>
+          {/* ── TOP READING PROGRESS BAR (STICKY AT TOP OF SCROLL CONTAINER) ── */}
+          {selectedPost && (
+            <div
+              style={{
+                position: "sticky",
+                top: 0,
+                left: 0,
+                right: 0,
+                width: "100%",
+                height: "2.5px",
+                background: "rgba(125,125,125,0.1)",
+                zIndex: 60,
+                margin: "-2.2rem 0 1.2rem 0",
+              }}
+            >
+              <div
+                style={{
+                  height: "100%",
+                  width: `${readingProgress}%`,
+                  background: "var(--text-primary, #111111)",
+                  transition: "width 0.08s ease-out",
+                }}
+              />
+            </div>
+          )}
+
           <div className="pj-journal-feed-wrap">
             {/* Simple Page Header with IG, Email, Search & About button (ONLY visible in Overview mode) */}
             {!selectedPost && (
@@ -2653,70 +2768,247 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: "1.2rem",
+                    gap: "1.4rem",
                     width: "100%",
-                    maxWidth: "800px",
+                    maxWidth: "760px",
                     paddingBottom: "5rem",
                     paddingTop: "0.25rem",
                   }}
                 >
-                  {/* ── TOP-LEFT BACK TO JOURNAL PILLBAR BUTTON ── */}
-                  <button
-                    onClick={() => setSelectedPostIndex(null)}
+                  {/* ── TOP READING UTILITY BAR (BACK BUTTON + READING CONTROLS) ── */}
+                  <div
                     style={{
-                      display: "inline-flex",
+                      display: "flex",
                       alignItems: "center",
-                      gap: "0.45rem",
-                      background: "var(--bg-secondary, rgba(125,125,125,0.08))",
-                      border: "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
-                      color: "var(--text-primary, #111111)",
-                      fontSize: "0.66rem",
-                      fontWeight: 700,
-                      letterSpacing: "0.08em",
-                      textTransform: "uppercase",
-                      cursor: "pointer",
-                      padding: "0.38rem 0.88rem",
-                      borderRadius: "9999px",
-                      alignSelf: "flex-start",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-                      transition: "all 0.2s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = "var(--text-primary, #111111)";
-                      e.currentTarget.style.color = "var(--bg-color, #FFFFFF)";
-                      e.currentTarget.style.borderColor = "var(--text-primary, #111111)";
-                      e.currentTarget.style.transform = "translateY(-1px)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = "var(--bg-secondary, rgba(125,125,125,0.08))";
-                      e.currentTarget.style.color = "var(--text-primary, #111111)";
-                      e.currentTarget.style.borderColor = "var(--border-subtle, rgba(125,125,125,0.18))";
-                      e.currentTarget.style.transform = "translateY(0px)";
+                      justifyContent: "space-between",
+                      width: "100%",
+                      paddingBottom: "1rem",
+                      borderBottom: "1px solid var(--border-subtle, rgba(125,125,125,0.12))",
+                      gap: "0.75rem",
+                      flexWrap: "wrap",
                     }}
                   >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="19" y1="12" x2="5" y2="12" />
-                      <polyline points="12 19 5 12 12 5" />
-                    </svg>
-                    BACK TO JOURNAL
-                  </button>
+                    {/* BACK BUTTON */}
+                    <button
+                      onClick={() => setSelectedPostIndex(null)}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.45rem",
+                        background: "var(--bg-secondary, rgba(125,125,125,0.08))",
+                        border: "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
+                        color: "var(--text-primary, #111111)",
+                        fontSize: "0.66rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        cursor: "pointer",
+                        padding: "0.38rem 0.88rem",
+                        borderRadius: "9999px",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                        transition: "all 0.2s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "var(--text-primary, #111111)";
+                        e.currentTarget.style.color = "var(--bg-color, #FFFFFF)";
+                        e.currentTarget.style.borderColor = "var(--text-primary, #111111)";
+                        e.currentTarget.style.transform = "translateY(-1px)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "var(--bg-secondary, rgba(125,125,125,0.08))";
+                        e.currentTarget.style.color = "var(--text-primary, #111111)";
+                        e.currentTarget.style.borderColor = "var(--border-subtle, rgba(125,125,125,0.18))";
+                        e.currentTarget.style.transform = "translateY(0px)";
+                      }}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12" />
+                        <polyline points="12 19 5 12 12 5" />
+                      </svg>
+                      BACK TO JOURNAL
+                    </button>
+
+                    {/* READING CONTROLS */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+                      {/* READING TIME BADGE */}
+                      <span
+                        style={{
+                          fontSize: "0.62rem",
+                          fontWeight: 700,
+                          letterSpacing: "0.08em",
+                          textTransform: "uppercase",
+                          color: "var(--text-muted, #888888)",
+                          padding: "0.32rem 0.65rem",
+                          borderRadius: "6px",
+                          background: "var(--bg-secondary, rgba(125,125,125,0.06))",
+                          border: "1px solid var(--border-subtle, rgba(125,125,125,0.1))",
+                        }}
+                      >
+                        {getReadingTime(selectedPost.content)} MIN READ
+                      </span>
+
+                      {/* FONT SERIF/SANS TOGGLE */}
+                      <button
+                        onClick={() => setReaderFont((prev) => (prev === "serif" ? "sans" : "serif"))}
+                        title={readerFont === "serif" ? "Switch to Sans-Serif font" : "Switch to Serif font"}
+                        style={{
+                          fontSize: "0.65rem",
+                          fontWeight: 700,
+                          padding: "0.32rem 0.65rem",
+                          borderRadius: "6px",
+                          border: "1px solid var(--border-subtle, rgba(125,125,125,0.15))",
+                          background: "transparent",
+                          color: "var(--text-primary, #111111)",
+                          cursor: "pointer",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
+                        {readerFont === "serif" ? "Aa Serif" : "Aa Sans"}
+                      </button>
+
+                      {/* FONT SIZE TOGGLE (SM / MD / LG) */}
+                      <button
+                        onClick={() => {
+                          setReaderSize((prev) => (prev === "sm" ? "md" : prev === "md" ? "lg" : "sm"));
+                        }}
+                        title="Adjust text size"
+                        style={{
+                          fontSize: "0.65rem",
+                          fontWeight: 700,
+                          padding: "0.32rem 0.65rem",
+                          borderRadius: "6px",
+                          border: "1px solid var(--border-subtle, rgba(125,125,125,0.15))",
+                          background: "transparent",
+                          color: "var(--text-primary, #111111)",
+                          cursor: "pointer",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
+                        {readerSize === "sm" ? "Text: S" : readerSize === "md" ? "Text: M" : "Text: L"}
+                      </button>
+
+                      {/* SHARE / COPY LINK */}
+                      <button
+                        onClick={() => {
+                          if (typeof window !== "undefined") {
+                            navigator.clipboard.writeText(window.location.href);
+                            setCopiedLink(true);
+                            setTimeout(() => setCopiedLink(false), 2000);
+                          }
+                        }}
+                        title="Copy story link"
+                        style={{
+                          width: "28px",
+                          height: "28px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderRadius: "50%",
+                          border: "1px solid var(--border-subtle, rgba(125,125,125,0.15))",
+                          background: "transparent",
+                          color: copiedLink ? "#10B981" : "var(--text-primary, #111111)",
+                          cursor: "pointer",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
+                        {copiedLink ? (
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        ) : (
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* ── ARTICLE CHAPTER HEADER BANNER ── */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.4rem" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
+                      <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
+                        CHAPTER {String(sortedPosts.length - (selectedPostIndex ?? 0)).padStart(2, "0")}
+                      </span>
+                      <span style={{ color: "var(--border-subtle)", opacity: 0.6 }}>·</span>
+                      <span style={{ fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--text-muted)", textTransform: "uppercase" }}>
+                        {formatDate(selectedPost.published, locale)}
+                      </span>
+                    </div>
+
+                    <h1
+                      style={{
+                        fontSize: "clamp(1.75rem, 3.2vw, 2.4rem)",
+                        fontWeight: 800,
+                        lineHeight: 1.25,
+                        letterSpacing: "-0.025em",
+                        color: "var(--text-primary)",
+                        margin: 0,
+                        fontFamily: "var(--font-sans, -apple-system, sans-serif)",
+                      }}
+                    >
+                      {selectedPost.title}
+                    </h1>
+                  </div>
 
                   {/* Pure Editorial Content Body (No photos in text stream; images are in left gallery) */}
                   <div
-                    className="blog-modal-content-body novel-article-reader"
+                    className={`blog-modal-content-body novel-article-reader font-${readerFont} size-${readerSize}`}
                     style={{
-                      fontSize: "1.05rem",
-                      lineHeight: 1.88,
-                      color: "var(--text-primary)",
-                      paddingTop: "0.25rem",
+                      paddingTop: "0.6rem",
                     }}
                     dangerouslySetInnerHTML={{ __html: stripImagesFromHtml(selectedPost.content) }}
                   />
 
+                  {/* ── ARTICLE ENDING ORNAMENT & AUTHOR SEAL ── */}
+                  <div
+                    style={{
+                      margin: "2.5rem 0 1.5rem 0",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "1.4rem",
+                    }}
+                  >
+                    <div style={{ letterSpacing: "0.6em", color: "var(--text-muted)", fontSize: "0.85rem", opacity: 0.45 }}>
+                      ✦ ✦ ✦
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "1rem",
+                        padding: "1rem 1.25rem",
+                        borderRadius: "12px",
+                        background: "var(--bg-secondary, rgba(125,125,125,0.04))",
+                        border: "1px solid var(--border-subtle, rgba(125,125,125,0.08))",
+                        width: "100%",
+                        maxWidth: "520px",
+                        boxSizing: "border-box",
+                      }}
+                    >
+                      <img
+                        src="/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg"
+                        alt="Ivan Affriandi"
+                        style={{ width: "44px", height: "44px", borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
+                      />
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}>
+                        <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-primary)" }}>
+                          Ivan Affriandi
+                        </span>
+                        <span style={{ fontSize: "0.74rem", color: "var(--text-muted)", lineHeight: 1.4 }}>
+                          Writing on software architecture, aesthetics, and moments in between.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* ── OTHER CHAPTERS THUMBNAIL ROW AT BOTTOM ── */}
                   <div
                     style={{
-                      marginTop: "3.5rem",
+                      marginTop: "1.5rem",
                       paddingTop: "2rem",
                       borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))",
                       display: "flex",
