@@ -8,8 +8,6 @@ import {
   Mail,
   Ban,
   CheckCircle2,
-  ExternalLink,
-  Sparkles
 } from 'lucide-react';
 import { MessageSummary, SubscriptionItem } from '@/types/mail';
 
@@ -126,60 +124,48 @@ export const SubscriptionsModal: React.FC<SubscriptionsModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in font-sans"
-      onClick={onClose}
-    >
+    <>
+      {/* Invisible backdrop for outside click */}
+      <div className="fixed inset-0 z-40" onClick={onClose} />
+
+      {/* Compact Popover anchored at bottom left beside calendar / sidebar */}
       <div
-        className="w-full max-w-lg bg-[var(--card-bg)] text-[var(--text-primary)] rounded-3xl border border-[var(--card-border)] shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-scale-up"
+        className="fixed bottom-4 left-3 md:left-[270px] lg:left-[280px] z-50 w-76 sm:w-88 bg-[var(--card-bg)] text-[var(--text-primary)] rounded-2xl border border-[var(--card-border)] shadow-2xl overflow-hidden flex flex-col max-h-[460px] animate-scale-up font-sans"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border-subtle)] shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
-              <Newspaper className="w-4 h-4" />
-            </div>
-            <div>
-              <h2 className="text-sm font-extrabold tracking-tight">Subscriptions</h2>
-              <p className="text-[11px] text-[var(--text-muted)]">
-                {subscriptions.length} detected newsletters &amp; dispatches
-              </p>
-            </div>
+        {/* Compact Header */}
+        <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-[var(--border-subtle)] shrink-0 bg-[var(--card-bg)]">
+          <div className="flex items-center gap-2">
+            <Newspaper className="w-3.5 h-3.5 text-blue-500" />
+            <span className="text-xs font-bold tracking-tight">Subscriptions ({subscriptions.length})</span>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-xl hover:bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] apple-transition cursor-pointer"
+            className="p-1 rounded-lg hover:bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] apple-transition cursor-pointer"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* Search */}
-        <div className="px-5 py-3 border-b border-[var(--border-subtle)] bg-[var(--bg-color)] shrink-0">
+        {/* Mini Search */}
+        <div className="px-3 py-2 border-b border-[var(--border-subtle)] bg-[var(--bg-color)] shrink-0">
           <div className="relative w-full">
-            <Search className="w-3.5 h-3.5 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-3 h-3 text-[var(--text-muted)] absolute left-2.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search publisher or email..."
-              className="w-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500/20 apple-transition"
+              placeholder="Search subscriptions..."
+              className="w-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-lg pl-7 pr-2.5 py-1 text-[11px] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-blue-500/30 apple-transition"
             />
           </div>
         </div>
 
-        {/* List */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-2.5 min-h-[220px]">
+        {/* Compact Scrollable List */}
+        <div className="flex-1 overflow-y-auto p-2 space-y-1.5 min-h-[140px] max-h-[300px]">
           {filteredSubscriptions.length === 0 ? (
-            <div className="h-44 flex flex-col items-center justify-center text-center p-4">
-              <div className="w-10 h-10 rounded-2xl bg-[var(--bg-secondary)] flex items-center justify-center text-[var(--text-muted)] mb-2">
-                <Newspaper className="w-5 h-5" />
-              </div>
-              <p className="text-xs font-bold text-[var(--text-primary)]">No subscriptions found</p>
-              <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
-                Newsletters and dispatches received will be listed here.
-              </p>
+            <div className="h-24 flex flex-col items-center justify-center text-center p-3">
+              <p className="text-[11px] font-bold text-[var(--text-muted)]">No subscriptions found</p>
             </div>
           ) : (
             filteredSubscriptions.map((sub) => {
@@ -187,69 +173,64 @@ export const SubscriptionsModal: React.FC<SubscriptionsModalProps> = ({
               return (
                 <div
                   key={sub.id}
-                  className={`p-3 rounded-2xl border apple-transition flex items-center justify-between gap-3 ${
+                  className={`p-2 rounded-xl border apple-transition flex items-center justify-between gap-2 ${
                     sub.is_unsubscribed
-                      ? 'bg-[var(--bg-secondary)]/40 border-[var(--card-border)] opacity-60'
-                      : 'bg-[var(--card-bg)] border-[var(--card-border)] hover:border-blue-500/20'
+                      ? 'bg-[var(--bg-secondary)]/30 border-[var(--card-border)] opacity-60'
+                      : 'bg-[var(--card-bg)] border-[var(--card-border)] hover:border-blue-500/30'
                   }`}
                 >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-xs shrink-0 shadow-2xs">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-2xs">
                       {initial}
                     </div>
                     <div className="flex flex-col min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-xs font-extrabold text-[var(--text-primary)] truncate">
+                      <div className="flex items-center gap-1">
+                        <span className="text-[11px] font-bold text-[var(--text-primary)] truncate">
                           {sub.sender_name}
                         </span>
-                        {sub.is_unsubscribed ? (
-                          <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                            Unsubscribed
-                          </span>
-                        ) : (
-                          <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                            Active
+                        {sub.is_unsubscribed && (
+                          <span className="text-[8px] font-bold px-1 py-0.2 rounded bg-amber-500/10 text-amber-500">
+                            Muted
                           </span>
                         )}
                       </div>
-                      <span className="text-[10px] text-[var(--text-muted)] font-mono truncate">
+                      <span className="text-[9px] text-[var(--text-muted)] font-mono truncate">
                         {sub.sender_address}
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex items-center gap-1 shrink-0">
                     <button
                       type="button"
                       onClick={() => {
                         onFilterSender(sub.sender_address);
                         onClose();
                       }}
-                      className="px-2.5 py-1 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--card-border)] text-[var(--text-primary)] text-[11px] font-semibold apple-transition flex items-center gap-1 cursor-pointer"
+                      className="p-1 rounded-md bg-[var(--bg-secondary)] hover:bg-[var(--card-border)] text-[var(--text-primary)] text-[10px] font-medium apple-transition cursor-pointer"
                       title="View all emails from this publisher"
                     >
                       <Mail className="w-3 h-3 text-[var(--text-muted)]" />
-                      <span>Issues</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleToggleUnsubscribe(sub.sender_address)}
-                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold apple-transition flex items-center gap-1 cursor-pointer ${
+                      className={`px-2 py-0.8 rounded-md text-[10px] font-bold apple-transition flex items-center gap-0.5 cursor-pointer ${
                         sub.is_unsubscribed
-                          ? 'bg-blue-500/10 text-blue-600 hover:bg-blue-600 hover:text-white border border-blue-500/20'
-                          : 'bg-red-500/10 hover:bg-red-500 text-red-600 hover:text-white border border-red-500/20'
+                          ? 'bg-blue-500/10 text-blue-600 hover:bg-blue-600 hover:text-white'
+                          : 'bg-red-500/10 hover:bg-red-500 text-red-600 hover:text-white'
                       }`}
                     >
                       {sub.is_unsubscribed ? (
                         <>
-                          <CheckCircle2 className="w-3 h-3" />
+                          <CheckCircle2 className="w-2.5 h-2.5" />
                           <span>Re-sub</span>
                         </>
                       ) : (
                         <>
-                          <Ban className="w-3 h-3" />
-                          <span>Unsubscribe</span>
+                          <Ban className="w-2.5 h-2.5" />
+                          <span>Unsub</span>
                         </>
                       )}
                     </button>
@@ -260,6 +241,6 @@ export const SubscriptionsModal: React.FC<SubscriptionsModalProps> = ({
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
