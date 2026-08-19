@@ -378,28 +378,30 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const [readingProgress, setReadingProgress] = useState<number>(0);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
   const [mobilePrologueOpen, setMobilePrologueOpen] = useState<boolean>(false);
+  const [isReadingPrologue, setIsReadingPrologue] = useState<boolean>(false);
 
   const selectedPostImages = useMemo(() => {
+    if (isReadingPrologue) return ["/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg"];
     if (!selectedPost || !selectedPost.content) return [];
     const extracted = extractAllImages(selectedPost.content);
     return extracted.length > 0 ? extracted : [fallbackHero];
-  }, [selectedPost, fallbackHero]);
+  }, [isReadingPrologue, selectedPost, fallbackHero]);
 
   useEffect(() => {
     setPostPhotoIndex(0);
     setReadingProgress(0);
-    if (selectedPostIndex !== null) {
+    if (selectedPostIndex !== null || isReadingPrologue) {
       window.scrollTo({ top: 0, left: 0, behavior: "instant" });
       const rightCol = document.querySelector(".pj-right");
       if (rightCol) rightCol.scrollTo({ top: 0, left: 0, behavior: "instant" });
       const wrapEl = document.querySelector(".pj-journal-feed-wrap");
       if (wrapEl) wrapEl.scrollTo({ top: 0, left: 0, behavior: "instant" });
     }
-  }, [selectedPostIndex]);
+  }, [selectedPostIndex, isReadingPrologue]);
 
   // Track article reading scroll progress
   useEffect(() => {
-    if (!selectedPost) {
+    if (!selectedPost && !isReadingPrologue) {
       setReadingProgress(0);
       return;
     }
@@ -416,7 +418,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
     rightCol.addEventListener("scroll", handleScroll);
     return () => rightCol.removeEventListener("scroll", handleScroll);
-  }, [selectedPost]);
+  }, [selectedPost, isReadingPrologue]);
 
   const fallbackCovers = useMemo(() => [
     "/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg",
@@ -444,25 +446,29 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     });
   }, [selectedPostImages]);
 
-  // Flipboard Deck containing EXCLUSIVELY BLOG POSTS for mobile & left cover
+  // Flipboard Deck: Card 0 is PROLOGUE by default, followed by Chapter 04, Chapter 03, etc.
   const flipboardCards = useMemo(() => {
+    const prologueCard = {
+      id: "prologue",
+      category: "PROLOGUE",
+      date: "INTRO",
+      title: "A Quiet Corner on the Internet",
+      excerpt: "Most of this gets written late at night, usually when the screen is the only light in the room and the city noise has finally died down. Passing thoughts turn into essays...",
+      img: fallbackCovers[0],
+      post: null,
+      isPrologue: true,
+      postIndex: -1,
+    };
+
     if (sortedPosts.length === 0) {
-      return [{
-        id: "fallback",
-        category: "CHAPTER 01",
-        date: "2026",
-        title: "Ivan Affriandi",
-        excerpt: "Crafting digital experiences, thoughtful software, and visual moments.",
-        img: fallbackCovers[0],
-        post: null,
-      }];
+      return [prologueCard];
     }
 
     const limited = sortedPosts.slice(0, 10);
-    return limited.map((p, idx) => {
+    const chapterCards = limited.map((p, idx) => {
       const extracted = extractCoverImage(p.content);
       const isBadImg = !extracted || extracted.includes("ocean_hero_mono.png");
-      const cover = isBadImg ? fallbackCovers[idx % fallbackCovers.length] : extracted;
+      const cover = isBadImg ? fallbackCovers[(idx + 1) % fallbackCovers.length] : extracted;
       const chapterNum = `CHAPTER ${String(sortedPosts.length - idx).padStart(2, "0")}`;
       return {
         id: p.id,
@@ -472,8 +478,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         excerpt: stripHtml(p.content || "").slice(0, 135) + "…",
         img: cover,
         post: p,
+        isPrologue: false,
+        postIndex: idx,
       };
     });
+
+    return [prologueCard, ...chapterCards];
   }, [sortedPosts, fallbackCovers]);
 
   // Backward-compatible hero posts for desktop
@@ -2176,7 +2186,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: block !important;
           }
 
-          /* ── ROOT LAYOUT (NATURAL SINGLE-COLUMN FLOW ON MOBILE) ── */
+          /* ── ROOT LAYOUT (IMMERSIVE 100VH CARD DECK ON MOBILE OVERVIEW) ── */
           .pj-root {
             display: flex !important;
             flex-direction: column !important;
@@ -2185,19 +2195,25 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             left: auto !important;
             right: auto !important;
             bottom: auto !important;
-            height: auto !important;
-            min-height: 100vh !important;
-            min-height: 100dvh !important;
+            height: 100vh !important;
+            height: 100dvh !important;
             width: 100vw !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
+            overflow: hidden !important;
             padding: 0 !important;
             margin: 0 !important;
-            background: var(--bg-color, #121212) !important;
+            background: var(--bg-color, #0c0d0e) !important;
             -webkit-overflow-scrolling: touch !important;
           }
 
-          /* ── HERO PHOTO FEATURED CARD (TOP BANNER ON MOBILE) ── */
+          /* When reading an article or prologue, allow vertical scrolling */
+          .pj-root.has-selected-post {
+            height: auto !important;
+            min-height: 100vh !important;
+            min-height: 100dvh !important;
+            overflow-y: auto !important;
+          }
+
+          /* ── HERO PHOTO FEATURED CARD (FULLSCREEN 100VH ON OVERVIEW) ── */
           .pj-left {
             position: relative !important;
             top: auto !important;
@@ -2206,16 +2222,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             bottom: auto !important;
             width: 100vw !important;
             max-width: 100vw !important;
-            height: 72vh !important;
-            height: 72dvh !important;
-            min-height: 480px !important;
+            height: 100vh !important;
+            height: 100dvh !important;
             margin: 0 !important;
-            border-radius: 0 0 24px 24px !important;
+            border-radius: 0 !important;
             border: none !important;
             overflow: hidden !important;
             flex-shrink: 0 !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
-            transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            box-shadow: none !important;
+            transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
           }
 
           /* When article reader is open on mobile */
@@ -2224,6 +2239,31 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             height: 38dvh !important;
             min-height: 240px !important;
             border-radius: 0 !important;
+            box-shadow: none !important;
+          }
+
+          /* ── EDITORIAL CONTENT FEED: HIDDEN IN OVERVIEW ON MOBILE, VISIBLE WHEN READING ── */
+          .pj-right {
+            display: none !important;
+          }
+
+          .pj-root.has-selected-post .pj-right {
+            display: block !important;
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            right: auto !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            max-height: none !important;
+            height: auto !important;
+            background: var(--bg-color, #FFFFFF) !important;
+            color: var(--text-primary, #111111) !important;
+            border-radius: 0 !important;
+            overflow-y: visible !important;
+            box-sizing: border-box !important;
+            z-index: 1 !important;
+            padding: 1.8rem 1.25rem calc(4rem + env(safe-area-inset-bottom, 0px)) !important;
             box-shadow: none !important;
           }
 
@@ -2521,7 +2561,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
       `}</style>
 
-      <div className={`pj-root${selectedPost ? " has-selected-post" : ""}`} ref={mobileScrollRef}>
+      <div className={`pj-root${selectedPost || isReadingPrologue ? " has-selected-post" : ""}`} ref={mobileScrollRef}>
         {/* ── FULLSCREEN HERO CARD DECK ── */}
         <div
           className="pj-left"
@@ -2586,9 +2626,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             }}
           >
             <img
-              key={selectedPost ? `post-${selectedPost.id}-${postPhotoIndex}` : `overview-${heroIndex}`}
-              src={selectedPost ? selectedPostImages[postPhotoIndex % selectedPostImages.length] : currentFlipCard.img}
-              alt={selectedPost ? selectedPost.title : currentFlipCard.title}
+              key={isReadingPrologue ? "prologue-hero" : selectedPost ? `post-${selectedPost.id}-${postPhotoIndex}` : `overview-${heroIndex}`}
+              src={isReadingPrologue ? fallbackCovers[0] : selectedPost ? selectedPostImages[postPhotoIndex % selectedPostImages.length] : currentFlipCard.img}
+              alt={isReadingPrologue ? "Prologue" : selectedPost ? selectedPost.title : currentFlipCard.title}
               style={{
                 width: "100%",
                 height: "100%",
@@ -2616,10 +2656,16 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           <div className="pj-left-content" style={{ zIndex: 3 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
               <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
-                {selectedPost ? `CHAPTER ${String(sortedPosts.length - (selectedPostIndex ?? 0)).padStart(2, "0")} · ${formatDate(selectedPost.published, locale)}` : currentFlipCard.category}
+                {isReadingPrologue
+                  ? "PROLOGUE · INTRO NARRATIVE"
+                  : selectedPost
+                  ? `CHAPTER ${String(sortedPosts.length - (selectedPostIndex ?? 0)).padStart(2, "0")} · ${formatDate(selectedPost.published, locale)}`
+                  : currentFlipCard.category}
               </span>
               <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.6)" }}>
-                {selectedPost
+                {isReadingPrologue
+                  ? "INTRO"
+                  : selectedPost
                   ? selectedPostImages.length > 1
                     ? `${(postPhotoIndex % selectedPostImages.length) + 1} / ${selectedPostImages.length} PHOTOS`
                     : getRelativeTimeString(selectedPost.published)
@@ -2627,9 +2673,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               </span>
             </div>
 
-            <h1 className="pj-title">{selectedPost ? selectedPost.title : currentFlipCard.title}</h1>
+            <h1 className="pj-title">
+              {isReadingPrologue
+                ? "A Quiet Corner on the Internet"
+                : selectedPost
+                ? selectedPost.title
+                : currentFlipCard.title}
+            </h1>
 
-            {!selectedPost && (
+            {!selectedPost && !isReadingPrologue && (
               <p className="pj-excerpt">
                 {currentFlipCard.excerpt}
               </p>
@@ -2649,7 +2701,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   />
                 ))}
               </div>
-            ) : !selectedPost && flipboardCards.length > 1 ? (
+            ) : !selectedPost && !isReadingPrologue && flipboardCards.length > 1 ? (
               <div className="pj-dots" style={{ marginTop: "1.4rem" }}>
                 {flipboardCards.map((_, i) => (
                   <div
@@ -2739,12 +2791,16 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 </svg>
               </button>
             </div>
-          ) : (
+          ) : !isReadingPrologue ? (
             <button
               className="pj-read-btn"
               onClick={(e) => {
                 e.stopPropagation();
-                if (currentFlipCard.post) {
+                if (currentFlipCard.isPrologue) {
+                  setIsReadingPrologue(true);
+                  setSelectedPostIndex(null);
+                } else if (currentFlipCard.post) {
+                  setIsReadingPrologue(false);
                   const idx = sortedPosts.findIndex((p) => p.id === currentFlipCard.post.id);
                   if (idx !== -1) setSelectedPostIndex(idx);
                 }
@@ -2756,7 +2812,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 <polyline points="12 5 19 12 12 19" />
               </svg>
             </button>
-          )}
+          ) : null}
         </div>
 
         {/* RIGHT COLUMN: SINGLE-SCREEN COMPACT EDITORIAL LAYOUT */}
@@ -2814,7 +2870,121 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             )}
 
             <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", flex: 1, minHeight: 0 }}>
-              {selectedPost ? (
+              {isReadingPrologue ? (
+                /* ── PROLOGUE ARTICLE CONTENT READER ── */
+                <motion.div
+                  key="prologue-reader"
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 14 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "1.4rem",
+                    width: "100%",
+                    maxWidth: "760px",
+                    paddingBottom: "5rem",
+                    paddingTop: "0.25rem",
+                  }}
+                >
+                  {/* ── TOP READING UTILITY BAR ── */}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      width: "100%",
+                      paddingBottom: "1rem",
+                      borderBottom: "1px solid var(--border-subtle, rgba(125,125,125,0.12))",
+                      gap: "0.75rem",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    {/* BACK BUTTON */}
+                    <button
+                      onClick={() => setIsReadingPrologue(false)}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.45rem",
+                        background: "var(--bg-secondary, rgba(125,125,125,0.08))",
+                        border: "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
+                        color: "var(--text-primary, #111111)",
+                        fontSize: "0.66rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        cursor: "pointer",
+                        padding: "0.38rem 0.88rem",
+                        borderRadius: "9999px",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                        transition: "all 0.2s ease",
+                      }}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12" />
+                        <polyline points="12 19 5 12 12 5" />
+                      </svg>
+                      BACK TO JOURNAL
+                    </button>
+
+                    <span
+                      style={{
+                        fontSize: "0.62rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        color: "var(--text-muted, #888888)",
+                      }}
+                    >
+                      PROLOGUE · 2 MIN READ
+                    </span>
+                  </div>
+
+                  {/* PROLOGUE BODY */}
+                  <div
+                    className="novel-article-reader"
+                    style={{
+                      fontFamily: readerFont === "serif" ? "var(--font-serif, Georgia, serif)" : "var(--font-sans, sans-serif)",
+                      fontSize: readerSize === "sm" ? "1rem" : readerSize === "lg" ? "1.25rem" : "1.12rem",
+                      lineHeight: readerSize === "sm" ? 1.8 : readerSize === "lg" ? 1.95 : 1.85,
+                      color: "var(--text-primary, #111111)",
+                    }}
+                  >
+                    <p className="novel-drop-cap">
+                      Most of this gets written late at night, usually when the screen is the only light in the room and the city noise has finally died down. It’s where passing thoughts turn into essays, and random observations get a second life.
+                    </p>
+                    <p>
+                      I build software, take photos, and obsess over small details. Instead of keeping all of that in separate boxes, I wanted a quiet corner on the internet where everything could just breathe together.
+                    </p>
+
+                    <div className="imessage-chat-wrap" style={{ margin: "2rem 0", gap: "0.75rem" }}>
+                      <div className="imessage-row-incoming">
+                        <span className="imessage-sender-tag" style={{ marginLeft: "0.5rem", fontSize: "0.54rem" }}>
+                          FRIEND
+                        </span>
+                        <div className="imessage-bubble-incoming" style={{ padding: "0.75rem 1.1rem", fontSize: "0.92rem", lineHeight: 1.45 }}>
+                          &ldquo;Wait, so what is this place exactly? A blog? A portfolio?&rdquo;
+                        </div>
+                      </div>
+
+                      <div className="imessage-row-outgoing">
+                        <span className="imessage-sender-tag" style={{ marginRight: "0.5rem", fontSize: "0.54rem" }}>
+                          IVAN
+                        </span>
+                        <div className="imessage-bubble-outgoing" style={{ padding: "0.75rem 1.1rem", fontSize: "0.92rem", lineHeight: 1.45 }}>
+                          &ldquo;Honestly? Just a running log. Things I build, photos I take, and ideas I can&apos;t stop chewing on.&rdquo;
+                        </div>
+                      </div>
+                    </div>
+
+                    <p style={{ fontStyle: "italic", opacity: 0.8 }}>
+                      Grab a drink. Make yourself at home.
+                    </p>
+                  </div>
+                </motion.div>
+              ) : selectedPost ? (
                 /* ── PURE ARTICLE CONTENT READER (LEFT ACTS AS COVER HEADER) ── */
                 <motion.div
                   key={selectedPost.id}
@@ -3780,48 +3950,102 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     style={{
                       flex: 1,
                       overflowY: "auto",
-                      padding: "0.4rem 1.25rem 2rem",
+                      padding: "0.4rem 1.25rem 2.5rem",
                       display: "flex",
                       flexDirection: "column",
-                      gap: "0.55rem",
+                      gap: "0.65rem",
                     }}
                   >
+                    {/* PROLOGUE ENTRY */}
+                    <div
+                      onClick={() => {
+                        setIsReadingPrologue(true);
+                        setSelectedPostIndex(null);
+                        setMobileSidebarOpen(false);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.85rem",
+                        padding: "0.65rem 0.75rem",
+                        borderRadius: "14px",
+                        background: isReadingPrologue ? "rgba(255,255,255,0.16)" : "var(--bg-secondary, rgba(255,255,255,0.04))",
+                        border: "1px solid var(--border-subtle, rgba(255,255,255,0.1))",
+                        cursor: "pointer",
+                        transition: "all 0.18s ease",
+                      }}
+                    >
+                      <div style={{ width: "72px", height: "54px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, position: "relative", background: "#1a1a1a" }}>
+                        <img
+                          src={fallbackCovers[0]}
+                          alt="Prologue"
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        />
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem", flex: 1, minWidth: 0 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted, rgba(255,255,255,0.5))" }}>
+                            PROLOGUE
+                          </span>
+                          <span style={{ fontSize: "0.5rem", fontWeight: 600, color: "var(--text-muted, rgba(255,255,255,0.4))", textTransform: "uppercase" }}>
+                            INTRO
+                          </span>
+                        </div>
+                        <h4 style={{ fontSize: "0.84rem", fontWeight: 700, lineHeight: 1.3, margin: 0, color: "var(--text-primary, #FFFFFF)", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                          A Quiet Corner on the Internet
+                        </h4>
+                      </div>
+                    </div>
+
+                    {/* CHAPTERS WITH COVER THUMBNAILS */}
                     {filteredPosts.map((post) => {
                       const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
                       const chapterNum = String(sortedPosts.length - postIdx).padStart(2, "0");
                       const relTime = getRelativeTimeString(post.published);
+                      const postCover = extractCoverImage(post.content) || fallbackCovers[(postIdx + 1) % fallbackCovers.length];
 
                       return (
                         <div
                           key={post.id}
                           onClick={() => {
+                            setIsReadingPrologue(false);
                             setSelectedPostIndex(postIdx);
                             setMobileSidebarOpen(false);
                             window.scrollTo({ top: 0, behavior: "smooth" });
                           }}
                           style={{
                             display: "flex",
-                            flexDirection: "column",
-                            gap: "0.25rem",
-                            padding: "0.8rem 0.95rem",
-                            borderRadius: "12px",
-                            background: selectedPostIndex === postIdx ? "rgba(255,255,255,0.12)" : "var(--bg-secondary, rgba(255,255,255,0.04))",
-                            border: "1px solid var(--border-subtle, rgba(255,255,255,0.08))",
+                            alignItems: "center",
+                            gap: "0.85rem",
+                            padding: "0.65rem 0.75rem",
+                            borderRadius: "14px",
+                            background: selectedPostIndex === postIdx && !isReadingPrologue ? "rgba(255,255,255,0.16)" : "var(--bg-secondary, rgba(255,255,255,0.04))",
+                            border: "1px solid var(--border-subtle, rgba(255,255,255,0.1))",
                             cursor: "pointer",
                             transition: "all 0.18s ease",
                           }}
                         >
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted, rgba(255,255,255,0.5))" }}>
-                              CHAPTER {chapterNum}
-                            </span>
-                            <span style={{ fontSize: "0.52rem", fontWeight: 600, color: "var(--text-muted, rgba(255,255,255,0.4))", textTransform: "uppercase" }}>
-                              {relTime}
-                            </span>
+                          <div style={{ width: "72px", height: "54px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, position: "relative", background: "#1a1a1a" }}>
+                            <img
+                              src={postCover}
+                              alt={post.title}
+                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            />
                           </div>
-                          <h4 style={{ fontSize: "0.86rem", fontWeight: 700, lineHeight: 1.35, margin: 0, color: "var(--text-primary, #FFFFFF)" }}>
-                            {post.title}
-                          </h4>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem", flex: 1, minWidth: 0 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                              <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted, rgba(255,255,255,0.5))" }}>
+                                CHAPTER {chapterNum}
+                              </span>
+                              <span style={{ fontSize: "0.5rem", fontWeight: 600, color: "var(--text-muted, rgba(255,255,255,0.4))", textTransform: "uppercase" }}>
+                                {relTime}
+                              </span>
+                            </div>
+                            <h4 style={{ fontSize: "0.84rem", fontWeight: 700, lineHeight: 1.3, margin: 0, color: "var(--text-primary, #FFFFFF)", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                              {post.title}
+                            </h4>
+                          </div>
                         </div>
                       );
                     })}
