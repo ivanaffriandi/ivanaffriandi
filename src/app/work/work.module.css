@@ -348,17 +348,105 @@
   border-radius: 2px;
 }
 
-/* ── 2. SKILLS TAB: PURE TYPOGRAPHY KINETIC MARQUEE (NO BOXES) ── */
+/* 2. SKILLS TAB: 4 STRUCTURED PILLARS + CLEAN MARQUEE */
+.skillsSectionWrapper {
+  grid-column: 1 / 4;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  border-top: 1px solid #f0f0f2;
+  padding-top: 28px;
+  width: 100%;
+}
+
+.skillsPillarGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 960px) {
+  .skillsPillarGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 580px) {
+  .skillsPillarGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.skillPillarCard {
+  border: 1px solid #eeeeee;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.skillPillarCard:hover {
+  border-color: #111111;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.pillarCategoryTitle {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #111111;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pillarDesc {
+  font-size: 11.5px;
+  color: #666666;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.pillarSkillList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid #f2f2f4;
+}
+
+.pillarSkillItem {
+  font-size: 12px;
+  font-weight: 550;
+  color: #222222;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pillarSkillDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #111111;
+  opacity: 0.5;
+}
+
 .skillsPureTypographyWrapper {
   grid-column: 1 / 4;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  border-top: 1px solid #f0f0f2;
-  padding-top: 32px;
   width: 100%;
   overflow: hidden;
   user-select: none;
+  margin-top: 8px;
 }
 
 .kineticRowTrack {
@@ -414,7 +502,7 @@
   display: inline-flex;
   align-items: baseline;
   gap: 8px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 550;
   letter-spacing: -0.02em;
   color: #111111;
@@ -423,8 +511,8 @@
 }
 
 .pureTextItem:hover {
-  color: #ef4444;
-  transform: scale(1.04);
+  color: #111111;
+  opacity: 0.7;
 }
 
 .pureTextBullet {
@@ -446,30 +534,125 @@
   grid-column: 1 / 4;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   border-top: 1px solid #f0f0f2;
   padding-top: 28px;
 }
 
-.processStepGrid {
+.overviewCardsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
 }
 
 @media (max-width: 860px) {
-  .processStepGrid {
+  .overviewCardsGrid {
     grid-template-columns: 1fr;
   }
 }
 
-.processCard {
+.overviewFocusCard {
   border: 1px solid #eeeeee;
-  padding: 20px;
+  padding: 24px;
+  border-radius: 4px;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.overviewFocusCard:hover {
+  border-color: #111111;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.overviewFocusNumber {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  color: #888888;
+  text-transform: uppercase;
+}
+
+.overviewFocusTitle {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: #111111;
+}
+
+.overviewFocusDesc {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #555555;
+  margin: 0;
+}
+
+.overviewFocusTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid #f3f3f5;
+}
+
+.contactBannerWrap {
+  grid-column: 1 / 4;
+  margin-top: 12px;
+  padding: 24px;
+  background: #fbfbfd;
+  border: 1px solid #eeeeee;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .contactBannerWrap {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.contactBannerLeft h4 {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.contactBannerLeft p {
+  margin: 0;
+  font-size: 12px;
+  color: #666666;
+}
+
+.contactActionBtn {
+  display: inline-flex;
+  align-items: center;
   gap: 8px;
-  background: #ffffff;
+  background: #111111;
+  color: #ffffff;
+  padding: 10px 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 20px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.contactActionBtn:hover {
+  background: #333333;
+  transform: translateY(-1px);
 }
 
 .processNum {
