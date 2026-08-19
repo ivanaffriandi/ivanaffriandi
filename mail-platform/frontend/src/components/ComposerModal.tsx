@@ -646,30 +646,39 @@ export const ComposerModal: React.FC<ComposerModalProps> = ({
   if (!isOpen && !isClosing) return null;
 
   return (
-    <div
-      ref={modalContainerRef}
-      className={`fixed inset-x-2.5 bottom-2.5 md:bottom-6 md:right-6 md:left-auto md:w-[580px] max-w-full md:max-w-[94vw] max-h-[94vh] overflow-y-auto no-scrollbar z-[160] select-none flex flex-col gap-2 font-sans ${
-        isClosing ? 'animate-genie-out' : 'animate-genie-in'
-      }`}
-    >
-      {/* Sending Result Banner */}
-      {sendResult && (
-        <div className={`px-4 py-2 text-xs font-bold flex items-center gap-2 rounded-2xl shadow-2xl animate-toast ${
-          sendResult === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'
-        }`}>
-          {sendResult === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-          <span>{sendResult === 'success' ? '✓ Message dispatched successfully!' : '✗ Failed to send message. Please try again.'}</span>
-        </div>
-      )}
+    <>
+      {/* Background Dimming Backdrop (Subtle focus backdrop) */}
+      <div
+        className={`fixed inset-0 bg-black/25 dark:bg-black/45 backdrop-blur-[2px] z-[150] select-none apple-transition ${
+          isClosing ? 'opacity-0' : 'opacity-100'
+        }`}
+        onClick={handleClose}
+      />
 
-      {/* 1. Separate Top Floating Metadata Card */}
-      <div className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl md:rounded-3xl shadow-[0_12px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.45)] p-3 md:p-4 space-y-2.5 apple-transition">
-        {/* Title Tag */}
-        <div className="flex items-center gap-2 px-1">
-          <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
-          <span className="text-[11px] font-black text-[var(--text-primary)] uppercase tracking-wider">
-            {subject?.toLowerCase().startsWith('re:') ? 'Reply' : subject?.toLowerCase().startsWith('fwd:') ? 'Forward' : 'New Message'}
-          </span>
+      <div
+        ref={modalContainerRef}
+        className={`fixed inset-x-2.5 bottom-2.5 md:bottom-6 md:right-6 md:left-auto md:w-[580px] max-w-full md:max-w-[94vw] max-h-[94vh] overflow-y-auto no-scrollbar z-[160] select-none flex flex-col gap-2 font-sans ${
+          isClosing ? 'animate-genie-out' : 'animate-genie-in'
+        }`}
+      >
+        {/* Sending Result Banner */}
+        {sendResult && (
+          <div className={`px-4 py-2 text-xs font-bold flex items-center gap-2 rounded-2xl shadow-lg animate-toast ${
+            sendResult === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'
+          }`}>
+            {sendResult === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+            <span>{sendResult === 'success' ? '✓ Message dispatched successfully!' : '✗ Failed to send message. Please try again.'}</span>
+          </div>
+        )}
+
+        {/* 1. Separate Top Floating Metadata Card */}
+        <div className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl md:rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.25)] ring-1 ring-black/5 dark:ring-white/10 p-3 md:p-4 space-y-2.5 apple-transition">
+          {/* Title Tag */}
+          <div className="flex items-center gap-2 px-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
+            <span className="text-[11px] font-black text-[var(--text-primary)] uppercase tracking-wider">
+              {subject?.toLowerCase().startsWith('re:') ? 'Reply' : subject?.toLowerCase().startsWith('fwd:') ? 'Forward' : 'New Message'}
+            </span>
           {recipients.length > 0 && (
             <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 font-bold border border-blue-500/20">
               {recipients.length} {recipients.length === 1 ? 'recipient' : 'recipients'}
@@ -755,7 +764,7 @@ export const ComposerModal: React.FC<ComposerModalProps> = ({
       </div>
 
       {/* 2. Separate Center Floating Editor Card */}
-      <div className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl shadow-[0_12px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.45)] p-4 space-y-2.5 apple-transition">
+      <div className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.25)] ring-1 ring-black/5 dark:ring-white/10 p-4 space-y-2.5 apple-transition">
         {/* Formatting Toolbar */}
         <div className="flex items-center gap-0.5 pb-1.5 border-b border-[var(--border-subtle)] text-[var(--text-secondary)] overflow-x-auto no-scrollbar">
           <button
@@ -871,8 +880,8 @@ export const ComposerModal: React.FC<ComposerModalProps> = ({
         />
       </div>
 
-      {/* 3. Separate Bottom Floating Action Dock (Solid, Pill-Rounded, iMessage Send Button) */}
-      <div className="px-3.5 py-2 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-full shadow-[0_12px_32px_rgba(0,0,0,0.1)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.5)] flex items-center justify-between gap-2 apple-transition animate-fade-in">
+      {/* 3. Separate Bottom Floating Action Dock */}
+      <div className="px-3.5 py-2 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-full shadow-[0_4px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.25)] ring-1 ring-black/5 dark:ring-white/10 flex items-center justify-between gap-2 apple-transition animate-fade-in">
         {showConfirmClose ? (
           /* Confirmation Bar when Closing with Unsaved Changes */
           <div className="w-full flex items-center justify-between gap-2 px-1">
@@ -963,5 +972,6 @@ export const ComposerModal: React.FC<ComposerModalProps> = ({
         )}
       </div>
     </div>
+    </>
   );
 };

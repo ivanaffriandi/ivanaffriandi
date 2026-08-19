@@ -343,22 +343,36 @@ export const MessageView: React.FC<MessageViewProps> = ({
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
             className="pointer-events-auto bg-[var(--card-bg)]/90 dark:bg-[#1c1c1f]/90 backdrop-blur-2xl border border-[var(--card-border)] rounded-full p-1.5 shadow-[0_16px_36px_rgba(0,0,0,0.18)] dark:shadow-[0_20px_45px_rgba(0,0,0,0.7)] flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_45px_rgba(0,0,0,0.22)] ring-1 ring-black/5 dark:ring-white/10"
           >
+            {/* Mobile-only Reply blue pill */}
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={onReply}
-              className="h-8 px-3.5 flex items-center justify-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-semibold shadow-xs cursor-pointer"
+              className="md:hidden h-8 px-3.5 flex items-center justify-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-semibold shadow-xs cursor-pointer"
             >
               <Reply className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>Reply</span>
             </motion.button>
 
+            {/* Desktop Forward blue pill */}
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={onForward}
+              className="hidden md:flex h-8 px-3.5 items-center justify-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-semibold shadow-xs cursor-pointer"
+              title="Forward message"
+            >
+              <Forward className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>Forward</span>
+            </motion.button>
+
+            {/* Mobile Forward icon-only */}
             <motion.button
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
               onClick={onForward}
-              className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] apple-transition cursor-pointer"
-              title="Forward"
+              className="md:hidden w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] apple-transition cursor-pointer"
+              title="Forward message"
             >
               <Forward className="w-4 h-4" />
             </motion.button>
