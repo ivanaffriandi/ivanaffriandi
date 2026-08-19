@@ -54,6 +54,12 @@ class Message(Base):
     spam_score = Column(Numeric(5, 2), default=0.00)
     spam_status = Column(String(50), default="ham")
 
+    # Smart Open / Read Tracking for Outbound Emails
+    tracking_token = Column(String(64), unique=True, index=True, nullable=True)
+    is_opened = Column(Boolean, default=False, nullable=False)
+    opened_at = Column(DateTime(timezone=True), nullable=True)
+    open_count = Column(Integer, default=0, nullable=False)
+
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
 
     user = relationship("User", back_populates="messages")

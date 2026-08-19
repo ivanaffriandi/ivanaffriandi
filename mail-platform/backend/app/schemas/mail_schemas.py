@@ -55,6 +55,9 @@ class MessageSummary(BaseModel):
     has_attachments: bool
     spam_score: float
     spam_status: str
+    is_opened: Optional[bool] = False
+    opened_at: Optional[datetime] = None
+    open_count: Optional[int] = 0
 
 class MessageDetail(MessageSummary):
     recipient_cc: Optional[str] = None

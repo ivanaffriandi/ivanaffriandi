@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Reply, Forward, Star, Trash2, Archive,
-  Paperclip, Download, MailOpen, FileText, X
+  Paperclip, Download, MailOpen, FileText, X, CheckCheck, Check
 } from 'lucide-react';
 import { Message, MessageDetail } from '@/types/mail';
 import { getBrandOrAvatarUrl } from '@/lib/avatar';
@@ -242,9 +242,30 @@ export const MessageView: React.FC<MessageViewProps> = ({
                     </div>
                   </div>
 
-                  <span className="text-xs text-[var(--text-muted)] font-medium shrink-0 font-sans">
-                    {new Date(item.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-                  </span>
+                  <div className="flex items-center gap-2 shrink-0 font-sans">
+                    {isMe && (
+                      item.is_opened ? (
+                        <span
+                          className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 shadow-2xs"
+                          title={`Read by recipient${item.opened_at ? ` on ${new Date(item.opened_at).toLocaleString()}` : ''}`}
+                        >
+                          <CheckCheck className="w-3.5 h-3.5" />
+                          <span>Read {item.open_count && item.open_count > 1 ? `(${item.open_count}x)` : ''}</span>
+                        </span>
+                      ) : (
+                        <span
+                          className="inline-flex items-center gap-1 text-[10px] font-semibold text-[var(--text-muted)] bg-[var(--bg-secondary)] px-2 py-0.5 rounded-full border border-[var(--border-subtle)]"
+                          title="Delivered to recipient mail server"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                          <span>Delivered</span>
+                        </span>
+                      )
+                    )}
+                    <span className="text-xs text-[var(--text-muted)] font-medium">
+                      {new Date(item.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Recipient info if multiple */}

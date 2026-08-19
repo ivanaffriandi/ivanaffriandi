@@ -31,6 +31,9 @@ export interface MessageSummary {
   has_attachments: boolean;
   spam_score: number;
   spam_status: 'ham' | 'spam' | 'quarantine';
+  is_opened?: boolean;
+  opened_at?: string;
+  open_count?: number;
 }
 
 export interface MessageDetail extends MessageSummary {

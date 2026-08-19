@@ -77,7 +77,7 @@ async def list_messages(
         try:
             target_mailbox_id = uuid.UUID(folder_id)
         except ValueError:
-            pass
+            raise HTTPException(status_code=400, detail="Invalid folder_id format")
 
     if not target_mailbox_id:
         inbox_box = await get_or_create_mailbox(db, user.id, MailboxType.INBOX, "Inbox")
@@ -119,7 +119,10 @@ async def list_messages(
             is_starred=msg.is_starred,
             has_attachments=msg.has_attachments,
             spam_score=float(msg.spam_score or 0.0),
-            spam_status=msg.spam_status or "ham"
+            spam_status=msg.spam_status or "ham",
+            is_opened=bool(msg.is_opened),
+            opened_at=msg.opened_at,
+            open_count=int(msg.open_count or 0)
         )
         for msg in messages
     ]
@@ -187,6 +190,9 @@ async def get_message(
                     has_attachments=tm.has_attachments,
                     spam_score=float(tm.spam_score or 0.0),
                     spam_status=tm.spam_status or "ham",
+                    is_opened=bool(tm.is_opened),
+                    opened_at=tm.opened_at,
+                    open_count=int(tm.open_count or 0),
                     attachments=[
                         AttachmentResponse(
                             id=a.id,
@@ -224,6 +230,9 @@ async def get_message(
         has_attachments=msg.has_attachments,
         spam_score=float(msg.spam_score or 0.0),
         spam_status=msg.spam_status or "ham",
+        is_opened=bool(msg.is_opened),
+        opened_at=msg.opened_at,
+        open_count=int(msg.open_count or 0),
         attachments=[
             AttachmentResponse(
                 id=a.id,
@@ -364,11 +373,24 @@ async def compose_and_send_message(
         for a in (send_req.attachments or [])
     ]
 
+    # Generate unique tracking token for read receipt detection
+    tracking_token = uuid.uuid4().hex
+    tracking_pixel = f'<img src="https://mail.ivanaffriandi.com/api/v1/messages/track/{tracking_token}" width="1" height="1" style="display:none!important;width:1px;height:1px;border:0;outline:none;" alt="" />'
+
+    if send_req.body_html and send_req.body_html.strip():
+        if "</body>" in send_req.body_html.lower():
+            idx = send_req.body_html.lower().rfind("</body>")
+            outbound_html = send_req.body_html[:idx] + tracking_pixel + send_req.body_html[idx:]
+        else:
+            outbound_html = send_req.body_html + tracking_pixel
+    else:
+        outbound_html = f"<div>{(send_req.body_plain or '').replace(chr(10), '<br/>')}</div>" + tracking_pixel
+
     generated_msg_id = await send_outbound_email(
         sender=user.email,
         recipients=clean_to,
         subject=send_req.subject or "(No Subject)",
-        body_html=send_req.body_html,
+        body_html=outbound_html,
         body_plain=send_req.body_plain,
         cc=clean_cc if clean_cc else None,
         bcc=clean_bcc if clean_bcc else None,
@@ -401,7 +423,11 @@ async def compose_and_send_message(
         is_read=True,
         has_attachments=has_att,
         spam_score=0.0,
-        spam_status="ham"
+        spam_status="ham",
+        tracking_token=tracking_token,
+        is_opened=False,
+        opened_at=None,
+        open_count=0
     )
     db.add(sent_msg)
     await db.flush()

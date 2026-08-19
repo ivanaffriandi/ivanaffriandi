@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import {
-  Star, Paperclip, Inbox, Check, Mail, MailOpen, Archive, Trash2, X,
+  Star, Paperclip, Inbox, Check, CheckCheck, Mail, MailOpen, Archive, Trash2, X,
   Loader2, ArrowDown
 } from 'lucide-react';
 import { MessageSummary } from '@/types/mail';
@@ -321,11 +321,34 @@ export const MessageList: React.FC<MessageListProps> = ({
                       }`}>
                         {displayName}
                       </span>
-                      <span className={`text-[10px] shrink-0 font-medium ${
-                        isSelected ? 'text-blue-100' : 'text-[var(--text-muted)]'
-                      }`}>
-                        {formatTime(msg.date)}
-                      </span>
+                      <div className="flex items-center gap-1 shrink-0">
+                        {msg.sender_address?.includes('ivanaffriandi.com') && (
+                          msg.is_opened ? (
+                            <span
+                              className={`inline-flex items-center ${
+                                isSelected ? 'text-emerald-200' : 'text-emerald-500 dark:text-emerald-400'
+                              }`}
+                              title={`Read by recipient (Opened ${msg.open_count || 1}x)`}
+                            >
+                              <CheckCheck className="w-3.5 h-3.5" />
+                            </span>
+                          ) : (
+                            <span
+                              className={`inline-flex items-center ${
+                                isSelected ? 'text-blue-200' : 'text-[var(--text-muted)]'
+                              }`}
+                              title="Delivered"
+                            >
+                              <Check className="w-3 h-3" />
+                            </span>
+                          )
+                        )}
+                        <span className={`text-[10px] shrink-0 font-medium ${
+                          isSelected ? 'text-blue-100' : 'text-[var(--text-muted)]'
+                        }`}>
+                          {formatTime(msg.date)}
+                        </span>
+                      </div>
                     </div>
 
                     <div className="flex items-center gap-1.5 min-w-0">
