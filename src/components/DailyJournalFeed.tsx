@@ -945,21 +945,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           justify-content: space-between;
         }
 
-        @media (max-width: 860px) {
-          .pj-right {
-            height: auto;
-            min-height: 100vh;
-            overflow-y: auto;
-            padding: 1rem 1rem 3rem;
-            gap: 1.5rem;
-            justify-content: flex-start;
-          }
-          .pj-right.fit-screen {
-            overflow-y: auto;
-            justify-content: flex-start;
-          }
-        }
-
         /* EDITORIAL THEME OVERRIDES FOR HOMEPAGE RIGHT FEED */
         .pj-right .right-page-title,
         .pj-right .about-bio-headline,
