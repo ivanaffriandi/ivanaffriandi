@@ -452,7 +452,6 @@ export default function MailApp() {
             setComposeContext(toEmail ? { to: toEmail } : {});
             setIsComposeOpen(true);
           }}
-          onOpenSubscriptions={() => setIsSubscriptionsOpen(true)}
           userEmail={userEmail}
           onSignOut={handleSignOut}
           selectedMessage={selectedMessageDetail}
@@ -480,10 +479,6 @@ export default function MailApp() {
               onOpenCompose={(toEmail?: string) => {
                 setComposeContext(toEmail ? { to: toEmail } : {});
                 setIsComposeOpen(true);
-                setIsMobileSidebarOpen(false);
-              }}
-              onOpenSubscriptions={() => {
-                setIsSubscriptionsOpen(true);
                 setIsMobileSidebarOpen(false);
               }}
               userEmail={userEmail}
@@ -530,10 +525,14 @@ export default function MailApp() {
           </div>
         )}
 
-        {/* Mail Split Pane (Responsive) */}
+        {/* Mail Split Pane (Responsive & Rigid Column Widths) */}
         <main className="flex-1 flex min-h-0 overflow-hidden gap-0 md:gap-3 pt-0 md:pt-1.5">
           {/* Message List */}
-          <div className={`relative h-full ${selectedMessageId ? 'hidden md:block md:w-[320px] lg:w-[380px] shrink-0' : 'w-full md:w-[320px] lg:w-[380px] shrink-0'}`}>
+          <div className={`relative h-full ${
+            selectedMessageId
+              ? 'hidden md:block md:w-[340px] lg:w-[380px] md:min-w-[340px] lg:min-w-[380px] md:max-w-[340px] lg:max-w-[380px] shrink-0'
+              : 'w-full md:w-[340px] lg:w-[380px] md:min-w-[340px] lg:min-w-[380px] md:max-w-[340px] lg:max-w-[380px] shrink-0'
+          }`}>
             {isLoading && (
               <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
                 <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
@@ -550,7 +549,7 @@ export default function MailApp() {
           </div>
 
           {/* Message View */}
-          <div className={`flex-1 min-w-0 relative h-full ${selectedMessageId ? 'block' : 'hidden md:block'}`}>
+          <div className={`flex-1 min-w-0 w-0 overflow-hidden relative h-full ${selectedMessageId ? 'block' : 'hidden md:block'}`}>
             {isLoadingDetail && selectedMessageId && (
               <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
                 <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />

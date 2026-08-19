@@ -5,7 +5,7 @@ import {
   Inbox, Send, FileText, Archive, AlertOctagon, Trash2, Camera,
   Calendar as CalendarIcon, Plus, ChevronLeft, ChevronRight, Check,
   Clock, X, Feather, ChevronDown, ChevronUp, Repeat, GripVertical, LogOut,
-  Newspaper, Reply, Edit3
+  Reply, Edit3
 } from 'lucide-react';
 import { Folder, AgendaItem, Message } from '@/types/mail';
 import { fetchAgendas, saveAgenda, toggleAgendaApi, deleteAgendaApi } from '@/lib/api';
@@ -15,7 +15,6 @@ interface SidebarProps {
   activeFolderId: string;
   onSelectFolder: (id: string) => void;
   onOpenCompose: (toEmail?: string) => void;
-  onOpenSubscriptions?: () => void;
   userEmail: string;
   onSignOut?: () => void;
   selectedMessage?: Message | null;
@@ -42,7 +41,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   activeFolderId,
   onSelectFolder,
   onOpenCompose,
-  onOpenSubscriptions,
   userEmail,
   onSignOut,
   selectedMessage,
@@ -285,7 +283,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   }
 
   return (
-    <aside className="w-64 h-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-3.5 shadow-card flex flex-col gap-2.5 select-none shrink-0 z-20 apple-transition overflow-hidden font-sans">
+    <aside className="w-64 min-w-[256px] max-w-[256px] h-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-3.5 shadow-card flex flex-col gap-2.5 select-none shrink-0 z-20 apple-transition overflow-hidden font-sans">
       {/* 1. Personal Greeting Header */}
       <div className="flex items-center gap-3 pt-1 px-1 shrink-0">
         <div className="relative group shrink-0">
@@ -364,21 +362,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
             );
           })}
-
-          {/* Subscriptions / Newsletters Section Item */}
-          <div className="pt-1.5 mt-1 border-t border-[var(--border-subtle)]">
-            <button
-              onClick={() => onOpenSubscriptions?.()}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-2xl text-xs font-semibold text-[var(--text-secondary)] hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)] border border-transparent transition-all duration-200 ease-out apple-active-scale cursor-pointer"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="text-[var(--text-muted)]">
-                  <Newspaper className="w-4 h-4 stroke-[1.8]" />
-                </span>
-                <span>Subscriptions</span>
-              </div>
-            </button>
-          </div>
         </nav>
       </div>
 
