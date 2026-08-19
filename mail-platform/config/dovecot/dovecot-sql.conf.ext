@@ -1,0 +1,15 @@
+# Dovecot PostgreSQL Authentication Driver Configuration
+
+driver = pgsql
+connect = host=postgres dbname=mailplatform user=mailuser password=change_me_in_production
+
+default_pass_scheme = ARGON2ID
+
+# Password query for SASL / IMAP login
+password_query = SELECT email AS user, password_hash AS password \
+  FROM users WHERE email = '%u' AND is_active = true
+
+# User query for Maildir UID/GID and home directory
+user_query = SELECT 5000 AS uid, 5000 AS gid, \
+  '/var/vmail/%d/%n' AS home \
+  FROM users WHERE email = '%u' AND is_active = true

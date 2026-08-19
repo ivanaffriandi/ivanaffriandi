@@ -1,0 +1,7 @@
+# PostgreSQL Lookup configuration for Postfix virtual mailboxes
+hosts = postgres
+user = mailuser
+password = Iv4nM4ilPgSql2026SecureKey
+dbname = mailplatform
+query = SELECT email FROM users WHERE email='%s' AND is_active=true
+

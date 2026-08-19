@@ -1,0 +1,274 @@
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # Database
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: mail_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-mailplatform}
+      POSTGRES_USER: ${POSTGRES_USER:-mailuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me_in_production}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./config/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - db-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mailuser} -d ${POSTGRES_DB:-mailplatform}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Redis Cache & Queue
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: mail_redis
+    restart: always
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_password_change_me}
+    volumes:
+      - redis_data:/data
+    networks:
+      - mail-net
+      - web-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis_password_change_me}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Mail Gateway - Postfix SMTP
+  # ---------------------------------------------------------------------------
+  postfix:
+    build:
+      context: ./config/postfix
+      dockerfile: Dockerfile
+    container_name: mail_postfix
+    restart: always
+    ports:
+      - "25:25"      # Standard SMTP
+      - "587:587"    # SMTP Submission (STARTTLS)
+      - "465:465"    # SMTPS (Implicit TLS)
+    environment:
+      POSTFIX_HOSTNAME: mail.ivanaffriandi.com
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-mailplatform}
+      POSTGRES_USER: ${POSTGRES_USER:-mailuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me_in_production}
+    volumes:
+      - ./config/postfix/main.cf:/etc/postfix/main.cf:ro
+      - ./config/postfix/master.cf:/etc/postfix/master.cf:ro
+      - ./config/postfix/pgsql-virtual-mailboxes.cf:/etc/postfix/pgsql-virtual-mailboxes.cf:ro
+      - postfix_queue:/var/spool/postfix
+      - tls_certs:/etc/ssl/mail:ro
+      - vmail_data:/var/vmail
+    networks:
+      - mail-net
+      - db-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rspamd:
+        condition: service_started
+
+  # ---------------------------------------------------------------------------
+  # Mail Storage & IMAP - Dovecot
+  # ---------------------------------------------------------------------------
+  dovecot:
+    build:
+      context: ./config/dovecot
+      dockerfile: Dockerfile
+    container_name: mail_dovecot
+    restart: always
+    ports:
+      - "993:993"    # IMAPS
+      - "143:143"    # IMAP (STARTTLS)
+      - "24:24"      # LMTP
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-mailplatform}
+      POSTGRES_USER: ${POSTGRES_USER:-mailuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me_in_production}
+    volumes:
+      - ./config/dovecot/dovecot.conf:/etc/dovecot/dovecot.conf:ro
+      - ./config/dovecot/dovecot-sql.conf.ext:/etc/dovecot/dovecot-sql.conf.ext:ro
+      - vmail_data:/var/vmail
+      - dovecot_indexes:/var/lib/dovecot
+      - tls_certs:/etc/ssl/mail:ro
+    networks:
+      - mail-net
+      - db-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ---------------------------------------------------------------------------
+  # Mail Security & Spam Filtering - Rspamd
+  # ---------------------------------------------------------------------------
+  rspamd:
+    image: rspamd/rspamd:3.8.4
+    container_name: mail_rspamd
+    restart: always
+    environment:
+      RSPAMD_PASSWORD: ${RSPAMD_PASSWORD:-rspamd_admin_secret}
+    volumes:
+      - ./config/rspamd/local.d:/etc/rspamd/local.d:ro
+      - rspamd_data:/var/lib/rspamd
+      - ./config/rspamd/dkim:/var/lib/rspamd/dkim:ro
+    networks:
+      - mail-net
+    depends_on:
+      - redis
+      - clamav
+
+  # ---------------------------------------------------------------------------
+  # Antivirus - ClamAV
+  # ---------------------------------------------------------------------------
+  clamav:
+    image: clamav/clamav:latest
+    container_name: mail_clamav
+    restart: always
+    volumes:
+      - clamav_data:/var/lib/clamav
+    networks:
+      - mail-net
+
+  # ---------------------------------------------------------------------------
+  # FastAPI Backend API
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mail_backend
+    restart: always
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-mailuser}:${POSTGRES_PASSWORD:-change_me_in_production}@postgres:5432/${POSTGRES_DB:-mailplatform}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_password_change_me}@redis:6379/0
+      DOVECOT_HOST: dovecot
+      DOVECOT_IMAP_PORT: 993
+      POSTFIX_HOST: postfix
+      POSTFIX_SMTP_PORT: 587
+      JWT_SECRET: ${JWT_SECRET:-super_secret_jwt_key_please_change}
+      ARGON2_SECRET: ${ARGON2_SECRET:-argon2_pepper_secret_key}
+      VMAIL_PATH: /var/vmail
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      SMTP_RELAY_HOST: ${SMTP_RELAY_HOST:-}
+      SMTP_RELAY_PORT: ${SMTP_RELAY_PORT:-587}
+      SMTP_RELAY_USER: ${SMTP_RELAY_USER:-}
+      SMTP_RELAY_PASS: ${SMTP_RELAY_PASS:-}
+      SMTP_RELAY_STARTTLS: ${SMTP_RELAY_STARTTLS:-true}
+    volumes:
+      - vmail_data:/var/vmail:ro
+      - backend_uploads:/app/uploads
+      - backend_storage:/app/storage
+    networks:
+      - web-net
+      - mail-net
+      - db-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      dovecot:
+        condition: service_started
+
+  # ---------------------------------------------------------------------------
+  # Next.js Webmail Frontend
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: mail_frontend
+    restart: always
+    ports:
+      - "127.0.0.1:3001:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: https://mail.ivanaffriandi.com/api/v1
+    networks:
+      - web-net
+    depends_on:
+      - backend
+
+  # ---------------------------------------------------------------------------
+  # Reverse Proxy & SSL Termination - Caddy
+  # ---------------------------------------------------------------------------
+  caddy:
+    image: caddy:2.7-alpine
+    container_name: mail_caddy
+    restart: always
+    network_mode: "host"
+    volumes:
+      - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - tls_certs:/etc/ssl/mail
+    depends_on:
+      - frontend
+      - backend
+
+  # ---------------------------------------------------------------------------
+  # Observability - Prometheus
+  # ---------------------------------------------------------------------------
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: mail_prometheus
+    restart: always
+    volumes:
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - web-net
+      - mail-net
+
+  # ---------------------------------------------------------------------------
+  # Observability - Grafana
+  # ---------------------------------------------------------------------------
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: mail_grafana
+    restart: always
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-grafana_admin_password}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana_data:/var/lib/grafana
+    networks:
+      - web-net
+    depends_on:
+      - prometheus
+
+networks:
+  mail-net:
+    driver: bridge
+  web-net:
+    driver: bridge
+  db-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  vmail_data:
+  dovecot_indexes:
+  postfix_queue:
+  rspamd_data:
+  clamav_data:
+  caddy_data:
+  caddy_config:
+  tls_certs:
+  backend_uploads:
+  backend_storage:
+  prometheus_data:
+  grafana_data:

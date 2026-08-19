@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="flapGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#93c5fd"/>
+      <stop offset="100%" stop-color="#60a5fa"/>
+    </linearGradient>
+    <linearGradient id="foldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#1e40af"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#1e3a8a" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Base Rounded Container / Background -->
+  <rect x="32" y="32" width="448" height="448" rx="112" fill="url(#bgGrad)" filter="url(#shadow)"/>
+
+  <!-- Envelope Body Base -->
+  <rect x="96" y="144" width="320" height="224" rx="28" fill="#ffffff" fill-opacity="0.95"/>
+
+  <!-- Inner Envelope Bottom Flap / Folds -->
+  <path d="M96 340 L220 236 C240 220 272 220 292 236 L416 340 C416 355 403 368 388 368 L124 368 C108 368 96 355 96 340 Z" fill="#e0e7ff"/>
+
+  <!-- Side Folds -->
+  <path d="M96 172 L212 268 L96 356 Z" fill="#c7d2fe" fill-opacity="0.6"/>
+  <path d="M416 172 L300 268 L416 356 Z" fill="#c7d2fe" fill-opacity="0.6"/>
+
+  <!-- Top Triangular Flap -->
+  <path d="M102 152 C100 156 100 162 104 166 L236 270 C248 280 264 280 276 270 L408 166 C412 162 412 156 410 152 C406 147 398 144 388 144 L124 144 C114 144 106 147 102 152 Z" fill="url(#flapGrad)"/>
+
+  <!-- Cute Notification Badge Dot -->
+  <circle cx="396" cy="120" r="32" fill="#ef4444" stroke="#ffffff" stroke-width="8"/>
+</svg>

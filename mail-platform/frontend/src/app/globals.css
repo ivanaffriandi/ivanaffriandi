@@ -1,0 +1,342 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-color: #f2f2f7;
+    --card-bg: #ffffff;
+    --card-border: #e5e5ea;
+    --text-primary: #1c1c1e;
+    --text-secondary: #48484a;
+    --text-muted: #8e8e93;
+    --bg-secondary: #f2f2f7;
+    --accent-blue: #007aff;
+    --accent-blue-hover: #0062cc;
+    --border-subtle: #f2f2f7;
+  }
+
+  .dark {
+    --bg-color: #000000;
+    --card-bg: #1c1c1e;
+    --card-border: #2c2c2e;
+    --text-primary: #f2f2f7;
+    --text-secondary: #d1d1d6;
+    --text-muted: #8e8e93;
+    --bg-secondary: #2c2c2e;
+    --accent-blue: #0a84ff;
+    --accent-blue-hover: #0071e3;
+    --border-subtle: #2c2c2e;
+  }
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Apple Smooth Transitions */
+.apple-transition {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.apple-active-scale:active {
+  transform: scale(0.97);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translate3d(0, -20px, 0) scale(0.96); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes toastSlideOut {
+  from { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  to { opacity: 0; transform: translate3d(0, -20px, 0) scale(0.96); }
+}
+
+@keyframes floatGentle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes flyPlane {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  30% {
+    transform: translate(8px, -8px) rotate(-15deg) scale(1.1);
+  }
+  60% {
+    opacity: 0.8;
+    transform: translate(32px, -32px) rotate(-35deg) scale(0.9);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(80px, -80px) rotate(-45deg) scale(0.2);
+  }
+}
+
+@keyframes genieIn {
+  0% {
+    opacity: 0;
+    transform: translate3d(80px, 80px, 0) scale3d(0.1, 0.1, 1);
+    border-radius: 9999px;
+  }
+  70% {
+    opacity: 0.95;
+    transform: translate3d(-4px, -4px, 0) scale3d(1.02, 1.02, 1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+    border-radius: 1.75rem;
+  }
+}
+
+@keyframes genieOut {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+    border-radius: 1.75rem;
+  }
+  30% {
+    opacity: 0.95;
+    transform: translate3d(-4px, -4px, 0) scale3d(0.98, 0.98, 1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(80px, 80px, 0) scale3d(0.1, 0.1, 1);
+    border-radius: 9999px;
+  }
+}
+
+.animate-genie-in {
+  transform-origin: bottom right;
+  animation: genieIn 0.34s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.animate-genie-out {
+  transform-origin: bottom right;
+  animation: genieOut 0.28s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.animate-toast {
+  animation: toastSlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalIn {
+  0% {
+    opacity: 0;
+    transform: scale3d(0.94, 0.94, 1) translate3d(0, 12px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
+  }
+}
+
+.animate-modal-in {
+  animation: modalIn 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.animate-fly-plane {
+  animation: flyPlane 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom Soft Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(161, 161, 170, 0.3);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(161, 161, 170, 0.5);
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   HTML EMAIL CONTENT & RESPONSIVE CONTAINMENT
+   ────────────────────────────────────────────────────────────────────────── */
+.mail-content-body {
+  font-size: 14px !important;
+  line-height: 1.75 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", Roboto, Helvetica, Arial, sans-serif !important;
+  letter-spacing: 0.01em;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* In Dark Mode: Ensure third-party newsletters with hardcoded black text are automatically high contrast */
+.dark .mail-content-adaptive,
+html[data-theme="dark"] .mail-content-adaptive {
+  color: #ededed !important;
+}
+
+.dark .mail-content-adaptive p,
+.dark .mail-content-adaptive span,
+.dark .mail-content-adaptive div,
+.dark .mail-content-adaptive td,
+.dark .mail-content-adaptive th,
+.dark .mail-content-adaptive li,
+.dark .mail-content-adaptive h1,
+.dark .mail-content-adaptive h2,
+.dark .mail-content-adaptive h3,
+.dark .mail-content-adaptive h4,
+.dark .mail-content-adaptive h5,
+.dark .mail-content-adaptive h6 {
+  color: inherit !important;
+}
+
+/* Paper Mode: Crystal clear light canvas for complex promotional/newsletter HTML */
+.mail-paper-canvas {
+  background-color: #FFFFFF !important;
+  color: #18181B !important;
+  border-radius: 18px !important;
+  padding: 24px 22px !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+.mail-paper-canvas * {
+  color: revert !important;
+}
+
+.mail-content-body > *:first-child,
+.mail-content-body > blockquote:first-child,
+.mail-content-body > p:first-child,
+.mail-content-body > div:first-child,
+.mail-content-body > table:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.mail-content-body blockquote {
+  margin: 0.25rem 0 0.5rem 0;
+  padding: 0.25rem 0.5rem 0.25rem 0.75rem;
+  border-left: 3px solid #3b82f6 !important;
+  background: transparent !important;
+  border-radius: 0;
+  font-style: normal;
+}
+
+.mail-content-body blockquote p {
+  margin: 0.15rem 0;
+  line-height: 1.55;
+}
+
+.mail-content-body table {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  table-layout: auto !important;
+  margin: 0 auto;
+}
+
+.mail-content-body td,
+.mail-content-body th {
+  max-width: 100% !important;
+  word-break: break-word;
+}
+
+.mail-content-body div,
+.mail-content-body section,
+.mail-content-body article,
+.mail-content-body center {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mail-content-body img {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 0.75rem;
+  margin: 0.4rem 0;
+  display: block;
+}
+
+.mail-content-body a {
+  color: var(--accent-blue) !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  word-break: break-all;
+}
+
+@keyframes verticalMarquee {
+  0% { transform: translateY(0%); }
+  100% { transform: translateY(-50%); }
+}
+
+.animate-vertical-marquee {
+  display: flex;
+  flex-direction: column;
+  animation: verticalMarquee 10s linear infinite;
+}
+
+.animate-vertical-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marqueeScroll {
+  0% { transform: translateX(0%); }
+  100% { transform: translateY(-50%); }
+}
+
+.animate-marquee {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marqueeScroll 12s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}

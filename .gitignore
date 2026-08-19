@@ -43,6 +43,13 @@ next-env.d.ts
 # firebase
 /.firebase/
 
-mail-platform/
-node_modules/
+# mail-platform
+mail-platform/.env*
+mail-platform/frontend/.next/
+mail-platform/frontend/node_modules/
+mail-platform/frontend/out/
+mail-platform/backend/.venv/
+mail-platform/backend/__pycache__/
+mail-platform/config/tls/*.key
+mail-platform/config/rspamd/dkim/*.key
 
