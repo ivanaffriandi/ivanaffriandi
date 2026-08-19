@@ -668,7 +668,7 @@ export const ComposerModal: React.FC<ComposerModalProps> = ({
         <div className="flex items-center gap-2 px-1">
           <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
           <span className="text-[11px] font-black text-[var(--text-primary)] uppercase tracking-wider">
-            New Message
+            {subject?.toLowerCase().startsWith('re:') ? 'Reply' : subject?.toLowerCase().startsWith('fwd:') ? 'Forward' : 'New Message'}
           </span>
           {recipients.length > 0 && (
             <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 font-bold border border-blue-500/20">

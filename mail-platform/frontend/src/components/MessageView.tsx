@@ -1,16 +1,13 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Reply, Forward, Star, Trash2, Archive,
-  Paperclip, Download, MailOpen, FileText,
-  Bold, Italic, Underline, List, ListOrdered, Link as LinkIcon,
-  RemoveFormatting, ArrowUp, Loader2, X
+  Paperclip, Download, MailOpen, FileText, X
 } from 'lucide-react';
 import { Message } from '@/types/mail';
 import { getBrandOrAvatarUrl } from '@/lib/avatar';
-import { sendMessage } from '@/lib/api';
 
 interface MessageViewProps {
   message: Message | null;
@@ -40,10 +37,9 @@ const getAvatarColors = (name: string) => {
   return AVATAR_PALETTES[idx];
 };
 
-const SUGGESTED_WORDS = ['Thanks,', 'Sounds good,', 'Let me know', 'Best,'];
-
 export const MessageView: React.FC<MessageViewProps> = ({
   message,
+  onReply,
   onForward,
   onDelete,
   onArchive,
@@ -52,13 +48,6 @@ export const MessageView: React.FC<MessageViewProps> = ({
 }) => {
   const [lightboxPhoto, setLightboxPhoto] = useState<string | null>(null);
   const [lightboxFilename, setLightboxFilename] = useState<string>('image.png');
-  const [isReplyExpanded, setIsReplyExpanded] = useState(false);
-
-  const [isSendingReply, setIsSendingReply] = useState(false);
-
-  const replyEditorRef = useRef<HTMLDivElement>(null);
-  const bottomScrollRef = useRef<HTMLDivElement>(null);
-  const replyContainerRef = useRef<HTMLDivElement>(null);
 
   // Close lightbox on Escape
   useEffect(() => {
@@ -81,68 +70,8 @@ export const MessageView: React.FC<MessageViewProps> = ({
       !/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(att.filename)
   );
 
-  useEffect(() => {
-    setIsReplyExpanded(false);
-  }, [message?.id]);
-
   const handleOpenReply = () => {
-    setIsReplyExpanded(true);
-    setTimeout(() => {
-      bottomScrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-      replyEditorRef.current?.focus();
-    }, 100);
-  };
-
-  const handleFormatDoc = (command: string, value: string | undefined = undefined) => {
-    document.execCommand(command, false, value);
-    replyEditorRef.current?.focus();
-  };
-
-  const handleInsertLink = () => {
-    const url = prompt('Enter link URL:');
-    if (url) {
-      handleFormatDoc('createLink', url);
-    }
-  };
-
-  const insertWord = (word: string) => {
-    if (!replyEditorRef.current) return;
-    replyEditorRef.current.focus();
-    document.execCommand('insertText', false, word + ' ');
-  };
-
-  const [replyError, setReplyError] = useState<string | null>(null);
-
-  const handleSendReply = async () => {
-    if (!message || !replyEditorRef.current) return;
-    const bodyHtml = replyEditorRef.current.innerHTML.trim();
-    const bodyPlain = replyEditorRef.current.innerText.trim();
-    if (!bodyPlain && !bodyHtml) return;
-
-    setIsSendingReply(true);
-    setReplyError(null);
-    try {
-      const cleanSub = (message.subject || "").trim();
-      const subject = /^re:\s*/i.test(cleanSub) ? cleanSub : `Re: ${cleanSub}`;
-      await sendMessage({
-        to: [message.sender_address],
-        subject,
-        body_plain: bodyPlain,
-        body_html: bodyHtml || `<p>${bodyPlain}</p>`,
-        in_reply_to: message.message_id_header || undefined,
-      });
-
-      if (replyEditorRef.current) replyEditorRef.current.innerHTML = '';
-      setIsReplyExpanded(false);
-      if (onReplySuccess) {
-        onReplySuccess({ to: message.sender_address, subject });
-      }
-    } catch (err: any) {
-      console.error('Failed to send reply:', err);
-      setReplyError(err.message || 'Failed to send reply. Please try again.');
-    } finally {
-      setIsSendingReply(false);
-    }
+    onReply?.();
   };
 
   if (!message) {
@@ -354,128 +283,6 @@ export const MessageView: React.FC<MessageViewProps> = ({
               </div>
             )}
           </div>
-
-          <div ref={bottomScrollRef} />
-
-          {/* Interactive In-line Expandable Reply Section */}
-          <AnimatePresence>
-            {isReplyExpanded && (
-              <motion.div
-                ref={replyContainerRef}
-                initial={{ opacity: 0, y: 16, height: 0 }}
-                animate={{ opacity: 1, y: 0, height: 'auto' }}
-                exit={{ opacity: 0, y: 16, height: 0 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-                className="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-[var(--border-subtle)]"
-              >
-                <div className="w-full bg-[var(--bg-color)] border border-[var(--card-border)] rounded-2xl md:rounded-3xl p-3 md:p-4 shadow-[0_12px_32px_rgba(0,0,0,0.08)] space-y-2.5">
-                  {/* Formatting Toolbar */}
-                  <div className="flex items-center gap-0.5 pb-1 text-[var(--text-secondary)] overflow-x-auto no-scrollbar border-b border-[var(--border-subtle)]">
-                    <button
-                      type="button"
-                      onClick={() => handleFormatDoc('bold')}
-                      className="p-1.5 rounded-lg hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)] apple-transition"
-                      title="Bold"
-                    >
-                      <Bold className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleFormatDoc('italic')}
-                      className="p-1.5 rounded-lg hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)] apple-transition"
-                      title="Italic"
-                    >
-                      <Italic className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleFormatDoc('underline')}
-                      className="p-1.5 rounded-lg hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)] apple-transition"
-                      title="Underline"
-                    >
-                      <Underline className="w-3.5 h-3.5" />
-                    </button>
-                    <div className="w-px h-3.5 bg-[var(--border-subtle)] mx-1" />
-                    <button
-                      type="button"
-                      onClick={() => handleFormatDoc('insertUnorderedList')}
-                      className="p-1.5 rounded-lg hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)] apple-transition"
-                      title="Bullet List"
-                    >
-                      <List className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleFormatDoc('insertOrderedList')}
-                      className="p-1.5 rounded-lg hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)] apple-transition"
-                      title="Numbered List"
-                    >
-                      <ListOrdered className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleInsertLink}
-                      className="p-1.5 rounded-lg hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)] apple-transition"
-                      title="Insert Link"
-                    >
-                      <LinkIcon className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleFormatDoc('removeFormat')}
-                      className="p-1.5 rounded-lg hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)] apple-transition"
-                      title="Clear Formatting"
-                    >
-                      <RemoveFormatting className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-
-                  {/* Contenteditable Rich Reply Area */}
-                  <div
-                    ref={replyEditorRef}
-                    contentEditable
-                    role="textbox"
-                    aria-multiline="true"
-                    className="w-full min-h-[85px] md:min-h-[110px] max-h-[190px] overflow-y-auto p-2 md:p-2.5 text-xs text-[var(--text-primary)] focus:outline-none leading-relaxed font-sans bg-[var(--card-bg)] rounded-xl md:rounded-2xl border border-[var(--card-border)] empty:before:content-['Type_your_reply_here...'] empty:before:text-[var(--text-muted)]"
-                  />
-
-                  {/* Bottom Action Bar: Suggested Words + Send Button */}
-                  <div className="flex items-center justify-between gap-2 pt-0.5">
-                    <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-                      {SUGGESTED_WORDS.map((w, idx) => (
-                        <motion.button
-                          key={idx}
-                          type="button"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => insertWord(w)}
-                          className="px-2.5 py-1 rounded-full bg-[var(--card-bg)] hover:bg-blue-500/10 hover:text-blue-600 text-[var(--text-secondary)] text-[11px] font-semibold border border-[var(--card-border)] whitespace-nowrap shrink-0 apple-transition"
-                        >
-                          {w}
-                        </motion.button>
-                      ))}
-                    </div>
-
-                    <motion.button
-                      type="button"
-                      whileHover={{ scale: 1.08 }}
-                      whileTap={{ scale: 0.92 }}
-                      onClick={handleSendReply}
-                      disabled={isSendingReply}
-                      className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-md hover:shadow-lg disabled:opacity-50 apple-transition shrink-0 cursor-pointer"
-                      title="Send Reply"
-                    >
-                      {isSendingReply ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <ArrowUp className="w-3.5 h-3.5 stroke-[3]" />
-                      )}
-                    </motion.button>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
         {/* ──────────────────────────────────────────────────────────────────────────
