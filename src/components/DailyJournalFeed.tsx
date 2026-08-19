@@ -2149,8 +2149,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
           }
 
-          /* ── HIDE THUMBNAIL POSTS CAROUSEL AT BOTTOM ON MOBILE ── */
-          .blog-section-wrap {
+          /* ── HIDE THUMBNAIL POSTS CAROUSEL & OTHER CHAPTERS AT BOTTOM ON MOBILE ── */
+          .blog-section-wrap,
+          .other-chapters-row {
             display: none !important;
           }
 
@@ -3238,8 +3239,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     dangerouslySetInnerHTML={{ __html: stripImagesFromHtml(selectedPost.content) }}
                   />
 
-                  {/* ── OTHER CHAPTERS THUMBNAIL ROW AT BOTTOM ── */}
+                  {/* ── OTHER CHAPTERS THUMBNAIL ROW AT BOTTOM (DESKTOP ONLY) ── */}
                   <div
+                    className="other-chapters-row"
                     style={{
                       marginTop: "3rem",
                       paddingTop: "2rem",
