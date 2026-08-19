@@ -126,17 +126,23 @@ export default function Navigation() {
     };
   }, [isMenuOpen]);
 
+  const [isBlogDomain, setIsBlogDomain] = useState(false);
   const [isWorkDomain, setIsWorkDomain] = useState(false);
+
   useEffect(() => {
     if (typeof window !== "undefined") {
-      if (window.location.hostname.startsWith("work.") || window.location.pathname.startsWith("/work")) {
+      const host = window.location.hostname;
+      if (host.startsWith("blog.") || host.includes("blog.ivanaffriandi.com")) {
+        setIsBlogDomain(true);
+      }
+      if (host.startsWith("work.") || host.includes("work.ivanaffriandi.com")) {
         setIsWorkDomain(true);
       }
     }
   }, []);
 
-  // Hide navigation entirely on root / and /work
-  if (pathname?.startsWith("/work") || isWorkDomain || pathname === "/") {
+  // Hide navigation on /work or on the actual main homepage (ivanaffriandi.com without blog subdomain)
+  if (pathname?.startsWith("/work") || isWorkDomain || (pathname === "/" && !isBlogDomain && typeof window !== "undefined" && !window.location.hostname.startsWith("blog."))) {
     return null;
   }
 
@@ -253,7 +259,7 @@ export default function Navigation() {
           {/* 1. Blog / Journal Link (Feather Pen / Quill Icon in Crisp Pure White) */}
           <a
             href="https://blog.ivanaffriandi.com"
-            className={`nav-side-icon${pathname.startsWith("/blog") ? " active" : ""}`}
+            className={`nav-side-icon${pathname.startsWith("/blog") || isBlogDomain ? " active" : ""}`}
             title="Blog & Journal"
           >
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
