@@ -298,7 +298,8 @@ export default function Navigation() {
         </div>
       </header>
 
-      {/* ── MOBILE DEDICATED TOP HEADER ── */}
+      {/* ── MOBILE DEDICATED TOP HEADER (HIDDEN ON /blog WHERE DailyJournalFeed RENDERS ITS OWN TRANSPARENT HEADER) ── */}
+      {!pathname.startsWith("/blog") && (
       <div className="mobile-header-bar">
         <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", color: "#FFFFFF" }}>
           <span
@@ -392,6 +393,7 @@ export default function Navigation() {
           )}
         </div>
       </div>
+      )}
 
       {/* ── MOBILE FULLSCREEN DRAWER OVERLAY ── */}
       <AnimatePresence>

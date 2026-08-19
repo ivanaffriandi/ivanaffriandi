@@ -376,6 +376,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const [readerSize, setReaderSize] = useState<"sm" | "md" | "lg">("md");
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [readingProgress, setReadingProgress] = useState<number>(0);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
+  const [mobilePrologueOpen, setMobilePrologueOpen] = useState<boolean>(false);
 
   const selectedPostImages = useMemo(() => {
     if (!selectedPost || !selectedPost.content) return [];
@@ -2051,11 +2053,129 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
         .modal-close:hover { color: var(--text-primary, #111111); }
 
+        /* ── DESKTOP DEFAULTS (HIDDEN) ── */
+        .mobile-blog-header {
+          display: none;
+        }
+        .prologue-mobile-accordion-btn {
+          display: none;
+        }
+        .prologue-mobile-body {
+          display: block;
+        }
+
         /* ─────────────────────────────────────────────────
            ELITE HIGH-TECH MOBILE LAYOUT — below 860px
            (ZERO EFFECT ON DESKTOP)
            ───────────────────────────────────────────────── */
         @media (max-width: 860px) {
+          /* ── MOBILE TRANSPARENT TOP HEADER ── */
+          .mobile-blog-header {
+            display: flex !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            z-index: 50 !important;
+            padding: 1rem 1.15rem !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            background: transparent !important;
+            border: none !important;
+          }
+
+          .mobile-home-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 0.35rem !important;
+            background: rgba(0, 0, 0, 0.45) !important;
+            backdrop-filter: blur(14px) !important;
+            -webkit-backdrop-filter: blur(14px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.22) !important;
+            color: #FFFFFF !important;
+            font-size: 0.64rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.12em !important;
+            text-transform: uppercase !important;
+            padding: 0.42rem 0.85rem !important;
+            border-radius: 9999px !important;
+            text-decoration: none !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+          }
+
+          .mobile-qna-icon-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 0.3rem !important;
+            background: rgba(0, 0, 0, 0.45) !important;
+            backdrop-filter: blur(14px) !important;
+            -webkit-backdrop-filter: blur(14px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.22) !important;
+            color: #FFFFFF !important;
+            font-size: 0.62rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.08em !important;
+            text-transform: uppercase !important;
+            padding: 0.42rem 0.8rem !important;
+            border-radius: 9999px !important;
+            text-decoration: none !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+          }
+
+          .mobile-menu-trigger-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            background: rgba(0, 0, 0, 0.45) !important;
+            backdrop-filter: blur(14px) !important;
+            -webkit-backdrop-filter: blur(14px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.22) !important;
+            color: #FFFFFF !important;
+            border-radius: 50% !important;
+            cursor: pointer !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+          }
+
+          /* ── HIDE THUMBNAIL POSTS CAROUSEL AT BOTTOM ON MOBILE ── */
+          .blog-section-wrap {
+            display: none !important;
+          }
+
+          /* ── HIDE IG AND EMAIL BUTTONS & DUPLICATE SEARCH ON MOBILE ── */
+          .right-page-header .action-icon-pill,
+          .right-page-header .search-pill-container {
+            display: none !important;
+          }
+
+          /* ── PROLOGUE ACCORDION ON MOBILE ── */
+          .prologue-mobile-accordion-btn {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+            background: var(--bg-secondary, rgba(0, 0, 0, 0.04)) !important;
+            border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08)) !important;
+            border-radius: 12px !important;
+            padding: 0.75rem 1rem !important;
+            color: var(--text-primary, #111111) !important;
+            font-size: 0.72rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.1em !important;
+            text-transform: uppercase !important;
+            cursor: pointer !important;
+            margin-bottom: 0.5rem !important;
+          }
+
+          .prologue-mobile-body.collapsed {
+            display: none !important;
+          }
+
+          .prologue-mobile-body.open {
+            display: block !important;
+          }
+
           /* ── ROOT LAYOUT (NATURAL SINGLE-COLUMN FLOW ON MOBILE) ── */
           .pj-root {
             display: flex !important;
@@ -2409,6 +2529,49 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           onTouchEnd={handleHeroTouchEnd}
           style={{ position: "relative", overflow: "hidden", background: "#0c0d0e" }}
         >
+          {/* MOBILE TRANSPARENT TOP HEADER BAR */}
+          <div className="mobile-blog-header">
+            {/* Left: HOME Button */}
+            <Link
+              href="/"
+              title="Return to Homepage"
+              className="mobile-home-btn"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+              <span>HOME</span>
+            </Link>
+
+            {/* Right: Q&A Button + Hamburger Menu for Chapter Directory */}
+            <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+              <Link
+                href="/ask"
+                title="Ask Q&A"
+                className="mobile-qna-icon-btn"
+              >
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                <span>Q&amp;A</span>
+              </Link>
+
+              <button
+                type="button"
+                onClick={() => setMobileSidebarOpen(true)}
+                className="mobile-menu-trigger-btn"
+                title="All Chapters & Search"
+              >
+                <svg width="18" height="13" viewBox="0 0 22 14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                  <line x1="1" y1="2" x2="21" y2="2" />
+                  <line x1="1" y1="7" x2="21" y2="7" />
+                  <line x1="1" y1="12" x2="21" y2="12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
           {/* SOLID IMAGE LAYER - ZERO FLICKER OR RE-RENDER BLINKS */}
           <div
             className="pj-photo-layer"
@@ -2981,50 +3144,68 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               ) : (
                 /* ── REGULAR OVERVIEW JOURNAL VIEW (FITS SCREEN WITHOUT VERTICAL OVERFLOW) ── */
                 <>
-                  {/* ── PROLOGUE WITH COMPACT 2-COLUMN LAYOUT & iMESSAGE BUBBLES ── */}
+                  {/* ── PROLOGUE WITH DROPDOWN ACCORDION ON MOBILE ── */}
                   <div className="novel-intro-wrap" style={{ margin: "0.15rem 0" }}>
+                    {/* Mobile Accordion Toggle Button */}
+                    <button
+                      type="button"
+                      onClick={() => setMobilePrologueOpen(!mobilePrologueOpen)}
+                      className="prologue-mobile-accordion-btn"
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+                        <span>PROLOGUE</span>
+                        <span style={{ fontSize: "0.58rem", opacity: 0.6, fontWeight: 600 }}>· INTRO NARRATIVE</span>
+                      </div>
+                      <span style={{ fontSize: "0.75rem", transform: mobilePrologueOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s ease" }}>
+                        ▾
+                      </span>
+                    </button>
+
+                    {/* Desktop Section Header */}
                     <div className="section-label-header" style={{ marginBottom: "0.4rem" }}>
                       <span>PROLOGUE</span>
                     </div>
 
-                    <div className="novel-intro-2col" style={{ gap: "1.25rem" }}>
-                      {/* LEFT COLUMN: ATMOSPHERIC NARRATIVE */}
-                      <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
-                        <p className="novel-intro-paragraph novel-drop-cap" style={{ fontSize: "0.86rem", lineHeight: 1.62, margin: 0 }}>
-                          Most of this gets written late at night, usually when the screen is the only light in the room and the city noise has finally died down. It’s where passing thoughts turn into essays, and random observations get a second life.
-                        </p>
-                        <p className="novel-intro-paragraph" style={{ fontSize: "0.84rem", lineHeight: 1.62, margin: 0 }}>
-                          I build software, take photos, and obsess over small details. Instead of keeping all of that in separate boxes, I wanted a quiet corner on the internet where everything could just breathe together.
-                        </p>
-                      </div>
-
-                      {/* RIGHT COLUMN: CHAT BUBBLE & SIGN OFF */}
-                      <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                        <div className="imessage-chat-wrap" style={{ margin: 0, gap: "0.45rem" }}>
-                          {/* Incoming Friend Message */}
-                          <div className="imessage-row-incoming">
-                            <span className="imessage-sender-tag" style={{ marginLeft: "0.5rem", fontSize: "0.52rem" }}>
-                              FRIEND
-                            </span>
-                            <div className="imessage-bubble-incoming" style={{ padding: "0.5rem 0.85rem", fontSize: "0.78rem", lineHeight: 1.4 }}>
-                              &ldquo;Wait, so what is this place exactly? A blog? A portfolio?&rdquo;
-                            </div>
-                          </div>
-
-                          {/* Outgoing Ivan Message */}
-                          <div className="imessage-row-outgoing">
-                            <span className="imessage-sender-tag" style={{ marginRight: "0.5rem", fontSize: "0.52rem" }}>
-                              IVAN
-                            </span>
-                            <div className="imessage-bubble-outgoing" style={{ padding: "0.5rem 0.85rem", fontSize: "0.78rem", lineHeight: 1.4 }}>
-                              &ldquo;Honestly? Just a running log. Things I build, photos I take, and ideas I can&apos;t stop chewing on.&rdquo;
-                            </div>
-                          </div>
+                    <div className={`prologue-mobile-body ${mobilePrologueOpen ? "open" : "collapsed"}`}>
+                      <div className="novel-intro-2col" style={{ gap: "1.25rem" }}>
+                        {/* LEFT COLUMN: ATMOSPHERIC NARRATIVE */}
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
+                          <p className="novel-intro-paragraph novel-drop-cap" style={{ fontSize: "0.86rem", lineHeight: 1.62, margin: 0 }}>
+                            Most of this gets written late at night, usually when the screen is the only light in the room and the city noise has finally died down. It’s where passing thoughts turn into essays, and random observations get a second life.
+                          </p>
+                          <p className="novel-intro-paragraph" style={{ fontSize: "0.84rem", lineHeight: 1.62, margin: 0 }}>
+                            I build software, take photos, and obsess over small details. Instead of keeping all of that in separate boxes, I wanted a quiet corner on the internet where everything could just breathe together.
+                          </p>
                         </div>
 
-                        <p className="novel-intro-paragraph" style={{ opacity: 0.72, fontSize: "0.76rem", fontStyle: "italic", borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))", paddingTop: "0.4rem", margin: 0 }}>
-                          Grab a drink. Make yourself at home.
-                        </p>
+                        {/* RIGHT COLUMN: CHAT BUBBLE & SIGN OFF */}
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                          <div className="imessage-chat-wrap" style={{ margin: 0, gap: "0.45rem" }}>
+                            {/* Incoming Friend Message */}
+                            <div className="imessage-row-incoming">
+                              <span className="imessage-sender-tag" style={{ marginLeft: "0.5rem", fontSize: "0.52rem" }}>
+                                FRIEND
+                              </span>
+                              <div className="imessage-bubble-incoming" style={{ padding: "0.5rem 0.85rem", fontSize: "0.78rem", lineHeight: 1.4 }}>
+                                &ldquo;Wait, so what is this place exactly? A blog? A portfolio?&rdquo;
+                              </div>
+                            </div>
+
+                            {/* Outgoing Ivan Message */}
+                            <div className="imessage-row-outgoing">
+                              <span className="imessage-sender-tag" style={{ marginRight: "0.5rem", fontSize: "0.52rem" }}>
+                                IVAN
+                              </span>
+                              <div className="imessage-bubble-outgoing" style={{ padding: "0.5rem 0.85rem", fontSize: "0.78rem", lineHeight: 1.4 }}>
+                                &ldquo;Honestly? Just a running log. Things I build, photos I take, and ideas I can&apos;t stop chewing on.&rdquo;
+                              </div>
+                            </div>
+                          </div>
+
+                          <p className="novel-intro-paragraph" style={{ opacity: 0.72, fontSize: "0.76rem", fontStyle: "italic", borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))", paddingTop: "0.4rem", margin: 0 }}>
+                            Grab a drink. Make yourself at home.
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -3460,6 +3641,193 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   </div>
                 </motion.div>
               </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
+
+      {/* ── MOBILE CHAPTERS DIRECTORY & SEARCH SIDEBAR DRAWER ── */}
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {mobileSidebarOpen && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  onClick={() => setMobileSidebarOpen(false)}
+                  style={{
+                    position: "fixed",
+                    inset: 0,
+                    backgroundColor: "rgba(0, 0, 0, 0.75)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                    zIndex: 99999,
+                  }}
+                />
+                <motion.aside
+                  initial={{ x: "100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "100%" }}
+                  transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                  style={{
+                    position: "fixed",
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    width: "88vw",
+                    maxWidth: "380px",
+                    background: "var(--bg-color, #111111)",
+                    color: "var(--text-primary, #FFFFFF)",
+                    zIndex: 100000,
+                    display: "flex",
+                    flexDirection: "column",
+                    boxShadow: "-10px 0 35px rgba(0,0,0,0.6)",
+                    borderLeft: "1px solid var(--border-subtle, rgba(255,255,255,0.12))",
+                  }}
+                >
+                  {/* Top Bar */}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "1.2rem 1.25rem 0.9rem",
+                      borderBottom: "1px solid var(--border-subtle, rgba(255,255,255,0.08))",
+                    }}
+                  >
+                    <div>
+                      <div
+                        style={{
+                          fontSize: "0.58rem",
+                          fontWeight: 800,
+                          letterSpacing: "0.18em",
+                          color: "var(--text-muted, rgba(255,255,255,0.5))",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        JOURNAL DIRECTORY
+                      </div>
+                      <div style={{ fontSize: "1.1rem", fontWeight: 800, letterSpacing: "-0.02em" }}>
+                        All Chapters ({sortedPosts.length})
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setMobileSidebarOpen(false)}
+                      style={{
+                        background: "var(--bg-secondary, rgba(255,255,255,0.08))",
+                        border: "1px solid var(--border-subtle, rgba(255,255,255,0.12))",
+                        color: "var(--text-primary, #FFFFFF)",
+                        width: "34px",
+                        height: "34px",
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "pointer",
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  {/* Search Bar */}
+                  <div style={{ padding: "0.85rem 1.25rem 0.65rem" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        background: "var(--bg-secondary, rgba(255,255,255,0.06))",
+                        border: "1px solid var(--border-subtle, rgba(255,255,255,0.12))",
+                        borderRadius: "12px",
+                        padding: "0.55rem 0.75rem",
+                      }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" style={{ opacity: 0.6 }}>
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                      </svg>
+                      <input
+                        type="text"
+                        placeholder="Search chapters..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        style={{
+                          background: "transparent",
+                          border: "none",
+                          outline: "none",
+                          color: "inherit",
+                          fontSize: "0.82rem",
+                          width: "100%",
+                        }}
+                      />
+                      {searchQuery && (
+                        <button
+                          onClick={() => setSearchQuery("")}
+                          style={{ background: "none", border: "none", color: "inherit", opacity: 0.6, cursor: "pointer", fontSize: "0.75rem" }}
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* List of Chapters (Sorted newest on top) */}
+                  <div
+                    style={{
+                      flex: 1,
+                      overflowY: "auto",
+                      padding: "0.4rem 1.25rem 2rem",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "0.55rem",
+                    }}
+                  >
+                    {filteredPosts.map((post) => {
+                      const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
+                      const chapterNum = String(sortedPosts.length - postIdx).padStart(2, "0");
+                      const relTime = getRelativeTimeString(post.published);
+
+                      return (
+                        <div
+                          key={post.id}
+                          onClick={() => {
+                            setSelectedPostIndex(postIdx);
+                            setMobileSidebarOpen(false);
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                          }}
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "0.25rem",
+                            padding: "0.8rem 0.95rem",
+                            borderRadius: "12px",
+                            background: selectedPostIndex === postIdx ? "rgba(255,255,255,0.12)" : "var(--bg-secondary, rgba(255,255,255,0.04))",
+                            border: "1px solid var(--border-subtle, rgba(255,255,255,0.08))",
+                            cursor: "pointer",
+                            transition: "all 0.18s ease",
+                          }}
+                        >
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted, rgba(255,255,255,0.5))" }}>
+                              CHAPTER {chapterNum}
+                            </span>
+                            <span style={{ fontSize: "0.52rem", fontWeight: 600, color: "var(--text-muted, rgba(255,255,255,0.4))", textTransform: "uppercase" }}>
+                              {relTime}
+                            </span>
+                          </div>
+                          <h4 style={{ fontSize: "0.86rem", fontWeight: 700, lineHeight: 1.35, margin: 0, color: "var(--text-primary, #FFFFFF)" }}>
+                            {post.title}
+                          </h4>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </motion.aside>
+              </>
             )}
           </AnimatePresence>,
           document.body
