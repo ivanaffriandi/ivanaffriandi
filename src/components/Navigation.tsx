@@ -251,6 +251,14 @@ export default function Navigation() {
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             transition: background 0.3s ease, border 0.3s ease;
           }
+
+          /* Completely disable and hide on blog / journal page */
+          body:has(.pj-root) .mobile-header-bar {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            pointer-events: none !important;
+          }
         }
       `}</style>
 
@@ -309,8 +317,8 @@ export default function Navigation() {
         </div>
       </header>
 
-      {/* ── MOBILE DEDICATED TOP HEADER (HIDDEN ON /blog WHERE DailyJournalFeed RENDERS ITS OWN TRANSPARENT HEADER) ── */}
-      {!pathname.startsWith("/blog") && (
+      {/* ── MOBILE DEDICATED TOP HEADER (NEVER SHOWN ON BLOG / JOURNAL) ── */}
+      {(!pathname.startsWith("/blog") && !isBlogDomain && (typeof window === "undefined" || (!window.location.hostname.startsWith("blog.") && !window.location.hostname.includes("blog.ivanaffriandi.com")))) && (
       <div className="mobile-header-bar">
         <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", color: "#FFFFFF" }}>
           <span
