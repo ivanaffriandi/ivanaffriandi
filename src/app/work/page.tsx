@@ -30,11 +30,11 @@ export default function WorkIvanPortfolioPage() {
 
   const tabHeaders = {
     about: {
-      headline: 'Ivan Affriandi',
+      headline: 'Affriandi, Ivan',
       narrative:
-        'Designer, full-stack engineer, and atelier founder crafting clean digital products and physical goods in Tangerang, Indonesia.',
+        'I build digital software, teach physics, craft leather goods, and occasionally disappear into a mushroom field.',
       duration: '2025 — Present',
-      client: 'Independent Studio',
+      client: 'Studio & Lab',
       artDirection: 'Digital & Physical',
     },
     projects: {
@@ -175,9 +175,22 @@ export default function WorkIvanPortfolioPage() {
               transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
               style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
             >
-              <h1 className={styles.mainTitleHeading}>
-                {current.headline}
-              </h1>
+              {activeTab === 'about' ? (
+                <div className={styles.heroTitleRowWithPhoto}>
+                  <img
+                    src="/ivan-head.png"
+                    alt="Affriandi, Ivan"
+                    className={styles.heroInlineHeadPhoto}
+                  />
+                  <h1 className={styles.mainTitleHeading}>
+                    {current.headline}
+                  </h1>
+                </div>
+              ) : (
+                <h1 className={styles.mainTitleHeading}>
+                  {current.headline}
+                </h1>
+              )}
 
               <p className={styles.narrativeParagraph}>
                 {current.narrative}
@@ -210,76 +223,249 @@ export default function WorkIvanPortfolioPage() {
 
         {/* ── ROW 4: DYNAMIC TAB VIEW CONTENTS ── */}
 
-        {/* 1. ABOUT TAB: SEAMLESS CUTOUT PORTRAIT + 3 DISCIPLINE CARDS */}
+        {/* 1. MASTER ABOUT TAB: EDITORIAL STUDIO ARCHIVE */}
         {activeTab === 'about' && (
           <div className={styles.fullWidthTabBlock}>
-            {/* Seamless Head Cutout & Intro */}
-            <div className={styles.aboutHeroSection}>
-              <img
-                src="/ivan-head.png"
-                alt="Ivan Affriandi"
-                className={styles.aboutHeadPortrait}
-              />
-              <div className={styles.aboutHeroBioWrap}>
-                <h3 className={styles.aboutHeroBioHeadline}>
-                  Building digital products &amp; bespoke physical craft.
-                </h3>
-                <p className={styles.aboutHeroBioText}>
-                  I specialize in building fast, lightweight web applications with Next.js, designing intuitive user interfaces in Figma, and handcrafting leather journals from my studio in Tangerang.
-                </p>
-              </div>
+            {/* SECTION 01: WHO I AM PROSE */}
+            <div className={styles.aboutSectionHeader}>
+              <span className={styles.aboutSectionNumber}>01 · WHO I AM</span>
+              <h3 className={styles.aboutSectionTitle}>The Strange Mix</h3>
             </div>
 
-            {/* 3 Focus Cards */}
-            <div className={styles.overviewCardsGrid}>
-              <div className={styles.overviewFocusCard}>
-                <span className={styles.overviewFocusNumber}>01 · DESIGN</span>
-                <h3 className={styles.overviewFocusTitle}>UI/UX &amp; Product Design</h3>
-                <p className={styles.overviewFocusDesc}>
-                  Clean, minimalist interfaces and design systems built in Figma with high attention to typography and micro-interactions.
+            <div className={styles.aboutProseGrid}>
+              <p className={styles.aboutProseParagraph}>
+                My work sits somewhere between pure physics education, software engineering, UI/UX design, physical leather craftsmanship, and running servers I probably didn&apos;t need to self-host. I am not interested in being boxed into a single corporate identity.
+              </p>
+              <p className={styles.aboutProseParagraph}>
+                I can spend part of my day explaining classical mechanics to olympiad students, another part designing an interface in Figma, another writing Next.js code, and another hand-stitching a trifold leather journal with tea getting cold beside me. That contrast is the whole point: curiosity → learning → making → teaching → documenting.
+              </p>
+            </div>
+
+            {/* SECTION 02: WHAT I DO (6 CORE DISCIPLINE CARDS) */}
+            <div className={styles.aboutSectionHeader}>
+              <span className={styles.aboutSectionNumber}>02 · WHAT I DO</span>
+              <h3 className={styles.aboutSectionTitle}>Six Areas of Focus</h3>
+            </div>
+
+            <div className={styles.aboutSixCardsGrid}>
+              <div className={styles.aboutDisciplineCard}>
+                <span className={styles.aboutDisciplineNumber}>01 · ACADEMIC</span>
+                <h4 className={styles.aboutDisciplineTitle}>Physics &amp; Mentoring</h4>
+                <p className={styles.aboutDisciplineDesc}>
+                  Founder of Equilibrium Academy. Physics tutor and olympiad trainer helping ambitious high-school students translate abstract mathematics into intuitive physical models.
                 </p>
-                <div className={styles.overviewFocusTags}>
-                  <span className={styles.miniPill}>Figma</span>
-                  <span className={styles.miniPill}>UI/UX</span>
-                  <span className={styles.miniPill}>Design Systems</span>
+                <div className={styles.aboutDisciplineTags}>
+                  <span className={styles.miniPill}>Pure Physics</span>
+                  <span className={styles.miniPill}>Olympiad / OSN</span>
+                  <span className={styles.miniPill}>Cambridge &amp; IB</span>
                 </div>
               </div>
 
-              <div className={styles.overviewFocusCard}>
-                <span className={styles.overviewFocusNumber}>02 · CODE</span>
-                <h3 className={styles.overviewFocusTitle}>Full-Stack Web Engineering</h3>
-                <p className={styles.overviewFocusDesc}>
-                  Fast, modern web applications built with Next.js 16, TypeScript, React, and lightweight cloud servers.
+              <div className={styles.aboutDisciplineCard}>
+                <span className={styles.aboutDisciplineNumber}>02 · DESIGN</span>
+                <h4 className={styles.aboutDisciplineTitle}>Product &amp; UI/UX</h4>
+                <p className={styles.aboutDisciplineDesc}>
+                  Clean, typography-driven interfaces, Figma design systems, generous whitespace, and obsessing over spacing, hierarchy, and micro-interactions that feel tactile.
                 </p>
-                <div className={styles.overviewFocusTags}>
+                <div className={styles.aboutDisciplineTags}>
+                  <span className={styles.miniPill}>Figma Systems</span>
+                  <span className={styles.miniPill}>Typography</span>
+                  <span className={styles.miniPill}>Interaction Design</span>
+                </div>
+              </div>
+
+              <div className={styles.aboutDisciplineCard}>
+                <span className={styles.aboutDisciplineNumber}>03 · CODE</span>
+                <h4 className={styles.aboutDisciplineTitle}>Software Engineering</h4>
+                <p className={styles.aboutDisciplineDesc}>
+                  Full-stack web applications built with Next.js 16, React 19, TypeScript, and modern APIs. Fast, lightweight code without bloated dependencies.
+                </p>
+                <div className={styles.aboutDisciplineTags}>
                   <span className={styles.miniPill}>Next.js 16</span>
                   <span className={styles.miniPill}>TypeScript</span>
-                  <span className={styles.miniPill}>Cloud Server</span>
+                  <span className={styles.miniPill}>React 19</span>
                 </div>
               </div>
 
-              <div className={styles.overviewFocusCard}>
-                <span className={styles.overviewFocusNumber}>03 · CRAFT</span>
-                <h3 className={styles.overviewFocusTitle}>3D Web &amp; Leather Atelier</h3>
-                <p className={styles.overviewFocusDesc}>
-                  Founder of SHŪ / EN Studio. Handcrafted bespoke leather journals and real-time Three.js 3D web customizers.
+              <div className={styles.aboutDisciplineCard}>
+                <span className={styles.aboutDisciplineNumber}>04 · INFRA</span>
+                <h4 className={styles.aboutDisciplineTitle}>Digital Independence</h4>
+                <p className={styles.aboutDisciplineDesc}>
+                  Self-hosted cloud VMs, private email servers (SMTP, Postfix, DKIM), and personal digital tools. The internet as something you build and inhabit, not just consume.
                 </p>
-                <div className={styles.overviewFocusTags}>
-                  <span className={styles.miniPill}>Three.js</span>
-                  <span className={styles.miniPill}>Leathercraft</span>
+                <div className={styles.aboutDisciplineTags}>
+                  <span className={styles.miniPill}>Self-Hosted</span>
+                  <span className={styles.miniPill}>Cloud VM</span>
+                  <span className={styles.miniPill}>Private Mail</span>
+                </div>
+              </div>
+
+              <div className={styles.aboutDisciplineCard}>
+                <span className={styles.aboutDisciplineNumber}>05 · ATELIER</span>
+                <h4 className={styles.aboutDisciplineTitle}>Physical Craft (SHŪ / EN)</h4>
+                <p className={styles.aboutDisciplineDesc}>
+                  Bespoke leather journals handcrafted from Italian vegetable-tanned hides, Japanese Moire lining, bookbinding, and solid 925 sterling silver charms.
+                </p>
+                <div className={styles.aboutDisciplineTags}>
+                  <span className={styles.miniPill}>Italian Leather</span>
+                  <span className={styles.miniPill}>Saddle Stitch</span>
                   <span className={styles.miniPill}>925 Silver</span>
                 </div>
               </div>
+
+              <div className={styles.aboutDisciplineCard}>
+                <span className={styles.aboutDisciplineNumber}>06 · EXPERIMENTS</span>
+                <h4 className={styles.aboutDisciplineTitle}>Creative Labs &amp; 3D</h4>
+                <p className={styles.aboutDisciplineDesc}>
+                  Real-time Three.js 3D WebGL configurators, GLSL procedural shaders, Web Audio sound synthesis, and tools built simply because &quot;I wonder if I can build that myself.&quot;
+                </p>
+                <div className={styles.aboutDisciplineTags}>
+                  <span className={styles.miniPill}>Three.js</span>
+                  <span className={styles.miniPill}>GLSL Shaders</span>
+                  <span className={styles.miniPill}>Web Audio</span>
+                </div>
+              </div>
             </div>
 
-            {/* Quick Contact Banner */}
+            {/* SECTION 03: THE OTHER 50% (HOBBIES & HANDS) */}
+            <div className={styles.aboutSectionHeader}>
+              <span className={styles.aboutSectionNumber}>03 · THE OTHER 50%</span>
+              <h3 className={styles.aboutSectionTitle}>Observation &amp; Tactile Making</h3>
+            </div>
+
+            <div className={styles.aboutHobbiesGrid}>
+              <div className={styles.aboutHobbyCard}>
+                <h4 className={styles.aboutHobbyTitle}>🍄 Mushrooms &amp; Mycology</h4>
+                <p className={styles.aboutHobbyText}>
+                  Finding wild fungi, photographing them in the wild, reading field guides, taking notes, and slowly building an understanding of how they grow.
+                </p>
+              </div>
+
+              <div className={styles.aboutHobbyCard}>
+                <h4 className={styles.aboutHobbyTitle}>🧵 Crochet &amp; Embroidery</h4>
+                <p className={styles.aboutHobbyText}>
+                  Fiber work, thread tension, and tactile patience. The satisfaction of making physical everyday objects with needles and yarn.
+                </p>
+              </div>
+
+              <div className={styles.aboutHobbyCard}>
+                <h4 className={styles.aboutHobbyTitle}>🍵 Tea &amp; Quiet Mornings</h4>
+                <p className={styles.aboutHobbyText}>
+                  Hot green tea, quiet studio desks before the world wakes up, and sitting with difficult scientific questions until they finally make sense.
+                </p>
+              </div>
+
+              <div className={styles.aboutHobbyCard}>
+                <h4 className={styles.aboutHobbyTitle}>📚 Non-Fiction &amp; Kindle</h4>
+                <p className={styles.aboutHobbyText}>
+                  Collecting questions over answers. Books on intellectual history, religion, philosophy, society, physics, and human knowledge systems.
+                </p>
+              </div>
+
+              <div className={styles.aboutHobbyCard}>
+                <h4 className={styles.aboutHobbyTitle}>🏛️ Museums &amp; Galleries</h4>
+                <p className={styles.aboutHobbyText}>
+                  Wandering quiet historical archives, art museums, and observing how different eras constructed tools, typography, and visual culture.
+                </p>
+              </div>
+
+              <div className={styles.aboutHobbyCard}>
+                <h4 className={styles.aboutHobbyTitle}>🪴 Plants &amp; Gardening</h4>
+                <p className={styles.aboutHobbyText}>
+                  Watching soil, foliage, and cuttings grow slowly on the studio terrace in Tangerang without any rush.
+                </p>
+              </div>
+            </div>
+
+            {/* SECTION 04: HOW I THINK (PHILOSOPHY) */}
+            <div className={styles.aboutSectionHeader}>
+              <span className={styles.aboutSectionNumber}>04 · WORKING PHILOSOPHY</span>
+              <h3 className={styles.aboutSectionTitle}>How I Approach Making</h3>
+            </div>
+
+            <div className={styles.aboutPhilosophyGrid}>
+              <div className={styles.aboutPhilosophyCard}>
+                <h4 className={styles.aboutPhilosophyHeadline}>Make things yourself.</h4>
+                <p className={styles.aboutPhilosophyBody}>
+                  If something interests me, I want to understand how it works under the hood and rebuild a version myself. Learning and creating are the exact same process.
+                </p>
+              </div>
+
+              <div className={styles.aboutPhilosophyCard}>
+                <h4 className={styles.aboutPhilosophyHeadline}>Teach what you understand.</h4>
+                <p className={styles.aboutPhilosophyBody}>
+                  Teaching forces abstract ideas to become clear. If you can&apos;t explain a physics model simply, you haven&apos;t truly understood the underlying assumptions yet.
+                </p>
+              </div>
+
+              <div className={styles.aboutPhilosophyCard}>
+                <h4 className={styles.aboutPhilosophyHeadline}>Boundaries are artificial.</h4>
+                <p className={styles.aboutPhilosophyBody}>
+                  Physics informs design, design informs code, and leather craft informs digital products. The contrast between pixels and physical materials is where the fun lives.
+                </p>
+              </div>
+            </div>
+
+            {/* SECTION 05: CURRENTLY (STATUS BOARD) */}
+            <div className={styles.aboutSectionHeader}>
+              <span className={styles.aboutSectionNumber}>05 · STATUS BOARD</span>
+              <h3 className={styles.aboutSectionTitle}>Currently</h3>
+            </div>
+
+            <div className={styles.aboutCurrentlyGrid}>
+              <div className={styles.aboutCurrentItem}>
+                <span className={styles.aboutCurrentLabel}>Reading</span>
+                <span className={styles.aboutCurrentVal}>Non-fiction, intellectual history &amp; physics</span>
+              </div>
+              <div className={styles.aboutCurrentItem}>
+                <span className={styles.aboutCurrentLabel}>Making</span>
+                <span className={styles.aboutCurrentVal}>Next.js tools + handcrafted leather journals</span>
+              </div>
+              <div className={styles.aboutCurrentItem}>
+                <span className={styles.aboutCurrentLabel}>Learning</span>
+                <span className={styles.aboutCurrentVal}>Spanish, Dutch &amp; GLSL shader mathematics</span>
+              </div>
+              <div className={styles.aboutCurrentItem}>
+                <span className={styles.aboutCurrentLabel}>Exploring</span>
+                <span className={styles.aboutCurrentVal}>Wild mycology, photography &amp; fiber craft</span>
+              </div>
+              <div className={styles.aboutCurrentItem}>
+                <span className={styles.aboutCurrentLabel}>Building</span>
+                <span className={styles.aboutCurrentVal}>Independent personal web infrastructure</span>
+              </div>
+              <div className={styles.aboutCurrentItem}>
+                <span className={styles.aboutCurrentLabel}>Thinking About</span>
+                <span className={styles.aboutCurrentVal}>What to build and understand next</span>
+              </div>
+            </div>
+
+            {/* SECTION 06: SMALL THINGS I LIKE */}
+            <div className={styles.aboutSectionHeader}>
+              <span className={styles.aboutSectionNumber}>06 · SMALL THINGS I LIKE</span>
+              <h3 className={styles.aboutSectionTitle}>Human Details</h3>
+            </div>
+
+            <div className={styles.aboutLikesWrap}>
+              <span className={styles.aboutLikePill}>Good typography</span>
+              <span className={styles.aboutLikePill}>Quiet museums</span>
+              <span className={styles.aboutLikePill}>Old non-fiction books</span>
+              <span className={styles.aboutLikePill}>Leather patina</span>
+              <span className={styles.aboutLikePill}>Notebooks &amp; paper</span>
+              <span className={styles.aboutLikePill}>Hot tea</span>
+              <span className={styles.aboutLikePill}>Wild mushrooms</span>
+              <span className={styles.aboutLikePill}>Clean interfaces</span>
+              <span className={styles.aboutLikePill}>Weird technical rabbit holes</span>
+              <span className={styles.aboutLikePill}>Learning something complicated just for fun</span>
+            </div>
+
+            {/* SECTION 07: CONTACT CTA */}
             <div className={styles.contactBannerWrap}>
               <div className={styles.contactBannerLeft}>
-                <h4>Have a project in mind?</h4>
-                <p>Available for freelance web projects, design systems, and custom studio builds.</p>
+                <h4>Have an interesting problem or project?</h4>
+                <p>If you have a strange idea, an interesting challenge, or a project that sits between disciplines, I&apos;m probably interested.</p>
               </div>
               <a href="mailto:ivan@ivanaffriandi.com" className={styles.contactActionBtn}>
-                Get in Touch ↗
+                Say Hello ↗
               </a>
             </div>
           </div>
@@ -622,11 +808,11 @@ export default function WorkIvanPortfolioPage() {
             {/* Quick Contact CTA */}
             <div className={styles.contactBannerWrap}>
               <div className={styles.contactBannerLeft}>
-                <h4>Ready to start a project?</h4>
-                <p>Send an email with your timeline and requirements, and I will reply within 24 hours.</p>
+                <h4>Have an interesting problem or project?</h4>
+                <p>If you have a strange idea, an interesting challenge, or a project that sits between disciplines, I&apos;m probably interested.</p>
               </div>
               <a href="mailto:ivan@ivanaffriandi.com" className={styles.contactActionBtn}>
-                Send Email ↗
+                Say Hello ↗
               </a>
             </div>
           </div>

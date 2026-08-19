@@ -532,69 +532,295 @@
 /* 3. PROCESS, OVERVIEW & ARCHIVE TAB BLOCKS */
 .fullWidthTabBlock {
   grid-column: 1 / 4;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  border-top: 1px solid #f0f0f2;
-  padding-top: 28px;
-}
-
-/* ── ABOUT HERO WITH SEAMLESS HEAD CUTOUT (NO BOX / NO FRAME) ── */
-.aboutHeroSection {
+/* ── HERO TITLE ROW WITH PHOTO (HEAD PHOTO TO THE LEFT OF AFFRIANDI, IVAN) ── */
+.heroTitleRowWithPhoto {
   display: flex;
   align-items: center;
-  gap: 32px;
-  padding: 4px 0 12px 0;
-  width: 100%;
+  gap: 16px;
 }
 
-@media (max-width: 768px) {
-  .aboutHeroSection {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 18px;
-  }
-}
-
-.aboutHeadPortrait {
-  width: 135px;
-  height: 135px;
+.heroInlineHeadPhoto {
+  width: 52px;
+  height: 52px;
   object-fit: contain;
-  flex-shrink: 0;
+  border-radius: 0 !important;
   border: none !important;
   background: transparent !important;
   box-shadow: none !important;
-  border-radius: 0 !important;
+  flex-shrink: 0;
   display: block;
 }
 
 @media (max-width: 768px) {
-  .aboutHeadPortrait {
-    width: 100px;
-    height: 100px;
+  .heroInlineHeadPhoto {
+    width: 42px;
+    height: 42px;
   }
 }
 
-.aboutHeroBioWrap {
+/* 3. PROCESS, ABOUT & ARCHIVE TAB BLOCKS */
+.fullWidthTabBlock {
+  grid-column: 1 / 4;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  flex: 1;
+  gap: 36px;
+  border-top: 1px solid #f0f0f2;
+  padding-top: 32px;
 }
 
-.aboutHeroBioHeadline {
-  font-size: 15px;
+/* ── EDITORIAL SECTION HEADER DIVIDER ── */
+.aboutSectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f2f2f4;
+}
+
+.aboutSectionNumber {
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  color: #888888;
+  text-transform: uppercase;
+}
+
+.aboutSectionTitle {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
   color: #111111;
   margin: 0;
 }
 
-.aboutHeroBioText {
-  font-size: 13px;
-  line-height: 1.65;
+/* ── SECTION 01: WHO I AM PROSE ── */
+.aboutProseGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+@media (max-width: 860px) {
+  .aboutProseGrid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+.aboutProseParagraph {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #444444;
+  margin: 0;
+}
+
+/* ── 6 DISCIPLINE CARDS GRID ── */
+.aboutSixCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 960px) {
+  .aboutSixCardsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .aboutSixCardsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.aboutDisciplineCard {
+  border: 1px solid #eeeeee;
+  padding: 22px;
+  border-radius: 4px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.aboutDisciplineCard:hover {
+  border-color: #111111;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+}
+
+.aboutDisciplineNumber {
+  font-size: 10.5px;
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  color: #888888;
+  text-transform: uppercase;
+}
+
+.aboutDisciplineTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111111;
+  margin: 0;
+}
+
+.aboutDisciplineDesc {
+  font-size: 12.5px;
+  line-height: 1.55;
   color: #555555;
   margin: 0;
+}
+
+.aboutDisciplineTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid #f4f4f6;
+}
+
+/* ── HOBBIES & NATURE GRID ── */
+.aboutHobbiesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 960px) {
+  .aboutHobbiesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .aboutHobbiesGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.aboutHobbyCard {
+  border: 1px solid #f0f0f2;
+  padding: 18px;
+  border-radius: 4px;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.aboutHobbyCard:hover {
+  background: #ffffff;
+  border-color: #111111;
+}
+
+.aboutHobbyTitle {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #111111;
+  margin: 0;
+}
+
+.aboutHobbyText {
+  font-size: 12px;
+  line-height: 1.55;
+  color: #555555;
+  margin: 0;
+}
+
+/* ── PHILOSOPHY GRID ── */
+.aboutPhilosophyGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 860px) {
+  .aboutPhilosophyGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.aboutPhilosophyCard {
+  border-left: 2px solid #111111;
+  padding: 4px 0 4px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.aboutPhilosophyHeadline {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111111;
+  margin: 0;
+}
+
+.aboutPhilosophyBody {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #555555;
+  margin: 0;
+}
+
+/* ── CURRENT STATUS BOARD ── */
+.aboutCurrentlyGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  background: #f9f9fb;
+  padding: 20px;
+  border-radius: 6px;
+  border: 1px solid #eeeeee;
+}
+
+@media (max-width: 860px) {
+  .aboutCurrentlyGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+.aboutCurrentItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.aboutCurrentLabel {
+  font-size: 10px;
+  font-weight: 700;
+  font-family: ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  color: #888888;
+  text-transform: uppercase;
+}
+
+.aboutCurrentVal {
+  font-size: 12.5px;
+  font-weight: 550;
+  color: #111111;
+  line-height: 1.4;
+}
+
+/* ── LIKES PILLS ROW ── */
+.aboutLikesWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.aboutLikePill {
+  font-size: 12px;
+  font-weight: 500;
+  color: #333333;
+  background: #f2f2f5;
+  padding: 6px 12px;
+  border-radius: 20px;
 }
 
 .overviewCardsGrid {
