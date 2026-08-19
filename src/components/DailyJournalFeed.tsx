@@ -749,9 +749,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           left: 0;
           align-self: flex-start;
           flex-shrink: 0;
-          width: 42vw;
-          min-width: 300px;
-          max-width: 600px;
+          width: 36vw;
+          min-width: 280px;
+          max-width: 480px;
           height: 100vh;
           overflow: hidden;
           cursor: pointer;
@@ -2699,8 +2699,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             <h1
               className="pj-title"
               style={{
-                fontSize: isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue) ? "2.6rem" : undefined,
-                fontWeight: 900,
+                fontSize: isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue) ? "2.3rem" : undefined,
+                fontWeight: isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue) ? 750 : 600,
                 letterSpacing: isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue) ? "-0.03em" : "-0.02em",
                 textTransform: isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue) ? "uppercase" : "none",
               }}
