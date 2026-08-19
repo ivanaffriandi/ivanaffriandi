@@ -445,7 +445,7 @@ export default function MailApp() {
       {/* Desktop Sidebar */}
       <div
         className="hidden lg:block h-full mail-sidebar-fixed"
-        style={{ width: '256px', minWidth: '256px', maxWidth: '256px' }}
+        style={{ width: '256px', minWidth: '256px', maxWidth: '256px', flex: '0 0 256px' }}
       >
         <Sidebar
           folders={folders}
@@ -497,7 +497,7 @@ export default function MailApp() {
       )}
 
       {/* Main Workspace */}
-      <div className="flex flex-col h-full overflow-hidden min-w-0">
+      <div className="flex flex-col h-full overflow-hidden min-w-0 flex-1">
         <Header
           activeFolderName={folders.find((f) => f.id === activeFolderId)?.name ?? 'Inbox'}
           totalMessagesCount={displayMessages.length}
@@ -528,8 +528,8 @@ export default function MailApp() {
           </div>
         )}
 
-        {/* Mail Split Pane (CSS Grid Locked) */}
-        <main className="mail-split-grid flex-1 min-h-0 overflow-hidden pt-0 md:pt-1.5">
+        {/* Mail Split Pane */}
+        <main className="flex-1 flex min-h-0 overflow-hidden pt-0 md:pt-1.5 gap-0 md:gap-3 w-full">
           {/* Message List */}
           <div
             className={`relative h-full mail-list-fixed ${
@@ -537,7 +537,7 @@ export default function MailApp() {
                 ? 'hidden md:block'
                 : 'block'
             }`}
-            style={{ width: '100%', minWidth: '0px' }}
+            style={{ width: '360px', minWidth: '360px', maxWidth: '360px', flex: '0 0 360px' }}
           >
             {isLoading && (
               <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
@@ -557,7 +557,7 @@ export default function MailApp() {
           {/* Message View */}
           <div
             className={`mail-view-flexible relative h-full ${selectedMessageId ? 'block' : 'hidden md:block'}`}
-            style={{ width: '100%', minWidth: '0px', overflow: 'hidden' }}
+            style={{ flex: '1 1 0%', minWidth: 0, width: 0, overflow: 'hidden' }}
           >
             {isLoadingDetail && selectedMessageId && (
               <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">

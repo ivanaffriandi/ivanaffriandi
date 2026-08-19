@@ -43,46 +43,22 @@ body {
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* Rock-solid structural layout locking with CSS Grid (Never shifts or resizes on message select) */
-@media (min-width: 1024px) {
-  .mail-desktop-grid {
-    display: grid !important;
-    grid-template-columns: 256px minmax(0, 1fr) !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    overflow: hidden !important;
-    gap: 12px !important;
-    padding: 12px !important;
-    box-sizing: border-box !important;
-  }
-  .mail-split-grid {
-    display: grid !important;
-    grid-template-columns: 360px minmax(0, 1fr) !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-    gap: 12px !important;
-  }
+/* Rock-solid structural layout locking (Never shifts or resizes on message select) */
+.mail-desktop-grid {
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  gap: 12px !important;
+  padding: 12px !important;
+  box-sizing: border-box !important;
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (max-width: 1023px) {
   .mail-desktop-grid {
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    overflow: hidden !important;
-    padding: 12px !important;
-  }
-  .mail-split-grid {
-    display: grid !important;
-    grid-template-columns: 360px minmax(0, 1fr) !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-    gap: 12px !important;
+    padding: 0 !important;
+    gap: 0 !important;
   }
 }
 
@@ -90,23 +66,32 @@ body {
   width: 256px !important;
   min-width: 256px !important;
   max-width: 256px !important;
+  flex: 0 0 256px !important;
+  flex-shrink: 0 !important;
   height: 100% !important;
   overflow: hidden !important;
 }
 
-.mail-list-fixed {
-  width: 100% !important;
-  max-width: 100% !important;
-  height: 100% !important;
-  overflow: hidden !important;
+@media (min-width: 768px) {
+  .mail-list-fixed {
+    width: 360px !important;
+    min-width: 360px !important;
+    max-width: 360px !important;
+    flex: 0 0 360px !important;
+    flex-shrink: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
 }
 
 .mail-view-flexible {
-  width: 100% !important;
+  flex: 1 1 0% !important;
   min-width: 0 !important;
+  width: 0 !important;
   max-width: 100% !important;
   height: 100% !important;
   overflow: hidden !important;
+  contain: inline-size !important;
 }
 
 .apple-active-scale:active {
