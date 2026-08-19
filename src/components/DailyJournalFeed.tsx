@@ -1529,15 +1529,42 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           transition: font-family 0.2s ease, font-size 0.2s ease;
         }
 
-        .novel-article-reader.font-sans {
-          font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif);
-          line-height: 1.86;
-          letter-spacing: -0.01em;
+        .novel-article-reader.font-sans,
+        .novel-article-reader.font-sans * {
+          font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif) !important;
         }
 
-        .novel-article-reader.size-sm { font-size: 1.02rem; line-height: 1.88; }
-        .novel-article-reader.size-md { font-size: 1.14rem; line-height: 1.96; }
-        .novel-article-reader.size-lg { font-size: 1.26rem; line-height: 2.04; }
+        .novel-article-reader.font-serif,
+        .novel-article-reader.font-serif * {
+          font-family: var(--font-lora, var(--font-merriweather, Georgia, serif)) !important;
+        }
+
+        .novel-article-reader.size-sm,
+        .novel-article-reader.size-sm p,
+        .novel-article-reader.size-sm span,
+        .novel-article-reader.size-sm div,
+        .novel-article-reader.size-sm li {
+          font-size: 0.95rem !important;
+          line-height: 1.8 !important;
+        }
+
+        .novel-article-reader.size-md,
+        .novel-article-reader.size-md p,
+        .novel-article-reader.size-md span,
+        .novel-article-reader.size-md div,
+        .novel-article-reader.size-md li {
+          font-size: 1.14rem !important;
+          line-height: 1.96 !important;
+        }
+
+        .novel-article-reader.size-lg,
+        .novel-article-reader.size-lg p,
+        .novel-article-reader.size-lg span,
+        .novel-article-reader.size-lg div,
+        .novel-article-reader.size-lg li {
+          font-size: 1.35rem !important;
+          line-height: 2.1 !important;
+        }
 
         .novel-article-reader p {
           margin: 0 0 1.35rem 0 !important;
@@ -2288,7 +2315,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           }
 
           .pj-root.has-selected-post .pj-left-content {
-            padding: 1.5rem 1.25rem 1.25rem !important;
+            padding: 1.5rem 6.2rem 1.25rem 1.25rem !important;
           }
 
           .pj-title {
@@ -2301,9 +2328,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           }
 
           .pj-root.has-selected-post .pj-title {
-            font-size: clamp(1.2rem, 5vw, 1.45rem) !important;
-            line-height: 1.2 !important;
+            font-size: clamp(1.15rem, 4.8vw, 1.4rem) !important;
+            line-height: 1.25 !important;
             margin: 0.25rem 0 0 0 !important;
+            word-break: break-word !important;
           }
 
           .pj-excerpt {
@@ -2356,7 +2384,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           }
 
           .pj-root.has-selected-post .pj-left-content {
-            padding: 1.5rem 1.25rem 1.25rem !important;
+            padding: 1.5rem 6.2rem 1.25rem 1.25rem !important;
           }
 
           .pj-title {
@@ -2689,9 +2717,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 {isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue)
                   ? "2 MIN READ"
                   : selectedPost
-                  ? selectedPostImages.length > 1
-                    ? `${(postPhotoIndex % selectedPostImages.length) + 1} / ${selectedPostImages.length} PHOTOS`
-                    : ""
+                  ? ""
                   : currentFlipCard.date}
               </span>
             </div>
