@@ -2691,7 +2691,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   : selectedPost
                   ? selectedPostImages.length > 1
                     ? `${(postPhotoIndex % selectedPostImages.length) + 1} / ${selectedPostImages.length} PHOTOS`
-                    : getRelativeTimeString(selectedPost.published)
+                    : ""
                   : currentFlipCard.date}
               </span>
             </div>

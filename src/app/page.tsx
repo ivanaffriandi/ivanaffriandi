@@ -150,7 +150,7 @@ export default function AvantGardeHomepage() {
         flexDirection: "column",
         justifyContent: "space-between",
         paddingTop: isMobile ? "calc(env(safe-area-inset-top, 0px) + 14px)" : "24px",
-        paddingBottom: isMobile ? "calc(env(safe-area-inset-bottom, 0px) + 20px)" : "24px",
+        paddingBottom: isMobile ? "calc(env(safe-area-inset-bottom, 0px) + 26px)" : "24px",
         paddingLeft: isMobile ? "18px" : "48px",
         paddingRight: isMobile ? "18px" : "48px",
         boxSizing: "border-box",
