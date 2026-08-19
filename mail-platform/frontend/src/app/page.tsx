@@ -438,12 +438,12 @@ export default function MailApp() {
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[var(--bg-color)] text-[var(--text-primary)] p-0 md:p-3 gap-0 md:gap-3 font-sans">
+    <div className="mail-desktop-grid bg-[var(--bg-color)] text-[var(--text-primary)] font-sans">
       {/* Toast Banner System */}
       <Toast toasts={toasts} onDismiss={(id) => setToasts((p) => p.filter((t) => t.id !== id))} />
 
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex shrink-0 h-full mail-sidebar-fixed">
+      <div className="hidden lg:block h-full mail-sidebar-fixed">
         <Sidebar
           folders={folders}
           activeFolderId={activeFolderId}
@@ -494,7 +494,7 @@ export default function MailApp() {
       )}
 
       {/* Main Workspace */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+      <div className="flex flex-col h-full overflow-hidden min-w-0">
         <Header
           activeFolderName={folders.find((f) => f.id === activeFolderId)?.name ?? 'Inbox'}
           totalMessagesCount={displayMessages.length}
@@ -525,13 +525,13 @@ export default function MailApp() {
           </div>
         )}
 
-        {/* Mail Split Pane (Responsive & Rigid Column Widths) */}
-        <main className="flex-1 flex min-h-0 overflow-hidden gap-0 md:gap-3 pt-0 md:pt-1.5 w-full">
+        {/* Mail Split Pane (CSS Grid Locked) */}
+        <main className="mail-split-grid flex-1 min-h-0 overflow-hidden pt-0 md:pt-1.5">
           {/* Message List */}
-          <div className={`relative h-full ${
+          <div className={`relative h-full mail-list-fixed ${
             selectedMessageId
-              ? 'hidden md:block mail-list-fixed shrink-0'
-              : 'w-full md:w-[360px] mail-list-fixed shrink-0'
+              ? 'hidden md:block'
+              : 'block'
           }`}>
             {isLoading && (
               <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
