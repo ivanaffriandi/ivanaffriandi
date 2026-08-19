@@ -134,7 +134,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
       {/* ──────────────────────────────────────────────────────────────────────────
           2. MAIN EMAIL DETAIL CONTAINER
           ────────────────────────────────────────────────────────────────────────── */}
-      <div className="flex-1 bg-[var(--card-bg)] border-0 md:border border-[var(--card-border)] rounded-none md:rounded-3xl shadow-none md:shadow-[0_12px_28px_rgba(0,0,0,0.06)] md:dark:shadow-[0_12px_28px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden min-h-0 apple-transition ring-0 md:ring-1 md:ring-black/5 md:dark:ring-white/10 relative">
+      <div className="flex-1 bg-[var(--card-bg)] border-0 md:border border-[var(--card-border)] rounded-none md:rounded-3xl shadow-none md:shadow-[0_12px_28px_rgba(0,0,0,0.06)] md:dark:shadow-[0_12px_28px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden min-h-0 ring-0 md:ring-1 md:ring-black/5 md:dark:ring-white/10 relative">
         
         {/* Email Subject Header Row */}
         <div className="px-5 py-3.5 border-b border-[var(--border-subtle)] shrink-0 bg-[var(--card-bg)] flex items-center justify-between gap-3">

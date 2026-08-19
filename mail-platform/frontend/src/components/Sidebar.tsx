@@ -283,7 +283,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   }
 
   return (
-    <aside className="w-64 min-w-[256px] max-w-[256px] h-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-3.5 shadow-card flex flex-col gap-2.5 select-none shrink-0 z-20 apple-transition overflow-hidden font-sans">
+    <aside className="mail-sidebar-fixed h-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-3.5 shadow-card flex flex-col gap-2.5 select-none shrink-0 z-20 overflow-hidden font-sans">
       {/* 1. Personal Greeting Header */}
       <div className="flex items-center gap-3 pt-1 px-1 shrink-0">
         <div className="relative group shrink-0">

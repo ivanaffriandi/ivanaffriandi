@@ -443,7 +443,7 @@ export default function MailApp() {
       <Toast toasts={toasts} onDismiss={(id) => setToasts((p) => p.filter((t) => t.id !== id))} />
 
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex shrink-0 h-full w-64 min-w-[256px] max-w-[256px]">
+      <div className="hidden lg:flex shrink-0 h-full mail-sidebar-fixed">
         <Sidebar
           folders={folders}
           activeFolderId={activeFolderId}
@@ -526,12 +526,12 @@ export default function MailApp() {
         )}
 
         {/* Mail Split Pane (Responsive & Rigid Column Widths) */}
-        <main className="flex-1 flex min-h-0 overflow-hidden gap-0 md:gap-3 pt-0 md:pt-1.5">
+        <main className="flex-1 flex min-h-0 overflow-hidden gap-0 md:gap-3 pt-0 md:pt-1.5 w-full">
           {/* Message List */}
           <div className={`relative h-full ${
             selectedMessageId
-              ? 'hidden md:block w-full md:w-[360px] md:min-w-[360px] md:max-w-[360px] shrink-0'
-              : 'w-full md:w-[360px] md:min-w-[360px] md:max-w-[360px] shrink-0'
+              ? 'hidden md:block mail-list-fixed shrink-0'
+              : 'w-full md:w-[360px] mail-list-fixed shrink-0'
           }`}>
             {isLoading && (
               <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
@@ -549,7 +549,7 @@ export default function MailApp() {
           </div>
 
           {/* Message View */}
-          <div className={`flex-1 min-w-0 w-0 overflow-hidden relative h-full ${selectedMessageId ? 'block' : 'hidden md:block'}`}>
+          <div className={`mail-view-flexible relative h-full ${selectedMessageId ? 'block' : 'hidden md:block'}`}>
             {isLoadingDetail && selectedMessageId && (
               <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
                 <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />

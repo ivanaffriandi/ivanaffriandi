@@ -40,7 +40,32 @@ body {
 
 /* Apple Smooth Transitions */
 .apple-transition {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Rock-solid structural layout locking (Never shifts or resizes on message select) */
+.mail-sidebar-fixed {
+  width: 256px !important;
+  min-width: 256px !important;
+  max-width: 256px !important;
+  flex: 0 0 256px !important;
+}
+
+@media (min-width: 768px) {
+  .mail-list-fixed {
+    width: 360px !important;
+    min-width: 360px !important;
+    max-width: 360px !important;
+    flex: 0 0 360px !important;
+  }
+}
+
+.mail-view-flexible {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
 }
 
 .apple-active-scale:active {
