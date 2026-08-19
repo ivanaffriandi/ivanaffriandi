@@ -211,7 +211,7 @@ export default function AvantGardeHomepage() {
           </a>
           <span style={{ fontSize: "11px", color: textMuted, lineHeight: 1 }}>·</span>
           <a
-            href="https://blog.ivanaffriandi.com/ask"
+            href="/ask"
             style={{
               fontSize: isMobile ? "11px" : "11px",
               fontWeight: 700,

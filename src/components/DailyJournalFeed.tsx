@@ -2188,8 +2188,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             line-height: 1 !important;
           }
 
-          .mobile-prologue-btn,
-          .mobile-search-btn {
+          .mobile-prologue-btn {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
@@ -2207,6 +2206,27 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             text-transform: uppercase !important;
             padding: 0 0.82rem !important;
             border-radius: 9999px !important;
+            text-decoration: none !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+            cursor: pointer !important;
+            line-height: 1 !important;
+          }
+
+          .mobile-search-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 32px !important;
+            height: 32px !important;
+            min-width: 32px !important;
+            box-sizing: border-box !important;
+            background: rgba(0, 0, 0, 0.45) !important;
+            backdrop-filter: blur(14px) !important;
+            -webkit-backdrop-filter: blur(14px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.22) !important;
+            color: #FFFFFF !important;
+            padding: 0 !important;
+            border-radius: 50% !important;
             text-decoration: none !important;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
             cursor: pointer !important;
@@ -2688,36 +2708,38 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               </a>
             )}
 
-            {/* Right: Prologue Button + Search Button */}
+            {/* Right: Prologue Button (hidden when displaying post/prologue content) + Search Icon Button */}
             <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsReadingPrologue(true);
-                  setSelectedPostIndex(null);
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-                className="mobile-prologue-btn"
-                title="Read Prologue"
-              >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                </svg>
-                <span>PROLOGUE</span>
-              </button>
+              {!selectedPost && !isReadingPrologue && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsReadingPrologue(true);
+                    setSelectedPostIndex(null);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="mobile-prologue-btn"
+                  title="Read Prologue"
+                >
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                  </svg>
+                  <span>PROLOGUE</span>
+                </button>
+              )}
 
               <button
                 type="button"
                 onClick={() => setMobileSearchOpen(true)}
                 className="mobile-search-btn"
                 title="Search Stories & Chapters"
+                aria-label="Search"
               >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="11" cy="11" r="8"/>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
-                <span>SEARCH</span>
               </button>
             </div>
           </div>

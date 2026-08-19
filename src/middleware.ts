@@ -11,6 +11,10 @@ export function middleware(request: NextRequest) {
 
   // 1. If visiting on blog subdomain (e.g. blog.ivanaffriandi.com)
   if (isBlogSubdomain) {
+    // If accessing /ask, rewrite directly to /ask
+    if (pathname.startsWith('/ask')) {
+      return NextResponse.rewrite(new URL(pathname + search, request.url));
+    }
     // If URL contains /blog, strip it to keep URL purely blog.ivanaffriandi.com/...
     if (pathname.startsWith('/blog')) {
       const cleanPath = pathname.replace(/^\/blog/, '') || '/';
