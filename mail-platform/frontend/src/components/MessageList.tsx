@@ -276,7 +276,7 @@ export const MessageList: React.FC<MessageListProps> = ({
                     onSelectMessage(msg.id);
                   }
                 }}
-                className={`w-full text-left px-3.5 py-2.5 rounded-2xl apple-transition apple-active-scale group relative border cursor-pointer ${
+                className={`w-full text-left px-3.5 py-2.5 h-[84px] rounded-2xl transition-colors duration-100 group relative border cursor-pointer box-border flex items-center shrink-0 ${
                   isChecked
                     ? 'bg-blue-500/10 border-blue-500/40 text-[var(--text-primary)]'
                     : isSelected
@@ -284,11 +284,11 @@ export const MessageList: React.FC<MessageListProps> = ({
                     : 'bg-transparent border-transparent hover:bg-[var(--bg-secondary)]'
                 }`}
               >
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="w-full flex items-center gap-3 min-w-0">
                   {/* Circular Avatar / Selection Checkbox Toggle */}
                   <div
                     onClick={(e) => toggleSelectOne(msg.id, e)}
-                    className="relative shrink-0 cursor-pointer"
+                    className="w-9 h-9 shrink-0 relative cursor-pointer flex items-center justify-center"
                     title={isChecked ? 'Deselect' : 'Select'}
                   >
                     {isChecked ? (
@@ -297,7 +297,7 @@ export const MessageList: React.FC<MessageListProps> = ({
                       </div>
                     ) : (
                       <div
-                        className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center font-extrabold text-xs text-white shadow-2xs apple-transition ring-1 ring-black/5 dark:ring-white/10 relative"
+                        className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center font-extrabold text-xs text-white shadow-2xs ring-1 ring-black/5 dark:ring-white/10 relative"
                         style={{ background: `linear-gradient(135deg, ${colorFrom}, ${colorTo})` }}
                       >
                         <span className="select-none">{initial}</span>
@@ -314,8 +314,8 @@ export const MessageList: React.FC<MessageListProps> = ({
                   </div>
 
                   {/* Message Metadata (Fixed 3-line vertical flow for uniform card height) */}
-                  <div className="flex-1 min-w-0 flex flex-col justify-center gap-0.5">
-                    <div className="flex items-center justify-between gap-1.5">
+                  <div className="flex-1 min-w-0 flex flex-col justify-center gap-0.5 overflow-hidden">
+                    <div className="flex items-center justify-between gap-1.5 min-w-0">
                       <span className={`text-xs font-bold truncate leading-tight ${
                         isSelected ? 'text-white' : !msg.is_read ? 'text-[var(--text-primary)] font-extrabold' : 'text-[var(--text-secondary)]'
                       }`}>
@@ -328,7 +328,7 @@ export const MessageList: React.FC<MessageListProps> = ({
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 min-w-0">
                       <span className={`text-xs truncate font-medium leading-tight ${
                         isSelected ? 'text-white font-bold' : !msg.is_read ? 'text-[var(--text-primary)] font-bold' : 'text-[var(--text-secondary)]'
                       }`}>
@@ -343,8 +343,8 @@ export const MessageList: React.FC<MessageListProps> = ({
                     </p>
                   </div>
 
-                  {/* Actions & Icons */}
-                  <div className="flex flex-col items-end justify-center gap-1.5 shrink-0">
+                  {/* Actions & Icons - Fixed 24px slot so layout never shifts */}
+                  <div className="w-6 flex flex-col items-center justify-center gap-1.5 shrink-0">
                     {msg.has_attachments && (
                       <Paperclip className={`w-3.5 h-3.5 ${isSelected ? 'text-white' : 'text-[var(--text-muted)]'}`} />
                     )}
@@ -354,7 +354,7 @@ export const MessageList: React.FC<MessageListProps> = ({
                           e.stopPropagation();
                           onToggleStar(msg.id, e);
                         }}
-                        className={`p-1 rounded-full apple-transition ${
+                        className={`p-1 rounded-full cursor-pointer transition-colors duration-100 ${
                           msg.is_starred
                             ? 'text-yellow-400 opacity-100'
                             : isSelected
