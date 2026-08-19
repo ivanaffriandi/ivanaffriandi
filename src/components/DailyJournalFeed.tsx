@@ -171,7 +171,7 @@ function FlippableQACard({ qa }: { qa: any }) {
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.14)", paddingBottom: "0.4rem" }}>
               <span style={{ fontSize: "0.56rem", fontWeight: 700, letterSpacing: "0.12em", color: "#FFFFFF" }}>
-                IVAN AFFRIANDI
+                IVAN
               </span>
               <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.05em", color: "rgba(255,255,255,0.65)" }}>
                 BACK ↻
@@ -3002,15 +3002,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                                 />
                               </div>
-                              <div style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--text-muted)", textTransform: "uppercase" }}>
-                                CHAPTER {pChapter} · {pRelative || formatDate(p.published, locale)}
+                              <div style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--text-muted)", textTransform: "uppercase" }}>
+                                CHAPTER {pChapter}
                               </div>
                               <div
                                 style={{
-                                  fontSize: "0.88rem",
+                                  fontSize: "0.85rem",
                                   fontWeight: 700,
                                   color: "var(--text-primary)",
-                                  lineHeight: 1.35,
+                                  lineHeight: 1.3,
                                   display: "-webkit-box",
                                   WebkitLineClamp: 2,
                                   WebkitBoxOrient: "vertical",
@@ -3018,6 +3018,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                                 }}
                               >
                                 {p.title}
+                              </div>
+                              <div style={{ fontSize: "0.54rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                                {pRelative || formatDate(p.published, locale)}
                               </div>
                             </div>
                           );
@@ -3190,9 +3193,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                             <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", minWidth: 0, flex: 1, justifyContent: "space-between" }}>
                               <div>
                                 <div className="blog-card-date">
-                                  CHAPTER {chapterNum} · {relativeTime ? relativeTime : formatDate(post.published, locale)}
+                                  CHAPTER {chapterNum}
                                 </div>
                                 <h3 className="blog-card-title">{post.title}</h3>
+                                <div style={{ fontSize: "0.52rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginTop: "0.15rem" }}>
+                                  {relativeTime ? relativeTime : formatDate(post.published, locale)}
+                                </div>
                               </div>
                               <p className="blog-card-excerpt">{excerpt}</p>
                             </div>
@@ -3455,19 +3461,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                             </div>
                           )}
 
-                          {/* SOLID OPAQUE DARK INPUT (NOT TRANSPARENT) */}
-                          <div style={{ background: "#18181A", border: "1px solid rgba(255, 255, 255, 0.25)", borderRadius: "10px", padding: "0.5rem 0.8rem" }}>
-                            <input
-                              type="text"
-                              value={senderName}
-                              onChange={(e) => setSenderName(e.target.value)}
-                              placeholder="Your name (optional)"
-                              maxLength={40}
-                              disabled={isSubmittingQA}
-                              style={{ color: "#FFFFFF", width: "100%", background: "transparent", border: "none", outline: "none", fontSize: "0.8rem", fontFamily: "var(--font-serif, Georgia, serif)" }}
-                            />
-                          </div>
-
                           {/* SOLID OPAQUE DARK TEXTAREA (NOT TRANSPARENT) */}
                           <div style={{ background: "#18181A", border: "1px solid rgba(255, 255, 255, 0.25)", borderRadius: "10px", padding: "0.6rem 0.8rem" }}>
                             <textarea
@@ -3475,13 +3468,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                               onChange={(e) => setQaContent(e.target.value)}
                               placeholder="Write your question..."
                               maxLength={300}
-                              rows={2}
+                              rows={3}
                               disabled={isSubmittingQA}
                               style={{ color: "#FFFFFF", width: "100%", background: "transparent", border: "none", outline: "none", resize: "none", fontSize: "0.8rem", lineHeight: 1.45, fontFamily: "var(--font-serif, Georgia, serif)" }}
                             />
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.3rem", paddingTop: "0.3rem", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
                               <span style={{ fontSize: "0.52rem", color: "rgba(255,255,255,0.5)" }}>
-                                🔒 Anonymous by default
+                                🔒 Anonymous
                               </span>
                               <span style={{ fontSize: "0.52rem", color: "rgba(255,255,255,0.5)" }}>
                                 {qaContent.length} / 300

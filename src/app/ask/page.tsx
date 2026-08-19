@@ -151,7 +151,7 @@ function FlippableQACard({ qa }: { qa: any }) {
               <span style={{ fontSize: "0.56rem", color: "rgba(255,255,255,0.4)" }}>
                 {new Date(qa.published || Date.now()).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
               </span>
-              <span style={{ fontSize: "0.56rem", color: "#60a5fa", fontWeight: 600 }}>
+              <span style={{ fontSize: "0.56rem", color: "rgba(255,255,255,0.85)", fontWeight: 600 }}>
                 Read Answer →
               </span>
             </div>
@@ -179,9 +179,9 @@ function FlippableQACard({ qa }: { qa: any }) {
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "0.5rem" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#3b82f6", boxShadow: "0 0 8px #3b82f6" }} />
+                <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "rgba(255,255,255,0.8)", boxShadow: "0 0 6px rgba(255,255,255,0.4)" }} />
                 <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.1em", color: "#FFFFFF", fontFamily: "var(--font-sans, -apple-system, sans-serif)" }}>
-                  IVAN AFFRIANDI
+                  IVAN
                 </span>
               </div>
               <span
@@ -671,18 +671,6 @@ export default function AskPage() {
             )}
 
             <div className="ask-input-box">
-              <input
-                type="text"
-                value={senderName}
-                onChange={(e) => setSenderName(e.target.value)}
-                placeholder="Your name (optional)"
-                maxLength={40}
-                disabled={isSubmitting}
-                className="ask-text-field"
-              />
-            </div>
-
-            <div className="ask-input-box">
               <textarea
                 value={qaContent}
                 onChange={(e) => setQaContent(e.target.value)}
@@ -695,7 +683,7 @@ export default function AskPage() {
               />
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.4rem", paddingTop: "0.35rem", borderTop: "1px solid rgba(255,255,255,0.12)" }}>
                 <span style={{ fontSize: "0.56rem", color: "rgba(255,255,255,0.55)", fontFamily: "var(--font-sans, -apple-system, sans-serif)" }}>
-                  Anonymous by default
+                  Anonymous
                 </span>
                 <span style={{ fontSize: "0.54rem", color: qaContent.length > 250 ? "#f87171" : "rgba(255,255,255,0.55)", fontWeight: qaContent.length > 250 ? 700 : 400 }}>
                   {qaContent.length} / 300
