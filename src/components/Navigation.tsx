@@ -141,8 +141,13 @@ export default function Navigation() {
     }
   }, []);
 
-  // Hide navigation on /work or on the actual main homepage (ivanaffriandi.com without blog subdomain)
-  if (pathname?.startsWith("/work") || isWorkDomain || (pathname === "/" && !isBlogDomain && typeof window !== "undefined" && !window.location.hostname.startsWith("blog."))) {
+  // Hide navigation ONLY on /work
+  if (pathname?.startsWith("/work") || isWorkDomain) {
+    return null;
+  }
+
+  // Hide on main domain homepage (ivanaffriandi.com at "/") only if NOT on blog subdomain
+  if (pathname === "/" && typeof window !== "undefined" && !window.location.hostname.startsWith("blog.") && !window.location.hostname.includes("blog.ivanaffriandi.com")) {
     return null;
   }
 
@@ -159,7 +164,7 @@ export default function Navigation() {
           left: 0;
           bottom: 0;
           width: 54px;
-          z-index: 500;
+          z-index: 9999;
           display: flex;
           flex-direction: column;
           align-items: center;

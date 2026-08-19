@@ -3,7 +3,7 @@ import DailyJournalFeed from "@/components/DailyJournalFeed";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Journal & Essays · Ivan Affriandi",
+  title: "Ivan's Journal",
   description: "Quiet thoughts, essays on software craft, typography, sartorial tailoring, and life.",
 };
 
