@@ -455,6 +455,8 @@ export default function MailApp() {
           onOpenSubscriptions={() => setIsSubscriptionsOpen(true)}
           userEmail={userEmail}
           onSignOut={handleSignOut}
+          selectedMessage={selectedMessageDetail}
+          onReplyCurrentMessage={handleReply}
         />
       </div>
 
@@ -486,6 +488,11 @@ export default function MailApp() {
               }}
               userEmail={userEmail}
               onSignOut={handleSignOut}
+              selectedMessage={selectedMessageDetail}
+              onReplyCurrentMessage={() => {
+                handleReply();
+                setIsMobileSidebarOpen(false);
+              }}
             />
           </div>
         </div>

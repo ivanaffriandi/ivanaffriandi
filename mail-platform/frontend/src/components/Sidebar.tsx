@@ -5,9 +5,9 @@ import {
   Inbox, Send, FileText, Archive, AlertOctagon, Trash2, Camera,
   Calendar as CalendarIcon, Plus, ChevronLeft, ChevronRight, Check,
   Clock, X, Feather, ChevronDown, ChevronUp, Repeat, GripVertical, LogOut,
-  Newspaper
+  Newspaper, Reply, Edit3
 } from 'lucide-react';
-import { Folder, AgendaItem } from '@/types/mail';
+import { Folder, AgendaItem, Message } from '@/types/mail';
 import { fetchAgendas, saveAgenda, toggleAgendaApi, deleteAgendaApi } from '@/lib/api';
 
 interface SidebarProps {
@@ -18,6 +18,8 @@ interface SidebarProps {
   onOpenSubscriptions?: () => void;
   userEmail: string;
   onSignOut?: () => void;
+  selectedMessage?: Message | null;
+  onReplyCurrentMessage?: () => void;
 }
 
 export const formatLocalDateKey = (d: Date): string => {
@@ -43,9 +45,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenSubscriptions,
   userEmail,
   onSignOut,
+  selectedMessage,
+  onReplyCurrentMessage,
 }) => {
   const [salutation, setSalutation] = useState('Good morning,');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [showWriteMenu, setShowWriteMenu] = useState(false);
 
   // Folder ordering
   const [folderOrder, setFolderOrder] = useState<string[]>(DEFAULT_FOLDER_ORDER);
@@ -608,11 +613,54 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      {/* 4. Compose / Write Action Pillbar Button */}
-      <div className="shrink-0 pt-1">
+      {/* 4. Compose / Write Action Pillbar Button with Contextual Reply Popover */}
+      <div className="relative shrink-0 pt-1">
+        {showWriteMenu && selectedMessage && (
+          <>
+            <div className="fixed inset-0 z-30" onClick={() => setShowWriteMenu(false)} />
+            <div className="absolute bottom-full left-0 right-0 mb-2 p-1.5 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl shadow-xl z-40 flex flex-col gap-1 animate-scale-up font-sans">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowWriteMenu(false);
+                  onReplyCurrentMessage?.();
+                }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-[var(--text-primary)] hover:bg-blue-500/10 hover:text-blue-600 apple-transition text-left cursor-pointer"
+              >
+                <Reply className="w-4 h-4 text-blue-500 shrink-0" />
+                <div className="flex flex-col min-w-0 flex-1">
+                  <span className="truncate text-xs font-bold">Reply to {selectedMessage.sender_name || selectedMessage.sender_address.split('@')[0]}</span>
+                  <span className="text-[10px] text-[var(--text-muted)] truncate font-normal">Re: {selectedMessage.subject || '(No Subject)'}</span>
+                </div>
+              </button>
+
+              <div className="h-px bg-[var(--border-subtle)] my-0.5" />
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowWriteMenu(false);
+                  onOpenCompose();
+                }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] apple-transition text-left cursor-pointer"
+              >
+                <Edit3 className="w-4 h-4 text-[var(--text-muted)] shrink-0" />
+                <span className="text-xs font-bold">New Message</span>
+              </button>
+            </div>
+          </>
+        )}
+
         <button
-          onClick={() => onOpenCompose()}
-          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-xs shadow-md hover:shadow-lg apple-transition apple-active-scale"
+          type="button"
+          onClick={() => {
+            if (selectedMessage) {
+              setShowWriteMenu((prev) => !prev);
+            } else {
+              onOpenCompose();
+            }
+          }}
+          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-xs shadow-md hover:shadow-lg apple-transition apple-active-scale cursor-pointer"
         >
           <Feather className="w-4 h-4 stroke-[2.2]" />
           <span>Write</span>
