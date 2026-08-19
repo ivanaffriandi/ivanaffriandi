@@ -15,6 +15,7 @@ interface SidebarProps {
   activeFolderId: string;
   onSelectFolder: (id: string) => void;
   onOpenCompose: (toEmail?: string) => void;
+  onOpenSubscriptions?: () => void;
   userEmail: string;
   onSignOut?: () => void;
 }
@@ -359,28 +360,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
           })}
 
           {/* Subscriptions / Newsletters Section Item */}
-          <div className="pt-1 mt-1 border-t border-[var(--card-border)]/60">
+          <div className="pt-1.5 mt-1 border-t border-[var(--border-subtle)]">
             <button
-              onClick={() => onSelectFolder('subscriptions')}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-2xl text-xs font-semibold transition-all duration-200 ease-out apple-active-scale cursor-pointer ${
-                activeFolderId === 'subscriptions'
-                  ? 'bg-blue-600 text-white font-bold shadow-md scale-100'
-                  : 'text-[var(--text-secondary)] hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)] border border-transparent'
-              }`}
+              onClick={() => onOpenSubscriptions?.()}
+              className="w-full flex items-center justify-between px-3 py-2 rounded-2xl text-xs font-semibold text-[var(--text-secondary)] hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)] border border-transparent transition-all duration-200 ease-out apple-active-scale cursor-pointer"
             >
               <div className="flex items-center gap-2.5">
-                <span className={activeFolderId === 'subscriptions' ? 'text-white' : 'text-[var(--text-muted)]'}>
+                <span className="text-[var(--text-muted)]">
                   <Newspaper className="w-4 h-4 stroke-[1.8]" />
                 </span>
                 <span>Subscriptions</span>
               </div>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors duration-200 ${
-                activeFolderId === 'subscriptions'
-                  ? 'bg-white/20 text-white font-extrabold'
-                  : 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
-              }`}>
-                Hub
-              </span>
             </button>
           </div>
         </nav>

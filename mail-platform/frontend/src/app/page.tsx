@@ -9,7 +9,7 @@ import { MessageView } from '@/components/MessageView';
 import { ComposerModal } from '@/components/ComposerModal';
 import { Toast, ToastMessage } from '@/components/Toast';
 import { ImportContactsModal } from '@/components/ImportContactsModal';
-import { SubscriptionsView } from '@/components/SubscriptionsView';
+import { SubscriptionsModal } from '@/components/SubscriptionsModal';
 import { sound } from '@/lib/sound';
 import { Folder, MessageSummary, MessageDetail } from '@/types/mail';
 import {
@@ -55,6 +55,7 @@ export default function MailApp() {
   const [selectedMessageDetail, setSelectedMessageDetail] = useState<MessageDetail | null>(null);
 
   const [isComposeOpen, setIsComposeOpen] = useState(false);
+  const [isSubscriptionsOpen, setIsSubscriptionsOpen] = useState(false);
   const [composeContext, setComposeContext] = useState<{ to?: string; subject?: string; body?: string; in_reply_to?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
@@ -451,6 +452,7 @@ export default function MailApp() {
             setComposeContext(toEmail ? { to: toEmail } : {});
             setIsComposeOpen(true);
           }}
+          onOpenSubscriptions={() => setIsSubscriptionsOpen(true)}
           userEmail={userEmail}
           onSignOut={handleSignOut}
         />
@@ -478,6 +480,10 @@ export default function MailApp() {
                 setIsComposeOpen(true);
                 setIsMobileSidebarOpen(false);
               }}
+              onOpenSubscriptions={() => {
+                setIsSubscriptionsOpen(true);
+                setIsMobileSidebarOpen(false);
+              }}
               userEmail={userEmail}
               onSignOut={handleSignOut}
             />
@@ -488,8 +494,8 @@ export default function MailApp() {
       {/* Main Workspace */}
       <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
         <Header
-          activeFolderName={activeFolderId === 'subscriptions' ? 'Subscriptions & Newsletters' : (folders.find((f) => f.id === activeFolderId)?.name ?? 'Inbox')}
-          totalMessagesCount={activeFolderId === 'subscriptions' ? 0 : displayMessages.length}
+          activeFolderName={folders.find((f) => f.id === activeFolderId)?.name ?? 'Inbox'}
+          totalMessagesCount={displayMessages.length}
           messages={messages}
           selectedMessage={selectedMessageDetail}
           onBack={() => setSelectedMessageId(null)}
@@ -517,66 +523,48 @@ export default function MailApp() {
           </div>
         )}
 
-        {/* Mail Split Pane (Responsive) / Subscriptions View */}
+        {/* Mail Split Pane (Responsive) */}
         <main className="flex-1 flex min-h-0 overflow-hidden gap-0 md:gap-3 pt-0 md:pt-1.5">
-          {activeFolderId === 'subscriptions' ? (
-            <SubscriptionsView
-              messages={messages}
-              onFilterSender={(senderEmail) => {
-                const inbox = folders.find((f) => f.type === 'inbox') ?? folders[0];
-                if (inbox) {
-                  setActiveFolderId(inbox.id);
-                  loadMessages(inbox.id);
-                }
-                setSearchQuery(senderEmail);
-              }}
+          {/* Message List */}
+          <div className={`relative h-full ${selectedMessageId ? 'hidden md:block md:w-[320px] lg:w-[380px] shrink-0' : 'w-full md:w-[320px] lg:w-[380px] shrink-0'}`}>
+            {isLoading && (
+              <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
+                <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
+            <MessageList
+              messages={displayMessages}
+              selectedMessageId={selectedMessageId}
+              onSelectMessage={setSelectedMessageId}
+              onToggleStar={(id) => handleToggleStar(id)}
               onRefresh={handleRefresh}
-              onToast={(type, text) => addToast(type, text)}
+              onBatchAction={handleBatchAction}
             />
-          ) : (
-            <>
-              {/* Message List */}
-              <div className={`relative h-full ${selectedMessageId ? 'hidden md:block md:w-[320px] lg:w-[380px] shrink-0' : 'w-full md:w-[320px] lg:w-[380px] shrink-0'}`}>
-                {isLoading && (
-                  <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
-                    <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                  </div>
-                )}
-                <MessageList
-                  messages={displayMessages}
-                  selectedMessageId={selectedMessageId}
-                  onSelectMessage={setSelectedMessageId}
-                  onToggleStar={(id) => handleToggleStar(id)}
-                  onRefresh={handleRefresh}
-                  onBatchAction={handleBatchAction}
-                />
-              </div>
+          </div>
 
-              {/* Message View */}
-              <div className={`flex-1 min-w-0 relative h-full ${selectedMessageId ? 'block' : 'hidden md:block'}`}>
-                {isLoadingDetail && selectedMessageId && (
-                  <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
-                    <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                  </div>
-                )}
-                <MessageView
-                  message={selectedMessageDetail}
-                  onReply={handleReply}
-                  onForward={handleForward}
-                  onArchive={() => selectedMessageId && handleArchive(selectedMessageId)}
-                  onDelete={() => selectedMessageId && handleDelete(selectedMessageId)}
-                  onToggleStar={() => selectedMessageId && handleToggleStar(selectedMessageId)}
-                  onMarkUnread={handleMarkUnread}
-                  onBack={() => setSelectedMessageId(null)}
-                  onReplySuccess={(info) => {
-                    sound.playSend();
-                    addToast('success', `✓ Reply dispatched to ${info.to}`);
-                    loadFolders();
-                  }}
-                />
+          {/* Message View */}
+          <div className={`flex-1 min-w-0 relative h-full ${selectedMessageId ? 'block' : 'hidden md:block'}`}>
+            {isLoadingDetail && selectedMessageId && (
+              <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
+                <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
               </div>
-            </>
-          )}
+            )}
+            <MessageView
+              message={selectedMessageDetail}
+              onReply={handleReply}
+              onForward={handleForward}
+              onArchive={() => selectedMessageId && handleArchive(selectedMessageId)}
+              onDelete={() => selectedMessageId && handleDelete(selectedMessageId)}
+              onToggleStar={() => selectedMessageId && handleToggleStar(selectedMessageId)}
+              onMarkUnread={handleMarkUnread}
+              onBack={() => setSelectedMessageId(null)}
+              onReplySuccess={(info) => {
+                sound.playSend();
+                addToast('success', `✓ Reply dispatched to ${info.to}`);
+                loadFolders();
+              }}
+            />
+          </div>
         </main>
       </div>
 
@@ -594,6 +582,15 @@ export default function MailApp() {
         isOpen={showImportModal}
         onClose={() => setShowImportModal(false)}
         onImportSuccess={handleImportSuccess}
+      />
+
+      {/* Subscriptions Popup Modal */}
+      <SubscriptionsModal
+        isOpen={isSubscriptionsOpen}
+        onClose={() => setIsSubscriptionsOpen(false)}
+        messages={messages}
+        onFilterSender={(senderEmail) => setSearchQuery(senderEmail)}
+        onToast={(type, text) => addToast(type, text)}
       />
     </div>
   );
