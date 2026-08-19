@@ -251,8 +251,8 @@ export default function Navigation() {
 
         <div className="desktop-nav-links">
           {/* 1. Blog / Journal Link (Feather Pen / Quill Icon in Crisp Pure White) */}
-          <a
-            href="https://blog.ivanaffriandi.com"
+          <Link
+            href="/blog"
             className={`nav-side-icon${pathname.startsWith("/blog") ? " active" : ""}`}
             title="Blog & Journal"
           >
@@ -261,7 +261,7 @@ export default function Navigation() {
               <line x1="16" y1="8" x2="2" y2="22" />
               <line x1="17.5" x2="15" y1="15" y2="17.5" />
             </svg>
-          </a>
+          </Link>
 
           {/* 2. Ask Q&A Link */}
           <Link
@@ -451,8 +451,8 @@ export default function Navigation() {
 
             {/* Navigation Links: ONLY Blog & Ask */}
             <div style={{ display: "flex", flexDirection: "column", gap: "1.8rem", margin: "auto 0", width: "100%", alignItems: "center" }}>
-              <a
-                href="https://blog.ivanaffriandi.com"
+              <Link
+                href="/blog"
                 onClick={() => setIsMenuOpen(false)}
                 style={{
                   fontSize: "2.4rem",
@@ -465,7 +465,7 @@ export default function Navigation() {
                 }}
               >
                 Blog
-              </a>
+              </Link>
               <Link
                 href="/ask"
                 onClick={() => setIsMenuOpen(false)}

@@ -9,49 +9,32 @@ export function middleware(request: NextRequest) {
   const isBlogSubdomain = hostname.startsWith('blog.') || hostname.includes('blog.ivanaffriandi.com');
   const isWorkSubdomain = hostname.startsWith('work.') || hostname.includes('work.ivanaffriandi.com');
 
-  // 1. If visiting on blog subdomain
+  // 1. If visiting on blog subdomain (e.g. blog.ivanaffriandi.com)
   if (isBlogSubdomain) {
-    // If someone visits blog.ivanaffriandi.com/blog/xxx, strip "/blog" from URL
+    // If URL contains /blog, strip it to keep URL purely blog.ivanaffriandi.com/...
     if (pathname.startsWith('/blog')) {
       const cleanPath = pathname.replace(/^\/blog/, '') || '/';
       return NextResponse.redirect(new URL(cleanPath + search, request.url), 308);
     }
-    // Rewrite all paths under blog subdomain to internal /blog routes
+    // Rewrite all paths under blog subdomain to internal /blog page
     if (!pathname.startsWith('/api') && !pathname.startsWith('/_next')) {
       return NextResponse.rewrite(new URL(`/blog${pathname === '/' ? '' : pathname}`, request.url));
     }
     return NextResponse.next();
   }
 
-  // 2. If visiting on work subdomain
+  // 2. If visiting on work subdomain (e.g. work.ivanaffriandi.com)
   if (isWorkSubdomain) {
-    // If someone visits work.ivanaffriandi.com/work/xxx, strip "/work" from URL
+    // If URL contains /work, strip it to keep URL purely work.ivanaffriandi.com/...
     if (pathname.startsWith('/work')) {
       const cleanPath = pathname.replace(/^\/work/, '') || '/';
       return NextResponse.redirect(new URL(cleanPath + search, request.url), 308);
     }
-    // Rewrite all paths under work subdomain to internal /work routes
+    // Rewrite all paths under work subdomain to internal /work page
     if (!pathname.startsWith('/api') && !pathname.startsWith('/_next')) {
       return NextResponse.rewrite(new URL(`/work${pathname === '/' ? '' : pathname}`, request.url));
     }
     return NextResponse.next();
-  }
-
-  // 3. If visiting on main domain (ivanaffriandi.com) and accessing /blog or /work directly in URL, redirect to subdomains
-  if (!isBlogSubdomain && !isWorkSubdomain) {
-    if (pathname.startsWith('/blog')) {
-      const targetPath = pathname.replace(/^\/blog/, '') || '';
-      const domain = hostname.includes('localhost') ? `blog.localhost:3000` : `blog.ivanaffriandi.com`;
-      const protocol = request.nextUrl.protocol || 'https:';
-      return NextResponse.redirect(`${protocol}//${domain}${targetPath}${search}`, 308);
-    }
-
-    if (pathname.startsWith('/work')) {
-      const targetPath = pathname.replace(/^\/work/, '') || '';
-      const domain = hostname.includes('localhost') ? `work.localhost:3000` : `work.ivanaffriandi.com`;
-      const protocol = request.nextUrl.protocol || 'https:';
-      return NextResponse.redirect(`${protocol}//${domain}${targetPath}${search}`, 308);
-    }
   }
 
   return NextResponse.next();

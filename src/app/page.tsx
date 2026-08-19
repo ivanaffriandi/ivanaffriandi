@@ -42,11 +42,11 @@ interface MomentPhoto {
 }
 
 const ROLES_LIST = [
-  { label: "UI/UX DESIGNER", href: "https://work.ivanaffriandi.com" },
-  { label: "SOFTWARE ENGINEER", href: "https://work.ivanaffriandi.com" },
+  { label: "UI/UX DESIGNER", href: "/work" },
+  { label: "SOFTWARE ENGINEER", href: "/work" },
   { label: "FOUNDER · SHŪ / EN STUDIO", href: "https://shuenstudio.com", external: true },
-  { label: "PRODUCT DESIGNER · KVR", href: "https://work.ivanaffriandi.com" },
-  { label: "WRITER", href: "https://blog.ivanaffriandi.com" },
+  { label: "PRODUCT DESIGNER · KVR", href: "/work" },
+  { label: "WRITER", href: "/blog" },
 ];
 
 export default function AvantGardeHomepage() {
@@ -174,8 +174,8 @@ export default function AvantGardeHomepage() {
       >
         {/* TOP LEFT: WORK · BLOG (Accessible everywhere via Next.js Link) */}
         <nav style={{ display: "flex", alignItems: "center", gap: isMobile ? "8px" : "12px" }}>
-          <a
-            href="https://work.ivanaffriandi.com"
+          <Link
+            href="/work"
             style={{
               fontSize: isMobile ? "11px" : "11px",
               fontWeight: 700,
@@ -190,10 +190,10 @@ export default function AvantGardeHomepage() {
             onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
           >
             WORK
-          </a>
+          </Link>
           <span style={{ fontSize: "11px", color: textMuted, lineHeight: 1 }}>·</span>
-          <a
-            href="https://blog.ivanaffriandi.com"
+          <Link
+            href="/blog"
             style={{
               fontSize: isMobile ? "11px" : "11px",
               fontWeight: 700,
@@ -208,7 +208,7 @@ export default function AvantGardeHomepage() {
             onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
           >
             BLOG
-          </a>
+          </Link>
         </nav>
 
         {/* TOP CENTER: 1-Line Simple Title (Desktop Only) */}
