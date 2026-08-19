@@ -341,8 +341,8 @@ export const MessageView: React.FC<MessageViewProps> = ({
             </div>
           )}
 
-          {/* Email Message Content Body - Flowing in Adaptive / Paper Container */}
-          <div className="mail-paper-canvas">
+          {/* Email Message Content Body - Adaptive Dark / Light Mode */}
+          <div className="mail-content-adaptive">
             {message.body_html ? (
               <div
                 className="max-w-none font-sans leading-[1.75] mail-content-body text-[14px] antialiased tracking-[0.01em]"
