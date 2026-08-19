@@ -176,19 +176,28 @@ export default function WorkIvanPortfolioPage() {
               style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
             >
               {activeTab === 'about' ? (
-                <div className={styles.heroTitleRowWithPhoto}>
+                <h1
+                  className={styles.mainTitleHeading}
+                  style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'nowrap' }}
+                >
                   <img
                     src="/ivan-head.png"
                     alt="Affriandi, Ivan"
-                    width={48}
-                    height={48}
-                    style={{ width: '48px', height: '48px', objectFit: 'contain', display: 'block', flexShrink: 0 }}
-                    className={styles.heroInlineHeadPhoto}
+                    width={40}
+                    height={40}
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      objectFit: 'contain',
+                      display: 'inline-block',
+                      flexShrink: 0,
+                      borderRadius: 0,
+                      border: 'none',
+                      background: 'transparent',
+                    }}
                   />
-                  <h1 className={styles.mainTitleHeading}>
-                    {current.headline}
-                  </h1>
-                </div>
+                  <span>Affriandi, Ivan</span>
+                </h1>
               ) : (
                 <h1 className={styles.mainTitleHeading}>
                   {current.headline}
@@ -226,7 +235,7 @@ export default function WorkIvanPortfolioPage() {
 
         {/* ── ROW 4: DYNAMIC TAB VIEW CONTENTS ── */}
 
-        {/* 1. MASTER ABOUT TAB: EDITORIAL STUDIO ARCHIVE */}
+        {/* 1. MASTER ABOUT TAB: FULL EDITORIAL STUDIO ARCHIVE (ZERO EMOJIS) */}
         {activeTab === 'about' && (
           <div className={styles.fullWidthTabBlock}>
             {/* SECTION 01: WHO I AM PROSE */}
@@ -330,7 +339,7 @@ export default function WorkIvanPortfolioPage() {
               </div>
             </div>
 
-            {/* SECTION 03: THE OTHER 50% (HOBBIES & HANDS) */}
+            {/* SECTION 03: THE OTHER 50% (HOBBIES & HANDS - ZERO EMOJIS) */}
             <div className={styles.aboutSectionHeader}>
               <span className={styles.aboutSectionNumber}>03 · THE OTHER 50%</span>
               <h3 className={styles.aboutSectionTitle}>Observation &amp; Tactile Making</h3>
@@ -338,42 +347,42 @@ export default function WorkIvanPortfolioPage() {
 
             <div className={styles.aboutHobbiesGrid}>
               <div className={styles.aboutHobbyCard}>
-                <h4 className={styles.aboutHobbyTitle}>🍄 Mushrooms &amp; Mycology</h4>
+                <h4 className={styles.aboutHobbyTitle}>01 · Mushrooms &amp; Mycology</h4>
                 <p className={styles.aboutHobbyText}>
                   Finding wild fungi, photographing them in the wild, reading field guides, taking notes, and slowly building an understanding of how they grow.
                 </p>
               </div>
 
               <div className={styles.aboutHobbyCard}>
-                <h4 className={styles.aboutHobbyTitle}>🧵 Crochet &amp; Embroidery</h4>
+                <h4 className={styles.aboutHobbyTitle}>02 · Crochet &amp; Embroidery</h4>
                 <p className={styles.aboutHobbyText}>
                   Fiber work, thread tension, and tactile patience. The satisfaction of making physical everyday objects with needles and yarn.
                 </p>
               </div>
 
               <div className={styles.aboutHobbyCard}>
-                <h4 className={styles.aboutHobbyTitle}>🍵 Tea &amp; Quiet Mornings</h4>
+                <h4 className={styles.aboutHobbyTitle}>03 · Tea &amp; Quiet Mornings</h4>
                 <p className={styles.aboutHobbyText}>
                   Hot green tea, quiet studio desks before the world wakes up, and sitting with difficult scientific questions until they finally make sense.
                 </p>
               </div>
 
               <div className={styles.aboutHobbyCard}>
-                <h4 className={styles.aboutHobbyTitle}>📚 Non-Fiction &amp; Kindle</h4>
+                <h4 className={styles.aboutHobbyTitle}>04 · Non-Fiction &amp; Kindle</h4>
                 <p className={styles.aboutHobbyText}>
                   Collecting questions over answers. Books on intellectual history, religion, philosophy, society, physics, and human knowledge systems.
                 </p>
               </div>
 
               <div className={styles.aboutHobbyCard}>
-                <h4 className={styles.aboutHobbyTitle}>🏛️ Museums &amp; Galleries</h4>
+                <h4 className={styles.aboutHobbyTitle}>05 · Museums &amp; Galleries</h4>
                 <p className={styles.aboutHobbyText}>
                   Wandering quiet historical archives, art museums, and observing how different eras constructed tools, typography, and visual culture.
                 </p>
               </div>
 
               <div className={styles.aboutHobbyCard}>
-                <h4 className={styles.aboutHobbyTitle}>🪴 Plants &amp; Gardening</h4>
+                <h4 className={styles.aboutHobbyTitle}>06 · Plants &amp; Gardening</h4>
                 <p className={styles.aboutHobbyText}>
                   Watching soil, foliage, and cuttings grow slowly on the studio terrace in Tangerang without any rush.
                 </p>
