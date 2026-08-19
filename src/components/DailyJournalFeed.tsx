@@ -835,14 +835,25 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           overflow-y: auto;
           overflow-x: hidden;
           box-sizing: border-box;
-          padding: 2.5rem max(3.2vw, 1.75rem) 3rem;
+          padding: 2.2rem max(3.2vw, 1.75rem) 2rem;
           display: flex;
           flex-direction: column;
-          gap: 1.25rem;
+          gap: 1rem;
           -webkit-overflow-scrolling: touch;
           scroll-behavior: smooth;
           background: var(--bg-color, #FFFFFF);
           color: var(--text-primary, #111111);
+        }
+
+        .pj-right.fit-screen {
+          overflow-y: hidden;
+          justify-content: flex-start;
+        }
+
+        @media (max-width: 860px) {
+          .pj-right.fit-screen {
+            overflow-y: auto;
+          }
         }
 
         /* EDITORIAL THEME OVERRIDES FOR HOMEPAGE RIGHT FEED */
@@ -1450,39 +1461,51 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           border: 1px solid rgba(0, 0, 0, 0.06) !important;
         }
 
-        /* CHAPTERS LIST LAYOUT */
+        /* ── HORIZONTAL CHAPTERS CAROUSEL LAYOUT ── */
         .blog-grid-layout {
           display: flex;
-          flex-direction: column;
+          flex-direction: row;
+          align-items: stretch;
+          gap: 0.95rem;
           width: 100%;
-          padding: 0.2rem 0 1rem 0;
+          overflow-x: auto;
+          overflow-y: hidden;
+          scroll-snap-type: x mandatory;
+          scroll-behavior: smooth;
+          padding: 0.2rem 0 0.6rem 0;
+          box-sizing: border-box;
+          scrollbar-width: none !important;
+        }
+        .blog-grid-layout::-webkit-scrollbar { display: none !important; }
+
+        .blog-grid-card {
+          display: flex;
+          flex-direction: column;
+          gap: 0.55rem;
+          flex-shrink: 0;
+          width: 250px;
+          scroll-snap-align: start;
+          cursor: pointer;
+          border-radius: 8px;
+          padding: 0.65rem;
+          border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
+          background: var(--card-bg-1, #FFFFFF);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+          transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
           box-sizing: border-box;
         }
 
-        .blog-grid-card {
-          display: grid;
-          grid-template-columns: 130px 1fr;
-          gap: 1.1rem;
-          align-items: flex-start;
-          cursor: pointer;
-          padding: 1rem 0;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.07);
-          transition: opacity 0.2s ease;
-        }
-
-        .blog-grid-card:first-child {
-          border-top: 1px solid rgba(0, 0, 0, 0.07);
-        }
-
         .blog-grid-card:hover {
-          opacity: 0.7;
+          transform: translateY(-2px);
+          border-color: var(--border-strong, rgba(0, 0, 0, 0.22));
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
         }
 
         .blog-card-thumb-wrap {
-          width: 130px;
-          height: 88px;
+          width: 100%;
+          height: 120px;
           flex-shrink: 0;
-          border-radius: 5px;
+          border-radius: 6px;
           overflow: hidden;
           background: #111111;
           border: none !important;
@@ -1508,25 +1531,39 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
         .blog-card-date {
           font-size: 0.6rem;
-          font-weight: 600;
-          letter-spacing: 0.06em;
+          font-weight: 700;
+          letter-spacing: 0.08em;
           text-transform: uppercase;
           color: var(--text-muted, #888888);
         }
 
         .blog-card-title {
-          font-size: 0.92rem;
-          font-weight: 600;
-          line-height: 1.3;
+          font-size: 0.88rem;
+          font-weight: 700;
+          line-height: 1.35;
           letter-spacing: -0.015em;
           color: var(--text-primary, #111111);
-          margin: 0 0 0.25rem 0;
-          word-break: break-word;
+          margin: 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
           transition: opacity 0.2s ease;
         }
 
         .blog-grid-card:hover .blog-card-title {
-          opacity: 0.65;
+          opacity: 0.75;
+        }
+
+        .blog-card-excerpt {
+          font-size: 0.75rem;
+          line-height: 1.45;
+          color: var(--text-secondary, #666666);
+          margin: 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
 
         .blog-card-excerpt {
@@ -2523,7 +2560,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         )}
 
         {/* Desktop pj-right (hidden on mobile via CSS) */}
-        <div className="pj-right">
+        <div className={`pj-right${!selectedPost ? " fit-screen" : ""}`}>
           <div className="pj-journal-feed-wrap">
             {/* Simple Page Header with IG, Email, Search & About button (ONLY visible in Overview mode) */}
             {!selectedPost && (
@@ -2576,7 +2613,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               </div>
             )}
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", flex: 1 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", flex: 1, minHeight: 0 }}>
               {selectedPost ? (
                 /* ── PURE ARTICLE CONTENT READER (LEFT ACTS AS COVER HEADER) ── */
                 <motion.div
@@ -2708,91 +2745,143 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   </div>
                 </motion.div>
               ) : (
-                /* ── REGULAR OVERVIEW JOURNAL VIEW ── */
+                /* ── REGULAR OVERVIEW JOURNAL VIEW (FITS SCREEN WITHOUT VERTICAL OVERFLOW) ── */
                 <>
-                  {/* ── PROLOGUE WITH 2-COLUMN LAYOUT & iMESSAGE BUBBLES ── */}
-                  <div className="novel-intro-wrap" style={{ marginTop: "0.25rem" }}>
-                    <div className="section-label-header">
+                  {/* ── PROLOGUE WITH COMPACT 2-COLUMN LAYOUT & iMESSAGE BUBBLES ── */}
+                  <div className="novel-intro-wrap" style={{ margin: "0.15rem 0" }}>
+                    <div className="section-label-header" style={{ marginBottom: "0.4rem" }}>
                       <span>PROLOGUE</span>
                     </div>
 
-                    <div className="novel-intro-2col">
+                    <div className="novel-intro-2col" style={{ gap: "1.25rem" }}>
                       {/* LEFT COLUMN: ATMOSPHERIC NARRATIVE */}
-                      <div style={{ display: "flex", flexDirection: "column", gap: "0.95rem" }}>
-                        <p className="novel-intro-paragraph novel-drop-cap">
-                          Somewhere past midnight, with the city going quiet outside and a cup of tea slowly going cold beside the keyboard, things tend to get clearer. The kind of clarity that only shows up when the noise settles and you&apos;re left alone with whatever&apos;s been sitting at the back of your mind.
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
+                        <p className="novel-intro-paragraph novel-drop-cap" style={{ fontSize: "0.86rem", lineHeight: 1.62, margin: 0 }}>
+                          Somewhere past midnight, with the city going quiet outside and a cup of tea slowly going cold beside the keyboard, things tend to get clearer. The kind of clarity that only shows up when the noise settles.
                         </p>
-                        <p className="novel-intro-paragraph">
-                          I&apos;ve spent a lot of time moving between things—building, making, reading, photographing, writing—and somewhere along the way I stopped treating that as a contradiction. The same mind that wants to understand how light refracts also wants to know why certain sentences land the way they do. Both feel like the same question, just wearing different clothes.
+                        <p className="novel-intro-paragraph" style={{ fontSize: "0.84rem", lineHeight: 1.62, margin: 0 }}>
+                          I&apos;ve spent a lot of time moving between things—building, making, photographing, writing—and somewhere along the way I stopped treating that as a contradiction. Both feel like the same question, just wearing different clothes.
                         </p>
                       </div>
 
-                      {/* RIGHT COLUMN: PARAGRAPH 3 & 2 B&W iOS iMESSAGE BUBBLES */}
-                      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                        <p className="novel-intro-paragraph">
-                          This place is where those things get to breathe. Not a portfolio, not quite a diary. Somewhere in between—a slow, honest record of what I&apos;m paying attention to, and why.
-                        </p>
-
-                        <div className="imessage-chat-wrap" style={{ margin: 0 }}>
+                      {/* RIGHT COLUMN: CHAT BUBBLE & SIGN OFF */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                        <div className="imessage-chat-wrap" style={{ margin: 0, gap: "0.45rem" }}>
                           {/* Incoming Friend Message */}
                           <div className="imessage-row-incoming">
-                            <span className="imessage-sender-tag" style={{ marginLeft: "0.6rem" }}>
+                            <span className="imessage-sender-tag" style={{ marginLeft: "0.5rem", fontSize: "0.52rem" }}>
                               FRIEND
                             </span>
-                            <div className="imessage-bubble-incoming">
+                            <div className="imessage-bubble-incoming" style={{ padding: "0.5rem 0.85rem", fontSize: "0.78rem", lineHeight: 1.4 }}>
                               &ldquo;Wait, so what is this exactly? A blog? A portfolio? I can&apos;t tell.&rdquo;
                             </div>
                           </div>
 
                           {/* Outgoing Ivan Message */}
                           <div className="imessage-row-outgoing">
-                            <span className="imessage-sender-tag" style={{ marginRight: "0.6rem" }}>
+                            <span className="imessage-sender-tag" style={{ marginRight: "0.5rem", fontSize: "0.52rem" }}>
                               IVAN
                             </span>
-                            <div className="imessage-bubble-outgoing">
-                              &ldquo;Neither, really. Think of it as a running tab — things I notice, things I make, things I can&apos;t stop thinking about. Some of it matters a lot. Some of it is just a mushroom I found interesting.&rdquo;
+                            <div className="imessage-bubble-outgoing" style={{ padding: "0.5rem 0.85rem", fontSize: "0.78rem", lineHeight: 1.4 }}>
+                              &ldquo;Neither, really. Think of it as a running tab — things I notice, things I make, things I can&apos;t stop thinking about.&rdquo;
                             </div>
                           </div>
                         </div>
 
-                        <p className="novel-intro-paragraph" style={{ opacity: 0.72, fontSize: "0.82rem", fontStyle: "italic", borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))", paddingTop: "0.75rem", marginTop: "0.25rem" }}>
+                        <p className="novel-intro-paragraph" style={{ opacity: 0.72, fontSize: "0.76rem", fontStyle: "italic", borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))", paddingTop: "0.4rem", margin: 0 }}>
                           Pull up a chair. The tea&apos;s still warm, probably.
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  {/* 2. ELEGANT GRID LAYOUT FOR CHAPTERS WITH YEAR TABS */}
-                  <div className="blog-section-wrap">
+                  {/* ── HORIZONTAL CAROUSEL LAYOUT FOR CHAPTERS WITH YEAR TABS & ARROWS ── */}
+                  <div className="blog-section-wrap" style={{ marginTop: "0.25rem" }}>
                     <div className="blog-tabs-header">
                       <div className="section-label-header" style={{ marginBottom: 0 }}>
                         <span>CHAPTERS {searchQuery ? `(${filteredPosts.length})` : ""}</span>
                       </div>
 
-                      {/* YEAR FILTER TABS (YYYY) */}
-                      <div className="blog-tabs-list">
-                        {yearFilters.map((y) => (
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+                        {/* YEAR FILTER TABS (YYYY) */}
+                        <div className="blog-tabs-list">
+                          {yearFilters.map((y) => (
+                            <button
+                              key={y}
+                              className={`blog-tab-item${y === activeFilter ? " active" : ""}`}
+                              onClick={() => {
+                                setActiveFilter(y);
+                                if (blogRowRef.current) {
+                                  blogRowRef.current.scrollTo({ left: 0, behavior: "smooth" });
+                                }
+                              }}
+                            >
+                              {y}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* HORIZONTAL SCROLL ARROWS */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
                           <button
-                            key={y}
-                            className={`blog-tab-item${y === activeFilter ? " active" : ""}`}
                             onClick={() => {
-                              setActiveFilter(y);
                               if (blogRowRef.current) {
-                                blogRowRef.current.scrollTo({ left: 0, behavior: "smooth" });
+                                blogRowRef.current.scrollBy({ left: -260, behavior: "smooth" });
                               }
                             }}
+                            style={{
+                              width: "24px",
+                              height: "24px",
+                              borderRadius: "50%",
+                              border: "1px solid var(--border-subtle, rgba(0,0,0,0.12))",
+                              background: "transparent",
+                              color: "var(--text-primary)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              cursor: "pointer",
+                              padding: 0,
+                            }}
+                            title="Scroll Left"
                           >
-                            {y}
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <polyline points="15 18 9 12 15 6" />
+                            </svg>
                           </button>
-                        ))}
+                          <button
+                            onClick={() => {
+                              if (blogRowRef.current) {
+                                blogRowRef.current.scrollBy({ left: 260, behavior: "smooth" });
+                              }
+                            }}
+                            style={{
+                              width: "24px",
+                              height: "24px",
+                              borderRadius: "50%",
+                              border: "1px solid var(--border-subtle, rgba(0,0,0,0.12))",
+                              background: "transparent",
+                              color: "var(--text-primary)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              cursor: "pointer",
+                              padding: 0,
+                            }}
+                            title="Scroll Right"
+                          >
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
                     </div>
 
-                    {/* VERTICAL LIST LAYOUT — photo LEFT, text RIGHT, novel style */}
+                    {/* HORIZONTAL CAROUSEL ROW */}
                     <div className="blog-grid-layout" ref={blogRowRef}>
                       {filteredPosts.map((post) => {
                         const img = extractCoverImage(post.content);
-                        const excerpt = stripHtml(post.content).slice(0, 160) + "…";
+                        const excerpt = stripHtml(post.content).slice(0, 110) + "…";
                         const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
                         const relativeTime = getRelativeTimeString(post.published);
                         const chapterNum = String(sortedPosts.length - postIdx).padStart(2, "0");
@@ -2806,7 +2895,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                               window.scrollTo({ top: 0, behavior: "smooth" });
                             }}
                           >
-                            {/* LEFT: compact thumbnail */}
+                            {/* TOP: thumbnail */}
                             <div className="blog-card-thumb-wrap">
                               <div className="ig-b-w-container" style={{ width: "100%", height: "100%" }}>
                                 <img
@@ -2816,12 +2905,14 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                                 />
                               </div>
                             </div>
-                            {/* RIGHT: text info with novel-style excerpt */}
-                            <div style={{ display: "flex", flexDirection: "column", gap: "0.18rem", minWidth: 0 }}>
-                              <div className="blog-card-date">
-                                CHAPTER {chapterNum} · {relativeTime ? relativeTime : formatDate(post.published, locale)}
+                            {/* BOTTOM: text info */}
+                            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", minWidth: 0, flex: 1, justifyContent: "space-between" }}>
+                              <div>
+                                <div className="blog-card-date">
+                                  CHAPTER {chapterNum} · {relativeTime ? relativeTime : formatDate(post.published, locale)}
+                                </div>
+                                <h3 className="blog-card-title">{post.title}</h3>
                               </div>
-                              <h3 className="blog-card-title">{post.title}</h3>
                               <p className="blog-card-excerpt">{excerpt}</p>
                             </div>
                           </div>
