@@ -30,44 +30,44 @@ export default function WorkIvanPortfolioPage() {
 
   const tabHeaders = {
     overview: {
-      headline: "Hey, I'm Ivan. I design digital stuff and handcraft leather goods.",
+      headline: 'Design & Code',
       narrative:
-        "I love building snappy web apps, designing clean interfaces that feel great to use, and handcrafting leather journals in my Tangerang workshop. Simple, fast, and made with care.",
+        'I design clean digital interfaces, build fast web apps, and craft bespoke leather goods in Tangerang, Indonesia.',
       duration: '2025 — Present',
       client: 'Independent Studio',
-      artDirection: 'Code, Design & Leathercraft',
+      artDirection: 'Digital & Physical',
     },
     projects: {
-      headline: "Things I've Built & Shipped",
+      headline: 'Selected Works',
       narrative:
-        "A mix of live web apps, 3D interactive toys, private cloud servers, and physical leather products. Click on any card to explore them live.",
-      duration: 'Recent Works',
-      client: 'Personal Labs & Studio',
-      artDirection: 'Web Apps, 3D & Physical Goods',
+        'A collection of live web applications, 3D configurators, and handcrafted physical goods.',
+      duration: '2025 — 2026',
+      client: 'Recent Projects',
+      artDirection: 'Web & Atelier',
     },
     skills: {
-      headline: 'My Toolbox & Everyday Stack',
+      headline: 'Tools & Stack',
       narrative:
-        'The tech, frameworks, and studio tools I use to bring ideas to life — from Next.js on my screen to stitching chisels on my workshop bench.',
+        'The technologies, frameworks, and workshop tools I use daily to build products.',
       duration: 'Daily Stack',
-      client: 'Tech & Atelier',
-      artDirection: 'Full-Stack & Craft',
+      client: 'Engineering & Craft',
+      artDirection: 'Full Stack',
     },
     process: {
-      headline: 'How Ideas Become Real Things',
+      headline: 'How I Work',
       narrative:
-        'No boring meetings or corporate fluff. Just a straightforward 3-step way I brainstorm, code, polish, and ship products.',
-      duration: 'Quick & Iterative',
+        'A simple three-step approach to turning ideas into fast, finished products.',
+      duration: 'Workflow',
       client: 'Direct Collaboration',
-      artDirection: 'Idea → Code → Launch',
+      artDirection: 'Plan → Build → Ship',
     },
     archive: {
-      headline: "Let's Build Something Cool Together",
+      headline: 'Services & Log',
       narrative:
-        "Need a fresh website, a custom web app, or a bespoke leather journal? Here is what I can do for you, plus the full log of everything I've built.",
-      duration: 'Open for Projects',
-      client: 'Clients & Collectors',
-      artDirection: 'Services & Archive',
+        'Available services for hire and a complete chronological record of launched projects.',
+      duration: 'Open for Hire',
+      client: 'Clients & Studio',
+      artDirection: 'Full Archive',
     },
   };
 
@@ -75,39 +75,39 @@ export default function WorkIvanPortfolioPage() {
 
   // Pure Typography Stream Rows for Skills Marquee
   const row1 = [
-    { num: '01', title: 'Next.js 16 (Turbopack)' },
-    { num: '02', title: 'React 19 Server Components' },
-    { num: '03', title: 'TypeScript Strict Mode' },
-    { num: '04', title: 'App Router & Server Actions' },
-    { num: '05', title: 'Vanilla CSS Modules & Tailwind' },
-    { num: '06', title: 'Framer Motion Springs' },
+    { num: '01', title: 'Next.js 16' },
+    { num: '02', title: 'React 19' },
+    { num: '03', title: 'TypeScript' },
+    { num: '04', title: 'Tailwind CSS' },
+    { num: '05', title: 'Framer Motion' },
+    { num: '06', title: 'Figma Systems' },
   ];
 
   const row2 = [
-    { num: '07', title: 'Three.js 3D Engine' },
-    { num: '08', title: 'WebGL 2.0 Viewports' },
-    { num: '09', title: 'GLSL Procedural Shaders' },
-    { num: '10', title: 'Interactive 3D Configurator' },
-    { num: '11', title: 'Web Audio API Synthesis' },
-    { num: '12', title: 'Blender 3D Modeling' },
+    { num: '07', title: 'Three.js 3D' },
+    { num: '08', title: 'WebGL 2.0' },
+    { num: '09', title: 'GLSL Shaders' },
+    { num: '10', title: '3D Configurator' },
+    { num: '11', title: 'Web Audio API' },
+    { num: '12', title: 'Blender 3D' },
   ];
 
   const row3 = [
-    { num: '13', title: 'Oracle Cloud OCI Compute VM' },
-    { num: '14', title: 'AWS SES & Outbound Mail' },
-    { num: '15', title: 'Docker & Docker Compose' },
-    { num: '16', title: 'PostgreSQL & Prisma ORM' },
-    { num: '17', title: 'Redis Cache & Cloudflare SSL' },
-    { num: '18', title: 'Linux Ubuntu & systemd' },
+    { num: '13', title: 'Oracle Cloud VM' },
+    { num: '14', title: 'AWS SES Relay' },
+    { num: '15', title: 'Docker Compose' },
+    { num: '16', title: 'PostgreSQL' },
+    { num: '17', title: 'Redis Cache' },
+    { num: '18', title: 'Cloudflare SSL' },
   ];
 
   const row4 = [
-    { num: '19', title: 'Bespoke Leather Pattern Drafting' },
-    { num: '20', title: 'Italian Vegetable-Tanned Leather' },
-    { num: '21', title: 'Hand Saddle-Stitch Linen Thread' },
-    { num: '22', title: 'Solid 925 Sterling Silver Casting' },
-    { num: '23', title: 'Wax Burnished Edge Creasing' },
-    { num: '24', title: 'Custom Trifold Journal Binding' },
+    { num: '19', title: 'Italian Leather' },
+    { num: '20', title: 'Pattern Drafting' },
+    { num: '21', title: 'Saddle Stitching' },
+    { num: '22', title: 'Solid 925 Silver' },
+    { num: '23', title: 'Edge Burnishing' },
+    { num: '24', title: 'Journal Binding' },
   ];
 
   return (
@@ -149,7 +149,7 @@ export default function WorkIvanPortfolioPage() {
             onClick={() => setActiveTab('archive')}
             className={`${styles.navItemBtn} ${activeTab === 'archive' ? styles.navItemActive : ''}`}
           >
-            Services &amp; Archive
+            Services &amp; Log
           </button>
         </div>
 
@@ -161,7 +161,7 @@ export default function WorkIvanPortfolioPage() {
         {/* ── ROW 2: HERO TITLE & NARRATIVE (EXACT INDENT AT COL 2) ── */}
         <div className={styles.heroCol1}>
           <span className={styles.overviewLabel}>
-            → {activeTab === 'archive' ? 'Services & Archive' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+            → {activeTab === 'archive' ? 'Services & Log' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
           </span>
         </div>
 
@@ -173,7 +173,7 @@ export default function WorkIvanPortfolioPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
             >
               <h1 className={styles.mainTitleHeading}>
                 {current.headline}
@@ -188,7 +188,7 @@ export default function WorkIvanPortfolioPage() {
 
         {/* ── ROW 3: METADATA ROW ── */}
         <div className={styles.metaCol1}>
-          <span className={styles.metaLabel}>What I Focus On</span>
+          <span className={styles.metaLabel}>Discipline</span>
         </div>
 
         <div className={styles.metaCol2}>
@@ -198,7 +198,7 @@ export default function WorkIvanPortfolioPage() {
           </div>
 
           <div className={styles.metaItemCluster}>
-            <span className={styles.metaLabel}>Vibe &amp; Role</span>
+            <span className={styles.metaLabel}>Focus</span>
             <span className={styles.metaValue}>{current.client}</span>
           </div>
         </div>
@@ -210,67 +210,64 @@ export default function WorkIvanPortfolioPage() {
 
         {/* ── ROW 4: DYNAMIC TAB VIEW CONTENTS ── */}
 
-        {/* 1. OVERVIEW TAB: 3 CASUAL & CLEAR SPECIALIZATION CARDS */}
+        {/* 1. OVERVIEW TAB */}
         {activeTab === 'overview' && (
           <div className={styles.fullWidthTabBlock}>
             <div className={styles.overviewCardsGrid}>
               <div className={styles.overviewFocusCard}>
-                <span className={styles.overviewFocusNumber}>01 · THE DESIGN SIDE</span>
-                <h3 className={styles.overviewFocusTitle}>Clean Interfaces &amp; Figma Systems</h3>
+                <span className={styles.overviewFocusNumber}>01 · DESIGN</span>
+                <h3 className={styles.overviewFocusTitle}>UI/UX &amp; Product Design</h3>
                 <p className={styles.overviewFocusDesc}>
-                  I design screens that look sharp, feel natural, and don&apos;t overwhelm people. Clean typography, generous whitespace, and subtle animations that make clicking around fun.
+                  Clean, minimalist interfaces and design systems built in Figma with high attention to typography and micro-interactions.
                 </p>
                 <div className={styles.overviewFocusTags}>
                   <span className={styles.miniPill}>Figma</span>
-                  <span className={styles.miniPill}>UI/UX Design</span>
+                  <span className={styles.miniPill}>UI/UX</span>
                   <span className={styles.miniPill}>Design Systems</span>
-                  <span className={styles.miniPill}>Motion &amp; Feel</span>
                 </div>
               </div>
 
               <div className={styles.overviewFocusCard}>
-                <span className={styles.overviewFocusNumber}>02 · THE CODE SIDE</span>
-                <h3 className={styles.overviewFocusTitle}>Fast Next.js &amp; Full-Stack Apps</h3>
+                <span className={styles.overviewFocusNumber}>02 · CODE</span>
+                <h3 className={styles.overviewFocusTitle}>Full-Stack Web Engineering</h3>
                 <p className={styles.overviewFocusDesc}>
-                  I write clean, modern code with Next.js 16, React, and TypeScript. Zero bloated libraries — just snappy, reliable web apps that load in a blink.
+                  Fast, modern web applications built with Next.js 16, TypeScript, React, and lightweight cloud servers.
                 </p>
                 <div className={styles.overviewFocusTags}>
                   <span className={styles.miniPill}>Next.js 16</span>
                   <span className={styles.miniPill}>TypeScript</span>
-                  <span className={styles.miniPill}>Tailwind / CSS</span>
-                  <span className={styles.miniPill}>Cloud Servers</span>
+                  <span className={styles.miniPill}>Cloud Server</span>
                 </div>
               </div>
 
               <div className={styles.overviewFocusCard}>
-                <span className={styles.overviewFocusNumber}>03 · THE ATELIER SIDE</span>
-                <h3 className={styles.overviewFocusTitle}>3D WebGL &amp; Handcrafted Leather</h3>
+                <span className={styles.overviewFocusNumber}>03 · CRAFT</span>
+                <h3 className={styles.overviewFocusTitle}>3D Web &amp; Leather Atelier</h3>
                 <p className={styles.overviewFocusDesc}>
-                  Founder of SHŪ / EN Studio. When I&apos;m not coding, I handcraft leather journals from Italian hides and build 3D WebGL customizers so people can customize them online.
+                  Founder of SHŪ / EN Studio. Handcrafted bespoke leather journals and real-time Three.js 3D web customizers.
                 </p>
                 <div className={styles.overviewFocusTags}>
-                  <span className={styles.miniPill}>Three.js 3D</span>
-                  <span className={styles.miniPill}>WebGL Shaders</span>
-                  <span className={styles.miniPill}>Italian Leather</span>
+                  <span className={styles.miniPill}>Three.js</span>
+                  <span className={styles.miniPill}>Leathercraft</span>
                   <span className={styles.miniPill}>925 Silver</span>
                 </div>
               </div>
             </div>
 
-            {/* Casual Contact Banner */}
+            {/* Quick Contact Banner */}
             <div className={styles.contactBannerWrap}>
               <div className={styles.contactBannerLeft}>
-                <h4>Got a cool idea or want to build something together?</h4>
-                <p>I&apos;m always open to freelance web projects, design systems, and creative experiments.</p>
+                <h4>Have a project in mind?</h4>
+                <p>Available for freelance web projects, design systems, and custom studio builds.</p>
               </div>
               <a href="mailto:ivan@ivanaffriandi.com" className={styles.contactActionBtn}>
-                Say Hello ↗
+                Get in Touch ↗
               </a>
             </div>
           </div>
         )}
 
-        {/* 2. PROJECTS TAB: 3 VISUAL SHOWCASES + 3 DETAILED CARDS */}
+        {/* 2. PROJECTS TAB */}
         {activeTab === 'projects' && (
           <>
             <a
@@ -285,7 +282,7 @@ export default function WorkIvanPortfolioPage() {
               />
               <div className={styles.cardOverlayInfo}>
                 <span>Private Mail Platform</span>
-                <span>Self-Hosted Cloud VM ↗</span>
+                <span>Self-Hosted Cloud ↗</span>
               </div>
             </a>
 
@@ -301,7 +298,7 @@ export default function WorkIvanPortfolioPage() {
               />
               <div className={styles.cardOverlayInfo}>
                 <span>Atmospheric Reader (/x)</span>
-                <span>Ambient Wind &amp; Books ↗</span>
+                <span>Web Audio &amp; Books ↗</span>
               </div>
             </a>
 
@@ -317,7 +314,7 @@ export default function WorkIvanPortfolioPage() {
               />
               <div className={styles.cardOverlayInfo}>
                 <span>SHŪ / EN Leather Goods</span>
-                <span>Handmade Atelier ↗</span>
+                <span>Bespoke Atelier ↗</span>
               </div>
             </a>
 
@@ -333,12 +330,12 @@ export default function WorkIvanPortfolioPage() {
                   SHŪ / EN Leather Goods Atelier <span>↗</span>
                 </h3>
                 <p className={styles.secondaryProjectDesc}>
-                  Bespoke trifold journals handcrafted from Italian vegetable-tanned Nero leather, Japanese Moire lining, and solid 925 sterling silver charms.
+                  Bespoke trifold journals handcrafted from Italian vegetable-tanned Nero leather, Japanese Moire lining, and solid 925 silver.
                 </p>
                 <div className={styles.secondaryProjectPills}>
-                  <span className={styles.miniPill}>Full-Grain Nero Leather</span>
+                  <span className={styles.miniPill}>Full-Grain Leather</span>
                   <span className={styles.miniPill}>Solid 925 Silver</span>
-                  <span className={styles.miniPill}>Handmade in Tangerang</span>
+                  <span className={styles.miniPill}>Tangerang Atelier</span>
                 </div>
               </a>
 
@@ -352,7 +349,7 @@ export default function WorkIvanPortfolioPage() {
                   3D WebGL Configurator Engine <span>↗</span>
                 </h3>
                 <p className={styles.secondaryProjectDesc}>
-                  Spin, flip, and customize leather journal colors and gold foil embossing in real-time 3D right inside your mobile or desktop browser.
+                  Interactive 3D product customizer with live Three.js camera controls, leather texture switching, and gold foil stamping.
                 </p>
                 <div className={styles.secondaryProjectPills}>
                   <span className={styles.miniPill}>Three.js</span>
@@ -368,70 +365,70 @@ export default function WorkIvanPortfolioPage() {
                 className={styles.secondaryProjectCard}
               >
                 <h3 className={styles.secondaryProjectTitle}>
-                  Private Self-Hosted Mail Server <span>↗</span>
+                  Private Mail Server Stack <span>↗</span>
                 </h3>
                 <p className={styles.secondaryProjectDesc}>
-                  My own personal email system running on Oracle Cloud VM with AWS SES relay, automated DKIM keys, zero spam tracking, and a minimal web client.
+                  Personal self-hosted email infrastructure on Oracle Cloud VM with AWS SES relay, automated DKIM keys, and zero tracking.
                 </p>
                 <div className={styles.secondaryProjectPills}>
                   <span className={styles.miniPill}>Oracle Cloud VM</span>
                   <span className={styles.miniPill}>AWS SES</span>
-                  <span className={styles.miniPill}>Zero Tracking</span>
+                  <span className={styles.miniPill}>DKIM Keys</span>
                 </div>
               </a>
             </div>
           </>
         )}
 
-        {/* 3. SKILLS TAB: 4 CLEAR CREATIVE PILLARS + CLEAN MARQUEE */}
+        {/* 3. SKILLS TAB */}
         {activeTab === 'skills' && (
           <div className={styles.skillsSectionWrapper}>
             <div className={styles.skillsPillarGrid}>
               <div className={styles.skillPillarCard}>
-                <h3 className={styles.pillarCategoryTitle}>01 · SCREEN &amp; FEEL</h3>
-                <p className={styles.pillarDesc}>Making web interfaces look gorgeous, sharp, and effortless to use.</p>
+                <h3 className={styles.pillarCategoryTitle}>01 · FRONTEND</h3>
+                <p className={styles.pillarDesc}>Clean, fast web interfaces with smooth interactions.</p>
                 <div className={styles.pillarSkillList}>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Next.js 16 (App Router)</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Next.js 16</span>
                   <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> React 19 &amp; TypeScript</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Framer Motion Animations</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Vanilla CSS &amp; Tailwind</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Figma Design Systems</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Framer Motion</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Tailwind CSS</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Figma Systems</span>
                 </div>
               </div>
 
               <div className={styles.skillPillarCard}>
-                <h3 className={styles.pillarCategoryTitle}>02 · 3D &amp; EXPERIMENTS</h3>
-                <p className={styles.pillarDesc}>Interactive 3D WebGL models, custom shaders, and spatial audio.</p>
+                <h3 className={styles.pillarCategoryTitle}>02 · 3D &amp; AUDIO</h3>
+                <p className={styles.pillarDesc}>Interactive 3D WebGL models and procedural audio.</p>
                 <div className={styles.pillarSkillList}>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Three.js &amp; WebGL 2.0</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> GLSL Procedural Shaders</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> 3D Product Customizers</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Web Audio API Soundscapes</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Blender 3D Prototyping</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Three.js &amp; WebGL</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> GLSL Shaders</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> 3D Customizers</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Web Audio API</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Blender 3D</span>
                 </div>
               </div>
 
               <div className={styles.skillPillarCard}>
-                <h3 className={styles.pillarCategoryTitle}>03 · ENGINE &amp; CLOUD</h3>
-                <p className={styles.pillarDesc}>Fast servers, secure APIs, and cloud infrastructure running 24/7.</p>
+                <h3 className={styles.pillarCategoryTitle}>03 · BACKEND</h3>
+                <p className={styles.pillarDesc}>Cloud servers, containerization, and secure APIs.</p>
                 <div className={styles.pillarSkillList}>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Node.js &amp; Python APIs</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Node.js &amp; Python</span>
                   <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Oracle Cloud &amp; AWS SES</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Docker &amp; Docker Compose</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Docker Compose</span>
                   <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> PostgreSQL &amp; Redis</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Cloudflare Edge Security</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Cloudflare SSL</span>
                 </div>
               </div>
 
               <div className={styles.skillPillarCard}>
-                <h3 className={styles.pillarCategoryTitle}>04 · HANDS &amp; ATELIER</h3>
-                <p className={styles.pillarDesc}>Traditional leathercraft and physical products made with patience.</p>
+                <h3 className={styles.pillarCategoryTitle}>04 · ATELIER</h3>
+                <p className={styles.pillarDesc}>Traditional bespoke leather goods made by hand.</p>
                 <div className={styles.pillarSkillList}>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Italian Vegetable-Tanned Hides</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Hand Saddle-Stitching</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Solid 925 Silver Casting</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Wax Edge Burnishing</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Custom Pattern Drafting</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Italian Leather</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Saddle Stitching</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Solid 925 Silver</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Edge Burnishing</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Pattern Drafting</span>
                 </div>
               </div>
             </div>
@@ -489,29 +486,29 @@ export default function WorkIvanPortfolioPage() {
           </div>
         )}
 
-        {/* 4. PROCESS TAB: 3 CASUAL WORKFLOW STEPS */}
+        {/* 4. PROCESS TAB */}
         {activeTab === 'process' && (
           <div className={styles.fullWidthTabBlock}>
             <div className={styles.processStepGrid}>
               <div className={styles.processCard}>
                 <span className={styles.processNum}>01</span>
-                <h3 className={styles.processTitle}>Brainstorm &amp; Sketch</h3>
+                <h3 className={styles.processTitle}>Plan &amp; Sketch</h3>
                 <p className={styles.processText}>
-                  We figure out what actually matters, strip away the fluff, sketch clean user flows in Figma, and pick the best tech stack for the job.
+                  Define clear project goals, sketch simple user flows in Figma, and design the system architecture.
                 </p>
               </div>
               <div className={styles.processCard}>
                 <span className={styles.processNum}>02</span>
-                <h3 className={styles.processTitle}>Code &amp; Polish</h3>
+                <h3 className={styles.processTitle}>Build &amp; Refine</h3>
                 <p className={styles.processText}>
-                  Writing clean Next.js and TypeScript code, tweaking animations until they feel just right, and making sure the app is super fast on phones.
+                  Write clean Next.js and TypeScript code, polish animations, and test speed on mobile and desktop.
                 </p>
               </div>
               <div className={styles.processCard}>
                 <span className={styles.processNum}>03</span>
                 <h3 className={styles.processTitle}>Ship &amp; Launch</h3>
                 <p className={styles.processText}>
-                  Deploying to lightning-fast cloud servers, setting up custom domains and security, and handing over a project that works flawlessly.
+                  Deploy to fast cloud servers, configure custom domains with SSL, and launch live with zero hassle.
                 </p>
               </div>
             </div>
@@ -524,24 +521,24 @@ export default function WorkIvanPortfolioPage() {
             {/* Services Grid */}
             <div className={styles.overviewCardsGrid}>
               <div className={styles.overviewFocusCard}>
-                <span className={styles.overviewFocusNumber}>SERVICE · 01</span>
+                <span className={styles.overviewFocusNumber}>01 · SERVICE</span>
                 <h3 className={styles.overviewFocusTitle}>Web &amp; App Development</h3>
                 <p className={styles.overviewFocusDesc}>
-                  Fast websites, portfolio platforms, and SaaS web apps built with Next.js 16, TypeScript, and clean cloud backends.
+                  Fast websites, SaaS platforms, and custom web apps built with Next.js 16 and TypeScript.
                 </p>
               </div>
               <div className={styles.overviewFocusCard}>
-                <span className={styles.overviewFocusNumber}>SERVICE · 02</span>
+                <span className={styles.overviewFocusNumber}>02 · SERVICE</span>
                 <h3 className={styles.overviewFocusTitle}>UI/UX &amp; Design Systems</h3>
                 <p className={styles.overviewFocusDesc}>
-                  Minimalist interfaces, Figma design systems, interactive prototypes, and mobile-first responsive layouts.
+                  Clean user interfaces, Figma design systems, and responsive mobile-first layouts.
                 </p>
               </div>
               <div className={styles.overviewFocusCard}>
-                <span className={styles.overviewFocusNumber}>SERVICE · 03</span>
+                <span className={styles.overviewFocusNumber}>03 · SERVICE</span>
                 <h3 className={styles.overviewFocusTitle}>3D Web &amp; Custom Atelier</h3>
                 <p className={styles.overviewFocusDesc}>
-                  Interactive 3D Three.js product customizers and custom bespoke leather goods from SHŪ / EN Studio.
+                  Interactive 3D Three.js product customizers and bespoke leather goods from SHŪ / EN Studio.
                 </p>
               </div>
             </div>
@@ -556,7 +553,7 @@ export default function WorkIvanPortfolioPage() {
                 <a href="https://mail.ivanaffriandi.com" target="_blank" rel="noreferrer" className={styles.archiveRowItem}>
                   <div className={styles.archiveLeftCol}>
                     <h3 className={styles.archiveItemTitle}>Private Mail Platform</h3>
-                    <p className={styles.archiveItemSubtitle}>Self-hosted Oracle Cloud VM, AWS SES relay, automated DKIM 2048-bit keys.</p>
+                    <p className={styles.archiveItemSubtitle}>Self-hosted Oracle Cloud VM, AWS SES relay, automated DKIM keys.</p>
                   </div>
                   <div className={styles.archivePillStack}>
                     <span className={styles.miniPill}>Next.js 16</span>
@@ -569,7 +566,7 @@ export default function WorkIvanPortfolioPage() {
                 <a href="https://ivanaffriandi.com/x" target="_blank" rel="noreferrer" className={styles.archiveRowItem}>
                   <div className={styles.archiveLeftCol}>
                     <h3 className={styles.archiveItemTitle}>Atmospheric Digital Reader (/x)</h3>
-                    <p className={styles.archiveItemSubtitle}>Minimalist editorial reading app with Web Audio ambient wind sound synthesis.</p>
+                    <p className={styles.archiveItemSubtitle}>Minimalist digital reading app with Web Audio ambient sound synthesis.</p>
                   </div>
                   <div className={styles.archivePillStack}>
                     <span className={styles.miniPill}>Web Audio API</span>
@@ -604,14 +601,14 @@ export default function WorkIvanPortfolioPage() {
               </div>
             </div>
 
-            {/* Casual Contact CTA */}
+            {/* Quick Contact CTA */}
             <div className={styles.contactBannerWrap}>
               <div className={styles.contactBannerLeft}>
-                <h4>Ready to start a project or just want to say hi?</h4>
-                <p>Drop me an email with what you&apos;re thinking, and I&apos;ll get back to you quickly.</p>
+                <h4>Ready to start a project?</h4>
+                <p>Send an email with your timeline and requirements, and I will reply within 24 hours.</p>
               </div>
               <a href="mailto:ivan@ivanaffriandi.com" className={styles.contactActionBtn}>
-                Send an Email ↗
+                Send Email ↗
               </a>
             </div>
           </div>
