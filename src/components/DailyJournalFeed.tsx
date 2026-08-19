@@ -451,9 +451,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const flipboardCards = useMemo(() => {
     const prologueCard = {
       id: "prologue",
-      category: "PROLOGUE",
-      date: "INTRO",
-      title: "A Quiet Corner on the Internet",
+      category: "INTRO NARRATIVE",
+      date: "READING",
+      title: "PROLOGUE",
       excerpt: "Most of this gets written late at night, usually when the screen is the only light in the room and the city noise has finally died down. Passing thoughts turn into essays...",
       img: fallbackCovers[0],
       post: null,
@@ -2572,18 +2572,37 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         >
           {/* MOBILE TRANSPARENT TOP HEADER BAR */}
           <div className="mobile-blog-header">
-            {/* Left: HOME Button */}
-            <Link
-              href="/"
-              title="Return to Homepage"
-              className="mobile-home-btn"
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
-              </svg>
-              <span>HOME</span>
-            </Link>
+            {/* Left: HOME Button (Overview) or iOS-style JOURNAL Back Button (Reader mode) */}
+            {selectedPost || isReadingPrologue ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsReadingPrologue(false);
+                  setSelectedPostIndex(null);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className="mobile-home-btn"
+                title="Back to Journal Deck"
+                style={{ cursor: "pointer" }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+                <span>JOURNAL</span>
+              </button>
+            ) : (
+              <Link
+                href="/"
+                title="Return to Homepage"
+                className="mobile-home-btn"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                <span>HOME</span>
+              </Link>
+            )}
 
             {/* Right: Q&A Button + Hamburger Menu for Chapter Directory */}
             <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
@@ -2657,15 +2676,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           <div className="pj-left-content" style={{ zIndex: 3 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
               <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
-                {isReadingPrologue
-                  ? "PROLOGUE · INTRO NARRATIVE"
+                {isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue)
+                  ? "INTRO NARRATIVE"
                   : selectedPost
                   ? `CHAPTER ${String(sortedPosts.length - (selectedPostIndex ?? 0)).padStart(2, "0")} · ${formatDate(selectedPost.published, locale)}`
                   : currentFlipCard.category}
               </span>
               <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.6)" }}>
-                {isReadingPrologue
-                  ? "INTRO"
+                {isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue)
+                  ? "2 MIN READ"
                   : selectedPost
                   ? selectedPostImages.length > 1
                     ? `${(postPhotoIndex % selectedPostImages.length) + 1} / ${selectedPostImages.length} PHOTOS`
@@ -2674,9 +2693,17 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               </span>
             </div>
 
-            <h1 className="pj-title">
+            <h1
+              className="pj-title"
+              style={{
+                fontSize: isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue) ? "2.6rem" : undefined,
+                fontWeight: 900,
+                letterSpacing: isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue) ? "-0.03em" : "-0.02em",
+                textTransform: isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue) ? "uppercase" : "none",
+              }}
+            >
               {isReadingPrologue
-                ? "A Quiet Corner on the Internet"
+                ? "PROLOGUE"
                 : selectedPost
                 ? selectedPost.title
                 : currentFlipCard.title}
@@ -2795,7 +2822,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           ) : !isReadingPrologue ? (
             <button
               className="pj-read-btn"
+              style={{ pointerEvents: "auto", cursor: "pointer", zIndex: 100 }}
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 if (currentFlipCard.isPrologue) {
                   setIsReadingPrologue(true);
@@ -2817,10 +2846,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         </div>
 
         {/* RIGHT COLUMN: SINGLE-SCREEN COMPACT EDITORIAL LAYOUT */}
-        <div className={`pj-right${!selectedPost ? " fit-screen" : ""}`}>
+        <div className={`pj-right${!selectedPost && !isReadingPrologue ? " fit-screen" : ""}`}>
           <div className="pj-journal-feed-wrap">
             {/* Simple Page Header with IG, Email, Search & About button (ONLY visible in Overview mode) */}
-            {!selectedPost && (
+            {!selectedPost && !isReadingPrologue && (
               <div className="right-page-header">
                 <h1 className="right-page-title">Journal</h1>
 
@@ -3949,7 +3978,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     </div>
                   </div>
 
-                  {/* List of Chapters (Sorted newest on top) */}
+                  {/* List of Chapters (Sorted newest on top, Prologue at bottom) */}
                   <div
                     style={{
                       flex: 1,
@@ -3961,48 +3990,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       background: "#0c0d10",
                     }}
                   >
-                    {/* PROLOGUE ENTRY */}
-                    <div
-                      onClick={() => {
-                        setIsReadingPrologue(true);
-                        setSelectedPostIndex(null);
-                        setMobileSidebarOpen(false);
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                      }}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.85rem",
-                        padding: "0.75rem 0.85rem",
-                        borderRadius: "14px",
-                        background: isReadingPrologue ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.05)",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        cursor: "pointer",
-                        transition: "all 0.18s ease",
-                      }}
-                    >
-                      <div style={{ width: "74px", height: "56px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, position: "relative", background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.12)" }}>
-                        <img
-                          src={fallbackCovers[0]}
-                          alt="Prologue"
-                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                        />
-                      </div>
-                      <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1, minWidth: 0 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#FFFFFF", background: "rgba(255,255,255,0.15)", padding: "2px 6px", borderRadius: "4px" }}>
-                            PROLOGUE
-                          </span>
-                          <span style={{ fontSize: "0.52rem", fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>
-                            INTRO
-                          </span>
-                        </div>
-                        <h4 style={{ fontSize: "0.84rem", fontWeight: 700, lineHeight: 1.3, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                          A Quiet Corner on the Internet
-                        </h4>
-                      </div>
-                    </div>
-
                     {/* CHAPTERS WITH COVER THUMBNAILS (NEWEST FIRST) */}
                     {filteredPosts.map((post) => {
                       const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
@@ -4054,6 +4041,48 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         </div>
                       );
                     })}
+
+                    {/* PROLOGUE ENTRY AT THE BOTTOM */}
+                    <div
+                      onClick={() => {
+                        setIsReadingPrologue(true);
+                        setSelectedPostIndex(null);
+                        setMobileSidebarOpen(false);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.85rem",
+                        padding: "0.75rem 0.85rem",
+                        borderRadius: "14px",
+                        background: isReadingPrologue ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.05)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        cursor: "pointer",
+                        transition: "all 0.18s ease",
+                      }}
+                    >
+                      <div style={{ width: "74px", height: "56px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, position: "relative", background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.12)" }}>
+                        <img
+                          src={fallbackCovers[0]}
+                          alt="Prologue"
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        />
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1, minWidth: 0 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#FFFFFF", background: "rgba(255,255,255,0.15)", padding: "2px 6px", borderRadius: "4px" }}>
+                            PROLOGUE
+                          </span>
+                          <span style={{ fontSize: "0.52rem", fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>
+                            INTRO
+                          </span>
+                        </div>
+                        <h4 style={{ fontSize: "0.84rem", fontWeight: 700, lineHeight: 1.3, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                          A Quiet Corner on the Internet
+                        </h4>
+                      </div>
+                    </div>
                   </div>
                 </motion.aside>
               </>
