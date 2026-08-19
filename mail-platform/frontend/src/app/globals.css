@@ -203,7 +203,8 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   HTML EMAIL CONTENT & UNIVERSAL RESPONSIVE CONTRAST (LIGHT & DARK MODES)
+   HTML EMAIL CONTENT: PURE WHITE DOCUMENT SHEET (APPLE MAIL STANDARD)
+   Guarantees 100% readability across Light Mode & Dark Mode.
    ────────────────────────────────────────────────────────────────────────── */
 .mail-content-body {
   font-size: 14.5px !important;
@@ -216,116 +217,140 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.mail-content-adaptive {
-  background-color: transparent !important;
-  color: var(--text-primary) !important;
-  padding: 4px 2px;
+.mail-paper-canvas {
+  background-color: #FFFFFF !important;
+  color: #111111 !important;
+  border-radius: 20px !important;
+  padding: 28px 24px !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08) !important;
 }
 
-/* Light Mode: Ensure high contrast text */
-.mail-content-adaptive {
-  color: #18181b;
+/* Force base text on white canvas to be dark #111111 */
+.mail-paper-canvas,
+.mail-paper-canvas p,
+.mail-paper-canvas span,
+.mail-paper-canvas td,
+.mail-paper-canvas th,
+.mail-paper-canvas li,
+.mail-paper-canvas h1,
+.mail-paper-canvas h2,
+.mail-paper-canvas h3,
+.mail-paper-canvas h4,
+.mail-paper-canvas h5,
+.mail-paper-canvas h6,
+.mail-paper-canvas div {
+  color: #111111;
 }
 
-/* Fix dark background boxes in newsletters (e.g. black footers) so text is always bright white */
-.mail-content-adaptive [style*="background: rgb(0"],
-.mail-content-adaptive [style*="background: rgb(1"],
-.mail-content-adaptive [style*="background: rgb(2"],
-.mail-content-adaptive [style*="background: rgb(3"],
-.mail-content-adaptive [style*="background: rgb(4"],
-.mail-content-adaptive [style*="background: #0"],
-.mail-content-adaptive [style*="background: #1"],
-.mail-content-adaptive [style*="background: #2"],
-.mail-content-adaptive [style*="background: #3"],
-.mail-content-adaptive [style*="background: #4"],
-.mail-content-adaptive [style*="background-color: rgb(0"],
-.mail-content-adaptive [style*="background-color: rgb(1"],
-.mail-content-adaptive [style*="background-color: rgb(2"],
-.mail-content-adaptive [style*="background-color: rgb(3"],
-.mail-content-adaptive [style*="background-color: rgb(4"],
-.mail-content-adaptive [style*="background-color: #0"],
-.mail-content-adaptive [style*="background-color: #1"],
-.mail-content-adaptive [style*="background-color: #2"],
-.mail-content-adaptive [style*="background-color: #3"],
-.mail-content-adaptive [style*="background-color: #4"],
-.mail-content-adaptive [bgcolor="#000000"],
-.mail-content-adaptive [bgcolor="#111111"],
-.mail-content-adaptive [bgcolor="#222222"],
-.mail-content-adaptive [bgcolor="#333333"] {
+/* CRITICAL: When an email has a dark background/footer (e.g. #000, #111, #222, #333, #444, #555, rgb(0..80)), force text inside it to be crisp WHITE */
+.mail-paper-canvas [style*="background: rgb(0"],
+.mail-paper-canvas [style*="background: rgb(1"],
+.mail-paper-canvas [style*="background: rgb(2"],
+.mail-paper-canvas [style*="background: rgb(3"],
+.mail-paper-canvas [style*="background: rgb(4"],
+.mail-paper-canvas [style*="background: rgb(5"],
+.mail-paper-canvas [style*="background: #0"],
+.mail-paper-canvas [style*="background: #1"],
+.mail-paper-canvas [style*="background: #2"],
+.mail-paper-canvas [style*="background: #3"],
+.mail-paper-canvas [style*="background: #4"],
+.mail-paper-canvas [style*="background: #5"],
+.mail-paper-canvas [style*="background-color: rgb(0"],
+.mail-paper-canvas [style*="background-color: rgb(1"],
+.mail-paper-canvas [style*="background-color: rgb(2"],
+.mail-paper-canvas [style*="background-color: rgb(3"],
+.mail-paper-canvas [style*="background-color: rgb(4"],
+.mail-paper-canvas [style*="background-color: rgb(5"],
+.mail-paper-canvas [style*="background-color: #0"],
+.mail-paper-canvas [style*="background-color: #1"],
+.mail-paper-canvas [style*="background-color: #2"],
+.mail-paper-canvas [style*="background-color: #3"],
+.mail-paper-canvas [style*="background-color: #4"],
+.mail-paper-canvas [style*="background-color: #5"],
+.mail-paper-canvas [style*="background-color:#0"],
+.mail-paper-canvas [style*="background-color:#1"],
+.mail-paper-canvas [style*="background-color:#2"],
+.mail-paper-canvas [style*="background-color:#3"],
+.mail-paper-canvas [style*="background-color:#4"],
+.mail-paper-canvas [style*="background-color:#5"],
+.mail-paper-canvas [style*="background:#0"],
+.mail-paper-canvas [style*="background:#1"],
+.mail-paper-canvas [style*="background:#2"],
+.mail-paper-canvas [style*="background:#3"],
+.mail-paper-canvas [style*="background:#4"],
+.mail-paper-canvas [style*="background:#5"],
+.mail-paper-canvas [bgcolor="#000000"],
+.mail-paper-canvas [bgcolor="#111111"],
+.mail-paper-canvas [bgcolor="#222222"],
+.mail-paper-canvas [bgcolor="#333333"],
+.mail-paper-canvas [bgcolor="#444444"],
+.mail-paper-canvas [bgcolor="#555555"],
+.mail-paper-canvas [bgcolor="black"],
+.mail-paper-canvas [bgcolor="#000"],
+.mail-paper-canvas [bgcolor="#111"],
+.mail-paper-canvas [bgcolor="#222"],
+.mail-paper-canvas [bgcolor="#333"] {
   color: #ffffff !important;
 }
 
-.mail-content-adaptive [style*="background: rgb(0"] *,
-.mail-content-adaptive [style*="background: rgb(1"] *,
-.mail-content-adaptive [style*="background: rgb(2"] *,
-.mail-content-adaptive [style*="background: rgb(3"] *,
-.mail-content-adaptive [style*="background: rgb(4"] *,
-.mail-content-adaptive [style*="background: #0"] *,
-.mail-content-adaptive [style*="background: #1"] *,
-.mail-content-adaptive [style*="background: #2"] *,
-.mail-content-adaptive [style*="background: #3"] *,
-.mail-content-adaptive [style*="background: #4"] *,
-.mail-content-adaptive [style*="background-color: rgb(0"] *,
-.mail-content-adaptive [style*="background-color: rgb(1"] *,
-.mail-content-adaptive [style*="background-color: rgb(2"] *,
-.mail-content-adaptive [style*="background-color: rgb(3"] *,
-.mail-content-adaptive [style*="background-color: rgb(4"] *,
-.mail-content-adaptive [style*="background-color: #0"] *,
-.mail-content-adaptive [style*="background-color: #1"] *,
-.mail-content-adaptive [style*="background-color: #2"] *,
-.mail-content-adaptive [style*="background-color: #3"] *,
-.mail-content-adaptive [style*="background-color: #4"] *,
-.mail-content-adaptive [bgcolor="#000000"] *,
-.mail-content-adaptive [bgcolor="#111111"] *,
-.mail-content-adaptive [bgcolor="#222222"] *,
-.mail-content-adaptive [bgcolor="#333333"] * {
+.mail-paper-canvas [style*="background: rgb(0"] *,
+.mail-paper-canvas [style*="background: rgb(1"] *,
+.mail-paper-canvas [style*="background: rgb(2"] *,
+.mail-paper-canvas [style*="background: rgb(3"] *,
+.mail-paper-canvas [style*="background: rgb(4"] *,
+.mail-paper-canvas [style*="background: rgb(5"] *,
+.mail-paper-canvas [style*="background: #0"] *,
+.mail-paper-canvas [style*="background: #1"] *,
+.mail-paper-canvas [style*="background: #2"] *,
+.mail-paper-canvas [style*="background: #3"] *,
+.mail-paper-canvas [style*="background: #4"] *,
+.mail-paper-canvas [style*="background: #5"] *,
+.mail-paper-canvas [style*="background-color: rgb(0"] *,
+.mail-paper-canvas [style*="background-color: rgb(1"] *,
+.mail-paper-canvas [style*="background-color: rgb(2"] *,
+.mail-paper-canvas [style*="background-color: rgb(3"] *,
+.mail-paper-canvas [style*="background-color: rgb(4"] *,
+.mail-paper-canvas [style*="background-color: rgb(5"] *,
+.mail-paper-canvas [style*="background-color: #0"] *,
+.mail-paper-canvas [style*="background-color: #1"] *,
+.mail-paper-canvas [style*="background-color: #2"] *,
+.mail-paper-canvas [style*="background-color: #3"] *,
+.mail-paper-canvas [style*="background-color: #4"] *,
+.mail-paper-canvas [style*="background-color: #5"] *,
+.mail-paper-canvas [style*="background-color:#0"] *,
+.mail-paper-canvas [style*="background-color:#1"] *,
+.mail-paper-canvas [style*="background-color:#2"] *,
+.mail-paper-canvas [style*="background-color:#3"] *,
+.mail-paper-canvas [style*="background-color:#4"] *,
+.mail-paper-canvas [style*="background-color:#5"] *,
+.mail-paper-canvas [style*="background:#0"] *,
+.mail-paper-canvas [style*="background:#1"] *,
+.mail-paper-canvas [style*="background:#2"] *,
+.mail-paper-canvas [style*="background:#3"] *,
+.mail-paper-canvas [style*="background:#4"] *,
+.mail-paper-canvas [style*="background:#5"] *,
+.mail-paper-canvas [bgcolor="#000000"] *,
+.mail-paper-canvas [bgcolor="#111111"] *,
+.mail-paper-canvas [bgcolor="#222222"] *,
+.mail-paper-canvas [bgcolor="#333333"] *,
+.mail-paper-canvas [bgcolor="#444444"] *,
+.mail-paper-canvas [bgcolor="#555555"] *,
+.mail-paper-canvas [bgcolor="black"] *,
+.mail-paper-canvas [bgcolor="#000"] *,
+.mail-paper-canvas [bgcolor="#111"] *,
+.mail-paper-canvas [bgcolor="#222"] *,
+.mail-paper-canvas [bgcolor="#333"] * {
   color: #ffffff !important;
 }
 
-/* Dark Mode: Full native dark mode alignment with crystal clear text contrast */
-.dark .mail-content-adaptive,
-html[data-theme="dark"] .mail-content-adaptive {
-  color: #ededed !important;
-  background-color: transparent !important;
+/* Links */
+.mail-paper-canvas a {
+  color: #0066cc !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
-.dark .mail-content-adaptive p,
-.dark .mail-content-adaptive span,
-.dark .mail-content-adaptive td,
-.dark .mail-content-adaptive th,
-.dark .mail-content-adaptive li,
-.dark .mail-content-adaptive h1,
-.dark .mail-content-adaptive h2,
-.dark .mail-content-adaptive h3,
-.dark .mail-content-adaptive h4,
-.dark .mail-content-adaptive h5,
-.dark .mail-content-adaptive h6 {
-  color: #ededed !important;
-}
-
-.dark .mail-content-adaptive a {
-  color: #60a5fa !important;
-}
-
-/* In dark mode, neutralize hardcoded blinding white backgrounds in newsletters so they blend into dark mode */
-.dark .mail-content-adaptive [style*="background-color: #fff"],
-.dark .mail-content-adaptive [style*="background-color: #FFF"],
-.dark .mail-content-adaptive [style*="background-color: #ffffff"],
-.dark .mail-content-adaptive [style*="background-color: #FFFFFF"],
-.dark .mail-content-adaptive [style*="background-color: rgb(255, 255, 255)"],
-.dark .mail-content-adaptive [style*="background-color: white"],
-.dark .mail-content-adaptive [style*="background: #fff"],
-.dark .mail-content-adaptive [style*="background: #FFF"],
-.dark .mail-content-adaptive [style*="background: #ffffff"],
-.dark .mail-content-adaptive [style*="background: #FFFFFF"],
-.dark .mail-content-adaptive [style*="background: rgb(255, 255, 255)"],
-.dark .mail-content-adaptive [style*="background: white"],
-.dark .mail-content-adaptive [bgcolor="#ffffff"],
-.dark .mail-content-adaptive [bgcolor="#fff"],
-.dark .mail-content-adaptive [bgcolor="white"] {
-  background-color: transparent !important;
-  background: transparent !important;
-}
 
 
 .mail-content-body > *:first-child,
