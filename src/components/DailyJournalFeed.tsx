@@ -376,7 +376,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const [readerSize, setReaderSize] = useState<"sm" | "md" | "lg">("md");
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [readingProgress, setReadingProgress] = useState<number>(0);
-  const [mobileTab, setMobileTab] = useState<"featured" | "chapters">("featured");
 
   const selectedPostImages = useMemo(() => {
     if (!selectedPost || !selectedPost.content) return [];
@@ -508,12 +507,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
     if (Math.abs(diffX) > 40 || Math.abs(diffY) > 40) {
       if (Math.abs(diffX) > Math.abs(diffY)) {
-        if (diffX < -50) {
-          // Swipe RIGHT (finger moves left to right) → open Prologue & Chapters
-          setMobileTab("chapters");
-        } else if (diffX > 50) {
-          // Swipe LEFT → next featured card
+        if (diffX > 0) {
           setHeroIndex((prev) => (prev + 1) % flipboardCards.length);
+        } else {
+          setHeroIndex((prev) => (prev - 1 + flipboardCards.length) % flipboardCards.length);
         }
       }
     }
@@ -2054,19 +2051,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
         .modal-close:hover { color: var(--text-primary, #111111); }
 
-        /* ── MOBILE NAV BARS (HIDDEN ON DESKTOP) ── */
-        .mobile-view-nav-bar,
-        .mobile-swipe-indicator-btn,
-        .mobile-back-to-featured-bar {
-          display: none;
-        }
-
         /* ─────────────────────────────────────────────────
            ELITE HIGH-TECH MOBILE LAYOUT — below 860px
            (ZERO EFFECT ON DESKTOP)
            ───────────────────────────────────────────────── */
         @media (max-width: 860px) {
-          /* ── ROOT LAYOUT (FULLSCREEN APP-LIKE FEEL ON MOBILE) ── */
+          /* ── ROOT LAYOUT (NATURAL SINGLE-COLUMN FLOW ON MOBILE) ── */
           .pj-root {
             display: flex !important;
             flex-direction: column !important;
@@ -2075,8 +2065,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             left: auto !important;
             right: auto !important;
             bottom: auto !important;
-            height: 100vh !important;
-            height: 100dvh !important;
+            height: auto !important;
+            min-height: 100vh !important;
+            min-height: 100dvh !important;
             width: 100vw !important;
             overflow-y: auto !important;
             overflow-x: hidden !important;
@@ -2086,141 +2077,102 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             -webkit-overflow-scrolling: touch !important;
           }
 
-          /* ── OVERVIEW MODE: SHOW EITHER FEATURED DECK OR CHAPTERS DIRECTORY ── */
-          .pj-root.mobile-tab-featured:not(.has-selected-post) .pj-left {
-            display: block !important;
+          /* ── HERO PHOTO FEATURED CARD (TOP BANNER ON MOBILE) ── */
+          .pj-left {
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            right: auto !important;
+            bottom: auto !important;
             width: 100vw !important;
-            height: 100vh !important;
-            height: 100dvh !important;
-            border-radius: 0 !important;
+            max-width: 100vw !important;
+            height: 72vh !important;
+            height: 72dvh !important;
+            min-height: 480px !important;
+            margin: 0 !important;
+            border-radius: 0 0 24px 24px !important;
             border: none !important;
             overflow: hidden !important;
             flex-shrink: 0 !important;
-            position: relative !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+            transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
           }
 
-          .pj-root.mobile-tab-featured:not(.has-selected-post) .pj-right {
-            display: none !important;
-          }
-
-          .pj-root.mobile-tab-chapters:not(.has-selected-post) .pj-left {
-            display: none !important;
-          }
-
-          .pj-root.mobile-tab-chapters:not(.has-selected-post) .pj-right {
-            display: block !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            height: 100dvh !important;
-            overflow-y: auto !important;
-            background: var(--bg-color, #FFFFFF) !important;
-            color: var(--text-primary, #111111) !important;
-            padding: 1.25rem 1.2rem calc(4rem + env(safe-area-inset-bottom, 0px)) !important;
-            box-sizing: border-box !important;
-          }
-
-          /* ── READER MODE ON MOBILE (ARTICLE OPEN) ── */
+          /* When article reader is open on mobile */
           .pj-root.has-selected-post .pj-left {
-            display: block !important;
-            width: 100vw !important;
             height: 38vh !important;
             height: 38dvh !important;
             min-height: 240px !important;
             border-radius: 0 !important;
             box-shadow: none !important;
-            flex-shrink: 0 !important;
           }
 
-          .pj-root.has-selected-post .pj-right {
-            display: block !important;
-            width: 100vw !important;
-            height: auto !important;
-            min-height: 62vh !important;
-            overflow-y: visible !important;
-            padding: 1.5rem 1.2rem calc(4rem + env(safe-area-inset-bottom, 0px)) !important;
-            box-sizing: border-box !important;
-          }
+          .pj-about-ig-grid { left: 0; height: 100%; }
 
-          /* ── MOBILE TAB SWITCHER BAR ── */
-          .mobile-view-nav-bar {
-            display: flex !important;
-            align-items: center !important;
-            background: rgba(0, 0, 0, 0.5) !important;
-            backdrop-filter: blur(14px) !important;
-            -webkit-backdrop-filter: blur(14px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.16) !important;
-            border-radius: 9999px !important;
-            padding: 3px !important;
-            gap: 3px !important;
+          /* ── HERO TEXT INSIDE LEFT PANEL ── */
+          .pj-left-content {
             position: absolute !important;
-            top: 1.1rem !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            z-index: 25 !important;
-          }
-
-          .mobile-view-nav-pill {
-            background: transparent !important;
-            border: none !important;
-            color: rgba(255, 255, 255, 0.6) !important;
-            font-size: 0.58rem !important;
-            font-weight: 700 !important;
-            letter-spacing: 0.08em !important;
-            text-transform: uppercase !important;
-            padding: 0.35rem 0.75rem !important;
-            border-radius: 9999px !important;
-            cursor: pointer !important;
-            transition: all 0.2s ease !important;
-          }
-
-          .mobile-view-nav-pill.active {
-            background: rgba(255, 255, 255, 0.95) !important;
-            color: #111111 !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
-          }
-
-          .mobile-swipe-indicator-btn {
-            display: inline-flex !important;
-            align-items: center !important;
-            gap: 0.4rem !important;
-            background: rgba(255, 255, 255, 0.12) !important;
-            backdrop-filter: blur(12px) !important;
-            -webkit-backdrop-filter: blur(12px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            color: rgba(255, 255, 255, 0.9) !important;
-            font-size: 0.58rem !important;
-            font-weight: 700 !important;
-            letter-spacing: 0.08em !important;
-            text-transform: uppercase !important;
-            padding: 0.45rem 0.9rem !important;
-            border-radius: 9999px !important;
-            cursor: pointer !important;
-            margin-top: 0.75rem !important;
-            align-self: flex-start !important;
-          }
-
-          .mobile-back-to-featured-bar {
+            inset: 0 !important;
+            width: 100vw !important;
+            height: 100% !important;
             display: flex !important;
-            align-items: center !important;
-            margin-bottom: 1rem !important;
-            padding-bottom: 0.75rem !important;
-            border-bottom: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.06)) !important;
+            flex-direction: column !important;
+            justify-content: flex-end !important;
+            padding: 3rem 1.35rem calc(1.8rem + env(safe-area-inset-bottom, 0px)) 1.35rem !important;
+            box-sizing: border-box !important;
+            z-index: 10 !important;
           }
 
-          .mobile-back-to-featured-btn {
-            display: inline-flex !important;
-            align-items: center !important;
-            gap: 0.4rem !important;
-            background: var(--bg-secondary, rgba(0, 0, 0, 0.06)) !important;
-            border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.12)) !important;
+          .pj-root.has-selected-post .pj-left-content {
+            padding: 1.5rem 1.25rem 1.25rem !important;
+          }
+
+          .pj-title {
+            font-size: clamp(1.65rem, 6.8vw, 2.35rem) !important;
+            line-height: 1.15 !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.035em !important;
+            margin: 0.35rem 0 0.5rem 0 !important;
+            text-shadow: 0 2px 14px rgba(0,0,0,0.6) !important;
+          }
+
+          .pj-root.has-selected-post .pj-title {
+            font-size: clamp(1.2rem, 5vw, 1.45rem) !important;
+            line-height: 1.2 !important;
+            margin: 0.25rem 0 0 0 !important;
+          }
+
+          .pj-excerpt {
+            font-size: 0.88rem !important;
+            line-height: 1.5 !important;
+            color: rgba(255, 255, 255, 0.84) !important;
+            margin: 0 0 0.85rem 0 !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 3 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.6) !important;
+          }
+
+          /* ── EDITORIAL CONTENT FEED (FLOWS DIRECTLY UNDER HERO ON MOBILE) ── */
+          .pj-right {
+            display: block !important;
+            position: relative !important;
+            top: auto !important;
+            left: auto !important;
+            right: auto !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            max-height: none !important;
+            height: auto !important;
+            background: var(--bg-color, #FFFFFF) !important;
             color: var(--text-primary, #111111) !important;
-            font-size: 0.62rem !important;
-            font-weight: 700 !important;
-            letter-spacing: 0.08em !important;
-            text-transform: uppercase !important;
-            padding: 0.4rem 0.85rem !important;
-            border-radius: 9999px !important;
-            cursor: pointer !important;
+            border-radius: 0 !important;
+            overflow-y: visible !important;
+            box-sizing: border-box !important;
+            z-index: 1 !important;
+            padding: 1.8rem 1.25rem calc(4rem + env(safe-area-inset-bottom, 0px)) !important;
+            box-shadow: none !important;
           }
 
           .pj-about-ig-grid { left: 0; height: 100%; }
@@ -2449,7 +2401,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
       `}</style>
 
-      <div className={`pj-root${selectedPost ? " has-selected-post" : ` mobile-tab-${mobileTab}`}`} ref={mobileScrollRef}>
+      <div className={`pj-root${selectedPost ? " has-selected-post" : ""}`} ref={mobileScrollRef}>
         {/* ── FULLSCREEN HERO CARD DECK ── */}
         <div
           className="pj-left"
@@ -2457,26 +2409,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           onTouchEnd={handleHeroTouchEnd}
           style={{ position: "relative", overflow: "hidden", background: "#0c0d0e" }}
         >
-          {/* MOBILE TAB CONTROLLER BAR (VISIBLE ON MOBILE ONLY) */}
-          {!selectedPost && (
-            <div className="mobile-view-nav-bar">
-              <button
-                type="button"
-                onClick={() => setMobileTab("featured")}
-                className={`mobile-view-nav-pill ${mobileTab === "featured" ? "active" : ""}`}
-              >
-                ✦ FEATURED
-              </button>
-              <button
-                type="button"
-                onClick={() => setMobileTab("chapters")}
-                className={`mobile-view-nav-pill ${mobileTab === "chapters" ? "active" : ""}`}
-              >
-                ☰ PROLOGUE &amp; CHAPTERS
-              </button>
-            </div>
-          )}
-
           {/* SOLID IMAGE LAYER - ZERO FLICKER OR RE-RENDER BLINKS */}
           <div
             className="pj-photo-layer"
@@ -2535,18 +2467,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             <h1 className="pj-title">{selectedPost ? selectedPost.title : currentFlipCard.title}</h1>
 
             {!selectedPost && (
-              <>
-                <p className="pj-excerpt">
-                  {currentFlipCard.excerpt}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setMobileTab("chapters")}
-                  className="mobile-swipe-indicator-btn"
-                >
-                  SWIPE OR TAP FOR PROLOGUE &amp; CHAPTERS →
-                </button>
-              </>
+              <p className="pj-excerpt">
+                {currentFlipCard.excerpt}
+              </p>
             )}
 
             {/* Dots indicator: for article photo gallery when open, or for flipboard in overview mode */}
@@ -2676,19 +2599,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         {/* RIGHT COLUMN: SINGLE-SCREEN COMPACT EDITORIAL LAYOUT */}
         <div className={`pj-right${!selectedPost ? " fit-screen" : ""}`}>
           <div className="pj-journal-feed-wrap">
-            {/* MOBILE BACK TO FEATURED BUTTON (Overview Mode on Mobile) */}
-            {!selectedPost && (
-              <div className="mobile-back-to-featured-bar">
-                <button
-                  type="button"
-                  onClick={() => setMobileTab("featured")}
-                  className="mobile-back-to-featured-btn"
-                >
-                  ← BACK TO FEATURED STORY DECK
-                </button>
-              </div>
-            )}
-
             {/* Simple Page Header with IG, Email, Search & About button (ONLY visible in Overview mode) */}
             {!selectedPost && (
               <div className="right-page-header">
