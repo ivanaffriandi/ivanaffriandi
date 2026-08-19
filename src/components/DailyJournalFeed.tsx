@@ -2357,80 +2357,84 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         {/* Desktop pj-right (hidden on mobile via CSS) */}
         <div className="pj-right">
           <div className="pj-journal-feed-wrap">
-            {/* Simple Page Header with IG, Email, Search & About button */}
-            <div className="right-page-header">
-              <h1 className="right-page-title">Journal</h1>
+            {/* Simple Page Header with IG, Email, Search & About button (ONLY visible in Overview mode) */}
+            {!selectedPost && (
+              <div className="right-page-header">
+                <h1 className="right-page-title">Journal</h1>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                {/* IG ICON PILL */}
-                <a
-                  href="https://instagram.com/ivanaffriandi"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="action-pill-btn action-icon-pill"
-                  title="Instagram"
-                >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-                  </svg>
-                </a>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  {/* IG ICON PILL */}
+                  <a
+                    href="https://instagram.com/ivanaffriandi"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="action-pill-btn action-icon-pill"
+                    title="Instagram"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                    </svg>
+                  </a>
 
-                {/* EMAIL ICON PILL */}
-                <a
-                  href="mailto:hello@ivanaffriandi.com"
-                  className="action-pill-btn action-icon-pill"
-                  title="Email"
-                >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                    <polyline points="22,6 12,13 2,6"/>
-                  </svg>
-                </a>
+                  {/* EMAIL ICON PILL */}
+                  <a
+                    href="mailto:hello@ivanaffriandi.com"
+                    className="action-pill-btn action-icon-pill"
+                    title="Email"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                      <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                  </a>
 
-                {/* SEARCH PILLBAR */}
-                <div className="search-pill-container expanded">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" style={{ flexShrink: 0, color: "var(--text-muted)" }}>
-                    <circle cx="11" cy="11" r="8"/>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                  </svg>
-                  <input
-                    type="text"
-                    placeholder="Search journal..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="search-pill-input"
-                  />
+                  {/* SEARCH PILLBAR */}
+                  <div className="search-pill-container expanded">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" style={{ flexShrink: 0, color: "var(--text-muted)" }}>
+                      <circle cx="11" cy="11" r="8"/>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input
+                      type="text"
+                      placeholder="Search journal..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="search-pill-input"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+
             <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", flex: 1 }}>
               {selectedPost ? (
-                /* ── SPLIT SCREEN IN-PLACE ARTICLE READER ── */
+                /* ── PURE ARTICLE CONTENT READER (LEFT ACTS AS COVER HEADER) ── */
                 <motion.div
                   key={selectedPost.id}
-                  initial={{ opacity: 0, y: 16 }}
+                  initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 16 }}
-                  transition={{ duration: 0.28, ease: "easeOut" }}
+                  exit={{ opacity: 0, y: 14 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: "1.6rem",
+                    gap: "1.4rem",
                     width: "100%",
                     maxWidth: "800px",
                     paddingBottom: "5rem",
+                    paddingTop: "0.5rem",
                   }}
                 >
-                  {/* Top Minimalist Navigation Bar */}
+                  {/* Top Minimalist Back Action */}
                   <div
                     style={{
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
                       borderBottom: "1px solid var(--border-subtle, rgba(0,0,0,0.08))",
-                      paddingBottom: "0.9rem",
+                      paddingBottom: "0.85rem",
                     }}
                   >
                     <button
@@ -2439,7 +2443,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         background: "none",
                         border: "none",
                         color: "var(--text-primary)",
-                        fontSize: "0.74rem",
+                        fontSize: "0.72rem",
                         fontWeight: 700,
                         letterSpacing: "0.1em",
                         textTransform: "uppercase",
@@ -2474,26 +2478,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     </div>
                   </div>
 
-                  {/* Big Editorial Title */}
-                  <h1
-                    style={{
-                      fontSize: "2.1rem",
-                      fontWeight: 800,
-                      lineHeight: 1.2,
-                      letterSpacing: "-0.03em",
-                      color: "var(--text-primary)",
-                      margin: "0.25rem 0 0",
-                    }}
-                  >
-                    {selectedPost.title}
-                  </h1>
-
-                  {/* Editorial Full Content Body */}
+                  {/* Pure Editorial Content Body (No repeated title) */}
                   <div
                     className="blog-modal-content-body novel-article-reader"
                     style={{
-                      fontSize: "1.02rem",
-                      lineHeight: 1.85,
+                      fontSize: "1.05rem",
+                      lineHeight: 1.88,
                       color: "var(--text-primary)",
                     }}
                     dangerouslySetInnerHTML={{ __html: selectedPost.content }}
