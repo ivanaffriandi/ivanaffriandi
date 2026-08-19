@@ -422,11 +422,11 @@ export default function AvantGardeHomepage() {
         </motion.div>
       </main>
 
-      {/* ─── 3. BOTTOM BAR (TITLE "AFFRIANDI, IVAN" + TEXT BERJALAN DI SEBELAH KANAN) ──── */}
+      {/* ─── 3. BOTTOM BAR (TITLE "AFFRIANDI, IVAN" + ROLES LIST) ──── */}
       <footer
         style={{
           display: "flex",
-          alignItems: "center",
+          alignItems: isMobile ? "flex-end" : "center",
           justifyContent: "space-between",
           width: "100%",
           gap: isMobile ? "12px" : "24px",
@@ -437,7 +437,7 @@ export default function AvantGardeHomepage() {
         <div style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
           <h1
             style={{
-              fontSize: isMobile ? "20px" : "24px",
+              fontSize: isMobile ? "18px" : "24px",
               fontWeight: 800,
               letterSpacing: "-0.03em",
               textTransform: "uppercase",
@@ -451,39 +451,28 @@ export default function AvantGardeHomepage() {
           </h1>
         </div>
 
-        {/* TO THE RIGHT OF TITLE: Auto-Scrolling Roles Ticker Marquee */}
-        <div
-          style={{
-            flex: 1,
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-            display: "flex",
-            alignItems: "center",
-            maskImage: "linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)",
-            WebkitMaskImage: "linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)",
-          }}
-        >
-          <motion.div
-            animate={{ x: ["0%", "-50%"] }}
-            transition={{ repeat: Infinity, ease: "linear", duration: 18 }}
+        {/* ON MOBILE: Stacked Vertical Static List of Roles at Bottom Right */}
+        {isMobile ? (
+          <div
             style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "16px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-end",
+              gap: "2.5px",
+              textAlign: "right",
+              flexShrink: 0,
             }}
           >
-            {ROLES_LIST.concat(ROLES_LIST).map((item, idx) => (
+            {ROLES_LIST.map((item, idx) => (
               <span
                 key={idx}
                 style={{
-                  fontSize: isMobile ? "9px" : "9.5px",
-                  fontWeight: 600,
+                  fontSize: "8px",
+                  fontWeight: 700,
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
                   color: textMuted,
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "14px",
+                  lineHeight: 1.25,
                 }}
               >
                 {item.external ? (
@@ -492,8 +481,6 @@ export default function AvantGardeHomepage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ color: "inherit", textDecoration: "none" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = fg)}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = textMuted)}
                   >
                     {item.label}
                   </a>
@@ -501,17 +488,76 @@ export default function AvantGardeHomepage() {
                   <Link
                     href={item.href}
                     style={{ color: "inherit", textDecoration: "none" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = fg)}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = textMuted)}
                   >
                     {item.label}
                   </Link>
                 )}
-                <span style={{ fontSize: "8.5px", opacity: 0.35 }}>·</span>
               </span>
             ))}
-          </motion.div>
-        </div>
+          </div>
+        ) : (
+          /* ON DESKTOP: Auto-Scrolling Roles Ticker Marquee to the right */
+          <div
+            style={{
+              flex: 1,
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              display: "flex",
+              alignItems: "center",
+              maskImage: "linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)",
+              WebkitMaskImage: "linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)",
+            }}
+          >
+            <motion.div
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ repeat: Infinity, ease: "linear", duration: 18 }}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "16px",
+              }}
+            >
+              {ROLES_LIST.concat(ROLES_LIST).map((item, idx) => (
+                <span
+                  key={idx}
+                  style={{
+                    fontSize: "9.5px",
+                    fontWeight: 600,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    color: textMuted,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "14px",
+                  }}
+                >
+                  {item.external ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: "inherit", textDecoration: "none" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = fg)}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = textMuted)}
+                    >
+                      {item.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      style={{ color: "inherit", textDecoration: "none" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = fg)}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = textMuted)}
+                    >
+                      {item.label}
+                    </Link>
+                  )}
+                  <span style={{ fontSize: "8.5px", opacity: 0.35 }}>·</span>
+                </span>
+              ))}
+            </motion.div>
+          </div>
+        )}
       </footer>
     </div>
   );
