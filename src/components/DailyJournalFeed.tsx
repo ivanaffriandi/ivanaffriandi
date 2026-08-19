@@ -940,7 +940,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
 
         .pj-right.fit-screen {
-          overflow-y: hidden;
+          overflow-y: auto;
           justify-content: flex-start;
         }
 
@@ -1688,35 +1688,25 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           border: 1px solid rgba(0, 0, 0, 0.06) !important;
         }
 
-        /* ── HORIZONTAL CHAPTERS CAROUSEL LAYOUT (5 THUMBNAILS PER SLIDE) ── */
+        /* ── DESKTOP CHAPTERS 2-COLUMN GRID LAYOUT (FILLS RIGHT COLUMN BEAUTIFULLY) ── */
         .blog-grid-layout {
-          display: flex;
-          flex-direction: row;
-          align-items: stretch;
-          gap: 0.65rem;
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 0.95rem;
           width: 100%;
-          overflow-x: auto;
-          overflow-y: hidden;
-          scroll-snap-type: x mandatory;
-          scroll-behavior: smooth;
-          padding: 0.15rem 0 0.45rem 0;
+          padding: 0.35rem 0 2rem 0;
           box-sizing: border-box;
-          scrollbar-width: none !important;
         }
-        .blog-grid-layout::-webkit-scrollbar { display: none !important; }
 
         .blog-grid-card {
           display: flex;
           flex-direction: column;
-          gap: 0.4rem;
-          flex-shrink: 0;
-          width: calc((100% - (4 * 0.65rem)) / 5);
-          min-width: 140px;
-          max-width: 190px;
-          scroll-snap-align: start;
+          gap: 0.55rem;
+          width: 100%;
+          min-width: 0;
           cursor: pointer;
-          border-radius: 7px;
-          padding: 0.45rem;
+          border-radius: 8px;
+          padding: 0.65rem;
           border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
           background: var(--card-bg-1, #FFFFFF);
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
@@ -1726,15 +1716,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
         .blog-grid-card:hover {
           transform: translateY(-2px);
-          border-color: var(--border-strong, rgba(0, 0, 0, 0.22));
-          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+          border-color: var(--border-strong, rgba(0, 0, 0, 0.25));
+          box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
         }
 
         .blog-card-thumb-wrap {
           width: 100%;
-          height: 92px;
+          height: 125px;
           flex-shrink: 0;
-          border-radius: 5px;
+          border-radius: 6px;
           overflow: hidden;
           background: #111111;
           border: none !important;
@@ -1759,20 +1749,20 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
 
         .blog-card-date {
-          font-size: 0.52rem;
-          font-weight: 700;
-          letter-spacing: 0.07em;
+          font-size: 0.54rem;
+          font-weight: 800;
+          letter-spacing: 0.08em;
           text-transform: uppercase;
           color: var(--text-muted, #888888);
         }
 
         .blog-card-title {
-          font-size: 0.78rem;
+          font-size: 0.88rem;
           font-weight: 700;
-          line-height: 1.3;
+          line-height: 1.32;
           letter-spacing: -0.015em;
           color: var(--text-primary, #111111);
-          margin: 0;
+          margin: 0.1rem 0 0 0;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
@@ -1785,10 +1775,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
 
         .blog-card-excerpt {
-          font-size: 0.68rem;
-          line-height: 1.38;
+          font-size: 0.72rem;
+          line-height: 1.42;
           color: var(--text-secondary, #666666);
-          margin: 0;
+          margin: 0.25rem 0 0 0;
           font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif);
           font-style: normal;
           display: -webkit-box;
@@ -3674,73 +3664,16 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                               className={`blog-tab-item${y === activeFilter ? " active" : ""}`}
                               onClick={() => {
                                 setActiveFilter(y);
-                                if (blogRowRef.current) {
-                                  blogRowRef.current.scrollTo({ left: 0, behavior: "smooth" });
-                                }
                               }}
                             >
                               {y}
                             </button>
                           ))}
                         </div>
-
-                        {/* HORIZONTAL SCROLL ARROWS */}
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                          <button
-                            onClick={() => {
-                              if (blogRowRef.current) {
-                                blogRowRef.current.scrollBy({ left: -260, behavior: "smooth" });
-                              }
-                            }}
-                            style={{
-                              width: "24px",
-                              height: "24px",
-                              borderRadius: "50%",
-                              border: "1px solid var(--border-subtle, rgba(0,0,0,0.12))",
-                              background: "transparent",
-                              color: "var(--text-primary)",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              cursor: "pointer",
-                              padding: 0,
-                            }}
-                            title="Scroll Left"
-                          >
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                              <polyline points="15 18 9 12 15 6" />
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() => {
-                              if (blogRowRef.current) {
-                                blogRowRef.current.scrollBy({ left: 260, behavior: "smooth" });
-                              }
-                            }}
-                            style={{
-                              width: "24px",
-                              height: "24px",
-                              borderRadius: "50%",
-                              border: "1px solid var(--border-subtle, rgba(0,0,0,0.12))",
-                              background: "transparent",
-                              color: "var(--text-primary)",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              cursor: "pointer",
-                              padding: 0,
-                            }}
-                            title="Scroll Right"
-                          >
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                              <polyline points="9 18 15 12 9 6" />
-                            </svg>
-                          </button>
-                        </div>
                       </div>
                     </div>
 
-                    {/* HORIZONTAL CAROUSEL ROW */}
+                    {/* DESKTOP 2-COLUMN CHAPTERS GRID */}
                     <div className="blog-grid-layout" ref={blogRowRef}>
                       {filteredPosts.map((post) => {
                         const img = extractCoverImage(post.content);
