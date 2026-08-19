@@ -420,6 +420,8 @@ async def ingest_inbound_message(
         in_reply_to = parsed["in_reply_to"]
         references = parsed["references"]
         attachments_raw = parsed["attachments"]
+        is_spam = parsed.get("is_spam", False)
+        spam_score = parsed.get("spam_score", 0.0)
 
     target_mailbox = spam_box if is_spam else inbox_box
 

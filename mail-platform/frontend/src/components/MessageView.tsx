@@ -341,15 +341,15 @@ export const MessageView: React.FC<MessageViewProps> = ({
             </div>
           )}
 
-          {/* Email Message Content Body - Clean White Sheet Canvas (Guaranteed 100% Readability) */}
-          <div className="mail-paper-canvas">
+          {/* Email Message Content Body - Intelligent Adaptive Theme Engine */}
+          <div className="mail-adaptive-sheet">
             {message.body_html ? (
               <div
-                className="max-w-none font-sans leading-[1.75] mail-content-body text-[14px] antialiased tracking-[0.01em]"
+                className="max-w-none font-sans leading-[1.75] mail-content-body text-[14.5px] antialiased tracking-[0.01em]"
                 dangerouslySetInnerHTML={{ __html: message.body_html }}
               />
             ) : (
-              <div className="text-[14px] font-sans text-[#111111] whitespace-pre-wrap leading-[1.7] font-normal antialiased tracking-[0.01em]">
+              <div className="text-[14.5px] font-sans whitespace-pre-wrap leading-[1.7] font-normal antialiased tracking-[0.01em]">
                 {message.body_plain}
               </div>
             )}
