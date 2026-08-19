@@ -41,10 +41,14 @@ function extractAllImages(html: string): string[] {
 function stripImagesFromHtml(html: string): string {
   if (!html) return "";
   return html
-    .replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, "")
     .replace(/<div class="separator"[^>]*>[\s\S]*?<\/div>/gi, "")
+    .replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, "")
+    .replace(/<table[^>]*>[\s\S]*?<\/table>/gi, "")
     .replace(/<img[^>]*>/gi, "")
-    .replace(/<p>\s*(?:&nbsp;|\s)*<\/p>/gi, "");
+    .replace(/<p[^>]*>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, "")
+    .replace(/<div[^>]*>(\s|&nbsp;|<br\s*\/?>)*<\/div>/gi, "")
+    .replace(/(<br\s*\/?>\s*){2,}/gi, "<br>")
+    .trim();
 }
 
 function getRelativeTimeString(dateStr: string): string {
@@ -1436,6 +1440,23 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           word-break: break-word;
         }
 
+        .novel-article-reader p {
+          margin: 0 0 1.25rem 0 !important;
+          line-height: 1.88 !important;
+        }
+
+        .novel-article-reader p:empty,
+        .novel-article-reader div:empty,
+        .novel-article-reader span:empty {
+          display: none !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+
+        .novel-article-reader br + br {
+          display: none !important;
+        }
+
         .blog-modal-content-body > p:first-of-type::first-letter,
         .blog-modal-content-body > div:first-of-type::first-letter {
           font-family: var(--font-serif, Georgia, serif);
@@ -2210,9 +2231,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
                 <h1 className="pj-title">{selectedPost ? selectedPost.title : currentFlipCard.title}</h1>
 
-                <p className="pj-excerpt">
-                  {selectedPost ? stripHtml(selectedPost.content).slice(0, 140) + "…" : currentFlipCard.excerpt}
-                </p>
+                {!selectedPost && (
+                  <p className="pj-excerpt">
+                    {currentFlipCard.excerpt}
+                  </p>
+                )}
 
                 {/* Dots indicator: for article photo gallery when open, or for flipboard in overview mode */}
                 {selectedPost && selectedPostImages.length > 1 ? (
@@ -2243,44 +2266,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   </div>
                 ) : null}
               </div>
-
-              {/* ── TOP-RIGHT FEATHER PEN RETURN TO JOURNAL OVERVIEW BUTTON ── */}
-              {selectedPost && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedPostIndex(null);
-                  }}
-                  title="Back to Journal Overview"
-                  style={{
-                    position: "absolute",
-                    top: "1.5rem",
-                    right: "1.5rem",
-                    zIndex: 25,
-                    width: "38px",
-                    height: "38px",
-                    borderRadius: "50%",
-                    background: "rgba(0, 0, 0, 0.4)",
-                    backdropFilter: "blur(12px)",
-                    WebkitBackdropFilter: "blur(12px)",
-                    border: "1px solid rgba(255, 255, 255, 0.3)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#FFFFFF",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(0, 0, 0, 0.65)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(0, 0, 0, 0.4)")}
-                >
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
-                    <line x1="16" y1="8" x2="2" y2="22" />
-                    <line x1="17.5" y1="15" x2="9" y2="15" />
-                  </svg>
-                </button>
-              )}
 
               {selectedPost ? (
                 <div
@@ -2634,13 +2619,48 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: "1.4rem",
+                    gap: "1.2rem",
                     width: "100%",
                     maxWidth: "800px",
                     paddingBottom: "5rem",
-                    paddingTop: "0.5rem",
+                    paddingTop: "0.25rem",
                   }}
                 >
+                  {/* ── TOP-LEFT BACK TO JOURNAL BUTTON ── */}
+                  <button
+                    onClick={() => setSelectedPostIndex(null)}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.45rem",
+                      background: "none",
+                      border: "none",
+                      color: "var(--text-muted, #777777)",
+                      fontSize: "0.68rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.12em",
+                      textTransform: "uppercase",
+                      cursor: "pointer",
+                      padding: "0.2rem 0",
+                      alignSelf: "flex-start",
+                      transition: "color 0.2s ease, transform 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "var(--text-primary, #111111)";
+                      e.currentTarget.style.transform = "translateX(-2px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "var(--text-muted, #777777)";
+                      e.currentTarget.style.transform = "translateX(0px)";
+                    }}
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="19" y1="12" x2="5" y2="12" />
+                      <polyline points="12 19 5 12 12 5" />
+                    </svg>
+                    BACK TO JOURNAL
+                  </button>
+
                   {/* Pure Editorial Content Body (No photos in text stream; images are in left gallery) */}
                   <div
                     className="blog-modal-content-body novel-article-reader"
