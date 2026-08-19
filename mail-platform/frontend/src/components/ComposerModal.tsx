@@ -626,15 +626,18 @@ export const ComposerModal: React.FC<ComposerModalProps> = ({
         localStorage.removeItem('composer_saved_draft');
       }
 
+      if (onSuccess) onSuccess({ to: finalEmails.join(', '), subject: subject || '(No Subject)', body: editorText });
+
+      // Clean instantaneous genie close
+      triggerGenieClose();
       setTimeout(() => {
-        triggerGenieClose();
         setRecipients([]);
         setInputValue('');
         setSubject('');
         setAttachments([]);
         if (editorRef.current) editorRef.current.innerHTML = '';
         setSendResult(null);
-      }, 1000);
+      }, 300);
     } catch (err) {
       console.error('Send error:', err);
       setSendResult('error');
@@ -667,13 +670,11 @@ export const ComposerModal: React.FC<ComposerModalProps> = ({
           isClosing ? 'animate-genie-out' : 'animate-genie-in'
         }`}
       >
-        {/* Sending Result Banner */}
-        {sendResult && (
-          <div className={`px-4 py-2 text-xs font-bold flex items-center gap-2 rounded-2xl shadow-lg animate-toast ${
-            sendResult === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'
-          }`}>
-            {sendResult === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-            <span>{sendResult === 'success' ? '✓ Message dispatched successfully!' : '✗ Failed to send message. Please try again.'}</span>
+        {/* Error Notification Banner (Only if failed) */}
+        {sendResult === 'error' && (
+          <div className="px-3.5 py-2 text-xs font-semibold flex items-center gap-2 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 shadow-sm animate-toast">
+            <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+            <span>Failed to send message. Please verify connection and try again.</span>
           </div>
         )}
 

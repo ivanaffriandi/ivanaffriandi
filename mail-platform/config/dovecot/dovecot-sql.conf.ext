@@ -1,7 +1,7 @@
 # Dovecot PostgreSQL Authentication Driver Configuration
 
 driver = pgsql
-connect = host=postgres dbname=mailplatform user=mailuser password=change_me_in_production
+connect = host=postgres dbname=mailplatform user=mailuser password=Iv4nM4ilPgSql2026SecureKey
 
 default_pass_scheme = ARGON2ID
 

@@ -95,6 +95,8 @@ def parse_raw_mime(raw_bytes: bytes) -> Dict[str, Any]:
         clean = re.sub(r'<[^>]+>', ' ', clean)
         raw_text = html_lib.unescape(clean)
 
+    snippet = " ".join(raw_text.split())[:160] if raw_text else ""
+
     # Spam detection headers from Rspamd / Postfix / SpamAssassin
     spam_flag_header = msg.get("X-Spam-Flag", "").upper() == "YES"
     spam_status_header = msg.get("X-Spam-Status", "").lower().startswith("yes")
@@ -115,8 +117,11 @@ def parse_raw_mime(raw_bytes: bytes) -> Dict[str, Any]:
         "recipient_to": recipient_to,
         "recipient_cc": recipient_cc,
         "recipient_bcc": recipient_bcc,
+        "message_id": message_id,
         "message_id_header": message_id,
+        "in_reply_to": in_reply_to,
         "in_reply_to_header": in_reply_to,
+        "references": references,
         "references_header": references,
         "body_plain": body_plain,
         "body_html": body_html,
