@@ -304,6 +304,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
   useEffect(() => {
     setMounted(true);
+    setHeroIndex(0);
     const checkMobile = () => {
       setIsMobileScreen(window.innerWidth <= 860);
     };
@@ -3849,13 +3850,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     bottom: 0,
                     width: "88vw",
                     maxWidth: "380px",
-                    background: "var(--bg-color, #111111)",
-                    color: "var(--text-primary, #FFFFFF)",
+                    background: "#0c0d10",
+                    color: "#FFFFFF",
                     zIndex: 100000,
                     display: "flex",
                     flexDirection: "column",
-                    boxShadow: "-10px 0 35px rgba(0,0,0,0.6)",
-                    borderLeft: "1px solid var(--border-subtle, rgba(255,255,255,0.12))",
+                    boxShadow: "-12px 0 40px rgba(0,0,0,0.85)",
+                    borderLeft: "1px solid rgba(255,255,255,0.14)",
                   }}
                 >
                   {/* Top Bar */}
@@ -3864,8 +3865,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
-                      padding: "1.2rem 1.25rem 0.9rem",
-                      borderBottom: "1px solid var(--border-subtle, rgba(255,255,255,0.08))",
+                      padding: "1.3rem 1.25rem 1rem",
+                      borderBottom: "1px solid rgba(255,255,255,0.08)",
+                      background: "#0c0d10",
                     }}
                   >
                     <div>
@@ -3873,23 +3875,24 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         style={{
                           fontSize: "0.58rem",
                           fontWeight: 800,
-                          letterSpacing: "0.18em",
-                          color: "var(--text-muted, rgba(255,255,255,0.5))",
+                          letterSpacing: "0.2em",
+                          color: "rgba(255,255,255,0.45)",
                           textTransform: "uppercase",
+                          fontFamily: "var(--font-sans, sans-serif)",
                         }}
                       >
                         JOURNAL DIRECTORY
                       </div>
-                      <div style={{ fontSize: "1.1rem", fontWeight: 800, letterSpacing: "-0.02em" }}>
+                      <div style={{ fontSize: "1.15rem", fontWeight: 800, letterSpacing: "-0.02em", color: "#FFFFFF", marginTop: "2px", fontFamily: "var(--font-sans, sans-serif)" }}>
                         All Chapters ({sortedPosts.length})
                       </div>
                     </div>
                     <button
                       onClick={() => setMobileSidebarOpen(false)}
                       style={{
-                        background: "var(--bg-secondary, rgba(255,255,255,0.08))",
-                        border: "1px solid var(--border-subtle, rgba(255,255,255,0.12))",
-                        color: "var(--text-primary, #FFFFFF)",
+                        background: "rgba(255,255,255,0.08)",
+                        border: "1px solid rgba(255,255,255,0.18)",
+                        color: "#FFFFFF",
                         width: "34px",
                         height: "34px",
                         borderRadius: "50%",
@@ -3897,6 +3900,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         alignItems: "center",
                         justifyContent: "center",
                         cursor: "pointer",
+                        transition: "all 0.2s ease",
                       }}
                     >
                       ✕
@@ -3904,19 +3908,19 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   </div>
 
                   {/* Search Bar */}
-                  <div style={{ padding: "0.85rem 1.25rem 0.65rem" }}>
+                  <div style={{ padding: "0.95rem 1.25rem 0.75rem", background: "#0c0d10" }}>
                     <div
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: "0.5rem",
-                        background: "var(--bg-secondary, rgba(255,255,255,0.06))",
-                        border: "1px solid var(--border-subtle, rgba(255,255,255,0.12))",
+                        gap: "0.55rem",
+                        background: "rgba(255,255,255,0.06)",
+                        border: "1px solid rgba(255,255,255,0.14)",
                         borderRadius: "12px",
-                        padding: "0.55rem 0.75rem",
+                        padding: "0.6rem 0.85rem",
                       }}
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" style={{ opacity: 0.6 }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" style={{ opacity: 0.6, color: "#FFFFFF" }}>
                         <circle cx="11" cy="11" r="8"/>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                       </svg>
@@ -3929,15 +3933,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           background: "transparent",
                           border: "none",
                           outline: "none",
-                          color: "inherit",
-                          fontSize: "0.82rem",
+                          color: "#FFFFFF",
+                          fontSize: "0.84rem",
                           width: "100%",
                         }}
                       />
                       {searchQuery && (
                         <button
                           onClick={() => setSearchQuery("")}
-                          style={{ background: "none", border: "none", color: "inherit", opacity: 0.6, cursor: "pointer", fontSize: "0.75rem" }}
+                          style={{ background: "none", border: "none", color: "#FFFFFF", opacity: 0.6, cursor: "pointer", fontSize: "0.75rem" }}
                         >
                           ✕
                         </button>
@@ -3954,6 +3958,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       display: "flex",
                       flexDirection: "column",
                       gap: "0.65rem",
+                      background: "#0c0d10",
                     }}
                   >
                     {/* PROLOGUE ENTRY */}
@@ -3968,37 +3973,37 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         display: "flex",
                         alignItems: "center",
                         gap: "0.85rem",
-                        padding: "0.65rem 0.75rem",
+                        padding: "0.75rem 0.85rem",
                         borderRadius: "14px",
-                        background: isReadingPrologue ? "rgba(255,255,255,0.16)" : "var(--bg-secondary, rgba(255,255,255,0.04))",
-                        border: "1px solid var(--border-subtle, rgba(255,255,255,0.1))",
+                        background: isReadingPrologue ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.05)",
+                        border: "1px solid rgba(255,255,255,0.1)",
                         cursor: "pointer",
                         transition: "all 0.18s ease",
                       }}
                     >
-                      <div style={{ width: "72px", height: "54px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, position: "relative", background: "#1a1a1a" }}>
+                      <div style={{ width: "74px", height: "56px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, position: "relative", background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.12)" }}>
                         <img
                           src={fallbackCovers[0]}
                           alt="Prologue"
                           style={{ width: "100%", height: "100%", objectFit: "cover" }}
                         />
                       </div>
-                      <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem", flex: 1, minWidth: 0 }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1, minWidth: 0 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted, rgba(255,255,255,0.5))" }}>
+                          <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#FFFFFF", background: "rgba(255,255,255,0.15)", padding: "2px 6px", borderRadius: "4px" }}>
                             PROLOGUE
                           </span>
-                          <span style={{ fontSize: "0.5rem", fontWeight: 600, color: "var(--text-muted, rgba(255,255,255,0.4))", textTransform: "uppercase" }}>
+                          <span style={{ fontSize: "0.52rem", fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>
                             INTRO
                           </span>
                         </div>
-                        <h4 style={{ fontSize: "0.84rem", fontWeight: 700, lineHeight: 1.3, margin: 0, color: "var(--text-primary, #FFFFFF)", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                        <h4 style={{ fontSize: "0.84rem", fontWeight: 700, lineHeight: 1.3, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                           A Quiet Corner on the Internet
                         </h4>
                       </div>
                     </div>
 
-                    {/* CHAPTERS WITH COVER THUMBNAILS */}
+                    {/* CHAPTERS WITH COVER THUMBNAILS (NEWEST FIRST) */}
                     {filteredPosts.map((post) => {
                       const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
                       const chapterNum = String(sortedPosts.length - postIdx).padStart(2, "0");
@@ -4018,31 +4023,31 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                             display: "flex",
                             alignItems: "center",
                             gap: "0.85rem",
-                            padding: "0.65rem 0.75rem",
+                            padding: "0.75rem 0.85rem",
                             borderRadius: "14px",
-                            background: selectedPostIndex === postIdx && !isReadingPrologue ? "rgba(255,255,255,0.16)" : "var(--bg-secondary, rgba(255,255,255,0.04))",
-                            border: "1px solid var(--border-subtle, rgba(255,255,255,0.1))",
+                            background: selectedPostIndex === postIdx && !isReadingPrologue ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.05)",
+                            border: "1px solid rgba(255,255,255,0.1)",
                             cursor: "pointer",
                             transition: "all 0.18s ease",
                           }}
                         >
-                          <div style={{ width: "72px", height: "54px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, position: "relative", background: "#1a1a1a" }}>
+                          <div style={{ width: "74px", height: "56px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, position: "relative", background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.12)" }}>
                             <img
                               src={postCover}
                               alt={post.title}
                               style={{ width: "100%", height: "100%", objectFit: "cover" }}
                             />
                           </div>
-                          <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem", flex: 1, minWidth: 0 }}>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1, minWidth: 0 }}>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                              <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted, rgba(255,255,255,0.5))" }}>
+                              <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#FFFFFF", background: "rgba(255,255,255,0.12)", padding: "2px 6px", borderRadius: "4px" }}>
                                 CHAPTER {chapterNum}
                               </span>
-                              <span style={{ fontSize: "0.5rem", fontWeight: 600, color: "var(--text-muted, rgba(255,255,255,0.4))", textTransform: "uppercase" }}>
+                              <span style={{ fontSize: "0.52rem", fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>
                                 {relTime}
                               </span>
                             </div>
-                            <h4 style={{ fontSize: "0.84rem", fontWeight: 700, lineHeight: 1.3, margin: 0, color: "var(--text-primary, #FFFFFF)", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                            <h4 style={{ fontSize: "0.84rem", fontWeight: 700, lineHeight: 1.3, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                               {post.title}
                             </h4>
                           </div>
