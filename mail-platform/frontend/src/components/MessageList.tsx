@@ -220,9 +220,9 @@ export const MessageList: React.FC<MessageListProps> = ({
           </div>
         </div>
       ) : (
-        <div className="px-3.5 py-2.5 border-b border-[var(--border-subtle)] flex items-center justify-between shrink-0 bg-[var(--bg-secondary)]/50">
+        <div className="px-3.5 py-2.5 border-b border-[var(--border-subtle)] flex items-center justify-between shrink-0 bg-[var(--bg-secondary)]/50 gap-2">
           {/* iOS Floating Pill Style Filter Control */}
-          <div className="flex items-center bg-[var(--card-bg)]/90 backdrop-blur-xl p-1 rounded-full border border-[var(--card-border)] shadow-xs ring-1 ring-black/5 dark:ring-white/10 gap-0.5 relative">
+          <div className="flex items-center bg-[var(--card-bg)]/90 backdrop-blur-xl p-1 rounded-full border border-[var(--card-border)] shadow-xs ring-1 ring-black/5 dark:ring-white/10 gap-0.5 relative shrink-0">
             {(['all', 'unread', 'starred'] as const).map((tabKey) => {
               const isActive = filter === tabKey;
               const label = tabKey === 'all' ? `All (${messages.length})` : tabKey === 'unread' ? 'Unread' : 'Starred';
@@ -230,7 +230,7 @@ export const MessageList: React.FC<MessageListProps> = ({
                 <button
                   key={tabKey}
                   onClick={() => setFilter(tabKey)}
-                  className={`px-3 py-1 rounded-full text-[11px] font-bold apple-transition apple-active-scale cursor-pointer ${
+                  className={`px-3 py-1 rounded-full text-[11px] font-bold apple-transition apple-active-scale cursor-pointer shrink-0 ${
                     isActive
                       ? 'bg-blue-600 text-white shadow-xs'
                       : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
@@ -241,7 +241,7 @@ export const MessageList: React.FC<MessageListProps> = ({
               );
             })}
           </div>
-          <span className="text-[11px] text-[var(--text-muted)] font-semibold pr-1 font-sans">
+          <span className="text-[11px] text-[var(--text-muted)] font-semibold pr-1 font-sans shrink-0 whitespace-nowrap">
             {filteredMessages.length} {filteredMessages.length === 1 ? 'message' : 'messages'}
           </span>
         </div>

@@ -443,7 +443,7 @@ export default function MailApp() {
       <Toast toasts={toasts} onDismiss={(id) => setToasts((p) => p.filter((t) => t.id !== id))} />
 
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex shrink-0 h-full">
+      <div className="hidden lg:flex shrink-0 h-full w-64 min-w-[256px] max-w-[256px]">
         <Sidebar
           folders={folders}
           activeFolderId={activeFolderId}
@@ -530,8 +530,8 @@ export default function MailApp() {
           {/* Message List */}
           <div className={`relative h-full ${
             selectedMessageId
-              ? 'hidden md:block md:w-[340px] lg:w-[380px] md:min-w-[340px] lg:min-w-[380px] md:max-w-[340px] lg:max-w-[380px] shrink-0'
-              : 'w-full md:w-[340px] lg:w-[380px] md:min-w-[340px] lg:min-w-[380px] md:max-w-[340px] lg:max-w-[380px] shrink-0'
+              ? 'hidden md:block w-full md:w-[360px] md:min-w-[360px] md:max-w-[360px] shrink-0'
+              : 'w-full md:w-[360px] md:min-w-[360px] md:max-w-[360px] shrink-0'
           }`}>
             {isLoading && (
               <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
