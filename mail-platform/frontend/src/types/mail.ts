@@ -67,3 +67,16 @@ export interface AgendaItem {
   completed: boolean;
 }
 
+export interface SubscriptionItem {
+  id: string;
+  sender_name: string;
+  sender_address: string;
+  latest_subject: string;
+  latest_date: string;
+  total_emails: number;
+  unsubscribe_url?: string;
+  unsubscribe_email?: string;
+  is_unsubscribed?: boolean;
+  frequency?: 'daily' | 'weekly' | 'monthly' | 'occasional';
+}
+

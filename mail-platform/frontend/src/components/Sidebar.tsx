@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import {
   Inbox, Send, FileText, Archive, AlertOctagon, Trash2, Camera,
   Calendar as CalendarIcon, Plus, ChevronLeft, ChevronRight, Check,
-  Clock, X, Feather, ChevronDown, ChevronUp, Repeat, GripVertical, LogOut
+  Clock, X, Feather, ChevronDown, ChevronUp, Repeat, GripVertical, LogOut,
+  Newspaper
 } from 'lucide-react';
 import { Folder, AgendaItem } from '@/types/mail';
 import { fetchAgendas, saveAgenda, toggleAgendaApi, deleteAgendaApi } from '@/lib/api';
@@ -356,6 +357,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
             );
           })}
+
+          {/* Subscriptions / Newsletters Section Item */}
+          <div className="pt-1 mt-1 border-t border-[var(--card-border)]/60">
+            <button
+              onClick={() => onSelectFolder('subscriptions')}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-2xl text-xs font-semibold transition-all duration-200 ease-out apple-active-scale cursor-pointer ${
+                activeFolderId === 'subscriptions'
+                  ? 'bg-blue-600 text-white font-bold shadow-md scale-100'
+                  : 'text-[var(--text-secondary)] hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)] border border-transparent'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <span className={activeFolderId === 'subscriptions' ? 'text-white' : 'text-[var(--text-muted)]'}>
+                  <Newspaper className="w-4 h-4 stroke-[1.8]" />
+                </span>
+                <span>Subscriptions</span>
+              </div>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors duration-200 ${
+                activeFolderId === 'subscriptions'
+                  ? 'bg-white/20 text-white font-extrabold'
+                  : 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
+              }`}>
+                Hub
+              </span>
+            </button>
+          </div>
         </nav>
       </div>
 

@@ -9,6 +9,7 @@ import { MessageView } from '@/components/MessageView';
 import { ComposerModal } from '@/components/ComposerModal';
 import { Toast, ToastMessage } from '@/components/Toast';
 import { ImportContactsModal } from '@/components/ImportContactsModal';
+import { SubscriptionsView } from '@/components/SubscriptionsView';
 import { sound } from '@/lib/sound';
 import { Folder, MessageSummary, MessageDetail } from '@/types/mail';
 import {
@@ -135,7 +136,7 @@ export default function MailApp() {
 
   // ── Load messages for active folder ──────────────────────────────────────
   const loadMessages = useCallback(async (folderId: string, silent = false) => {
-    if (!folderId) return;
+    if (!folderId || folderId === 'subscriptions') return;
     if (!silent) setIsLoading(true);
     setLoadError(null);
     try {
@@ -243,11 +244,15 @@ export default function MailApp() {
 
   // ── Handlers ──────────────────────────────────────────────────────────────
   const handleSelectFolder = (id: string) => {
+    setSelectedMessageId(null);
     if (id === activeFolderId) {
-      loadMessages(id);
+      if (id !== 'subscriptions') loadMessages(id);
       return;
     }
     setActiveFolderId(id);
+    if (id !== 'subscriptions') {
+      loadMessages(id);
+    }
   };
 
   const handleReply = useCallback(() => {
@@ -483,8 +488,8 @@ export default function MailApp() {
       {/* Main Workspace */}
       <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
         <Header
-          activeFolderName={folders.find((f) => f.id === activeFolderId)?.name ?? 'Inbox'}
-          totalMessagesCount={displayMessages.length}
+          activeFolderName={activeFolderId === 'subscriptions' ? 'Subscriptions & Newsletters' : (folders.find((f) => f.id === activeFolderId)?.name ?? 'Inbox')}
+          totalMessagesCount={activeFolderId === 'subscriptions' ? 0 : displayMessages.length}
           messages={messages}
           selectedMessage={selectedMessageDetail}
           onBack={() => setSelectedMessageId(null)}
@@ -512,48 +517,66 @@ export default function MailApp() {
           </div>
         )}
 
-        {/* Mail Split Pane (Responsive) */}
+        {/* Mail Split Pane (Responsive) / Subscriptions View */}
         <main className="flex-1 flex min-h-0 overflow-hidden gap-0 md:gap-3 pt-0 md:pt-1.5">
-          {/* Message List */}
-          <div className={`relative h-full ${selectedMessageId ? 'hidden md:block md:w-[320px] lg:w-[380px] shrink-0' : 'w-full md:w-[320px] lg:w-[380px] shrink-0'}`}>
-            {isLoading && (
-              <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
-                <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-              </div>
-            )}
-            <MessageList
-              messages={displayMessages}
-              selectedMessageId={selectedMessageId}
-              onSelectMessage={setSelectedMessageId}
-              onToggleStar={(id) => handleToggleStar(id)}
-              onRefresh={handleRefresh}
-              onBatchAction={handleBatchAction}
-            />
-          </div>
-
-          {/* Message View */}
-          <div className={`flex-1 min-w-0 relative h-full ${selectedMessageId ? 'block' : 'hidden md:block'}`}>
-            {isLoadingDetail && selectedMessageId && (
-              <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
-                <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-              </div>
-            )}
-            <MessageView
-              message={selectedMessageDetail}
-              onReply={handleReply}
-              onForward={handleForward}
-              onArchive={() => selectedMessageId && handleArchive(selectedMessageId)}
-              onDelete={() => selectedMessageId && handleDelete(selectedMessageId)}
-              onToggleStar={() => selectedMessageId && handleToggleStar(selectedMessageId)}
-              onMarkUnread={handleMarkUnread}
-              onBack={() => setSelectedMessageId(null)}
-              onReplySuccess={(info) => {
-                sound.playSend();
-                addToast('success', `✓ Reply dispatched to ${info.to}`);
-                loadFolders();
+          {activeFolderId === 'subscriptions' ? (
+            <SubscriptionsView
+              messages={messages}
+              onFilterSender={(senderEmail) => {
+                const inbox = folders.find((f) => f.type === 'inbox') ?? folders[0];
+                if (inbox) {
+                  setActiveFolderId(inbox.id);
+                  loadMessages(inbox.id);
+                }
+                setSearchQuery(senderEmail);
               }}
+              onRefresh={handleRefresh}
+              onToast={(type, text) => addToast(type, text)}
             />
-          </div>
+          ) : (
+            <>
+              {/* Message List */}
+              <div className={`relative h-full ${selectedMessageId ? 'hidden md:block md:w-[320px] lg:w-[380px] shrink-0' : 'w-full md:w-[320px] lg:w-[380px] shrink-0'}`}>
+                {isLoading && (
+                  <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
+                    <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                )}
+                <MessageList
+                  messages={displayMessages}
+                  selectedMessageId={selectedMessageId}
+                  onSelectMessage={setSelectedMessageId}
+                  onToggleStar={(id) => handleToggleStar(id)}
+                  onRefresh={handleRefresh}
+                  onBatchAction={handleBatchAction}
+                />
+              </div>
+
+              {/* Message View */}
+              <div className={`flex-1 min-w-0 relative h-full ${selectedMessageId ? 'block' : 'hidden md:block'}`}>
+                {isLoadingDetail && selectedMessageId && (
+                  <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
+                    <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                )}
+                <MessageView
+                  message={selectedMessageDetail}
+                  onReply={handleReply}
+                  onForward={handleForward}
+                  onArchive={() => selectedMessageId && handleArchive(selectedMessageId)}
+                  onDelete={() => selectedMessageId && handleDelete(selectedMessageId)}
+                  onToggleStar={() => selectedMessageId && handleToggleStar(selectedMessageId)}
+                  onMarkUnread={handleMarkUnread}
+                  onBack={() => setSelectedMessageId(null)}
+                  onReplySuccess={(info) => {
+                    sound.playSend();
+                    addToast('success', `✓ Reply dispatched to ${info.to}`);
+                    loadFolders();
+                  }}
+                />
+              </div>
+            </>
+          )}
         </main>
       </div>
 
