@@ -65,6 +65,7 @@ class MessageDetail(MessageSummary):
     body_plain: Optional[str] = None
     body_html: Optional[str] = None
     attachments: List[AttachmentResponse] = []
+    thread_messages: Optional[List['MessageDetail']] = []
 
 class AttachmentPayload(BaseModel):
     filename: str

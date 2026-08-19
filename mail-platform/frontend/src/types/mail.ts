@@ -43,6 +43,7 @@ export interface MessageDetail extends MessageSummary {
   body_html?: string;
   created_at?: string;
   attachments: Attachment[];
+  thread_messages?: MessageDetail[];
 }
 
 export type Message = MessageDetail;

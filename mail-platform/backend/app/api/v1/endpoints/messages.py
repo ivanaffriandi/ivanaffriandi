@@ -140,6 +140,57 @@ async def get_message(
     # Sanitize HTML body
     clean_html = sanitize_email_html(msg.body_html or "")
 
+    # Load thread conversation history
+    thread_msgs = []
+    if msg.thread_id:
+        t_stmt = (
+            select(Message)
+            .options(selectinload(Message.attachments))
+            .where(Message.thread_id == msg.thread_id)
+            .order_by(Message.date.asc())
+        )
+        t_res = await db.execute(t_stmt)
+        raw_thread_msgs = t_res.scalars().all()
+        for tm in raw_thread_msgs:
+            tm_clean_html = sanitize_email_html(tm.body_html or "")
+            thread_msgs.append(
+                MessageDetail(
+                    id=tm.id,
+                    thread_id=tm.thread_id,
+                    mailbox_id=tm.mailbox_id,
+                    sender_name=tm.sender_name,
+                    sender_address=tm.sender_address,
+                    recipient_to=tm.recipient_to,
+                    recipient_cc=tm.recipient_cc,
+                    recipient_bcc=tm.recipient_bcc,
+                    message_id_header=tm.message_id_header,
+                    in_reply_to_header=tm.in_reply_to_header,
+                    references_header=tm.references_header,
+                    subject=tm.subject,
+                    date=tm.date,
+                    snippet=(tm.body_plain or tm.body_html or "")[:150],
+                    body_plain=tm.body_plain,
+                    body_html=tm_clean_html,
+                    is_read=tm.is_read,
+                    is_starred=tm.is_starred,
+                    has_attachments=tm.has_attachments,
+                    spam_score=float(tm.spam_score or 0.0),
+                    spam_status=tm.spam_status or "ham",
+                    attachments=[
+                        AttachmentResponse(
+                            id=a.id,
+                            filename=a.filename,
+                            content_type=a.content_type,
+                            size_bytes=a.size_bytes,
+                            is_inline=a.is_inline,
+                            checksum_sha256=a.checksum_sha256
+                        )
+                        for a in tm.attachments
+                    ],
+                    thread_messages=[]
+                )
+            )
+
     return MessageDetail(
         id=msg.id,
         thread_id=msg.thread_id,
@@ -172,7 +223,8 @@ async def get_message(
                 checksum_sha256=a.checksum_sha256
             )
             for a in msg.attachments
-        ]
+        ],
+        thread_messages=thread_msgs
     )
 
 @router.patch("/{message_id}/star")
