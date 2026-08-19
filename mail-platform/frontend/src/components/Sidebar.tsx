@@ -334,9 +334,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
               >
                 <button
                   onClick={() => onSelectFolder(folder.id)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-2xl text-xs font-semibold transition-all duration-200 ease-out apple-active-scale ${
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-2xl text-xs font-semibold transition-colors duration-100 ${
                     isActive
-                      ? 'bg-blue-600 text-white font-bold shadow-md scale-100'
+                      ? 'bg-blue-600 text-white font-bold shadow-md'
                       : 'text-[var(--text-secondary)] hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)] border border-transparent'
                   }`}
                 >
