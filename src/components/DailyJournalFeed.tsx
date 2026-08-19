@@ -380,6 +380,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState<boolean>(false);
   const [mobilePrologueOpen, setMobilePrologueOpen] = useState<boolean>(false);
   const [isReadingPrologue, setIsReadingPrologue] = useState<boolean>(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState<boolean>(false);
 
   const selectedPostImages = useMemo(() => {
     if (isReadingPrologue) return ["/nature_hero.png"];
@@ -447,7 +448,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     });
   }, [selectedPostImages]);
 
-  // Flipboard Deck: Card 0 is PROLOGUE by default, followed by Chapter 04, Chapter 03, etc.
+  // Flipboard Deck: Card 0 is PROLOGUE by default, followed by Chapter 04, Chapter 03, etc. (ALL posts included)
   const flipboardCards = useMemo(() => {
     const prologueCard = {
       id: "prologue",
@@ -465,8 +466,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
       return [prologueCard];
     }
 
-    const limited = sortedPosts.slice(0, 10);
-    const chapterCards = limited.map((p, idx) => {
+    const chapterCards = sortedPosts.map((p, idx) => {
       const extracted = extractCoverImage(p.content);
       const isBadImg = !extracted || extracted.includes("ocean_hero_mono.png");
       const cover = isBadImg ? fallbackCovers[(idx + 1) % fallbackCovers.length] : extracted;
@@ -474,7 +474,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
       return {
         id: p.id,
         category: chapterNum,
-        date: p.published ? getRelativeTimeString(p.published) : "ESSAY",
+        date: p.published ? formatDate(p.published, locale) : "ESSAY",
         title: p.title,
         excerpt: stripHtml(p.content || "").slice(0, 135) + "…",
         img: cover,
@@ -485,7 +485,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     });
 
     return [prologueCard, ...chapterCards];
-  }, [sortedPosts, fallbackCovers]);
+  }, [sortedPosts, fallbackCovers, locale]);
 
   // Backward-compatible hero posts for desktop
   const heroPosts = useMemo(() => {
@@ -2325,12 +2325,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             letter-spacing: -0.035em !important;
             margin: 0.35rem 0 0.5rem 0 !important;
             text-shadow: 0 2px 14px rgba(0,0,0,0.6) !important;
+            max-width: 84% !important;
+            word-break: break-word !important;
           }
 
           .pj-root.has-selected-post .pj-title {
             font-size: clamp(1.15rem, 4.8vw, 1.4rem) !important;
             line-height: 1.25 !important;
             margin: 0.25rem 0 0 0 !important;
+            max-width: 100% !important;
             word-break: break-word !important;
           }
 
@@ -2339,6 +2342,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             line-height: 1.5 !important;
             color: rgba(255, 255, 255, 0.84) !important;
             margin: 0 0 0.85rem 0 !important;
+            max-width: 82% !important;
             display: -webkit-box !important;
             -webkit-line-clamp: 3 !important;
             -webkit-box-orient: vertical !important;
@@ -2378,7 +2382,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: flex !important;
             flex-direction: column !important;
             justify-content: flex-end !important;
-            padding: 3rem 1.35rem calc(2.2rem + env(safe-area-inset-bottom, 0px)) 1.35rem !important;
+            padding: 3rem 4.5rem calc(2.2rem + env(safe-area-inset-bottom, 0px)) 1.35rem !important;
             box-sizing: border-box !important;
             z-index: 10 !important;
           }
@@ -2635,7 +2639,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               </Link>
             )}
 
-            {/* Right: Q&A Button + Hamburger Menu for Chapter Directory */}
+            {/* Right: Q&A Button + Search Button */}
             <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
               <Link
                 href="/ask"
@@ -2650,14 +2654,14 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
               <button
                 type="button"
-                onClick={() => setMobileSidebarOpen(true)}
+                onClick={() => setMobileSearchOpen(true)}
                 className="mobile-menu-trigger-btn"
-                title="All Chapters & Search"
+                title="Search Stories & Chapters"
+                style={{ width: "32px", height: "32px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
               >
-                <svg width="18" height="13" viewBox="0 0 22 14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                  <line x1="1" y1="2" x2="21" y2="2" />
-                  <line x1="1" y1="7" x2="21" y2="7" />
-                  <line x1="1" y1="12" x2="21" y2="12" />
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
               </button>
             </div>
@@ -2704,22 +2708,46 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             }}
           />
 
-          <div className="pj-left-content" style={{ zIndex: 3 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+          <div
+            className="pj-left-content"
+            style={{
+              zIndex: 3,
+              cursor: !selectedPost && !isReadingPrologue ? "pointer" : "default",
+            }}
+            onClick={(e) => {
+              if (!selectedPost && !isReadingPrologue) {
+                e.stopPropagation();
+                if (currentFlipCard.isPrologue) {
+                  setIsReadingPrologue(true);
+                  setSelectedPostIndex(null);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                } else if (currentFlipCard.post) {
+                  setIsReadingPrologue(false);
+                  const idx = sortedPosts.findIndex((p) => p.id === currentFlipCard.post.id);
+                  if (idx !== -1) {
+                    setSelectedPostIndex(idx);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }
+                }
+              }
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.5rem", flexWrap: "nowrap" }}>
               <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
                 {isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue)
                   ? "INTRO NARRATIVE"
                   : selectedPost
-                  ? `CHAPTER ${String(sortedPosts.length - (selectedPostIndex ?? 0)).padStart(2, "0")} · ${formatDate(selectedPost.published, locale)}`
+                  ? `CHAPTER ${String(sortedPosts.length - (selectedPostIndex ?? 0)).padStart(2, "0")}`
                   : currentFlipCard.category}
               </span>
-              <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.6)" }}>
-                {isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue)
-                  ? "2 MIN READ"
-                  : selectedPost
-                  ? ""
-                  : currentFlipCard.date}
-              </span>
+              {((!selectedPost && currentFlipCard.date && !currentFlipCard.isPrologue) || (selectedPost && selectedPost.published)) && (
+                <>
+                  <span style={{ color: "rgba(255, 255, 255, 0.4)", fontSize: "0.65rem" }}>·</span>
+                  <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.65)" }}>
+                    {selectedPost ? formatDate(selectedPost.published, locale) : currentFlipCard.date}
+                  </span>
+                </>
+              )}
             </div>
 
             <h1
@@ -2744,7 +2772,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               </p>
             )}
 
-            {/* Dots indicator: for article photo gallery when open, or for flipboard in overview mode */}
+            {/* Dots indicator: for article photo gallery when open, or for flipboard in overview mode (MAX 5 VISIBLE STRIPS WINDOW) */}
             {selectedPost && selectedPostImages.length > 1 ? (
               <div className="pj-dots" style={{ marginTop: "1.4rem" }}>
                 {selectedPostImages.map((_, i) => (
@@ -2760,16 +2788,42 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               </div>
             ) : !selectedPost && !isReadingPrologue && flipboardCards.length > 1 ? (
               <div className="pj-dots" style={{ marginTop: "1.4rem" }}>
-                {flipboardCards.map((_, i) => (
-                  <div
-                    key={i}
-                    className={`pj-dot${i === (heroIndex % flipboardCards.length) ? " active" : ""}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setHeroIndex(i);
-                    }}
-                  />
-                ))}
+                {(() => {
+                  const total = flipboardCards.length;
+                  if (total <= 5) {
+                    return flipboardCards.map((_, i) => (
+                      <div
+                        key={i}
+                        className={`pj-dot${i === (heroIndex % total) ? " active" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setHeroIndex(i);
+                        }}
+                      />
+                    ));
+                  }
+                  const current = heroIndex % total;
+                  let start = Math.max(0, current - 2);
+                  let end = start + 5;
+                  if (end > total) {
+                    end = total;
+                    start = Math.max(0, end - 5);
+                  }
+                  const visibleDots = [];
+                  for (let i = start; i < end; i++) {
+                    visibleDots.push(
+                      <div
+                        key={i}
+                        className={`pj-dot${i === current ? " active" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setHeroIndex(i);
+                        }}
+                      />
+                    );
+                  }
+                  return visibleDots;
+                })()}
               </div>
             ) : null}
           </div>
@@ -2849,28 +2903,73 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               </button>
             </div>
           ) : !isReadingPrologue ? (
-            <button
-              className="pj-read-btn"
-              style={{ pointerEvents: "auto", cursor: "pointer", zIndex: 100 }}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (currentFlipCard.isPrologue) {
-                  setIsReadingPrologue(true);
-                  setSelectedPostIndex(null);
-                } else if (currentFlipCard.post) {
-                  setIsReadingPrologue(false);
-                  const idx = sortedPosts.findIndex((p) => p.id === currentFlipCard.post.id);
-                  if (idx !== -1) setSelectedPostIndex(idx);
-                }
+            <div
+              style={{
+                position: "absolute",
+                bottom: "1.5rem",
+                right: "1.5rem",
+                zIndex: 10,
+                display: "flex",
+                alignItems: "center",
+                gap: "0.45rem",
               }}
             >
-              READ
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
-              </svg>
-            </button>
+              {/* PREVIOUS STORY DECK BUTTON */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setHeroIndex((prev) => (prev > 0 ? prev - 1 : flipboardCards.length - 1));
+                }}
+                title="Previous Story"
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "50%",
+                  background: "rgba(255, 255, 255, 0.14)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255, 255, 255, 0.22)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#ffffff",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+
+              {/* NEXT STORY DECK BUTTON */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setHeroIndex((prev) => (prev < flipboardCards.length - 1 ? prev + 1 : 0));
+                }}
+                title="Next Story"
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "50%",
+                  background: "rgba(255, 255, 255, 0.14)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255, 255, 255, 0.22)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#ffffff",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            </div>
           ) : null}
         </div>
 
@@ -3890,116 +3989,76 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           document.body
         )}
 
-      {/* ── MOBILE CHAPTERS DIRECTORY & SEARCH SIDEBAR DRAWER ── */}
+      {/* ── FULLSCREEN EXPANDABLE MOBILE SEARCH OVERLAY MODAL ── */}
       {typeof document !== "undefined" &&
         createPortal(
           <AnimatePresence>
-            {mobileSidebarOpen && (
+            {mobileSearchOpen && (
               <>
+                {/* Backdrop */}
                 <motion.div
+                  key="mobile-search-backdrop"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                  onClick={() => setMobileSidebarOpen(false)}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => setMobileSearchOpen(false)}
                   style={{
                     position: "fixed",
                     inset: 0,
-                    backgroundColor: "rgba(0, 0, 0, 0.75)",
-                    backdropFilter: "blur(12px)",
-                    WebkitBackdropFilter: "blur(12px)",
-                    zIndex: 99999,
+                    backgroundColor: "rgba(0, 0, 0, 0.78)",
+                    backdropFilter: "blur(14px)",
+                    WebkitBackdropFilter: "blur(14px)",
+                    zIndex: 99998,
                   }}
                 />
-                <motion.aside
-                  initial={{ x: "100%" }}
-                  animate={{ x: 0 }}
-                  exit={{ x: "100%" }}
-                  transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+
+                {/* Search Content Sheet */}
+                <motion.div
+                  key="mobile-search-sheet"
+                  initial={{ opacity: 0, y: -24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -24 }}
+                  transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
                   style={{
                     position: "fixed",
                     top: 0,
+                    left: 0,
                     right: 0,
                     bottom: 0,
-                    width: "88vw",
-                    maxWidth: "380px",
-                    background: "#0c0d10",
-                    color: "#FFFFFF",
-                    zIndex: 100000,
+                    width: "100vw",
+                    height: "100dvh",
+                    zIndex: 99999,
                     display: "flex",
                     flexDirection: "column",
-                    boxShadow: "-12px 0 40px rgba(0,0,0,0.85)",
-                    borderLeft: "1px solid rgba(255,255,255,0.14)",
+                    backgroundColor: "#0c0d10",
+                    color: "#FFFFFF",
+                    padding: "calc(env(safe-area-inset-top, 0px) + 14px) 1.25rem calc(env(safe-area-inset-bottom, 0px) + 20px)",
+                    boxSizing: "border-box",
                   }}
                 >
-                  {/* Top Bar */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "1.3rem 1.25rem 1rem",
-                      borderBottom: "1px solid rgba(255,255,255,0.08)",
-                      background: "#0c0d10",
-                    }}
-                  >
-                    <div>
-                      <div
-                        style={{
-                          fontSize: "0.58rem",
-                          fontWeight: 800,
-                          letterSpacing: "0.2em",
-                          color: "rgba(255,255,255,0.45)",
-                          textTransform: "uppercase",
-                          fontFamily: "var(--font-sans, sans-serif)",
-                        }}
-                      >
-                        JOURNAL DIRECTORY
-                      </div>
-                      <div style={{ fontSize: "1.15rem", fontWeight: 800, letterSpacing: "-0.02em", color: "#FFFFFF", marginTop: "2px", fontFamily: "var(--font-sans, sans-serif)" }}>
-                        All Chapters ({sortedPosts.length})
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setMobileSidebarOpen(false)}
-                      style={{
-                        background: "rgba(255,255,255,0.08)",
-                        border: "1px solid rgba(255,255,255,0.18)",
-                        color: "#FFFFFF",
-                        width: "34px",
-                        height: "34px",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        cursor: "pointer",
-                        transition: "all 0.2s ease",
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-
-                  {/* Search Bar */}
-                  <div style={{ padding: "0.95rem 1.25rem 0.75rem", background: "#0c0d10" }}>
+                  {/* Top Bar: Live Input + Cancel button */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", marginBottom: "1rem" }}>
                     <div
                       style={{
+                        flex: 1,
                         display: "flex",
                         alignItems: "center",
-                        gap: "0.55rem",
-                        background: "rgba(255,255,255,0.06)",
-                        border: "1px solid rgba(255,255,255,0.14)",
-                        borderRadius: "12px",
-                        padding: "0.6rem 0.85rem",
+                        gap: "0.65rem",
+                        background: "rgba(255, 255, 255, 0.08)",
+                        border: "1px solid rgba(255, 255, 255, 0.18)",
+                        borderRadius: "14px",
+                        padding: "0.7rem 0.95rem",
                       }}
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" style={{ opacity: 0.6, color: "#FFFFFF" }}>
-                        <circle cx="11" cy="11" r="8"/>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" style={{ color: "rgba(255,255,255,0.6)", flexShrink: 0 }}>
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
                       </svg>
                       <input
                         type="text"
-                        placeholder="Search chapters..."
+                        autoFocus
+                        placeholder="Search essays, keywords, dates..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         style={{
@@ -4007,38 +4066,75 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           border: "none",
                           outline: "none",
                           color: "#FFFFFF",
-                          fontSize: "0.84rem",
+                          fontSize: "0.95rem",
+                          fontWeight: 500,
                           width: "100%",
                         }}
                       />
                       {searchQuery && (
                         <button
                           onClick={() => setSearchQuery("")}
-                          style={{ background: "none", border: "none", color: "#FFFFFF", opacity: 0.6, cursor: "pointer", fontSize: "0.75rem" }}
+                          style={{
+                            background: "rgba(255,255,255,0.14)",
+                            border: "none",
+                            borderRadius: "50%",
+                            width: "20px",
+                            height: "20px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "#FFFFFF",
+                            cursor: "pointer",
+                            fontSize: "0.7rem",
+                          }}
                         >
                           ✕
                         </button>
                       )}
                     </div>
+
+                    <button
+                      onClick={() => setMobileSearchOpen(false)}
+                      style={{
+                        background: "rgba(255, 255, 255, 0.08)",
+                        border: "1px solid rgba(255, 255, 255, 0.16)",
+                        color: "#FFFFFF",
+                        fontSize: "0.72rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        padding: "0.7rem 0.9rem",
+                        borderRadius: "14px",
+                        cursor: "pointer",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      CANCEL
+                    </button>
                   </div>
 
-                  {/* List of Chapters (Sorted newest on top, Prologue at bottom) */}
+                  {/* Results Count / Header */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 0.25rem 0.65rem", borderBottom: "1px solid rgba(255,255,255,0.08)", marginBottom: "0.75rem" }}>
+                    <span style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)" }}>
+                      {searchQuery.trim() ? `MATCHING RESULTS (${filteredPosts.length + ("prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim()) ? 1 : 0)})` : `ALL STORIES (${sortedPosts.length + 1})`}
+                    </span>
+                  </div>
+
+                  {/* Results List */}
                   <div
                     style={{
                       flex: 1,
                       overflowY: "auto",
-                      padding: "0.4rem 1.25rem 2.5rem",
                       display: "flex",
                       flexDirection: "column",
                       gap: "0.65rem",
-                      background: "#0c0d10",
+                      paddingBottom: "2rem",
                     }}
                   >
-                    {/* CHAPTERS WITH COVER THUMBNAILS (NEWEST FIRST) */}
+                    {/* Matching Chapters */}
                     {filteredPosts.map((post) => {
                       const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
                       const chapterNum = String(sortedPosts.length - postIdx).padStart(2, "0");
-                      const relTime = getRelativeTimeString(post.published);
                       const postCover = extractCoverImage(post.content) || fallbackCovers[(postIdx + 1) % fallbackCovers.length];
 
                       return (
@@ -4047,7 +4143,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           onClick={() => {
                             setIsReadingPrologue(false);
                             setSelectedPostIndex(postIdx);
-                            setMobileSidebarOpen(false);
+                            setMobileSearchOpen(false);
                             window.scrollTo({ top: 0, behavior: "smooth" });
                           }}
                           style={{
@@ -4056,7 +4152,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                             gap: "0.85rem",
                             padding: "0.75rem 0.85rem",
                             borderRadius: "14px",
-                            background: selectedPostIndex === postIdx && !isReadingPrologue ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.05)",
+                            background: "rgba(255,255,255,0.05)",
                             border: "1px solid rgba(255,255,255,0.1)",
                             cursor: "pointer",
                             transition: "all 0.18s ease",
@@ -4075,7 +4171,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                                 CHAPTER {chapterNum}
                               </span>
                               <span style={{ fontSize: "0.52rem", fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>
-                                {relTime}
+                                {formatDate(post.published, locale)}
                               </span>
                             </div>
                             <h4 style={{ fontSize: "0.84rem", fontWeight: 700, lineHeight: 1.3, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
@@ -4086,49 +4182,51 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       );
                     })}
 
-                    {/* PROLOGUE ENTRY AT THE BOTTOM */}
-                    <div
-                      onClick={() => {
-                        setIsReadingPrologue(true);
-                        setSelectedPostIndex(null);
-                        setMobileSidebarOpen(false);
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                      }}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.85rem",
-                        padding: "0.75rem 0.85rem",
-                        borderRadius: "14px",
-                        background: isReadingPrologue ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.05)",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        cursor: "pointer",
-                        transition: "all 0.18s ease",
-                      }}
-                    >
-                      <div style={{ width: "74px", height: "56px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, position: "relative", background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.12)" }}>
-                        <img
-                          src="/nature_hero.png"
-                          alt="Prologue"
-                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                        />
-                      </div>
-                      <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1, minWidth: 0 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#FFFFFF", background: "rgba(255,255,255,0.15)", padding: "2px 6px", borderRadius: "4px" }}>
-                            PROLOGUE
-                          </span>
-                          <span style={{ fontSize: "0.52rem", fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>
-                            INTRO
-                          </span>
+                    {/* PROLOGUE ENTRY (Shown when no search or when query matches prologue keywords) */}
+                    {(!searchQuery.trim() || "prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim())) && (
+                      <div
+                        onClick={() => {
+                          setIsReadingPrologue(true);
+                          setSelectedPostIndex(null);
+                          setMobileSearchOpen(false);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.85rem",
+                          padding: "0.75rem 0.85rem",
+                          borderRadius: "14px",
+                          background: isReadingPrologue ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.05)",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          cursor: "pointer",
+                          transition: "all 0.18s ease",
+                        }}
+                      >
+                        <div style={{ width: "74px", height: "56px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, position: "relative", background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.12)" }}>
+                          <img
+                            src="/nature_hero.png"
+                            alt="Prologue"
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          />
                         </div>
-                        <h4 style={{ fontSize: "0.84rem", fontWeight: 700, lineHeight: 1.3, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                          A Quiet Corner on the Internet
-                        </h4>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1, minWidth: 0 }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#FFFFFF", background: "rgba(255,255,255,0.15)", padding: "2px 6px", borderRadius: "4px" }}>
+                              PROLOGUE
+                            </span>
+                            <span style={{ fontSize: "0.52rem", fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>
+                              INTRO NARRATIVE
+                            </span>
+                          </div>
+                          <h4 style={{ fontSize: "0.84rem", fontWeight: 700, lineHeight: 1.3, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                            A Quiet Corner on the Internet
+                          </h4>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
-                </motion.aside>
+                </motion.div>
               </>
             )}
           </AnimatePresence>,
