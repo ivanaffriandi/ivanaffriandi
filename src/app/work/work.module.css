@@ -539,6 +539,64 @@
   padding-top: 28px;
 }
 
+/* ── ABOUT HERO WITH SEAMLESS HEAD CUTOUT (NO BOX / NO FRAME) ── */
+.aboutHeroSection {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 4px 0 12px 0;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .aboutHeroSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+}
+
+.aboutHeadPortrait {
+  width: 135px;
+  height: 135px;
+  object-fit: contain;
+  flex-shrink: 0;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .aboutHeadPortrait {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+.aboutHeroBioWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.aboutHeroBioHeadline {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #111111;
+  margin: 0;
+}
+
+.aboutHeroBioText {
+  font-size: 13px;
+  line-height: 1.65;
+  color: #555555;
+  margin: 0;
+}
+
 .overviewCardsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

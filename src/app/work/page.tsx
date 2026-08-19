@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './work.module.css';
 
-type TabType = 'overview' | 'projects' | 'skills' | 'process' | 'archive';
+type TabType = 'about' | 'projects' | 'skills' | 'process' | 'archive';
 
 export default function WorkIvanPortfolioPage() {
-  const [activeTab, setActiveTab] = useState<TabType>('overview');
+  const [activeTab, setActiveTab] = useState<TabType>('about');
   const [liveTime, setLiveTime] = useState('5:40 PM (WIB)');
 
   // Real-time Indonesian WIB clock ticker
@@ -29,10 +29,10 @@ export default function WorkIvanPortfolioPage() {
   }, []);
 
   const tabHeaders = {
-    overview: {
-      headline: 'Design & Code',
+    about: {
+      headline: 'Ivan Affriandi',
       narrative:
-        'I design clean digital interfaces, build fast web apps, and craft bespoke leather goods in Tangerang, Indonesia.',
+        'Designer, full-stack engineer, and atelier founder crafting clean digital products and physical goods in Tangerang, Indonesia.',
       duration: '2025 — Present',
       client: 'Independent Studio',
       artDirection: 'Digital & Physical',
@@ -122,10 +122,10 @@ export default function WorkIvanPortfolioPage() {
 
         <div className={styles.headerCol2}>
           <button
-            onClick={() => setActiveTab('overview')}
-            className={`${styles.navItemBtn} ${activeTab === 'overview' ? styles.navItemActive : ''}`}
+            onClick={() => setActiveTab('about')}
+            className={`${styles.navItemBtn} ${activeTab === 'about' ? styles.navItemActive : ''}`}
           >
-            Overview
+            About
           </button>
           <button
             onClick={() => setActiveTab('projects')}
@@ -210,9 +210,27 @@ export default function WorkIvanPortfolioPage() {
 
         {/* ── ROW 4: DYNAMIC TAB VIEW CONTENTS ── */}
 
-        {/* 1. OVERVIEW TAB */}
-        {activeTab === 'overview' && (
+        {/* 1. ABOUT TAB: SEAMLESS CUTOUT PORTRAIT + 3 DISCIPLINE CARDS */}
+        {activeTab === 'about' && (
           <div className={styles.fullWidthTabBlock}>
+            {/* Seamless Head Cutout & Intro */}
+            <div className={styles.aboutHeroSection}>
+              <img
+                src="/ivan-head.png"
+                alt="Ivan Affriandi"
+                className={styles.aboutHeadPortrait}
+              />
+              <div className={styles.aboutHeroBioWrap}>
+                <h3 className={styles.aboutHeroBioHeadline}>
+                  Building digital products &amp; bespoke physical craft.
+                </h3>
+                <p className={styles.aboutHeroBioText}>
+                  I specialize in building fast, lightweight web applications with Next.js, designing intuitive user interfaces in Figma, and handcrafting leather journals from my studio in Tangerang.
+                </p>
+              </div>
+            </div>
+
+            {/* 3 Focus Cards */}
             <div className={styles.overviewCardsGrid}>
               <div className={styles.overviewFocusCard}>
                 <span className={styles.overviewFocusNumber}>01 · DESIGN</span>
