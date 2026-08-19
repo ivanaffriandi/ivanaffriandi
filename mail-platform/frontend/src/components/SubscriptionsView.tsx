@@ -97,7 +97,7 @@ export const SubscriptionsView: React.FC<SubscriptionsViewProps> = ({
         latest_date: item.latest_date,
         total_emails: item.total_emails,
         is_unsubscribed: isUnsub,
-        frequency: item.total_emails > 5 ? 'daily' : item.total_emails > 2 ? 'weekly' : 'occasional',
+        frequency: (item.total_emails > 5 ? 'daily' : item.total_emails > 2 ? 'weekly' : 'occasional') as 'daily' | 'weekly' | 'occasional',
       };
     }).sort((a, b) => new Date(b.latest_date).getTime() - new Date(a.latest_date).getTime());
   }, [messages, unsubscribedMap]);
