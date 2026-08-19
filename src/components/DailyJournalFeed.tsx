@@ -2404,47 +2404,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             text-shadow: 0 1px 8px rgba(0,0,0,0.6) !important;
           }
 
-          /* ── EDITORIAL CONTENT FEED (FLOWS DIRECTLY UNDER HERO ON MOBILE) ── */
-          .pj-right {
-            display: block !important;
-            position: relative !important;
-            top: auto !important;
-            left: auto !important;
-            right: auto !important;
-            width: 100vw !important;
-            max-width: 100vw !important;
-            max-height: none !important;
-            height: auto !important;
-            background: var(--bg-color, #FFFFFF) !important;
-            color: var(--text-primary, #111111) !important;
-            border-radius: 0 !important;
-            overflow-y: visible !important;
-            box-sizing: border-box !important;
-            z-index: 1 !important;
-            padding: 1.8rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) !important;
-            box-shadow: none !important;
-          }
-
-          .pj-about-ig-grid { left: 0; height: 100%; }
-
-          /* ── HERO TEXT INSIDE LEFT PANEL ── */
-          .pj-left-content {
-            position: absolute !important;
-            inset: 0 !important;
-            width: 100vw !important;
-            height: 100% !important;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: flex-end !important;
-            padding: 3rem 4.5rem calc(2.2rem + env(safe-area-inset-bottom, 0px)) 1.35rem !important;
-            box-sizing: border-box !important;
-            z-index: 10 !important;
-          }
-
-          .pj-root.has-selected-post .pj-left-content {
-            padding: 1.5rem 6.2rem 1.25rem 1.25rem !important;
-          }
-
           .pj-title {
             font-size: clamp(1.65rem, 6.8vw, 2.35rem) !important;
             line-height: 1.15 !important;
