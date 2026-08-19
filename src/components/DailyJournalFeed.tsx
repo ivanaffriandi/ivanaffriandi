@@ -929,11 +929,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           overflow-y: hidden;
           overflow-x: hidden;
           box-sizing: border-box;
-          padding: 1.4rem max(2.5vw, 1.5rem) 1.15rem;
+          padding: 1.8rem max(3.2vw, 1.8rem) 1.5rem;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          gap: 0.65rem;
+          gap: 0.85rem;
           -webkit-overflow-scrolling: touch;
           scroll-behavior: smooth;
           background: var(--bg-color, #FFFFFF);
@@ -1683,28 +1683,28 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           border: 1px solid rgba(0, 0, 0, 0.06) !important;
         }
 
-        /* ── DESKTOP CHAPTERS 4-COLUMN 2-ROW GRID (FITS 100% ON SCREEN WITHOUT SCROLL) ── */
+        /* ── DESKTOP CHAPTERS 3-COLUMN 2-ROW GRID (MINIMALIST & BALANCED) ── */
         .blog-grid-layout {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 0.55rem;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0.85rem;
           width: 100%;
-          padding: 0.15rem 0 0 0;
+          padding: 0.25rem 0 0.5rem 0;
           box-sizing: border-box;
         }
 
         .blog-grid-card {
           display: flex;
           flex-direction: column;
-          gap: 0.35rem;
+          gap: 0.45rem;
           width: 100%;
           min-width: 0;
           cursor: pointer;
-          border-radius: 6px;
-          padding: 0.4rem;
+          border-radius: 7px;
+          padding: 0.55rem;
           border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
           background: var(--card-bg-1, #FFFFFF);
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.025);
           transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
           box-sizing: border-box;
         }
@@ -1712,14 +1712,14 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .blog-grid-card:hover {
           transform: translateY(-2px);
           border-color: var(--border-strong, rgba(0, 0, 0, 0.25));
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
         }
 
         .blog-card-thumb-wrap {
           width: 100%;
-          height: 68px;
+          height: 98px;
           flex-shrink: 0;
-          border-radius: 4px;
+          border-radius: 5px;
           overflow: hidden;
           background: #111111;
           border: none !important;
@@ -1744,20 +1744,20 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
 
         .blog-card-date {
-          font-size: 0.5rem;
+          font-size: 0.52rem;
           font-weight: 800;
-          letter-spacing: 0.07em;
+          letter-spacing: 0.08em;
           text-transform: uppercase;
           color: var(--text-muted, #888888);
         }
 
         .blog-card-title {
-          font-size: 0.72rem;
+          font-size: 0.82rem;
           font-weight: 700;
-          line-height: 1.25;
+          line-height: 1.28;
           letter-spacing: -0.015em;
           color: var(--text-primary, #111111);
-          margin: 0.05rem 0 0 0;
+          margin: 0.08rem 0 0 0;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
@@ -1770,10 +1770,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
 
         .blog-card-excerpt {
-          font-size: 0.62rem;
-          line-height: 1.32;
+          font-size: 0.68rem;
+          line-height: 1.38;
           color: var(--text-secondary, #666666);
-          margin: 0.15rem 0 0 0;
+          margin: 0.2rem 0 0 0;
           font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif);
           font-style: normal;
           display: -webkit-box;
@@ -1786,25 +1786,25 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .novel-intro-wrap {
           display: flex;
           flex-direction: column;
-          gap: 0.45rem;
+          gap: 0.65rem;
           width: 100%;
-          padding: 0.55rem 0 0.75rem;
+          padding: 0.75rem 0 0.95rem;
           border-bottom: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
         }
 
         .novel-intro-content {
           display: flex;
           flex-direction: column;
-          gap: 0.45rem;
+          gap: 0.65rem;
         }
 
         .novel-intro-2col {
           display: grid;
           grid-template-columns: 1.15fr 1fr;
-          gap: 1.5rem;
+          gap: 1.8rem;
           align-items: flex-start;
           width: 100%;
-          margin-top: 0.2rem;
+          margin-top: 0.25rem;
         }
 
         @media (max-width: 860px) {
@@ -1815,8 +1815,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
 
         .novel-intro-paragraph {
-          font-size: 0.82rem;
-          line-height: 1.6;
+          font-size: 0.86rem;
+          line-height: 1.68;
           color: var(--text-secondary, #333333);
           font-family: var(--font-serif, Georgia, serif);
           margin: 0;
@@ -1826,11 +1826,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         /* STUNNING LITERARY DROP CAP ON FIRST LETTER */
         .novel-drop-cap::first-letter {
           font-family: var(--font-serif, Georgia, serif);
-          font-size: 2.7rem;
+          font-size: 2.9rem;
           float: left;
           line-height: 0.82;
-          margin-right: 0.5rem;
-          margin-top: 0.1rem;
+          margin-right: 0.55rem;
+          margin-top: 0.12rem;
           font-weight: 400;
           color: var(--text-primary, #111111);
           font-style: italic;
