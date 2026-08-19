@@ -2244,6 +2244,44 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 ) : null}
               </div>
 
+              {/* ── TOP-RIGHT FEATHER PEN RETURN TO JOURNAL OVERVIEW BUTTON ── */}
+              {selectedPost && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedPostIndex(null);
+                  }}
+                  title="Back to Journal Overview"
+                  style={{
+                    position: "absolute",
+                    top: "1.5rem",
+                    right: "1.5rem",
+                    zIndex: 25,
+                    width: "38px",
+                    height: "38px",
+                    borderRadius: "50%",
+                    background: "rgba(0, 0, 0, 0.4)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                    border: "1px solid rgba(255, 255, 255, 0.3)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#FFFFFF",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(0, 0, 0, 0.65)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(0, 0, 0, 0.4)")}
+                >
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
+                    <line x1="16" y1="8" x2="2" y2="22" />
+                    <line x1="17.5" y1="15" x2="9" y2="15" />
+                  </svg>
+                </button>
+              )}
+
               {selectedPost ? (
                 <div
                   style={{
@@ -2284,35 +2322,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <polyline points="15 18 9 12 15 6" />
-                    </svg>
-                  </button>
-
-                  {/* CLOSE / BACK TO OVERVIEW ICON BUTTON */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedPostIndex(null);
-                    }}
-                    title="Back to Journal Overview"
-                    style={{
-                      width: "36px",
-                      height: "36px",
-                      borderRadius: "50%",
-                      background: "rgba(255, 255, 255, 0.24)",
-                      backdropFilter: "blur(12px)",
-                      WebkitBackdropFilter: "blur(12px)",
-                      border: "1px solid rgba(255, 255, 255, 0.38)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#fff",
-                      cursor: "pointer",
-                      transition: "all 0.2s ease",
-                    }}
-                  >
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
                   </button>
 
@@ -2757,10 +2766,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       {/* LEFT COLUMN: ATMOSPHERIC NARRATIVE */}
                       <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
                         <p className="novel-intro-paragraph novel-drop-cap" style={{ fontSize: "0.86rem", lineHeight: 1.62, margin: 0 }}>
-                          Somewhere past midnight, with the city going quiet outside and a cup of tea slowly going cold beside the keyboard, things tend to get clearer. The kind of clarity that only shows up when the noise settles.
+                          Most of this gets written late at night, usually when the screen is the only light in the room and the city noise has finally died down. It’s where passing thoughts turn into essays, and random observations get a second life.
                         </p>
                         <p className="novel-intro-paragraph" style={{ fontSize: "0.84rem", lineHeight: 1.62, margin: 0 }}>
-                          I&apos;ve spent a lot of time moving between things—building, making, photographing, writing—and somewhere along the way I stopped treating that as a contradiction. Both feel like the same question, just wearing different clothes.
+                          I build software, take photos, and obsess over small details. Instead of keeping all of that in separate boxes, I wanted a quiet corner on the internet where everything could just breathe together.
                         </p>
                       </div>
 
@@ -2773,7 +2782,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                               FRIEND
                             </span>
                             <div className="imessage-bubble-incoming" style={{ padding: "0.5rem 0.85rem", fontSize: "0.78rem", lineHeight: 1.4 }}>
-                              &ldquo;Wait, so what is this exactly? A blog? A portfolio? I can&apos;t tell.&rdquo;
+                              &ldquo;Wait, so what is this place exactly? A blog? A portfolio?&rdquo;
                             </div>
                           </div>
 
@@ -2783,13 +2792,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                               IVAN
                             </span>
                             <div className="imessage-bubble-outgoing" style={{ padding: "0.5rem 0.85rem", fontSize: "0.78rem", lineHeight: 1.4 }}>
-                              &ldquo;Neither, really. Think of it as a running tab — things I notice, things I make, things I can&apos;t stop thinking about.&rdquo;
+                              &ldquo;Honestly? Just a running log. Things I build, photos I take, and ideas I can&apos;t stop chewing on.&rdquo;
                             </div>
                           </div>
                         </div>
 
                         <p className="novel-intro-paragraph" style={{ opacity: 0.72, fontSize: "0.76rem", fontStyle: "italic", borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))", paddingTop: "0.4rem", margin: 0 }}>
-                          Pull up a chair. The tea&apos;s still warm, probably.
+                          Grab a drink. Make yourself at home.
                         </p>
                       </div>
                     </div>
