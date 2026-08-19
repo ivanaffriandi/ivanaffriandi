@@ -366,6 +366,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
   useEffect(() => {
     setPostPhotoIndex(0);
+    if (selectedPostIndex !== null) {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      const rightCol = document.querySelector(".pj-right");
+      if (rightCol) rightCol.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      const wrapEl = document.querySelector(".pj-journal-feed-wrap");
+      if (wrapEl) wrapEl.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }
   }, [selectedPostIndex]);
 
   // Auto-cycle through the article's gallery photos on the left
@@ -2153,7 +2160,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               <div className="pj-left-content">
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
                   <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
-                    {selectedPost ? `JOURNAL · ${formatDate(selectedPost.published, locale)}` : currentFlipCard.category}
+                    {selectedPost ? `CHAPTER ${String(sortedPosts.length - (selectedPostIndex ?? 0)).padStart(2, "0")} · ${formatDate(selectedPost.published, locale)}` : currentFlipCard.category}
                   </span>
                   <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.6)" }}>
                     {selectedPost
@@ -2200,24 +2207,127 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 ) : null}
               </div>
 
-              <button
-                className="pj-read-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (selectedPost) {
-                    setSelectedPostIndex(null);
-                  } else if (currentFlipCard.post) {
-                    const idx = sortedPosts.findIndex((p) => p.id === currentFlipCard.post.id);
-                    if (idx !== -1) setSelectedPostIndex(idx);
-                  }
-                }}
-              >
-                {selectedPost ? "← BACK" : "READ"}
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                  <polyline points="12 5 19 12 12 19" />
-                </svg>
-              </button>
+              {selectedPost ? (
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: "1.5rem",
+                    right: "1.5rem",
+                    zIndex: 10,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.45rem",
+                  }}
+                >
+                  {/* PREVIOUS CHAPTER ICON BUTTON */}
+                  <button
+                    disabled={selectedPostIndex === null || selectedPostIndex >= sortedPosts.length - 1}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1) {
+                        setSelectedPostIndex(selectedPostIndex + 1);
+                      }
+                    }}
+                    title="Previous Chapter"
+                    style={{
+                      width: "36px",
+                      height: "36px",
+                      borderRadius: "50%",
+                      background: "rgba(255, 255, 255, 0.14)",
+                      backdropFilter: "blur(12px)",
+                      WebkitBackdropFilter: "blur(12px)",
+                      border: "1px solid rgba(255, 255, 255, 0.22)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? "#fff" : "rgba(255,255,255,0.3)",
+                      cursor: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? "pointer" : "default",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="15 18 9 12 15 6" />
+                    </svg>
+                  </button>
+
+                  {/* CLOSE / BACK TO OVERVIEW ICON BUTTON */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedPostIndex(null);
+                    }}
+                    title="Back to Journal Overview"
+                    style={{
+                      width: "36px",
+                      height: "36px",
+                      borderRadius: "50%",
+                      background: "rgba(255, 255, 255, 0.24)",
+                      backdropFilter: "blur(12px)",
+                      WebkitBackdropFilter: "blur(12px)",
+                      border: "1px solid rgba(255, 255, 255, 0.38)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#fff",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+
+                  {/* NEXT CHAPTER ICON BUTTON */}
+                  <button
+                    disabled={selectedPostIndex === null || selectedPostIndex <= 0}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (selectedPostIndex !== null && selectedPostIndex > 0) {
+                        setSelectedPostIndex(selectedPostIndex - 1);
+                      }
+                    }}
+                    title="Next Chapter"
+                    style={{
+                      width: "36px",
+                      height: "36px",
+                      borderRadius: "50%",
+                      background: "rgba(255, 255, 255, 0.14)",
+                      backdropFilter: "blur(12px)",
+                      WebkitBackdropFilter: "blur(12px)",
+                      border: "1px solid rgba(255, 255, 255, 0.22)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: selectedPostIndex !== null && selectedPostIndex > 0 ? "#fff" : "rgba(255,255,255,0.3)",
+                      cursor: selectedPostIndex !== null && selectedPostIndex > 0 ? "pointer" : "default",
+                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </button>
+                </div>
+              ) : (
+                <button
+                  className="pj-read-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (currentFlipCard.post) {
+                      const idx = sortedPosts.findIndex((p) => p.id === currentFlipCard.post.id);
+                      if (idx !== -1) setSelectedPostIndex(idx);
+                    }
+                  }}
+                >
+                  READ
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </button>
+              )}
 
               {/* ── SCROLL DOWN HINT ── */}
               <div
@@ -2497,119 +2607,111 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     dangerouslySetInnerHTML={{ __html: stripImagesFromHtml(selectedPost.content) }}
                   />
 
-                  {/* Bottom Navigation Between Chapters */}
+                  {/* ── OTHER CHAPTERS THUMBNAIL ROW AT BOTTOM ── */}
                   <div
                     style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
+                      marginTop: "3.5rem",
+                      paddingTop: "2rem",
                       borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))",
-                      paddingTop: "1.5rem",
-                      marginTop: "2.5rem",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "1.2rem",
                     }}
                   >
-                    {selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? (
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
+                        OTHER CHAPTERS
+                      </span>
                       <button
-                        onClick={() => {
-                          setSelectedPostIndex(selectedPostIndex + 1);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        }}
+                        onClick={() => setSelectedPostIndex(null)}
                         style={{
                           background: "none",
                           border: "none",
-                          color: "var(--text-muted)",
-                          cursor: "pointer",
-                          fontSize: "0.72rem",
+                          color: "var(--text-primary)",
+                          fontSize: "0.7rem",
                           fontWeight: 700,
+                          cursor: "pointer",
                           letterSpacing: "0.06em",
                           textTransform: "uppercase",
+                          padding: 0,
                         }}
                       >
-                        ← PREVIOUS CHAPTER
+                        SEE ALL ↗
                       </button>
-                    ) : (
-                      <div />
-                    )}
+                    </div>
 
-                    <button
-                      onClick={() => setSelectedPostIndex(null)}
+                    <div
                       style={{
-                        background: "var(--bg-secondary, rgba(0,0,0,0.05))",
-                        border: "1px solid var(--border-subtle, rgba(0,0,0,0.1))",
-                        borderRadius: "16px",
-                        padding: "6px 14px",
-                        color: "var(--text-primary)",
-                        cursor: "pointer",
-                        fontSize: "0.68rem",
-                        fontWeight: 700,
-                        letterSpacing: "0.06em",
-                        textTransform: "uppercase",
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+                        gap: "1rem",
                       }}
                     >
-                      ALL CHAPTERS
-                    </button>
+                      {sortedPosts
+                        .filter((_, idx) => idx !== selectedPostIndex)
+                        .slice(0, 4)
+                        .map((p) => {
+                          const pIdx = sortedPosts.findIndex((item) => item.id === p.id);
+                          const pCover = extractCoverImage(p.content) || fallbackHero;
+                          const pChapter = String(sortedPosts.length - pIdx).padStart(2, "0");
+                          const pRelative = getRelativeTimeString(p.published);
 
-                    {selectedPostIndex !== null && selectedPostIndex > 0 ? (
-                      <button
-                        onClick={() => {
-                          setSelectedPostIndex(selectedPostIndex - 1);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        }}
-                        style={{
-                          background: "none",
-                          border: "none",
-                          color: "var(--text-muted)",
-                          cursor: "pointer",
-                          fontSize: "0.72rem",
-                          fontWeight: 700,
-                          letterSpacing: "0.06em",
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        NEXT CHAPTER →
-                      </button>
-                    ) : (
-                      <div />
-                    )}
+                          return (
+                            <div
+                              key={p.id}
+                              onClick={() => {
+                                setSelectedPostIndex(pIdx);
+                                window.scrollTo({ top: 0, behavior: "smooth" });
+                              }}
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "0.6rem",
+                                cursor: "pointer",
+                                borderRadius: "10px",
+                                padding: "0.6rem",
+                                border: "1px solid var(--border-subtle, rgba(0,0,0,0.06))",
+                                background: "var(--bg-secondary, rgba(0,0,0,0.02))",
+                                transition: "all 0.2s ease",
+                              }}
+                              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--border-strong, rgba(0,0,0,0.2))")}
+                              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--border-subtle, rgba(0,0,0,0.06))")}
+                            >
+                              <div style={{ width: "100%", height: "115px", borderRadius: "6px", overflow: "hidden", position: "relative" }}>
+                                <img
+                                  src={pCover}
+                                  alt={p.title}
+                                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                />
+                              </div>
+                              <div style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--text-muted)", textTransform: "uppercase" }}>
+                                CHAPTER {pChapter} · {pRelative || formatDate(p.published, locale)}
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "0.88rem",
+                                  fontWeight: 700,
+                                  color: "var(--text-primary)",
+                                  lineHeight: 1.35,
+                                  display: "-webkit-box",
+                                  WebkitLineClamp: 2,
+                                  WebkitBoxOrient: "vertical",
+                                  overflow: "hidden",
+                                }}
+                              >
+                                {p.title}
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
                   </div>
                 </motion.div>
               ) : (
                 /* ── REGULAR OVERVIEW JOURNAL VIEW ── */
                 <>
-                  {/* 1. INSTAGRAM MOMENTS */}
-                  <div className="ig-neat-carousel-wrap">
-                    <div
-                      className="ig-neat-row"
-                      ref={igRowRef}
-                      onMouseEnter={() => setIsHoveringIg(true)}
-                      onMouseLeave={() => setIsHoveringIg(false)}
-                    >
-                      {instagramItems.map((item) => (
-                        <div
-                          key={item.id}
-                          className="ig-neat-card"
-                          onClick={() => {
-                            if (item.rawIg) {
-                              setSelectedIgItem(item);
-                            } else if (item.permalink) {
-                              window.open(item.permalink, "_blank", "noopener,noreferrer");
-                            }
-                          }}
-                        >
-                          <div className="ig-b-w-container">
-                            <img
-                              src={item.img}
-                              alt={item.title}
-                              className="ig-b-w-img"
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
                   {/* ── PROLOGUE WITH 2-COLUMN LAYOUT & iMESSAGE BUBBLES ── */}
-                  <div className="novel-intro-wrap">
+                  <div className="novel-intro-wrap" style={{ marginTop: "0.25rem" }}>
                     <div className="section-label-header">
                       <span>PROLOGUE</span>
                     </div>
@@ -2693,6 +2795,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         const excerpt = stripHtml(post.content).slice(0, 160) + "…";
                         const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
                         const relativeTime = getRelativeTimeString(post.published);
+                        const chapterNum = String(sortedPosts.length - postIdx).padStart(2, "0");
 
                         return (
                           <div
@@ -2715,7 +2818,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                             </div>
                             {/* RIGHT: text info with novel-style excerpt */}
                             <div style={{ display: "flex", flexDirection: "column", gap: "0.18rem", minWidth: 0 }}>
-                              <div className="blog-card-date">{relativeTime ? relativeTime : formatDate(post.published, locale)}</div>
+                              <div className="blog-card-date">
+                                CHAPTER {chapterNum} · {relativeTime ? relativeTime : formatDate(post.published, locale)}
+                              </div>
                               <h3 className="blog-card-title">{post.title}</h3>
                               <p className="blog-card-excerpt">{excerpt}</p>
                             </div>
