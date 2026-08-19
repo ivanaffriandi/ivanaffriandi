@@ -30,44 +30,44 @@ export default function WorkIvanPortfolioPage() {
 
   const tabHeaders = {
     overview: {
-      headline: 'Product Designer, Full-Stack Engineer & Atelier Founder',
+      headline: "Hey, I'm Ivan. I design digital stuff and handcraft leather goods.",
       narrative:
-        'I design intuitive digital products, build fast web applications, and craft physical leather goods. Bridging clean software engineering with tactile physical craft from Tangerang, Indonesia.',
+        "I love building snappy web apps, designing clean interfaces that feel great to use, and handcrafting leather journals in my Tangerang workshop. Simple, fast, and made with care.",
       duration: '2025 — Present',
-      client: 'Independent Practice',
-      artDirection: 'Digital Products & Bespoke Goods',
+      client: 'Independent Studio',
+      artDirection: 'Code, Design & Leathercraft',
     },
     projects: {
-      headline: 'Featured Works & Live Systems',
+      headline: "Things I've Built & Shipped",
       narrative:
-        'A curated selection of live web applications, interactive 3D configurators, and bespoke physical products built with clean code and high attention to detail.',
-      duration: '2025 — 2026',
-      client: 'Selected Projects',
-      artDirection: 'Software & Interactive Media',
+        "A mix of live web apps, 3D interactive toys, private cloud servers, and physical leather products. Click on any card to explore them live.",
+      duration: 'Recent Works',
+      client: 'Personal Labs & Studio',
+      artDirection: 'Web Apps, 3D & Physical Goods',
     },
     skills: {
-      headline: 'Technical Stack & Capabilities',
+      headline: 'My Toolbox & Everyday Stack',
       narrative:
-        'Core technologies and disciplines organized across four key areas: Frontend & UI, 3D & Creative Tech, Backend & Cloud Infrastructure, and Physical Leather Craft.',
-      duration: 'Comprehensive Mastery',
-      client: 'Multidisciplinary',
-      artDirection: 'Engineering & Craft',
+        'The tech, frameworks, and studio tools I use to bring ideas to life — from Next.js on my screen to stitching chisels on my workshop bench.',
+      duration: 'Daily Stack',
+      client: 'Tech & Atelier',
+      artDirection: 'Full-Stack & Craft',
     },
     process: {
-      headline: 'How I Work & Build',
+      headline: 'How Ideas Become Real Things',
       narrative:
-        'A straightforward three-phase approach to designing, developing, and delivering high-quality digital products and bespoke atelier goods.',
-      duration: 'End-to-End Workflow',
+        'No boring meetings or corporate fluff. Just a straightforward 3-step way I brainstorm, code, polish, and ship products.',
+      duration: 'Quick & Iterative',
       client: 'Direct Collaboration',
-      artDirection: 'Design & Engineering',
+      artDirection: 'Idea → Code → Launch',
     },
     archive: {
-      headline: 'Services & Project Archive',
+      headline: "Let's Build Something Cool Together",
       narrative:
-        'Available for select full-stack web development, UI/UX product design, interactive 3D WebGL experiences, and bespoke studio commissions.',
-      duration: '2025 — 2026',
-      client: 'Available for Hire',
-      artDirection: 'Full Portfolio',
+        "Need a fresh website, a custom web app, or a bespoke leather journal? Here is what I can do for you, plus the full log of everything I've built.",
+      duration: 'Open for Projects',
+      client: 'Clients & Collectors',
+      artDirection: 'Services & Archive',
     },
   };
 
@@ -188,7 +188,7 @@ export default function WorkIvanPortfolioPage() {
 
         {/* ── ROW 3: METADATA ROW ── */}
         <div className={styles.metaCol1}>
-          <span className={styles.metaLabel}>Focus &amp; Role</span>
+          <span className={styles.metaLabel}>What I Focus On</span>
         </div>
 
         <div className={styles.metaCol2}>
@@ -198,7 +198,7 @@ export default function WorkIvanPortfolioPage() {
           </div>
 
           <div className={styles.metaItemCluster}>
-            <span className={styles.metaLabel}>Discipline</span>
+            <span className={styles.metaLabel}>Vibe &amp; Role</span>
             <span className={styles.metaValue}>{current.client}</span>
           </div>
         </div>
@@ -210,61 +210,61 @@ export default function WorkIvanPortfolioPage() {
 
         {/* ── ROW 4: DYNAMIC TAB VIEW CONTENTS ── */}
 
-        {/* 1. OVERVIEW TAB: 3 CLEAR CORE DISCIPLINES + PRINCIPLES */}
+        {/* 1. OVERVIEW TAB: 3 CASUAL & CLEAR SPECIALIZATION CARDS */}
         {activeTab === 'overview' && (
           <div className={styles.fullWidthTabBlock}>
             <div className={styles.overviewCardsGrid}>
               <div className={styles.overviewFocusCard}>
-                <span className={styles.overviewFocusNumber}>01 · DESIGN</span>
-                <h3 className={styles.overviewFocusTitle}>UI/UX &amp; Product Design</h3>
+                <span className={styles.overviewFocusNumber}>01 · THE DESIGN SIDE</span>
+                <h3 className={styles.overviewFocusTitle}>Clean Interfaces &amp; Figma Systems</h3>
                 <p className={styles.overviewFocusDesc}>
-                  I create clean, minimalist interfaces with strong typography, intuitive navigation, and high-fidelity Figma design systems tailored for web and mobile.
+                  I design screens that look sharp, feel natural, and don&apos;t overwhelm people. Clean typography, generous whitespace, and subtle animations that make clicking around fun.
                 </p>
                 <div className={styles.overviewFocusTags}>
                   <span className={styles.miniPill}>Figma</span>
+                  <span className={styles.miniPill}>UI/UX Design</span>
                   <span className={styles.miniPill}>Design Systems</span>
-                  <span className={styles.miniPill}>Prototyping</span>
-                  <span className={styles.miniPill}>Micro-interactions</span>
+                  <span className={styles.miniPill}>Motion &amp; Feel</span>
                 </div>
               </div>
 
               <div className={styles.overviewFocusCard}>
-                <span className={styles.overviewFocusNumber}>02 · CODE</span>
-                <h3 className={styles.overviewFocusTitle}>Full-Stack Web Engineering</h3>
+                <span className={styles.overviewFocusNumber}>02 · THE CODE SIDE</span>
+                <h3 className={styles.overviewFocusTitle}>Fast Next.js &amp; Full-Stack Apps</h3>
                 <p className={styles.overviewFocusDesc}>
-                  I build fast, responsive, and secure web applications using Next.js 16, TypeScript, Tailwind, and scalable cloud backends with zero bloat.
+                  I write clean, modern code with Next.js 16, React, and TypeScript. Zero bloated libraries — just snappy, reliable web apps that load in a blink.
                 </p>
                 <div className={styles.overviewFocusTags}>
                   <span className={styles.miniPill}>Next.js 16</span>
                   <span className={styles.miniPill}>TypeScript</span>
-                  <span className={styles.miniPill}>React 19</span>
-                  <span className={styles.miniPill}>Docker &amp; Cloud</span>
+                  <span className={styles.miniPill}>Tailwind / CSS</span>
+                  <span className={styles.miniPill}>Cloud Servers</span>
                 </div>
               </div>
 
               <div className={styles.overviewFocusCard}>
-                <span className={styles.overviewFocusNumber}>03 · CRAFT</span>
-                <h3 className={styles.overviewFocusTitle}>3D WebGL &amp; Physical Atelier</h3>
+                <span className={styles.overviewFocusNumber}>03 · THE ATELIER SIDE</span>
+                <h3 className={styles.overviewFocusTitle}>3D WebGL &amp; Handcrafted Leather</h3>
                 <p className={styles.overviewFocusDesc}>
-                  Founder of SHŪ / EN Studio. I handcraft bespoke leather journals while building real-time 3D Three.js product configurators with custom shaders.
+                  Founder of SHŪ / EN Studio. When I&apos;m not coding, I handcraft leather journals from Italian hides and build 3D WebGL customizers so people can customize them online.
                 </p>
                 <div className={styles.overviewFocusTags}>
-                  <span className={styles.miniPill}>Three.js</span>
-                  <span className={styles.miniPill}>WebGL</span>
-                  <span className={styles.miniPill}>Leathercraft</span>
+                  <span className={styles.miniPill}>Three.js 3D</span>
+                  <span className={styles.miniPill}>WebGL Shaders</span>
+                  <span className={styles.miniPill}>Italian Leather</span>
                   <span className={styles.miniPill}>925 Silver</span>
                 </div>
               </div>
             </div>
 
-            {/* Quick Contact Banner */}
+            {/* Casual Contact Banner */}
             <div className={styles.contactBannerWrap}>
               <div className={styles.contactBannerLeft}>
-                <h4>Have a project in mind or need a custom build?</h4>
-                <p>Available for freelance projects, technical consulting, and bespoke studio commissions.</p>
+                <h4>Got a cool idea or want to build something together?</h4>
+                <p>I&apos;m always open to freelance web projects, design systems, and creative experiments.</p>
               </div>
               <a href="mailto:ivan@ivanaffriandi.com" className={styles.contactActionBtn}>
-                Get in Touch ↗
+                Say Hello ↗
               </a>
             </div>
           </div>
@@ -285,7 +285,7 @@ export default function WorkIvanPortfolioPage() {
               />
               <div className={styles.cardOverlayInfo}>
                 <span>Private Mail Platform</span>
-                <span>Oracle Cloud + Next.js ↗</span>
+                <span>Self-Hosted Cloud VM ↗</span>
               </div>
             </a>
 
@@ -301,7 +301,7 @@ export default function WorkIvanPortfolioPage() {
               />
               <div className={styles.cardOverlayInfo}>
                 <span>Atmospheric Reader (/x)</span>
-                <span>Web Audio &amp; Editorial ↗</span>
+                <span>Ambient Wind &amp; Books ↗</span>
               </div>
             </a>
 
@@ -317,7 +317,7 @@ export default function WorkIvanPortfolioPage() {
               />
               <div className={styles.cardOverlayInfo}>
                 <span>SHŪ / EN Leather Goods</span>
-                <span>Bespoke Atelier ↗</span>
+                <span>Handmade Atelier ↗</span>
               </div>
             </a>
 
@@ -333,12 +333,12 @@ export default function WorkIvanPortfolioPage() {
                   SHŪ / EN Leather Goods Atelier <span>↗</span>
                 </h3>
                 <p className={styles.secondaryProjectDesc}>
-                  Handcrafted bespoke leather journals made with Italian vegetable-tanned Nero leather, Japanese Moire lining, and solid 925 sterling silver charms.
+                  Bespoke trifold journals handcrafted from Italian vegetable-tanned Nero leather, Japanese Moire lining, and solid 925 sterling silver charms.
                 </p>
                 <div className={styles.secondaryProjectPills}>
                   <span className={styles.miniPill}>Full-Grain Nero Leather</span>
                   <span className={styles.miniPill}>Solid 925 Silver</span>
-                  <span className={styles.miniPill}>Handcrafted in Tangerang</span>
+                  <span className={styles.miniPill}>Handmade in Tangerang</span>
                 </div>
               </a>
 
@@ -352,7 +352,7 @@ export default function WorkIvanPortfolioPage() {
                   3D WebGL Configurator Engine <span>↗</span>
                 </h3>
                 <p className={styles.secondaryProjectDesc}>
-                  Real-time interactive 3D product customizer with live Three.js camera controls, leather texture switching, and custom gold foil embossing preview.
+                  Spin, flip, and customize leather journal colors and gold foil embossing in real-time 3D right inside your mobile or desktop browser.
                 </p>
                 <div className={styles.secondaryProjectPills}>
                   <span className={styles.miniPill}>Three.js</span>
@@ -371,25 +371,25 @@ export default function WorkIvanPortfolioPage() {
                   Private Self-Hosted Mail Server <span>↗</span>
                 </h3>
                 <p className={styles.secondaryProjectDesc}>
-                  Custom email infrastructure deployed on Oracle Cloud VM with AWS SES relay, automated DKIM 2048-bit authentication, and a clean web client.
+                  My own personal email system running on Oracle Cloud VM with AWS SES relay, automated DKIM keys, zero spam tracking, and a minimal web client.
                 </p>
                 <div className={styles.secondaryProjectPills}>
                   <span className={styles.miniPill}>Oracle Cloud VM</span>
                   <span className={styles.miniPill}>AWS SES</span>
-                  <span className={styles.miniPill}>DKIM &amp; DMARC</span>
+                  <span className={styles.miniPill}>Zero Tracking</span>
                 </div>
               </a>
             </div>
           </>
         )}
 
-        {/* 3. SKILLS TAB: 4 CLEAR DISCIPLINE PILLARS + CLEAN MARQUEE */}
+        {/* 3. SKILLS TAB: 4 CLEAR CREATIVE PILLARS + CLEAN MARQUEE */}
         {activeTab === 'skills' && (
           <div className={styles.skillsSectionWrapper}>
             <div className={styles.skillsPillarGrid}>
               <div className={styles.skillPillarCard}>
-                <h3 className={styles.pillarCategoryTitle}>01 · Frontend &amp; UI</h3>
-                <p className={styles.pillarDesc}>Modern, high-performance web interfaces with clean typography and smooth animations.</p>
+                <h3 className={styles.pillarCategoryTitle}>01 · SCREEN &amp; FEEL</h3>
+                <p className={styles.pillarDesc}>Making web interfaces look gorgeous, sharp, and effortless to use.</p>
                 <div className={styles.pillarSkillList}>
                   <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Next.js 16 (App Router)</span>
                   <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> React 19 &amp; TypeScript</span>
@@ -400,38 +400,38 @@ export default function WorkIvanPortfolioPage() {
               </div>
 
               <div className={styles.skillPillarCard}>
-                <h3 className={styles.pillarCategoryTitle}>02 · 3D &amp; Creative</h3>
-                <p className={styles.pillarDesc}>Interactive 3D WebGL experiences, custom shaders, and spatial audio synthesis.</p>
+                <h3 className={styles.pillarCategoryTitle}>02 · 3D &amp; EXPERIMENTS</h3>
+                <p className={styles.pillarDesc}>Interactive 3D WebGL models, custom shaders, and spatial audio.</p>
                 <div className={styles.pillarSkillList}>
                   <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Three.js &amp; WebGL 2.0</span>
                   <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> GLSL Procedural Shaders</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> 3D Product Configurators</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Web Audio API Synthesis</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Blender 3D Modeling</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> 3D Product Customizers</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Web Audio API Soundscapes</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Blender 3D Prototyping</span>
                 </div>
               </div>
 
               <div className={styles.skillPillarCard}>
-                <h3 className={styles.pillarCategoryTitle}>03 · Backend &amp; Cloud</h3>
-                <p className={styles.pillarDesc}>Reliable cloud servers, automated APIs, containerization, and email infrastructure.</p>
+                <h3 className={styles.pillarCategoryTitle}>03 · ENGINE &amp; CLOUD</h3>
+                <p className={styles.pillarDesc}>Fast servers, secure APIs, and cloud infrastructure running 24/7.</p>
                 <div className={styles.pillarSkillList}>
                   <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Node.js &amp; Python APIs</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Oracle Cloud (OCI) &amp; AWS SES</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Oracle Cloud &amp; AWS SES</span>
                   <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Docker &amp; Docker Compose</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> PostgreSQL &amp; Redis Cache</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> PostgreSQL &amp; Redis</span>
                   <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Cloudflare Edge Security</span>
                 </div>
               </div>
 
               <div className={styles.skillPillarCard}>
-                <h3 className={styles.pillarCategoryTitle}>04 · Physical Craft</h3>
-                <p className={styles.pillarDesc}>Traditional bespoke leather goods handcrafted with premium imported materials.</p>
+                <h3 className={styles.pillarCategoryTitle}>04 · HANDS &amp; ATELIER</h3>
+                <p className={styles.pillarDesc}>Traditional leathercraft and physical products made with patience.</p>
                 <div className={styles.pillarSkillList}>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Leather Pattern Drafting</span>
                   <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Italian Vegetable-Tanned Hides</span>
                   <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Hand Saddle-Stitching</span>
                   <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Solid 925 Silver Casting</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Wax Burnished Edges</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Wax Edge Burnishing</span>
+                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Custom Pattern Drafting</span>
                 </div>
               </div>
             </div>
@@ -489,29 +489,29 @@ export default function WorkIvanPortfolioPage() {
           </div>
         )}
 
-        {/* 4. PROCESS TAB: 3 CLEAR WORKFLOW PHASES */}
+        {/* 4. PROCESS TAB: 3 CASUAL WORKFLOW STEPS */}
         {activeTab === 'process' && (
           <div className={styles.fullWidthTabBlock}>
             <div className={styles.processStepGrid}>
               <div className={styles.processCard}>
                 <span className={styles.processNum}>01</span>
-                <h3 className={styles.processTitle}>Discovery &amp; Architecture</h3>
+                <h3 className={styles.processTitle}>Brainstorm &amp; Sketch</h3>
                 <p className={styles.processText}>
-                  We define clear project goals, establish user requirements, design wireframes in Figma, and plan the underlying system architecture for scalability.
+                  We figure out what actually matters, strip away the fluff, sketch clean user flows in Figma, and pick the best tech stack for the job.
                 </p>
               </div>
               <div className={styles.processCard}>
                 <span className={styles.processNum}>02</span>
-                <h3 className={styles.processTitle}>Design, Code &amp; Prototyping</h3>
+                <h3 className={styles.processTitle}>Code &amp; Polish</h3>
                 <p className={styles.processText}>
-                  Writing clean, strictly-typed Next.js and TypeScript code, implementing fluid micro-interactions, crafting shaders, and testing responsiveness.
+                  Writing clean Next.js and TypeScript code, tweaking animations until they feel just right, and making sure the app is super fast on phones.
                 </p>
               </div>
               <div className={styles.processCard}>
                 <span className={styles.processNum}>03</span>
-                <h3 className={styles.processTitle}>Deployment &amp; Handover</h3>
+                <h3 className={styles.processTitle}>Ship &amp; Launch</h3>
                 <p className={styles.processText}>
-                  Deploying to optimized cloud servers (OCI, Cloudflare, Vercel), ensuring strict security (SSL, DKIM), and delivering complete documentation.
+                  Deploying to lightning-fast cloud servers, setting up custom domains and security, and handing over a project that works flawlessly.
                 </p>
               </div>
             </div>
@@ -527,21 +527,21 @@ export default function WorkIvanPortfolioPage() {
                 <span className={styles.overviewFocusNumber}>SERVICE · 01</span>
                 <h3 className={styles.overviewFocusTitle}>Web &amp; App Development</h3>
                 <p className={styles.overviewFocusDesc}>
-                  Custom web applications, portfolio platforms, and SaaS tools built with Next.js 16, TypeScript, and modern backend APIs.
+                  Fast websites, portfolio platforms, and SaaS web apps built with Next.js 16, TypeScript, and clean cloud backends.
                 </p>
               </div>
               <div className={styles.overviewFocusCard}>
                 <span className={styles.overviewFocusNumber}>SERVICE · 02</span>
                 <h3 className={styles.overviewFocusTitle}>UI/UX &amp; Design Systems</h3>
                 <p className={styles.overviewFocusDesc}>
-                  User interface design, Figma component libraries, responsive web design, and interactive click-through prototypes.
+                  Minimalist interfaces, Figma design systems, interactive prototypes, and mobile-first responsive layouts.
                 </p>
               </div>
               <div className={styles.overviewFocusCard}>
                 <span className={styles.overviewFocusNumber}>SERVICE · 03</span>
                 <h3 className={styles.overviewFocusTitle}>3D Web &amp; Custom Atelier</h3>
                 <p className={styles.overviewFocusDesc}>
-                  Real-time Three.js 3D WebGL product customizers and bespoke handcrafted leather goods from SHŪ / EN Studio.
+                  Interactive 3D Three.js product customizers and custom bespoke leather goods from SHŪ / EN Studio.
                 </p>
               </div>
             </div>
@@ -569,7 +569,7 @@ export default function WorkIvanPortfolioPage() {
                 <a href="https://ivanaffriandi.com/x" target="_blank" rel="noreferrer" className={styles.archiveRowItem}>
                   <div className={styles.archiveLeftCol}>
                     <h3 className={styles.archiveItemTitle}>Atmospheric Digital Reader (/x)</h3>
-                    <p className={styles.archiveItemSubtitle}>Minimalist editorial reading interface with Web Audio ambient wind sound synthesis.</p>
+                    <p className={styles.archiveItemSubtitle}>Minimalist editorial reading app with Web Audio ambient wind sound synthesis.</p>
                   </div>
                   <div className={styles.archivePillStack}>
                     <span className={styles.miniPill}>Web Audio API</span>
@@ -604,11 +604,11 @@ export default function WorkIvanPortfolioPage() {
               </div>
             </div>
 
-            {/* Contact CTA */}
+            {/* Casual Contact CTA */}
             <div className={styles.contactBannerWrap}>
               <div className={styles.contactBannerLeft}>
-                <h4>Ready to start a project together?</h4>
-                <p>Send an inquiry with your timeline and requirements, and I will reply within 24 hours.</p>
+                <h4>Ready to start a project or just want to say hi?</h4>
+                <p>Drop me an email with what you&apos;re thinking, and I&apos;ll get back to you quickly.</p>
               </div>
               <a href="mailto:ivan@ivanaffriandi.com" className={styles.contactActionBtn}>
                 Send an Email ↗
