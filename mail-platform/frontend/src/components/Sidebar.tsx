@@ -427,11 +427,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   key={dayNum}
                   onClick={() => setSelectedDate(thisDate)}
-                  className={`h-6 w-6 mx-auto rounded-full text-[11px] font-bold flex flex-col items-center justify-center relative transition-all duration-150 ${
+                  className={`h-7 w-7 mx-auto rounded-full text-[11px] font-bold flex flex-col items-center justify-center relative apple-transition cursor-pointer ${
                     isSelected
-                      ? 'bg-blue-600 text-white shadow-2xs scale-105'
+                      ? 'bg-blue-600 text-white shadow-xs'
                       : isToday
-                      ? 'bg-blue-500/15 text-blue-600'
+                      ? 'bg-blue-500/15 text-blue-600 font-extrabold'
                       : isSunday
                       ? 'text-red-500/80 font-bold hover:bg-red-500/10'
                       : 'text-[var(--text-secondary)] hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)]'
@@ -447,7 +447,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         ) : (
           /* Weekly View (1 Row) */
-          <div className="grid grid-cols-7 gap-1 text-center shrink-0 animate-fade-in py-0.5">
+          <div className="grid grid-cols-7 gap-0.5 text-center shrink-0 py-0.5">
             {currentWeekDays.map((thisDate, i) => {
               const isSelected = thisDate.toDateString() === selectedDate.toDateString();
               const isToday = thisDate.toDateString() === new Date().toDateString();
@@ -459,11 +459,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   key={i}
                   onClick={() => setSelectedDate(thisDate)}
-                  className={`h-7 rounded-2xl text-[11px] font-bold flex flex-col items-center justify-center relative transition-all duration-150 ${
+                  className={`h-7 w-7 mx-auto rounded-full text-[11px] font-bold flex flex-col items-center justify-center relative apple-transition cursor-pointer ${
                     isSelected
-                      ? 'bg-blue-600 text-white shadow-2xs scale-105'
+                      ? 'bg-blue-600 text-white shadow-xs'
                       : isToday
-                      ? 'bg-blue-500/15 text-blue-600'
+                      ? 'bg-blue-500/15 text-blue-600 font-extrabold'
                       : isSunday
                       ? 'text-red-500/80 font-bold hover:bg-red-500/10'
                       : 'text-[var(--text-secondary)] hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)]'
@@ -471,7 +471,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 >
                   <span>{thisDate.getDate()}</span>
                   {hasAgendas && !isSelected && (
-                    <span className="w-1 h-1 rounded-full bg-blue-500 absolute bottom-1" />
+                    <span className="w-1 h-1 rounded-full bg-blue-500 absolute bottom-0.5" />
                   )}
                 </button>
               );
