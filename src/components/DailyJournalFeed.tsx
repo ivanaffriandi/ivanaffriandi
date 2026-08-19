@@ -2059,7 +2059,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .modal-close:hover { color: var(--text-primary, #111111); }
 
         /* ─────────────────────────────────────────────────
-           PREMIUM MOBILE LAYOUT — full reflow below 860px
+           ELITE HIGH-TECH MOBILE LAYOUT — below 860px
+           (ZERO EFFECT ON DESKTOP)
            ───────────────────────────────────────────────── */
         @media (max-width: 860px) {
           /* ── ROOT LAYOUT (NATURAL SINGLE-COLUMN FLOW ON MOBILE) ── */
@@ -2073,12 +2074,14 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             bottom: auto !important;
             height: auto !important;
             min-height: 100vh !important;
+            min-height: 100dvh !important;
             width: 100vw !important;
             overflow-y: auto !important;
             overflow-x: hidden !important;
             padding: 0 !important;
             margin: 0 !important;
             background: var(--bg-color, #121212) !important;
+            -webkit-overflow-scrolling: touch !important;
           }
 
           /* ── HERO PHOTO FEATURED CARD (TOP BANNER ON MOBILE) ── */
@@ -2090,13 +2093,25 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             bottom: auto !important;
             width: 100vw !important;
             max-width: 100vw !important;
-            height: 72vh !important;
-            min-height: 480px !important;
+            height: 76vh !important;
+            height: 76dvh !important;
+            min-height: 520px !important;
             margin: 0 !important;
-            border-radius: 0 !important;
+            border-radius: 0 0 24px 24px !important;
             border: none !important;
             overflow: hidden !important;
             flex-shrink: 0 !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+            transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+          }
+
+          /* When article reader is open on mobile */
+          .pj-root.has-selected-post .pj-left {
+            height: 36vh !important;
+            height: 36dvh !important;
+            min-height: 240px !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
           }
 
           .pj-about-ig-grid { left: 0; height: 100%; }
@@ -2110,14 +2125,40 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: flex !important;
             flex-direction: column !important;
             justify-content: flex-end !important;
-            padding: 3.5rem 1.4rem calc(1.8rem + env(safe-area-inset-bottom, 0px)) 1.4rem !important;
+            padding: 3rem 1.35rem calc(1.8rem + env(safe-area-inset-bottom, 0px)) 1.35rem !important;
             box-sizing: border-box !important;
             z-index: 10 !important;
           }
 
+          .pj-root.has-selected-post .pj-left-content {
+            padding: 1.5rem 1.25rem 1.25rem !important;
+          }
+
           .pj-title {
-            font-size: clamp(1.8rem, 7vw, 2.8rem) !important;
-            line-height: 1.1 !important;
+            font-size: clamp(1.65rem, 6.8vw, 2.35rem) !important;
+            line-height: 1.15 !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.035em !important;
+            margin: 0.35rem 0 0.5rem 0 !important;
+            text-shadow: 0 2px 14px rgba(0,0,0,0.6) !important;
+          }
+
+          .pj-root.has-selected-post .pj-title {
+            font-size: clamp(1.2rem, 5vw, 1.45rem) !important;
+            line-height: 1.2 !important;
+            margin: 0.25rem 0 0 0 !important;
+          }
+
+          .pj-excerpt {
+            font-size: 0.88rem !important;
+            line-height: 1.5 !important;
+            color: rgba(255, 255, 255, 0.84) !important;
+            margin: 0 0 1rem 0 !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 3 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.6) !important;
           }
 
           /* ── EDITORIAL CONTENT FEED (FLOWS UNDERNEATH HERO ON MOBILE) ── */
@@ -2131,123 +2172,161 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             max-width: 100vw !important;
             max-height: none !important;
             height: auto !important;
-            background: var(--bg-color, #121212) !important;
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
-            color: var(--text-primary, #FFFFFF) !important;
+            background: var(--bg-color, #FFFFFF) !important;
+            color: var(--text-primary, #111111) !important;
             border-radius: 0 !important;
             overflow-y: visible !important;
             box-sizing: border-box !important;
             z-index: 1 !important;
-            padding: 1.5rem 1.25rem 3.5rem !important;
+            padding: 1.8rem 1.25rem calc(4rem + env(safe-area-inset-bottom, 0px)) !important;
             box-shadow: none !important;
           }
 
           /* ── PAGE HEADER ── */
           .right-page-header {
-            padding: 0 0 1rem 0;
-            flex-wrap: wrap;
-            gap: 0.75rem;
+            padding: 0 0 0.85rem 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 0.6rem !important;
+            border-bottom: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.06)) !important;
           }
 
           .right-page-title {
-            color: var(--text-primary, #FFFFFF) !important;
-            font-size: 1.6rem !important;
+            font-size: 1.5rem !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.03em !important;
           }
 
-          /* ── IG CAROUSEL ── */
-          .ig-neat-card {
-            width: 110px !important;
-            height: 130px !important;
-            border-radius: 14px !important;
+          .search-pill-container {
+            max-width: 140px !important;
+            padding: 0.35rem 0.65rem !important;
+            background: var(--bg-secondary, rgba(0, 0, 0, 0.04)) !important;
+            border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08)) !important;
           }
 
-          /* ── PROLOGUE 2-COLUMN STACKS VERTICAL ── */
+          .search-pill-input {
+            font-size: 0.72rem !important;
+          }
+
+          /* ── PROLOGUE SECTION ── */
+          .novel-intro-wrap {
+            padding: 0.95rem 0 1.25rem !important;
+            border-bottom: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08)) !important;
+          }
+
           .novel-intro-2col {
-            grid-template-columns: 1fr !important;
+            display: flex !important;
+            flex-direction: column !important;
             gap: 1.25rem !important;
           }
 
           .novel-intro-paragraph {
-            font-size: 0.94rem !important;
-            line-height: 1.72 !important;
-            color: var(--text-primary, #F6F6F4) !important;
+            font-size: 0.95rem !important;
+            line-height: 1.75 !important;
+            color: var(--text-primary) !important;
           }
 
           .novel-drop-cap::first-letter {
-            font-size: 2.8rem !important;
-            color: var(--text-primary, #FFFFFF) !important;
-          }
-
-          /* ── iMESSAGE BUBBLES NARROW ── */
-          .imessage-bubble-incoming {
-            background: var(--bg-secondary, rgba(255, 255, 255, 0.08)) !important;
-            color: var(--text-primary, #FFFFFF) !important;
-            font-size: 0.88rem !important;
-            max-width: 90% !important;
-            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1)) !important;
-          }
-
-          .imessage-bubble-outgoing {
-            background: var(--text-primary, #FFFFFF) !important;
-            color: var(--bg-color, #121212) !important;
-            font-size: 0.88rem !important;
-            max-width: 90% !important;
-          }
-
-          /* ── CHAPTERS LIST ── */
-          .blog-grid-card {
-            background: var(--card-bg-1, #1A1A1A) !important;
-            border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08)) !important;
-            border-radius: 12px !important;
-            padding: 1rem !important;
-            grid-template-columns: 76px 1fr !important;
-            gap: 0.85rem !important;
-            margin-bottom: 0.75rem !important;
-          }
-
-          .blog-card-thumb-wrap {
-            width: 76px !important;
-            height: 64px !important;
-          }
-
-          .blog-card-title {
-            color: var(--text-primary, #FFFFFF) !important;
-            font-size: 0.92rem !important;
+            font-size: 2.9rem !important;
+            line-height: 0.85 !important;
+            margin-right: 0.45rem !important;
+            float: left !important;
+            font-family: var(--font-playfair, Georgia, serif) !important;
             font-weight: 700 !important;
           }
 
-          .blog-card-meta {
-            color: var(--text-muted, rgba(255, 255, 255, 0.5)) !important;
+          /* ── iMESSAGE BUBBLES ── */
+          .imessage-bubble-incoming {
+            background: var(--bg-secondary, rgba(0, 0, 0, 0.05)) !important;
+            color: var(--text-primary) !important;
+            font-size: 0.85rem !important;
+            line-height: 1.45 !important;
+            max-width: 90% !important;
+            border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08)) !important;
+            border-radius: 16px !important;
+            padding: 0.75rem 1rem !important;
           }
 
-          .blog-card-excerpt {
+          .imessage-bubble-outgoing {
+            background: var(--text-primary, #111111) !important;
+            color: var(--bg-color, #FFFFFF) !important;
+            font-size: 0.85rem !important;
+            line-height: 1.45 !important;
+            max-width: 90% !important;
+            border-radius: 16px !important;
+            padding: 0.75rem 1rem !important;
+          }
+
+          /* ── CHAPTERS HORIZONTAL SNAP CAROUSEL ON MOBILE ── */
+          .blog-carousel-track-container {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            scroll-snap-type: x mandatory !important;
+            padding-bottom: 0.75rem !important;
+            scrollbar-width: none !important;
+          }
+          .blog-carousel-track-container::-webkit-scrollbar {
             display: none !important;
           }
 
-          /* ── SECTION LABELS ── */
-          .section-label-header {
-            color: var(--text-muted, rgba(255, 255, 255, 0.5)) !important;
-            font-size: 0.55rem !important;
-            letter-spacing: 0.2em !important;
+          .blog-carousel-track {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            gap: 0.85rem !important;
+            width: max-content !important;
           }
 
-          .search-pill-container {
-            background: var(--bg-secondary, rgba(255, 255, 255, 0.06)) !important;
-            border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12)) !important;
+          .blog-grid-card {
+            width: 220px !important;
+            min-width: 220px !important;
+            max-width: 220px !important;
+            flex-shrink: 0 !important;
+            scroll-snap-align: start !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 0.65rem !important;
+            background: var(--card-bg-1, rgba(125,125,125,0.05)) !important;
+            border: 1px solid var(--border-subtle, rgba(125,125,125,0.12)) !important;
+            border-radius: 14px !important;
+            padding: 0.75rem !important;
+            box-sizing: border-box !important;
           }
 
-          .search-pill-input {
-            color: var(--text-primary, #FFFFFF) !important;
+          .blog-card-thumb-wrap {
+            width: 100% !important;
+            height: 120px !important;
+            border-radius: 9px !important;
+            overflow: hidden !important;
           }
 
-          /* ── BLOG TABS ── */
-          .blog-tab-item {
-            font-size: 0.56rem !important;
-            padding: 0.18rem 0.45rem !important;
+          .blog-card-title {
+            color: var(--text-primary) !important;
+            font-size: 0.88rem !important;
+            font-weight: 700 !important;
+            line-height: 1.3 !important;
           }
 
-          /* ── MODAL ── */
+          .blog-card-excerpt {
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            font-size: 0.7rem !important;
+            line-height: 1.4 !important;
+          }
+
+          /* ── READER ARTICLE ON MOBILE ── */
+          .novel-article-reader {
+            font-size: 1.05rem !important;
+            line-height: 1.85 !important;
+            padding: 0 !important;
+          }
+
+          .novel-article-reader p {
+            margin-bottom: 1.3rem !important;
+          }
+
           /* ── FULL-SCREEN BOTTOM SHEET MODAL ON MOBILE ── */
           .modal-bg {
             align-items: flex-end !important;
@@ -2258,15 +2337,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             grid-template-columns: 1fr !important;
             width: 100vw !important;
             max-width: 100vw !important;
-            height: 94vh !important;
-            height: 94dvh !important;
-            border-radius: 20px 20px 0 0 !important;
+            height: 92vh !important;
+            height: 92dvh !important;
+            border-radius: 24px 24px 0 0 !important;
             margin: 0 !important;
             overflow-y: auto !important;
           }
 
           .modal-photo {
-            min-height: 280px !important;
+            min-height: 260px !important;
             max-height: 45vw !important;
           }
 
@@ -2282,7 +2361,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
       `}</style>
 
-      <div className="pj-root" ref={mobileScrollRef}>
+      <div className={`pj-root${selectedPost ? " has-selected-post" : ""}`} ref={mobileScrollRef}>
         {/* ── FULLSCREEN HERO CARD DECK ── */}
         <div
           className="pj-left"
