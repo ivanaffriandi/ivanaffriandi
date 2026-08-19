@@ -203,13 +203,13 @@ body {
 }
 
 /* ──────────────────────────────────────────────────────────────────────────
-   INTELLIGENT ADAPTIVE EMAIL THEME ENGINE (DARK & LIGHT MODES)
-   Seamless theme integration with 100% crisp typography contrast.
+   HIGH-FIDELITY ADAPTIVE EMAIL RENDERER (DARK & LIGHT MODES)
+   Preserves sender template designs & brand fidelity with guaranteed contrast.
    ────────────────────────────────────────────────────────────────────────── */
 .mail-content-body {
-  font-size: 14.5px !important;
-  line-height: 1.75 !important;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", Roboto, Helvetica, Arial, sans-serif !important;
+  font-size: 14.5px;
+  line-height: 1.75;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", Roboto, Helvetica, Arial, sans-serif;
   letter-spacing: 0.01em;
   overflow-wrap: break-word;
   word-break: break-word;
@@ -217,188 +217,91 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Base Light Mode Card */
 .mail-adaptive-sheet {
-  background-color: #ffffff !important;
-  color: #18181b !important;
-  border-radius: 24px !important;
-  padding: 26px 22px !important;
-  border: 1px solid rgba(0, 0, 0, 0.07) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  border-radius: 24px;
+  padding: 24px 20px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow, 0 4px 20px rgba(0, 0, 0, 0.04));
   transition: background-color 0.2s ease, border-color 0.2s ease;
+  overflow-x: auto;
 }
 
-.mail-adaptive-sheet,
-.mail-adaptive-sheet p,
-.mail-adaptive-sheet span,
-.mail-adaptive-sheet td,
-.mail-adaptive-sheet th,
-.mail-adaptive-sheet li,
-.mail-adaptive-sheet h1,
-.mail-adaptive-sheet h2,
-.mail-adaptive-sheet h3,
-.mail-adaptive-sheet h4,
-.mail-adaptive-sheet h5,
-.mail-adaptive-sheet h6,
-.mail-adaptive-sheet div,
-.mail-adaptive-sheet font {
+/* Light Mode: Natural sender template presentation */
+.mail-adaptive-sheet {
+  background-color: #ffffff;
   color: #18181b;
 }
 
 .mail-adaptive-sheet a {
   color: #2563eb !important;
-  text-decoration: underline;
-  text-underline-offset: 2px;
 }
 
-/* Light mode dark boxes / footers preserve white text */
-.mail-adaptive-sheet [style*="background: rgb(0"],
-.mail-adaptive-sheet [style*="background: rgb(1"],
-.mail-adaptive-sheet [style*="background: rgb(2"],
-.mail-adaptive-sheet [style*="background: rgb(3"],
-.mail-adaptive-sheet [style*="background: #0"],
-.mail-adaptive-sheet [style*="background: #1"],
-.mail-adaptive-sheet [style*="background: #2"],
-.mail-adaptive-sheet [style*="background: #3"],
-.mail-adaptive-sheet [style*="background-color: rgb(0"],
-.mail-adaptive-sheet [style*="background-color: rgb(1"],
-.mail-adaptive-sheet [style*="background-color: rgb(2"],
-.mail-adaptive-sheet [style*="background-color: rgb(3"],
-.mail-adaptive-sheet [style*="background-color: #0"],
-.mail-adaptive-sheet [style*="background-color: #1"],
-.mail-adaptive-sheet [style*="background-color: #2"],
-.mail-adaptive-sheet [style*="background-color: #3"],
-.mail-adaptive-sheet [bgcolor="#000000"],
-.mail-adaptive-sheet [bgcolor="#111111"],
-.mail-adaptive-sheet [bgcolor="#222222"],
-.mail-adaptive-sheet [bgcolor="black"] {
-  color: #ffffff !important;
-  border-radius: 12px;
-}
-
-.mail-adaptive-sheet [style*="background: rgb(0"] *,
-.mail-adaptive-sheet [style*="background: rgb(1"] *,
-.mail-adaptive-sheet [style*="background: rgb(2"] *,
-.mail-adaptive-sheet [style*="background: rgb(3"] *,
-.mail-adaptive-sheet [style*="background: #0"] *,
-.mail-adaptive-sheet [style*="background: #1"] *,
-.mail-adaptive-sheet [style*="background: #2"] *,
-.mail-adaptive-sheet [style*="background: #3"] *,
-.mail-adaptive-sheet [style*="background-color: rgb(0"] *,
-.mail-adaptive-sheet [style*="background-color: rgb(1"] *,
-.mail-adaptive-sheet [style*="background-color: rgb(2"] *,
-.mail-adaptive-sheet [style*="background-color: rgb(3"] *,
-.mail-adaptive-sheet [style*="background-color: #0"] *,
-.mail-adaptive-sheet [style*="background-color: #1"] *,
-.mail-adaptive-sheet [style*="background-color: #2"] *,
-.mail-adaptive-sheet [style*="background-color: #3"] *,
-.mail-adaptive-sheet [bgcolor="#000000"] *,
-.mail-adaptive-sheet [bgcolor="#111111"] *,
-.mail-adaptive-sheet [bgcolor="#222222"] *,
-.mail-adaptive-sheet [bgcolor="black"] * {
-  color: #ffffff !important;
-}
-
-/* ──────────────────────────────────────────────────────────────────────────
-   DARK MODE SEAMLESS ADAPTATION (High-Tech Deep OLED / Dark Neutral)
-   ────────────────────────────────────────────────────────────────────────── */
+/* Dark Mode: Sleek dark canvas with high-contrast text & brand preservation */
 .dark .mail-adaptive-sheet,
 html[data-theme="dark"] .mail-adaptive-sheet {
-  background-color: #161618 !important;
-  color: #f4f4f5 !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
+  background-color: #161618;
+  color: #f4f4f5;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Neutralize hardcoded white/light backgrounds from HTML email tables & containers */
-.dark .mail-adaptive-sheet table,
-.dark .mail-adaptive-sheet tbody,
-.dark .mail-adaptive-sheet tr,
-.dark .mail-adaptive-sheet td,
-.dark .mail-adaptive-sheet th,
-.dark .mail-adaptive-sheet center,
-.dark .mail-adaptive-sheet div[style*="background"],
-.dark .mail-adaptive-sheet table[style*="background"],
-.dark .mail-adaptive-sheet td[style*="background"],
-.dark .mail-adaptive-sheet [style*="background-color: #fff" i],
-.dark .mail-adaptive-sheet [style*="background-color: #FFF" i],
+/* In dark mode, ensure fallback text on dark canvas is bright silver-white */
+.dark .mail-adaptive-sheet p:not([style*="color"]),
+.dark .mail-adaptive-sheet span:not([style*="color"]),
+.dark .mail-adaptive-sheet td:not([style*="color"]),
+.dark .mail-adaptive-sheet div:not([style*="color"]),
+.dark .mail-adaptive-sheet li:not([style*="color"]),
+.dark .mail-adaptive-sheet h1:not([style*="color"]),
+.dark .mail-adaptive-sheet h2:not([style*="color"]),
+.dark .mail-adaptive-sheet h3:not([style*="color"]),
+.dark .mail-adaptive-sheet h4:not([style*="color"]) {
+  color: #f4f4f5;
+}
+
+/* In dark mode, neutralize blinding full-bleed white wrapper backgrounds so they blend elegantly */
 .dark .mail-adaptive-sheet [style*="background-color: #ffffff" i],
-.dark .mail-adaptive-sheet [style*="background-color: #FFFFFF" i],
+.dark .mail-adaptive-sheet [style*="background-color: #fff" i],
 .dark .mail-adaptive-sheet [style*="background-color: white" i],
-.dark .mail-adaptive-sheet [style*="background-color: rgb(255" i],
-.dark .mail-adaptive-sheet [style*="background-color: rgb(250" i],
-.dark .mail-adaptive-sheet [style*="background-color: rgb(245" i],
-.dark .mail-adaptive-sheet [style*="background-color: rgb(240" i],
-.dark .mail-adaptive-sheet [style*="background: #fff" i],
-.dark .mail-adaptive-sheet [style*="background: #FFF" i],
 .dark .mail-adaptive-sheet [style*="background: #ffffff" i],
-.dark .mail-adaptive-sheet [style*="background: #FFFFFF" i],
+.dark .mail-adaptive-sheet [style*="background: #fff" i],
 .dark .mail-adaptive-sheet [style*="background: white" i],
-.dark .mail-adaptive-sheet [style*="background: rgb(255" i],
 .dark .mail-adaptive-sheet [bgcolor="#ffffff" i],
 .dark .mail-adaptive-sheet [bgcolor="#fff" i],
-.dark .mail-adaptive-sheet [bgcolor="#f9f9f9" i],
-.dark .mail-adaptive-sheet [bgcolor="#f4f4f5" i],
 .dark .mail-adaptive-sheet [bgcolor="white" i] {
   background-color: transparent !important;
   background: transparent !important;
 }
 
-/* Force all text in dark mode to be bright, crisp, readable silver-white */
-.dark .mail-adaptive-sheet,
-.dark .mail-adaptive-sheet p,
-.dark .mail-adaptive-sheet span,
-.dark .mail-adaptive-sheet td,
-.dark .mail-adaptive-sheet th,
-.dark .mail-adaptive-sheet li,
-.dark .mail-adaptive-sheet h1,
-.dark .mail-adaptive-sheet h2,
-.dark .mail-adaptive-sheet h3,
-.dark .mail-adaptive-sheet h4,
-.dark .mail-adaptive-sheet h5,
-.dark .mail-adaptive-sheet h6,
-.dark .mail-adaptive-sheet div,
-.dark .mail-adaptive-sheet font,
-.dark .mail-adaptive-sheet strong,
-.dark .mail-adaptive-sheet em,
-.dark .mail-adaptive-sheet b,
-.dark .mail-adaptive-sheet i {
-  color: #f4f4f5 !important;
-}
-
-/* Dark banner headers in newsletters (e.g. "The Daily" black box) look sleek & elevated */
+/* In dark mode, dark boxes and banners remain sleek with white text */
 .dark .mail-adaptive-sheet [style*="background-color: #0" i],
 .dark .mail-adaptive-sheet [style*="background-color: #1" i],
 .dark .mail-adaptive-sheet [style*="background-color: #2" i],
-.dark .mail-adaptive-sheet [style*="background-color: #3" i],
 .dark .mail-adaptive-sheet [style*="background-color: rgb(0" i],
 .dark .mail-adaptive-sheet [style*="background-color: rgb(1" i],
-.dark .mail-adaptive-sheet [style*="background-color: rgb(2" i],
-.dark .mail-adaptive-sheet [style*="background-color: rgb(3" i],
 .dark .mail-adaptive-sheet [style*="background: #0" i],
 .dark .mail-adaptive-sheet [style*="background: #1" i],
-.dark .mail-adaptive-sheet [style*="background: #2" i],
-.dark .mail-adaptive-sheet [style*="background: #3" i],
 .dark .mail-adaptive-sheet [style*="background: rgb(0" i],
-.dark .mail-adaptive-sheet [style*="background: rgb(1" i],
-.dark .mail-adaptive-sheet [style*="background: rgb(2" i],
-.dark .mail-adaptive-sheet [style*="background: rgb(3" i],
 .dark .mail-adaptive-sheet [bgcolor="#000000" i],
 .dark .mail-adaptive-sheet [bgcolor="#111111" i],
-.dark .mail-adaptive-sheet [bgcolor="#222222" i],
 .dark .mail-adaptive-sheet [bgcolor="black" i] {
   background-color: #232326 !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
   color: #ffffff !important;
-  border-radius: 14px;
+  border-radius: 12px;
 }
 
-/* Dark mode electric blue links */
+/* Dark mode links */
 .dark .mail-adaptive-sheet a {
   color: #60a5fa !important;
-  text-decoration: underline;
-  text-underline-offset: 2px;
 }
+
+/* Images & embeds are cleanly contained */
+.mail-adaptive-sheet img {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 8px;
+}
+
 
 
 
