@@ -2107,19 +2107,24 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
            (ZERO EFFECT ON DESKTOP)
            ───────────────────────────────────────────────── */
         @media (max-width: 860px) {
-          /* ── MOBILE TRANSPARENT TOP HEADER ── */
+          /* ── MOBILE TRANSPARENT TOP HEADER (STICKY FLOATING NAVBAR) ── */
           .mobile-blog-header {
             display: flex !important;
-            position: absolute !important;
+            position: fixed !important;
             top: 0 !important;
             left: 0 !important;
             right: 0 !important;
-            z-index: 50 !important;
-            padding: 1rem 1.15rem !important;
+            z-index: 100 !important;
+            padding: calc(env(safe-area-inset-top, 0px) + 0.85rem) 1.15rem 0.85rem 1.15rem !important;
             align-items: center !important;
             justify-content: space-between !important;
             background: transparent !important;
             border: none !important;
+            pointer-events: none !important;
+          }
+
+          .mobile-blog-header > * {
+            pointer-events: auto !important;
           }
 
           .mobile-home-btn {
@@ -2294,7 +2299,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             overflow-y: visible !important;
             box-sizing: border-box !important;
             z-index: 1 !important;
-            padding: 1.8rem 1.25rem calc(4rem + env(safe-area-inset-bottom, 0px)) !important;
+            padding: 1.8rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) !important;
             box-shadow: none !important;
           }
 
@@ -2367,7 +2372,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             overflow-y: visible !important;
             box-sizing: border-box !important;
             z-index: 1 !important;
-            padding: 1.8rem 1.25rem calc(4rem + env(safe-area-inset-bottom, 0px)) !important;
+            padding: 1.8rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) !important;
             box-shadow: none !important;
           }
 
@@ -2605,7 +2610,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           onTouchEnd={handleHeroTouchEnd}
           style={{ position: "relative", overflow: "hidden", background: "#0c0d0e" }}
         >
-          {/* MOBILE TRANSPARENT TOP HEADER BAR */}
+          {/* MOBILE TRANSPARENT TOP HEADER BAR (STICKY FLOATING NAVBAR) */}
           <div className="mobile-blog-header">
             {/* Left: HOME Button (Overview) or iOS-style JOURNAL Back Button (Reader mode) */}
             {selectedPost || isReadingPrologue ? (
@@ -3224,7 +3229,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     </button>
 
                     {/* HORIZONTAL RULE LINE SPANNING TO PILLBAR */}
-                    <div style={{ flex: 1, height: "1px", background: "var(--border-subtle, rgba(125,125,125,0.18))" }} />
+                    <div style={{ flex: 1, height: "1px", background: "var(--border-strong, rgba(125,125,125,0.45))", opacity: 0.85 }} />
 
                     {/* ── UNIFIED READING CONTROLS PILLBAR (PINNED TO RIGHT) ── */}
                     <div
@@ -3380,12 +3385,40 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     dangerouslySetInnerHTML={{ __html: stripImagesFromHtml(selectedPost.content) }}
                   />
 
+                  {/* ── CENTERED END MARKER WITH HORIZONTAL ACCENT LINES ── */}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "1.25rem",
+                      margin: "2.2rem 0 1rem 0",
+                      width: "100%",
+                      boxSizing: "border-box",
+                    }}
+                  >
+                    <div style={{ flex: 1, height: "1px", background: "var(--border-subtle, rgba(125,125,125,0.35))" }} />
+                    <span
+                      style={{
+                        fontSize: "0.66rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.25em",
+                        textTransform: "uppercase",
+                        color: "var(--text-muted, #888888)",
+                        opacity: 0.65,
+                      }}
+                    >
+                      END
+                    </span>
+                    <div style={{ flex: 1, height: "1px", background: "var(--border-subtle, rgba(125,125,125,0.35))" }} />
+                  </div>
+
                   {/* ── OTHER CHAPTERS THUMBNAIL ROW AT BOTTOM (DESKTOP ONLY) ── */}
                   <div
                     className="other-chapters-row"
                     style={{
-                      marginTop: "3rem",
-                      paddingTop: "2rem",
+                      marginTop: "1.8rem",
+                      paddingTop: "1.5rem",
                       borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))",
                       display: "flex",
                       flexDirection: "column",
