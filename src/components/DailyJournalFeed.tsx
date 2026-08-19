@@ -40,15 +40,19 @@ function extractAllImages(html: string): string[] {
 
 function stripImagesFromHtml(html: string): string {
   if (!html) return "";
-  return html
+  let clean = html
     .replace(/<div class="separator"[^>]*>[\s\S]*?<\/div>/gi, "")
     .replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, "")
     .replace(/<table[^>]*>[\s\S]*?<\/table>/gi, "")
     .replace(/<img[^>]*>/gi, "")
-    .replace(/<p[^>]*>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, "")
-    .replace(/<div[^>]*>(\s|&nbsp;|<br\s*\/?>)*<\/div>/gi, "")
+    .replace(/<p[^>]*>\s*(?:&nbsp;|<br\s*\/?>|\s)*<\/p>/gi, "")
+    .replace(/<div[^>]*>\s*(?:&nbsp;|<br\s*\/?>|\s)*<\/div>/gi, "")
     .replace(/(<br\s*\/?>\s*){2,}/gi, "<br>")
     .trim();
+
+  // Strip leading empty tags / whitespace
+  clean = clean.replace(/^(\s*<br\s*\/?>|\s*&nbsp;|\s*)+/gi, "").trim();
+  return clean;
 }
 
 function getRelativeTimeString(dateStr: string): string {
@@ -379,15 +383,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     }
   }, [selectedPostIndex]);
 
-  // Auto-cycle through the article's gallery photos on the left
-  useEffect(() => {
-    if (!selectedPost || selectedPostImages.length <= 1) return;
-    const t = setInterval(() => {
-      setPostPhotoIndex((prev) => (prev + 1) % selectedPostImages.length);
-    }, 4000);
-    return () => clearInterval(t);
-  }, [selectedPost, selectedPostImages.length]);
-
   const fallbackCovers = useMemo(() => [
     "/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg",
     "/images/moments/539303572_18073420046098563_1129254407547625674_n..webp",
@@ -396,6 +391,23 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     "/images/moments/515043142_18068610035098563_4316722369364790783_n..jpg",
     "/images/moments/608079301_18086400239098563_3466106499873906770_n..webp",
   ], []);
+
+  // Preload covers in browser memory to eliminate image flashing/flickering
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    fallbackCovers.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, [fallbackCovers]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || selectedPostImages.length === 0) return;
+    selectedPostImages.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, [selectedPostImages]);
 
   // Flipboard Deck containing EXCLUSIVELY BLOG POSTS for mobile
   const flipboardCards = useMemo(() => {
@@ -1210,19 +1222,19 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           gap: 0.4rem;
         }
 
-        /* SEARCH PILLBAR (COMPACT 30px HEIGHT - CLEAN LIGHT STYLE) */
+        /* SEARCH PILLBAR (ADAPTIVE THEMED PILL STYLE) */
         .search-pill-container {
           display: flex;
           align-items: center;
           height: 30px;
           border-radius: 15px;
-          background: #EFEFEF !important;
-          border: 1px solid rgba(0, 0, 0, 0.08) !important;
+          background: var(--bg-secondary, rgba(0, 0, 0, 0.05));
+          border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
           padding: 0 0.65rem;
           box-sizing: border-box;
-          transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease;
+          transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, border-color 0.2s ease;
           overflow: hidden;
-          box-shadow: 0 1px 4px rgba(0,0,0,0.04) !important;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.04);
         }
 
         .search-pill-container.compact {
@@ -1240,16 +1252,42 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           outline: none;
           background: transparent;
           font-size: 0.66rem;
-          color: #111111 !important;
+          color: var(--text-primary, #111111);
           width: 100%;
           margin-left: 0.35rem;
           font-family: inherit;
         }
 
         .search-pill-input::placeholder {
-          color: rgba(0, 0, 0, 0.45) !important;
+          color: var(--text-muted, rgba(0, 0, 0, 0.45));
           font-size: 0.62rem;
           letter-spacing: 0.04em;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          .search-pill-container {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: rgba(255, 255, 255, 0.14) !important;
+          }
+          .search-pill-input {
+            color: #FFFFFF !important;
+          }
+          .search-pill-input::placeholder {
+            color: rgba(255, 255, 255, 0.45) !important;
+          }
+        }
+        [data-theme="dark"] .search-pill-container,
+        .dark .search-pill-container {
+          background: rgba(255, 255, 255, 0.08) !important;
+          border-color: rgba(255, 255, 255, 0.14) !important;
+        }
+        [data-theme="dark"] .search-pill-input,
+        .dark .search-pill-input {
+          color: #FFFFFF !important;
+        }
+        [data-theme="dark"] .search-pill-input::placeholder,
+        .dark .search-pill-input::placeholder {
+          color: rgba(255, 255, 255, 0.45) !important;
         }
 
         /* ── SECTION 2: HORIZONTAL BLOG POSTS WITH MM/YY FILTERS ── */
@@ -1457,16 +1495,22 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           display: none !important;
         }
 
+        /* GUARANTEED DROP CAP FOR ALL BLOG POSTS */
+        .novel-article-reader > p:first-of-type::first-letter,
+        .novel-article-reader > div:first-of-type > p:first-of-type::first-letter,
+        .novel-article-reader > div:first-of-type::first-letter,
         .blog-modal-content-body > p:first-of-type::first-letter,
+        .blog-modal-content-body > div:first-of-type > p:first-of-type::first-letter,
         .blog-modal-content-body > div:first-of-type::first-letter {
-          font-family: var(--font-serif, Georgia, serif);
-          font-size: 3.2rem;
-          float: left;
-          line-height: 0.82;
-          margin-right: 0.65rem;
-          margin-top: 0.15rem;
-          font-weight: 700;
-          color: var(--text-primary, #111111);
+          font-family: var(--font-serif, Georgia, "Times New Roman", serif) !important;
+          font-size: 3.4rem !important;
+          float: left !important;
+          line-height: 0.82 !important;
+          margin-right: 0.65rem !important;
+          margin-top: 0.12rem !important;
+          font-weight: 700 !important;
+          color: var(--text-primary, #111111) !important;
+          text-transform: uppercase !important;
         }
 
         .blog-modal-content-body img {
@@ -1482,18 +1526,18 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           border: 1px solid rgba(0, 0, 0, 0.06) !important;
         }
 
-        /* ── HORIZONTAL CHAPTERS CAROUSEL LAYOUT ── */
+        /* ── HORIZONTAL CHAPTERS CAROUSEL LAYOUT (5 THUMBNAILS PER SLIDE) ── */
         .blog-grid-layout {
           display: flex;
           flex-direction: row;
           align-items: stretch;
-          gap: 0.95rem;
+          gap: 0.65rem;
           width: 100%;
           overflow-x: auto;
           overflow-y: hidden;
           scroll-snap-type: x mandatory;
           scroll-behavior: smooth;
-          padding: 0.2rem 0 0.6rem 0;
+          padding: 0.15rem 0 0.45rem 0;
           box-sizing: border-box;
           scrollbar-width: none !important;
         }
@@ -1502,13 +1546,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .blog-grid-card {
           display: flex;
           flex-direction: column;
-          gap: 0.55rem;
+          gap: 0.4rem;
           flex-shrink: 0;
-          width: 250px;
+          width: calc((100% - (4 * 0.65rem)) / 5);
+          min-width: 140px;
+          max-width: 190px;
           scroll-snap-align: start;
           cursor: pointer;
-          border-radius: 8px;
-          padding: 0.65rem;
+          border-radius: 7px;
+          padding: 0.45rem;
           border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
           background: var(--card-bg-1, #FFFFFF);
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
@@ -1524,9 +1570,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
         .blog-card-thumb-wrap {
           width: 100%;
-          height: 120px;
+          height: 92px;
           flex-shrink: 0;
-          border-radius: 6px;
+          border-radius: 5px;
           overflow: hidden;
           background: #111111;
           border: none !important;
@@ -1551,17 +1597,17 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
 
         .blog-card-date {
-          font-size: 0.6rem;
+          font-size: 0.52rem;
           font-weight: 700;
-          letter-spacing: 0.08em;
+          letter-spacing: 0.07em;
           text-transform: uppercase;
           color: var(--text-muted, #888888);
         }
 
         .blog-card-title {
-          font-size: 0.88rem;
+          font-size: 0.78rem;
           font-weight: 700;
-          line-height: 1.35;
+          line-height: 1.3;
           letter-spacing: -0.015em;
           color: var(--text-primary, #111111);
           margin: 0;
@@ -1577,8 +1623,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
 
         .blog-card-excerpt {
-          font-size: 0.75rem;
-          line-height: 1.45;
+          font-size: 0.68rem;
+          line-height: 1.35;
           color: var(--text-secondary, #666666);
           margin: 0;
           display: -webkit-box;
@@ -2162,226 +2208,214 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           className="pj-left"
           onTouchStart={handleHeroTouchStart}
           onTouchEnd={handleHeroTouchEnd}
+          style={{ position: "relative", overflow: "hidden", background: "#0c0d0e" }}
         >
-          <AnimatePresence mode="popLayout">
-            <motion.div
-              key={heroIndex}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.35, ease: "easeInOut" }}
+          {/* SOLID IMAGE LAYER - ZERO FLICKER OR RE-RENDER BLINKS */}
+          <div
+            className="pj-photo-layer"
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              zIndex: 1,
+              overflow: "hidden",
+              background: "#0c0d0e",
+            }}
+          >
+            <img
+              key={selectedPost ? `post-${selectedPost.id}-${postPhotoIndex}` : `overview-${heroIndex}`}
+              src={selectedPost ? selectedPostImages[postPhotoIndex % selectedPostImages.length] : currentFlipCard.img}
+              alt={selectedPost ? selectedPost.title : currentFlipCard.title}
               style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
                 width: "100%",
                 height: "100%",
+                objectFit: "cover",
+                objectPosition: "center",
+                display: "block",
+                transition: "opacity 0.35s ease",
+              }}
+            />
+          </div>
+
+          <div
+            className="pj-overlay"
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              background: "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.92) 100%)",
+              zIndex: 2,
+              pointerEvents: "none",
+            }}
+          />
+
+          <div className="pj-left-content" style={{ zIndex: 3 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+              <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
+                {selectedPost ? `CHAPTER ${String(sortedPosts.length - (selectedPostIndex ?? 0)).padStart(2, "0")} · ${formatDate(selectedPost.published, locale)}` : currentFlipCard.category}
+              </span>
+              <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.6)" }}>
+                {selectedPost
+                  ? selectedPostImages.length > 1
+                    ? `${(postPhotoIndex % selectedPostImages.length) + 1} / ${selectedPostImages.length} PHOTOS`
+                    : getRelativeTimeString(selectedPost.published)
+                  : currentFlipCard.date}
+              </span>
+            </div>
+
+            <h1 className="pj-title">{selectedPost ? selectedPost.title : currentFlipCard.title}</h1>
+
+            {!selectedPost && (
+              <p className="pj-excerpt">
+                {currentFlipCard.excerpt}
+              </p>
+            )}
+
+            {/* Dots indicator: for article photo gallery when open, or for flipboard in overview mode */}
+            {selectedPost && selectedPostImages.length > 1 ? (
+              <div className="pj-dots" style={{ marginTop: "1.4rem" }}>
+                {selectedPostImages.map((_, i) => (
+                  <div
+                    key={i}
+                    className={`pj-dot${i === (postPhotoIndex % selectedPostImages.length) ? " active" : ""}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPostPhotoIndex(i);
+                    }}
+                  />
+                ))}
+              </div>
+            ) : !selectedPost && flipboardCards.length > 1 ? (
+              <div className="pj-dots" style={{ marginTop: "1.4rem" }}>
+                {flipboardCards.map((_, i) => (
+                  <div
+                    key={i}
+                    className={`pj-dot${i === (heroIndex % flipboardCards.length) ? " active" : ""}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setHeroIndex(i);
+                    }}
+                  />
+                ))}
+              </div>
+            ) : null}
+          </div>
+
+          {selectedPost ? (
+            <div
+              style={{
+                position: "absolute",
+                bottom: "1.5rem",
+                right: "1.5rem",
+                zIndex: 10,
+                display: "flex",
+                alignItems: "center",
+                gap: "0.45rem",
               }}
             >
-              <div
-                className="pj-photo-layer"
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  width: "100%",
-                  height: "100%",
-                  backgroundImage: `url(${selectedPost ? selectedPostImages[postPhotoIndex % selectedPostImages.length] : currentFlipCard.img})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  backgroundRepeat: "no-repeat",
-                  opacity: 1,
-                  zIndex: 1,
-                  transition: "background-image 0.5s ease-in-out",
+              {/* PREVIOUS CHAPTER ICON BUTTON */}
+              <button
+                disabled={selectedPostIndex === null || selectedPostIndex >= sortedPosts.length - 1}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1) {
+                    setSelectedPostIndex(selectedPostIndex + 1);
+                  }
                 }}
-              />
-
-              <div
-                className="pj-overlay"
+                title="Previous Chapter"
                 style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  width: "100%",
-                  height: "100%",
-                  background: "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.92) 100%)",
-                  zIndex: 2,
-                }}
-              />
-
-              <div className="pj-left-content">
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                  <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
-                    {selectedPost ? `CHAPTER ${String(sortedPosts.length - (selectedPostIndex ?? 0)).padStart(2, "0")} · ${formatDate(selectedPost.published, locale)}` : currentFlipCard.category}
-                  </span>
-                  <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.6)" }}>
-                    {selectedPost
-                      ? selectedPostImages.length > 1
-                        ? `${(postPhotoIndex % selectedPostImages.length) + 1} / ${selectedPostImages.length} PHOTOS`
-                        : getRelativeTimeString(selectedPost.published)
-                      : currentFlipCard.date}
-                  </span>
-                </div>
-
-                <h1 className="pj-title">{selectedPost ? selectedPost.title : currentFlipCard.title}</h1>
-
-                {!selectedPost && (
-                  <p className="pj-excerpt">
-                    {currentFlipCard.excerpt}
-                  </p>
-                )}
-
-                {/* Dots indicator: for article photo gallery when open, or for flipboard in overview mode */}
-                {selectedPost && selectedPostImages.length > 1 ? (
-                  <div className="pj-dots" style={{ marginTop: "1.4rem" }}>
-                    {selectedPostImages.map((_, i) => (
-                      <div
-                        key={i}
-                        className={`pj-dot${i === (postPhotoIndex % selectedPostImages.length) ? " active" : ""}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setPostPhotoIndex(i);
-                        }}
-                      />
-                    ))}
-                  </div>
-                ) : !selectedPost && flipboardCards.length > 1 ? (
-                  <div className="pj-dots" style={{ marginTop: "1.4rem" }}>
-                    {flipboardCards.map((_, i) => (
-                      <div
-                        key={i}
-                        className={`pj-dot${i === (heroIndex % flipboardCards.length) ? " active" : ""}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setHeroIndex(i);
-                        }}
-                      />
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-
-              {selectedPost ? (
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: "1.5rem",
-                    right: "1.5rem",
-                    zIndex: 10,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.45rem",
-                  }}
-                >
-                  {/* PREVIOUS CHAPTER ICON BUTTON */}
-                  <button
-                    disabled={selectedPostIndex === null || selectedPostIndex >= sortedPosts.length - 1}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1) {
-                        setSelectedPostIndex(selectedPostIndex + 1);
-                      }
-                    }}
-                    title="Previous Chapter"
-                    style={{
-                      width: "36px",
-                      height: "36px",
-                      borderRadius: "50%",
-                      background: "rgba(255, 255, 255, 0.14)",
-                      backdropFilter: "blur(12px)",
-                      WebkitBackdropFilter: "blur(12px)",
-                      border: "1px solid rgba(255, 255, 255, 0.22)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? "#fff" : "rgba(255,255,255,0.3)",
-                      cursor: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? "pointer" : "default",
-                      transition: "all 0.2s ease",
-                    }}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polyline points="15 18 9 12 15 6" />
-                    </svg>
-                  </button>
-
-                  {/* NEXT CHAPTER ICON BUTTON */}
-                  <button
-                    disabled={selectedPostIndex === null || selectedPostIndex <= 0}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (selectedPostIndex !== null && selectedPostIndex > 0) {
-                        setSelectedPostIndex(selectedPostIndex - 1);
-                      }
-                    }}
-                    title="Next Chapter"
-                    style={{
-                      width: "36px",
-                      height: "36px",
-                      borderRadius: "50%",
-                      background: "rgba(255, 255, 255, 0.14)",
-                      backdropFilter: "blur(12px)",
-                      WebkitBackdropFilter: "blur(12px)",
-                      border: "1px solid rgba(255, 255, 255, 0.22)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: selectedPostIndex !== null && selectedPostIndex > 0 ? "#fff" : "rgba(255,255,255,0.3)",
-                      cursor: selectedPostIndex !== null && selectedPostIndex > 0 ? "pointer" : "default",
-                      transition: "all 0.2s ease",
-                    }}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <polyline points="9 18 15 12 9 6" />
-                    </svg>
-                  </button>
-                </div>
-              ) : (
-                <button
-                  className="pj-read-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (currentFlipCard.post) {
-                      const idx = sortedPosts.findIndex((p) => p.id === currentFlipCard.post.id);
-                      if (idx !== -1) setSelectedPostIndex(idx);
-                    }
-                  }}
-                >
-                  READ
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                    <polyline points="12 5 19 12 12 19" />
-                  </svg>
-                </button>
-              )}
-
-              {/* ── SCROLL DOWN HINT ── */}
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: "calc(1rem + env(safe-area-inset-bottom, 0px))",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  zIndex: 20,
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "50%",
+                  background: "rgba(255, 255, 255, 0.14)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255, 255, 255, 0.22)",
                   display: "flex",
-                  flexDirection: "column",
                   alignItems: "center",
-                  gap: "3px",
-                  opacity: 0.55,
-                  pointerEvents: "none",
+                  justifyContent: "center",
+                  color: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? "#fff" : "rgba(255,255,255,0.3)",
+                  cursor: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? "pointer" : "default",
+                  transition: "all 0.2s ease",
                 }}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                  <polyline points="6 9 12 15 18 9" />
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="15 18 9 12 15 6" />
                 </svg>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+              </button>
+
+              {/* NEXT CHAPTER ICON BUTTON */}
+              <button
+                disabled={selectedPostIndex === null || selectedPostIndex <= 0}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (selectedPostIndex !== null && selectedPostIndex > 0) {
+                    setSelectedPostIndex(selectedPostIndex - 1);
+                  }
+                }}
+                title="Next Chapter"
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "50%",
+                  background: "rgba(255, 255, 255, 0.14)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  border: "1px solid rgba(255, 255, 255, 0.22)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: selectedPostIndex !== null && selectedPostIndex > 0 ? "#fff" : "rgba(255,255,255,0.3)",
+                  cursor: selectedPostIndex !== null && selectedPostIndex > 0 ? "pointer" : "default",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            </div>
+          ) : (
+            <button
+              className="pj-read-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (currentFlipCard.post) {
+                  const idx = sortedPosts.findIndex((p) => p.id === currentFlipCard.post.id);
+                  if (idx !== -1) setSelectedPostIndex(idx);
+                }
+              }}
+            >
+              READ
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+          )}
+
+          {/* ── SCROLL DOWN HINT ── */}
+          <div
+            style={{
+              position: "absolute",
+              bottom: "calc(1rem + env(safe-area-inset-bottom, 0px))",
+              left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 20,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "3px",
+              opacity: 0.55,
+              pointerEvents: "none",
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
         </div>
 
         {/* ── MOBILE TOP SLIDE-DOWN PANEL (Gallery, Prologue, Chapters) ── */}
@@ -2626,35 +2660,41 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     paddingTop: "0.25rem",
                   }}
                 >
-                  {/* ── TOP-LEFT BACK TO JOURNAL BUTTON ── */}
+                  {/* ── TOP-LEFT BACK TO JOURNAL PILLBAR BUTTON ── */}
                   <button
                     onClick={() => setSelectedPostIndex(null)}
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
                       gap: "0.45rem",
-                      background: "none",
-                      border: "none",
-                      color: "var(--text-muted, #777777)",
-                      fontSize: "0.68rem",
+                      background: "var(--bg-secondary, rgba(125,125,125,0.08))",
+                      border: "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
+                      color: "var(--text-primary, #111111)",
+                      fontSize: "0.66rem",
                       fontWeight: 700,
-                      letterSpacing: "0.12em",
+                      letterSpacing: "0.08em",
                       textTransform: "uppercase",
                       cursor: "pointer",
-                      padding: "0.2rem 0",
+                      padding: "0.38rem 0.88rem",
+                      borderRadius: "9999px",
                       alignSelf: "flex-start",
-                      transition: "color 0.2s ease, transform 0.2s ease",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                      transition: "all 0.2s ease",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.color = "var(--text-primary, #111111)";
-                      e.currentTarget.style.transform = "translateX(-2px)";
+                      e.currentTarget.style.background = "var(--text-primary, #111111)";
+                      e.currentTarget.style.color = "var(--bg-color, #FFFFFF)";
+                      e.currentTarget.style.borderColor = "var(--text-primary, #111111)";
+                      e.currentTarget.style.transform = "translateY(-1px)";
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.color = "var(--text-muted, #777777)";
-                      e.currentTarget.style.transform = "translateX(0px)";
+                      e.currentTarget.style.background = "var(--bg-secondary, rgba(125,125,125,0.08))";
+                      e.currentTarget.style.color = "var(--text-primary, #111111)";
+                      e.currentTarget.style.borderColor = "var(--border-subtle, rgba(125,125,125,0.18))";
+                      e.currentTarget.style.transform = "translateY(0px)";
                     }}
                   >
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <line x1="19" y1="12" x2="5" y2="12" />
                       <polyline points="12 19 5 12 12 5" />
                     </svg>
