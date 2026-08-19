@@ -223,7 +223,7 @@ export const Header: React.FC<HeaderProps> = ({
           1. MOBILE VIEW: WHEN MESSAGE IS OPEN (< md screen)
           ────────────────────────────────────────────────────────────────────────── */}
       {selectedMessage && (
-        <header className="md:hidden h-14 px-3.5 flex items-center justify-between shrink-0 select-none relative z-[900] font-sans border-b border-[var(--border-subtle)] bg-[var(--card-bg)] shadow-2xs">
+        <header className="md:hidden h-14 px-3.5 flex items-center justify-between shrink-0 select-none relative z-30 font-sans border-b border-[var(--border-subtle)] bg-[var(--card-bg)] shadow-2xs">
           <div className="flex items-center gap-2.5 min-w-0 flex-1">
             {onBack && (
               <button
@@ -277,7 +277,7 @@ export const Header: React.FC<HeaderProps> = ({
           2. MOBILE VIEW: HOME / LIST VIEW (< md screen, when no message selected)
           ────────────────────────────────────────────────────────────────────────── */}
       {!selectedMessage && (
-        <header className="md:hidden h-14 px-3.5 flex items-center justify-between shrink-0 select-none relative z-[900] font-sans border-b border-[var(--border-subtle)] bg-[var(--card-bg)] shadow-2xs">
+        <header className="md:hidden h-14 px-3.5 flex items-center justify-between shrink-0 select-none relative z-30 font-sans border-b border-[var(--border-subtle)] bg-[var(--card-bg)] shadow-2xs">
           <div ref={mobileSearchRef} className="w-full flex items-center justify-between gap-2.5 relative">
             {!isSearchFocused ? (
               <>
@@ -336,7 +336,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
 
                 {/* Mobile Search Dropdown */}
-                <div className="absolute left-0 right-0 top-full mt-2 w-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl shadow-xl z-[999] p-3 space-y-2 max-h-[70vh] overflow-y-auto">
+                <div className="absolute left-0 right-0 top-full mt-2 w-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl shadow-xl z-50 p-3 space-y-2 max-h-[70vh] overflow-y-auto">
                   {displayContacts.length > 0 && (
                     <div className="bg-[var(--bg-color)] border border-[var(--card-border)] rounded-xl p-2">
                       <div className="text-[10px] font-extrabold uppercase text-[var(--text-muted)] tracking-wider mb-2 flex items-center gap-1">
@@ -407,7 +407,7 @@ export const Header: React.FC<HeaderProps> = ({
              - Left: Clean Folder Name (Inbox) without count badge
              - Right: Search Input + Results Dropdown (w-80) + Refresh + Settings
           ────────────────────────────────────────────────────────────────────────── */}
-      <header className="hidden md:flex h-13 px-3 items-center justify-between shrink-0 select-none relative z-[900] font-sans bg-transparent">
+      <header className="hidden md:flex h-13 px-3 items-center justify-between shrink-0 select-none relative z-30 font-sans bg-transparent">
         {/* Left: Folder Name Only */}
         <div className="flex items-center gap-3 shrink-0">
           <h1 className="font-extrabold text-xl text-[var(--text-primary)] tracking-tight capitalize font-sans">
@@ -449,7 +449,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Desktop Search Results Dropdown - Exactly matches w-80 width */}
             {isSearchFocused && (
-              <div className="absolute right-0 top-full mt-2 w-80 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.18)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.7)] z-[999] overflow-hidden p-3 animate-toast apple-transition space-y-2.5">
+              <div className="absolute right-0 top-full mt-2 w-80 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.18)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.7)] z-50 overflow-hidden p-3 animate-toast apple-transition space-y-2.5">
                 {displayContacts.length > 0 && (
                   <div className="bg-[var(--bg-color)] border border-[var(--card-border)] rounded-xl p-2 shadow-2xs">
                     <div className="px-1 pb-1.5 text-[10px] font-extrabold uppercase text-[var(--text-muted)] tracking-wider flex items-center justify-between">
@@ -565,7 +565,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             {showSettingsMenu && (
-              <div className="absolute right-0 top-full mt-2 w-64 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl shadow-xl z-[999] p-2 animate-toast space-y-1 font-sans">
+              <div className="absolute right-0 top-full mt-2 w-64 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl shadow-xl z-50 p-2 animate-toast space-y-1 font-sans">
                 <div className="px-3 py-2 border-b border-[var(--border-subtle)] mb-1">
                   <span className="text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider block">Signed In As</span>
                   <span className="text-xs font-black text-[var(--text-primary)] truncate block">{userEmail}</span>

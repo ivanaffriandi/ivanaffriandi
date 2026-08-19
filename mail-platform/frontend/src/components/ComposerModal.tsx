@@ -5,7 +5,7 @@ import {
   CheckCircle2, AlertCircle, Loader2, ArrowUp, Trash2, FileText,
   Clock, Bold, Italic, Underline, Strikethrough,
   List, ListOrdered, Quote, RemoveFormatting, Link as LinkIcon, Sparkles,
-  Paperclip, X,
+  Paperclip, X, Reply,
 } from 'lucide-react';
 import { sendMessage } from '@/lib/api';
 
@@ -647,9 +647,9 @@ export const ComposerModal: React.FC<ComposerModalProps> = ({
 
   return (
     <>
-      {/* Background Dimming Backdrop (Subtle focus backdrop) */}
+      {/* Background Dimming Backdrop (Subtle focus backdrop covering entire page) */}
       <div
-        className={`fixed inset-0 bg-black/25 dark:bg-black/45 backdrop-blur-[2px] z-[150] select-none apple-transition ${
+        className={`fixed inset-0 bg-black/30 dark:bg-black/50 backdrop-blur-[2px] z-[9990] select-none apple-transition ${
           isClosing ? 'opacity-0' : 'opacity-100'
         }`}
         onClick={() => {
@@ -663,7 +663,7 @@ export const ComposerModal: React.FC<ComposerModalProps> = ({
 
       <div
         ref={modalContainerRef}
-        className={`fixed inset-x-2.5 bottom-2.5 md:bottom-6 md:right-6 md:left-auto md:w-[580px] max-w-full md:max-w-[94vw] max-h-[94vh] overflow-y-auto no-scrollbar z-[160] select-none flex flex-col gap-2 font-sans ${
+        className={`fixed inset-x-2.5 bottom-2.5 md:bottom-6 md:right-6 md:left-auto md:w-[580px] max-w-full md:max-w-[94vw] max-h-[94vh] overflow-y-auto no-scrollbar z-[9999] select-none flex flex-col gap-2 font-sans ${
           isClosing ? 'animate-genie-out' : 'animate-genie-in'
         }`}
       >
@@ -678,96 +678,120 @@ export const ComposerModal: React.FC<ComposerModalProps> = ({
         )}
 
         {/* 1. Separate Top Floating Metadata Card */}
-        <div className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl md:rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.25)] ring-1 ring-black/5 dark:ring-white/10 p-3 md:p-4 space-y-2.5 apple-transition">
-          {/* Title Tag */}
-          <div className="flex items-center gap-2 px-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
-            <span className="text-[11px] font-black text-[var(--text-primary)] uppercase tracking-wider">
-              {subject?.toLowerCase().startsWith('re:') ? 'Reply' : subject?.toLowerCase().startsWith('fwd:') ? 'Forward' : 'New Message'}
-            </span>
-          {recipients.length > 0 && (
-            <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 font-bold border border-blue-500/20">
-              {recipients.length} {recipients.length === 1 ? 'recipient' : 'recipients'}
-            </span>
+        <div className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl md:rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.25)] ring-1 ring-black/5 dark:ring-white/10 p-3 md:p-3.5 space-y-2 apple-transition font-sans">
+          {subject?.toLowerCase().startsWith('re:') ? (
+            /* ULTRA-MINIMALIST COMPACT REPLY HEADER */
+            <div className="flex items-center justify-between gap-2.5 px-1">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-xs shrink-0 border border-blue-500/20">
+                  <Reply className="w-3 h-3 stroke-[2.5]" />
+                  <span>Reply</span>
+                </div>
+                <div className="flex items-center gap-1 min-w-0 flex-1 text-xs truncate">
+                  <span className="font-semibold text-[var(--text-muted)] shrink-0">To:</span>
+                  <span className="font-bold text-[var(--text-primary)] truncate font-sans">
+                    {recipients[0]?.name ? `${recipients[0].name} (${recipients[0].email})` : (recipients[0]?.email || inputValue || 'Recipient')}
+                  </span>
+                </div>
+              </div>
+              <span className="text-[11px] text-[var(--text-muted)] truncate max-w-[220px] hidden sm:inline font-normal font-sans">
+                {subject}
+              </span>
+            </div>
+          ) : (
+            /* NEW MESSAGE STANDARD HEADER */
+            <>
+              {/* Title Tag */}
+              <div className="flex items-center gap-2 px-1">
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
+                <span className="text-[11px] font-black text-[var(--text-primary)] uppercase tracking-wider">
+                  {subject?.toLowerCase().startsWith('fwd:') ? 'Forward' : 'New Message'}
+                </span>
+                {recipients.length > 0 && (
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 font-bold border border-blue-500/20">
+                    {recipients.length} {recipients.length === 1 ? 'recipient' : 'recipients'}
+                  </span>
+                )}
+              </div>
+
+              {/* TO Field */}
+              <div className="flex items-center gap-2 border-t border-[var(--border-subtle)] pt-2.5">
+                <span className="text-xs font-bold text-[var(--text-muted)] w-14 shrink-0 pl-1">To:</span>
+                <div className="flex-1 relative">
+                  <div className="flex flex-wrap items-center gap-1.5 min-h-[28px]">
+                    {recipients.map((rec, i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold text-white shadow-2xs animate-fade-in"
+                        style={{ backgroundColor: getColor(rec.email) }}
+                      >
+                        <span>{rec.name ? `${rec.name} (${rec.email})` : rec.email}</span>
+                        <button
+                          type="button"
+                          onClick={() => removeRecipient(i)}
+                          className="p-0.5 hover:bg-black/20 rounded-full"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={inputValue}
+                      onChange={handleInputChange}
+                      onKeyDown={handleInputKeyDown}
+                      onFocus={() => inputValue && setShowSuggestions(true)}
+                      placeholder={recipients.length === 0 ? 'Type email address or name…' : ''}
+                      className="flex-1 min-w-[140px] bg-transparent text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none font-sans font-medium"
+                    />
+                  </div>
+
+                  {/* Autocomplete Dropdown */}
+                  {showSuggestions && suggestions.length > 0 && (
+                    <div className="absolute left-0 right-0 top-full mt-2 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl shadow-2xl z-50 overflow-hidden font-sans max-h-44 overflow-y-auto ring-1 ring-black/10 dark:ring-white/15">
+                      <div className="p-1.5 text-[10px] font-extrabold text-[var(--text-muted)] uppercase tracking-wider px-3 border-b border-[var(--border-subtle)] flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        <span>Suggested Recipients</span>
+                      </div>
+                      {suggestions.map((item, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => addRecipient(item.email, item.name)}
+                          className="w-full text-left px-3.5 py-2 hover:bg-[var(--bg-color)] flex items-center justify-between text-xs apple-transition"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="w-5 h-5 rounded-full text-white text-[10px] flex items-center justify-center font-extrabold"
+                              style={{ backgroundColor: getColor(item.email) }}
+                            >
+                              {item.email.charAt(0).toUpperCase()}
+                            </span>
+                            <span className="font-semibold text-[var(--text-primary)]">{item.name || item.email}</span>
+                          </div>
+                          {item.name && <span className="text-[11px] text-[var(--text-muted)] font-mono">{item.email}</span>}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Subject Field */}
+              <div className="flex items-center gap-2 border-t border-[var(--border-subtle)] pt-2.5">
+                <span className="text-xs font-bold text-[var(--text-muted)] w-14 shrink-0 pl-1">Subject:</span>
+                <input
+                  type="text"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  placeholder="Write a clear subject…"
+                  className="flex-1 bg-transparent text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none font-sans font-medium"
+                />
+              </div>
+            </>
           )}
         </div>
-
-        {/* TO Field */}
-        <div className="flex items-center gap-2 border-t border-[var(--border-subtle)] pt-2.5">
-          <span className="text-xs font-bold text-[var(--text-muted)] w-14 shrink-0 pl-1">To:</span>
-          <div className="flex-1 relative">
-            <div className="flex flex-wrap items-center gap-1.5 min-h-[28px]">
-              {recipients.map((rec, i) => (
-                <span
-                  key={i}
-                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold text-white shadow-2xs animate-fade-in"
-                  style={{ backgroundColor: getColor(rec.email) }}
-                >
-                  <span>{rec.name ? `${rec.name} (${rec.email})` : rec.email}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeRecipient(i)}
-                    className="p-0.5 hover:bg-black/20 rounded-full"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
-              <input
-                ref={inputRef}
-                type="text"
-                value={inputValue}
-                onChange={handleInputChange}
-                onKeyDown={handleInputKeyDown}
-                onFocus={() => inputValue && setShowSuggestions(true)}
-                placeholder={recipients.length === 0 ? 'Type email address or name…' : ''}
-                className="flex-1 min-w-[140px] bg-transparent text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none font-sans font-medium"
-              />
-            </div>
-
-            {/* Autocomplete Dropdown */}
-            {showSuggestions && suggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-full mt-2 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl shadow-2xl z-50 overflow-hidden font-sans max-h-44 overflow-y-auto ring-1 ring-black/10 dark:ring-white/15">
-                <div className="p-1.5 text-[10px] font-extrabold text-[var(--text-muted)] uppercase tracking-wider px-3 border-b border-[var(--border-subtle)] flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  <span>Suggested Recipients</span>
-                </div>
-                {suggestions.map((item, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => addRecipient(item.email, item.name)}
-                    className="w-full text-left px-3.5 py-2 hover:bg-[var(--bg-color)] flex items-center justify-between text-xs apple-transition"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="w-5 h-5 rounded-full text-white text-[10px] flex items-center justify-center font-extrabold"
-                        style={{ backgroundColor: getColor(item.email) }}
-                      >
-                        {item.email.charAt(0).toUpperCase()}
-                      </span>
-                      <span className="font-semibold text-[var(--text-primary)]">{item.name || item.email}</span>
-                    </div>
-                    {item.name && <span className="text-[11px] text-[var(--text-muted)] font-mono">{item.email}</span>}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Subject Field */}
-        <div className="flex items-center gap-2 border-t border-[var(--border-subtle)] pt-2.5">
-          <span className="text-xs font-bold text-[var(--text-muted)] w-14 shrink-0 pl-1">Subject:</span>
-          <input
-            type="text"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            placeholder="Write a clear subject…"
-            className="flex-1 bg-transparent text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none font-sans font-medium"
-          />
-        </div>
-      </div>
 
       {/* 2. Separate Center Floating Editor Card */}
       <div className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.25)] ring-1 ring-black/5 dark:ring-white/10 p-4 space-y-2.5 apple-transition">

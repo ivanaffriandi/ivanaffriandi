@@ -90,7 +90,7 @@ export const ContactDetailModal: React.FC<ContactDetailModalProps> = ({
   const brandAvatar = getBrandOrAvatarUrl(email || contact.email, name);
 
   return (
-    <div className={`fixed inset-0 z-[200] flex items-center justify-center p-4 select-none font-sans ${isClosing ? 'animate-fade-out opacity-0' : 'animate-fade-in'}`}>
+    <div className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 select-none font-sans ${isClosing ? 'animate-fade-out opacity-0' : 'animate-fade-in'}`}>
       {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/40 backdrop-blur-xs apple-transition"
