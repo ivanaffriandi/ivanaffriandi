@@ -926,13 +926,14 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           flex: 1;
           min-width: 0;
           height: 100vh;
-          overflow-y: auto;
+          overflow-y: hidden;
           overflow-x: hidden;
           box-sizing: border-box;
-          padding: 2.2rem max(3.2vw, 1.75rem) 2rem;
+          padding: 1.4rem max(2.5vw, 1.5rem) 1.15rem;
           display: flex;
           flex-direction: column;
-          gap: 1rem;
+          justify-content: space-between;
+          gap: 0.65rem;
           -webkit-overflow-scrolling: touch;
           scroll-behavior: smooth;
           background: var(--bg-color, #FFFFFF);
@@ -940,13 +941,22 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
 
         .pj-right.fit-screen {
-          overflow-y: auto;
-          justify-content: flex-start;
+          overflow-y: hidden;
+          justify-content: space-between;
         }
 
         @media (max-width: 860px) {
+          .pj-right {
+            height: auto;
+            min-height: 100vh;
+            overflow-y: auto;
+            padding: 1rem 1rem 3rem;
+            gap: 1.5rem;
+            justify-content: flex-start;
+          }
           .pj-right.fit-screen {
             overflow-y: auto;
+            justify-content: flex-start;
           }
         }
 
@@ -1688,28 +1698,28 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           border: 1px solid rgba(0, 0, 0, 0.06) !important;
         }
 
-        /* ── DESKTOP CHAPTERS 2-COLUMN GRID LAYOUT (FILLS RIGHT COLUMN BEAUTIFULLY) ── */
+        /* ── DESKTOP CHAPTERS 4-COLUMN 2-ROW GRID (FITS 100% ON SCREEN WITHOUT SCROLL) ── */
         .blog-grid-layout {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 0.95rem;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 0.55rem;
           width: 100%;
-          padding: 0.35rem 0 2rem 0;
+          padding: 0.15rem 0 0 0;
           box-sizing: border-box;
         }
 
         .blog-grid-card {
           display: flex;
           flex-direction: column;
-          gap: 0.55rem;
+          gap: 0.35rem;
           width: 100%;
           min-width: 0;
           cursor: pointer;
-          border-radius: 8px;
-          padding: 0.65rem;
+          border-radius: 6px;
+          padding: 0.4rem;
           border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
           background: var(--card-bg-1, #FFFFFF);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
           transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
           box-sizing: border-box;
         }
@@ -1717,14 +1727,14 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .blog-grid-card:hover {
           transform: translateY(-2px);
           border-color: var(--border-strong, rgba(0, 0, 0, 0.25));
-          box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
         }
 
         .blog-card-thumb-wrap {
           width: 100%;
-          height: 125px;
+          height: 68px;
           flex-shrink: 0;
-          border-radius: 6px;
+          border-radius: 4px;
           overflow: hidden;
           background: #111111;
           border: none !important;
@@ -1749,20 +1759,20 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
 
         .blog-card-date {
-          font-size: 0.54rem;
+          font-size: 0.5rem;
           font-weight: 800;
-          letter-spacing: 0.08em;
+          letter-spacing: 0.07em;
           text-transform: uppercase;
           color: var(--text-muted, #888888);
         }
 
         .blog-card-title {
-          font-size: 0.88rem;
+          font-size: 0.72rem;
           font-weight: 700;
-          line-height: 1.32;
+          line-height: 1.25;
           letter-spacing: -0.015em;
           color: var(--text-primary, #111111);
-          margin: 0.1rem 0 0 0;
+          margin: 0.05rem 0 0 0;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
@@ -1775,10 +1785,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
 
         .blog-card-excerpt {
-          font-size: 0.72rem;
-          line-height: 1.42;
+          font-size: 0.62rem;
+          line-height: 1.32;
           color: var(--text-secondary, #666666);
-          margin: 0.25rem 0 0 0;
+          margin: 0.15rem 0 0 0;
           font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif);
           font-style: normal;
           display: -webkit-box;
@@ -1791,25 +1801,25 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .novel-intro-wrap {
           display: flex;
           flex-direction: column;
-          gap: 0.75rem;
+          gap: 0.45rem;
           width: 100%;
-          padding: 1.1rem 0 1.25rem;
+          padding: 0.55rem 0 0.75rem;
           border-bottom: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
         }
 
         .novel-intro-content {
           display: flex;
           flex-direction: column;
-          gap: 0.85rem;
+          gap: 0.45rem;
         }
 
         .novel-intro-2col {
           display: grid;
-          grid-template-columns: 1.12fr 1fr;
-          gap: 2.2rem;
+          grid-template-columns: 1.15fr 1fr;
+          gap: 1.5rem;
           align-items: flex-start;
           width: 100%;
-          margin-top: 0.5rem;
+          margin-top: 0.2rem;
         }
 
         @media (max-width: 860px) {
@@ -1820,8 +1830,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
 
         .novel-intro-paragraph {
-          font-size: 0.9rem;
-          line-height: 1.72;
+          font-size: 0.82rem;
+          line-height: 1.6;
           color: var(--text-secondary, #333333);
           font-family: var(--font-serif, Georgia, serif);
           margin: 0;
@@ -1831,11 +1841,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         /* STUNNING LITERARY DROP CAP ON FIRST LETTER */
         .novel-drop-cap::first-letter {
           font-family: var(--font-serif, Georgia, serif);
-          font-size: 3.2rem;
+          font-size: 2.7rem;
           float: left;
           line-height: 0.82;
-          margin-right: 0.65rem;
-          margin-top: 0.15rem;
+          margin-right: 0.5rem;
+          margin-top: 0.1rem;
           font-weight: 400;
           color: var(--text-primary, #111111);
           font-style: italic;
