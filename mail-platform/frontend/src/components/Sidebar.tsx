@@ -40,6 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   activeFolderId,
   onSelectFolder,
   onOpenCompose,
+  onOpenSubscriptions,
   userEmail,
   onSignOut,
 }) => {
