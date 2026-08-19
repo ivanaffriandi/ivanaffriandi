@@ -93,6 +93,17 @@ async def list_messages(
     results = await db.execute(stmt)
     messages = results.scalars().all()
 
+    def extract_snippet(text: str) -> str:
+        if not text:
+            return ""
+        if "<" in text and ">" in text:
+            import re, html as html_lib
+            c = re.sub(r'<(style|script|head|link|iframe)[^>]*>.*?</\1>', ' ', text, flags=re.DOTALL | re.IGNORECASE)
+            c = re.sub(r'<(br|p|div|tr|li|h[1-6])[^>]*>', ' ', c, flags=re.IGNORECASE)
+            c = re.sub(r'<[^>]+>', ' ', c)
+            text = html_lib.unescape(c)
+        return " ".join(text.split()).strip()[:150]
+
     return [
         MessageSummary(
             id=msg.id,
@@ -103,7 +114,7 @@ async def list_messages(
             recipient_to=msg.recipient_to,
             subject=msg.subject,
             date=msg.date,
-            snippet=(msg.body_plain or msg.body_html or "")[:150],
+            snippet=extract_snippet(msg.body_plain or msg.body_html or ""),
             is_read=msg.is_read,
             is_starred=msg.is_starred,
             has_attachments=msg.has_attachments,

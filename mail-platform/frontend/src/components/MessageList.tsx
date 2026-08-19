@@ -339,7 +339,15 @@ export const MessageList: React.FC<MessageListProps> = ({
                     <p className={`text-[11px] truncate leading-tight ${
                       isSelected ? 'text-blue-100' : 'text-[var(--text-muted)]'
                     }`}>
-                      {msg.snippet || '\u00A0'}
+                      {msg.snippet
+                        ? msg.snippet
+                            .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+                            .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+                            .replace(/<[^>]+>/g, ' ')
+                            .replace(/&nbsp;/g, ' ')
+                            .replace(/\s+/g, ' ')
+                            .trim() || '\u00A0'
+                        : '\u00A0'}
                     </p>
                   </div>
 

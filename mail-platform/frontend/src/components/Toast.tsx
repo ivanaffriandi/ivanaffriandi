@@ -41,6 +41,17 @@ function playNotificationChime() {
   }
 }
 
+const cleanTextSnippet = (raw?: string) => {
+  if (!raw) return '';
+  return raw
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+};
+
 export const Toast: React.FC<ToastProps> = ({ toasts, onDismiss }) => {
   useEffect(() => {
     if (toasts.length > 0) {
@@ -54,7 +65,7 @@ export const Toast: React.FC<ToastProps> = ({ toasts, onDismiss }) => {
     <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end gap-3 pointer-events-none font-sans">
       {toasts.map((toast) => {
         if (toast.isIncomingMail) {
-          const previewText = toast.snippet || toast.text || 'New message arrived';
+          const previewText = cleanTextSnippet(toast.snippet || toast.text) || 'New message arrived';
           const senderInitial = (toast.sender || 'M').charAt(0).toUpperCase();
 
           return (

@@ -84,18 +84,23 @@ def parse_raw_mime(raw_bytes: bytes) -> Dict[str, Any]:
     import re
     import html as html_lib
 
-    if body_plain and body_plain.strip():
+    def extract_clean_text(content: str) -> str:
+        if not content:
+            return ""
+        c = re.sub(r'<(style|script|head|link|iframe)[^>]*>.*?</\1>', ' ', content, flags=re.DOTALL | re.IGNORECASE)
+        c = re.sub(r'<(br|p|div|tr|li|h[1-6])[^>]*>', ' ', c, flags=re.IGNORECASE)
+        c = re.sub(r'<[^>]+>', ' ', c)
+        c = html_lib.unescape(c)
+        return " ".join(c.split()).strip()
+
+    if body_plain and body_plain.strip() and not ("<html" in body_plain.lower() or "<body" in body_plain.lower() or "<style" in body_plain.lower()):
         raw_text = body_plain.strip()
     else:
-        # Strip HTML and styles
-        clean = re.sub(r'<style[^>]*>.*?</style>', '', body_html or '', flags=re.DOTALL | re.IGNORECASE)
-        clean = re.sub(r'<script[^>]*>.*?</script>', '', clean, flags=re.DOTALL | re.IGNORECASE)
-        clean = re.sub(r'<head[^>]*>.*?</head>', '', clean, flags=re.DOTALL | re.IGNORECASE)
-        clean = re.sub(r'<(br|p|div|tr)[^>]*>', ' ', clean, flags=re.IGNORECASE)
-        clean = re.sub(r'<[^>]+>', ' ', clean)
-        raw_text = html_lib.unescape(clean)
+        raw_text = extract_clean_text(body_html or body_plain or "")
+        if not body_plain:
+            body_plain = raw_text
 
-    snippet = " ".join(raw_text.split())[:160] if raw_text else ""
+    snippet = raw_text[:160] if raw_text else ""
 
     # Spam detection headers from Rspamd / Postfix / SpamAssassin
     spam_flag_header = msg.get("X-Spam-Flag", "").upper() == "YES"
