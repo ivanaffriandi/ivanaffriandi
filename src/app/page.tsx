@@ -209,6 +209,24 @@ export default function AvantGardeHomepage() {
           >
             BLOG
           </a>
+          <span style={{ fontSize: "11px", color: textMuted, lineHeight: 1 }}>·</span>
+          <a
+            href="https://blog.ivanaffriandi.com/ask"
+            style={{
+              fontSize: isMobile ? "11px" : "11px",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: fg,
+              textDecoration: "none",
+              transition: "opacity 0.15s ease",
+              lineHeight: 1,
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.6")}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+          >
+            ASK
+          </a>
         </nav>
 
         {/* TOP CENTER: 1-Line Simple Title (Desktop Only) */}

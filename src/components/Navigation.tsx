@@ -282,17 +282,6 @@ export default function Navigation() {
             </svg>
           </a>
 
-          {/* 2. Ask Q&A Link */}
-          <Link
-            href="/ask"
-            className={`nav-side-icon${pathname.startsWith("/ask") ? " active" : ""}`}
-            title="Ask Q&A"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-          </Link>
-
           {isAdminPage && <SignOutButton />}
 
           <span
@@ -354,62 +343,34 @@ export default function Navigation() {
             {lang.toUpperCase()}
           </button>
 
-          {/* On blog page: show direct Q&A button instead of hamburger menu */}
-          {pathname.startsWith("/blog") ? (
-            <Link
-              href="/ask"
-              title="Ask Q&A"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.35rem",
-                background: "rgba(255,255,255,0.12)",
-                border: "1px solid rgba(255,255,255,0.22)",
-                borderRadius: "14px",
-                padding: "4px 9px",
-                fontSize: "0.62rem",
-                fontWeight: 700,
-                letterSpacing: "0.08em",
-                color: "#FFFFFF",
-                textDecoration: "none",
-                textTransform: "uppercase",
-              }}
-            >
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            title="Toggle Menu"
+            style={{
+              background: "transparent",
+              color: "#FFFFFF",
+              border: "none",
+              width: "36px",
+              height: "36px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              borderRadius: "4px",
+            }}
+          >
+            {isMenuOpen ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
-              Q&amp;A
-            </Link>
-          ) : (
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              title="Toggle Menu"
-              style={{
-                background: "transparent",
-                color: "#FFFFFF",
-                border: "none",
-                width: "36px",
-                height: "36px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                borderRadius: "4px",
-              }}
-            >
-              {isMenuOpen ? (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              ) : (
-                <svg width="20" height="12" viewBox="0 0 22 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
-                  <line x1="0" y1="2" x2="22" y2="2" />
-                  <line x1="0" y1="10" x2="22" y2="10" />
-                </svg>
-              )}
-            </button>
-          )}
+            ) : (
+              <svg width="20" height="12" viewBox="0 0 22 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
+                <line x1="0" y1="2" x2="22" y2="2" />
+                <line x1="0" y1="10" x2="22" y2="10" />
+              </svg>
+            )}
+          </button>
         </div>
       </div>
       )}

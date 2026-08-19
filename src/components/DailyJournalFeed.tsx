@@ -86,7 +86,7 @@ function getRelativeTimeString(dateStr: string): string {
   return `${diffYears} ${diffYears === 1 ? "year" : "years"} ago`;
 }
 
-function FlippableQACard({ qa }: { qa: any }) {
+function FlippableQACard({ qa, darkTheme = false }: { qa: any; darkTheme?: boolean }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const rawAnswer = typeof qa.answer === "string" ? qa.answer.trim() : "";
   const hasAnswer = rawAnswer.length > 0 && rawAnswer.toLowerCase() !== "null" && rawAnswer.toLowerCase() !== "undefined";
@@ -123,31 +123,35 @@ function FlippableQACard({ qa }: { qa: any }) {
             style={{
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
-              background: "#FAFAFA",
-              border: "1px solid rgba(0,0,0,0.06)",
-              borderRadius: "11px",
-              padding: "0.85rem 1rem",
+              background: darkTheme ? "rgba(255, 255, 255, 0.05)" : "#FAFAFA",
+              border: darkTheme ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0,0,0,0.06)",
+              borderRadius: "14px",
+              padding: "1rem 1.15rem",
               display: "flex",
               flexDirection: "column",
-              gap: "0.6rem",
+              gap: "0.75rem",
               boxSizing: "border-box",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
-              minHeight: "105px",
+              boxShadow: darkTheme ? "0 4px 20px rgba(0,0,0,0.25)" : "0 1px 4px rgba(0,0,0,0.03)",
+              minHeight: "115px",
               justifyContent: "space-between",
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#888888" }}>
+              <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: darkTheme ? "rgba(255,255,255,0.5)" : "#888888" }}>
                 {qa.name ? qa.name : qa.author ? qa.author : "ANONYMOUS"} · {new Date(qa.published || Date.now()).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
               </span>
-              <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.05em", color: "#111111", display: "flex", alignItems: "center", gap: "0.2rem" }}>
+              <span style={{ fontSize: "0.52rem", fontWeight: 800, letterSpacing: "0.08em", color: darkTheme ? "#FFFFFF" : "#111111", background: darkTheme ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.05)", padding: "2px 8px", borderRadius: "9999px", display: "flex", alignItems: "center", gap: "0.2rem" }}>
                 FLIP ↺
               </span>
             </div>
 
-            <p style={{ fontSize: "0.85rem", lineHeight: 1.48, color: "#111111", margin: 0, fontFamily: "var(--font-serif, Georgia, serif)" }}>
+            <p style={{ fontSize: "0.9rem", lineHeight: 1.5, color: darkTheme ? "#FFFFFF" : "#111111", margin: 0, fontFamily: "var(--font-serif, Georgia, serif)" }}>
               “{qa.content || qa.question}”
             </p>
+
+            <span style={{ fontSize: "0.52rem", color: darkTheme ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)", textAlign: "right" }}>
+              Tap to read Ivan’s answer →
+            </span>
           </div>
         ) : (
           /* BACK SIDE (ANSWER - NATURAL ADAPTIVE HEIGHT) */
@@ -156,34 +160,35 @@ function FlippableQACard({ qa }: { qa: any }) {
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
               transform: "rotateY(180deg)",
-              background: "#111111",
+              background: darkTheme ? "radial-gradient(ellipse at top, #1c1d24 0%, #0e0f12 100%)" : "#111111",
               color: "#FFFFFF",
-              borderRadius: "11px",
-              padding: "0.85rem 1rem",
+              borderRadius: "14px",
+              border: darkTheme ? "1px solid rgba(255, 255, 255, 0.16)" : "none",
+              padding: "1rem 1.15rem",
               display: "flex",
               flexDirection: "column",
-              gap: "0.6rem",
+              gap: "0.75rem",
               boxSizing: "border-box",
-              boxShadow: "0 4px 18px rgba(0,0,0,0.28)",
-              minHeight: "105px",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+              minHeight: "115px",
               justifyContent: "space-between",
             }}
           >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.14)", paddingBottom: "0.4rem" }}>
-              <span style={{ fontSize: "0.56rem", fontWeight: 700, letterSpacing: "0.12em", color: "#FFFFFF" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.12)", paddingBottom: "0.45rem" }}>
+              <span style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.12em", color: "#FFFFFF" }}>
                 IVAN
               </span>
-              <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.05em", color: "rgba(255,255,255,0.65)" }}>
+              <span style={{ fontSize: "0.52rem", fontWeight: 800, letterSpacing: "0.08em", color: "rgba(255,255,255,0.7)", background: "rgba(255,255,255,0.1)", padding: "2px 8px", borderRadius: "9999px" }}>
                 BACK ↻
               </span>
             </div>
 
-            <p style={{ fontSize: "0.82rem", lineHeight: 1.55, margin: 0, color: "rgba(255,255,255,0.94)", fontFamily: "var(--font-serif, Georgia, serif)" }}>
+            <p style={{ fontSize: "0.85rem", lineHeight: 1.58, margin: 0, color: "rgba(255,255,255,0.95)", fontFamily: "var(--font-serif, Georgia, serif)" }}>
               {answerText}
             </p>
 
             <span style={{ fontSize: "0.52rem", color: "rgba(255,255,255,0.45)", textAlign: "right" }}>
-              {new Date(qa.answeredAt || qa.published || Date.now()).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+              Answered · {new Date(qa.answeredAt || qa.published || Date.now()).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
             </span>
           </div>
         )}
@@ -448,24 +453,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     });
   }, [selectedPostImages]);
 
-  // Flipboard Deck: Card 0 is PROLOGUE by default, followed by Chapter 04, Chapter 03, etc. (ALL posts included)
+  // Flipboard Deck: Card 0 is PROLOGUE by default on desktop, followed by Chapter 04, Chapter 03, etc. (ALL posts included)
   const flipboardCards = useMemo(() => {
-    const prologueCard = {
-      id: "prologue",
-      category: "INTRO NARRATIVE",
-      date: "READING",
-      title: "PROLOGUE",
-      excerpt: "Most of this gets written late at night, usually when the screen is the only light in the room and the city noise has finally died down. Passing thoughts turn into essays...",
-      img: "/nature_hero.png",
-      post: null,
-      isPrologue: true,
-      postIndex: -1,
-    };
-
-    if (sortedPosts.length === 0) {
-      return [prologueCard];
-    }
-
     const chapterCards = sortedPosts.map((p, idx) => {
       const extracted = extractCoverImage(p.content);
       const isBadImg = !extracted || extracted.includes("ocean_hero_mono.png");
@@ -484,8 +473,29 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
       };
     });
 
+    const prologueCard = {
+      id: "prologue",
+      category: "INTRO NARRATIVE",
+      date: "READING",
+      title: "PROLOGUE",
+      excerpt: "Most of this gets written late at night, usually when the screen is the only light in the room and the city noise has finally died down. Passing thoughts turn into essays...",
+      img: "/nature_hero.png",
+      post: null,
+      isPrologue: true,
+      postIndex: -1,
+    };
+
+    if (sortedPosts.length === 0) {
+      return [prologueCard];
+    }
+
+    // On mobile, prologue is opened via the top header button next to search, so hero header starts directly with latest chapters
+    if (isMobileScreen) {
+      return chapterCards;
+    }
+
     return [prologueCard, ...chapterCards];
-  }, [sortedPosts, fallbackCovers, locale]);
+  }, [sortedPosts, fallbackCovers, locale, isMobileScreen]);
 
   // Backward-compatible hero posts for desktop
   const heroPosts = useMemo(() => {
@@ -646,6 +656,34 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
       .filter((q) => q.answer && typeof q.answer === "string" && q.answer.trim().length > 0)
       .sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
   }, [qaList]);
+
+  const [mobileQATab, setMobileQATab] = useState<"browse" | "ask">("browse");
+  const [mobileQACategory, setMobileQACategory] = useState<string>("all");
+  const [mobileQASearch, setMobileQASearch] = useState<string>("" );
+
+  const filteredMobileQAs = useMemo(() => {
+    return sortedQAs.filter((qa) => {
+      const qText = (qa.content || qa.question || "");
+      const aText = (qa.answer || "");
+      const fullText = (qText + " " + aText + " " + (qa.name || "")).toLowerCase();
+
+      // Category matching
+      if (mobileQACategory !== "all") {
+        if (mobileQACategory === "tech" && !(fullText.includes("tech") || fullText.includes("stack") || fullText.includes("coding") || fullText.includes("rust") || fullText.includes("next") || fullText.includes("react") || fullText.includes("code"))) return false;
+        if (mobileQACategory === "design" && !(fullText.includes("design") || fullText.includes("ui") || fullText.includes("ux") || fullText.includes("3d") || fullText.includes("render") || fullText.includes("studio") || fullText.includes("object"))) return false;
+        if (mobileQACategory === "philosophy" && !(fullText.includes("buku") || fullText.includes("book") || fullText.includes("baca") || fullText.includes("mind") || fullText.includes("perspektif") || fullText.includes("pikiran") || fullText.includes("filsafat") || fullText.includes("philosophy"))) return false;
+        if (mobileQACategory === "personal" && (fullText.includes("tech") || fullText.includes("design") || fullText.includes("buku") || fullText.includes("book") || fullText.includes("philosophy"))) return false;
+      }
+
+      // Search matching
+      if (mobileQASearch.trim()) {
+        const q = mobileQASearch.toLowerCase().trim();
+        return fullText.includes(q);
+      }
+
+      return true;
+    });
+  }, [sortedQAs, mobileQACategory, mobileQASearch]);
 
   const leftColQA = useMemo(() => sortedQAs.filter((_, i) => i % 2 === 0), [sortedQAs]);
   const rightColQA = useMemo(() => sortedQAs.filter((_, i) => i % 2 === 1), [sortedQAs]);
@@ -2130,26 +2168,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           .mobile-home-btn {
             display: inline-flex !important;
             align-items: center !important;
+            justify-content: center !important;
             gap: 0.35rem !important;
-            background: rgba(0, 0, 0, 0.45) !important;
-            backdrop-filter: blur(14px) !important;
-            -webkit-backdrop-filter: blur(14px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.22) !important;
-            color: #FFFFFF !important;
-            font-size: 0.64rem !important;
-            font-weight: 800 !important;
-            letter-spacing: 0.12em !important;
-            text-transform: uppercase !important;
-            padding: 0.42rem 0.85rem !important;
-            border-radius: 9999px !important;
-            text-decoration: none !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
-          }
-
-          .mobile-qna-icon-btn {
-            display: inline-flex !important;
-            align-items: center !important;
-            gap: 0.3rem !important;
+            height: 32px !important;
+            box-sizing: border-box !important;
             background: rgba(0, 0, 0, 0.45) !important;
             backdrop-filter: blur(14px) !important;
             -webkit-backdrop-filter: blur(14px) !important;
@@ -2159,26 +2181,48 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             font-weight: 800 !important;
             letter-spacing: 0.08em !important;
             text-transform: uppercase !important;
-            padding: 0.42rem 0.8rem !important;
+            padding: 0 0.85rem !important;
             border-radius: 9999px !important;
             text-decoration: none !important;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+            line-height: 1 !important;
           }
 
-          .mobile-menu-trigger-btn {
+          .mobile-prologue-btn,
+          .mobile-search-btn {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            width: 36px !important;
-            height: 36px !important;
+            gap: 0.32rem !important;
+            height: 32px !important;
+            box-sizing: border-box !important;
             background: rgba(0, 0, 0, 0.45) !important;
             backdrop-filter: blur(14px) !important;
             -webkit-backdrop-filter: blur(14px) !important;
             border: 1px solid rgba(255, 255, 255, 0.22) !important;
             color: #FFFFFF !important;
-            border-radius: 50% !important;
-            cursor: pointer !important;
+            font-size: 0.62rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.08em !important;
+            text-transform: uppercase !important;
+            padding: 0 0.82rem !important;
+            border-radius: 9999px !important;
+            text-decoration: none !important;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+            cursor: pointer !important;
+            line-height: 1 !important;
+          }
+
+          .mobile-search-scroll-container,
+          .mobile-qa-scroll-container {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+          }
+          .mobile-search-scroll-container::-webkit-scrollbar,
+          .mobile-qa-scroll-container::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
           }
 
           /* ── HIDE THUMBNAIL POSTS CAROUSEL, OTHER CHAPTERS, INLINE BACK BUTTON & DUPLICATE ARTICLE HEADER ON MOBILE ── */
@@ -2644,30 +2688,36 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               </a>
             )}
 
-            {/* Right: Q&A Button + Search Button */}
+            {/* Right: Prologue Button + Search Button */}
             <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
-              <Link
-                href="/ask"
-                title="Ask Q&A"
-                className="mobile-qna-icon-btn"
+              <button
+                type="button"
+                onClick={() => {
+                  setIsReadingPrologue(true);
+                  setSelectedPostIndex(null);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className="mobile-prologue-btn"
+                title="Read Prologue"
               >
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
                 </svg>
-                <span>Q&amp;A</span>
-              </Link>
+                <span>PROLOGUE</span>
+              </button>
 
               <button
                 type="button"
                 onClick={() => setMobileSearchOpen(true)}
-                className="mobile-menu-trigger-btn"
+                className="mobile-search-btn"
                 title="Search Stories & Chapters"
-                style={{ width: "32px", height: "32px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="11" cy="11" r="8"/>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
+                <span>SEARCH</span>
               </button>
             </div>
           </div>
@@ -3780,248 +3830,708 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         createPortal(
           <AnimatePresence>
             {isQAModalOpen && (
-              <motion.div
-                className="modal-bg"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setIsQAModalOpen(false)}
-                style={{
-                  position: "fixed",
-                  inset: 0,
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  width: "100vw",
-                  height: "100vh",
-                  zIndex: 99999,
-                  background: "rgba(0, 0, 0, 0.72)",
-                  backdropFilter: "blur(14px)",
-                  WebkitBackdropFilter: "blur(14px)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "1.5rem",
-                  boxSizing: "border-box",
-                  margin: 0,
-                }}
-              >
-                <motion.div
-                  className="modal-inner"
-                  initial={{ scale: 0.96, opacity: 0, y: 15 }}
-                  animate={{ scale: 1, opacity: 1, y: 0 }}
-                  exit={{ scale: 0.96, opacity: 0, y: 15 }}
-                  transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                  onClick={(e) => e.stopPropagation()}
-                  style={{
-                    maxWidth: "1020px",
-                    width: "100%",
-                    height: "85vh",
-                    maxHeight: "820px",
-                    background: "#FFFFFF",
-                    color: "#111111",
-                    borderRadius: "16px",
-                    padding: 0,
-                    display: "grid",
-                    gridTemplateColumns: "1fr 400px",
-                    boxShadow: "0 36px 100px rgba(0, 0, 0, 0.35)",
-                    overflow: "hidden",
-                    position: "relative",
-                  }}
-                >
-                  {/* CLOSE BUTTON AT TOP RIGHT */}
-                  <button
-                    className="modal-close"
+              isMobileScreen ? (
+                /* ── MOBILE-EXCLUSIVE DEDICATED FULLSCREEN Q&A MODAL ── */
+                <>
+                  {/* Backdrop */}
+                  <motion.div
+                    key="mobile-qa-backdrop"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
                     onClick={() => setIsQAModalOpen(false)}
                     style={{
-                      position: "absolute",
-                      top: "1.25rem",
-                      right: "1.25rem",
-                      zIndex: 10,
-                      background: "rgba(0,0,0,0.5)",
-                      color: "#FFFFFF",
-                      width: "32px",
-                      height: "32px",
-                      borderRadius: "50%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "0.9rem",
-                      border: "none",
-                      cursor: "pointer",
-                      backdropFilter: "blur(6px)",
+                      position: "fixed",
+                      inset: 0,
+                      backgroundColor: "rgba(0, 0, 0, 0.82)",
+                      backdropFilter: "blur(18px)",
+                      WebkitBackdropFilter: "blur(18px)",
+                      zIndex: 99998,
                     }}
-                  >
-                    ✕
-                  </button>
+                  />
 
-                  {/* LEFT COLUMN: ANSWERED QUESTIONS 2-COLUMN MASONRY STREAM */}
-                  <div
+                  {/* Sheet */}
+                  <motion.div
+                    key="mobile-qa-sheet"
+                    initial={{ opacity: 0, y: -20, scale: 0.99 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.99 }}
+                    transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+                    className="mobile-qa-scroll-container"
                     style={{
-                      padding: "2.2rem 2.5rem",
+                      position: "fixed",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      width: "100vw",
+                      maxWidth: "100%",
+                      height: "100dvh",
+                      zIndex: 99999,
                       display: "flex",
                       flexDirection: "column",
-                      gap: "1.25rem",
-                      overflowY: "auto",
-                      boxSizing: "border-box",
-                      background: "#FFFFFF",
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", borderBottom: "1px solid rgba(0,0,0,0.08)", paddingBottom: "1rem" }}>
-                      <h2 style={{ fontSize: "1.5rem", fontWeight: 700, margin: 0, letterSpacing: "-0.02em", color: "#111111" }}>Q&amp;A</h2>
-                      <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.12em", color: "#888888", textTransform: "uppercase" }}>
-                        {qaList.length} Answered Questions
-                      </span>
-                    </div>
-
-                    {loadingQA ? (
-                      <div style={{ padding: "3rem 0", textAlign: "center", color: "#888888", fontSize: "0.82rem" }}>
-                        Loading questions…
-                      </div>
-                    ) : qaList.length === 0 ? (
-                      <div style={{ padding: "3rem 0", textAlign: "center", color: "#888888", fontSize: "0.82rem" }}>
-                        No answered questions yet. Use the form on the right to send a question!
-                      </div>
-                    ) : (
-                      /* 2-COLUMN MASONRY GRID WITH 3D CARD FLIP EFFECT */
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.85rem", alignItems: "start" }}>
-                        {/* LEFT SUB-COLUMN */}
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
-                          {leftColQA.map((qa) => (
-                            <FlippableQACard key={qa.id} qa={qa} />
-                          ))}
-                        </div>
-
-                        {/* RIGHT SUB-COLUMN */}
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
-                          {rightColQA.map((qa) => (
-                            <FlippableQACard key={qa.id} qa={qa} />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* RIGHT COLUMN: HEADER PHOTO + REDESIGNED ASK QUESTION FORM */}
-                  <div
-                    style={{
-                      position: "relative",
-                      background: "#000000",
+                      background: "radial-gradient(ellipse at top, #14161b 0%, #0a0b0e 100%)",
                       color: "#FFFFFF",
-                      margin: 0,
-                      padding: 0,
+                      padding: "calc(env(safe-area-inset-top, 0px) + 16px) 1.25rem calc(env(safe-area-inset-bottom, 0px) + 20px)",
                       boxSizing: "border-box",
                       overflow: "hidden",
-                      height: "100%",
                     }}
                   >
-                    {/* BACKGROUND HEADER PHOTO */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        width: "100%",
-                        height: "100%",
-                        backgroundImage: `url("/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg")`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center bottom",
-                        filter: "grayscale(100%) contrast(1.15)",
-                        zIndex: 1,
-                      }}
-                    />
-                    {/* SOLID PITCH-BLACK TOP GRADIENT OVERLAY FORCIBLY ELIMINATING ANY TOP GREY SKY */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        width: "100%",
-                        height: "100%",
-                        background: "linear-gradient(to bottom, #000000 0%, #000000 50px, rgba(0,0,0,0.65) 120px, rgba(0,0,0,0.96) 100%)",
-                        zIndex: 2,
-                      }}
-                    />
+                    {/* TOP BAR: TITLE + CLOSE BUTTON */}
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                        <h2 style={{ fontSize: "1.15rem", fontWeight: 800, margin: 0, color: "#FFFFFF", letterSpacing: "-0.01em" }}>
+                          Q&amp;A ARCHIVE
+                        </h2>
+                        <span style={{ fontSize: "0.55rem", fontWeight: 800, color: "#FFFFFF", background: "rgba(255,255,255,0.14)", padding: "2px 7px", borderRadius: "9999px", letterSpacing: "0.08em" }}>
+                          {sortedQAs.length} ANSWERED
+                        </span>
+                      </div>
 
-                    {/* OVERLAY CONTENT */}
-                    <div style={{ position: "relative", zIndex: 3, display: "flex", flexDirection: "column", height: "100%", justifyContent: "flex-end", padding: "2.2rem 1.75rem", boxSizing: "border-box" }}>
-                      {/* SOLID OPAQUE FORM AT THE BOTTOM */}
-                      <div>
-                        <h3 style={{ fontSize: "1.2rem", fontWeight: 700, margin: "0 0 0.2rem 0", color: "#FFFFFF", letterSpacing: "-0.02em" }}>
-                          Ask Ivan Anything
-                        </h3>
-                        <p style={{ fontSize: "0.75rem", lineHeight: 1.45, color: "rgba(255,255,255,0.7)", fontFamily: "var(--font-serif, Georgia, serif)", margin: "0 0 0.85rem 0" }}>
-                          Ask anonymously or with your handle. Read &amp; replied personally.
-                        </p>
+                      <button
+                        type="button"
+                        onClick={() => setIsQAModalOpen(false)}
+                        aria-label="Close Q&A modal"
+                        style={{
+                          width: "36px",
+                          height: "36px",
+                          borderRadius: "50%",
+                          background: "rgba(255,255,255,0.08)",
+                          border: "1px solid rgba(255,255,255,0.16)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#FFFFFF",
+                          fontSize: "0.85rem",
+                          cursor: "pointer",
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
 
-                        <form onSubmit={handleQASubmit} style={{ display: "flex", flexDirection: "column", gap: "0.55rem" }}>
-                          {qaErrorMsg && (
-                            <div style={{ border: "1px solid rgba(255,100,100,0.3)", borderRadius: "8px", padding: "6px 10px", color: "#ff6b6b", fontSize: "0.72rem" }}>
-                              {qaErrorMsg}
-                            </div>
-                          )}
+                    {/* SEGMENTED TAB SELECTOR */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.4rem", background: "rgba(255,255,255,0.06)", padding: "3px", borderRadius: "14px", border: "1px solid rgba(255,255,255,0.1)", marginBottom: "1rem" }}>
+                      <button
+                        type="button"
+                        onClick={() => setMobileQATab("browse")}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "0.35rem",
+                          padding: "0.55rem 0.8rem",
+                          borderRadius: "11px",
+                          border: "none",
+                          fontSize: "0.68rem",
+                          fontWeight: 800,
+                          letterSpacing: "0.06em",
+                          textTransform: "uppercase",
+                          cursor: "pointer",
+                          transition: "all 0.18s ease",
+                          background: mobileQATab === "browse" ? "#FFFFFF" : "transparent",
+                          color: mobileQATab === "browse" ? "#111111" : "rgba(255,255,255,0.6)",
+                          boxShadow: mobileQATab === "browse" ? "0 2px 8px rgba(0,0,0,0.3)" : "none",
+                        }}
+                      >
+                        <span>QUESTIONS ({sortedQAs.length})</span>
+                      </button>
 
-                          {/* SOLID OPAQUE DARK TEXTAREA (NOT TRANSPARENT) */}
-                          <div style={{ background: "#18181A", border: "1px solid rgba(255, 255, 255, 0.25)", borderRadius: "10px", padding: "0.6rem 0.8rem" }}>
-                            <textarea
-                              value={qaContent}
-                              onChange={(e) => setQaContent(e.target.value)}
-                              placeholder="Write your question..."
-                              maxLength={300}
-                              rows={3}
-                              disabled={isSubmittingQA}
-                              style={{ color: "#FFFFFF", width: "100%", background: "transparent", border: "none", outline: "none", resize: "none", fontSize: "0.8rem", lineHeight: 1.45, fontFamily: "var(--font-serif, Georgia, serif)" }}
-                            />
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.3rem", paddingTop: "0.3rem", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
-                              <span style={{ fontSize: "0.52rem", color: "rgba(255,255,255,0.5)" }}>
-                                🔒 Anonymous
-                              </span>
-                              <span style={{ fontSize: "0.52rem", color: "rgba(255,255,255,0.5)" }}>
-                                {qaContent.length} / 300
-                              </span>
-                            </div>
-                          </div>
+                      <button
+                        type="button"
+                        onClick={() => setMobileQATab("ask")}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "0.35rem",
+                          padding: "0.55rem 0.8rem",
+                          borderRadius: "11px",
+                          border: "none",
+                          fontSize: "0.68rem",
+                          fontWeight: 800,
+                          letterSpacing: "0.06em",
+                          textTransform: "uppercase",
+                          cursor: "pointer",
+                          transition: "all 0.18s ease",
+                          background: mobileQATab === "ask" ? "#FFFFFF" : "transparent",
+                          color: mobileQATab === "ask" ? "#111111" : "rgba(255,255,255,0.6)",
+                          boxShadow: mobileQATab === "ask" ? "0 2px 8px rgba(0,0,0,0.3)" : "none",
+                        }}
+                      >
+                        <span>ASK IVAN ✦</span>
+                      </button>
+                    </div>
 
-                          {/* COMPACT BUTTON */}
-                          <button
-                            type="submit"
-                            disabled={isSubmittingQA || !qaContent.trim()}
+                    {/* TAB CONTENT: BROWSE */}
+                    {mobileQATab === "browse" && (
+                      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minHeight: 0 }}>
+                        {/* SEARCH INPUT BAR */}
+                        <div
+                          style={{
+                            height: "44px",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.65rem",
+                            background: "rgba(255, 255, 255, 0.06)",
+                            border: "1px solid rgba(255, 255, 255, 0.14)",
+                            borderRadius: "14px",
+                            padding: "0 0.9rem",
+                            boxSizing: "border-box",
+                            marginBottom: "0.75rem",
+                          }}
+                        >
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" style={{ color: "rgba(255,255,255,0.6)", flexShrink: 0 }}>
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                          </svg>
+                          <input
+                            type="text"
+                            placeholder="Filter questions, keywords..."
+                            value={mobileQASearch}
+                            onChange={(e) => setMobileQASearch(e.target.value)}
                             style={{
+                              background: "transparent",
+                              border: "none",
+                              outline: "none",
+                              color: "#FFFFFF",
+                              fontSize: "0.85rem",
+                              fontWeight: 500,
+                              width: "100%",
+                            }}
+                          />
+                          {mobileQASearch && (
+                            <button
+                              type="button"
+                              onClick={() => setMobileQASearch("")}
+                              style={{
+                                background: "rgba(255,255,255,0.18)",
+                                border: "none",
+                                borderRadius: "50%",
+                                width: "20px",
+                                height: "20px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "#FFFFFF",
+                                cursor: "pointer",
+                                fontSize: "0.7rem",
+                                flexShrink: 0,
+                              }}
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
+
+                        {/* CATEGORY FILTER CHIPS */}
+                        <div
+                          className="mobile-qa-scroll-container"
+                          style={{
+                            display: "flex",
+                            gap: "0.45rem",
+                            overflowX: "auto",
+                            paddingBottom: "0.75rem",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {[
+                            { id: "all", label: "ALL" },
+                            { id: "tech", label: "TECH & CODE" },
+                            { id: "design", label: "DESIGN & 3D" },
+                            { id: "philosophy", label: "PHILOSOPHY" },
+                            { id: "personal", label: "PERSONAL" },
+                          ].map((cat) => (
+                            <button
+                              key={cat.id}
+                              type="button"
+                              onClick={() => setMobileQACategory(cat.id)}
+                              style={{
+                                padding: "0.38rem 0.75rem",
+                                borderRadius: "9999px",
+                                border: "1px solid",
+                                borderColor: mobileQACategory === cat.id ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.12)",
+                                background: mobileQACategory === cat.id ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.05)",
+                                color: mobileQACategory === cat.id ? "#FFFFFF" : "rgba(255,255,255,0.6)",
+                                fontSize: "0.58rem",
+                                fontWeight: 800,
+                                letterSpacing: "0.08em",
+                                textTransform: "uppercase",
+                                whiteSpace: "nowrap",
+                                cursor: "pointer",
+                              }}
+                            >
+                              {cat.label}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* QUESTIONS STREAM */}
+                        <div
+                          className="mobile-qa-scroll-container"
+                          style={{
+                            flex: 1,
+                            overflowY: "auto",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "0.85rem",
+                            paddingBottom: "4.5rem",
+                          }}
+                        >
+                          {loadingQA ? (
+                            <div style={{ padding: "3rem 0", textAlign: "center", color: "rgba(255,255,255,0.5)", fontSize: "0.82rem" }}>
+                              Loading answered questions…
+                            </div>
+                          ) : filteredMobileQAs.length === 0 ? (
+                            <div style={{ padding: "3.5rem 1rem", textAlign: "center", color: "rgba(255,255,255,0.5)", display: "flex", flexDirection: "column", alignItems: "center", gap: "0.6rem" }}>
+                              <span style={{ fontSize: "1.2rem" }}>💬</span>
+                              <p style={{ margin: 0, fontSize: "0.85rem", color: "#FFFFFF", fontWeight: 600 }}>
+                                No questions found
+                              </p>
+                              <p style={{ margin: 0, fontSize: "0.75rem", maxWidth: "240px", color: "rgba(255,255,255,0.5)" }}>
+                                Try searching for another topic or switch to the Ask tab to ask a new question.
+                              </p>
+                              <button
+                                type="button"
+                                onClick={() => setMobileQATab("ask")}
+                                style={{
+                                  marginTop: "0.5rem",
+                                  padding: "0.55rem 1.1rem",
+                                  borderRadius: "9999px",
+                                  background: "#FFFFFF",
+                                  color: "#111111",
+                                  border: "none",
+                                  fontSize: "0.7rem",
+                                  fontWeight: 800,
+                                  cursor: "pointer",
+                                }}
+                              >
+                                Ask a Question ✦
+                              </button>
+                            </div>
+                          ) : (
+                            filteredMobileQAs.map((qa) => (
+                              <FlippableQACard key={qa.id} qa={qa} darkTheme={true} />
+                            ))
+                          )}
+                        </div>
+
+                        {/* FLOATING ACTION BAR FOR QUICK ASK */}
+                        <div
+                          style={{
+                            position: "absolute",
+                            bottom: "calc(env(safe-area-inset-bottom, 0px) + 16px)",
+                            left: "1.25rem",
+                            right: "1.25rem",
+                            display: "flex",
+                            justifyContent: "center",
+                            pointerEvents: "none",
+                          }}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => setMobileQATab("ask")}
+                            style={{
+                              pointerEvents: "auto",
                               background: "#FFFFFF",
                               color: "#111111",
                               border: "none",
-                              borderRadius: "20px",
-                              padding: "0.58rem 1.2rem",
-                              fontSize: "0.64rem",
-                              fontWeight: 700,
-                              letterSpacing: "0.1em",
+                              borderRadius: "9999px",
+                              padding: "0.7rem 1.4rem",
+                              fontSize: "0.72rem",
+                              fontWeight: 800,
+                              letterSpacing: "0.08em",
                               textTransform: "uppercase",
-                              cursor: qaContent.trim() ? "pointer" : "not-allowed",
-                              opacity: qaContent.trim() ? 1 : 0.4,
-                              transition: "all 0.2s ease",
-                              boxShadow: qaContent.trim() ? "0 3px 12px rgba(255,255,255,0.18)" : "none",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "0.45rem",
+                              boxShadow: "0 8px 30px rgba(0,0,0,0.6)",
+                              cursor: "pointer",
                             }}
                           >
-                            {isSubmittingQA ? "SENDING..." : "SEND QUESTION ✦"}
+                            <span>Ask Ivan a Question ✦</span>
                           </button>
-                        </form>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* TAB CONTENT: ASK IVAN */}
+                    {mobileQATab === "ask" && (
+                      <div
+                        className="mobile-qa-scroll-container"
+                        style={{
+                          flex: 1,
+                          overflowY: "auto",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "1rem",
+                          paddingBottom: "2rem",
+                        }}
+                      >
+                        <div
+                          style={{
+                            background: "rgba(255,255,255,0.05)",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                            borderRadius: "18px",
+                            padding: "1.2rem",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "0.9rem",
+                          }}
+                        >
+                          <div>
+                            <h3 style={{ fontSize: "1.1rem", fontWeight: 700, margin: "0 0 0.25rem 0", color: "#FFFFFF", letterSpacing: "-0.01em" }}>
+                              Ask Ivan Anything
+                            </h3>
+                            <p style={{ fontSize: "0.78rem", lineHeight: 1.45, color: "rgba(255,255,255,0.65)", margin: 0, fontFamily: "var(--font-serif, Georgia, serif)" }}>
+                              Ask anonymously or leave your name. Every question is read personally.
+                            </p>
+                          </div>
+
+                          <form onSubmit={handleQASubmit} style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+                            {qaErrorMsg && (
+                              <div style={{ border: "1px solid rgba(255,100,100,0.3)", background: "rgba(255,80,80,0.1)", borderRadius: "10px", padding: "8px 12px", color: "#ff8585", fontSize: "0.75rem" }}>
+                                {qaErrorMsg}
+                              </div>
+                            )}
+
+                            {/* SENDER NAME (OPTIONAL) */}
+                            <div>
+                              <label style={{ display: "block", fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", marginBottom: "0.35rem" }}>
+                                YOUR NAME OR HANDLE (OPTIONAL)
+                              </label>
+                              <input
+                                type="text"
+                                value={senderName}
+                                onChange={(e) => setSenderName(e.target.value)}
+                                placeholder="Anonymous (or @handle)"
+                                style={{
+                                  width: "100%",
+                                  background: "rgba(0,0,0,0.4)",
+                                  border: "1px solid rgba(255,255,255,0.16)",
+                                  borderRadius: "12px",
+                                  padding: "0.7rem 0.9rem",
+                                  color: "#FFFFFF",
+                                  fontSize: "0.85rem",
+                                  outline: "none",
+                                  boxSizing: "border-box",
+                                }}
+                              />
+                            </div>
+
+                            {/* QUESTION TEXTAREA */}
+                            <div>
+                              <label style={{ display: "block", fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)", marginBottom: "0.35rem" }}>
+                                YOUR QUESTION
+                              </label>
+                              <div style={{ background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.16)", borderRadius: "12px", padding: "0.75rem 0.9rem" }}>
+                                <textarea
+                                  value={qaContent}
+                                  onChange={(e) => setQaContent(e.target.value)}
+                                  placeholder="Write your question about design, engineering, books, or philosophy..."
+                                  maxLength={300}
+                                  rows={4}
+                                  disabled={isSubmittingQA}
+                                  style={{
+                                    color: "#FFFFFF",
+                                    width: "100%",
+                                    background: "transparent",
+                                    border: "none",
+                                    outline: "none",
+                                    resize: "none",
+                                    fontSize: "0.85rem",
+                                    lineHeight: 1.5,
+                                    fontFamily: "var(--font-serif, Georgia, serif)",
+                                    boxSizing: "border-box",
+                                  }}
+                                />
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.4rem", paddingTop: "0.4rem", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+                                  <span style={{ fontSize: "0.54rem", color: "rgba(255,255,255,0.45)" }}>
+                                    🔒 Direct to Ivan
+                                  </span>
+                                  <span style={{ fontSize: "0.54rem", color: "rgba(255,255,255,0.45)" }}>
+                                    {qaContent.length} / 300
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* SUBMIT BUTTON */}
+                            <button
+                              type="submit"
+                              disabled={isSubmittingQA || !qaContent.trim()}
+                              style={{
+                                marginTop: "0.4rem",
+                                background: "#FFFFFF",
+                                color: "#111111",
+                                border: "none",
+                                borderRadius: "14px",
+                                padding: "0.85rem 1.4rem",
+                                fontSize: "0.72rem",
+                                fontWeight: 800,
+                                letterSpacing: "0.08em",
+                                textTransform: "uppercase",
+                                cursor: qaContent.trim() ? "pointer" : "not-allowed",
+                                opacity: qaContent.trim() ? 1 : 0.45,
+                                transition: "all 0.2s ease",
+                                boxShadow: qaContent.trim() ? "0 4px 18px rgba(255,255,255,0.22)" : "none",
+                              }}
+                            >
+                              {isSubmittingQA ? "SENDING..." : "SEND QUESTION ✦"}
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                </>
+              ) : (
+                /* ── DESKTOP MODAL (UNTOUCHED FOR DESKTOP MODE) ── */
+                <motion.div
+                  className="modal-bg"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setIsQAModalOpen(false)}
+                  style={{
+                    position: "fixed",
+                    inset: 0,
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    width: "100vw",
+                    height: "100vh",
+                    zIndex: 99999,
+                    background: "rgba(0, 0, 0, 0.72)",
+                    backdropFilter: "blur(14px)",
+                    WebkitBackdropFilter: "blur(14px)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "1.5rem",
+                    boxSizing: "border-box",
+                    margin: 0,
+                  }}
+                >
+                  <motion.div
+                    className="modal-inner"
+                    initial={{ scale: 0.96, opacity: 0, y: 15 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.96, opacity: 0, y: 15 }}
+                    transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                    onClick={(e) => e.stopPropagation()}
+                    style={{
+                      maxWidth: "1020px",
+                      width: "100%",
+                      height: "85vh",
+                      maxHeight: "820px",
+                      background: "#FFFFFF",
+                      color: "#111111",
+                      borderRadius: "16px",
+                      padding: 0,
+                      display: "grid",
+                      gridTemplateColumns: "1fr 400px",
+                      boxShadow: "0 36px 100px rgba(0, 0, 0, 0.35)",
+                      overflow: "hidden",
+                      position: "relative",
+                    }}
+                  >
+                    {/* CLOSE BUTTON AT TOP RIGHT */}
+                    <button
+                      className="modal-close"
+                      onClick={() => setIsQAModalOpen(false)}
+                      style={{
+                        position: "absolute",
+                        top: "1.25rem",
+                        right: "1.25rem",
+                        zIndex: 10,
+                        background: "rgba(0,0,0,0.5)",
+                        color: "#FFFFFF",
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "0.9rem",
+                        border: "none",
+                        cursor: "pointer",
+                        backdropFilter: "blur(6px)",
+                      }}
+                    >
+                      ✕
+                    </button>
+
+                    {/* LEFT COLUMN: ANSWERED QUESTIONS 2-COLUMN MASONRY STREAM */}
+                    <div
+                      style={{
+                        padding: "2.2rem 2.5rem",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "1.25rem",
+                        overflowY: "auto",
+                        boxSizing: "border-box",
+                        background: "#FFFFFF",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", borderBottom: "1px solid rgba(0,0,0,0.08)", paddingBottom: "1rem" }}>
+                        <h2 style={{ fontSize: "1.5rem", fontWeight: 700, margin: 0, letterSpacing: "-0.02em", color: "#111111" }}>Q&amp;A</h2>
+                        <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.12em", color: "#888888", textTransform: "uppercase" }}>
+                          {qaList.length} Answered Questions
+                        </span>
+                      </div>
+
+                      {loadingQA ? (
+                        <div style={{ padding: "3rem 0", textAlign: "center", color: "#888888", fontSize: "0.82rem" }}>
+                          Loading questions…
+                        </div>
+                      ) : qaList.length === 0 ? (
+                        <div style={{ padding: "3rem 0", textAlign: "center", color: "#888888", fontSize: "0.82rem" }}>
+                          No answered questions yet. Use the form on the right to send a question!
+                        </div>
+                      ) : (
+                        /* 2-COLUMN MASONRY GRID WITH 3D CARD FLIP EFFECT */
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.85rem", alignItems: "start" }}>
+                          {/* LEFT SUB-COLUMN */}
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+                            {leftColQA.map((qa) => (
+                              <FlippableQACard key={qa.id} qa={qa} />
+                            ))}
+                          </div>
+
+                          {/* RIGHT SUB-COLUMN */}
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+                            {rightColQA.map((qa) => (
+                              <FlippableQACard key={qa.id} qa={qa} />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* RIGHT COLUMN: HEADER PHOTO + REDESIGNED ASK QUESTION FORM */}
+                    <div
+                      style={{
+                        position: "relative",
+                        background: "#000000",
+                        color: "#FFFFFF",
+                        margin: 0,
+                        padding: 0,
+                        boxSizing: "border-box",
+                        overflow: "hidden",
+                        height: "100%",
+                      }}
+                    >
+                      {/* BACKGROUND HEADER PHOTO */}
+                      <div
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          width: "100%",
+                          height: "100%",
+                          backgroundImage: `url("/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg")`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center bottom",
+                          filter: "grayscale(100%) contrast(1.15)",
+                          zIndex: 1,
+                        }}
+                      />
+                      {/* SOLID PITCH-BLACK TOP GRADIENT OVERLAY FORCIBLY ELIMINATING ANY TOP GREY SKY */}
+                      <div
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          width: "100%",
+                          height: "100%",
+                          background: "linear-gradient(to bottom, #000000 0%, #000000 50px, rgba(0,0,0,0.65) 120px, rgba(0,0,0,0.96) 100%)",
+                          zIndex: 2,
+                        }}
+                      />
+
+                      {/* OVERLAY CONTENT */}
+                      <div style={{ position: "relative", zIndex: 3, display: "flex", flexDirection: "column", height: "100%", justifyContent: "flex-end", padding: "2.2rem 1.75rem", boxSizing: "border-box" }}>
+                        {/* SOLID OPAQUE FORM AT THE BOTTOM */}
+                        <div>
+                          <h3 style={{ fontSize: "1.2rem", fontWeight: 700, margin: "0 0 0.2rem 0", color: "#FFFFFF", letterSpacing: "-0.02em" }}>
+                            Ask Ivan Anything
+                          </h3>
+                          <p style={{ fontSize: "0.75rem", lineHeight: 1.45, color: "rgba(255,255,255,0.7)", fontFamily: "var(--font-serif, Georgia, serif)", margin: "0 0 0.85rem 0" }}>
+                            Ask anonymously or with your handle. Read &amp; replied personally.
+                          </p>
+
+                          <form onSubmit={handleQASubmit} style={{ display: "flex", flexDirection: "column", gap: "0.55rem" }}>
+                            {qaErrorMsg && (
+                              <div style={{ border: "1px solid rgba(255,100,100,0.3)", borderRadius: "8px", padding: "6px 10px", color: "#ff6b6b", fontSize: "0.72rem" }}>
+                                {qaErrorMsg}
+                              </div>
+                            )}
+
+                            {/* SOLID OPAQUE DARK TEXTAREA (NOT TRANSPARENT) */}
+                            <div style={{ background: "#18181A", border: "1px solid rgba(255, 255, 255, 0.25)", borderRadius: "10px", padding: "0.6rem 0.8rem" }}>
+                              <textarea
+                                value={qaContent}
+                                onChange={(e) => setQaContent(e.target.value)}
+                                placeholder="Write your question..."
+                                maxLength={300}
+                                rows={3}
+                                disabled={isSubmittingQA}
+                                style={{ color: "#FFFFFF", width: "100%", background: "transparent", border: "none", outline: "none", resize: "none", fontSize: "0.8rem", lineHeight: 1.45, fontFamily: "var(--font-serif, Georgia, serif)" }}
+                              />
+                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.3rem", paddingTop: "0.3rem", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+                                <span style={{ fontSize: "0.52rem", color: "rgba(255,255,255,0.5)" }}>
+                                  🔒 Anonymous
+                                </span>
+                                <span style={{ fontSize: "0.52rem", color: "rgba(255,255,255,0.5)" }}>
+                                  {qaContent.length} / 300
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* COMPACT BUTTON */}
+                            <button
+                              type="submit"
+                              disabled={isSubmittingQA || !qaContent.trim()}
+                              style={{
+                                background: "#FFFFFF",
+                                color: "#111111",
+                                border: "none",
+                                borderRadius: "20px",
+                                padding: "0.58rem 1.2rem",
+                                fontSize: "0.64rem",
+                                fontWeight: 700,
+                                letterSpacing: "0.1em",
+                                textTransform: "uppercase",
+                                cursor: qaContent.trim() ? "pointer" : "not-allowed",
+                                opacity: qaContent.trim() ? 1 : 0.4,
+                                transition: "all 0.2s ease",
+                                boxShadow: qaContent.trim() ? "0 3px 12px rgba(255,255,255,0.18)" : "none",
+                              }}
+                            >
+                              {isSubmittingQA ? "SENDING..." : "SEND QUESTION ✦"}
+                            </button>
+                          </form>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 </motion.div>
-              </motion.div>
+              )
             )}
           </AnimatePresence>,
           document.body
         )}
 
+      {/* ── FULLSCREEN EXPANDABLE MOBILE SEARCH OVERLAY MODAL ── */}
       {/* ── FULLSCREEN EXPANDABLE MOBILE SEARCH OVERLAY MODAL ── */}
       {typeof document !== "undefined" &&
         createPortal(
@@ -4039,9 +4549,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   style={{
                     position: "fixed",
                     inset: 0,
-                    backgroundColor: "rgba(0, 0, 0, 0.78)",
-                    backdropFilter: "blur(14px)",
-                    WebkitBackdropFilter: "blur(14px)",
+                    backgroundColor: "rgba(0, 0, 0, 0.82)",
+                    backdropFilter: "blur(18px)",
+                    WebkitBackdropFilter: "blur(18px)",
                     zIndex: 99998,
                   }}
                 />
@@ -4049,10 +4559,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 {/* Search Content Sheet */}
                 <motion.div
                   key="mobile-search-sheet"
-                  initial={{ opacity: 0, y: -24 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -24 }}
+                  initial={{ opacity: 0, y: -20, scale: 0.99 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -20, scale: 0.99 }}
                   transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+                  className="mobile-search-scroll-container"
                   style={{
                     position: "fixed",
                     top: 0,
@@ -4060,38 +4571,42 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     right: 0,
                     bottom: 0,
                     width: "100vw",
+                    maxWidth: "100%",
                     height: "100dvh",
                     zIndex: 99999,
                     display: "flex",
                     flexDirection: "column",
-                    backgroundColor: "#0c0d10",
+                    background: "radial-gradient(ellipse at top, #14161b 0%, #0a0b0e 100%)",
                     color: "#FFFFFF",
-                    padding: "calc(env(safe-area-inset-top, 0px) + 14px) 1.25rem calc(env(safe-area-inset-bottom, 0px) + 20px)",
+                    padding: "calc(env(safe-area-inset-top, 0px) + 16px) 1.25rem calc(env(safe-area-inset-bottom, 0px) + 24px)",
                     boxSizing: "border-box",
+                    overflow: "hidden",
                   }}
                 >
                   {/* Top Bar: Live Input + Cancel button */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", marginBottom: "1rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.65rem", marginBottom: "1.1rem" }}>
                     <div
                       style={{
                         flex: 1,
+                        height: "48px",
                         display: "flex",
                         alignItems: "center",
-                        gap: "0.65rem",
+                        gap: "0.75rem",
                         background: "rgba(255, 255, 255, 0.08)",
-                        border: "1px solid rgba(255, 255, 255, 0.18)",
-                        borderRadius: "14px",
-                        padding: "0.7rem 0.95rem",
+                        border: "1px solid rgba(255, 255, 255, 0.16)",
+                        borderRadius: "16px",
+                        padding: "0 1rem",
+                        boxSizing: "border-box",
                       }}
                     >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" style={{ color: "rgba(255,255,255,0.6)", flexShrink: 0 }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" style={{ color: "rgba(255,255,255,0.65)", flexShrink: 0 }}>
                         <circle cx="11" cy="11" r="8" />
                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
                       </svg>
                       <input
                         type="text"
                         autoFocus
-                        placeholder="Search essays, keywords, dates..."
+                        placeholder="Search essays, chapters, keywords..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         style={{
@@ -4106,19 +4621,22 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       />
                       {searchQuery && (
                         <button
+                          type="button"
                           onClick={() => setSearchQuery("")}
+                          aria-label="Clear search query"
                           style={{
-                            background: "rgba(255,255,255,0.14)",
+                            background: "rgba(255,255,255,0.18)",
                             border: "none",
                             borderRadius: "50%",
-                            width: "20px",
-                            height: "20px",
+                            width: "22px",
+                            height: "22px",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             color: "#FFFFFF",
                             cursor: "pointer",
-                            fontSize: "0.7rem",
+                            fontSize: "0.75rem",
+                            flexShrink: 0,
                           }}
                         >
                           ✕
@@ -4127,19 +4645,25 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     </div>
 
                     <button
+                      type="button"
                       onClick={() => setMobileSearchOpen(false)}
                       style={{
+                        height: "48px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                         background: "rgba(255, 255, 255, 0.08)",
                         border: "1px solid rgba(255, 255, 255, 0.16)",
                         color: "#FFFFFF",
                         fontSize: "0.72rem",
-                        fontWeight: 700,
+                        fontWeight: 800,
                         letterSpacing: "0.08em",
                         textTransform: "uppercase",
-                        padding: "0.7rem 0.9rem",
-                        borderRadius: "14px",
+                        padding: "0 1.05rem",
+                        borderRadius: "16px",
                         cursor: "pointer",
                         whiteSpace: "nowrap",
+                        boxSizing: "border-box",
                       }}
                     >
                       CANCEL
@@ -4147,21 +4671,29 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   </div>
 
                   {/* Results Count / Header */}
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 0.25rem 0.65rem", borderBottom: "1px solid rgba(255,255,255,0.08)", marginBottom: "0.75rem" }}>
-                    <span style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)" }}>
-                      {searchQuery.trim() ? `MATCHING RESULTS (${filteredPosts.length + ("prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim()) ? 1 : 0)})` : `ALL STORIES (${sortedPosts.length + 1})`}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 0.25rem 0.75rem", borderBottom: "1px solid rgba(255,255,255,0.08)", marginBottom: "0.85rem" }}>
+                    <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.6)" }}>
+                      {searchQuery.trim()
+                        ? `MATCHING RESULTS (${filteredPosts.length + ("prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim()) ? 1 : 0)})`
+                        : `ALL STORIES (${sortedPosts.length + 1})`}
                     </span>
+                    {searchQuery && (
+                      <span style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.4)" }}>
+                        Filtering “{searchQuery}”
+                      </span>
+                    )}
                   </div>
 
                   {/* Results List */}
                   <div
+                    className="mobile-search-scroll-container"
                     style={{
                       flex: 1,
                       overflowY: "auto",
                       display: "flex",
                       flexDirection: "column",
-                      gap: "0.65rem",
-                      paddingBottom: "2rem",
+                      gap: "0.8rem",
+                      paddingBottom: "2.5rem",
                     }}
                   >
                     {/* Matching Chapters */}
@@ -4169,6 +4701,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
                       const chapterNum = String(sortedPosts.length - postIdx).padStart(2, "0");
                       const postCover = extractCoverImage(post.content) || fallbackCovers[(postIdx + 1) % fallbackCovers.length];
+                      const excerpt = stripHtml(post.content || "").slice(0, 110) + "…";
+                      const readTime = getReadingTime(post.content || "");
 
                       return (
                         <div
@@ -4182,34 +4716,38 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           style={{
                             display: "flex",
                             alignItems: "center",
-                            gap: "0.85rem",
-                            padding: "0.75rem 0.85rem",
-                            borderRadius: "14px",
-                            background: "rgba(255,255,255,0.05)",
-                            border: "1px solid rgba(255,255,255,0.1)",
+                            gap: "1rem",
+                            padding: "0.95rem 1rem",
+                            borderRadius: "16px",
+                            background: "rgba(255,255,255,0.045)",
+                            border: "1px solid rgba(255,255,255,0.09)",
+                            boxShadow: "0 4px 16px rgba(0,0,0,0.22)",
                             cursor: "pointer",
                             transition: "all 0.18s ease",
                           }}
                         >
-                          <div style={{ width: "74px", height: "56px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, position: "relative", background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.12)" }}>
+                          <div style={{ width: "84px", height: "66px", borderRadius: "10px", overflow: "hidden", flexShrink: 0, position: "relative", background: "#16171a", border: "1px solid rgba(255,255,255,0.12)" }}>
                             <img
                               src={postCover}
                               alt={post.title}
                               style={{ width: "100%", height: "100%", objectFit: "cover" }}
                             />
                           </div>
-                          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1, minWidth: 0 }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                              <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#FFFFFF", background: "rgba(255,255,255,0.12)", padding: "2px 6px", borderRadius: "4px" }}>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.32rem", flex: 1, minWidth: 0 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.5rem" }}>
+                              <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#FFFFFF", background: "rgba(255,255,255,0.14)", padding: "2px 7px", borderRadius: "4px" }}>
                                 CHAPTER {chapterNum}
                               </span>
-                              <span style={{ fontSize: "0.52rem", fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>
-                                {formatDate(post.published, locale)}
+                              <span style={{ fontSize: "0.54rem", fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+                                {formatDate(post.published, locale)} · {readTime}M READ
                               </span>
                             </div>
-                            <h4 style={{ fontSize: "0.84rem", fontWeight: 700, lineHeight: 1.3, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                            <h4 style={{ fontSize: "0.88rem", fontWeight: 700, lineHeight: 1.35, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                               {post.title}
                             </h4>
+                            <p style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.55)", margin: 0, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                              {excerpt}
+                            </p>
                           </div>
                         </div>
                       );
@@ -4227,35 +4765,96 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         style={{
                           display: "flex",
                           alignItems: "center",
-                          gap: "0.85rem",
-                          padding: "0.75rem 0.85rem",
-                          borderRadius: "14px",
-                          background: isReadingPrologue ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.05)",
-                          border: "1px solid rgba(255,255,255,0.1)",
+                          gap: "1rem",
+                          padding: "0.95rem 1rem",
+                          borderRadius: "16px",
+                          background: isReadingPrologue ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.045)",
+                          border: isReadingPrologue ? "1px solid rgba(255,255,255,0.22)" : "1px solid rgba(255,255,255,0.09)",
+                          boxShadow: "0 4px 16px rgba(0,0,0,0.22)",
                           cursor: "pointer",
                           transition: "all 0.18s ease",
                         }}
                       >
-                        <div style={{ width: "74px", height: "56px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, position: "relative", background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.12)" }}>
+                        <div style={{ width: "84px", height: "66px", borderRadius: "10px", overflow: "hidden", flexShrink: 0, position: "relative", background: "#16171a", border: "1px solid rgba(255,255,255,0.12)" }}>
                           <img
                             src="/nature_hero.png"
                             alt="Prologue"
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                           />
                         </div>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", flex: 1, minWidth: 0 }}>
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#FFFFFF", background: "rgba(255,255,255,0.15)", padding: "2px 6px", borderRadius: "4px" }}>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.32rem", flex: 1, minWidth: 0 }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.5rem" }}>
+                            <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#FFFFFF", background: "rgba(255,255,255,0.16)", padding: "2px 7px", borderRadius: "4px" }}>
                               PROLOGUE
                             </span>
-                            <span style={{ fontSize: "0.52rem", fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>
-                              INTRO NARRATIVE
+                            <span style={{ fontSize: "0.54rem", fontWeight: 600, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+                              INTRO NARRATIVE · 2M READ
                             </span>
                           </div>
-                          <h4 style={{ fontSize: "0.84rem", fontWeight: 700, lineHeight: 1.3, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                          <h4 style={{ fontSize: "0.88rem", fontWeight: 700, lineHeight: 1.35, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                             A Quiet Corner on the Internet
                           </h4>
+                          <p style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.55)", margin: 0, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                            Most of this gets written late at night when the screen is the only light…
+                          </p>
                         </div>
+                      </div>
+                    )}
+
+                    {/* EMPTY STATE */}
+                    {filteredPosts.length === 0 && !("prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim())) && (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          padding: "3.5rem 1.5rem",
+                          textAlign: "center",
+                          gap: "0.85rem",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: "48px",
+                            height: "48px",
+                            borderRadius: "50%",
+                            background: "rgba(255,255,255,0.06)",
+                            border: "1px solid rgba(255,255,255,0.12)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "rgba(255,255,255,0.6)",
+                          }}
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                          </svg>
+                        </div>
+                        <h4 style={{ fontSize: "1rem", fontWeight: 700, margin: 0, color: "#FFFFFF" }}>
+                          No essays found
+                        </h4>
+                        <p style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.55)", margin: 0, maxWidth: "260px", lineHeight: 1.45 }}>
+                          No stories matched “{searchQuery}”. Try searching for chapter themes, dates, or keywords.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setSearchQuery("")}
+                          style={{
+                            marginTop: "0.5rem",
+                            background: "rgba(255,255,255,0.12)",
+                            border: "1px solid rgba(255,255,255,0.2)",
+                            color: "#FFFFFF",
+                            fontSize: "0.72rem",
+                            fontWeight: 700,
+                            padding: "0.55rem 1.1rem",
+                            borderRadius: "9999px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Clear Search
+                        </button>
                       </div>
                     )}
                   </div>
