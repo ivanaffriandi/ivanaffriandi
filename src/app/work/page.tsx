@@ -163,14 +163,6 @@ export default function WorkIvanPortfolioPage() {
           <span className={styles.overviewLabel}>
             → {activeTab === 'archive' ? 'Services & Log' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
           </span>
-
-          {activeTab === 'about' && (
-            <img
-              src="/ivan-head.png"
-              alt="Affriandi, Ivan"
-              className={styles.aboutCol1Photo}
-            />
-          )}
         </div>
 
         <div className={styles.heroCol23}>
@@ -183,9 +175,22 @@ export default function WorkIvanPortfolioPage() {
               transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
               style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
             >
-              <h1 className={styles.mainTitleHeading}>
-                {current.headline}
-              </h1>
+              {activeTab === 'about' ? (
+                <div className={styles.heroTitleWithPhotoWrap}>
+                  <img
+                    src="/ivan-head.png"
+                    alt="Affriandi, Ivan"
+                    className={styles.heroInlineHeadCutout}
+                  />
+                  <h1 className={styles.mainTitleHeading} style={{ margin: 0 }}>
+                    {current.headline}
+                  </h1>
+                </div>
+              ) : (
+                <h1 className={styles.mainTitleHeading}>
+                  {current.headline}
+                </h1>
+              )}
 
               <p className={styles.narrativeParagraph}>
                 {current.narrative}

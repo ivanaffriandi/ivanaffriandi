@@ -121,28 +121,8 @@
 .heroCol1 {
   grid-column: 1 / 2;
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
-  gap: 14px;
   padding-top: 6px;
-}
-
-.aboutCol1Photo {
-  width: 88px;
-  height: 88px;
-  object-fit: contain;
-  border-radius: 0 !important;
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  display: block;
-}
-
-@media (max-width: 860px) {
-  .aboutCol1Photo {
-    width: 64px;
-    height: 64px;
-  }
 }
 
 .overviewLabel {
@@ -549,18 +529,18 @@
   letter-spacing: 0.5px;
 }
 
-/* ── HERO TITLE ROW WITH PHOTO (HEAD PHOTO TO THE LEFT OF AFFRIANDI, IVAN) ── */
-.heroTitleRowWithPhoto {
+/* ── HERO TITLE ROW WITH PHOTO (HEAD PHOTO RIGHT NEXT TO AFFRIANDI, IVAN) ── */
+.heroTitleWithPhotoWrap {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 
-.heroInlineHeadPhoto {
-  width: 44px;
-  height: 44px;
-  max-width: 44px;
-  max-height: 44px;
+.heroInlineHeadCutout {
+  width: 64px;
+  height: 64px;
+  max-width: 64px;
+  max-height: 64px;
   object-fit: contain;
   border-radius: 0 !important;
   border: none !important;
@@ -571,11 +551,11 @@
 }
 
 @media (max-width: 768px) {
-  .heroInlineHeadPhoto {
-    width: 36px;
-    height: 36px;
-    max-width: 36px;
-    max-height: 36px;
+  .heroInlineHeadCutout {
+    width: 48px;
+    height: 48px;
+    max-width: 48px;
+    max-height: 48px;
   }
 }
 
