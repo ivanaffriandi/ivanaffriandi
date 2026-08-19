@@ -1533,7 +1533,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .novel-article-reader.size-lg { font-size: 1.26rem; line-height: 2.04; }
 
         .novel-article-reader p {
-          margin: 0 0 1.6rem 0 !important;
+          margin: 0 0 1.35rem 0 !important;
+          line-height: 1.9 !important;
           color: inherit;
         }
 
@@ -2484,27 +2485,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               </svg>
             </button>
           )}
-
-          {/* ── SCROLL DOWN HINT ── */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: "calc(1rem + env(safe-area-inset-bottom, 0px))",
-              left: "50%",
-              transform: "translateX(-50%)",
-              zIndex: 20,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "3px",
-              opacity: 0.55,
-              pointerEvents: "none",
-            }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </div>
         </div>
 
         {/* ── MOBILE TOP SLIDE-DOWN PANEL (Gallery, Prologue, Chapters) ── */}
@@ -2678,32 +2658,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
         {/* Desktop pj-right (hidden on mobile via CSS) */}
         <div className={`pj-right${!selectedPost ? " fit-screen" : ""}`}>
-          {/* ── TOP READING PROGRESS BAR (STICKY AT TOP OF SCROLL CONTAINER) ── */}
-          {selectedPost && (
-            <div
-              style={{
-                position: "sticky",
-                top: 0,
-                left: 0,
-                right: 0,
-                width: "100%",
-                height: "2.5px",
-                background: "rgba(125,125,125,0.1)",
-                zIndex: 60,
-                margin: "-2.2rem 0 1.2rem 0",
-              }}
-            >
-              <div
-                style={{
-                  height: "100%",
-                  width: `${readingProgress}%`,
-                  background: "var(--text-primary, #111111)",
-                  transition: "width 0.08s ease-out",
-                }}
-              />
-            </div>
-          )}
-
           <div className="pj-journal-feed-wrap">
             {/* Simple Page Header with IG, Email, Search & About button (ONLY visible in Overview mode) */}
             {!selectedPost && (
@@ -2775,7 +2729,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     paddingTop: "0.25rem",
                   }}
                 >
-                  {/* ── TOP READING UTILITY BAR (BACK BUTTON + READING CONTROLS) ── */}
+                  {/* ── TOP READING UTILITY BAR (BACK BUTTON + UNIFIED PILLBAR CONTROLS) ── */}
                   <div
                     style={{
                       display: "flex",
@@ -2828,8 +2782,19 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       BACK TO JOURNAL
                     </button>
 
-                    {/* READING CONTROLS */}
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+                    {/* ── UNIFIED READING CONTROLS PILLBAR ── */}
+                    <div
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        background: "var(--bg-secondary, rgba(125,125,125,0.08))",
+                        border: "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
+                        borderRadius: "9999px",
+                        padding: "0.22rem 0.35rem",
+                        gap: "0.15rem",
+                        boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
+                      }}
+                    >
                       {/* READING TIME BADGE */}
                       <span
                         style={{
@@ -2838,33 +2803,36 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           letterSpacing: "0.08em",
                           textTransform: "uppercase",
                           color: "var(--text-muted, #888888)",
-                          padding: "0.32rem 0.65rem",
-                          borderRadius: "6px",
-                          background: "var(--bg-secondary, rgba(125,125,125,0.06))",
-                          border: "1px solid var(--border-subtle, rgba(125,125,125,0.1))",
+                          padding: "0.25rem 0.55rem",
                         }}
                       >
                         {getReadingTime(selectedPost.content)} MIN READ
                       </span>
+
+                      <div style={{ width: "1px", height: "12px", background: "var(--border-subtle, rgba(125,125,125,0.18))" }} />
 
                       {/* FONT SERIF/SANS TOGGLE */}
                       <button
                         onClick={() => setReaderFont((prev) => (prev === "serif" ? "sans" : "serif"))}
                         title={readerFont === "serif" ? "Switch to Sans-Serif font" : "Switch to Serif font"}
                         style={{
-                          fontSize: "0.65rem",
+                          fontSize: "0.64rem",
                           fontWeight: 700,
-                          padding: "0.32rem 0.65rem",
-                          borderRadius: "6px",
-                          border: "1px solid var(--border-subtle, rgba(125,125,125,0.15))",
+                          padding: "0.25rem 0.55rem",
+                          borderRadius: "9999px",
+                          border: "none",
                           background: "transparent",
                           color: "var(--text-primary, #111111)",
                           cursor: "pointer",
                           transition: "all 0.2s ease",
                         }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = "var(--border-subtle, rgba(125,125,125,0.12))"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                       >
                         {readerFont === "serif" ? "Aa Serif" : "Aa Sans"}
                       </button>
+
+                      <div style={{ width: "1px", height: "12px", background: "var(--border-subtle, rgba(125,125,125,0.18))" }} />
 
                       {/* FONT SIZE TOGGLE (SM / MD / LG) */}
                       <button
@@ -2873,19 +2841,23 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         }}
                         title="Adjust text size"
                         style={{
-                          fontSize: "0.65rem",
+                          fontSize: "0.64rem",
                           fontWeight: 700,
-                          padding: "0.32rem 0.65rem",
-                          borderRadius: "6px",
-                          border: "1px solid var(--border-subtle, rgba(125,125,125,0.15))",
+                          padding: "0.25rem 0.55rem",
+                          borderRadius: "9999px",
+                          border: "none",
                           background: "transparent",
                           color: "var(--text-primary, #111111)",
                           cursor: "pointer",
                           transition: "all 0.2s ease",
                         }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = "var(--border-subtle, rgba(125,125,125,0.12))"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                       >
                         {readerSize === "sm" ? "Text: S" : readerSize === "md" ? "Text: M" : "Text: L"}
                       </button>
+
+                      <div style={{ width: "1px", height: "12px", background: "var(--border-subtle, rgba(125,125,125,0.18))" }} />
 
                       {/* SHARE / COPY LINK */}
                       <button
@@ -2898,18 +2870,20 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         }}
                         title="Copy story link"
                         style={{
-                          width: "28px",
-                          height: "28px",
+                          width: "24px",
+                          height: "24px",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
                           borderRadius: "50%",
-                          border: "1px solid var(--border-subtle, rgba(125,125,125,0.15))",
+                          border: "none",
                           background: "transparent",
                           color: copiedLink ? "#10B981" : "var(--text-primary, #111111)",
                           cursor: "pointer",
                           transition: "all 0.2s ease",
                         }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = "var(--border-subtle, rgba(125,125,125,0.12))"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                       >
                         {copiedLink ? (
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -2961,54 +2935,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     dangerouslySetInnerHTML={{ __html: stripImagesFromHtml(selectedPost.content) }}
                   />
 
-                  {/* ── ARTICLE ENDING ORNAMENT & AUTHOR SEAL ── */}
-                  <div
-                    style={{
-                      margin: "2.5rem 0 1.5rem 0",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: "1.4rem",
-                    }}
-                  >
-                    <div style={{ letterSpacing: "0.6em", color: "var(--text-muted)", fontSize: "0.85rem", opacity: 0.45 }}>
-                      ✦ ✦ ✦
-                    </div>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "1rem",
-                        padding: "1rem 1.25rem",
-                        borderRadius: "12px",
-                        background: "var(--bg-secondary, rgba(125,125,125,0.04))",
-                        border: "1px solid var(--border-subtle, rgba(125,125,125,0.08))",
-                        width: "100%",
-                        maxWidth: "520px",
-                        boxSizing: "border-box",
-                      }}
-                    >
-                      <img
-                        src="/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg"
-                        alt="Ivan Affriandi"
-                        style={{ width: "44px", height: "44px", borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
-                      />
-                      <div style={{ display: "flex", flexDirection: "column", gap: "0.15rem" }}>
-                        <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--text-primary)" }}>
-                          Ivan Affriandi
-                        </span>
-                        <span style={{ fontSize: "0.74rem", color: "var(--text-muted)", lineHeight: 1.4 }}>
-                          Writing on software architecture, aesthetics, and moments in between.
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
                   {/* ── OTHER CHAPTERS THUMBNAIL ROW AT BOTTOM ── */}
                   <div
                     style={{
-                      marginTop: "1.5rem",
+                      marginTop: "3rem",
                       paddingTop: "2rem",
                       borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))",
                       display: "flex",
