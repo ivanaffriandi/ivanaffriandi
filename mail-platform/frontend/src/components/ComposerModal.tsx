@@ -652,7 +652,13 @@ export const ComposerModal: React.FC<ComposerModalProps> = ({
         className={`fixed inset-0 bg-black/25 dark:bg-black/45 backdrop-blur-[2px] z-[150] select-none apple-transition ${
           isClosing ? 'opacity-0' : 'opacity-100'
         }`}
-        onClick={handleClose}
+        onClick={() => {
+          if (hasUnsavedContent()) {
+            setShowConfirmClose(true);
+          } else {
+            triggerGenieClose();
+          }
+        }}
       />
 
       <div
