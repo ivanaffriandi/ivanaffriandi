@@ -180,6 +180,9 @@ export default function WorkIvanPortfolioPage() {
                   <img
                     src="/ivan-head.png"
                     alt="Affriandi, Ivan"
+                    width={48}
+                    height={48}
+                    style={{ width: '48px', height: '48px', objectFit: 'contain', display: 'block', flexShrink: 0 }}
                     className={styles.heroInlineHeadPhoto}
                   />
                   <h1 className={styles.mainTitleHeading}>
