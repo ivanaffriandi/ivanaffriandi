@@ -451,113 +451,54 @@ export default function AvantGardeHomepage() {
           </h1>
         </div>
 
-        {/* ON MOBILE: Stacked Vertical Static List of Roles at Bottom Right */}
-        {isMobile ? (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
-              gap: "2.5px",
-              textAlign: "right",
-              flexShrink: 0,
-            }}
-          >
-            {ROLES_LIST.map((item, idx) => (
-              <span
-                key={idx}
-                style={{
-                  fontSize: "8px",
-                  fontWeight: 700,
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                  color: textMuted,
-                  lineHeight: 1.25,
-                }}
-              >
-                {item.external ? (
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: "inherit", textDecoration: "none" }}
-                  >
-                    {item.label}
-                  </a>
-                ) : (
-                  <Link
-                    href={item.href}
-                    style={{ color: "inherit", textDecoration: "none" }}
-                  >
-                    {item.label}
-                  </Link>
-                )}
-              </span>
-            ))}
-          </div>
-        ) : (
-          /* ON DESKTOP: Auto-Scrolling Roles Ticker Marquee to the right */
-          <div
-            style={{
-              flex: 1,
-              overflow: "hidden",
-              whiteSpace: "nowrap",
-              display: "flex",
-              alignItems: "center",
-              maskImage: "linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)",
-              WebkitMaskImage: "linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)",
-            }}
-          >
-            <motion.div
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{ repeat: Infinity, ease: "linear", duration: 18 }}
+        {/* Stacked Vertical Static List of Roles at Bottom Right (Both Desktop & Mobile) */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-end",
+            gap: "2.5px",
+            textAlign: "right",
+            flexShrink: 0,
+          }}
+        >
+          {ROLES_LIST.map((item, idx) => (
+            <span
+              key={idx}
               style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "16px",
+                fontSize: isMobile ? "8px" : "9.5px",
+                fontWeight: 700,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                color: textMuted,
+                lineHeight: 1.25,
+                transition: "color 0.2s ease",
               }}
             >
-              {ROLES_LIST.concat(ROLES_LIST).map((item, idx) => (
-                <span
-                  key={idx}
-                  style={{
-                    fontSize: "9.5px",
-                    fontWeight: 600,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    color: textMuted,
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "14px",
-                  }}
+              {item.external ? (
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "inherit", textDecoration: "none" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = fg)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = textMuted)}
                 >
-                  {item.external ? (
-                    <a
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ color: "inherit", textDecoration: "none" }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = fg)}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = textMuted)}
-                    >
-                      {item.label}
-                    </a>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      style={{ color: "inherit", textDecoration: "none" }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = fg)}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = textMuted)}
-                    >
-                      {item.label}
-                    </Link>
-                  )}
-                  <span style={{ fontSize: "8.5px", opacity: 0.35 }}>·</span>
-                </span>
-              ))}
-            </motion.div>
-          </div>
-        )}
+                  {item.label}
+                </a>
+              ) : (
+                <Link
+                  href={item.href}
+                  style={{ color: "inherit", textDecoration: "none" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = fg)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = textMuted)}
+                >
+                  {item.label}
+                </Link>
+              )}
+            </span>
+          ))}
+        </div>
       </footer>
     </div>
   );
