@@ -382,7 +382,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const [isReadingPrologue, setIsReadingPrologue] = useState<boolean>(false);
 
   const selectedPostImages = useMemo(() => {
-    if (isReadingPrologue) return ["/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg"];
+    if (isReadingPrologue) return ["/nature_hero.png"];
     if (!selectedPost || !selectedPost.content) return [];
     const extracted = extractAllImages(selectedPost.content);
     return extracted.length > 0 ? extracted : [fallbackHero];
@@ -455,7 +455,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
       date: "READING",
       title: "PROLOGUE",
       excerpt: "Most of this gets written late at night, usually when the screen is the only light in the room and the city noise has finally died down. Passing thoughts turn into essays...",
-      img: fallbackCovers[0],
+      img: "/nature_hero.png",
       post: null,
       isPrologue: true,
       postIndex: -1,
@@ -2649,7 +2649,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           >
             <img
               key={isReadingPrologue ? "prologue-hero" : selectedPost ? `post-${selectedPost.id}-${postPhotoIndex}` : `overview-${heroIndex}`}
-              src={isReadingPrologue ? fallbackCovers[0] : selectedPost ? selectedPostImages[postPhotoIndex % selectedPostImages.length] : currentFlipCard.img}
+              src={isReadingPrologue ? "/nature_hero.png" : selectedPost ? selectedPostImages[postPhotoIndex % selectedPostImages.length] : currentFlipCard.img}
               alt={isReadingPrologue ? "Prologue" : selectedPost ? selectedPost.title : currentFlipCard.title}
               style={{
                 width: "100%",
@@ -4069,7 +4069,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     >
                       <div style={{ width: "74px", height: "56px", borderRadius: "8px", overflow: "hidden", flexShrink: 0, position: "relative", background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.12)" }}>
                         <img
-                          src={fallbackCovers[0]}
+                          src="/nature_hero.png"
                           alt="Prologue"
                           style={{ width: "100%", height: "100%", objectFit: "cover" }}
                         />
