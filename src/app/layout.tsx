@@ -55,6 +55,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false, // Prevents all mobile auto-zoom issues completely!
+  viewportFit: "cover",
 };
 
 export const metadata: Metadata = {

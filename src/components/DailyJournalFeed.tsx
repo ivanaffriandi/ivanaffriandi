@@ -2149,9 +2149,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
           }
 
-          /* ── HIDE THUMBNAIL POSTS CAROUSEL & OTHER CHAPTERS AT BOTTOM ON MOBILE ── */
+          /* ── HIDE THUMBNAIL POSTS CAROUSEL, OTHER CHAPTERS & INLINE BACK BUTTON ON MOBILE ── */
           .blog-section-wrap,
-          .other-chapters-row {
+          .other-chapters-row,
+          .reader-back-btn-desktop {
             display: none !important;
           }
 
@@ -2932,8 +2933,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       flexWrap: "wrap",
                     }}
                   >
-                    {/* BACK BUTTON */}
+                    {/* BACK BUTTON (DESKTOP ONLY - ON MOBILE TOP BAR HANDLES THIS) */}
                     <button
+                      className="reader-back-btn-desktop"
                       onClick={() => setIsReadingPrologue(false)}
                       style={{
                         display: "inline-flex",
@@ -3046,8 +3048,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       flexWrap: "wrap",
                     }}
                   >
-                    {/* BACK BUTTON */}
+                    {/* BACK BUTTON (DESKTOP ONLY - ON MOBILE TOP BAR HANDLES THIS) */}
                     <button
+                      className="reader-back-btn-desktop"
                       onClick={() => setSelectedPostIndex(null)}
                       style={{
                         display: "inline-flex",
