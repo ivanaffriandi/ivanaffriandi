@@ -28,6 +28,25 @@ function extractCoverImage(html: string): string | null {
   return url;
 }
 
+function extractAllImages(html: string): string[] {
+  if (!html) return [];
+  const matches = Array.from(html.matchAll(/<img[^>]+src=["']([^"']+)["']/gi));
+  const urls = matches.map((m) => {
+    let url = m[1];
+    return url.replace(/\/s\d+(-c)?\//, "/s1600/").replace(/\/w\d+-h\d+(-c)?\//, "/s1600/");
+  });
+  return urls;
+}
+
+function stripImagesFromHtml(html: string): string {
+  if (!html) return "";
+  return html
+    .replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, "")
+    .replace(/<div class="separator"[^>]*>[\s\S]*?<\/div>/gi, "")
+    .replace(/<img[^>]*>/gi, "")
+    .replace(/<p>\s*(?:&nbsp;|\s)*<\/p>/gi, "");
+}
+
 function getRelativeTimeString(dateStr: string): string {
   if (!dateStr) return "";
   const date = new Date(dateStr);
@@ -336,6 +355,27 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
   const fallbackHero = "/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg";
   const fallbackBrand = "/images/defining_brand_mono.png";
+
+  const [postPhotoIndex, setPostPhotoIndex] = useState<number>(0);
+
+  const selectedPostImages = useMemo(() => {
+    if (!selectedPost || !selectedPost.content) return [];
+    const extracted = extractAllImages(selectedPost.content);
+    return extracted.length > 0 ? extracted : [fallbackHero];
+  }, [selectedPost, fallbackHero]);
+
+  useEffect(() => {
+    setPostPhotoIndex(0);
+  }, [selectedPostIndex]);
+
+  // Auto-cycle through the article's gallery photos on the left
+  useEffect(() => {
+    if (!selectedPost || selectedPostImages.length <= 1) return;
+    const t = setInterval(() => {
+      setPostPhotoIndex((prev) => (prev + 1) % selectedPostImages.length);
+    }, 4000);
+    return () => clearInterval(t);
+  }, [selectedPost, selectedPostImages.length]);
 
   const fallbackCovers = useMemo(() => [
     "/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg",
@@ -2085,13 +2125,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   bottom: 0,
                   width: "100%",
                   height: "100%",
-                  backgroundImage: `url(${selectedPost ? (extractCoverImage(selectedPost.content) || fallbackHero) : currentFlipCard.img})`,
+                  backgroundImage: `url(${selectedPost ? selectedPostImages[postPhotoIndex % selectedPostImages.length] : currentFlipCard.img})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   backgroundRepeat: "no-repeat",
                   opacity: 1,
                   zIndex: 1,
-                  transition: "background-image 0.4s ease-out",
+                  transition: "background-image 0.5s ease-in-out",
                 }}
               />
 
@@ -2116,7 +2156,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     {selectedPost ? `JOURNAL · ${formatDate(selectedPost.published, locale)}` : currentFlipCard.category}
                   </span>
                   <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.6)" }}>
-                    {selectedPost ? getRelativeTimeString(selectedPost.published) : currentFlipCard.date}
+                    {selectedPost
+                      ? selectedPostImages.length > 1
+                        ? `${(postPhotoIndex % selectedPostImages.length) + 1} / ${selectedPostImages.length} PHOTOS`
+                        : getRelativeTimeString(selectedPost.published)
+                      : currentFlipCard.date}
                   </span>
                 </div>
 
@@ -2126,7 +2170,21 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   {selectedPost ? stripHtml(selectedPost.content).slice(0, 140) + "…" : currentFlipCard.excerpt}
                 </p>
 
-                {!selectedPost && flipboardCards.length > 1 && (
+                {/* Dots indicator: for article photo gallery when open, or for flipboard in overview mode */}
+                {selectedPost && selectedPostImages.length > 1 ? (
+                  <div className="pj-dots" style={{ marginTop: "1.4rem" }}>
+                    {selectedPostImages.map((_, i) => (
+                      <div
+                        key={i}
+                        className={`pj-dot${i === (postPhotoIndex % selectedPostImages.length) ? " active" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPostPhotoIndex(i);
+                        }}
+                      />
+                    ))}
+                  </div>
+                ) : !selectedPost && flipboardCards.length > 1 ? (
                   <div className="pj-dots" style={{ marginTop: "1.4rem" }}>
                     {flipboardCards.map((_, i) => (
                       <div
@@ -2139,7 +2197,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       />
                     ))}
                   </div>
-                )}
+                ) : null}
               </div>
 
               <button
@@ -2154,7 +2212,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   }
                 }}
               >
-                {selectedPost ? "← ALL CHAPTERS" : "READ"}
+                {selectedPost ? "← BACK" : "READ"}
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
@@ -2427,66 +2485,16 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     paddingTop: "0.5rem",
                   }}
                 >
-                  {/* Top Minimalist Back Action */}
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      borderBottom: "1px solid var(--border-subtle, rgba(0,0,0,0.08))",
-                      paddingBottom: "0.85rem",
-                    }}
-                  >
-                    <button
-                      onClick={() => setSelectedPostIndex(null)}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        color: "var(--text-primary)",
-                        fontSize: "0.72rem",
-                        fontWeight: 700,
-                        letterSpacing: "0.1em",
-                        textTransform: "uppercase",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.45rem",
-                        cursor: "pointer",
-                        padding: 0,
-                        transition: "opacity 0.2s ease",
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.6")}
-                      onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-                    >
-                      <span style={{ fontSize: "0.95rem", lineHeight: 1 }}>←</span> BACK TO JOURNAL
-                    </button>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.65rem",
-                        fontSize: "0.68rem",
-                        fontWeight: 600,
-                        color: "var(--text-muted)",
-                        letterSpacing: "0.06em",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      <span>{formatDate(selectedPost.published, locale)}</span>
-                      <span>·</span>
-                      <span>IVAN AFFRIANDI</span>
-                    </div>
-                  </div>
-
-                  {/* Pure Editorial Content Body (No repeated title) */}
+                  {/* Pure Editorial Content Body (No photos in text stream; images are in left gallery) */}
                   <div
                     className="blog-modal-content-body novel-article-reader"
                     style={{
                       fontSize: "1.05rem",
                       lineHeight: 1.88,
                       color: "var(--text-primary)",
+                      paddingTop: "0.25rem",
                     }}
-                    dangerouslySetInnerHTML={{ __html: selectedPost.content }}
+                    dangerouslySetInnerHTML={{ __html: stripImagesFromHtml(selectedPost.content) }}
                   />
 
                   {/* Bottom Navigation Between Chapters */}
