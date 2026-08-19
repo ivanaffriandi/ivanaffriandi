@@ -442,12 +442,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     });
   }, [selectedPostImages]);
 
-  // Flipboard Deck containing EXCLUSIVELY BLOG POSTS for mobile
+  // Flipboard Deck containing EXCLUSIVELY BLOG POSTS for mobile & left cover
   const flipboardCards = useMemo(() => {
     if (sortedPosts.length === 0) {
       return [{
         id: "fallback",
-        category: "01 / 01 · JOURNAL",
+        category: "CHAPTER 01",
         date: "2026",
         title: "Ivan Affriandi",
         excerpt: "Crafting digital experiences, thoughtful software, and visual moments.",
@@ -461,9 +461,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
       const extracted = extractCoverImage(p.content);
       const isBadImg = !extracted || extracted.includes("ocean_hero_mono.png");
       const cover = isBadImg ? fallbackCovers[idx % fallbackCovers.length] : extracted;
+      const chapterNum = `CHAPTER ${String(sortedPosts.length - idx).padStart(2, "0")}`;
       return {
         id: p.id,
-        category: `${String(idx + 1).padStart(2, "0")} / ${String(limited.length).padStart(2, "0")} · JOURNAL`,
+        category: chapterNum,
         date: p.published ? getRelativeTimeString(p.published) : "ESSAY",
         title: p.title,
         excerpt: stripHtml(p.content || "").slice(0, 135) + "…",
@@ -1714,24 +1715,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
         .blog-card-excerpt {
           font-size: 0.68rem;
-          line-height: 1.35;
+          line-height: 1.38;
           color: var(--text-secondary, #666666);
           margin: 0;
+          font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif);
+          font-style: normal;
           display: -webkit-box;
           -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        .blog-card-excerpt {
-          font-size: 0.8rem;
-          line-height: 1.55;
-          color: var(--text-secondary, #555555);
-          margin: 0;
-          font-family: var(--font-serif, Georgia, serif);
-          font-style: italic;
-          display: -webkit-box;
-          -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
