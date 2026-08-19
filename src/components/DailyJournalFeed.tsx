@@ -2149,10 +2149,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
           }
 
-          /* ── HIDE THUMBNAIL POSTS CAROUSEL, OTHER CHAPTERS & INLINE BACK BUTTON ON MOBILE ── */
+          /* ── HIDE THUMBNAIL POSTS CAROUSEL, OTHER CHAPTERS, INLINE BACK BUTTON & DUPLICATE ARTICLE HEADER ON MOBILE ── */
           .blog-section-wrap,
           .other-chapters-row,
-          .reader-back-btn-desktop {
+          .reader-back-btn-desktop,
+          .article-reader-chapter-title-desktop {
             display: none !important;
           }
 
@@ -2920,17 +2921,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     paddingTop: "0.25rem",
                   }}
                 >
-                  {/* ── TOP READING UTILITY BAR ── */}
+                  {/* ── TOP READING UTILITY BAR (PROLOGUE) ── */}
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "space-between",
+                      justifyContent: "flex-end",
                       width: "100%",
-                      paddingBottom: "1rem",
-                      borderBottom: "1px solid var(--border-subtle, rgba(125,125,125,0.12))",
+                      paddingBottom: "0.25rem",
                       gap: "0.75rem",
-                      flexWrap: "wrap",
                     }}
                   >
                     {/* BACK BUTTON (DESKTOP ONLY - ON MOBILE TOP BAR HANDLES THIS) */}
@@ -2953,6 +2952,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         borderRadius: "9999px",
                         boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                         transition: "all 0.2s ease",
+                        flexShrink: 0,
                       }}
                     >
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -2962,6 +2962,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       BACK TO JOURNAL
                     </button>
 
+                    {/* HORIZONTAL RULE LINE SPANNING TO PILL */}
+                    <div style={{ flex: 1, height: "1px", background: "var(--border-subtle, rgba(125,125,125,0.18))" }} />
+
                     <span
                       style={{
                         fontSize: "0.62rem",
@@ -2969,6 +2972,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         letterSpacing: "0.08em",
                         textTransform: "uppercase",
                         color: "var(--text-muted, #888888)",
+                        background: "var(--bg-secondary, rgba(125,125,125,0.08))",
+                        border: "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
+                        padding: "0.28rem 0.65rem",
+                        borderRadius: "9999px",
+                        whiteSpace: "nowrap",
+                        flexShrink: 0,
                       }}
                     >
                       PROLOGUE · 2 MIN READ
@@ -3036,16 +3045,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   }}
                 >
                   {/* ── TOP READING UTILITY BAR (BACK BUTTON + UNIFIED PILLBAR CONTROLS) ── */}
+                  {/* ── TOP READING UTILITY BAR (BACK BUTTON + HORIZONTAL LINE + UNIFIED PILLBAR CONTROLS ON RIGHT) ── */}
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "space-between",
+                      justifyContent: "flex-end",
                       width: "100%",
-                      paddingBottom: "1rem",
-                      borderBottom: "1px solid var(--border-subtle, rgba(125,125,125,0.12))",
+                      paddingBottom: "0.25rem",
                       gap: "0.75rem",
-                      flexWrap: "wrap",
                     }}
                   >
                     {/* BACK BUTTON (DESKTOP ONLY - ON MOBILE TOP BAR HANDLES THIS) */}
@@ -3068,6 +3076,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         borderRadius: "9999px",
                         boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                         transition: "all 0.2s ease",
+                        flexShrink: 0,
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background = "var(--text-primary, #111111)";
@@ -3089,7 +3098,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       BACK TO JOURNAL
                     </button>
 
-                    {/* ── UNIFIED READING CONTROLS PILLBAR ── */}
+                    {/* HORIZONTAL RULE LINE SPANNING TO PILLBAR */}
+                    <div style={{ flex: 1, height: "1px", background: "var(--border-subtle, rgba(125,125,125,0.18))" }} />
+
+                    {/* ── UNIFIED READING CONTROLS PILLBAR (PINNED TO RIGHT) ── */}
                     <div
                       style={{
                         display: "inline-flex",
@@ -3100,6 +3112,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         padding: "0.22rem 0.35rem",
                         gap: "0.15rem",
                         boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
+                        flexShrink: 0,
                       }}
                     >
                       {/* READING TIME BADGE */}
@@ -3206,8 +3219,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     </div>
                   </div>
 
-                  {/* ── ARTICLE CHAPTER HEADER BANNER ── */}
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.4rem" }}>
+                  {/* ── ARTICLE CHAPTER HEADER BANNER (DESKTOP ONLY - ON MOBILE TOP COVER SHOWS THIS) ── */}
+                  <div className="article-reader-chapter-title-desktop" style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.4rem" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
                       <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
                         CHAPTER {String(sortedPosts.length - (selectedPostIndex ?? 0)).padStart(2, "0")}
