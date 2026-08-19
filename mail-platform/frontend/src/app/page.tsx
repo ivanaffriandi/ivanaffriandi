@@ -443,7 +443,10 @@ export default function MailApp() {
       <Toast toasts={toasts} onDismiss={(id) => setToasts((p) => p.filter((t) => t.id !== id))} />
 
       {/* Desktop Sidebar */}
-      <div className="hidden lg:block h-full mail-sidebar-fixed">
+      <div
+        className="hidden lg:block h-full mail-sidebar-fixed"
+        style={{ width: '256px', minWidth: '256px', maxWidth: '256px' }}
+      >
         <Sidebar
           folders={folders}
           activeFolderId={activeFolderId}
@@ -528,11 +531,14 @@ export default function MailApp() {
         {/* Mail Split Pane (CSS Grid Locked) */}
         <main className="mail-split-grid flex-1 min-h-0 overflow-hidden pt-0 md:pt-1.5">
           {/* Message List */}
-          <div className={`relative h-full mail-list-fixed ${
-            selectedMessageId
-              ? 'hidden md:block'
-              : 'block'
-          }`}>
+          <div
+            className={`relative h-full mail-list-fixed ${
+              selectedMessageId
+                ? 'hidden md:block'
+                : 'block'
+            }`}
+            style={{ width: '100%', minWidth: '0px' }}
+          >
             {isLoading && (
               <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
                 <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
@@ -549,7 +555,10 @@ export default function MailApp() {
           </div>
 
           {/* Message View */}
-          <div className={`mail-view-flexible relative h-full ${selectedMessageId ? 'block' : 'hidden md:block'}`}>
+          <div
+            className={`mail-view-flexible relative h-full ${selectedMessageId ? 'block' : 'hidden md:block'}`}
+            style={{ width: '100%', minWidth: '0px', overflow: 'hidden' }}
+          >
             {isLoadingDetail && selectedMessageId && (
               <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
                 <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />

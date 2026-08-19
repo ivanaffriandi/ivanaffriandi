@@ -398,6 +398,7 @@ html[data-theme="dark"] .mail-adaptive-sheet {
 .mail-adaptive-sheet {
   max-width: 100% !important;
   width: 100% !important;
+  min-width: 0 !important;
   overflow-x: hidden !important;
   box-sizing: border-box !important;
 }
@@ -405,6 +406,7 @@ html[data-theme="dark"] .mail-adaptive-sheet {
 .mail-content-body {
   max-width: 100% !important;
   width: 100% !important;
+  min-width: 0 !important;
   overflow-x: auto !important;
   word-break: break-word !important;
   overflow-wrap: anywhere !important;
@@ -413,21 +415,24 @@ html[data-theme="dark"] .mail-adaptive-sheet {
 
 .mail-content-body * {
   max-width: 100% !important;
+  min-width: 0 !important;
   box-sizing: border-box !important;
 }
 
 .mail-content-body table {
   max-width: 100% !important;
   width: 100% !important;
+  min-width: 0 !important;
   height: auto !important;
-  table-layout: auto !important;
+  table-layout: fixed !important;
   margin: 0 auto;
-  word-break: break-word;
+  word-break: break-word !important;
 }
 
 .mail-content-body td,
 .mail-content-body th {
   max-width: 100% !important;
+  min-width: 0 !important;
   word-break: break-word !important;
 }
 
@@ -436,6 +441,7 @@ html[data-theme="dark"] .mail-adaptive-sheet {
 .mail-content-body article,
 .mail-content-body center {
   max-width: 100% !important;
+  min-width: 0 !important;
   box-sizing: border-box !important;
 }
 

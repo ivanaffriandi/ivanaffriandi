@@ -182,7 +182,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
         {/* ──────────────────────────────────────────────────────────────────────────
             3. SCROLLABLE CONVERSATION THREAD STREAM (Smooth Single Scroll)
             ────────────────────────────────────────────────────────────────────────── */}
-        <div className="flex-1 overflow-y-auto min-h-0 px-4 md:px-7 py-5 space-y-6 pb-28">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 min-w-0 w-full px-4 md:px-7 py-5 space-y-6 pb-28">
           
           {threadToDisplay.map((item, index) => {
             const isMe =
@@ -203,7 +203,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
             return (
               <div
                 key={item.id || index}
-                className={`p-4 md:p-6 rounded-2xl md:rounded-3xl border transition-all duration-200 ${
+                className={`p-4 md:p-6 rounded-2xl md:rounded-3xl border transition-all duration-200 min-w-0 max-w-full overflow-hidden ${
                   isMe
                     ? 'bg-blue-500/3 dark:bg-blue-950/15 border-blue-500/15'
                     : 'bg-[var(--card-bg)] border-[var(--card-border)]'
@@ -316,14 +316,14 @@ export const MessageView: React.FC<MessageViewProps> = ({
                 )}
 
                 {/* Email Body Content */}
-                <div className="mail-adaptive-sheet pt-1">
+                <div className="mail-adaptive-sheet pt-1 min-w-0 max-w-full overflow-x-auto">
                   {item.body_html ? (
                     <div
-                      className="max-w-none font-sans leading-[1.75] mail-content-body text-[14.5px] antialiased tracking-[0.01em]"
+                      className="max-w-full min-w-0 overflow-x-auto font-sans leading-[1.75] mail-content-body text-[14.5px] antialiased tracking-[0.01em]"
                       dangerouslySetInnerHTML={{ __html: item.body_html }}
                     />
                   ) : (
-                    <div className="text-[14.5px] font-sans whitespace-pre-wrap leading-[1.7] font-normal antialiased tracking-[0.01em]">
+                    <div className="text-[14.5px] font-sans whitespace-pre-wrap leading-[1.7] font-normal antialiased tracking-[0.01em] min-w-0 max-w-full overflow-x-auto">
                       {item.body_plain}
                     </div>
                   )}
