@@ -1013,26 +1013,31 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           justify-content: space-between !important;
         }
 
-        /* EDITORIAL THEME OVERRIDES FOR HOMEPAGE RIGHT FEED */
-        .pj-right .right-page-title,
-        .pj-right .about-bio-headline,
-        .pj-right .about-work-title,
-        .pj-right .about-card-value,
-        .pj-right .blog-card-title,
-        .pj-right .prologue-nav-btn {
-          color: var(--text-primary, #111111);
+        /* EDITORIAL THEME OVERRIDES FOR HOMEPAGE RIGHT FEED (EXPLICIT HIGH CONTRAST INK) */
+        .pj-right.fit-screen {
+          background: #FAF8F5 !important;
+          color: #111111 !important;
         }
 
-        .pj-right .section-label-header,
-        .pj-right .section-label-sm,
-        .pj-right .mini-spec-title,
-        .pj-right .about-card-label,
-        .pj-right .imessage-sender-tag,
-        .pj-right .about-story-text,
-        .pj-right .about-work-desc,
-        .pj-right .blog-card-excerpt,
-        .pj-right .blog-card-meta {
-          color: var(--text-secondary, #555555);
+        .pj-right.fit-screen .right-page-title,
+        .pj-right.fit-screen .about-bio-headline,
+        .pj-right.fit-screen .about-work-title,
+        .pj-right.fit-screen .about-card-value,
+        .pj-right.fit-screen .blog-card-title,
+        .pj-right.fit-screen .prologue-nav-btn {
+          color: #111111 !important;
+        }
+
+        .pj-right.fit-screen .section-label-header,
+        .pj-right.fit-screen .section-label-sm,
+        .pj-right.fit-screen .mini-spec-title,
+        .pj-right.fit-screen .about-card-label,
+        .pj-right.fit-screen .imessage-sender-tag,
+        .pj-right.fit-screen .about-story-text,
+        .pj-right.fit-screen .about-work-desc,
+        .pj-right.fit-screen .blog-card-excerpt,
+        .pj-right.fit-screen .blog-card-meta {
+          color: #555555 !important;
         }
 
         .pj-right .right-page-header {
@@ -1042,74 +1047,90 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
         .pj-right .blog-tabs-header,
         .pj-right .prologue-nav-bar {
-          border-bottom-color: var(--border-color, rgba(0, 0, 0, 0.08));
-          border-top-color: var(--border-color, rgba(0, 0, 0, 0.08));
+          border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+          border-top-color: rgba(0, 0, 0, 0.08) !important;
         }
 
-        .pj-right .novel-page-card {
-          background: var(--card-bg-1, #FAFAFA);
-          border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.06));
-          box-shadow: var(--shadow-raised, 0 4px 20px rgba(0, 0, 0, 0.02));
+        .pj-right.fit-screen .novel-page-card {
+          background: #FFFFFF !important;
+          border: 1px solid rgba(0, 0, 0, 0.06) !important;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
         }
 
-        .pj-right .novel-intro-paragraph {
-          color: var(--text-primary, #222222);
+        .pj-right.fit-screen .novel-intro-paragraph {
+          color: #222222 !important;
         }
 
-        .pj-right .novel-drop-cap::first-letter,
+        .pj-right.fit-screen .novel-drop-cap::first-letter,
         .novel-drop-cap::first-letter {
-          color: var(--text-primary, #000000);
+          color: #000000 !important;
           opacity: 1;
         }
 
-        .pj-right .imessage-bubble-incoming {
-          background: var(--bg-secondary, #EAEAEA);
-          color: var(--text-primary, #111111);
+        .pj-right.fit-screen .imessage-bubble-incoming {
+          background: #EAEAEA !important;
+          color: #111111 !important;
+          border: 1px solid rgba(0, 0, 0, 0.06) !important;
+        }
+        .pj-right.fit-screen .imessage-bubble-incoming * {
+          color: #111111 !important;
         }
 
-        .pj-right .imessage-bubble-outgoing {
-          background: var(--text-primary, #111111);
-          color: var(--bg-color, #FFFFFF);
+        .pj-right.fit-screen .imessage-bubble-outgoing {
+          background: #111111 !important;
+          color: #FFFFFF !important;
+        }
+        .pj-right.fit-screen .imessage-bubble-outgoing * {
+          color: #FFFFFF !important;
         }
 
-        .pj-right .blog-tab-item {
-          color: var(--text-muted, #777777);
+        .pj-right.fit-screen .blog-tab-item {
+          color: #777777 !important;
         }
 
-        .pj-right .blog-tab-item:hover,
-        .pj-right .blog-tab-item.active {
-          color: var(--text-primary, #111111);
-          background: var(--border-subtle, rgba(0, 0, 0, 0.06));
+        .pj-right.fit-screen .blog-tab-item:hover,
+        .pj-right.fit-screen .blog-tab-item.active {
+          color: #111111 !important;
+          background: rgba(0, 0, 0, 0.06) !important;
         }
 
-        .pj-right .blog-grid-card {
-          background: var(--card-bg-1, #FFFFFF);
-          border-bottom: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.06));
+        .pj-right.fit-screen .blog-grid-card {
+          background: #FFFFFF !important;
+          border: 1px solid rgba(0, 0, 0, 0.06) !important;
+        }
+
+        .pj-right.fit-screen .blog-grid-card .blog-card-title {
+          color: #111111 !important;
+        }
+
+        .pj-right.fit-screen .blog-grid-card .blog-card-excerpt,
+        .pj-right.fit-screen .blog-grid-card .blog-card-meta {
+          color: #666666 !important;
         }
 
         .pj-right .search-pill-container {
-          background: var(--bg-secondary, #EFEFEF);
-          border: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+          background: #EFEFEF !important;
+          border: 1px solid rgba(0, 0, 0, 0.08) !important;
         }
 
         .pj-right .search-pill-input {
-          color: var(--text-primary, #111111);
+          color: #111111 !important;
         }
 
         .pj-right .search-pill-input::placeholder {
-          color: var(--text-muted, rgba(0, 0, 0, 0.45));
+          color: rgba(0, 0, 0, 0.45) !important;
         }
 
         .pj-right .action-pill-btn {
-          background: var(--text-primary, #111111);
-          color: var(--bg-color, #FFFFFF);
+          background: #111111 !important;
+          color: #FFFFFF !important;
         }
 
         .pj-right .about-pill-item,
         .pj-right .about-pill-item-sm,
         .pj-right .about-card-item {
-          background: var(--bg-secondary, rgba(0, 0, 0, 0.04));
-          color: var(--text-primary, #111111);
+          background: rgba(0, 0, 0, 0.04) !important;
+          color: #111111 !important;
         }
 
         /* HIDE ALL SCROLLBAR INDICATORS ENTIRELY */
