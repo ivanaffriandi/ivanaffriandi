@@ -3656,10 +3656,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           textTransform: "uppercase",
                           color: readerTheme === "dark" ? "#FFFFFF" : readerTheme === "paper" ? "#2C2820" : "#111111",
                           background: readerTheme === "dark" ? "rgba(255,255,255,0.14)" : readerTheme === "paper" ? "rgba(0,0,0,0.07)" : "rgba(0,0,0,0.06)",
-                          padding: "0.22rem 0.55rem",
-                          borderRadius: "4px",
+                          padding: "0.22rem 0.65rem",
+                          borderRadius: "9999px",
                           whiteSpace: "nowrap",
-                          border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(0,0,0,0.08)",
+                          border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.18)" : "1px solid rgba(0,0,0,0.1)",
                         }}
                       >
                         {getReadingTime(selectedPost.content)} MIN READ
