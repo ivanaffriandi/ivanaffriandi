@@ -49,6 +49,8 @@ function stripImagesFromHtml(html: string): string {
     .replace(/<\/font>/gi, "")
     .replace(/\s*style="[^"]*"/gi, "")
     .replace(/\s*face="[^"]*"/gi, "")
+    .replace(/\s*color="[^"]*"/gi, "")
+    .replace(/\s*size="[^"]*"/gi, "")
     .replace(/<p[^>]*>\s*(?:&nbsp;|<br\s*\/?>|\s)*<\/p>/gi, "")
     .replace(/<div[^>]*>\s*(?:&nbsp;|<br\s*\/?>|\s)*<\/div>/gi, "")
     .replace(/(<br\s*\/?>\s*){2,}/gi, "<br>")
@@ -1556,13 +1558,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           word-break: break-word;
         }
 
-        /* ── EDITORIAL NOVEL ARTICLE READER (100% CONSISTENT TYPOGRAPHY) ── */
+        /* ── EDITORIAL NOVEL ARTICLE READER (CLEAN, SIMPLE, 100% UNIFORM TYPOGRAPHY) ── */
         .novel-article-reader {
-          font-family: var(--font-lora, var(--font-merriweather, Georgia, "Times New Roman", serif)) !important;
-          font-size: 1.12rem !important;
-          line-height: 1.92 !important;
-          color: inherit !important;
-          letter-spacing: -0.003em !important;
+          font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+          font-size: 1.05rem !important;
+          line-height: 1.85 !important;
+          letter-spacing: -0.012em !important;
           word-break: break-word;
           transition: background 0.2s ease, color 0.2s ease;
         }
@@ -1571,39 +1572,91 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .novel-article-reader div,
         .novel-article-reader span,
         .novel-article-reader li,
-        .novel-article-reader font {
-          font-family: var(--font-lora, var(--font-merriweather, Georgia, "Times New Roman", serif)) !important;
-          font-size: 1.12rem !important;
-          line-height: 1.92 !important;
-          letter-spacing: inherit !important;
-          color: inherit !important;
-          margin-bottom: 1.45rem !important;
+        .novel-article-reader font,
+        .novel-article-reader b,
+        .novel-article-reader strong,
+        .novel-article-reader i,
+        .novel-article-reader em,
+        .novel-article-reader b i,
+        .novel-article-reader strong em,
+        .novel-article-reader i b,
+        .novel-article-reader em strong,
+        .novel-article-reader b span,
+        .novel-article-reader strong span,
+        .novel-article-reader span b,
+        .novel-article-reader span strong,
+        .novel-article-reader span i,
+        .novel-article-reader span em {
+          font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+          font-size: 1.05rem !important;
+          line-height: 1.85 !important;
+          letter-spacing: -0.012em !important;
+          margin-bottom: 1.35rem !important;
         }
 
         .novel-article-reader b,
-        .novel-article-reader strong {
-          font-weight: 750 !important;
-          font-size: inherit !important;
+        .novel-article-reader strong,
+        .novel-article-reader b *,
+        .novel-article-reader strong * {
+          font-weight: 700 !important;
+          font-size: 1.05rem !important;
         }
 
         .novel-article-reader i,
-        .novel-article-reader em {
+        .novel-article-reader em,
+        .novel-article-reader i *,
+        .novel-article-reader em * {
           font-style: italic !important;
-          font-size: inherit !important;
+          font-size: 1.05rem !important;
         }
 
-        /* ── READING THEMES (PAPER, LIGHT, DARK) ── */
+        .novel-article-reader b i,
+        .novel-article-reader strong em,
+        .novel-article-reader i b,
+        .novel-article-reader em strong {
+          font-weight: 700 !important;
+          font-style: italic !important;
+          font-size: 1.05rem !important;
+        }
+
+        /* ── READING THEMES (PAPER, LIGHT, DARK) WITH RIGID CONTRAST RULES ── */
         .pj-right.theme-paper {
           background: #FAF7F0 !important;
           color: #2B2824 !important;
         }
+        .pj-right.theme-paper .novel-article-reader,
+        .pj-right.theme-paper .novel-article-reader *,
+        .pj-right.theme-paper .article-reader-chapter-title-desktop h1,
+        .pj-right.theme-paper .novel-article-reader > p:first-of-type::first-letter,
+        .pj-right.theme-paper .novel-article-reader > div:first-of-type > p:first-of-type::first-letter,
+        .pj-right.theme-paper .novel-article-reader > div:first-of-type::first-letter {
+          color: #2B2824 !important;
+        }
+
         .pj-right.theme-light {
           background: #FFFFFF !important;
           color: #111111 !important;
         }
+        .pj-right.theme-light .novel-article-reader,
+        .pj-right.theme-light .novel-article-reader *,
+        .pj-right.theme-light .article-reader-chapter-title-desktop h1,
+        .pj-right.theme-light .novel-article-reader > p:first-of-type::first-letter,
+        .pj-right.theme-light .novel-article-reader > div:first-of-type > p:first-of-type::first-letter,
+        .pj-right.theme-light .novel-article-reader > div:first-of-type::first-letter {
+          color: #111111 !important;
+        }
+
         .pj-right.theme-dark {
-          background: #141518 !important;
-          color: #E2E2E6 !important;
+          background: #121316 !important;
+          color: #EDEDF0 !important;
+        }
+        .pj-right.theme-dark .novel-article-reader,
+        .pj-right.theme-dark .novel-article-reader *,
+        .pj-right.theme-dark .article-reader-chapter-title-desktop h1,
+        .pj-right.theme-dark .novel-article-reader > p:first-of-type::first-letter,
+        .pj-right.theme-dark .novel-article-reader > div:first-of-type > p:first-of-type::first-letter,
+        .pj-right.theme-dark .novel-article-reader > div:first-of-type::first-letter {
+          color: #EDEDF0 !important;
         }
 
         .novel-article-reader blockquote {
@@ -2642,9 +2695,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               <button
                 type="button"
                 onClick={() => {
+                  window.scrollTo({ top: 0, behavior: "instant" });
                   setIsReadingPrologue(false);
                   setSelectedPostIndex(null);
-                  window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
                 className="mobile-home-btn"
                 title="Back to Journal Deck"
