@@ -2285,47 +2285,60 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 0.35rem !important;
-            height: 32px !important;
+            gap: 0.4rem !important;
+            height: 38px !important;
+            min-height: 38px !important;
+            min-width: 44px !important;
             box-sizing: border-box !important;
-            background: rgba(0, 0, 0, 0.45) !important;
-            backdrop-filter: blur(14px) !important;
-            -webkit-backdrop-filter: blur(14px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.22) !important;
+            background: rgba(0, 0, 0, 0.6) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
             color: #FFFFFF !important;
-            font-size: 0.62rem !important;
+            font-size: 0.68rem !important;
             font-weight: 800 !important;
             letter-spacing: 0.08em !important;
             text-transform: uppercase !important;
-            padding: 0 0.85rem !important;
+            padding: 0 1.05rem !important;
             border-radius: 9999px !important;
             text-decoration: none !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
             line-height: 1 !important;
+            cursor: pointer !important;
+            touch-action: manipulation !important;
+            -webkit-tap-highlight-color: transparent !important;
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            z-index: 100 !important;
+            position: relative !important;
+          }
+
+          .mobile-home-btn:active {
+            transform: scale(0.94) !important;
+            background: rgba(0, 0, 0, 0.8) !important;
           }
 
           .mobile-prologue-btn {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 0.32rem !important;
-            height: 32px !important;
+            gap: 0.35rem !important;
+            height: 38px !important;
+            min-height: 38px !important;
             box-sizing: border-box !important;
-            background: rgba(0, 0, 0, 0.45) !important;
-            backdrop-filter: blur(14px) !important;
-            -webkit-backdrop-filter: blur(14px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.22) !important;
+            background: rgba(0, 0, 0, 0.6) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
             color: #FFFFFF !important;
-            font-size: 0.62rem !important;
+            font-size: 0.68rem !important;
             font-weight: 800 !important;
             letter-spacing: 0.08em !important;
-            text-transform: uppercase !important;
-            padding: 0 0.82rem !important;
+            padding: 0 0.95rem !important;
             border-radius: 9999px !important;
-            text-decoration: none !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
-            cursor: pointer !important;
-            line-height: 1 !important;
+            touch-action: manipulation !important;
+            -webkit-tap-highlight-color: transparent !important;
+            text-transform: uppercase !important;
           }
 
           .mobile-search-btn {
@@ -2776,16 +2789,26 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             {selectedPost || isReadingPrologue ? (
               <button
                 type="button"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.scrollTo({ top: 0, behavior: "instant" });
+                  setIsReadingPrologue(false);
+                  setSelectedPostIndex(null);
+                }}
+                onTouchStart={(e) => {
+                  e.stopPropagation();
+                }}
+                onTouchEnd={(e) => {
+                  e.stopPropagation();
                   window.scrollTo({ top: 0, behavior: "instant" });
                   setIsReadingPrologue(false);
                   setSelectedPostIndex(null);
                 }}
                 className="mobile-home-btn"
                 title="Back to Journal Deck"
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", touchAction: "manipulation" }}
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="15 18 9 12 15 6" />
                 </svg>
                 <span>JOURNAL</span>
@@ -3022,24 +3045,35 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     setSelectedPostIndex(selectedPostIndex + 1);
                   }
                 }}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => {
+                  e.stopPropagation();
+                  if (selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1) {
+                    setSelectedPostIndex(selectedPostIndex + 1);
+                  }
+                }}
                 title="Previous Chapter"
                 style={{
-                  width: "36px",
-                  height: "36px",
+                  width: "42px",
+                  height: "42px",
                   borderRadius: "50%",
-                  background: "rgba(255, 255, 255, 0.14)",
-                  backdropFilter: "blur(12px)",
-                  WebkitBackdropFilter: "blur(12px)",
-                  border: "1px solid rgba(255, 255, 255, 0.22)",
+                  background: "rgba(0, 0, 0, 0.5)",
+                  backdropFilter: "blur(14px)",
+                  WebkitBackdropFilter: "blur(14px)",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? "#fff" : "rgba(255,255,255,0.3)",
                   cursor: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? "pointer" : "default",
-                  transition: "all 0.2s ease",
+                  transition: "all 0.15s ease",
+                  touchAction: "manipulation",
+                  WebkitTapHighlightColor: "transparent",
+                  userSelect: "none",
+                  WebkitUserSelect: "none",
                 }}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6">
                   <polyline points="15 18 9 12 15 6" />
                 </svg>
               </button>
@@ -3053,24 +3087,35 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     setSelectedPostIndex(selectedPostIndex - 1);
                   }
                 }}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => {
+                  e.stopPropagation();
+                  if (selectedPostIndex !== null && selectedPostIndex > 0) {
+                    setSelectedPostIndex(selectedPostIndex - 1);
+                  }
+                }}
                 title="Next Chapter"
                 style={{
-                  width: "36px",
-                  height: "36px",
+                  width: "42px",
+                  height: "42px",
                   borderRadius: "50%",
-                  background: "rgba(255, 255, 255, 0.14)",
-                  backdropFilter: "blur(12px)",
-                  WebkitBackdropFilter: "blur(12px)",
-                  border: "1px solid rgba(255, 255, 255, 0.22)",
+                  background: "rgba(0, 0, 0, 0.5)",
+                  backdropFilter: "blur(14px)",
+                  WebkitBackdropFilter: "blur(14px)",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: selectedPostIndex !== null && selectedPostIndex > 0 ? "#fff" : "rgba(255,255,255,0.3)",
                   cursor: selectedPostIndex !== null && selectedPostIndex > 0 ? "pointer" : "default",
-                  transition: "all 0.2s ease",
+                  transition: "all 0.15s ease",
+                  touchAction: "manipulation",
+                  WebkitTapHighlightColor: "transparent",
+                  userSelect: "none",
+                  WebkitUserSelect: "none",
                 }}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6">
                   <polyline points="9 18 15 12 9 6" />
                 </svg>
               </button>
@@ -3082,10 +3127,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 position: "absolute",
                 bottom: "1.5rem",
                 right: "1.5rem",
-                zIndex: 10,
+                zIndex: 50,
                 display: "flex",
                 alignItems: "center",
-                gap: "0.45rem",
+                gap: "0.55rem",
               }}
             >
               {/* PREVIOUS STORY DECK BUTTON */}
@@ -3094,24 +3139,33 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   e.stopPropagation();
                   setHeroIndex((prev) => (prev > 0 ? prev - 1 : flipboardCards.length - 1));
                 }}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => {
+                  e.stopPropagation();
+                  setHeroIndex((prev) => (prev > 0 ? prev - 1 : flipboardCards.length - 1));
+                }}
                 title="Previous Story"
                 style={{
-                  width: "36px",
-                  height: "36px",
+                  width: "42px",
+                  height: "42px",
                   borderRadius: "50%",
-                  background: "rgba(255, 255, 255, 0.14)",
-                  backdropFilter: "blur(12px)",
-                  WebkitBackdropFilter: "blur(12px)",
-                  border: "1px solid rgba(255, 255, 255, 0.22)",
+                  background: "rgba(0, 0, 0, 0.55)",
+                  backdropFilter: "blur(14px)",
+                  WebkitBackdropFilter: "blur(14px)",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: "#ffffff",
                   cursor: "pointer",
-                  transition: "all 0.2s ease",
+                  transition: "all 0.15s ease",
+                  touchAction: "manipulation",
+                  WebkitTapHighlightColor: "transparent",
+                  userSelect: "none",
+                  WebkitUserSelect: "none",
                 }}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6">
                   <polyline points="15 18 9 12 15 6" />
                 </svg>
               </button>
@@ -3122,24 +3176,33 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   e.stopPropagation();
                   setHeroIndex((prev) => (prev < flipboardCards.length - 1 ? prev + 1 : 0));
                 }}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => {
+                  e.stopPropagation();
+                  setHeroIndex((prev) => (prev < flipboardCards.length - 1 ? prev + 1 : 0));
+                }}
                 title="Next Story"
                 style={{
-                  width: "36px",
-                  height: "36px",
+                  width: "42px",
+                  height: "42px",
                   borderRadius: "50%",
-                  background: "rgba(255, 255, 255, 0.14)",
-                  backdropFilter: "blur(12px)",
-                  WebkitBackdropFilter: "blur(12px)",
-                  border: "1px solid rgba(255, 255, 255, 0.22)",
+                  background: "rgba(0, 0, 0, 0.55)",
+                  backdropFilter: "blur(14px)",
+                  WebkitBackdropFilter: "blur(14px)",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: "#ffffff",
                   cursor: "pointer",
-                  transition: "all 0.2s ease",
+                  transition: "all 0.15s ease",
+                  touchAction: "manipulation",
+                  WebkitTapHighlightColor: "transparent",
+                  userSelect: "none",
+                  WebkitUserSelect: "none",
                 }}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6">
                   <polyline points="9 18 15 12 9 6" />
                 </svg>
               </button>
