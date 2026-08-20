@@ -177,12 +177,12 @@ export default function WorkIvanPortfolioPage() {
               style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
             >
               {activeTab === 'about' ? (
-                <div className={styles.aboutHeroWithLeftPhoto}>
+                <div className={styles.aboutHeroHeader}>
                   <div className={styles.aboutHeroPhotoAndNameRow}>
                     <img
                       src="/ivan-head.png"
                       alt="Affriandi, Ivan"
-                      className={styles.aboutHeroBigPortrait}
+                      className={styles.aboutHeroPortrait}
                     />
                     <h1 className={styles.mainTitleHeading} style={{ margin: 0 }}>
                       <span className={styles.nameLineBreak}>Affriandi,</span>
@@ -190,26 +190,24 @@ export default function WorkIvanPortfolioPage() {
                     </h1>
                   </div>
 
-                  <div className={styles.aboutHeroRightStack}>
-                    <p className={styles.narrativeParagraph}>
-                      {current.narrative}
-                    </p>
+                  <p className={styles.narrativeParagraph}>
+                    {current.narrative}
+                  </p>
 
-                    <div className={styles.aboutHeroMetaStrip}>
-                      <div className={styles.metaItemCluster}>
-                        <span className={styles.metaLabel}>Timeline</span>
-                        <span className={styles.metaValue}>{current.duration}</span>
-                      </div>
+                  <div className={styles.aboutHeroMetaStrip}>
+                    <div className={styles.metaItemCluster}>
+                      <span className={styles.metaLabel}>Timeline</span>
+                      <span className={styles.metaValue}>{current.duration}</span>
+                    </div>
 
-                      <div className={styles.metaItemCluster}>
-                        <span className={styles.metaLabel}>Focus</span>
-                        <span className={styles.metaValue}>{current.client}</span>
-                      </div>
+                    <div className={styles.metaItemCluster}>
+                      <span className={styles.metaLabel}>Focus</span>
+                      <span className={styles.metaValue}>{current.client}</span>
+                    </div>
 
-                      <div className={styles.metaItemCluster}>
-                        <span className={styles.metaLabel}>Output</span>
-                        <span className={styles.metaValue}>{current.artDirection}</span>
-                      </div>
+                    <div className={styles.metaItemCluster}>
+                      <span className={styles.metaLabel}>Output</span>
+                      <span className={styles.metaValue}>{current.artDirection}</span>
                     </div>
                   </div>
                 </div>

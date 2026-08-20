@@ -47,6 +47,9 @@
 .headerCol1 {
   grid-column: 1 / 2;
   display: flex;
+  align-items: center;
+}
+
 .mobileLiveClock {
   display: none;
 }
@@ -151,13 +154,15 @@
   grid-column: 3 / 4;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 16px;
 }
 
 .locationOnlyText {
   font-size: 11.5px;
   font-weight: 500;
   color: #777777;
+  white-space: nowrap;
 }
 
 .liveClockHeader {
@@ -165,6 +170,7 @@
   font-weight: 700;
   font-family: ui-monospace, SFMono-Regular, monospace;
   color: #111111;
+  white-space: nowrap;
 }
 
 /* ── ROW 2: HERO TITLE & NARRATIVE (EXACT INDENT AT COL 2) ── */
@@ -579,46 +585,50 @@
   letter-spacing: 0.5px;
 }
 
-/* ── ABOUT HERO WITH LEFT PHOTO (PORTRAIT CENTERED BETWEEN "→ ABOUT" & CONTENT) ── */
-.aboutHeroWithLeftPhoto {
+/* ── ABOUT HERO HEADER & PORTRAIT (DESKTOP & MOBILE) ── */
+.aboutHeroHeader {
   display: flex;
-  align-items: center;
-  gap: 32px;
+  flex-direction: column;
+  gap: 16px;
   width: 100%;
-  margin-left: -220px;
 }
 
 .aboutHeroPhotoAndNameRow {
-  display: contents;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.aboutHeroPortrait {
+  width: 52px;
+  height: 52px;
+  max-width: 52px;
+  max-height: 52px;
+  object-fit: contain;
+  flex-shrink: 0;
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  display: block;
 }
 
 .nameLineBreak {
   display: inline;
+  margin-right: 0.3em;
 }
 
-@media (max-width: 1250px) {
-  .aboutHeroWithLeftPhoto {
-    margin-left: -150px;
-    gap: 24px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .aboutHeroWithLeftPhoto {
-    margin-left: -60px;
-    gap: 20px;
-  }
+.aboutHeroMetaStrip {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  padding-top: 14px;
+  margin-top: 4px;
+  border-top: 1px solid #f2f2f4;
+  flex-wrap: wrap;
 }
 
 @media (max-width: 860px) {
-  .aboutHeroWithLeftPhoto {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 14px !important;
-    margin-left: 0 !important;
-    width: 100% !important;
-  }
-
   .aboutHeroPhotoAndNameRow {
     display: flex !important;
     align-items: center !important;
@@ -626,21 +636,20 @@
     width: 100% !important;
   }
 
-  .aboutHeroBigPortrait {
-    width: 74px !important;
-    height: 74px !important;
-    max-width: 74px !important;
-    max-height: 74px !important;
+  .aboutHeroPortrait {
+    width: 72px !important;
+    height: 72px !important;
+    max-width: 72px !important;
+    max-height: 72px !important;
     object-fit: contain !important;
     flex-shrink: 0 !important;
-    margin: 0 !important;
   }
 
   .aboutHeroPhotoAndNameRow .mainTitleHeading {
-    font-size: 31px !important;
-    font-weight: 600 !important;
-    line-height: 1.15 !important;
-    letter-spacing: -0.03em !important;
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    line-height: 1.18 !important;
+    letter-spacing: -0.025em !important;
     color: #111111 !important;
     margin: 0 !important;
     display: flex !important;
@@ -651,38 +660,8 @@
   .nameLineBreak {
     display: block !important;
     white-space: nowrap !important;
+    margin-right: 0 !important;
   }
-}
-
-.aboutHeroBigPortrait {
-  width: 175px;
-  height: 175px;
-  max-width: 175px;
-  max-height: 175px;
-  object-fit: contain;
-  flex-shrink: 0;
-  border-radius: 0 !important;
-  border: none !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  display: block;
-}
-
-.aboutHeroRightStack {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  flex: 1;
-}
-
-.aboutHeroMetaStrip {
-  display: flex;
-  align-items: center;
-  gap: 36px;
-  padding-top: 14px;
-  margin-top: 2px;
-  border-top: 1px solid #f2f2f4;
-  flex-wrap: wrap;
 }
 
 /* 3. PROCESS, ABOUT & ARCHIVE TAB BLOCKS (SPANS FULL 3-COLUMN WIDTH) */

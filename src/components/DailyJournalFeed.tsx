@@ -53,20 +53,21 @@ function formatBloggerArticleHtml(html: string): string {
     .replace(/\s*size="[^"]*"/gi, "")
     .replace(/<p[^>]*>\s*(?:&nbsp;|<br\s*\/?>|\s)*<\/p>/gi, "")
     .replace(/<div[^>]*>\s*(?:&nbsp;|<br\s*\/?>|\s)*<\/div>/gi, "")
-    .replace(/(<br\s*\/?>\s*){2,}/gi, "<br>")
+    .replace(/(<br\s*\/?>[\s]*){2,}/gi, "<br>")
     .trim();
 
   // Strip leading empty tags / whitespace
   clean = clean.replace(/^(\s*<br\s*\/?>|\s*&nbsp;|\s*)+/gi, "").trim();
 
-  // Ensure first paragraph gets novel-drop-cap class for guaranteed bold initial letter
-  if (clean.startsWith("<p")) {
-    clean = clean.replace(/<p([^>]*)>/i, '<p class="novel-drop-cap"$1>');
-  } else if (!clean.startsWith("<div") && !clean.startsWith("<h")) {
-    clean = `<p class="novel-drop-cap">${clean}</p>`;
-  } else if (clean.startsWith("<div")) {
-    clean = clean.replace(/<div([^>]*)>/i, '<div class="novel-drop-cap"$1>');
-  }
+  // Inject drop-cap ONLY on the first letter of the first real <p> paragraph.
+  // We wrap just that first letter in a <span class="novel-drop-cap-letter">.
+  // This avoids CSS ::first-letter accidentally matching other elements.
+  clean = clean.replace(
+    /(<p[^>]*>)([\s]*)([A-Za-zÀ-ÖØ-öø-ÿ\u00C0-\u017F"])/,
+    (match, pTag, spaces, firstChar) =>
+      `${pTag}${spaces}<span class="novel-drop-cap-letter">${firstChar}</span>`
+  );
+
   return clean;
 }
 
@@ -1095,8 +1096,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           color: #222222 !important;
         }
 
-        .pj-right.fit-screen .novel-drop-cap::first-letter,
-        .novel-drop-cap::first-letter {
+        .pj-right.fit-screen .novel-drop-cap-letter,
+        .novel-drop-cap-letter {
           color: #000000 !important;
           opacity: 1;
         }
@@ -1735,11 +1736,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           font-size: 100% !important;
         }
 
-        /* ── UNIVERSAL GUARANTEED DROP-CAP ── */
-        .novel-drop-cap::first-letter,
-        .novel-article-reader > p:first-of-type::first-letter,
-        .novel-article-reader > div:first-of-type::first-letter,
-        .novel-article-reader > div:first-of-type > p:first-of-type::first-letter {
+        /* ── UNIVERSAL GUARANTEED DROP-CAP (targets injected span only) ── */
+        .novel-drop-cap-letter {
           font-size: 3.5rem !important;
           line-height: 0.82 !important;
           float: left !important;
@@ -1758,10 +1756,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .pj-right.theme-paper .novel-article-reader,
         .pj-right.theme-paper .novel-article-reader *,
         .pj-right.theme-paper .article-reader-chapter-title-desktop h1,
-        .pj-right.theme-paper .novel-article-reader > p:first-of-type::first-letter,
-        .pj-right.theme-paper .novel-article-reader > div:first-of-type > p:first-of-type::first-letter,
-        .pj-right.theme-paper .novel-article-reader > div:first-of-type::first-letter,
-        .pj-right.theme-paper .novel-drop-cap::first-letter {
+        .pj-right.theme-paper .novel-drop-cap-letter {
           color: #2B2824 !important;
         }
 
@@ -1772,10 +1767,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .pj-right.theme-light .novel-article-reader,
         .pj-right.theme-light .novel-article-reader *,
         .pj-right.theme-light .article-reader-chapter-title-desktop h1,
-        .pj-right.theme-light .novel-article-reader > p:first-of-type::first-letter,
-        .pj-right.theme-light .novel-article-reader > div:first-of-type > p:first-of-type::first-letter,
-        .pj-right.theme-light .novel-article-reader > div:first-of-type::first-letter,
-        .pj-right.theme-light .novel-drop-cap::first-letter {
+        .pj-right.theme-light .novel-drop-cap-letter {
           color: #111111 !important;
         }
 
@@ -1786,10 +1778,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .pj-right.theme-dark .novel-article-reader,
         .pj-right.theme-dark .novel-article-reader *,
         .pj-right.theme-dark .article-reader-chapter-title-desktop h1,
-        .pj-right.theme-dark .novel-article-reader > p:first-of-type::first-letter,
-        .pj-right.theme-dark .novel-article-reader > div:first-of-type > p:first-of-type::first-letter,
-        .pj-right.theme-dark .novel-article-reader > div:first-of-type::first-letter,
-        .pj-right.theme-dark .novel-drop-cap::first-letter {
+        .pj-right.theme-dark .novel-drop-cap-letter {
           color: #EDEDF0 !important;
         }
 
@@ -2078,16 +2067,17 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
 
         /* STUNNING LITERARY DROP CAP ON FIRST LETTER */
-        .novel-drop-cap::first-letter {
+        .novel-drop-cap-letter {
           font-family: var(--font-serif, Georgia, serif);
-          font-size: 2.9rem;
+          font-size: 3.5rem;
           float: left;
           line-height: 0.82;
           margin-right: 0.55rem;
           margin-top: 0.12rem;
-          font-weight: 400;
+          font-weight: 700;
           color: var(--text-primary, #111111);
-          font-style: italic;
+          text-transform: uppercase;
+          display: block;
         }
 
         /* ── ULTRA-AESTHETIC EDITORIAL ABOUT PAGE ── */
@@ -2800,13 +2790,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             color: var(--text-primary) !important;
           }
 
-          .novel-drop-cap::first-letter {
-            font-size: 2.9rem !important;
+          .novel-drop-cap-letter {
+            font-size: 3.5rem !important;
             line-height: 0.85 !important;
             margin-right: 0.45rem !important;
             float: left !important;
             font-family: var(--font-playfair, Georgia, serif) !important;
             font-weight: 700 !important;
+            text-transform: uppercase !important;
+            display: block !important;
           }
 
           /* ── iMESSAGE BUBBLES ── */
@@ -3629,19 +3621,26 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           width: "28px",
                           height: "28px",
                           borderRadius: "50%",
-                          border: "none",
-                          background: "transparent",
+                          border: readerTheme === "dark" 
+                            ? "1px solid rgba(255,255,255,0.15)" 
+                            : (readerTheme === "paper" ? "1px solid #D4CEBF" : "1px solid rgba(0,0,0,0.12)"),
+                          background: readerTheme === "dark"
+                            ? "rgba(255,255,255,0.1)"
+                            : (readerTheme === "paper" ? "#EFECE1" : "#F0F0F2"),
                           display: "inline-flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          color: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? (readerTheme === "dark" ? "#FFFFFF" : "#111111") : (readerTheme === "dark" ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.22)"),
-                          cursor: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? "pointer" : "default",
+                          color: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 
+                            ? (readerTheme === "dark" ? "#FFFFFF" : (readerTheme === "paper" ? "#2C2A26" : "#111111")) 
+                            : (readerTheme === "dark" ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.25)"),
+                          opacity: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? 1 : 0.45,
+                          cursor: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? "pointer" : "not-allowed",
                           transition: "all 0.15s ease",
                           padding: 0,
                           touchAction: "manipulation",
                         }}
                       >
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
                           <polyline points="15 18 9 12 15 6" />
                         </svg>
                       </button>
@@ -3660,19 +3659,26 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           width: "28px",
                           height: "28px",
                           borderRadius: "50%",
-                          border: "none",
-                          background: "transparent",
+                          border: readerTheme === "dark" 
+                            ? "1px solid rgba(255,255,255,0.15)" 
+                            : (readerTheme === "paper" ? "1px solid #D4CEBF" : "1px solid rgba(0,0,0,0.12)"),
+                          background: readerTheme === "dark"
+                            ? "rgba(255,255,255,0.1)"
+                            : (readerTheme === "paper" ? "#EFECE1" : "#F0F0F2"),
                           display: "inline-flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          color: selectedPostIndex !== null && selectedPostIndex > 0 ? (readerTheme === "dark" ? "#FFFFFF" : "#111111") : (readerTheme === "dark" ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.22)"),
-                          cursor: selectedPostIndex !== null && selectedPostIndex > 0 ? "pointer" : "default",
+                          color: selectedPostIndex !== null && selectedPostIndex > 0 
+                            ? (readerTheme === "dark" ? "#FFFFFF" : (readerTheme === "paper" ? "#2C2A26" : "#111111")) 
+                            : (readerTheme === "dark" ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.25)"),
+                          opacity: selectedPostIndex !== null && selectedPostIndex > 0 ? 1 : 0.45,
+                          cursor: selectedPostIndex !== null && selectedPostIndex > 0 ? "pointer" : "not-allowed",
                           transition: "all 0.15s ease",
                           padding: 0,
                           touchAction: "manipulation",
                         }}
                       >
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
                           <polyline points="9 18 15 12 9 6" />
                         </svg>
                       </button>

@@ -51,6 +51,34 @@ async def get_or_create_mailbox(db: AsyncSession, user_id: uuid.UUID, box_type: 
         await db.flush()
     return box
 
+@router.get("/track/{tracking_token}")
+async def track_message_open(
+    tracking_token: str,
+    db: AsyncSession = Depends(get_db)
+):
+    """Records email read receipt when recipient opens the email."""
+    # 1x1 transparent GIF bytes
+    GIF_1X1 = b'GIF89a\x01\x00\x01\x00\x80\x00\x00\xff\xff\xff\x00\x00\x00!\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;'
+    if tracking_token:
+        stmt = select(Message).where(Message.tracking_token == tracking_token)
+        res = await db.execute(stmt)
+        msg = res.scalar_one_or_none()
+        if msg:
+            msg.is_opened = True
+            msg.open_count = (msg.open_count or 0) + 1
+            if not msg.opened_at:
+                msg.opened_at = datetime.now(timezone.utc)
+            await db.commit()
+    return Response(
+        content=GIF_1X1,
+        media_type="image/gif",
+        headers={
+            "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0, proxy-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0"
+        }
+    )
+
 @router.get("", response_model=List[MessageSummary])
 async def list_messages(
     folder_id: Optional[str] = None,
