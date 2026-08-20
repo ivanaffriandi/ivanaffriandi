@@ -2543,11 +2543,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           }
 
           body.pj-reader-mode {
+            overflow-x: hidden !important;
             overflow-y: auto !important;
             -webkit-overflow-scrolling: touch !important;
             touch-action: pan-y !important;
             overscroll-behavior-y: auto !important;
             background-color: var(--bg-color, #FFFFFF) !important;
+            height: auto !important;
+            min-height: 100vh !important;
+            min-height: 100dvh !important;
           }
 
           /* ── ROOT LAYOUT (IMMERSIVE LOCKED CARD DECK ON MOBILE OVERVIEW) ── */
@@ -2573,15 +2577,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           .pj-root.has-selected-post {
             display: block !important;
             position: relative !important;
-            width: 100vw !important;
+            width: 100% !important;
             max-width: 100vw !important;
             height: auto !important;
-            min-height: 100vh !important;
-            min-height: 100dvh !important;
-            overflow-x: hidden !important;
-            overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch !important;
-            overscroll-behavior-y: auto !important;
+            min-height: auto !important;
+            overflow: visible !important;
             background: var(--bg-color, #FFFFFF) !important;
           }
 
@@ -2634,17 +2634,16 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             top: auto !important;
             left: auto !important;
             right: auto !important;
-            width: 100vw !important;
-            max-width: 100vw !important;
+            width: 100% !important;
+            max-width: 100% !important;
             max-height: none !important;
             height: auto !important;
-            min-height: 50vh !important;
+            min-height: auto !important;
             border-radius: 0 !important;
-            overflow-x: hidden !important;
-            overflow-y: visible !important;
+            overflow: visible !important;
             box-sizing: border-box !important;
             z-index: 1 !important;
-            padding: 1.8rem 1.25rem calc(env(safe-area-inset-bottom, 24px) + 120px) !important;
+            padding: 1.8rem 1.25rem calc(env(safe-area-inset-bottom, 24px) + 80px) !important;
             box-shadow: none !important;
           }
 
