@@ -413,6 +413,25 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     }
   }, [selectedPostIndex, isReadingPrologue]);
 
+  // Lock mobile body scroll during overview card deck to prevent accidental page scroll underneath
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const isMobile = window.innerWidth <= 860;
+    if (isMobile) {
+      if (!selectedPost && !isReadingPrologue) {
+        document.body.style.overflow = "hidden";
+        document.documentElement.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+        document.documentElement.style.overflow = "auto";
+      }
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [selectedPost, isReadingPrologue]);
+
   // Track article reading scroll progress
   useEffect(() => {
     if (!selectedPost && !isReadingPrologue) {
@@ -2415,7 +2434,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: block !important;
           }
 
-          /* ── ROOT LAYOUT (IMMERSIVE CARD DECK ON MOBILE OVERVIEW) ── */
+          html, body {
+            background-color: #0c0d0e !important;
+            overscroll-behavior-y: none !important;
+          }
+
+          /* ── ROOT LAYOUT (IMMERSIVE LOCKED CARD DECK ON MOBILE OVERVIEW) ── */
           .pj-root {
             display: flex !important;
             flex-direction: column !important;
@@ -2430,7 +2454,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             padding: 0 !important;
             margin: 0 !important;
             background: #0c0d0e !important;
-            -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-x !important;
+            overscroll-behavior: none !important;
+            -webkit-overflow-scrolling: auto !important;
           }
 
           /* When reading an article or prologue, allow vertical scrolling with smooth transition */
@@ -2440,6 +2466,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             min-height: 100vh !important;
             min-height: 100dvh !important;
             overflow-y: auto !important;
+            touch-action: pan-y !important;
+            overscroll-behavior-y: auto !important;
             background: var(--bg-color, #FFFFFF) !important;
           }
 
