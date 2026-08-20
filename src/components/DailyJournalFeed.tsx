@@ -403,6 +403,87 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     return extracted.length > 0 ? extracted : [fallbackHero];
   }, [isReadingPrologue, selectedPost, fallbackHero]);
 
+  // Real-time Like state per post
+  const [likesMap, setLikesMap] = useState<Record<string, { count: number; hasLiked: boolean }>>({});
+  const [isLiking, setIsLiking] = useState<boolean>(false);
+
+  const activePostId = isReadingPrologue ? "prologue" : selectedPost?.id ? String(selectedPost.id) : null;
+
+  useEffect(() => {
+    if (!activePostId) return;
+
+    // Instant local cache check
+    const localLiked = typeof window !== "undefined" && localStorage.getItem(`post_liked_${activePostId}`) === "true";
+    if (localLiked && !likesMap[activePostId]?.hasLiked) {
+      setLikesMap((prev) => ({
+        ...prev,
+        [activePostId]: {
+          count: prev[activePostId]?.count || 1,
+          hasLiked: true,
+        },
+      }));
+    }
+
+    // Fetch real-time count & status from API
+    fetch(`/api/likes?postId=${encodeURIComponent(activePostId)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && typeof data.count === "number") {
+          setLikesMap((prev) => ({
+            ...prev,
+            [activePostId]: {
+              count: data.count,
+              hasLiked: data.hasLiked || localLiked,
+            },
+          }));
+        }
+      })
+      .catch((err) => console.error("Error fetching likes:", err));
+  }, [activePostId]);
+
+  const handleToggleLike = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!activePostId || isLiking) return;
+
+    const current = likesMap[activePostId] || { count: 0, hasLiked: false };
+    const nextHasLiked = !current.hasLiked;
+    const nextCount = Math.max(0, current.count + (nextHasLiked ? 1 : -1));
+
+    // Optimistic UI update
+    setLikesMap((prev) => ({
+      ...prev,
+      [activePostId]: { count: nextCount, hasLiked: nextHasLiked },
+    }));
+
+    if (typeof window !== "undefined") {
+      if (nextHasLiked) {
+        localStorage.setItem(`post_liked_${activePostId}`, "true");
+      } else {
+        localStorage.removeItem(`post_liked_${activePostId}`);
+      }
+    }
+
+    setIsLiking(true);
+    try {
+      const res = await fetch("/api/likes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postId: activePostId }),
+      });
+      const data = await res.json();
+      if (data && typeof data.count === "number") {
+        setLikesMap((prev) => ({
+          ...prev,
+          [activePostId]: { count: data.count, hasLiked: data.hasLiked },
+        }));
+      }
+    } catch (err) {
+      console.error("Error toggling like:", err);
+    } finally {
+      setIsLiking(false);
+    }
+  };
+
   useEffect(() => {
     setPostPhotoIndex(0);
     setReadingProgress(0);
@@ -2378,28 +2459,18 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           .desktop-prologue-wrap {
             display: none !important;
           }
-          .mobile-overview-footer {
-            display: flex !important;
-            align-items: center;
-            font-size: 0.58rem;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.45);
-            margin-top: 0.9rem;
-          }
           .mobile-reader-footer {
             display: flex !important;
             justify-content: center;
             align-items: center;
             width: 100%;
-            font-size: 0.6rem;
+            font-size: 0.58rem;
             font-weight: 700;
             letter-spacing: 0.12em;
             text-transform: uppercase;
             color: var(--text-muted, #888888);
-            padding: 1.5rem 1rem calc(env(safe-area-inset-bottom, 24px) + 2rem) 1rem !important;
-            margin-top: 1.2rem !important;
+            padding: 0.45rem 1rem calc(env(safe-area-inset-bottom, 20px) + 1.2rem) 1rem !important;
+            margin-top: 0.25rem !important;
             box-sizing: border-box !important;
           }
           /* ── MOBILE TRANSPARENT TOP HEADER (STICKY FLOATING NAVBAR) ── */
@@ -3201,12 +3272,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               </div>
             ) : null}
 
-            {/* ── MOBILE ONLY OVERVIEW 1-LINE FOOTER ── */}
-            {!selectedPost && !isReadingPrologue ? (
-              <div className="mobile-overview-footer">
-                <span>© {new Date().getFullYear()} IVAN AFFRIANDI</span>
-              </div>
-            ) : null}
+            {/* Mobile Overview: Clean & minimal without footer */}
           </div>
 
           {!selectedPost && !isReadingPrologue ? (
@@ -3430,23 +3496,55 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         flexShrink: 0,
                       }}
                     >
-                      {/* READING TIME BADGE */}
-                      <span
+                      {/* REAL-TIME LIKE BUTTON (ICON ONLY WITH HEART PULSE) */}
+                      <button
+                        onClick={handleToggleLike}
+                        title={likesMap[activePostId || ""]?.hasLiked ? "Unlike" : "Like"}
+                        aria-label="Like"
                         style={{
-                          fontSize: "0.62rem",
-                          fontWeight: 800,
-                          letterSpacing: "0.08em",
-                          textTransform: "uppercase",
-                          color: readerTheme === "dark" ? "#FFFFFF" : "#111111",
-                          background: readerTheme === "dark" ? "rgba(255,255,255,0.14)" : "rgba(0,0,0,0.06)",
-                          padding: "0.22rem 0.65rem",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "0.3rem",
+                          height: "26px",
+                          padding: "0 0.55rem",
                           borderRadius: "9999px",
-                          whiteSpace: "nowrap",
-                          border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.18)" : "1px solid rgba(0,0,0,0.1)",
+                          cursor: "pointer",
+                          transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                          border: likesMap[activePostId || ""]?.hasLiked
+                            ? "1px solid rgba(255, 45, 85, 0.5)"
+                            : (readerTheme === "dark" ? "1px solid rgba(255,255,255,0.22)" : "1px solid rgba(0,0,0,0.14)"),
+                          background: likesMap[activePostId || ""]?.hasLiked
+                            ? (readerTheme === "dark" ? "rgba(255, 45, 85, 0.22)" : "rgba(255, 45, 85, 0.12)")
+                            : (readerTheme === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.06)"),
+                          color: likesMap[activePostId || ""]?.hasLiked
+                            ? "#FF2D55"
+                            : (readerTheme === "dark" ? "#FFFFFF" : "#111111"),
+                          transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.04)" : "scale(1)",
                         }}
                       >
-                        PROLOGUE · 2 MIN READ
-                      </span>
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill={likesMap[activePostId || ""]?.hasLiked ? "currentColor" : "none"}
+                          stroke="currentColor"
+                          strokeWidth="2.4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          style={{
+                            transition: "transform 0.2s ease",
+                            transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.15)" : "scale(1)",
+                          }}
+                        >
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                        </svg>
+                        {likesMap[activePostId || ""]?.count && likesMap[activePostId || ""]!.count > 0 ? (
+                          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.02em" }}>
+                            {likesMap[activePostId || ""]!.count}
+                          </span>
+                        ) : null}
+                      </button>
 
                       <div style={{ width: "1px", height: "12px", background: readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "var(--border-subtle, rgba(125,125,125,0.18))" }} />
 
@@ -3705,23 +3803,55 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
                       <div style={{ width: "1px", height: "12px", background: readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "var(--border-subtle, rgba(125,125,125,0.18))" }} />
 
-                      {/* READING TIME BADGE */}
-                      <span
+                      {/* REAL-TIME LIKE BUTTON (ICON ONLY WITH HEART PULSE) */}
+                      <button
+                        onClick={handleToggleLike}
+                        title={likesMap[activePostId || ""]?.hasLiked ? "Unlike" : "Like"}
+                        aria-label="Like"
                         style={{
-                          fontSize: "0.62rem",
-                          fontWeight: 800,
-                          letterSpacing: "0.08em",
-                          textTransform: "uppercase",
-                          color: readerTheme === "dark" ? "#FFFFFF" : "#111111",
-                          background: readerTheme === "dark" ? "rgba(255,255,255,0.14)" : "rgba(0,0,0,0.06)",
-                          padding: "0.22rem 0.65rem",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "0.3rem",
+                          height: "26px",
+                          padding: "0 0.55rem",
                           borderRadius: "9999px",
-                          whiteSpace: "nowrap",
-                          border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.18)" : "1px solid rgba(0,0,0,0.1)",
+                          cursor: "pointer",
+                          transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                          border: likesMap[activePostId || ""]?.hasLiked
+                            ? "1px solid rgba(255, 45, 85, 0.5)"
+                            : (readerTheme === "dark" ? "1px solid rgba(255,255,255,0.22)" : "1px solid rgba(0,0,0,0.14)"),
+                          background: likesMap[activePostId || ""]?.hasLiked
+                            ? (readerTheme === "dark" ? "rgba(255, 45, 85, 0.22)" : "rgba(255, 45, 85, 0.12)")
+                            : (readerTheme === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.06)"),
+                          color: likesMap[activePostId || ""]?.hasLiked
+                            ? "#FF2D55"
+                            : (readerTheme === "dark" ? "#FFFFFF" : "#111111"),
+                          transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.04)" : "scale(1)",
                         }}
                       >
-                        {getReadingTime(selectedPost.content)} MIN READ
-                      </span>
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill={likesMap[activePostId || ""]?.hasLiked ? "currentColor" : "none"}
+                          stroke="currentColor"
+                          strokeWidth="2.4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          style={{
+                            transition: "transform 0.2s ease",
+                            transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.15)" : "scale(1)",
+                          }}
+                        >
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                        </svg>
+                        {likesMap[activePostId || ""]?.count && likesMap[activePostId || ""]!.count > 0 ? (
+                          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.02em" }}>
+                            {likesMap[activePostId || ""]!.count}
+                          </span>
+                        ) : null}
+                      </button>
 
                       <div style={{ width: "1px", height: "12px", background: readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "var(--border-subtle, rgba(125,125,125,0.18))" }} />
 
@@ -3817,7 +3947,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       alignItems: "center",
                       justifyContent: "center",
                       gap: "1.25rem",
-                      margin: "0.75rem 0 0 0",
+                      margin: "0.25rem 0 0 0",
                       width: "100%",
                       boxSizing: "border-box",
                     }}
