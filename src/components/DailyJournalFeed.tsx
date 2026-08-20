@@ -385,7 +385,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const fallbackBrand = "/images/defining_brand_mono.png";
 
   const [postPhotoIndex, setPostPhotoIndex] = useState<number>(0);
-  const [readerTheme, setReaderTheme] = useState<"paper" | "light" | "dark">("paper");
+  const [readerTheme, setReaderTheme] = useState<"light" | "dark">("light");
   const [readerFont, setReaderFont] = useState<"serif" | "sans">("serif");
   const [readerSize, setReaderSize] = useState<"sm" | "md" | "lg">("md");
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
@@ -394,6 +394,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const [mobilePrologueOpen, setMobilePrologueOpen] = useState<boolean>(false);
   const [isReadingPrologue, setIsReadingPrologue] = useState<boolean>(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState<boolean>(false);
+  const [headerHidden, setHeaderHidden] = useState<boolean>(false);
 
   const selectedPostImages = useMemo(() => {
     if (isReadingPrologue) return ["/nature_hero.png"];
@@ -441,9 +442,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
     let targetColor = "#0c0d0e"; // default dark for overview
     if (selectedPost || isReadingPrologue) {
-      if (readerTheme === "paper") targetColor = "#f5ede0";
-      else if (readerTheme === "light") targetColor = "#ffffff";
-      else targetColor = "#0c0d0e";
+      if (readerTheme === "dark") targetColor = "#0c0d0e";
+      else targetColor = "#ffffff";
     }
 
     let metaTheme = document.querySelector('meta[name="theme-color"]') as HTMLMetaElement | null;
@@ -495,12 +495,27 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           if (total > 0) {
             setReadingProgress(Math.min(100, Math.max(0, (scrollTop / total) * 100)));
           }
+
+          // Hide header on scroll down, reveal on scroll up (mobile reading mode only)
+          if (isMobile && (selectedPost || isReadingPrologue)) {
+            const delta = scrollTop - lastScrollY;
+            if (delta > 6 && scrollTop > 80) {
+              setHeaderHidden(true);
+            } else if (delta < -6) {
+              setHeaderHidden(false);
+            }
+            lastScrollY = scrollTop;
+          } else {
+            setHeaderHidden(false);
+          }
+
           ticking = false;
         });
         ticking = true;
       }
     };
 
+    let lastScrollY = 0;
     if (rightCol) rightCol.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("scroll", handleScroll, { passive: true });
 
@@ -2355,6 +2370,14 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             background: transparent !important;
             border: none !important;
             pointer-events: none !important;
+            transform: translateY(0) !important;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease !important;
+            opacity: 1 !important;
+          }
+          .mobile-blog-header.header-hidden {
+            transform: translateY(-110%) !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
           }
 
           .mobile-blog-header > * {
@@ -2897,7 +2920,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           style={{ position: "relative", overflow: "hidden", background: "#0c0d0e" }}
         >
           {/* MOBILE TRANSPARENT TOP HEADER BAR (STICKY FLOATING NAVBAR) */}
-          <div className="mobile-blog-header">
+          <div className={`mobile-blog-header${headerHidden ? " header-hidden" : ""}`}>
             {/* Left: HOME Button (Overview) or iOS-style JOURNAL Back Button (Reader mode) */}
             {selectedPost || isReadingPrologue ? (
               <button
@@ -3365,9 +3388,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           fontWeight: 800,
                           letterSpacing: "0.08em",
                           textTransform: "uppercase",
-                          color: readerTheme === "dark" ? "#EDEDF0" : (readerTheme === "paper" ? "#38342C" : "#111111"),
-                          padding: "0.25rem 0.5rem",
+                          color: readerTheme === "dark" ? "#FFFFFF" : "#111111",
+                          background: readerTheme === "dark" ? "rgba(255,255,255,0.14)" : "rgba(0,0,0,0.06)",
+                          padding: "0.22rem 0.65rem",
+                          borderRadius: "9999px",
                           whiteSpace: "nowrap",
+                          border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.18)" : "1px solid rgba(0,0,0,0.1)",
                         }}
                       >
                         PROLOGUE · 2 MIN READ
@@ -3375,14 +3401,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
                       <div style={{ width: "1px", height: "12px", background: readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "var(--border-subtle, rgba(125,125,125,0.18))" }} />
 
-                      {/* UNIFIED SINGLE THEME TOGGLE BUTTON (CYCLES PAPER -> LIGHT -> DARK) */}
+                      {/* THEME TOGGLE: LIGHT ↔ DARK */}
                       <button
-                        onClick={() => {
-                          if (readerTheme === "paper") setReaderTheme("light");
-                          else if (readerTheme === "light") setReaderTheme("dark");
-                          else setReaderTheme("paper");
-                        }}
-                        title={`Theme: ${readerTheme.toUpperCase()} (Click to cycle)`}
+                        onClick={() => setReaderTheme(readerTheme === "dark" ? "light" : "dark")}
+                        title={`Switch to ${readerTheme === "dark" ? "Light" : "Dark"} mode`}
                         style={{
                           display: "inline-flex",
                           alignItems: "center",
@@ -3393,32 +3415,22 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           textTransform: "uppercase",
                           padding: "0.22rem 0.6rem",
                           borderRadius: "9999px",
-                          border: readerTheme === "dark" 
-                            ? "1px solid rgba(255,255,255,0.3)" 
-                            : (readerTheme === "light" ? "1px solid #111111" : "1px solid #D4CEBF"),
-                          background: readerTheme === "dark" 
-                            ? "rgba(255,255,255,0.2)" 
-                            : (readerTheme === "light" ? "#111111" : "#EFECE1"),
-                          color: readerTheme === "dark" 
-                            ? "#FFFFFF" 
-                            : (readerTheme === "light" ? "#FFFFFF" : "#2C2A26"),
+                          border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.3)" : "1px solid #111111",
+                          background: readerTheme === "dark" ? "rgba(255,255,255,0.2)" : "#111111",
+                          color: "#FFFFFF",
                           cursor: "pointer",
                           transition: "all 0.15s ease",
                           whiteSpace: "nowrap",
                         }}
                       >
-                        {readerTheme === "paper" && (
+                        {readerTheme === "light" ? (
                           <>
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                              <polyline points="14 2 14 8 20 8" />
-                              <line x1="16" y1="13" x2="8" y2="13" />
-                              <line x1="16" y1="17" x2="8" y2="17" />
+                              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
                             </svg>
-                            <span>Paper</span>
+                            <span>Dark</span>
                           </>
-                        )}
-                        {readerTheme === "light" && (
+                        ) : (
                           <>
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                               <circle cx="12" cy="12" r="5" />
@@ -3432,14 +3444,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                               <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
                             </svg>
                             <span>Light</span>
-                          </>
-                        )}
-                        {readerTheme === "dark" && (
-                          <>
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                            </svg>
-                            <span>Dark</span>
                           </>
                         )}
                       </button>
@@ -3654,8 +3658,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           fontWeight: 800,
                           letterSpacing: "0.08em",
                           textTransform: "uppercase",
-                          color: readerTheme === "dark" ? "#FFFFFF" : readerTheme === "paper" ? "#2C2820" : "#111111",
-                          background: readerTheme === "dark" ? "rgba(255,255,255,0.14)" : readerTheme === "paper" ? "rgba(0,0,0,0.07)" : "rgba(0,0,0,0.06)",
+                          color: readerTheme === "dark" ? "#FFFFFF" : "#111111",
+                          background: readerTheme === "dark" ? "rgba(255,255,255,0.14)" : "rgba(0,0,0,0.06)",
                           padding: "0.22rem 0.65rem",
                           borderRadius: "9999px",
                           whiteSpace: "nowrap",
@@ -3667,14 +3671,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
                       <div style={{ width: "1px", height: "12px", background: readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "var(--border-subtle, rgba(125,125,125,0.18))" }} />
 
-                      {/* UNIFIED SINGLE THEME TOGGLE BUTTON (CYCLES PAPER -> LIGHT -> DARK) */}
+                      {/* THEME TOGGLE: LIGHT ↔ DARK */}
                       <button
-                        onClick={() => {
-                          if (readerTheme === "paper") setReaderTheme("light");
-                          else if (readerTheme === "light") setReaderTheme("dark");
-                          else setReaderTheme("paper");
-                        }}
-                        title={`Theme: ${readerTheme.toUpperCase()} (Click to cycle)`}
+                        onClick={() => setReaderTheme(readerTheme === "dark" ? "light" : "dark")}
+                        title={`Switch to ${readerTheme === "dark" ? "Light" : "Dark"} mode`}
                         style={{
                           display: "inline-flex",
                           alignItems: "center",
@@ -3685,32 +3685,22 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           textTransform: "uppercase",
                           padding: "0.22rem 0.6rem",
                           borderRadius: "9999px",
-                          border: readerTheme === "dark" 
-                            ? "1px solid rgba(255,255,255,0.3)" 
-                            : (readerTheme === "light" ? "1px solid #111111" : "1px solid #D4CEBF"),
-                          background: readerTheme === "dark" 
-                            ? "rgba(255,255,255,0.2)" 
-                            : (readerTheme === "light" ? "#111111" : "#EFECE1"),
-                          color: readerTheme === "dark" 
-                            ? "#FFFFFF" 
-                            : (readerTheme === "light" ? "#FFFFFF" : "#2C2A26"),
+                          border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.3)" : "1px solid #111111",
+                          background: readerTheme === "dark" ? "rgba(255,255,255,0.2)" : "#111111",
+                          color: "#FFFFFF",
                           cursor: "pointer",
                           transition: "all 0.15s ease",
                           whiteSpace: "nowrap",
                         }}
                       >
-                        {readerTheme === "paper" && (
+                        {readerTheme === "light" ? (
                           <>
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                              <polyline points="14 2 14 8 20 8" />
-                              <line x1="16" y1="13" x2="8" y2="13" />
-                              <line x1="16" y1="17" x2="8" y2="17" />
+                              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
                             </svg>
-                            <span>Paper</span>
+                            <span>Dark</span>
                           </>
-                        )}
-                        {readerTheme === "light" && (
+                        ) : (
                           <>
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                               <circle cx="12" cy="12" r="5" />
@@ -3724,14 +3714,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                               <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
                             </svg>
                             <span>Light</span>
-                          </>
-                        )}
-                        {readerTheme === "dark" && (
-                          <>
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                            </svg>
-                            <span>Dark</span>
                           </>
                         )}
                       </button>
@@ -3774,14 +3756,14 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     dangerouslySetInnerHTML={{ __html: formatBloggerArticleHtml(selectedPost.content) }}
                   />
 
-                  {/* ── CENTERED END MARKER WITH HORIZONTAL ACCENT LINES ── */}
+                  {/* ── END MARKER ── */}
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       gap: "1.25rem",
-                      margin: "2.2rem 0 1rem 0",
+                      margin: "0.75rem 0 0 0",
                       width: "100%",
                       boxSizing: "border-box",
                     }}
@@ -3789,12 +3771,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     <div style={{ flex: 1, height: "1px", background: "var(--border-subtle, rgba(125,125,125,0.35))" }} />
                     <span
                       style={{
-                        fontSize: "0.66rem",
+                        fontSize: "0.62rem",
                         fontWeight: 700,
                         letterSpacing: "0.25em",
                         textTransform: "uppercase",
                         color: "var(--text-muted, #888888)",
-                        opacity: 0.65,
+                        opacity: 0.55,
                       }}
                     >
                       END
