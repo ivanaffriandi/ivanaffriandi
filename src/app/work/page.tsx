@@ -8,7 +8,7 @@ type TabType = 'about' | 'skills';
 
 // Clean Minimal Social Icons
 const InstagramIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
     <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
     <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
@@ -16,20 +16,20 @@ const InstagramIcon = () => (
 );
 
 const GithubIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
     <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
     <path d="M9 18c-4.51 2-5-2-7-2" />
   </svg>
 );
 
 const XIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M4 4l16 16m0-16L4 20" />
   </svg>
 );
 
 const MailIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
     <rect width="20" height="16" x="2" y="4" rx="2" />
     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
   </svg>
@@ -37,7 +37,7 @@ const MailIcon = () => (
 
 export default function WorkIvanPortfolioPage() {
   const [activeTab, setActiveTab] = useState<TabType>('about');
-  const [liveTime, setLiveTime] = useState('9:55 PM (WIB)');
+  const [liveTime, setLiveTime] = useState('10:15 PM WIB');
 
   useEffect(() => {
     const updateTime = () => {
@@ -48,7 +48,7 @@ export default function WorkIvanPortfolioPage() {
         minute: '2-digit',
         hour12: true,
       }).format(now);
-      setLiveTime(`${timeStr} (WIB)`);
+      setLiveTime(`${timeStr} WIB`);
     };
 
     updateTime();
@@ -56,61 +56,30 @@ export default function WorkIvanPortfolioPage() {
     return () => clearInterval(timer);
   }, []);
 
-  const row1 = [
-    { num: '01', title: 'Next.js 16' },
-    { num: '02', title: 'React 19' },
-    { num: '03', title: 'TypeScript' },
-    { num: '04', title: 'Tailwind CSS' },
-    { num: '05', title: 'Framer Motion' },
-    { num: '06', title: 'Figma Systems' },
-  ];
-
-  const row2 = [
-    { num: '07', title: 'Three.js 3D' },
-    { num: '08', title: 'WebGL 2.0' },
-    { num: '09', title: 'GLSL Shaders' },
-    { num: '10', title: '3D Configurator' },
-    { num: '11', title: 'Web Audio API' },
-    { num: '12', title: 'Blender 3D' },
-  ];
-
-  const row3 = [
-    { num: '13', title: 'Oracle Cloud VM' },
-    { num: '14', title: 'AWS SES Relay' },
-    { num: '15', title: 'Docker Compose' },
-    { num: '16', title: 'PostgreSQL' },
-    { num: '17', title: 'Redis Cache' },
-    { num: '18', title: 'Cloudflare SSL' },
-  ];
-
-  const row4 = [
-    { num: '19', title: 'Italian Leather' },
-    { num: '20', title: 'Pattern Drafting' },
-    { num: '21', title: 'Saddle Stitching' },
-    { num: '22', title: 'Solid 925 Silver' },
-    { num: '23', title: 'Edge Burnishing' },
-    { num: '24', title: 'Journal Binding' },
-  ];
+  const skillRow1 = ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Figma Systems'];
+  const skillRow2 = ['Three.js 3D', 'WebGL 2.0', 'GLSL Shaders', '3D Configurator', 'Web Audio API', 'Blender 3D'];
+  const skillRow3 = ['Oracle Cloud VM', 'AWS SES Relay', 'Docker Compose', 'PostgreSQL', 'Redis Cache', 'Cloudflare SSL'];
+  const skillRow4 = ['Italian Leather', 'Pattern Drafting', 'Saddle Stitching', 'Solid 925 Silver', 'Edge Burnishing', 'Journal Binding'];
 
   return (
-    <div className={styles.portfolioViewport}>
-      <div className={styles.portfolioContainer}>
-        {/* ── 1. CLEAN TOP HEADER ── */}
-        <header className={styles.topHeader}>
-          <div className={styles.headerLeft}>
-            <a href="https://ivanaffriandi.com" className={styles.brandTitle}>
+    <div className={styles.fullDesktopViewport}>
+      <div className={styles.widePageContainer}>
+        {/* ── 1. TOP HEADER (WIDE DESKTOP BAR) ── */}
+        <header className={styles.topNavbar}>
+          <div className={styles.navBrandBlock}>
+            <a href="https://ivanaffriandi.com" className={styles.brandHeading}>
               Ivan&apos;s Work<sup>®</sup>
             </a>
-            <span className={styles.headerClock}>{liveTime}</span>
+            <span className={styles.liveTimePill}>{liveTime}</span>
           </div>
 
-          <div className={styles.headerRight}>
-            <div className={styles.socialsGroup}>
+          <div className={styles.navActionsBlock}>
+            <div className={styles.socialIconLinks}>
               <a
                 href="https://instagram.com/ivanaffriandi"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={styles.socialLink}
+                className={styles.cleanSocialBtn}
                 title="Instagram"
                 aria-label="Instagram"
               >
@@ -120,7 +89,7 @@ export default function WorkIvanPortfolioPage() {
                 href="https://github.com/ivanaffriandi"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={styles.socialLink}
+                className={styles.cleanSocialBtn}
                 title="GitHub"
                 aria-label="GitHub"
               >
@@ -130,7 +99,7 @@ export default function WorkIvanPortfolioPage() {
                 href="https://x.com/ivanaffriandi"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={styles.socialLink}
+                className={styles.cleanSocialBtn}
                 title="X (Twitter)"
                 aria-label="X (Twitter)"
               >
@@ -138,9 +107,9 @@ export default function WorkIvanPortfolioPage() {
               </a>
               <a
                 href="mailto:hello@ivanaffriandi.com"
-                className={styles.socialLink}
-                title="Email"
-                aria-label="Email"
+                className={styles.cleanSocialBtn}
+                title="Email Ivan"
+                aria-label="Email Ivan"
               >
                 <MailIcon />
               </a>
@@ -148,282 +117,291 @@ export default function WorkIvanPortfolioPage() {
           </div>
         </header>
 
-        {/* ── 2. HERO IDENTITY: NATURAL SEAMLESS PORTRAIT ON BACKGROUND + BIG NAME ── */}
+        {/* ── 2. HERO IDENTITY (WIDE, NATURAL, SEAMLESS PORTRAIT) ── */}
         <section className={styles.heroSection}>
-          <div className={styles.heroIdentityRow}>
-            {/* Seamless portrait directly on background (NO grey box, NO borders) */}
-            <div className={styles.seamlessPortraitWrapper}>
+          <div className={styles.heroRowLayout}>
+            {/* Seamless portrait directly blending on background */}
+            <div className={styles.heroPortraitWrap}>
               <img
                 src="/ivan-head.png"
                 alt="Affriandi, Ivan"
-                className={styles.seamlessPortraitImg}
+                className={styles.heroPortraitImg}
               />
             </div>
 
-            <div className={styles.heroTextCol}>
-              <h1 className={styles.heroNameTitle}>
-                <span className={styles.nameLine}>Affriandi,</span>
-                <span className={styles.nameLine}>Ivan</span>
+            <div className={styles.heroIntroContent}>
+              <h1 className={styles.heroMainName}>
+                <span className={styles.nameWord}>Affriandi,</span>
+                <span className={styles.nameWord}>Ivan</span>
               </h1>
-              <p className={styles.heroBioLead}>
+              <p className={styles.heroBioText}>
                 Software engineer by trade, UI/UX designer by obsession, bespoke leather artisan by night, and wild mushroom forager when I need to get away from screens. I build fast digital tools and stitch real physical goods in my studio.
               </p>
             </div>
           </div>
 
-          {/* ── 3. METADATA INFO STRIP ── */}
-          <div className={styles.metaInfoStrip}>
-            <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>Timeline</span>
-              <span className={styles.metaValue}>2020 — Present</span>
+          {/* ── 3. METADATA SPEC STRIP (CLEAN WIDE 4-COLUMN BAR) ── */}
+          <div className={styles.metadataWideBar}>
+            <div className={styles.metaStatItem}>
+              <span className={styles.metaStatLabel}>Timeline</span>
+              <span className={styles.metaStatValue}>2020 — Present</span>
             </div>
 
-            <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>Focus</span>
-              <span className={styles.metaValue}>Code, Pixels &amp; Leather</span>
+            <div className={styles.metaStatItem}>
+              <span className={styles.metaStatLabel}>Focus</span>
+              <span className={styles.metaStatValue}>Code, Pixels &amp; Leather</span>
             </div>
 
-            <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>Output</span>
-              <span className={styles.metaValue}>Digital Apps &amp; Physical Goods</span>
+            <div className={styles.metaStatItem}>
+              <span className={styles.metaStatLabel}>Output</span>
+              <span className={styles.metaStatValue}>Digital Apps &amp; Physical Goods</span>
             </div>
 
-            <div className={styles.metaItem}>
-              <span className={styles.metaLabel}>Base</span>
-              <span className={styles.metaValue}>Tangerang, Indonesia</span>
+            <div className={styles.metaStatItem}>
+              <span className={styles.metaStatLabel}>Location</span>
+              <span className={styles.metaStatValue}>Tangerang, Indonesia</span>
             </div>
           </div>
 
-          {/* ── 4. NAVIGATION BAR (LOCKED TABS CANNOT BE OPENED) ── */}
-          <nav className={styles.navBar} aria-label="Portfolio Navigation">
-            <div className={styles.navTrack}>
-              {/* Active Tab: About */}
+          {/* ── 4. NAVIGATION TABS (BELOW METADATA STRIP) ── */}
+          <nav className={styles.navigationTabSection} aria-label="Portfolio Tabs">
+            <div className={styles.tabTrackContainer}>
               <button
                 onClick={() => setActiveTab('about')}
-                className={`${styles.navTabBtn} ${activeTab === 'about' ? styles.navTabActive : ''}`}
+                className={`${styles.tabLinkItem} ${activeTab === 'about' ? styles.tabLinkActive : ''}`}
                 type="button"
               >
                 About
                 {activeTab === 'about' && (
                   <motion.div
-                    layoutId="activeTabUnderline"
-                    className={styles.activeUnderline}
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    layoutId="activeTabUnderlineIndicator"
+                    className={styles.activeTabUnderline}
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
               </button>
 
-              {/* Active Tab: Skills */}
               <button
                 onClick={() => setActiveTab('skills')}
-                className={`${styles.navTabBtn} ${activeTab === 'skills' ? styles.navTabActive : ''}`}
+                className={`${styles.tabLinkItem} ${activeTab === 'skills' ? styles.tabLinkActive : ''}`}
                 type="button"
               >
                 Skills
                 {activeTab === 'skills' && (
                   <motion.div
-                    layoutId="activeTabUnderline"
-                    className={styles.activeUnderline}
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    layoutId="activeTabUnderlineIndicator"
+                    className={styles.activeTabUnderline}
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
               </button>
 
-              {/* Locked Tabs (Cannot be clicked or opened) */}
               <button
                 disabled
-                className={`${styles.navTabBtn} ${styles.navTabDisabled}`}
+                className={`${styles.tabLinkItem} ${styles.tabLinkDisabled}`}
                 type="button"
-                title="Coming Soon"
+                title="Projects archive is coming soon"
               >
-                Projects <span className={styles.soonPill}>Soon</span>
+                Projects <span className={styles.comingSoonTag}>Soon</span>
               </button>
 
               <button
                 disabled
-                className={`${styles.navTabBtn} ${styles.navTabDisabled}`}
+                className={`${styles.tabLinkItem} ${styles.tabLinkDisabled}`}
                 type="button"
-                title="Coming Soon"
+                title="Process workflow is coming soon"
               >
-                Process <span className={styles.soonPill}>Soon</span>
+                Process <span className={styles.comingSoonTag}>Soon</span>
               </button>
 
               <button
                 disabled
-                className={`${styles.navTabBtn} ${styles.navTabDisabled}`}
+                className={`${styles.tabLinkItem} ${styles.tabLinkDisabled}`}
                 type="button"
-                title="Coming Soon"
+                title="Services & Archive log are coming soon"
               >
-                Services &amp; Log <span className={styles.soonPill}>Soon</span>
+                Services &amp; Log <span className={styles.comingSoonTag}>Soon</span>
               </button>
             </div>
           </nav>
         </section>
 
-        {/* ── 5. MAIN CONTENT AREA ── */}
-        <main className={styles.mainContent}>
+        {/* ── 5. MAIN CONTENT AREA (EXPANSIVE WIDE DESKTOP) ── */}
+        <main className={styles.mainContentContainer}>
           <AnimatePresence mode="wait">
             {/* ── 1. ABOUT VIEW ── */}
             {activeTab === 'about' && (
               <motion.div
                 key="about"
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                className={styles.contentWrap}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                className={styles.aboutEditorialBody}
               >
                 {/* SECTION 01: WHO I AM */}
-                <section className={styles.editorialSection}>
-                  <div className={styles.sectionHeader}>
-                    <span className={styles.sectionNumber}>01 · WHO I AM</span>
-                    <h2 className={styles.sectionTitle}>The Strange Mix</h2>
+                <section className={styles.contentSectionBlock}>
+                  <div className={styles.sectionHeaderRow}>
+                    <h2 className={styles.sectionHeadingTitle}>The Strange Mix</h2>
+                    <span className={styles.sectionCategoryTag}>Who I Am</span>
                   </div>
 
-                  <div className={styles.proseGrid}>
-                    <p className={styles.proseParagraph}>
+                  <div className={styles.proseTwoColumnGrid}>
+                    <p className={styles.proseTextParagraph}>
                       Look, I never really figured out how to fit into a single corporate job title, and honestly, I stopped trying. Some days I am deep in VS Code tuning Next.js performance and spinning up self-hosted cloud containers. Other days I am in Figma obsessing over letter spacing and layout tokens, or hand-stitching a vegetable-tanned leather journal with hot tea getting cold next to me.
                     </p>
-                    <p className={styles.proseParagraph}>
+                    <p className={styles.proseTextParagraph}>
                       I just love building things from scratch. Whether it is a web app with zero dependencies, a private email server I probably didn&apos;t need to self-host, or a leather wallet built to outlive all of us. The contrast between glowing screen pixels and raw tactile leather is what keeps my brain happy.
                     </p>
                   </div>
                 </section>
 
-                {/* SECTION 02: WHAT I DO */}
-                <section className={styles.editorialSection}>
-                  <div className={styles.sectionHeader}>
-                    <span className={styles.sectionNumber}>02 · WHAT I DO</span>
-                    <h2 className={styles.sectionTitle}>Six Areas of Focus</h2>
+                {/* SECTION 02: SIX AREAS OF FOCUS */}
+                <section className={styles.contentSectionBlock}>
+                  <div className={styles.sectionHeaderRow}>
+                    <h2 className={styles.sectionHeadingTitle}>Six Areas of Focus</h2>
+                    <span className={styles.sectionCategoryTag}>What I Do</span>
                   </div>
 
-                  <div className={styles.sixCardsGrid}>
-                    <div className={styles.disciplineCard}>
-                      <span className={styles.cardIndexNum}>01 · DESIGN</span>
-                      <h3 className={styles.cardHeading}>Product &amp; UI/UX</h3>
-                      <p className={styles.cardBodyText}>
+                  <div className={styles.cardsThreeColGrid}>
+                    <div className={styles.disciplineFeatureCard}>
+                      <div className={styles.cardHeaderArea}>
+                        <h3 className={styles.cardPrimaryTitle}>Product &amp; UI/UX</h3>
+                        <span className={styles.cardCategoryPill}>Design</span>
+                      </div>
+                      <p className={styles.cardDescriptionText}>
                         Clean interfaces, sharp typography, and generous whitespace. I obsess over spacing, hierarchy, and micro-interactions that feel snappy and effortless to use. No cluttered junk.
                       </p>
-                      <div className={styles.cardTags}>
-                        <span className={styles.miniTag}>Figma Systems</span>
-                        <span className={styles.miniTag}>Typography</span>
-                        <span className={styles.miniTag}>Interaction Design</span>
+                      <div className={styles.cardTagPillsRow}>
+                        <span className={styles.softPillTag}>Figma Systems</span>
+                        <span className={styles.softPillTag}>Typography</span>
+                        <span className={styles.softPillTag}>Interaction Design</span>
                       </div>
                     </div>
 
-                    <div className={styles.disciplineCard}>
-                      <span className={styles.cardIndexNum}>02 · CODE</span>
-                      <h3 className={styles.cardHeading}>Software Engineering</h3>
-                      <p className={styles.cardBodyText}>
+                    <div className={styles.disciplineFeatureCard}>
+                      <div className={styles.cardHeaderArea}>
+                        <h3 className={styles.cardPrimaryTitle}>Software Engineering</h3>
+                        <span className={styles.cardCategoryPill}>Code</span>
+                      </div>
+                      <p className={styles.cardDescriptionText}>
                         Full-stack web applications built with Next.js 16, React 19, and TypeScript. Fast, lightweight code without bloated npm dependencies. If a page takes more than a second to load, it hurts my soul.
                       </p>
-                      <div className={styles.cardTags}>
-                        <span className={styles.miniTag}>Next.js 16</span>
-                        <span className={styles.miniTag}>React 19</span>
-                        <span className={styles.miniTag}>TypeScript</span>
+                      <div className={styles.cardTagPillsRow}>
+                        <span className={styles.softPillTag}>Next.js 16</span>
+                        <span className={styles.softPillTag}>React 19</span>
+                        <span className={styles.softPillTag}>TypeScript</span>
                       </div>
                     </div>
 
-                    <div className={styles.disciplineCard}>
-                      <span className={styles.cardIndexNum}>03 · INFRA</span>
-                      <h3 className={styles.cardHeading}>Self-Hosted &amp; Freedom</h3>
-                      <p className={styles.cardBodyText}>
+                    <div className={styles.disciplineFeatureCard}>
+                      <div className={styles.cardHeaderArea}>
+                        <h3 className={styles.cardPrimaryTitle}>Self-Hosted &amp; Freedom</h3>
+                        <span className={styles.cardCategoryPill}>Infrastructure</span>
+                      </div>
+                      <p className={styles.cardDescriptionText}>
                         Running my own cloud VMs, configuring private SMTP/DKIM mail servers, and building tools I actually own. The internet is way more fun when you run your own infrastructure.
                       </p>
-                      <div className={styles.cardTags}>
-                        <span className={styles.miniTag}>Self-Hosted</span>
-                        <span className={styles.miniTag}>Cloud VMs</span>
-                        <span className={styles.miniTag}>Private Mail</span>
+                      <div className={styles.cardTagPillsRow}>
+                        <span className={styles.softPillTag}>Self-Hosted</span>
+                        <span className={styles.softPillTag}>Cloud VMs</span>
+                        <span className={styles.softPillTag}>Private Mail</span>
                       </div>
                     </div>
 
-                    <div className={styles.disciplineCard}>
-                      <span className={styles.cardIndexNum}>04 · ATELIER</span>
-                      <h3 className={styles.cardHeading}>Bespoke Leathercraft</h3>
-                      <p className={styles.cardBodyText}>
+                    <div className={styles.disciplineFeatureCard}>
+                      <div className={styles.cardHeaderArea}>
+                        <h3 className={styles.cardPrimaryTitle}>Bespoke Leathercraft</h3>
+                        <span className={styles.cardCategoryPill}>Atelier</span>
+                      </div>
+                      <p className={styles.cardDescriptionText}>
                         Handcrafting luxury leather goods through SHŪ / EN Studio using Italian vegetable-tanned hides, Japanese moire lining, and solid 925 sterling silver charms. No machines, just needles and patience.
                       </p>
-                      <div className={styles.cardTags}>
-                        <span className={styles.miniTag}>Italian Leather</span>
-                        <span className={styles.miniTag}>Saddle Stitch</span>
-                        <span className={styles.miniTag}>925 Silver</span>
+                      <div className={styles.cardTagPillsRow}>
+                        <span className={styles.softPillTag}>Italian Leather</span>
+                        <span className={styles.softPillTag}>Saddle Stitch</span>
+                        <span className={styles.softPillTag}>925 Silver</span>
                       </div>
                     </div>
 
-                    <div className={styles.disciplineCard}>
-                      <span className={styles.cardIndexNum}>05 · EXPERIMENTS</span>
-                      <h3 className={styles.cardHeading}>Creative Tech &amp; 3D</h3>
-                      <p className={styles.cardBodyText}>
+                    <div className={styles.disciplineFeatureCard}>
+                      <div className={styles.cardHeaderArea}>
+                        <h3 className={styles.cardPrimaryTitle}>Creative Tech &amp; 3D</h3>
+                        <span className={styles.cardCategoryPill}>Experiments</span>
+                      </div>
+                      <p className={styles.cardDescriptionText}>
                         Real-time Three.js 3D WebGL configurators, GLSL procedural shaders, and Web Audio synthesizers built purely because &quot;what if I try to code this tonight?&quot;
                       </p>
-                      <div className={styles.cardTags}>
-                        <span className={styles.miniTag}>Three.js</span>
-                        <span className={styles.miniTag}>WebGL 2.0</span>
-                        <span className={styles.miniTag}>GLSL Shaders</span>
+                      <div className={styles.cardTagPillsRow}>
+                        <span className={styles.softPillTag}>Three.js</span>
+                        <span className={styles.softPillTag}>WebGL 2.0</span>
+                        <span className={styles.softPillTag}>GLSL Shaders</span>
                       </div>
                     </div>
 
-                    <div className={styles.disciplineCard}>
-                      <span className={styles.cardIndexNum}>06 · VISUALS</span>
-                      <h3 className={styles.cardHeading}>Visual Essays &amp; Notes</h3>
-                      <p className={styles.cardBodyText}>
+                    <div className={styles.disciplineFeatureCard}>
+                      <div className={styles.cardHeaderArea}>
+                        <h3 className={styles.cardPrimaryTitle}>Visual Essays &amp; Notes</h3>
+                        <span className={styles.cardCategoryPill}>Photography</span>
+                      </div>
+                      <p className={styles.cardDescriptionText}>
                         Documentary snapshots of daily studio work, analog textures, architectural forms, and field notes from quiet mushroom walks out in the wild.
                       </p>
-                      <div className={styles.cardTags}>
-                        <span className={styles.miniTag}>Visual Notes</span>
-                        <span className={styles.miniTag}>Analog Textures</span>
-                        <span className={styles.miniTag}>Field Notes</span>
+                      <div className={styles.cardTagPillsRow}>
+                        <span className={styles.softPillTag}>Visual Notes</span>
+                        <span className={styles.softPillTag}>Analog Textures</span>
+                        <span className={styles.softPillTag}>Field Notes</span>
                       </div>
                     </div>
                   </div>
                 </section>
 
                 {/* SECTION 03: THE OTHER 50% */}
-                <section className={styles.editorialSection}>
-                  <div className={styles.sectionHeader}>
-                    <span className={styles.sectionNumber}>03 · THE OTHER 50%</span>
-                    <h2 className={styles.sectionTitle}>When I Am Not Staring at Code</h2>
+                <section className={styles.contentSectionBlock}>
+                  <div className={styles.sectionHeaderRow}>
+                    <h2 className={styles.sectionHeadingTitle}>When I Am Not Staring at Code</h2>
+                    <span className={styles.sectionCategoryTag}>The Other 50%</span>
                   </div>
 
-                  <div className={styles.sixCardsGrid}>
-                    <div className={styles.hobbyCard}>
-                      <h3 className={styles.hobbyHeading}>01 · Wild Mushrooms &amp; Fungi</h3>
-                      <p className={styles.hobbyText}>
+                  <div className={styles.cardsThreeColGrid}>
+                    <div className={styles.hobbyDetailCard}>
+                      <h3 className={styles.hobbyCardTitle}>Wild Mushrooms &amp; Fungi</h3>
+                      <p className={styles.hobbyCardDescription}>
                         Wandering damp trails with field guides, spotting weird fungi, taking macro photos, and appreciating nature&apos;s wildest procedural geometry.
                       </p>
                     </div>
 
-                    <div className={styles.hobbyCard}>
-                      <h3 className={styles.hobbyHeading}>02 · Crochet &amp; Fiber Arts</h3>
-                      <p className={styles.hobbyText}>
+                    <div className={styles.hobbyDetailCard}>
+                      <h3 className={styles.hobbyCardTitle}>Crochet &amp; Fiber Arts</h3>
+                      <p className={styles.hobbyCardDescription}>
                         Yarn, needles, and tension control. Making physical everyday goods with my own hands when typing on a keyboard gets tiring.
                       </p>
                     </div>
 
-                    <div className={styles.hobbyCard}>
-                      <h3 className={styles.hobbyHeading}>03 · Hot Tea &amp; Quiet Desks</h3>
-                      <p className={styles.hobbyText}>
+                    <div className={styles.hobbyDetailCard}>
+                      <h3 className={styles.hobbyCardTitle}>Hot Tea &amp; Quiet Desks</h3>
+                      <p className={styles.hobbyCardDescription}>
                         Loose-leaf green tea before 8 AM while the city is quiet, sketching out random software ideas in blank paper notebooks.
                       </p>
                     </div>
 
-                    <div className={styles.hobbyCard}>
-                      <h3 className={styles.hobbyHeading}>04 · Non-Fiction &amp; Old Books</h3>
-                      <p className={styles.hobbyText}>
+                    <div className={styles.hobbyDetailCard}>
+                      <h3 className={styles.hobbyCardTitle}>Non-Fiction &amp; Old Books</h3>
+                      <p className={styles.hobbyCardDescription}>
                         Hoarding books on design history, architecture, philosophy, human psychology, and obscure historical rabbit holes on my Kindle.
                       </p>
                     </div>
 
-                    <div className={styles.hobbyCard}>
-                      <h3 className={styles.hobbyHeading}>05 · Wandering Quiet Museums</h3>
-                      <p className={styles.hobbyText}>
+                    <div className={styles.hobbyDetailCard}>
+                      <h3 className={styles.hobbyCardTitle}>Wandering Quiet Museums</h3>
+                      <p className={styles.hobbyCardDescription}>
                         Strolling through empty galleries, inspecting ancient physical artifacts, and geeking out over how craftspeople worked centuries ago.
                       </p>
                     </div>
 
-                    <div className={styles.hobbyCard}>
-                      <h3 className={styles.hobbyHeading}>06 · Studio Plants</h3>
-                      <p className={styles.hobbyText}>
+                    <div className={styles.hobbyDetailCard}>
+                      <h3 className={styles.hobbyCardTitle}>Studio Plants</h3>
+                      <p className={styles.hobbyCardDescription}>
                         Propagating cuttings and watching green foliage quietly take over my studio terrace in Tangerang without any rush.
                       </p>
                     </div>
@@ -431,102 +409,102 @@ export default function WorkIvanPortfolioPage() {
                 </section>
 
                 {/* SECTION 04: WORKING PHILOSOPHY */}
-                <section className={styles.editorialSection}>
-                  <div className={styles.sectionHeader}>
-                    <span className={styles.sectionNumber}>04 · WORKING PHILOSOPHY</span>
-                    <h2 className={styles.sectionTitle}>My Rules of Thumb</h2>
+                <section className={styles.contentSectionBlock}>
+                  <div className={styles.sectionHeaderRow}>
+                    <h2 className={styles.sectionHeadingTitle}>How I Approach Making</h2>
+                    <span className={styles.sectionCategoryTag}>Working Philosophy</span>
                   </div>
 
-                  <div className={styles.philosophyGrid}>
-                    <div className={styles.philosophyCard}>
-                      <h3 className={styles.philosophyHeadline}>Build it yourself first.</h3>
-                      <p className={styles.philosophyBody}>
+                  <div className={styles.philosophyColumnsGrid}>
+                    <div className={styles.philosophyItemBlock}>
+                      <h3 className={styles.philosophyItemHeading}>Build it yourself first.</h3>
+                      <p className={styles.philosophyItemBody}>
                         If something sounds interesting, I want to take it apart, understand the engine, and build my own version. That is how real learning happens.
                       </p>
                     </div>
 
-                    <div className={styles.philosophyCard}>
-                      <h3 className={styles.philosophyHeadline}>Cut the noise.</h3>
-                      <p className={styles.philosophyBody}>
+                    <div className={styles.philosophyItemBlock}>
+                      <h3 className={styles.philosophyItemHeading}>Cut the noise.</h3>
+                      <p className={styles.philosophyItemBody}>
                         Good design is about deleting stuff until only what matters remains. If an interface feels dead simple, a lot of hard thinking went into making it that way.
                       </p>
                     </div>
 
-                    <div className={styles.philosophyCard}>
-                      <h3 className={styles.philosophyHeadline}>Pixels and physical craft belong together.</h3>
-                      <p className={styles.philosophyBody}>
+                    <div className={styles.philosophyItemBlock}>
+                      <h3 className={styles.philosophyItemHeading}>Pixels and physical craft belong together.</h3>
+                      <p className={styles.philosophyItemBody}>
                         Designing UI makes me a sharper leather artisan, and hand-stitching leather makes me write cleaner code. Cross-pollination keeps work honest.
                       </p>
                     </div>
                   </div>
                 </section>
 
-                {/* SECTION 05: CURRENT STATUS BOARD */}
-                <section className={styles.editorialSection}>
-                  <div className={styles.sectionHeader}>
-                    <span className={styles.sectionNumber}>05 · STATUS BOARD</span>
-                    <h2 className={styles.sectionTitle}>What Is On My Desk</h2>
+                {/* SECTION 05: STATUS BOARD */}
+                <section className={styles.contentSectionBlock}>
+                  <div className={styles.sectionHeaderRow}>
+                    <h2 className={styles.sectionHeadingTitle}>What Is On My Desk</h2>
+                    <span className={styles.sectionCategoryTag}>Currently</span>
                   </div>
 
-                  <div className={styles.statusGrid}>
-                    <div className={styles.statusItem}>
-                      <span className={styles.statusLabel}>Reading</span>
-                      <span className={styles.statusVal}>Design history, old essays &amp; sci-fi</span>
+                  <div className={styles.statusGridWide}>
+                    <div className={styles.statusGridCell}>
+                      <span className={styles.statusActivityLabel}>Reading</span>
+                      <span className={styles.statusActivityValue}>Design history, old essays &amp; sci-fi</span>
                     </div>
-                    <div className={styles.statusItem}>
-                      <span className={styles.statusLabel}>Making</span>
-                      <span className={styles.statusVal}>Next.js web apps &amp; bespoke leather journals</span>
+                    <div className={styles.statusGridCell}>
+                      <span className={styles.statusActivityLabel}>Making</span>
+                      <span className={styles.statusActivityValue}>Next.js web apps &amp; bespoke leather journals</span>
                     </div>
-                    <div className={styles.statusItem}>
-                      <span className={styles.statusLabel}>Learning</span>
-                      <span className={styles.statusVal}>Spanish, Dutch &amp; 3D shader mathematics</span>
+                    <div className={styles.statusGridCell}>
+                      <span className={styles.statusActivityLabel}>Learning</span>
+                      <span className={styles.statusActivityValue}>Spanish, Dutch &amp; 3D shader mathematics</span>
                     </div>
-                    <div className={styles.statusItem}>
-                      <span className={styles.statusLabel}>Exploring</span>
-                      <span className={styles.statusVal}>Wild mycology &amp; macro photography</span>
+                    <div className={styles.statusGridCell}>
+                      <span className={styles.statusActivityLabel}>Exploring</span>
+                      <span className={styles.statusActivityValue}>Wild mycology &amp; macro photography</span>
                     </div>
-                    <div className={styles.statusItem}>
-                      <span className={styles.statusLabel}>Tinkering</span>
-                      <span className={styles.statusVal}>Self-hosted servers &amp; private mail infrastructure</span>
+                    <div className={styles.statusGridCell}>
+                      <span className={styles.statusActivityLabel}>Tinkering</span>
+                      <span className={styles.statusActivityValue}>Self-hosted servers &amp; private mail infrastructure</span>
                     </div>
-                    <div className={styles.statusItem}>
-                      <span className={styles.statusLabel}>Thinking About</span>
-                      <span className={styles.statusVal}>What cool project to hack on next</span>
+                    <div className={styles.statusGridCell}>
+                      <span className={styles.statusActivityLabel}>Thinking About</span>
+                      <span className={styles.statusActivityValue}>What cool project to hack on next</span>
                     </div>
                   </div>
                 </section>
 
-                {/* SECTION 06: SMALL THINGS I LIKE */}
-                <section className={styles.editorialSection}>
-                  <div className={styles.sectionHeader}>
-                    <span className={styles.sectionNumber}>06 · SMALL THINGS I LIKE</span>
-                    <h2 className={styles.sectionTitle}>Stuff I Genuinely Love</h2>
+                {/* SECTION 06: HUMAN DETAILS */}
+                <section className={styles.contentSectionBlock}>
+                  <div className={styles.sectionHeaderRow}>
+                    <h2 className={styles.sectionHeadingTitle}>Stuff I Genuinely Love</h2>
+                    <span className={styles.sectionCategoryTag}>Human Details</span>
                   </div>
 
-                  <div className={styles.likesWrap}>
-                    <span className={styles.likePill}>Crisp typography</span>
-                    <span className={styles.likePill}>Quiet museums</span>
-                    <span className={styles.likePill}>Fresh hot green tea</span>
-                    <span className={styles.likePill}>Vegetable-tanned patina</span>
-                    <span className={styles.likePill}>Monospace fonts</span>
-                    <span className={styles.likePill}>Wild forest mushrooms</span>
-                    <span className={styles.likePill}>Zero-dependency code</span>
-                    <span className={styles.likePill}>Fast loading websites</span>
-                    <span className={styles.likePill}>Deep technical rabbit holes</span>
-                    <span className={styles.likePill}>Blank analog notebooks</span>
-                    <span className={styles.likePill}>Building things just for fun</span>
+                  <div className={styles.likesPillsContainer}>
+                    <span className={styles.humanLikePill}>Crisp typography</span>
+                    <span className={styles.humanLikePill}>Quiet museums</span>
+                    <span className={styles.humanLikePill}>Fresh hot green tea</span>
+                    <span className={styles.humanLikePill}>Vegetable-tanned patina</span>
+                    <span className={styles.humanLikePill}>Clean sans-serif fonts</span>
+                    <span className={styles.humanLikePill}>Wild forest mushrooms</span>
+                    <span className={styles.humanLikePill}>Zero-dependency code</span>
+                    <span className={styles.humanLikePill}>Fast loading websites</span>
+                    <span className={styles.humanLikePill}>Deep technical rabbit holes</span>
+                    <span className={styles.humanLikePill}>Blank analog notebooks</span>
+                    <span className={styles.humanLikePill}>Building things just for fun</span>
                   </div>
                 </section>
 
                 {/* SECTION 07: GET IN TOUCH BANNER */}
-                <div className={styles.contactBanner}>
-                  <div className={styles.contactTextCol}>
-                    <h3 className={styles.contactTitle}>Got a cool idea or weird project?</h3>
-                    <p className={styles.contactDesc}>
+                <div className={styles.fullWidthContactBanner}>
+                  <div className={styles.contactBannerLeftCol}>
+                    <h3 className={styles.contactBannerTitle}>Got a cool idea or weird project?</h3>
+                    <p className={styles.contactBannerDescription}>
                       Whether it is a strange technical puzzle, a high-craft interface, or bespoke atelier goods, I am always down to chat about interesting work.
                     </p>
                   </div>
-                  <a href="mailto:hello@ivanaffriandi.com" className={styles.contactActionBtn}>
+                  <a href="mailto:hello@ivanaffriandi.com" className={styles.contactBannerActionBtn}>
                     Say Hello ↗
                   </a>
                 </div>
@@ -537,107 +515,115 @@ export default function WorkIvanPortfolioPage() {
             {activeTab === 'skills' && (
               <motion.div
                 key="skills"
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                className={styles.contentWrap}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                className={styles.aboutEditorialBody}
               >
-                <div className={styles.skillsPillarGrid}>
-                  <div className={styles.skillPillarCard}>
-                    <h3 className={styles.pillarCategoryTitle}>01 · FRONTEND</h3>
-                    <p className={styles.pillarDesc}>Snappy, beautiful interfaces that feel great to use.</p>
-                    <div className={styles.pillarSkillList}>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Next.js 16</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> React 19 &amp; TypeScript</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Framer Motion</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Tailwind CSS</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Figma Systems</span>
+                <div className={styles.skillsPillarsWideGrid}>
+                  <div className={styles.skillPillarWideCard}>
+                    <div className={styles.skillPillarHeader}>
+                      <span className={styles.pillarStepBadge}>01</span>
+                      <h3 className={styles.pillarMainTitle}>Frontend</h3>
+                    </div>
+                    <p className={styles.pillarDescriptionText}>Snappy, beautiful interfaces that feel great to use.</p>
+                    <div className={styles.pillarItemList}>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Next.js 16</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> React 19 &amp; TypeScript</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Framer Motion</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Tailwind CSS</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Figma Systems</span>
                     </div>
                   </div>
 
-                  <div className={styles.skillPillarCard}>
-                    <h3 className={styles.pillarCategoryTitle}>02 · 3D &amp; AUDIO</h3>
-                    <p className={styles.pillarDesc}>Interactive WebGL 3D models and procedural sound.</p>
-                    <div className={styles.pillarSkillList}>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Three.js &amp; WebGL</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> GLSL Shaders</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> 3D Customizers</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Web Audio API</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Blender 3D</span>
+                  <div className={styles.skillPillarWideCard}>
+                    <div className={styles.skillPillarHeader}>
+                      <span className={styles.pillarStepBadge}>02</span>
+                      <h3 className={styles.pillarMainTitle}>3D &amp; Audio</h3>
+                    </div>
+                    <p className={styles.pillarDescriptionText}>Interactive WebGL 3D models and procedural sound.</p>
+                    <div className={styles.pillarItemList}>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Three.js &amp; WebGL</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> GLSL Shaders</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> 3D Customizers</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Web Audio API</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Blender 3D</span>
                     </div>
                   </div>
 
-                  <div className={styles.skillPillarCard}>
-                    <h3 className={styles.pillarCategoryTitle}>03 · BACKEND</h3>
-                    <p className={styles.pillarDesc}>Fast cloud servers, containers, and secure APIs.</p>
-                    <div className={styles.pillarSkillList}>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Node.js &amp; Python</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Oracle Cloud &amp; AWS SES</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Docker Compose</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> PostgreSQL &amp; Redis</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Cloudflare SSL</span>
+                  <div className={styles.skillPillarWideCard}>
+                    <div className={styles.skillPillarHeader}>
+                      <span className={styles.pillarStepBadge}>03</span>
+                      <h3 className={styles.pillarMainTitle}>Backend</h3>
+                    </div>
+                    <p className={styles.pillarDescriptionText}>Fast cloud servers, containers, and secure APIs.</p>
+                    <div className={styles.pillarItemList}>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Node.js &amp; Python</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Oracle Cloud &amp; AWS SES</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Docker Compose</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> PostgreSQL &amp; Redis</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Cloudflare SSL</span>
                     </div>
                   </div>
 
-                  <div className={styles.skillPillarCard}>
-                    <h3 className={styles.pillarCategoryTitle}>04 · ATELIER</h3>
-                    <p className={styles.pillarDesc}>Traditional bespoke leather goods crafted by hand.</p>
-                    <div className={styles.pillarSkillList}>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Italian Leather</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Saddle Stitching</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Solid 925 Silver</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Edge Burnishing</span>
-                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Pattern Drafting</span>
+                  <div className={styles.skillPillarWideCard}>
+                    <div className={styles.skillPillarHeader}>
+                      <span className={styles.pillarStepBadge}>04</span>
+                      <h3 className={styles.pillarMainTitle}>Atelier</h3>
+                    </div>
+                    <p className={styles.pillarDescriptionText}>Traditional bespoke leather goods crafted by hand.</p>
+                    <div className={styles.pillarItemList}>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Italian Leather</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Saddle Stitching</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Solid 925 Silver</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Edge Burnishing</span>
+                      <span className={styles.pillarSkillBullet}><span className={styles.bulletDot} /> Pattern Drafting</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Kinetic Marquee Stream */}
-                <div className={styles.skillsPureTypographyWrapper}>
-                  <div className={styles.kineticRowTrack}>
+                {/* Kinetic Typography Marquee */}
+                <div className={styles.kineticStreamWrapper}>
+                  <div className={styles.kineticTrackRow}>
                     <div className={styles.kineticMarqueeLeft}>
-                      {[...row1, ...row1, ...row1].map((item, idx) => (
-                        <div key={idx} className={styles.pureTextItem}>
-                          <span className={styles.pureTextIndex}>{item.num}</span>
-                          <span>{item.title}</span>
-                          <span className={styles.pureTextBullet}>/</span>
+                      {[...skillRow1, ...skillRow1, ...skillRow1].map((item, idx) => (
+                        <div key={idx} className={styles.streamPillItem}>
+                          <span>{item}</span>
+                          <span className={styles.streamSlash}>/</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className={styles.kineticRowTrack}>
+                  <div className={styles.kineticTrackRow}>
                     <div className={styles.kineticMarqueeRight}>
-                      {[...row2, ...row2, ...row2].map((item, idx) => (
-                        <div key={idx} className={styles.pureTextItem}>
-                          <span className={styles.pureTextIndex}>{item.num}</span>
-                          <span>{item.title}</span>
-                          <span className={styles.pureTextBullet}>/</span>
+                      {[...skillRow2, ...skillRow2, ...skillRow2].map((item, idx) => (
+                        <div key={idx} className={styles.streamPillItem}>
+                          <span>{item}</span>
+                          <span className={styles.streamSlash}>/</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className={styles.kineticRowTrack}>
+                  <div className={styles.kineticTrackRow}>
                     <div className={styles.kineticMarqueeLeft}>
-                      {[...row3, ...row3, ...row3].map((item, idx) => (
-                        <div key={idx} className={styles.pureTextItem}>
-                          <span className={styles.pureTextIndex}>{item.num}</span>
-                          <span>{item.title}</span>
-                          <span className={styles.pureTextBullet}>/</span>
+                      {[...skillRow3, ...skillRow3, ...skillRow3].map((item, idx) => (
+                        <div key={idx} className={styles.streamPillItem}>
+                          <span>{item}</span>
+                          <span className={styles.streamSlash}>/</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className={styles.kineticRowTrack}>
+                  <div className={styles.kineticTrackRow}>
                     <div className={styles.kineticMarqueeRight}>
-                      {[...row4, ...row4, ...row4].map((item, idx) => (
-                        <div key={idx} className={styles.pureTextItem}>
-                          <span className={styles.pureTextIndex}>{item.num}</span>
-                          <span>{item.title}</span>
-                          <span className={styles.pureTextBullet}>/</span>
+                      {[...skillRow4, ...skillRow4, ...skillRow4].map((item, idx) => (
+                        <div key={idx} className={styles.streamPillItem}>
+                          <span>{item}</span>
+                          <span className={styles.streamSlash}>/</span>
                         </div>
                       ))}
                     </div>
@@ -649,15 +635,15 @@ export default function WorkIvanPortfolioPage() {
         </main>
 
         {/* ── 6. FOOTER ── */}
-        <footer className={styles.pageFooter}>
-          <span className={styles.footerCopyright}>
+        <footer className={styles.widePageFooter}>
+          <span className={styles.footerCopyrightNote}>
             © {new Date().getFullYear()} Affriandi, Ivan · All Rights Reserved
           </span>
           <a
             href="https://shuenstudio.com"
             target="_blank"
             rel="noreferrer"
-            className={styles.footerAtelierLink}
+            className={styles.footerStudioLink}
           >
             Visit SHŪ / EN Atelier →
           </a>
