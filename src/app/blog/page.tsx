@@ -1,9 +1,13 @@
 import { getPosts } from "@/lib/blogger";
 import DailyJournalFeed from "@/components/DailyJournalFeed";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+export const viewport: Viewport = {
+  themeColor: "#0c0d0e",
+};
 
 export const metadata: Metadata = {
   title: "Ivan's Journal",

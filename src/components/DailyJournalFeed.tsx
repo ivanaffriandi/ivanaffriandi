@@ -434,6 +434,35 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     };
   }, [selectedPost, isReadingPrologue]);
 
+  // Dynamically update mobile browser theme-color (Safari status & navigation bar color)
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+
+    let targetColor = "#0c0d0e"; // default dark for overview
+    if (selectedPost || isReadingPrologue) {
+      if (readerTheme === "paper") targetColor = "#f5ede0";
+      else if (readerTheme === "light") targetColor = "#ffffff";
+      else targetColor = "#0c0d0e";
+    }
+
+    let metaTheme = document.querySelector('meta[name="theme-color"]') as HTMLMetaElement | null;
+    if (!metaTheme) {
+      metaTheme = document.createElement("meta");
+      metaTheme.name = "theme-color";
+      document.head.appendChild(metaTheme);
+    }
+    metaTheme.content = targetColor;
+
+    // Also update body/html background directly for seamless iOS overscroll
+    if (!selectedPost && !isReadingPrologue) {
+      document.documentElement.style.backgroundColor = "#0c0d0e";
+      document.body.style.backgroundColor = "#0c0d0e";
+    } else {
+      document.documentElement.style.backgroundColor = targetColor;
+      document.body.style.backgroundColor = targetColor;
+    }
+  }, [selectedPost, isReadingPrologue, readerTheme]);
+
   // Track article reading scroll progress
   useEffect(() => {
     if (!selectedPost && !isReadingPrologue) {
