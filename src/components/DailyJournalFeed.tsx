@@ -415,24 +415,24 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     }
   }, [selectedPostIndex, isReadingPrologue]);
 
-  // Toggle overview vs reader scroll modes on mobile
+  // Toggle overview vs reader scroll modes on both desktop and mobile
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const isMobile = window.innerWidth <= 860;
-    if (isMobile) {
-      if (!selectedPost && !isReadingPrologue) {
-        document.body.classList.add("pj-overview-mode");
-        document.body.classList.remove("pj-reader-mode");
-        document.documentElement.style.overflow = "hidden";
-      } else {
-        document.body.classList.remove("pj-overview-mode");
-        document.body.classList.add("pj-reader-mode");
-        document.documentElement.style.overflow = "auto";
-      }
+    if (!selectedPost && !isReadingPrologue) {
+      document.body.classList.add("pj-overview-mode");
+      document.body.classList.remove("pj-reader-mode");
+      document.documentElement.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.classList.remove("pj-overview-mode");
+      document.body.classList.add("pj-reader-mode");
+      document.documentElement.style.overflow = "auto";
+      document.body.style.overflow = "auto";
     }
     return () => {
       document.body.classList.remove("pj-overview-mode", "pj-reader-mode");
       document.documentElement.style.overflow = "";
+      document.body.style.overflow = "";
     };
   }, [selectedPost, isReadingPrologue]);
 
@@ -476,20 +476,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          const isMobile = window.innerWidth <= 860;
-          let scrollTop = 0;
-          let scrollHeight = 1;
-          let clientHeight = 1;
-
-          if (isMobile) {
-            scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
-            scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || 1;
-            clientHeight = window.innerHeight || document.documentElement.clientHeight || 1;
-          } else if (rightCol) {
-            scrollTop = rightCol.scrollTop;
-            scrollHeight = rightCol.scrollHeight;
-            clientHeight = rightCol.clientHeight;
-          }
+          const scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+          const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || 1;
+          const clientHeight = window.innerHeight || document.documentElement.clientHeight || 1;
 
           const total = scrollHeight - clientHeight;
           if (total > 0) {
@@ -881,10 +870,20 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           width: 100%;
           min-height: 100vh;
           box-sizing: border-box;
-          overflow: hidden;
           background: var(--bg-color, #FAFAFA);
           color: var(--text-primary, #111111);
           font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+        }
+
+        .pj-root:not(.has-selected-post) {
+          height: 100vh;
+          overflow: hidden;
+        }
+
+        .pj-root.has-selected-post {
+          height: auto;
+          min-height: 100vh;
+          overflow: visible;
         }
 
         /* ─────────────────────────────────────────────────────
@@ -1034,24 +1033,28 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .pj-right {
           flex: 1;
           min-width: 0;
-          height: 100vh;
-          overflow-y: auto;
-          overflow-x: hidden;
           box-sizing: border-box;
           padding: 1.8rem max(3.2vw, 1.8rem) 1.5rem;
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
           gap: 0.85rem;
-          -webkit-overflow-scrolling: touch;
-          scroll-behavior: smooth;
           background: var(--bg-color, #FFFFFF);
           color: var(--text-primary, #111111);
         }
 
+        .pj-root:not(.has-selected-post) .pj-right,
         .pj-right.fit-screen {
-          overflow-y: hidden !important;
+          height: 100vh;
+          overflow: hidden !important;
           justify-content: space-between !important;
+        }
+
+        .pj-root.has-selected-post .pj-right {
+          height: auto;
+          min-height: 100vh;
+          overflow: visible !important;
+          padding-bottom: 5rem;
         }
 
         /* EDITORIAL THEME OVERRIDES FOR HOMEPAGE RIGHT FEED (EXPLICIT HIGH CONTRAST INK) */
