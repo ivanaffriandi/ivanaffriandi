@@ -17,7 +17,7 @@
   --w-border-2: rgba(0, 0, 0, 0.1);
   --w-card-bg: #ffffff;
   --w-card-bg-2: #fcfcfd;
-  --w-pill-bg: #eeeeF2;
+  --w-pill-bg: #eeeff2;
   --w-pill-text: #2c2c34;
   --w-accent: #0f0f11;
   --w-muted: #8e8e98;
@@ -79,14 +79,14 @@
   max-width: 1120px;
   width: 100%;
   margin: 0 auto;
-  padding: 32px 40px 80px 40px;
+  padding: 36px 40px 80px 40px;
   display: flex;
   flex-direction: column;
   gap: 36px;
   box-sizing: border-box;
 }
 
-/* ── 1. TOP HEADER BAR ── */
+/* ── 1. TOP HEADER BAR (MINIMAL, BORDERLESS ICONS) ── */
 .topHeaderBar {
   display: flex;
   justify-content: space-between;
@@ -103,7 +103,7 @@
 }
 
 .brandLogo {
-  font-size: 14.5px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--w-text);
@@ -113,11 +113,11 @@
 }
 
 .brandLogo:hover {
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .brandLogo sup {
-  font-size: 8.5px;
+  font-size: 9px;
   font-weight: 700;
   margin-left: 2px;
 }
@@ -134,63 +134,30 @@
   letter-spacing: 0.02em;
 }
 
-/* Header Right: Social Media Icons + Email Link */
+/* Header Right: Clean Minimal SVG Icons */
 .headerRightSocials {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
 }
 
-.socialIconLink {
+.minimalSocialIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 6px;
-  color: var(--w-text-2);
-  background: var(--w-bg-2);
-  border: 1px solid var(--w-border);
+  color: var(--w-text);
+  opacity: 0.85;
   text-decoration: none;
-  transition: all 0.15s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  line-height: 1;
 }
 
-.socialIconLink:hover {
-  color: var(--w-text);
-  border-color: var(--w-border-2);
-  background: var(--w-bg-3);
+.minimalSocialIcon:hover {
+  opacity: 0.5;
   transform: translateY(-1px);
 }
 
-.emailIconLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 34px;
-  padding: 0 12px;
-  border-radius: 6px;
-  color: var(--w-text);
-  background: var(--w-bg-2);
-  border: 1px solid var(--w-border);
-  text-decoration: none;
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  transition: all 0.15s ease;
-}
-
-.emailIconLink:hover {
-  background: var(--w-accent);
-  color: var(--w-bg);
-  border-color: var(--w-accent);
-  transform: translateY(-1px);
-}
-
-.emailButtonText {
-  display: inline;
-}
-
-/* ── 2. HERO IDENTITY BLOCK ── */
+/* ── 2. HERO IDENTITY BLOCK (BIGGER AVATAR & NAME) ── */
 .heroSection {
   display: flex;
   flex-direction: column;
@@ -201,15 +168,15 @@
 .heroIdentityRow {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 32px;
   width: 100%;
 }
 
 .portraitPhotoWrapper {
-  width: 96px;
-  height: 96px;
-  min-width: 96px;
-  min-height: 96px;
+  width: 120px;
+  height: 120px;
+  min-width: 120px;
+  min-height: 120px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -222,26 +189,26 @@
   height: 100%;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 4px 12px var(--w-shadow));
-  transition: transform 0.25s ease;
+  filter: drop-shadow(0 6px 16px var(--w-shadow));
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .portraitPhotoWrapper:hover .heroPortraitImg {
-  transform: scale(1.04);
+  transform: scale(1.05);
 }
 
 .heroNameAndBioCol {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   flex: 1;
 }
 
 .heroNameTitle {
-  font-size: clamp(32px, 4.5vw, 44px);
+  font-size: clamp(34px, 4.8vw, 48px);
   font-weight: 700;
   letter-spacing: -0.03em;
-  line-height: 1.1;
+  line-height: 1.08;
   color: var(--w-text);
   margin: 0;
 }
@@ -280,7 +247,7 @@
 }
 
 .metaLabel {
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
   font-family: ui-monospace, SFMono-Regular, monospace;
   letter-spacing: 0.08em;
@@ -1087,7 +1054,7 @@
 @media (max-width: 860px) {
   .masterPageContainer {
     padding: 20px 18px 60px 18px;
-    gap: 26px;
+    gap: 24px;
   }
 
   /* Top Bar */
@@ -1104,22 +1071,7 @@
   }
 
   .headerRightSocials {
-    gap: 6px;
-  }
-
-  .socialIconLink {
-    width: 30px;
-    height: 30px;
-  }
-
-  .emailIconLink {
-    height: 30px;
-    padding: 0 9px;
-    font-size: 11px;
-  }
-
-  .emailButtonText {
-    display: none;
+    gap: 14px;
   }
 
   /* Hero */
@@ -1129,19 +1081,19 @@
 
   .heroIdentityRow {
     align-items: center;
-    gap: 16px;
+    gap: 18px;
   }
 
   .portraitPhotoWrapper {
-    width: 76px;
-    height: 76px;
-    min-width: 76px;
-    min-height: 76px;
+    width: 100px;
+    height: 100px;
+    min-width: 100px;
+    min-height: 100px;
   }
 
   .heroNameTitle {
-    font-size: 26px;
-    line-height: 1.15;
+    font-size: 28px;
+    line-height: 1.12;
   }
 
   .namePart {
