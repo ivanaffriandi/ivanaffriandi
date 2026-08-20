@@ -69,7 +69,7 @@ export async function getPosts(): Promise<BlogPost[]> {
   try {
     const res = await fetchWithTimeout(
       `${API_URL}/${BLOG_ID}/posts?key=${API_KEY}&fetchImages=true`,
-      { cache: "force-cache" } // Static hosting emergency: fetch during build and serve from Hosting.
+      { next: { revalidate: 0 } }
     );
     if (!res.ok) throw new Error(`Blogger API returned error: ${res.statusText}`);
     
