@@ -533,9 +533,15 @@
 .aboutHeroWithLeftPhoto {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 28px;
   width: 100%;
-  margin-left: -32px;
+  margin-left: -90px;
+}
+
+@media (max-width: 1100px) {
+  .aboutHeroWithLeftPhoto {
+    margin-left: -40px;
+  }
 }
 
 @media (max-width: 960px) {
@@ -554,10 +560,10 @@
 }
 
 .aboutHeroBigPortrait {
-  width: 155px;
-  height: 155px;
-  max-width: 155px;
-  max-height: 155px;
+  width: 180px;
+  height: 180px;
+  max-width: 180px;
+  max-height: 180px;
   object-fit: contain;
   flex-shrink: 0;
   border-radius: 0 !important;
@@ -569,10 +575,10 @@
 
 @media (max-width: 768px) {
   .aboutHeroBigPortrait {
-    width: 100px;
-    height: 100px;
-    max-width: 100px;
-    max-height: 100px;
+    width: 110px;
+    height: 110px;
+    max-width: 110px;
+    max-height: 110px;
   }
 }
 
