@@ -423,16 +423,22 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
       document.body.classList.remove("pj-reader-mode");
       document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
+      document.documentElement.style.height = "100%";
+      document.body.style.height = "100%";
     } else {
       document.body.classList.remove("pj-overview-mode");
       document.body.classList.add("pj-reader-mode");
       document.documentElement.style.overflow = "auto";
       document.body.style.overflow = "auto";
+      document.documentElement.style.height = "auto";
+      document.body.style.height = "auto";
     }
     return () => {
       document.body.classList.remove("pj-overview-mode", "pj-reader-mode");
       document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
+      document.documentElement.style.height = "";
+      document.body.style.height = "";
     };
   }, [selectedPost, isReadingPrologue]);
 
