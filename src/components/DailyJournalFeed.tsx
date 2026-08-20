@@ -45,6 +45,10 @@ function stripImagesFromHtml(html: string): string {
     .replace(/<figure[^>]*>[\s\S]*?<\/figure>/gi, "")
     .replace(/<table[^>]*>[\s\S]*?<\/table>/gi, "")
     .replace(/<img[^>]*>/gi, "")
+    .replace(/<font[^>]*>/gi, "")
+    .replace(/<\/font>/gi, "")
+    .replace(/\s*style="[^"]*"/gi, "")
+    .replace(/\s*face="[^"]*"/gi, "")
     .replace(/<p[^>]*>\s*(?:&nbsp;|<br\s*\/?>|\s)*<\/p>/gi, "")
     .replace(/<div[^>]*>\s*(?:&nbsp;|<br\s*\/?>|\s)*<\/div>/gi, "")
     .replace(/(<br\s*\/?>\s*){2,}/gi, "<br>")
@@ -378,6 +382,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const fallbackBrand = "/images/defining_brand_mono.png";
 
   const [postPhotoIndex, setPostPhotoIndex] = useState<number>(0);
+  const [readerTheme, setReaderTheme] = useState<"paper" | "light" | "dark">("paper");
   const [readerFont, setReaderFont] = useState<"serif" | "sans">("serif");
   const [readerSize, setReaderSize] = useState<"sm" | "md" | "lg">("md");
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
@@ -1551,58 +1556,54 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           word-break: break-word;
         }
 
-        /* ── EDITORIAL NOVEL ARTICLE READER ── */
+        /* ── EDITORIAL NOVEL ARTICLE READER (100% CONSISTENT TYPOGRAPHY) ── */
         .novel-article-reader {
-          font-family: var(--font-lora, var(--font-merriweather, Georgia, serif));
-          font-size: 1.14rem;
-          line-height: 1.96;
-          color: var(--text-primary, #111111);
-          letter-spacing: -0.003em;
+          font-family: var(--font-lora, var(--font-merriweather, Georgia, "Times New Roman", serif)) !important;
+          font-size: 1.12rem !important;
+          line-height: 1.92 !important;
+          color: inherit !important;
+          letter-spacing: -0.003em !important;
           word-break: break-word;
-          transition: font-family 0.2s ease, font-size 0.2s ease;
+          transition: background 0.2s ease, color 0.2s ease;
         }
 
-        .novel-article-reader.font-sans,
-        .novel-article-reader.font-sans * {
-          font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif) !important;
+        .novel-article-reader p,
+        .novel-article-reader div,
+        .novel-article-reader span,
+        .novel-article-reader li,
+        .novel-article-reader font {
+          font-family: var(--font-lora, var(--font-merriweather, Georgia, "Times New Roman", serif)) !important;
+          font-size: 1.12rem !important;
+          line-height: 1.92 !important;
+          letter-spacing: inherit !important;
+          color: inherit !important;
+          margin-bottom: 1.45rem !important;
         }
 
-        .novel-article-reader.font-serif,
-        .novel-article-reader.font-serif * {
-          font-family: var(--font-lora, var(--font-merriweather, Georgia, serif)) !important;
+        .novel-article-reader b,
+        .novel-article-reader strong {
+          font-weight: 750 !important;
+          font-size: inherit !important;
         }
 
-        .novel-article-reader.size-sm,
-        .novel-article-reader.size-sm p,
-        .novel-article-reader.size-sm span,
-        .novel-article-reader.size-sm div,
-        .novel-article-reader.size-sm li {
-          font-size: 0.95rem !important;
-          line-height: 1.8 !important;
+        .novel-article-reader i,
+        .novel-article-reader em {
+          font-style: italic !important;
+          font-size: inherit !important;
         }
 
-        .novel-article-reader.size-md,
-        .novel-article-reader.size-md p,
-        .novel-article-reader.size-md span,
-        .novel-article-reader.size-md div,
-        .novel-article-reader.size-md li {
-          font-size: 1.14rem !important;
-          line-height: 1.96 !important;
+        /* ── READING THEMES (PAPER, LIGHT, DARK) ── */
+        .pj-right.theme-paper {
+          background: #FAF7F0 !important;
+          color: #2B2824 !important;
         }
-
-        .novel-article-reader.size-lg,
-        .novel-article-reader.size-lg p,
-        .novel-article-reader.size-lg span,
-        .novel-article-reader.size-lg div,
-        .novel-article-reader.size-lg li {
-          font-size: 1.35rem !important;
-          line-height: 2.1 !important;
+        .pj-right.theme-light {
+          background: #FFFFFF !important;
+          color: #111111 !important;
         }
-
-        .novel-article-reader p {
-          margin: 0 0 1.35rem 0 !important;
-          line-height: 1.9 !important;
-          color: inherit;
+        .pj-right.theme-dark {
+          background: #141518 !important;
+          color: #E2E2E6 !important;
         }
 
         .novel-article-reader blockquote {
@@ -2271,16 +2272,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: block !important;
           }
 
-          /* ── ROOT LAYOUT (IMMERSIVE 100% FULLSCREEN COVER ON MOBILE OVERVIEW) ── */
+          /* ── ROOT LAYOUT (IMMERSIVE CARD DECK ON MOBILE OVERVIEW) ── */
           .pj-root {
             display: flex !important;
             flex-direction: column !important;
-            position: fixed !important;
-            inset: 0 !important;
-            height: 100% !important;
+            position: relative !important;
             height: 100vh !important;
             height: 100dvh !important;
-            height: -webkit-fill-available !important;
             width: 100vw !important;
             overflow: hidden !important;
             padding: 0 !important;
@@ -2289,10 +2287,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             -webkit-overflow-scrolling: touch !important;
           }
 
-          /* When reading an article or prologue, allow vertical scrolling */
+          /* When reading an article or prologue, allow vertical scrolling with smooth transition */
           .pj-root.has-selected-post {
             position: relative !important;
-            inset: auto !important;
             height: auto !important;
             min-height: 100vh !important;
             min-height: 100dvh !important;
@@ -2300,29 +2297,24 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             background: var(--bg-color, #FFFFFF) !important;
           }
 
-          /* ── HERO PHOTO FEATURED CARD (FULLSCREEN 100% ON OVERVIEW) ── */
+          /* ── HERO PHOTO FEATURED CARD (SMOOTH TRANSITION TO 38DVH ON ARTICLE OPEN) ── */
           .pj-left {
-            position: absolute !important;
-            inset: 0 !important;
-            width: 100% !important;
+            position: relative !important;
+            width: 100vw !important;
             max-width: 100vw !important;
-            height: 100% !important;
             height: 100vh !important;
             height: 100dvh !important;
-            height: -webkit-fill-available !important;
             margin: 0 !important;
             border-radius: 0 !important;
             border: none !important;
             overflow: hidden !important;
             flex-shrink: 0 !important;
             box-shadow: none !important;
-            transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            transition: height 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
           }
 
-          /* When article reader is open on mobile, shrink cover to top header */
+          /* When article reader is open on mobile, shrink cover with smooth transition */
           .pj-root.has-selected-post .pj-left {
-            position: relative !important;
-            inset: auto !important;
             height: 38vh !important;
             height: 38dvh !important;
             min-height: 240px !important;
@@ -2356,19 +2348,17 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             max-width: 100vw !important;
             max-height: none !important;
             height: auto !important;
-            background: var(--bg-color, #FFFFFF) !important;
-            color: var(--text-primary, #111111) !important;
             border-radius: 0 !important;
             overflow-y: visible !important;
             box-sizing: border-box !important;
             z-index: 1 !important;
-            padding: 1.8rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) !important;
+            padding: 1.8rem 1.25rem calc(2rem + env(safe-area-inset-bottom, 0px)) !important;
             box-shadow: none !important;
           }
 
           .pj-about-ig-grid { left: 0; height: 100%; }
 
-          /* ── HERO TEXT INSIDE LEFT PANEL ── */
+          /* ── HERO TEXT INSIDE LEFT PANEL (SAFE FROM SAFARI BOTTOM TOOLBAR) ── */
           .pj-left-content {
             position: absolute !important;
             inset: 0 !important;
@@ -2377,13 +2367,26 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: flex !important;
             flex-direction: column !important;
             justify-content: flex-end !important;
-            padding: 3rem 1.35rem calc(1.8rem + env(safe-area-inset-bottom, 0px)) 1.35rem !important;
+            padding: 3.5rem 1.35rem calc(5.2rem + env(safe-area-inset-bottom, 20px)) 1.35rem !important;
             box-sizing: border-box !important;
             z-index: 10 !important;
           }
 
+          .pj-hero-arrows {
+            bottom: calc(5.2rem + env(safe-area-inset-bottom, 20px)) !important;
+            right: 1.25rem !important;
+          }
+
           .pj-root.has-selected-post .pj-left-content {
             padding: 1.5rem 6.2rem 1.25rem 1.25rem !important;
+          }
+
+          /* Ensure reader navbar button doesn't float over article text */
+          .pj-root.has-selected-post .mobile-blog-header {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
           }
 
           .pj-title {
@@ -2939,6 +2942,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             </div>
           ) : !isReadingPrologue ? (
             <div
+              className="pj-hero-arrows"
               style={{
                 position: "absolute",
                 bottom: "1.5rem",
@@ -3009,7 +3013,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         </div>
 
         {/* RIGHT COLUMN: SINGLE-SCREEN COMPACT EDITORIAL LAYOUT */}
-        <div className={`pj-right${!selectedPost && !isReadingPrologue ? " fit-screen" : ""}`}>
+        <div className={`pj-right${!selectedPost && !isReadingPrologue ? " fit-screen" : ""} theme-${readerTheme}`}>
           <div className="pj-journal-feed-wrap">
             {/* Simple Page Header with IG, Email, Search & About button (ONLY visible in Overview mode) */}
             {!selectedPost && !isReadingPrologue && (
@@ -3261,16 +3265,16 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     {/* HORIZONTAL RULE LINE SPANNING TO PILLBAR */}
                     <div style={{ flex: 1, height: "1px", background: "var(--border-strong, rgba(125,125,125,0.45))", opacity: 0.85 }} />
 
-                    {/* ── UNIFIED READING CONTROLS PILLBAR (PINNED TO RIGHT) ── */}
+                    {/* ── UNIFIED READING THEME PILLBAR (PINNED TO RIGHT) ── */}
                     <div
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
-                        background: "var(--bg-secondary, rgba(125,125,125,0.08))",
-                        border: "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
+                        background: readerTheme === "dark" ? "rgba(255,255,255,0.08)" : "var(--bg-secondary, rgba(125,125,125,0.08))",
+                        border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.15)" : "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
                         borderRadius: "9999px",
                         padding: "0.22rem 0.35rem",
-                        gap: "0.15rem",
+                        gap: "0.2rem",
                         boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
                         flexShrink: 0,
                       }}
@@ -3282,99 +3286,70 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           fontWeight: 700,
                           letterSpacing: "0.08em",
                           textTransform: "uppercase",
-                          color: "var(--text-muted, #888888)",
-                          padding: "0.25rem 0.55rem",
+                          color: readerTheme === "dark" ? "#88888e" : "var(--text-muted, #888888)",
+                          padding: "0.25rem 0.5rem",
                         }}
                       >
                         {getReadingTime(selectedPost.content)} MIN READ
                       </span>
 
-                      <div style={{ width: "1px", height: "12px", background: "var(--border-subtle, rgba(125,125,125,0.18))" }} />
+                      <div style={{ width: "1px", height: "12px", background: readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "var(--border-subtle, rgba(125,125,125,0.18))" }} />
 
-                      {/* FONT SERIF/SANS TOGGLE */}
+                      {/* PAPER THEME BUTTON */}
                       <button
-                        onClick={() => setReaderFont((prev) => (prev === "serif" ? "sans" : "serif"))}
-                        title={readerFont === "serif" ? "Switch to Sans-Serif font" : "Switch to Serif font"}
+                        onClick={() => setReaderTheme("paper")}
+                        title="Paper Reading Mode"
                         style={{
-                          fontSize: "0.64rem",
-                          fontWeight: 700,
+                          fontSize: "0.65rem",
+                          fontWeight: readerTheme === "paper" ? 800 : 550,
                           padding: "0.25rem 0.55rem",
                           borderRadius: "9999px",
-                          border: "none",
-                          background: "transparent",
-                          color: "var(--text-primary, #111111)",
+                          border: readerTheme === "paper" ? "1px solid #D4CEBF" : "1px solid transparent",
+                          background: readerTheme === "paper" ? "#EFECE1" : "transparent",
+                          color: "#2C2A26",
                           cursor: "pointer",
-                          transition: "all 0.2s ease",
+                          transition: "all 0.15s ease",
                         }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = "var(--border-subtle, rgba(125,125,125,0.12))"; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                       >
-                        {readerFont === "serif" ? "Aa Serif" : "Aa Sans"}
+                        Paper
                       </button>
 
-                      <div style={{ width: "1px", height: "12px", background: "var(--border-subtle, rgba(125,125,125,0.18))" }} />
-
-                      {/* FONT SIZE TOGGLE (SM / MD / LG) */}
+                      {/* LIGHT THEME BUTTON */}
                       <button
-                        onClick={() => {
-                          setReaderSize((prev) => (prev === "sm" ? "md" : prev === "md" ? "lg" : "sm"));
-                        }}
-                        title="Adjust text size"
+                        onClick={() => setReaderTheme("light")}
+                        title="Light Reading Mode"
                         style={{
-                          fontSize: "0.64rem",
-                          fontWeight: 700,
+                          fontSize: "0.65rem",
+                          fontWeight: readerTheme === "light" ? 800 : 550,
                           padding: "0.25rem 0.55rem",
                           borderRadius: "9999px",
-                          border: "none",
-                          background: "transparent",
-                          color: "var(--text-primary, #111111)",
+                          border: readerTheme === "light" ? "1px solid #111111" : "1px solid transparent",
+                          background: readerTheme === "light" ? "#111111" : "transparent",
+                          color: readerTheme === "light" ? "#FFFFFF" : "var(--text-primary, #111111)",
                           cursor: "pointer",
-                          transition: "all 0.2s ease",
+                          transition: "all 0.15s ease",
                         }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = "var(--border-subtle, rgba(125,125,125,0.12))"; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                       >
-                        {readerSize === "sm" ? "Text: S" : readerSize === "md" ? "Text: M" : "Text: L"}
+                        Light
                       </button>
 
-                      <div style={{ width: "1px", height: "12px", background: "var(--border-subtle, rgba(125,125,125,0.18))" }} />
-
-                      {/* SHARE / COPY LINK */}
+                      {/* DARK THEME BUTTON */}
                       <button
-                        onClick={() => {
-                          if (typeof window !== "undefined") {
-                            navigator.clipboard.writeText(window.location.href);
-                            setCopiedLink(true);
-                            setTimeout(() => setCopiedLink(false), 2000);
-                          }
-                        }}
-                        title="Copy story link"
+                        onClick={() => setReaderTheme("dark")}
+                        title="Dark Reading Mode"
                         style={{
-                          width: "24px",
-                          height: "24px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          borderRadius: "50%",
-                          border: "none",
-                          background: "transparent",
-                          color: copiedLink ? "#10B981" : "var(--text-primary, #111111)",
+                          fontSize: "0.65rem",
+                          fontWeight: readerTheme === "dark" ? 800 : 550,
+                          padding: "0.25rem 0.55rem",
+                          borderRadius: "9999px",
+                          border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.3)" : "1px solid transparent",
+                          background: readerTheme === "dark" ? "rgba(255,255,255,0.18)" : "transparent",
+                          color: readerTheme === "dark" ? "#FFFFFF" : "var(--text-primary, #111111)",
                           cursor: "pointer",
-                          transition: "all 0.2s ease",
+                          transition: "all 0.15s ease",
                         }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = "var(--border-subtle, rgba(125,125,125,0.12))"; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                       >
-                        {copiedLink ? (
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        ) : (
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                          </svg>
-                        )}
+                        Dark
                       </button>
                     </div>
                   </div>
