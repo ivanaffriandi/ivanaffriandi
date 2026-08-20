@@ -2354,6 +2354,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .desktop-prologue-wrap {
           display: block;
         }
+        .mobile-overview-footer {
+          display: none;
+        }
+        .mobile-reader-footer {
+          display: none;
+        }
         .mobile-blog-header {
           display: none;
         }
@@ -2371,6 +2377,27 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         @media (max-width: 860px) {
           .desktop-prologue-wrap {
             display: none !important;
+          }
+          .mobile-overview-footer {
+            display: flex !important;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.55);
+            margin-top: 1.1rem;
+          }
+          .mobile-reader-footer {
+            display: flex !important;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 2.2rem 1rem calc(env(safe-area-inset-bottom, 24px) + 2.5rem) 1rem !important;
+            margin-top: 1.8rem !important;
+            border-top: 1px solid var(--border-subtle, rgba(125, 125, 125, 0.2));
+            box-sizing: border-box !important;
           }
           /* ── MOBILE TRANSPARENT TOP HEADER (STICKY FLOATING NAVBAR) ── */
           .mobile-blog-header {
@@ -3173,6 +3200,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 })()}
               </div>
             ) : null}
+
+            {/* ── MOBILE ONLY OVERVIEW 1-LINE FOOTER ── */}
+            {!selectedPost && !isReadingPrologue ? (
+              <div className="mobile-overview-footer">
+                <span>© {new Date().getFullYear()} IVAN AFFRIANDI</span>
+                <span style={{ opacity: 0.4 }}>·</span>
+                <span>JOURNAL</span>
+              </div>
+            ) : null}
           </div>
 
           {!selectedPost && !isReadingPrologue ? (
@@ -3498,6 +3534,20 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       Grab a drink. Make yourself at home.
                     </p>
                   </div>
+
+                  {/* ── MOBILE PROLOGUE READER FOOTER ── */}
+                  <footer className="mobile-reader-footer">
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.35rem", textAlign: "center" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
+                        <span>© {new Date().getFullYear()} IVAN AFFRIANDI</span>
+                        <span>·</span>
+                        <span>ALL RIGHTS RESERVED</span>
+                      </div>
+                      <span style={{ fontSize: "0.55rem", letterSpacing: "0.08em", color: "var(--text-muted)", opacity: 0.6, textTransform: "uppercase" }}>
+                        JOURNAL · THOUGHTS & CRAFT
+                      </span>
+                    </div>
+                  </footer>
                 </motion.div>
               ) : selectedPost ? (
                 /* ── PURE ARTICLE CONTENT READER (LEFT ACTS AS COVER HEADER) ── */
@@ -3902,6 +3952,20 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         })}
                     </div>
                   </div>
+
+                  {/* ── MOBILE ARTICLE READER FOOTER ── */}
+                  <footer className="mobile-reader-footer">
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.35rem", textAlign: "center" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
+                        <span>© {new Date().getFullYear()} IVAN AFFRIANDI</span>
+                        <span>·</span>
+                        <span>ALL RIGHTS RESERVED</span>
+                      </div>
+                      <span style={{ fontSize: "0.55rem", letterSpacing: "0.08em", color: "var(--text-muted)", opacity: 0.6, textTransform: "uppercase" }}>
+                        JOURNAL · THOUGHTS & CRAFT
+                      </span>
+                    </div>
+                  </footer>
                 </motion.div>
               ) : (
                 /* ── REGULAR OVERVIEW JOURNAL VIEW (FITS SCREEN WITHOUT VERTICAL OVERFLOW) ── */
