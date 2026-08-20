@@ -486,6 +486,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           }
 
           // Hide header on scroll down, reveal on scroll up (mobile reading mode only)
+          const isMobile = window.innerWidth <= 860;
           if (isMobile && (selectedPost || isReadingPrologue)) {
             const delta = scrollTop - lastScrollY;
             if (delta > 6 && scrollTop > 80) {
