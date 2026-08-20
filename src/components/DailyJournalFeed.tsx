@@ -2381,22 +2381,25 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           .mobile-overview-footer {
             display: flex !important;
             align-items: center;
-            gap: 0.45rem;
-            font-size: 0.6rem;
+            font-size: 0.58rem;
             font-weight: 700;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.55);
-            margin-top: 1.1rem;
+            color: rgba(255, 255, 255, 0.45);
+            margin-top: 0.9rem;
           }
           .mobile-reader-footer {
             display: flex !important;
             justify-content: center;
             align-items: center;
             width: 100%;
-            padding: 2.2rem 1rem calc(env(safe-area-inset-bottom, 24px) + 2.5rem) 1rem !important;
-            margin-top: 1.8rem !important;
-            border-top: 1px solid var(--border-subtle, rgba(125, 125, 125, 0.2));
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted, #888888);
+            padding: 1.5rem 1rem calc(env(safe-area-inset-bottom, 24px) + 2rem) 1rem !important;
+            margin-top: 1.2rem !important;
             box-sizing: border-box !important;
           }
           /* ── MOBILE TRANSPARENT TOP HEADER (STICKY FLOATING NAVBAR) ── */
@@ -2586,15 +2589,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           }
 
           body.pj-reader-mode {
-            overflow-x: hidden !important;
-            overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch !important;
-            touch-action: pan-y !important;
-            overscroll-behavior-y: auto !important;
+            overflow-x: visible !important;
+            overflow-y: visible !important;
             background-color: var(--bg-color, #FFFFFF) !important;
             height: auto !important;
-            min-height: 100vh !important;
-            min-height: 100dvh !important;
+            min-height: 100% !important;
+            -webkit-overflow-scrolling: touch !important;
           }
 
           /* ── ROOT LAYOUT (IMMERSIVE LOCKED CARD DECK ON MOBILE OVERVIEW) ── */
@@ -3205,8 +3205,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             {!selectedPost && !isReadingPrologue ? (
               <div className="mobile-overview-footer">
                 <span>© {new Date().getFullYear()} IVAN AFFRIANDI</span>
-                <span style={{ opacity: 0.4 }}>·</span>
-                <span>JOURNAL</span>
               </div>
             ) : null}
           </div>
@@ -3537,16 +3535,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
                   {/* ── MOBILE PROLOGUE READER FOOTER ── */}
                   <footer className="mobile-reader-footer">
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.35rem", textAlign: "center" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
-                        <span>© {new Date().getFullYear()} IVAN AFFRIANDI</span>
-                        <span>·</span>
-                        <span>ALL RIGHTS RESERVED</span>
-                      </div>
-                      <span style={{ fontSize: "0.55rem", letterSpacing: "0.08em", color: "var(--text-muted)", opacity: 0.6, textTransform: "uppercase" }}>
-                        JOURNAL · THOUGHTS & CRAFT
-                      </span>
-                    </div>
+                    <span>© {new Date().getFullYear()} IVAN AFFRIANDI</span>
                   </footer>
                 </motion.div>
               ) : selectedPost ? (
@@ -3955,16 +3944,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
                   {/* ── MOBILE ARTICLE READER FOOTER ── */}
                   <footer className="mobile-reader-footer">
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.35rem", textAlign: "center" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
-                        <span>© {new Date().getFullYear()} IVAN AFFRIANDI</span>
-                        <span>·</span>
-                        <span>ALL RIGHTS RESERVED</span>
-                      </div>
-                      <span style={{ fontSize: "0.55rem", letterSpacing: "0.08em", color: "var(--text-muted)", opacity: 0.6, textTransform: "uppercase" }}>
-                        JOURNAL · THOUGHTS & CRAFT
-                      </span>
-                    </div>
+                    <span>© {new Date().getFullYear()} IVAN AFFRIANDI</span>
                   </footer>
                 </motion.div>
               ) : (
