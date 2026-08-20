@@ -2345,6 +2345,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .modal-close:hover { color: var(--text-primary, #111111); }
 
         /* ── DESKTOP DEFAULTS (HIDDEN) ── */
+        .desktop-prologue-wrap {
+          display: block;
+        }
         .mobile-blog-header {
           display: none;
         }
@@ -2360,6 +2363,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
            (ZERO EFFECT ON DESKTOP)
            ───────────────────────────────────────────────── */
         @media (max-width: 860px) {
+          .desktop-prologue-wrap {
+            display: none !important;
+          }
           /* ── MOBILE TRANSPARENT TOP HEADER (STICKY FLOATING NAVBAR) ── */
           .mobile-blog-header {
             display: flex !important;
@@ -3894,6 +3900,53 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               ) : (
                 /* ── REGULAR OVERVIEW JOURNAL VIEW (FITS SCREEN WITHOUT VERTICAL OVERFLOW) ── */
                 <>
+                  {/* ── DESKTOP PROLOGUE SECTION (DESKTOP ONLY, HIDDEN ON MOBILE) ── */}
+                  <div className="desktop-prologue-wrap" style={{ margin: "0.15rem 0" }}>
+                    <div className="section-label-header" style={{ marginBottom: "0.4rem" }}>
+                      <span>PROLOGUE</span>
+                    </div>
+
+                    <div className="novel-intro-2col" style={{ gap: "1.25rem" }}>
+                      {/* LEFT COLUMN: ATMOSPHERIC NARRATIVE */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
+                        <p className="novel-intro-paragraph novel-drop-cap" style={{ fontSize: "0.86rem", lineHeight: 1.62, margin: 0 }}>
+                          Most of this gets written late at night, usually when the screen is the only light in the room and the city noise has finally died down. It&apos;s where passing thoughts turn into essays, and random observations get a second life.
+                        </p>
+                        <p className="novel-intro-paragraph" style={{ fontSize: "0.84rem", lineHeight: 1.62, margin: 0 }}>
+                          I build software, take photos, and obsess over small details. Instead of keeping all of that in separate boxes, I wanted a quiet corner on the internet where everything could just breathe together.
+                        </p>
+                      </div>
+
+                      {/* RIGHT COLUMN: CHAT BUBBLE & SIGN OFF */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                        <div className="imessage-chat-wrap" style={{ margin: 0, gap: "0.45rem" }}>
+                          {/* Incoming Friend Message */}
+                          <div className="imessage-row-incoming">
+                            <span className="imessage-sender-tag" style={{ marginLeft: "0.5rem", fontSize: "0.52rem" }}>
+                              FRIEND
+                            </span>
+                            <div className="imessage-bubble-incoming" style={{ padding: "0.5rem 0.85rem", fontSize: "0.78rem", lineHeight: 1.4 }}>
+                              &ldquo;Wait, so what is this place exactly? A blog? A portfolio?&rdquo;
+                            </div>
+                          </div>
+
+                          {/* Outgoing Ivan Message */}
+                          <div className="imessage-row-outgoing">
+                            <span className="imessage-sender-tag" style={{ marginRight: "0.5rem", fontSize: "0.52rem" }}>
+                              IVAN
+                            </span>
+                            <div className="imessage-bubble-outgoing" style={{ padding: "0.5rem 0.85rem", fontSize: "0.78rem", lineHeight: 1.4 }}>
+                              &ldquo;Honestly? Just a running log. Things I build, photos I take, and ideas I can&apos;t stop chewing on.&rdquo;
+                            </div>
+                          </div>
+                        </div>
+
+                        <p className="novel-intro-paragraph" style={{ opacity: 0.72, fontSize: "0.76rem", fontStyle: "italic", borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))", paddingTop: "0.4rem", margin: 0 }}>
+                          Grab a drink. Make yourself at home.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
 
                   {/* ── HORIZONTAL CAROUSEL LAYOUT FOR CHAPTERS WITH YEAR TABS & ARROWS ── */}
                   <div className="blog-section-wrap" style={{ marginTop: "0.25rem" }}>
