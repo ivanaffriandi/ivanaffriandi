@@ -926,13 +926,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           flex: 1;
           min-width: 0;
           height: 100vh;
-          overflow-y: hidden;
+          overflow-y: auto;
           overflow-x: hidden;
           box-sizing: border-box;
           padding: 1.8rem max(3.2vw, 1.8rem) 1.5rem;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
+          justify-content: flex-start;
           gap: 0.85rem;
           -webkit-overflow-scrolling: touch;
           scroll-behavior: smooth;
@@ -941,8 +941,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
 
         .pj-right.fit-screen {
-          overflow-y: hidden;
-          justify-content: space-between;
+          overflow-y: hidden !important;
+          justify-content: space-between !important;
         }
 
         /* EDITORIAL THEME OVERRIDES FOR HOMEPAGE RIGHT FEED */
