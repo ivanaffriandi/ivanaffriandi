@@ -3131,103 +3131,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             ) : null}
           </div>
 
-          {selectedPost ? (
-            <div
-              style={{
-                position: "absolute",
-                bottom: "1.5rem",
-                right: "1.5rem",
-                zIndex: 10,
-                display: "flex",
-                alignItems: "center",
-                gap: "0.45rem",
-              }}
-            >
-              {/* PREVIOUS CHAPTER ICON BUTTON */}
-              <button
-                disabled={selectedPostIndex === null || selectedPostIndex >= sortedPosts.length - 1}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1) {
-                    setSelectedPostIndex(selectedPostIndex + 1);
-                  }
-                }}
-                onTouchStart={(e) => e.stopPropagation()}
-                onTouchEnd={(e) => {
-                  e.stopPropagation();
-                  if (selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1) {
-                    setSelectedPostIndex(selectedPostIndex + 1);
-                  }
-                }}
-                title="Previous Chapter"
-                style={{
-                  width: "42px",
-                  height: "42px",
-                  borderRadius: "50%",
-                  background: "rgba(0, 0, 0, 0.5)",
-                  backdropFilter: "blur(14px)",
-                  WebkitBackdropFilter: "blur(14px)",
-                  border: "1px solid rgba(255, 255, 255, 0.3)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? "#fff" : "rgba(255,255,255,0.3)",
-                  cursor: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? "pointer" : "default",
-                  transition: "all 0.15s ease",
-                  touchAction: "manipulation",
-                  WebkitTapHighlightColor: "transparent",
-                  userSelect: "none",
-                  WebkitUserSelect: "none",
-                }}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6">
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
-
-              {/* NEXT CHAPTER ICON BUTTON */}
-              <button
-                disabled={selectedPostIndex === null || selectedPostIndex <= 0}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (selectedPostIndex !== null && selectedPostIndex > 0) {
-                    setSelectedPostIndex(selectedPostIndex - 1);
-                  }
-                }}
-                onTouchStart={(e) => e.stopPropagation()}
-                onTouchEnd={(e) => {
-                  e.stopPropagation();
-                  if (selectedPostIndex !== null && selectedPostIndex > 0) {
-                    setSelectedPostIndex(selectedPostIndex - 1);
-                  }
-                }}
-                title="Next Chapter"
-                style={{
-                  width: "42px",
-                  height: "42px",
-                  borderRadius: "50%",
-                  background: "rgba(0, 0, 0, 0.5)",
-                  backdropFilter: "blur(14px)",
-                  WebkitBackdropFilter: "blur(14px)",
-                  border: "1px solid rgba(255, 255, 255, 0.3)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: selectedPostIndex !== null && selectedPostIndex > 0 ? "#fff" : "rgba(255,255,255,0.3)",
-                  cursor: selectedPostIndex !== null && selectedPostIndex > 0 ? "pointer" : "default",
-                  transition: "all 0.15s ease",
-                  touchAction: "manipulation",
-                  WebkitTapHighlightColor: "transparent",
-                  userSelect: "none",
-                  WebkitUserSelect: "none",
-                }}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </button>
-            </div>
-          ) : !isReadingPrologue ? (
+          {!selectedPost && !isReadingPrologue ? (
             <div
               className="pj-hero-arrows"
               style={{
@@ -3443,7 +3347,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.15)" : "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
                         borderRadius: "9999px",
                         padding: "0.22rem 0.35rem",
-                        gap: "0.2rem",
+                        gap: "0.28rem",
                         boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
                         flexShrink: 0,
                       }}
@@ -3457,6 +3361,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           textTransform: "uppercase",
                           color: readerTheme === "dark" ? "#88888e" : "var(--text-muted, #888888)",
                           padding: "0.25rem 0.5rem",
+                          whiteSpace: "nowrap",
                         }}
                       >
                         PROLOGUE · 2 MIN READ
@@ -3464,61 +3369,41 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
                       <div style={{ width: "1px", height: "12px", background: readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "var(--border-subtle, rgba(125,125,125,0.18))" }} />
 
-                      {/* PAPER THEME BUTTON */}
+                      {/* UNIFIED SINGLE THEME TOGGLE BUTTON (CYCLES PAPER -> LIGHT -> DARK) */}
                       <button
-                        onClick={() => setReaderTheme("paper")}
-                        title="Paper Reading Mode"
+                        onClick={() => {
+                          if (readerTheme === "paper") setReaderTheme("light");
+                          else if (readerTheme === "light") setReaderTheme("dark");
+                          else setReaderTheme("paper");
+                        }}
+                        title={`Theme: ${readerTheme.toUpperCase()} (Click to cycle)`}
                         style={{
-                          fontSize: "0.65rem",
-                          fontWeight: readerTheme === "paper" ? 800 : 550,
-                          padding: "0.25rem 0.55rem",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.3rem",
+                          fontSize: "0.64rem",
+                          fontWeight: 700,
+                          letterSpacing: "0.04em",
+                          textTransform: "uppercase",
+                          padding: "0.22rem 0.6rem",
                           borderRadius: "9999px",
-                          border: readerTheme === "paper" ? "1px solid #D4CEBF" : "1px solid transparent",
-                          background: readerTheme === "paper" ? "#EFECE1" : "transparent",
-                          color: readerTheme === "paper" ? "#2C2A26" : (readerTheme === "dark" ? "rgba(255,255,255,0.7)" : "#7D7970"),
+                          border: readerTheme === "dark" 
+                            ? "1px solid rgba(255,255,255,0.3)" 
+                            : (readerTheme === "light" ? "1px solid #111111" : "1px solid #D4CEBF"),
+                          background: readerTheme === "dark" 
+                            ? "rgba(255,255,255,0.2)" 
+                            : (readerTheme === "light" ? "#111111" : "#EFECE1"),
+                          color: readerTheme === "dark" 
+                            ? "#FFFFFF" 
+                            : (readerTheme === "light" ? "#FFFFFF" : "#2C2A26"),
                           cursor: "pointer",
                           transition: "all 0.15s ease",
+                          whiteSpace: "nowrap",
                         }}
                       >
-                        Paper
-                      </button>
-
-                      {/* LIGHT THEME BUTTON */}
-                      <button
-                        onClick={() => setReaderTheme("light")}
-                        title="Light Reading Mode"
-                        style={{
-                          fontSize: "0.65rem",
-                          fontWeight: readerTheme === "light" ? 800 : 550,
-                          padding: "0.25rem 0.55rem",
-                          borderRadius: "9999px",
-                          border: readerTheme === "light" ? "1px solid #111111" : "1px solid transparent",
-                          background: readerTheme === "light" ? "#111111" : "transparent",
-                          color: readerTheme === "light" ? "#FFFFFF" : (readerTheme === "dark" ? "rgba(255,255,255,0.7)" : "#777777"),
-                          cursor: "pointer",
-                          transition: "all 0.15s ease",
-                        }}
-                      >
-                        Light
-                      </button>
-
-                      {/* DARK THEME BUTTON */}
-                      <button
-                        onClick={() => setReaderTheme("dark")}
-                        title="Dark Reading Mode"
-                        style={{
-                          fontSize: "0.65rem",
-                          fontWeight: readerTheme === "dark" ? 800 : 550,
-                          padding: "0.25rem 0.55rem",
-                          borderRadius: "9999px",
-                          border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.35)" : "1px solid transparent",
-                          background: readerTheme === "dark" ? "rgba(255,255,255,0.22)" : "transparent",
-                          color: readerTheme === "dark" ? "#FFFFFF" : (readerTheme === "paper" ? "#7D7970" : "#777777"),
-                          cursor: "pointer",
-                          transition: "all 0.15s ease",
-                        }}
-                      >
-                        Dark
+                        {readerTheme === "paper" && "📜 Paper"}
+                        {readerTheme === "light" && "☀️ Light"}
+                        {readerTheme === "dark" && "🌙 Dark"}
                       </button>
                     </div>
                   </div>
@@ -3632,7 +3517,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     {/* HORIZONTAL RULE LINE SPANNING TO PILLBAR */}
                     <div style={{ flex: 1, height: "1px", background: "var(--border-strong, rgba(125,125,125,0.45))", opacity: 0.85 }} />
 
-                    {/* ── UNIFIED READING THEME PILLBAR (PINNED TO RIGHT) ── */}
+                    {/* ── UNIFIED READING THEME PILLBAR (WITH PREV/NEXT ON FAR-LEFT & SINGLE THEME BUTTON) ── */}
                     <div
                       style={{
                         display: "inline-flex",
@@ -3641,11 +3526,75 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.15)" : "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
                         borderRadius: "9999px",
                         padding: "0.22rem 0.35rem",
-                        gap: "0.2rem",
+                        gap: "0.28rem",
                         boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
                         flexShrink: 0,
                       }}
                     >
+                      {/* PREVIOUS CHAPTER BUTTON (FAR LEFT) */}
+                      <button
+                        disabled={selectedPostIndex === null || selectedPostIndex >= sortedPosts.length - 1}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1) {
+                            setSelectedPostIndex(selectedPostIndex + 1);
+                          }
+                        }}
+                        title="Previous Chapter"
+                        style={{
+                          width: "28px",
+                          height: "28px",
+                          borderRadius: "50%",
+                          border: "none",
+                          background: "transparent",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? (readerTheme === "dark" ? "#FFFFFF" : "#111111") : (readerTheme === "dark" ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.22)"),
+                          cursor: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? "pointer" : "default",
+                          transition: "all 0.15s ease",
+                          padding: 0,
+                          touchAction: "manipulation",
+                        }}
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8">
+                          <polyline points="15 18 9 12 15 6" />
+                        </svg>
+                      </button>
+
+                      {/* NEXT CHAPTER BUTTON (FAR LEFT) */}
+                      <button
+                        disabled={selectedPostIndex === null || selectedPostIndex <= 0}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (selectedPostIndex !== null && selectedPostIndex > 0) {
+                            setSelectedPostIndex(selectedPostIndex - 1);
+                          }
+                        }}
+                        title="Next Chapter"
+                        style={{
+                          width: "28px",
+                          height: "28px",
+                          borderRadius: "50%",
+                          border: "none",
+                          background: "transparent",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: selectedPostIndex !== null && selectedPostIndex > 0 ? (readerTheme === "dark" ? "#FFFFFF" : "#111111") : (readerTheme === "dark" ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.22)"),
+                          cursor: selectedPostIndex !== null && selectedPostIndex > 0 ? "pointer" : "default",
+                          transition: "all 0.15s ease",
+                          padding: 0,
+                          touchAction: "manipulation",
+                        }}
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8">
+                          <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                      </button>
+
+                      <div style={{ width: "1px", height: "12px", background: readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "var(--border-subtle, rgba(125,125,125,0.18))" }} />
+
                       {/* READING TIME BADGE */}
                       <span
                         style={{
@@ -3654,7 +3603,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           letterSpacing: "0.08em",
                           textTransform: "uppercase",
                           color: readerTheme === "dark" ? "#88888e" : "var(--text-muted, #888888)",
-                          padding: "0.25rem 0.5rem",
+                          padding: "0.25rem 0.4rem",
+                          whiteSpace: "nowrap",
                         }}
                       >
                         {getReadingTime(selectedPost.content)} MIN READ
@@ -3662,79 +3612,41 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
                       <div style={{ width: "1px", height: "12px", background: readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "var(--border-subtle, rgba(125,125,125,0.18))" }} />
 
-                      {/* PAPER THEME BUTTON */}
+                      {/* UNIFIED SINGLE THEME TOGGLE BUTTON (CYCLES PAPER -> LIGHT -> DARK) */}
                       <button
-                        onClick={() => setReaderTheme("paper")}
-                        title="Paper Reading Mode"
-                        style={{
-                          fontSize: "0.65rem",
-                          fontWeight: readerTheme === "paper" ? 800 : 550,
-                          padding: "0.25rem 0.55rem",
-                          borderRadius: "9999px",
-                          border: readerTheme === "paper" 
-                            ? "1px solid #D4CEBF" 
-                            : "1px solid transparent",
-                          background: readerTheme === "paper" 
-                            ? "#EFECE1" 
-                            : "transparent",
-                          color: readerTheme === "paper" 
-                            ? "#2C2A26" 
-                            : (readerTheme === "dark" ? "rgba(255,255,255,0.7)" : "#7D7970"),
-                          cursor: "pointer",
-                          transition: "all 0.15s ease",
+                        onClick={() => {
+                          if (readerTheme === "paper") setReaderTheme("light");
+                          else if (readerTheme === "light") setReaderTheme("dark");
+                          else setReaderTheme("paper");
                         }}
-                      >
-                        Paper
-                      </button>
-
-                      {/* LIGHT THEME BUTTON */}
-                      <button
-                        onClick={() => setReaderTheme("light")}
-                        title="Light Reading Mode"
+                        title={`Theme: ${readerTheme.toUpperCase()} (Click to cycle)`}
                         style={{
-                          fontSize: "0.65rem",
-                          fontWeight: readerTheme === "light" ? 800 : 550,
-                          padding: "0.25rem 0.55rem",
-                          borderRadius: "9999px",
-                          border: readerTheme === "light" 
-                            ? "1px solid #111111" 
-                            : "1px solid transparent",
-                          background: readerTheme === "light" 
-                            ? "#111111" 
-                            : "transparent",
-                          color: readerTheme === "light" 
-                            ? "#FFFFFF" 
-                            : (readerTheme === "dark" ? "rgba(255,255,255,0.7)" : "#777777"),
-                          cursor: "pointer",
-                          transition: "all 0.15s ease",
-                        }}
-                      >
-                        Light
-                      </button>
-
-                      {/* DARK THEME BUTTON */}
-                      <button
-                        onClick={() => setReaderTheme("dark")}
-                        title="Dark Reading Mode"
-                        style={{
-                          fontSize: "0.65rem",
-                          fontWeight: readerTheme === "dark" ? 800 : 550,
-                          padding: "0.25rem 0.55rem",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.3rem",
+                          fontSize: "0.64rem",
+                          fontWeight: 700,
+                          letterSpacing: "0.04em",
+                          textTransform: "uppercase",
+                          padding: "0.22rem 0.6rem",
                           borderRadius: "9999px",
                           border: readerTheme === "dark" 
-                            ? "1px solid rgba(255,255,255,0.35)" 
-                            : "1px solid transparent",
+                            ? "1px solid rgba(255,255,255,0.3)" 
+                            : (readerTheme === "light" ? "1px solid #111111" : "1px solid #D4CEBF"),
                           background: readerTheme === "dark" 
-                            ? "rgba(255,255,255,0.22)" 
-                            : "transparent",
+                            ? "rgba(255,255,255,0.2)" 
+                            : (readerTheme === "light" ? "#111111" : "#EFECE1"),
                           color: readerTheme === "dark" 
                             ? "#FFFFFF" 
-                            : (readerTheme === "paper" ? "#7D7970" : "#777777"),
+                            : (readerTheme === "light" ? "#FFFFFF" : "#2C2A26"),
                           cursor: "pointer",
                           transition: "all 0.15s ease",
+                          whiteSpace: "nowrap",
                         }}
                       >
-                        Dark
+                        {readerTheme === "paper" && "📜 Paper"}
+                        {readerTheme === "light" && "☀️ Light"}
+                        {readerTheme === "dark" && "🌙 Dark"}
                       </button>
                     </div>
                   </div>
