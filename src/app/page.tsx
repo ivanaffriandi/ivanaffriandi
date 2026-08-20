@@ -140,19 +140,19 @@ export default function AvantGardeHomepage() {
         left: 0,
         right: 0,
         bottom: 0,
-        width: "100vw",
+        width: "100%",
         height: "100dvh",
-        minHeight: "100vh",
+        maxHeight: "100dvh",
         backgroundColor: bg,
         color: fg,
         zIndex: 99999,
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        paddingTop: isMobile ? "calc(env(safe-area-inset-top, 0px) + 14px)" : "24px",
-        paddingBottom: isMobile ? "calc(env(safe-area-inset-bottom, 0px) + 26px)" : "24px",
-        paddingLeft: isMobile ? "18px" : "48px",
-        paddingRight: isMobile ? "18px" : "48px",
+        paddingTop: isMobile ? "calc(env(safe-area-inset-top, 0px) + 16px)" : "24px",
+        paddingBottom: isMobile ? "calc(env(safe-area-inset-bottom, 0px) + 20px)" : "24px",
+        paddingLeft: isMobile ? "20px" : "48px",
+        paddingRight: isMobile ? "20px" : "48px",
         boxSizing: "border-box",
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         userSelect: "none",
@@ -451,15 +451,17 @@ export default function AvantGardeHomepage() {
           alignItems: isMobile ? "flex-end" : "center",
           justifyContent: "space-between",
           width: "100%",
-          gap: isMobile ? "12px" : "24px",
-          zIndex: 10,
+          gap: isMobile ? "8px" : "24px",
+          zIndex: 50,
+          flexShrink: 0,
+          marginTop: "auto",
         }}
       >
         {/* BOTTOM LEFT: Big Title "AFFRIANDI, IVAN" */}
-        <div style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
+        <div style={{ flexShrink: 0, display: "flex", alignItems: "flex-end" }}>
           <h1
             style={{
-              fontSize: isMobile ? "18px" : "24px",
+              fontSize: isMobile ? "16px" : "24px",
               fontWeight: 800,
               letterSpacing: "-0.03em",
               textTransform: "uppercase",
