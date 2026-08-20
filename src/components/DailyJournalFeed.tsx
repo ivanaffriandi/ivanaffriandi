@@ -1897,43 +1897,58 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           border: 1px solid rgba(0, 0, 0, 0.06) !important;
         }
 
-        /* ── DESKTOP CHAPTERS 3-COLUMN 2-ROW GRID (MINIMALIST & BALANCED) ── */
+        /* ── DESKTOP CHAPTERS – HORIZONTAL SCROLL ROW (FILLS FULL WIDTH) ── */
         .blog-grid-layout {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 0.85rem;
+          display: flex;
+          flex-direction: row;
+          overflow-x: auto;
+          overflow-y: visible;
+          scroll-snap-type: x mandatory;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          gap: 0;
           width: 100%;
           padding: 0.25rem 0 0.5rem 0;
           box-sizing: border-box;
+          margin: 0;
+        }
+
+        .blog-grid-layout::-webkit-scrollbar {
+          display: none;
         }
 
         .blog-grid-card {
           display: flex;
           flex-direction: column;
           gap: 0.45rem;
-          width: 100%;
-          min-width: 0;
+          flex: 0 0 auto;
+          width: calc(33.333% - 0.01px);
+          min-width: 200px;
+          scroll-snap-align: start;
           cursor: pointer;
-          border-radius: 7px;
-          padding: 0.55rem;
-          border: 1px solid var(--border-subtle, rgba(0, 0, 0, 0.08));
+          border-radius: 0;
+          padding: 0.55rem 0.65rem;
+          border: none;
+          border-right: 1px solid var(--border-subtle, rgba(0,0,0,0.07));
           background: var(--card-bg-1, #FFFFFF);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.025);
-          transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+          box-shadow: none;
+          transition: background 0.18s ease;
           box-sizing: border-box;
         }
 
+        .blog-grid-card:last-child {
+          border-right: none;
+        }
+
         .blog-grid-card:hover {
-          transform: translateY(-2px);
-          border-color: var(--border-strong, rgba(0, 0, 0, 0.25));
-          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+          background: var(--bg-hover, rgba(0,0,0,0.025));
         }
 
         .blog-card-thumb-wrap {
           width: 100%;
-          height: 98px;
+          height: 110px;
           flex-shrink: 0;
-          border-radius: 5px;
+          border-radius: 4px;
           overflow: hidden;
           background: #111111;
           border: none !important;
@@ -2035,6 +2050,20 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           font-family: var(--font-serif, Georgia, serif);
           margin: 0;
           word-break: break-word;
+        }
+
+        /* ── PROLOGUE DROP-CAP (FIRST LETTER ONLY, NEVER IN BLOG POSTS) ── */
+        .novel-prologue-drop {
+          font-family: Georgia, serif;
+          font-size: 3.2rem;
+          font-weight: 700;
+          line-height: 0.8;
+          float: left;
+          margin-right: 0.5rem;
+          margin-top: 0.1rem;
+          text-transform: uppercase;
+          color: var(--text-primary, #111111);
+          display: block;
         }
 
         /* ── ULTRA-AESTHETIC EDITORIAL ABOUT PAGE ── */
