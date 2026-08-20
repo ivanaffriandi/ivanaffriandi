@@ -434,6 +434,17 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     return () => rightCol.removeEventListener("scroll", handleScroll);
   }, [selectedPost, isReadingPrologue]);
 
+  // Auto-play / cycle post gallery cover photos every 4.5 seconds
+  useEffect(() => {
+    if (!selectedPost || selectedPostImages.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setPostPhotoIndex((prev) => (prev + 1) % selectedPostImages.length);
+    }, 4500);
+
+    return () => clearInterval(timer);
+  }, [selectedPost, selectedPostImages]);
+
   const fallbackCovers = useMemo(() => [
     "/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg",
     "/images/moments/539303572_18073420046098563_1129254407547625674_n..webp",
