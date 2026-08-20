@@ -32,7 +32,7 @@ export default function WorkIvanPortfolioPage() {
     about: {
       headline: 'Affriandi, Ivan',
       narrative:
-        'I build digital software, teach physics, craft leather goods, and occasionally disappear into a mushroom field.',
+        'I build digital software, design clean interfaces, craft leather goods, and occasionally disappear into a mushroom field.',
       duration: '2025 — Present',
       client: 'Studio & Lab',
       artDirection: 'Digital & Physical',
@@ -267,10 +267,10 @@ export default function WorkIvanPortfolioPage() {
 
             <div className={styles.aboutProseGrid}>
               <p className={styles.aboutProseParagraph}>
-                My work sits somewhere between pure physics education, software engineering, UI/UX design, physical leather craftsmanship, and running servers I probably didn&apos;t need to self-host. I am not interested in being boxed into a single corporate identity.
+                My work sits somewhere between software engineering, clean UI/UX design, physical leather craftsmanship, and running servers I probably didn&apos;t need to self-host. I am not interested in being boxed into a single corporate identity.
               </p>
               <p className={styles.aboutProseParagraph}>
-                I can spend part of my day explaining classical mechanics to olympiad students, another part designing an interface in Figma, another writing Next.js code, and another hand-stitching a trifold leather journal with tea getting cold beside me. That contrast is the whole point: curiosity → learning → making → teaching → documenting.
+                I can spend part of my day designing an interface in Figma, another writing Next.js code, and another hand-stitching a trifold leather journal with tea getting cold beside me. That contrast between digital pixels and tactile physical materials is where the fun lives.
               </p>
             </div>
 
@@ -282,20 +282,7 @@ export default function WorkIvanPortfolioPage() {
 
             <div className={styles.aboutSixCardsGrid}>
               <div className={styles.aboutDisciplineCard}>
-                <span className={styles.aboutDisciplineNumber}>01 · ACADEMIC</span>
-                <h4 className={styles.aboutDisciplineTitle}>Physics &amp; Mentoring</h4>
-                <p className={styles.aboutDisciplineDesc}>
-                  Founder of Equilibrium Academy. Physics tutor and olympiad trainer helping ambitious high-school students translate abstract mathematics into intuitive physical models.
-                </p>
-                <div className={styles.aboutDisciplineTags}>
-                  <span className={styles.miniPill}>Pure Physics</span>
-                  <span className={styles.miniPill}>Olympiad / OSN</span>
-                  <span className={styles.miniPill}>Cambridge &amp; IB</span>
-                </div>
-              </div>
-
-              <div className={styles.aboutDisciplineCard}>
-                <span className={styles.aboutDisciplineNumber}>02 · DESIGN</span>
+                <span className={styles.aboutDisciplineNumber}>01 · DESIGN</span>
                 <h4 className={styles.aboutDisciplineTitle}>Product &amp; UI/UX</h4>
                 <p className={styles.aboutDisciplineDesc}>
                   Clean, typography-driven interfaces, Figma design systems, generous whitespace, and obsessing over spacing, hierarchy, and micro-interactions that feel tactile.
@@ -308,7 +295,7 @@ export default function WorkIvanPortfolioPage() {
               </div>
 
               <div className={styles.aboutDisciplineCard}>
-                <span className={styles.aboutDisciplineNumber}>03 · CODE</span>
+                <span className={styles.aboutDisciplineNumber}>02 · CODE</span>
                 <h4 className={styles.aboutDisciplineTitle}>Software Engineering</h4>
                 <p className={styles.aboutDisciplineDesc}>
                   Full-stack web applications built with Next.js 16, React 19, TypeScript, and modern APIs. Fast, lightweight code without bloated dependencies.
@@ -321,7 +308,7 @@ export default function WorkIvanPortfolioPage() {
               </div>
 
               <div className={styles.aboutDisciplineCard}>
-                <span className={styles.aboutDisciplineNumber}>04 · INFRA</span>
+                <span className={styles.aboutDisciplineNumber}>03 · INFRA</span>
                 <h4 className={styles.aboutDisciplineTitle}>Digital Independence</h4>
                 <p className={styles.aboutDisciplineDesc}>
                   Self-hosted cloud VMs, private email servers (SMTP, Postfix, DKIM), and personal digital tools. The internet as something you build and inhabit, not just consume.
@@ -334,7 +321,7 @@ export default function WorkIvanPortfolioPage() {
               </div>
 
               <div className={styles.aboutDisciplineCard}>
-                <span className={styles.aboutDisciplineNumber}>05 · ATELIER</span>
+                <span className={styles.aboutDisciplineNumber}>04 · ATELIER</span>
                 <h4 className={styles.aboutDisciplineTitle}>Physical Craft (SHŪ / EN)</h4>
                 <p className={styles.aboutDisciplineDesc}>
                   Bespoke leather journals handcrafted from Italian vegetable-tanned hides, Japanese Moire lining, bookbinding, and solid 925 sterling silver charms.
@@ -347,7 +334,7 @@ export default function WorkIvanPortfolioPage() {
               </div>
 
               <div className={styles.aboutDisciplineCard}>
-                <span className={styles.aboutDisciplineNumber}>06 · EXPERIMENTS</span>
+                <span className={styles.aboutDisciplineNumber}>05 · EXPERIMENTS</span>
                 <h4 className={styles.aboutDisciplineTitle}>Creative Labs &amp; 3D</h4>
                 <p className={styles.aboutDisciplineDesc}>
                   Real-time Three.js 3D WebGL configurators, GLSL procedural shaders, Web Audio sound synthesis, and tools built simply because &quot;I wonder if I can build that myself.&quot;
@@ -356,6 +343,19 @@ export default function WorkIvanPortfolioPage() {
                   <span className={styles.miniPill}>Three.js</span>
                   <span className={styles.miniPill}>GLSL Shaders</span>
                   <span className={styles.miniPill}>Web Audio</span>
+                </div>
+              </div>
+
+              <div className={styles.aboutDisciplineCard}>
+                <span className={styles.aboutDisciplineNumber}>06 · VISUALS</span>
+                <h4 className={styles.aboutDisciplineTitle}>Photography &amp; Notes</h4>
+                <p className={styles.aboutDisciplineDesc}>
+                  Documenting architectural forms, natural textures, analog moments, and quiet visual essays that document the process behind the work.
+                </p>
+                <div className={styles.aboutDisciplineTags}>
+                  <span className={styles.miniPill}>Visual Notes</span>
+                  <span className={styles.miniPill}>Documentary</span>
+                  <span className={styles.miniPill}>Texture Studies</span>
                 </div>
               </div>
             </div>
@@ -384,14 +384,14 @@ export default function WorkIvanPortfolioPage() {
               <div className={styles.aboutHobbyCard}>
                 <h4 className={styles.aboutHobbyTitle}>03 · Tea &amp; Quiet Mornings</h4>
                 <p className={styles.aboutHobbyText}>
-                  Hot green tea, quiet studio desks before the world wakes up, and sitting with difficult scientific questions until they finally make sense.
+                  Hot green tea, quiet studio desks before the world wakes up, and sitting with interesting creative ideas until they click.
                 </p>
               </div>
 
               <div className={styles.aboutHobbyCard}>
                 <h4 className={styles.aboutHobbyTitle}>04 · Non-Fiction &amp; Kindle</h4>
                 <p className={styles.aboutHobbyText}>
-                  Collecting questions over answers. Books on intellectual history, religion, philosophy, society, physics, and human knowledge systems.
+                  Collecting questions over answers. Books on design, architecture, intellectual history, culture, and human knowledge systems.
                 </p>
               </div>
 
@@ -425,16 +425,16 @@ export default function WorkIvanPortfolioPage() {
               </div>
 
               <div className={styles.aboutPhilosophyCard}>
-                <h4 className={styles.aboutPhilosophyHeadline}>Teach what you understand.</h4>
+                <h4 className={styles.aboutPhilosophyHeadline}>Simplify the complex.</h4>
                 <p className={styles.aboutPhilosophyBody}>
-                  Teaching forces abstract ideas to become clear. If you can&apos;t explain a physics model simply, you haven&apos;t truly understood the underlying assumptions yet.
+                  Great design and clean code are about removing noise until only what matters is left. If an interface feels obvious, all the hard work happened behind the scenes.
                 </p>
               </div>
 
               <div className={styles.aboutPhilosophyCard}>
                 <h4 className={styles.aboutPhilosophyHeadline}>Boundaries are artificial.</h4>
                 <p className={styles.aboutPhilosophyBody}>
-                  Physics informs design, design informs code, and leather craft informs digital products. The contrast between pixels and physical materials is where the fun lives.
+                  Digital design informs code, code informs user interactions, and leather craft informs physical aesthetics. The contrast between pixels and raw materials keeps the work honest.
                 </p>
               </div>
             </div>
@@ -448,11 +448,11 @@ export default function WorkIvanPortfolioPage() {
             <div className={styles.aboutCurrentlyGrid}>
               <div className={styles.aboutCurrentItem}>
                 <span className={styles.aboutCurrentLabel}>Reading</span>
-                <span className={styles.aboutCurrentVal}>Non-fiction, intellectual history &amp; physics</span>
+                <span className={styles.aboutCurrentVal}>Design history, philosophy &amp; fiction</span>
               </div>
               <div className={styles.aboutCurrentItem}>
                 <span className={styles.aboutCurrentLabel}>Making</span>
-                <span className={styles.aboutCurrentVal}>Next.js tools + handcrafted leather journals</span>
+                <span className={styles.aboutCurrentVal}>Next.js web apps + bespoke leather goods</span>
               </div>
               <div className={styles.aboutCurrentItem}>
                 <span className={styles.aboutCurrentLabel}>Learning</span>
@@ -468,7 +468,7 @@ export default function WorkIvanPortfolioPage() {
               </div>
               <div className={styles.aboutCurrentItem}>
                 <span className={styles.aboutCurrentLabel}>Thinking About</span>
-                <span className={styles.aboutCurrentVal}>What to build and understand next</span>
+                <span className={styles.aboutCurrentVal}>What to build and explore next</span>
               </div>
             </div>
 
