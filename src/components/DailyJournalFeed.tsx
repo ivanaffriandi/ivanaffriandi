@@ -59,15 +59,6 @@ function formatBloggerArticleHtml(html: string): string {
   // Strip leading empty tags / whitespace
   clean = clean.replace(/^(\s*<br\s*\/?>|\s*&nbsp;|\s*)+/gi, "").trim();
 
-  // Inject drop-cap ONLY on the first letter of the first real <p> paragraph.
-  // We wrap just that first letter in a <span class="novel-drop-cap-letter">.
-  // This avoids CSS ::first-letter accidentally matching other elements.
-  clean = clean.replace(
-    /(<p[^>]*>)([\s]*)([A-Za-zÀ-ÖØ-öø-ÿ\u00C0-\u017F"])/,
-    (match, pTag, spaces, firstChar) =>
-      `${pTag}${spaces}<span class="novel-drop-cap-letter">${firstChar}</span>`
-  );
-
   return clean;
 }
 
@@ -1096,12 +1087,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           color: #222222 !important;
         }
 
-        .pj-right.fit-screen .novel-drop-cap-letter,
-        .novel-drop-cap-letter {
-          color: #000000 !important;
-          opacity: 1;
-        }
-
         .pj-right.fit-screen .imessage-bubble-incoming {
           background: #EAEAEA !important;
           color: #111111 !important;
@@ -1736,17 +1721,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           font-size: 100% !important;
         }
 
-        /* ── UNIVERSAL GUARANTEED DROP-CAP (targets injected span only) ── */
-        .novel-drop-cap-letter {
-          font-size: 3.5rem !important;
-          line-height: 0.82 !important;
-          float: left !important;
-          margin: 0.18rem 0.68rem 0.1rem 0 !important;
-          font-family: var(--font-serif, Georgia, serif) !important;
-          font-weight: 700 !important;
-          text-transform: uppercase !important;
-          display: block !important;
-        }
 
         /* ── READING THEMES (PAPER, LIGHT, DARK) WITH RIGID CONTRAST RULES ── */
         .pj-right.theme-paper {
@@ -1755,8 +1729,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
         .pj-right.theme-paper .novel-article-reader,
         .pj-right.theme-paper .novel-article-reader *,
-        .pj-right.theme-paper .article-reader-chapter-title-desktop h1,
-        .pj-right.theme-paper .novel-drop-cap-letter {
+        .pj-right.theme-paper .article-reader-chapter-title-desktop h1 {
           color: #2B2824 !important;
         }
 
@@ -1766,8 +1739,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
         .pj-right.theme-light .novel-article-reader,
         .pj-right.theme-light .novel-article-reader *,
-        .pj-right.theme-light .article-reader-chapter-title-desktop h1,
-        .pj-right.theme-light .novel-drop-cap-letter {
+        .pj-right.theme-light .article-reader-chapter-title-desktop h1 {
           color: #111111 !important;
         }
 
@@ -1777,8 +1749,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
         .pj-right.theme-dark .novel-article-reader,
         .pj-right.theme-dark .novel-article-reader *,
-        .pj-right.theme-dark .article-reader-chapter-title-desktop h1,
-        .pj-right.theme-dark .novel-drop-cap-letter {
+        .pj-right.theme-dark .article-reader-chapter-title-desktop h1 {
           color: #EDEDF0 !important;
         }
 
@@ -2064,20 +2035,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           font-family: var(--font-serif, Georgia, serif);
           margin: 0;
           word-break: break-word;
-        }
-
-        /* STUNNING LITERARY DROP CAP ON FIRST LETTER */
-        .novel-drop-cap-letter {
-          font-family: var(--font-serif, Georgia, serif);
-          font-size: 3.5rem;
-          float: left;
-          line-height: 0.82;
-          margin-right: 0.55rem;
-          margin-top: 0.12rem;
-          font-weight: 700;
-          color: var(--text-primary, #111111);
-          text-transform: uppercase;
-          display: block;
         }
 
         /* ── ULTRA-AESTHETIC EDITORIAL ABOUT PAGE ── */
@@ -2788,17 +2745,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             font-size: 0.95rem !important;
             line-height: 1.75 !important;
             color: var(--text-primary) !important;
-          }
-
-          .novel-drop-cap-letter {
-            font-size: 3.5rem !important;
-            line-height: 0.85 !important;
-            margin-right: 0.45rem !important;
-            float: left !important;
-            font-family: var(--font-playfair, Georgia, serif) !important;
-            font-weight: 700 !important;
-            text-transform: uppercase !important;
-            display: block !important;
           }
 
           /* ── iMESSAGE BUBBLES ── */
