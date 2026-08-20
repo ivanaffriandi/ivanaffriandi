@@ -115,9 +115,10 @@ export default function WorkIvanPortfolioPage() {
       <div className={styles.masterGridContainer}>
         {/* ── ROW 1: HEADER (ALIGNED PRECISELY ACROSS 3 COLUMNS) ── */}
         <div className={styles.headerCol1}>
-          <a href="https://ivanaffriandi.com" className={styles.brandLogo}>
+          <a href="https://work.ivanaffriandi.com" className={styles.brandLogo}>
             Ivan&apos;s Work<sup>®</sup>
           </a>
+          <span className={styles.mobileLiveClock}>{liveTime}</span>
         </div>
 
         <div className={styles.headerCol2}>
@@ -177,16 +178,19 @@ export default function WorkIvanPortfolioPage() {
             >
               {activeTab === 'about' ? (
                 <div className={styles.aboutHeroWithLeftPhoto}>
-                  <img
-                    src="/ivan-head.png"
-                    alt="Affriandi, Ivan"
-                    className={styles.aboutHeroBigPortrait}
-                  />
-                  <div className={styles.aboutHeroRightStack}>
+                  <div className={styles.aboutHeroPhotoAndNameRow}>
+                    <img
+                      src="/ivan-head.png"
+                      alt="Affriandi, Ivan"
+                      className={styles.aboutHeroBigPortrait}
+                    />
                     <h1 className={styles.mainTitleHeading} style={{ margin: 0 }}>
-                      {current.headline}
+                      <span className={styles.nameLineBreak}>Affriandi,</span>
+                      <span className={styles.nameLineBreak}>Ivan</span>
                     </h1>
+                  </div>
 
+                  <div className={styles.aboutHeroRightStack}>
                     <p className={styles.narrativeParagraph}>
                       {current.narrative}
                     </p>

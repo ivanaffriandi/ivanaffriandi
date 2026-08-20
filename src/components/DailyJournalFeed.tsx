@@ -413,21 +413,23 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     }
   }, [selectedPostIndex, isReadingPrologue]);
 
-  // Lock mobile body scroll during overview card deck to prevent accidental page scroll underneath
+  // Toggle overview vs reader scroll modes on mobile
   useEffect(() => {
     if (typeof window === "undefined") return;
     const isMobile = window.innerWidth <= 860;
     if (isMobile) {
       if (!selectedPost && !isReadingPrologue) {
-        document.body.style.overflow = "hidden";
+        document.body.classList.add("pj-overview-mode");
+        document.body.classList.remove("pj-reader-mode");
         document.documentElement.style.overflow = "hidden";
       } else {
-        document.body.style.overflow = "auto";
+        document.body.classList.remove("pj-overview-mode");
+        document.body.classList.add("pj-reader-mode");
         document.documentElement.style.overflow = "auto";
       }
     }
     return () => {
-      document.body.style.overflow = "";
+      document.body.classList.remove("pj-overview-mode", "pj-reader-mode");
       document.documentElement.style.overflow = "";
     };
   }, [selectedPost, isReadingPrologue]);
@@ -2304,24 +2306,23 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 0.4rem !important;
-            height: 38px !important;
-            min-height: 38px !important;
-            min-width: 44px !important;
+            gap: 0.35rem !important;
+            height: 36px !important;
+            min-height: 36px !important;
             box-sizing: border-box !important;
-            background: rgba(0, 0, 0, 0.6) !important;
+            background: rgba(0, 0, 0, 0.55) !important;
             backdrop-filter: blur(16px) !important;
             -webkit-backdrop-filter: blur(16px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            border: 1px solid rgba(255, 255, 255, 0.25) !important;
             color: #FFFFFF !important;
-            font-size: 0.68rem !important;
+            font-size: 0.65rem !important;
             font-weight: 800 !important;
             letter-spacing: 0.08em !important;
             text-transform: uppercase !important;
-            padding: 0 1.05rem !important;
+            padding: 0 0.95rem !important;
             border-radius: 9999px !important;
             text-decoration: none !important;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
             line-height: 1 !important;
             cursor: pointer !important;
             touch-action: manipulation !important;
@@ -2342,15 +2343,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             align-items: center !important;
             justify-content: center !important;
             gap: 0.35rem !important;
-            height: 38px !important;
-            min-height: 38px !important;
+            height: 36px !important;
+            min-height: 36px !important;
             box-sizing: border-box !important;
-            background: rgba(0, 0, 0, 0.6) !important;
+            background: rgba(0, 0, 0, 0.55) !important;
             backdrop-filter: blur(16px) !important;
             -webkit-backdrop-filter: blur(16px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            border: 1px solid rgba(255, 255, 255, 0.25) !important;
             color: #FFFFFF !important;
-            font-size: 0.68rem !important;
+            font-size: 0.65rem !important;
             font-weight: 800 !important;
             letter-spacing: 0.08em !important;
             padding: 0 0.95rem !important;
@@ -2358,27 +2359,42 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             touch-action: manipulation !important;
             -webkit-tap-highlight-color: transparent !important;
             text-transform: uppercase !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+            cursor: pointer !important;
+          }
+
+          .mobile-prologue-btn:active {
+            transform: scale(0.94) !important;
+            background: rgba(0, 0, 0, 0.8) !important;
           }
 
           .mobile-search-btn {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            width: 32px !important;
-            height: 32px !important;
-            min-width: 32px !important;
+            width: 36px !important;
+            height: 36px !important;
+            min-width: 36px !important;
+            min-height: 36px !important;
             box-sizing: border-box !important;
-            background: rgba(0, 0, 0, 0.45) !important;
-            backdrop-filter: blur(14px) !important;
-            -webkit-backdrop-filter: blur(14px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.22) !important;
+            background: rgba(0, 0, 0, 0.55) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.25) !important;
             color: #FFFFFF !important;
             padding: 0 !important;
             border-radius: 50% !important;
             text-decoration: none !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
             cursor: pointer !important;
             line-height: 1 !important;
+            touch-action: manipulation !important;
+            -webkit-tap-highlight-color: transparent !important;
+          }
+
+          .mobile-search-btn:active {
+            transform: scale(0.94) !important;
+            background: rgba(0, 0, 0, 0.8) !important;
           }
 
           .mobile-search-scroll-container,
@@ -2436,11 +2452,24 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
           html, body {
             background-color: #0c0d0e !important;
+          }
+
+          body.pj-overview-mode {
+            overflow: hidden !important;
+            touch-action: pan-x !important;
             overscroll-behavior-y: none !important;
           }
 
+          body.pj-reader-mode {
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-y !important;
+            overscroll-behavior-y: auto !important;
+            background-color: var(--bg-color, #FFFFFF) !important;
+          }
+
           /* ── ROOT LAYOUT (IMMERSIVE LOCKED CARD DECK ON MOBILE OVERVIEW) ── */
-          .pj-root {
+          .pj-root:not(.has-selected-post) {
             display: flex !important;
             flex-direction: column !important;
             position: fixed !important;
@@ -2456,18 +2485,18 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             background: #0c0d0e !important;
             touch-action: pan-x !important;
             overscroll-behavior: none !important;
-            -webkit-overflow-scrolling: auto !important;
           }
 
-          /* When reading an article or prologue, allow vertical scrolling with smooth transition */
+          /* When reading an article or prologue, allow full native document scrolling */
           .pj-root.has-selected-post {
+            display: block !important;
             position: relative !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
             height: auto !important;
             min-height: 100vh !important;
             min-height: 100dvh !important;
-            overflow-y: auto !important;
-            touch-action: pan-y !important;
-            overscroll-behavior-y: auto !important;
+            overflow: visible !important;
             background: var(--bg-color, #FFFFFF) !important;
           }
 
@@ -2525,10 +2554,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             max-height: none !important;
             height: auto !important;
             border-radius: 0 !important;
-            overflow-y: visible !important;
+            overflow: visible !important;
             box-sizing: border-box !important;
             z-index: 1 !important;
-            padding: 1.8rem 1.25rem calc(2rem + env(safe-area-inset-bottom, 0px)) !important;
+            padding: 1.8rem 1.25rem calc(2.5rem + env(safe-area-inset-bottom, 20px)) !important;
             box-shadow: none !important;
           }
 

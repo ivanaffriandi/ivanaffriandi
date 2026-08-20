@@ -47,7 +47,8 @@
 .headerCol1 {
   grid-column: 1 / 2;
   display: flex;
-  align-items: center;
+.mobileLiveClock {
+  display: none;
 }
 
 .brandLogo {
@@ -75,8 +76,16 @@
   .headerCol1 {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
     margin-bottom: 2px;
+  }
+  .mobileLiveClock {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    color: #111111;
   }
   .headerCol2 {
     display: flex !important;
@@ -84,32 +93,34 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    padding: 6px 0 12px 0;
-    gap: 8px;
+    padding: 6px 0 10px 0;
+    gap: 18px;
     border-bottom: 1px solid #f0f0f2;
-    margin-top: -8px;
-    margin-bottom: 8px;
+    margin-top: 2px;
+    margin-bottom: 4px;
     width: 100%;
   }
   .headerCol2::-webkit-scrollbar {
     display: none;
   }
   .navItemBtn {
-    font-size: 11px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.05em !important;
+    background: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-size: 11.5px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.04em !important;
     text-transform: uppercase !important;
     white-space: nowrap !important;
-    padding: 6px 13px !important;
-    background: #f4f4f6 !important;
-    border-radius: 9999px !important;
-    color: #666666 !important;
+    padding: 4px 0 !important;
+    color: #777777 !important;
+    border-bottom: 2px solid transparent !important;
     flex-shrink: 0 !important;
   }
   .navItemActive {
-    background: #111111 !important;
-    color: #ffffff !important;
-    font-weight: 700 !important;
+    color: #000000 !important;
+    font-weight: 800 !important;
+    border-bottom: 2px solid #000000 !important;
   }
   .headerCol3 {
     display: none !important;
@@ -577,6 +588,14 @@
   margin-left: -220px;
 }
 
+.aboutHeroPhotoAndNameRow {
+  display: contents;
+}
+
+.nameLineBreak {
+  display: inline;
+}
+
 @media (max-width: 1250px) {
   .aboutHeroWithLeftPhoto {
     margin-left: -150px;
@@ -593,10 +612,45 @@
 
 @media (max-width: 860px) {
   .aboutHeroWithLeftPhoto {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-    margin-left: 0;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .aboutHeroPhotoAndNameRow {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    width: 100% !important;
+  }
+
+  .aboutHeroBigPortrait {
+    width: 74px !important;
+    height: 74px !important;
+    max-width: 74px !important;
+    max-height: 74px !important;
+    object-fit: contain !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+  }
+
+  .aboutHeroPhotoAndNameRow .mainTitleHeading {
+    font-size: 31px !important;
+    font-weight: 600 !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.03em !important;
+    color: #111111 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+  }
+
+  .nameLineBreak {
+    display: block !important;
+    white-space: nowrap !important;
   }
 }
 
@@ -612,15 +666,6 @@
   background: transparent !important;
   box-shadow: none !important;
   display: block;
-}
-
-@media (max-width: 860px) {
-  .aboutHeroBigPortrait {
-    width: 110px;
-    height: 110px;
-    max-width: 110px;
-    max-height: 110px;
-  }
 }
 
 .aboutHeroRightStack {

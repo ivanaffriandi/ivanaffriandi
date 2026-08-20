@@ -14,7 +14,7 @@ export default async function BlogPage() {
   const posts = await getPosts();
 
   return (
-    <main style={{ minHeight: "100dvh", width: "100%", overflow: "hidden", backgroundColor: "#0c0d0e" }}>
+    <main style={{ minHeight: "100dvh", width: "100%", backgroundColor: "#0c0d0e" }}>
       <DailyJournalFeed posts={posts} />
     </main>
   );
