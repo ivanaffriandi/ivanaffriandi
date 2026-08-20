@@ -176,50 +176,79 @@ export default function WorkIvanPortfolioPage() {
               style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
             >
               {activeTab === 'about' ? (
-                <div className={styles.heroTitleWithPhotoWrap}>
+                <div className={styles.aboutHeroWithLeftPhoto}>
                   <img
                     src="/ivan-head.png"
                     alt="Affriandi, Ivan"
-                    className={styles.heroInlineHeadCutout}
+                    className={styles.aboutHeroBigPortrait}
                   />
-                  <h1 className={styles.mainTitleHeading} style={{ margin: 0 }}>
-                    {current.headline}
-                  </h1>
+                  <div className={styles.aboutHeroRightStack}>
+                    <h1 className={styles.mainTitleHeading} style={{ margin: 0 }}>
+                      {current.headline}
+                    </h1>
+
+                    <p className={styles.narrativeParagraph}>
+                      {current.narrative}
+                    </p>
+
+                    <div className={styles.aboutHeroMetaStrip}>
+                      <div className={styles.metaItemCluster}>
+                        <span className={styles.metaLabel}>Timeline</span>
+                        <span className={styles.metaValue}>{current.duration}</span>
+                      </div>
+
+                      <div className={styles.metaItemCluster}>
+                        <span className={styles.metaLabel}>Focus</span>
+                        <span className={styles.metaValue}>{current.client}</span>
+                      </div>
+
+                      <div className={styles.metaItemCluster}>
+                        <span className={styles.metaLabel}>Output</span>
+                        <span className={styles.metaValue}>{current.artDirection}</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ) : (
-                <h1 className={styles.mainTitleHeading}>
-                  {current.headline}
-                </h1>
-              )}
+                <>
+                  <h1 className={styles.mainTitleHeading}>
+                    {current.headline}
+                  </h1>
 
-              <p className={styles.narrativeParagraph}>
-                {current.narrative}
-              </p>
+                  <p className={styles.narrativeParagraph}>
+                    {current.narrative}
+                  </p>
+                </>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* ── ROW 3: METADATA ROW ── */}
-        <div className={styles.metaCol1}>
-          <span className={styles.metaLabel}>Discipline</span>
-        </div>
+        {/* ── ROW 3: METADATA ROW (FOR OTHER TABS) ── */}
+        {activeTab !== 'about' && (
+          <>
+            <div className={styles.metaCol1}>
+              <span className={styles.metaLabel}>Discipline</span>
+            </div>
 
-        <div className={styles.metaCol2}>
-          <div className={styles.metaItemCluster}>
-            <span className={styles.metaLabel}>Timeline</span>
-            <span className={styles.metaValue}>{current.duration}</span>
-          </div>
+            <div className={styles.metaCol2}>
+              <div className={styles.metaItemCluster}>
+                <span className={styles.metaLabel}>Timeline</span>
+                <span className={styles.metaValue}>{current.duration}</span>
+              </div>
 
-          <div className={styles.metaItemCluster}>
-            <span className={styles.metaLabel}>Focus</span>
-            <span className={styles.metaValue}>{current.client}</span>
-          </div>
-        </div>
+              <div className={styles.metaItemCluster}>
+                <span className={styles.metaLabel}>Focus</span>
+                <span className={styles.metaValue}>{current.client}</span>
+              </div>
+            </div>
 
-        <div className={styles.metaCol3}>
-          <span className={styles.metaLabel}>Output</span>
-          <span className={styles.metaValue}>{current.artDirection}</span>
-        </div>
+            <div className={styles.metaCol3}>
+              <span className={styles.metaLabel}>Output</span>
+              <span className={styles.metaValue}>{current.artDirection}</span>
+            </div>
+          </>
+        )}
 
         {/* ── ROW 4: DYNAMIC TAB VIEW CONTENTS ── */}
 

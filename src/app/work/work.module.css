@@ -529,34 +529,59 @@
   letter-spacing: 0.5px;
 }
 
-/* ── HERO TITLE ROW WITH PHOTO (HEAD PHOTO RIGHT NEXT TO AFFRIANDI, IVAN) ── */
-.heroTitleWithPhotoWrap {
+/* ── ABOUT HERO WITH LEFT PHOTO (PORTRAIT BESIDE NAME, NARRATIVE & METADATA) ── */
+.aboutHeroWithLeftPhoto {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  align-items: flex-start;
+  gap: 28px;
+  width: 100%;
 }
 
-.heroInlineHeadCutout {
-  width: 64px;
-  height: 64px;
-  max-width: 64px;
-  max-height: 64px;
+@media (max-width: 768px) {
+  .aboutHeroWithLeftPhoto {
+    flex-direction: column;
+    gap: 18px;
+  }
+}
+
+.aboutHeroBigPortrait {
+  width: 130px;
+  height: 130px;
+  max-width: 130px;
+  max-height: 130px;
   object-fit: contain;
+  flex-shrink: 0;
   border-radius: 0 !important;
   border: none !important;
   background: transparent !important;
   box-shadow: none !important;
-  flex-shrink: 0;
   display: block;
 }
 
 @media (max-width: 768px) {
-  .heroInlineHeadCutout {
-    width: 48px;
-    height: 48px;
-    max-width: 48px;
-    max-height: 48px;
+  .aboutHeroBigPortrait {
+    width: 90px;
+    height: 90px;
+    max-width: 90px;
+    max-height: 90px;
   }
+}
+
+.aboutHeroRightStack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+}
+
+.aboutHeroMetaStrip {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  padding-top: 14px;
+  margin-top: 2px;
+  border-top: 1px solid #f2f2f4;
+  flex-wrap: wrap;
 }
 
 /* 3. PROCESS, ABOUT & ARCHIVE TAB BLOCKS (SPANS FULL 3-COLUMN WIDTH) */
