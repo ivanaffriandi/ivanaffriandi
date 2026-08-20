@@ -1670,6 +1670,72 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           color: #EDEDF0 !important;
         }
 
+        /* ── EXPLICIT HIGH CONTRAST CHAT BUBBLES FOR ALL THEMES ── */
+        .novel-article-reader .imessage-bubble-incoming {
+          background: #E8E8EC !important;
+          border: 1px solid rgba(0,0,0,0.06) !important;
+          border-radius: 16px 16px 16px 4px !important;
+          padding: 0.75rem 1.1rem !important;
+          font-size: 0.92rem !important;
+          line-height: 1.5 !important;
+          max-width: 86% !important;
+        }
+        .novel-article-reader .imessage-bubble-incoming,
+        .novel-article-reader .imessage-bubble-incoming * {
+          color: #111111 !important;
+        }
+
+        .novel-article-reader .imessage-bubble-outgoing {
+          background: #111111 !important;
+          border: 1px solid transparent !important;
+          border-radius: 16px 16px 4px 16px !important;
+          padding: 0.75rem 1.1rem !important;
+          font-size: 0.92rem !important;
+          line-height: 1.5 !important;
+          max-width: 88% !important;
+        }
+        .novel-article-reader .imessage-bubble-outgoing,
+        .novel-article-reader .imessage-bubble-outgoing * {
+          color: #FFFFFF !important;
+        }
+
+        /* Paper Theme Chat Bubbles */
+        .pj-right.theme-paper .novel-article-reader .imessage-bubble-incoming {
+          background: #E8E3D7 !important;
+          border-color: #DCD6C8 !important;
+        }
+        .pj-right.theme-paper .novel-article-reader .imessage-bubble-incoming,
+        .pj-right.theme-paper .novel-article-reader .imessage-bubble-incoming * {
+          color: #2B2824 !important;
+        }
+        .pj-right.theme-paper .novel-article-reader .imessage-bubble-outgoing {
+          background: #2B2824 !important;
+        }
+        .pj-right.theme-paper .novel-article-reader .imessage-bubble-outgoing,
+        .pj-right.theme-paper .novel-article-reader .imessage-bubble-outgoing * {
+          color: #FAF7F0 !important;
+        }
+
+        /* Dark Theme Chat Bubbles */
+        .pj-right.theme-dark .novel-article-reader .imessage-bubble-incoming {
+          background: rgba(255, 255, 255, 0.12) !important;
+          border-color: rgba(255, 255, 255, 0.16) !important;
+        }
+        .pj-right.theme-dark .novel-article-reader .imessage-bubble-incoming,
+        .pj-right.theme-dark .novel-article-reader .imessage-bubble-incoming * {
+          color: #EDEDF0 !important;
+        }
+        .pj-right.theme-dark .novel-article-reader .imessage-bubble-outgoing {
+          background: #EDEDF0 !important;
+        }
+        .pj-right.theme-dark .novel-article-reader .imessage-bubble-outgoing,
+        .pj-right.theme-dark .novel-article-reader .imessage-bubble-outgoing * {
+          color: #121316 !important;
+        }
+        .pj-right.theme-dark .imessage-sender-tag {
+          color: rgba(255, 255, 255, 0.6) !important;
+        }
+
         .novel-article-reader blockquote {
           border-left: 2.5px solid var(--text-primary, #111111);
           margin: 2.2rem 0;
@@ -3190,38 +3256,100 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       BACK TO JOURNAL
                     </button>
 
-                    {/* HORIZONTAL RULE LINE SPANNING TO PILL */}
-                    <div style={{ flex: 1, height: "1px", background: "var(--border-subtle, rgba(125,125,125,0.18))" }} />
+                    {/* HORIZONTAL RULE LINE SPANNING TO PILLBAR */}
+                    <div style={{ flex: 1, height: "1px", background: "var(--border-strong, rgba(125,125,125,0.45))", opacity: 0.85 }} />
 
-                    <span
+                    {/* ── UNIFIED READING THEME PILLBAR (PINNED TO RIGHT) ── */}
+                    <div
                       style={{
-                        fontSize: "0.62rem",
-                        fontWeight: 700,
-                        letterSpacing: "0.08em",
-                        textTransform: "uppercase",
-                        color: "var(--text-muted, #888888)",
-                        background: "var(--bg-secondary, rgba(125,125,125,0.08))",
-                        border: "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
-                        padding: "0.28rem 0.65rem",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        background: readerTheme === "dark" ? "rgba(255,255,255,0.08)" : "var(--bg-secondary, rgba(125,125,125,0.08))",
+                        border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.15)" : "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
                         borderRadius: "9999px",
-                        whiteSpace: "nowrap",
+                        padding: "0.22rem 0.35rem",
+                        gap: "0.2rem",
+                        boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
                         flexShrink: 0,
                       }}
                     >
-                      PROLOGUE · 2 MIN READ
-                    </span>
+                      {/* READING TIME BADGE */}
+                      <span
+                        style={{
+                          fontSize: "0.62rem",
+                          fontWeight: 700,
+                          letterSpacing: "0.08em",
+                          textTransform: "uppercase",
+                          color: readerTheme === "dark" ? "#88888e" : "var(--text-muted, #888888)",
+                          padding: "0.25rem 0.5rem",
+                        }}
+                      >
+                        PROLOGUE · 2 MIN READ
+                      </span>
+
+                      <div style={{ width: "1px", height: "12px", background: readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "var(--border-subtle, rgba(125,125,125,0.18))" }} />
+
+                      {/* PAPER THEME BUTTON */}
+                      <button
+                        onClick={() => setReaderTheme("paper")}
+                        title="Paper Reading Mode"
+                        style={{
+                          fontSize: "0.65rem",
+                          fontWeight: readerTheme === "paper" ? 800 : 550,
+                          padding: "0.25rem 0.55rem",
+                          borderRadius: "9999px",
+                          border: readerTheme === "paper" ? "1px solid #D4CEBF" : "1px solid transparent",
+                          background: readerTheme === "paper" ? "#EFECE1" : "transparent",
+                          color: readerTheme === "paper" ? "#2C2A26" : (readerTheme === "dark" ? "rgba(255,255,255,0.7)" : "#7D7970"),
+                          cursor: "pointer",
+                          transition: "all 0.15s ease",
+                        }}
+                      >
+                        Paper
+                      </button>
+
+                      {/* LIGHT THEME BUTTON */}
+                      <button
+                        onClick={() => setReaderTheme("light")}
+                        title="Light Reading Mode"
+                        style={{
+                          fontSize: "0.65rem",
+                          fontWeight: readerTheme === "light" ? 800 : 550,
+                          padding: "0.25rem 0.55rem",
+                          borderRadius: "9999px",
+                          border: readerTheme === "light" ? "1px solid #111111" : "1px solid transparent",
+                          background: readerTheme === "light" ? "#111111" : "transparent",
+                          color: readerTheme === "light" ? "#FFFFFF" : (readerTheme === "dark" ? "rgba(255,255,255,0.7)" : "#777777"),
+                          cursor: "pointer",
+                          transition: "all 0.15s ease",
+                        }}
+                      >
+                        Light
+                      </button>
+
+                      {/* DARK THEME BUTTON */}
+                      <button
+                        onClick={() => setReaderTheme("dark")}
+                        title="Dark Reading Mode"
+                        style={{
+                          fontSize: "0.65rem",
+                          fontWeight: readerTheme === "dark" ? 800 : 550,
+                          padding: "0.25rem 0.55rem",
+                          borderRadius: "9999px",
+                          border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.35)" : "1px solid transparent",
+                          background: readerTheme === "dark" ? "rgba(255,255,255,0.22)" : "transparent",
+                          color: readerTheme === "dark" ? "#FFFFFF" : (readerTheme === "paper" ? "#7D7970" : "#777777"),
+                          cursor: "pointer",
+                          transition: "all 0.15s ease",
+                        }}
+                      >
+                        Dark
+                      </button>
+                    </div>
                   </div>
 
                   {/* PROLOGUE BODY */}
-                  <div
-                    className="novel-article-reader"
-                    style={{
-                      fontFamily: readerFont === "serif" ? "var(--font-serif, Georgia, serif)" : "var(--font-sans, sans-serif)",
-                      fontSize: readerSize === "sm" ? "1rem" : readerSize === "lg" ? "1.25rem" : "1.12rem",
-                      lineHeight: readerSize === "sm" ? 1.8 : readerSize === "lg" ? 1.95 : 1.85,
-                      color: "var(--text-primary, #111111)",
-                    }}
-                  >
+                  <div className="novel-article-reader">
                     <p className="novel-drop-cap">
                       Most of this gets written late at night, usually when the screen is the only light in the room and the city noise has finally died down. It’s where passing thoughts turn into essays, and random observations get a second life.
                     </p>
@@ -3229,21 +3357,21 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       I build software, take photos, and obsess over small details. Instead of keeping all of that in separate boxes, I wanted a quiet corner on the internet where everything could just breathe together.
                     </p>
 
-                    <div className="imessage-chat-wrap" style={{ margin: "2rem 0", gap: "0.75rem" }}>
-                      <div className="imessage-row-incoming">
+                    <div className="imessage-chat-wrap" style={{ margin: "2rem 0", gap: "0.75rem", display: "flex", flexDirection: "column" }}>
+                      <div className="imessage-row-incoming" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.3rem" }}>
                         <span className="imessage-sender-tag" style={{ marginLeft: "0.5rem", fontSize: "0.54rem" }}>
                           FRIEND
                         </span>
-                        <div className="imessage-bubble-incoming" style={{ padding: "0.75rem 1.1rem", fontSize: "0.92rem", lineHeight: 1.45 }}>
+                        <div className="imessage-bubble-incoming">
                           &ldquo;Wait, so what is this place exactly? A blog? A portfolio?&rdquo;
                         </div>
                       </div>
 
-                      <div className="imessage-row-outgoing">
+                      <div className="imessage-row-outgoing" style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.3rem" }}>
                         <span className="imessage-sender-tag" style={{ marginRight: "0.5rem", fontSize: "0.54rem" }}>
                           IVAN
                         </span>
-                        <div className="imessage-bubble-outgoing" style={{ padding: "0.75rem 1.1rem", fontSize: "0.92rem", lineHeight: 1.45 }}>
+                        <div className="imessage-bubble-outgoing">
                           &ldquo;Honestly? Just a running log. Things I build, photos I take, and ideas I can&apos;t stop chewing on.&rdquo;
                         </div>
                       </div>
