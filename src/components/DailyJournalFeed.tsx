@@ -1865,25 +1865,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           display: none !important;
         }
 
-        /* GUARANTEED DROP CAP FOR ALL BLOG POSTS */
-        .novel-article-reader > p:first-of-type::first-letter,
-        .novel-article-reader > div:first-of-type > p:first-of-type::first-letter,
-        .novel-article-reader > div:first-of-type::first-letter,
-        .blog-modal-content-body > p:first-of-type::first-letter,
-        .blog-modal-content-body > div:first-of-type > p:first-of-type::first-letter,
-        .blog-modal-content-body > div:first-of-type::first-letter {
-          font-family: var(--font-serif, var(--font-playfair, Georgia, serif)) !important;
-          font-size: 3.5rem !important;
-          float: left !important;
-          line-height: 0.8 !important;
-          margin-right: 0.75rem !important;
-          margin-top: 0.14rem !important;
-          margin-bottom: -0.1rem !important;
-          font-weight: 700 !important;
-          color: var(--text-primary, #111111) !important;
-          text-transform: uppercase !important;
-        }
-
         .blog-modal-content-body img {
           display: block !important;
           max-width: 100% !important;
@@ -2861,6 +2842,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             font-size: 1.05rem !important;
             line-height: 1.85 !important;
             padding: 0 !important;
+            padding-bottom: calc(env(safe-area-inset-bottom) + 100px) !important;
           }
 
           .novel-article-reader p {
@@ -3507,7 +3489,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     gap: "1.4rem",
                     width: "100%",
                     maxWidth: "760px",
-                    paddingBottom: "5rem",
+                    paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 6rem)",
                     paddingTop: "0.25rem",
                   }}
                 >
