@@ -33,7 +33,7 @@ export default function WorkIvanPortfolioPage() {
       headline: 'Affriandi, Ivan',
       narrative:
         'I build digital software, design clean interfaces, craft leather goods, and occasionally disappear into a mushroom field.',
-      duration: '2025 — Present',
+      duration: '2020 — Present',
       client: 'Studio & Lab',
       artDirection: 'Digital & Physical',
     },

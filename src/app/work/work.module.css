@@ -4,13 +4,55 @@
    3-Column Master Grid · Pure Typography Kinetic Stream (No Boxes)
    ============================================================ */
 
+/* ── CSS DESIGN TOKENS (LIGHT MODE) ── */
+:root {
+  --w-bg: #ffffff;
+  --w-bg-2: #f9f9fb;
+  --w-bg-3: #f2f2f5;
+  --w-text: #111111;
+  --w-text-2: #444444;
+  --w-text-3: #777777;
+  --w-text-4: #888888;
+  --w-border: #f0f0f2;
+  --w-border-2: #eeeeee;
+  --w-card-bg: #ffffff;
+  --w-card-bg-2: #fafafa;
+  --w-pill-bg: #f2f2f5;
+  --w-pill-text: #333333;
+  --w-accent: #111111;
+  --w-muted: #888888;
+  --w-shadow: rgba(0,0,0,0.04);
+}
+
+/* ── DARK MODE TOKENS (FOLLOWS DEVICE SETTING) ── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --w-bg: #0d0d0f;
+    --w-bg-2: #141416;
+    --w-bg-3: #1c1c1f;
+    --w-text: #f0f0f2;
+    --w-text-2: #b8b8be;
+    --w-text-3: #88888e;
+    --w-text-4: #666672;
+    --w-border: rgba(255,255,255,0.07);
+    --w-border-2: rgba(255,255,255,0.09);
+    --w-card-bg: #18181b;
+    --w-card-bg-2: #111113;
+    --w-pill-bg: rgba(255,255,255,0.08);
+    --w-pill-text: #c8c8d0;
+    --w-accent: #f0f0f2;
+    --w-muted: #666672;
+    --w-shadow: rgba(0,0,0,0.25);
+  }
+}
+
 .scandinavianViewport {
   min-height: 100vh;
   min-height: 100dvh;
   width: 100vw;
   width: 100dvw;
-  background-color: #ffffff;
-  color: #111111;
+  background-color: var(--w-bg);
+  color: var(--w-text);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", "Inter", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -20,6 +62,7 @@
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ── 3-COLUMN MASTER CONTAINER ── */
@@ -161,7 +204,7 @@
 .locationOnlyText {
   font-size: 11.5px;
   font-weight: 500;
-  color: #777777;
+  color: var(--w-text-3);
   white-space: nowrap;
 }
 
@@ -169,7 +212,7 @@
   font-size: 12px;
   font-weight: 700;
   font-family: ui-monospace, SFMono-Regular, monospace;
-  color: #111111;
+  color: var(--w-text);
   white-space: nowrap;
 }
 
@@ -184,7 +227,7 @@
 .overviewLabel {
   font-size: 12px;
   font-weight: 450;
-  color: #777777;
+  color: var(--w-text-3);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -202,7 +245,7 @@
   font-weight: 500;
   letter-spacing: -0.025em;
   line-height: 1.1;
-  color: #111111;
+  color: var(--w-text);
   margin: 0;
 }
 
@@ -215,7 +258,7 @@
 .narrativeParagraph {
   font-size: 14.5px;
   line-height: 1.6;
-  color: #3f3f46;
+  color: var(--w-text-2);
   margin: 0;
   max-width: 760px;
   font-weight: 400;
@@ -232,7 +275,7 @@
 .metaLabel {
   font-size: 11px;
   font-weight: 450;
-  color: #888888;
+  color: var(--w-text-4);
 }
 
 .metaCol2 {
@@ -251,7 +294,7 @@
 .metaValue {
   font-size: 11.5px;
   font-weight: 500;
-  color: #444444;
+  color: var(--w-text-2);
 }
 
 .metaCol3 {
@@ -358,17 +401,17 @@
   flex-direction: column;
   gap: 8px;
   text-decoration: none;
-  color: #111111;
+  color: var(--w-text);
   padding: 16px;
-  border: 1px solid #eeeeee;
+  border: 1px solid var(--w-border-2);
   border-radius: 2px;
   transition: all 0.2s ease;
-  background: #ffffff;
+  background: var(--w-card-bg);
 }
 
 .secondaryProjectCard:hover {
-  border-color: #111111;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  border-color: var(--w-accent);
+  box-shadow: 0 4px 16px var(--w-shadow);
 }
 
 .secondaryProjectTitle {
@@ -382,7 +425,7 @@
 
 .secondaryProjectDesc {
   font-size: 12px;
-  color: #555555;
+  color: var(--w-text-3);
   line-height: 1.5;
   margin: 0;
 }
@@ -398,8 +441,8 @@
   font-size: 9px;
   font-weight: 600;
   font-family: ui-monospace, monospace;
-  background: #f5f5f7;
-  color: #333333;
+  background: var(--w-pill-bg);
+  color: var(--w-pill-text);
   padding: 2px 6px;
   border-radius: 2px;
 }
@@ -434,9 +477,9 @@
 }
 
 .skillPillarCard {
-  border: 1px solid #eeeeee;
+  border: 1px solid var(--w-border-2);
   padding: 20px;
-  background: #ffffff;
+  background: var(--w-card-bg);
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -445,8 +488,8 @@
 }
 
 .skillPillarCard:hover {
-  border-color: #111111;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  border-color: var(--w-accent);
+  box-shadow: 0 4px 16px var(--w-shadow);
 }
 
 .pillarCategoryTitle {
@@ -454,7 +497,7 @@
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #111111;
+  color: var(--w-text);
   margin: 0;
   display: flex;
   align-items: center;
@@ -463,7 +506,7 @@
 
 .pillarDesc {
   font-size: 11.5px;
-  color: #666666;
+  color: var(--w-text-3);
   line-height: 1.45;
   margin: 0;
 }
@@ -474,13 +517,13 @@
   gap: 6px;
   margin-top: 4px;
   padding-top: 10px;
-  border-top: 1px solid #f2f2f4;
+  border-top: 1px solid var(--w-border);
 }
 
 .pillarSkillItem {
   font-size: 12px;
   font-weight: 550;
-  color: #222222;
+  color: var(--w-text-2);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -490,7 +533,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #111111;
+  background: var(--w-accent);
   opacity: 0.5;
 }
 
@@ -561,19 +604,18 @@
   font-size: 18px;
   font-weight: 550;
   letter-spacing: -0.02em;
-  color: #111111;
+  color: var(--w-text);
   transition: color 0.15s ease, transform 0.15s ease;
   cursor: default;
 }
 
 .pureTextItem:hover {
-  color: #111111;
   opacity: 0.7;
 }
 
 .pureTextBullet {
   font-size: 14px;
-  color: #cccccc;
+  color: var(--w-border-2);
   font-weight: 300;
 }
 
@@ -581,7 +623,7 @@
   font-family: ui-monospace, SFMono-Regular, monospace;
   font-size: 10px;
   font-weight: 700;
-  color: #88888e;
+  color: var(--w-muted);
   letter-spacing: 0.5px;
 }
 
@@ -624,7 +666,7 @@
   gap: 36px;
   padding-top: 14px;
   margin-top: 4px;
-  border-top: 1px solid #f2f2f4;
+  border-top: 1px solid var(--w-border);
   flex-wrap: wrap;
 }
 
@@ -637,10 +679,10 @@
   }
 
   .aboutHeroPortrait {
-    width: 72px !important;
-    height: 72px !important;
-    max-width: 72px !important;
-    max-height: 72px !important;
+    width: 68px !important;
+    height: 68px !important;
+    max-width: 68px !important;
+    max-height: 68px !important;
     object-fit: contain !important;
     flex-shrink: 0 !important;
   }
@@ -650,7 +692,7 @@
     font-weight: 700 !important;
     line-height: 1.18 !important;
     letter-spacing: -0.025em !important;
-    color: #111111 !important;
+    color: var(--w-text) !important;
     margin: 0 !important;
     display: flex !important;
     flex-direction: column !important;
@@ -671,7 +713,7 @@
   display: flex;
   flex-direction: column;
   gap: 36px;
-  border-top: 1px solid #f0f0f2;
+  border-top: 1px solid var(--w-border);
   padding-top: 32px;
 }
 
@@ -682,7 +724,7 @@
   gap: 4px;
   margin-top: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #f2f2f4;
+  border-bottom: 1px solid var(--w-border);
 }
 
 .aboutSectionNumber {
@@ -690,7 +732,7 @@
   font-weight: 700;
   font-family: ui-monospace, monospace;
   letter-spacing: 0.08em;
-  color: #888888;
+  color: var(--w-muted);
   text-transform: uppercase;
 }
 
@@ -698,7 +740,7 @@
   font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.015em;
-  color: #111111;
+  color: var(--w-text);
   margin: 0;
 }
 
@@ -719,7 +761,7 @@
 .aboutProseParagraph {
   font-size: 14px;
   line-height: 1.7;
-  color: #444444;
+  color: var(--w-text-2);
   margin: 0;
 }
 
@@ -743,10 +785,10 @@
 }
 
 .aboutDisciplineCard {
-  border: 1px solid #eeeeee;
+  border: 1px solid var(--w-border-2);
   padding: 22px;
   border-radius: 4px;
-  background: #ffffff;
+  background: var(--w-card-bg);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -754,8 +796,8 @@
 }
 
 .aboutDisciplineCard:hover {
-  border-color: #111111;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  border-color: var(--w-accent);
+  box-shadow: 0 4px 18px var(--w-shadow);
 }
 
 .aboutDisciplineNumber {
@@ -763,21 +805,21 @@
   font-weight: 700;
   font-family: ui-monospace, monospace;
   letter-spacing: 0.08em;
-  color: #888888;
+  color: var(--w-muted);
   text-transform: uppercase;
 }
 
 .aboutDisciplineTitle {
   font-size: 15px;
   font-weight: 700;
-  color: #111111;
+  color: var(--w-text);
   margin: 0;
 }
 
 .aboutDisciplineDesc {
   font-size: 12.5px;
   line-height: 1.55;
-  color: #555555;
+  color: var(--w-text-3);
   margin: 0;
 }
 
@@ -787,7 +829,7 @@
   gap: 5px;
   margin-top: 4px;
   padding-top: 10px;
-  border-top: 1px solid #f4f4f6;
+  border-top: 1px solid var(--w-border);
 }
 
 /* ── HOBBIES & NATURE GRID ── */
@@ -810,10 +852,10 @@
 }
 
 .aboutHobbyCard {
-  border: 1px solid #f0f0f2;
+  border: 1px solid var(--w-border);
   padding: 18px;
   border-radius: 4px;
-  background: #fafafa;
+  background: var(--w-bg-2);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -821,21 +863,21 @@
 }
 
 .aboutHobbyCard:hover {
-  background: #ffffff;
-  border-color: #111111;
+  background: var(--w-card-bg);
+  border-color: var(--w-accent);
 }
 
 .aboutHobbyTitle {
   font-size: 13.5px;
   font-weight: 700;
-  color: #111111;
+  color: var(--w-text);
   margin: 0;
 }
 
 .aboutHobbyText {
   font-size: 12px;
   line-height: 1.55;
-  color: #555555;
+  color: var(--w-text-3);
   margin: 0;
 }
 
@@ -853,7 +895,7 @@
 }
 
 .aboutPhilosophyCard {
-  border-left: 2px solid #111111;
+  border-left: 2px solid var(--w-accent);
   padding: 4px 0 4px 16px;
   display: flex;
   flex-direction: column;
@@ -863,14 +905,14 @@
 .aboutPhilosophyHeadline {
   font-size: 14px;
   font-weight: 700;
-  color: #111111;
+  color: var(--w-text);
   margin: 0;
 }
 
 .aboutPhilosophyBody {
   font-size: 12.5px;
   line-height: 1.55;
-  color: #555555;
+  color: var(--w-text-3);
   margin: 0;
 }
 
@@ -879,10 +921,10 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-  background: #f9f9fb;
+  background: var(--w-bg-3);
   padding: 20px;
   border-radius: 6px;
-  border: 1px solid #eeeeee;
+  border: 1px solid var(--w-border-2);
 }
 
 @media (max-width: 860px) {
@@ -903,19 +945,19 @@
   font-weight: 700;
   font-family: ui-monospace, monospace;
   letter-spacing: 0.08em;
-  color: #888888;
+  color: var(--w-muted);
   text-transform: uppercase;
 }
 
 .aboutCurrentVal {
   font-size: 12.5px;
   font-weight: 550;
-  color: #111111;
+  color: var(--w-text);
   line-height: 1.4;
 }
 
 /* ── LIKES PILLS ROW ── */
-.aboutLikesWrap {
+.aboutLikeWrap {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -924,8 +966,8 @@
 .aboutLikePill {
   font-size: 12px;
   font-weight: 500;
-  color: #333333;
-  background: #f2f2f5;
+  color: var(--w-pill-text);
+  background: var(--w-pill-bg);
   padding: 6px 12px;
   border-radius: 20px;
 }
@@ -943,10 +985,10 @@
 }
 
 .overviewFocusCard {
-  border: 1px solid #eeeeee;
+  border: 1px solid var(--w-border-2);
   padding: 24px;
   border-radius: 4px;
-  background: #ffffff;
+  background: var(--w-card-bg);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -954,8 +996,8 @@
 }
 
 .overviewFocusCard:hover {
-  border-color: #111111;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border-color: var(--w-accent);
+  box-shadow: 0 4px 20px var(--w-shadow);
 }
 
 .overviewFocusNumber {
@@ -963,7 +1005,7 @@
   font-weight: 700;
   font-family: ui-monospace, monospace;
   letter-spacing: 0.1em;
-  color: #888888;
+  color: var(--w-muted);
   text-transform: uppercase;
 }
 
@@ -972,13 +1014,13 @@
   font-weight: 700;
   letter-spacing: -0.01em;
   margin: 0;
-  color: #111111;
+  color: var(--w-text);
 }
 
 .overviewFocusDesc {
   font-size: 12.5px;
   line-height: 1.55;
-  color: #555555;
+  color: var(--w-text-3);
   margin: 0;
 }
 
@@ -988,15 +1030,15 @@
   gap: 5px;
   margin-top: 6px;
   padding-top: 12px;
-  border-top: 1px solid #f3f3f5;
+  border-top: 1px solid var(--w-border);
 }
 
 .contactBannerWrap {
   grid-column: 1 / 4;
   margin-top: 12px;
   padding: 24px;
-  background: #fbfbfd;
-  border: 1px solid #eeeeee;
+  background: var(--w-bg-2);
+  border: 1px solid var(--w-border-2);
   border-radius: 4px;
   display: flex;
   justify-content: space-between;
@@ -1015,21 +1057,21 @@
   margin: 0 0 4px 0;
   font-size: 15px;
   font-weight: 700;
-  color: #111111;
+  color: var(--w-text);
 }
 
 .contactBannerLeft p {
   margin: 0;
   font-size: 12px;
-  color: #666666;
+  color: var(--w-text-3);
 }
 
 .contactActionBtn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #111111;
-  color: #ffffff;
+  background: var(--w-accent);
+  color: var(--w-bg);
   padding: 10px 20px;
   font-size: 11.5px;
   font-weight: 700;
@@ -1042,7 +1084,7 @@
 }
 
 .contactActionBtn:hover {
-  background: #333333;
+  opacity: 0.8;
   transform: translateY(-1px);
 }
 
@@ -1050,18 +1092,19 @@
   font-size: 24px;
   font-weight: 300;
   font-family: ui-monospace, monospace;
-  color: #888888;
+  color: var(--w-muted);
 }
 
 .processTitle {
   font-size: 14px;
   font-weight: 700;
   margin: 0;
+  color: var(--w-text);
 }
 
 .processText {
   font-size: 12px;
-  color: #55555a;
+  color: var(--w-text-3);
   line-height: 1.5;
   margin: 0;
 }
@@ -1077,15 +1120,15 @@
   justify-content: space-between;
   align-items: center;
   padding: 14px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--w-border);
   text-decoration: none;
-  color: #111111;
+  color: var(--w-text);
   transition: background 0.15s ease;
 }
 
 .archiveRowItem:hover {
   padding-left: 6px;
-  background: #fafafa;
+  background: var(--w-bg-2);
 }
 
 .archiveLeftCol {
@@ -1096,11 +1139,12 @@
   font-size: 13px;
   font-weight: 700;
   margin: 0;
+  color: var(--w-text);
 }
 
 .archiveItemSubtitle {
   font-size: 11.5px;
-  color: #777777;
+  color: var(--w-text-3);
   margin: 2px 0 0 0;
 }
 
@@ -1114,7 +1158,7 @@
 .archiveYearLabel {
   font-size: 11.5px;
   font-family: ui-monospace, monospace;
-  color: #888888;
+  color: var(--w-muted);
   font-weight: 600;
 }
 
@@ -1130,7 +1174,7 @@
 .seeMoreLink {
   font-size: 11.5px;
   font-weight: 500;
-  color: #333333;
+  color: var(--w-text-2);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -1140,5 +1184,163 @@
 
 .seeMoreLink:hover {
   transform: translateX(3px);
-  color: #000000;
+  color: var(--w-text);
+}
+
+/* ── MOBILE: COMPREHENSIVE DARK-MODE-AWARE OVERHAUL ── */
+@media (max-width: 860px) {
+  /* Header becomes a clean 2-line stack */
+  .masterGridContainer {
+    padding: 18px 18px 60px 18px;
+    row-gap: 20px;
+  }
+
+  /* Line 1: Brand + Clock */
+  .headerCol1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    grid-column: 1 / -1;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--w-border);
+  }
+
+  .brandLogo {
+    font-size: 13px;
+  }
+
+  .mobileLiveClock {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 700;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    color: var(--w-text);
+    letter-spacing: 0.02em;
+  }
+
+  /* Line 2: Nav tabs scrollable */
+  .headerCol2 {
+    display: flex !important;
+    grid-column: 1 / -1;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0 0 8px 0;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .headerCol2::-webkit-scrollbar {
+    display: none;
+  }
+
+  .navItemBtn {
+    background: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+    padding: 5px 0 !important;
+    color: var(--w-text-4) !important;
+    border-bottom: 2px solid transparent !important;
+    flex-shrink: 0 !important;
+    transition: color 0.15s ease, border-color 0.15s ease !important;
+  }
+
+  .navItemActive {
+    color: var(--w-text) !important;
+    font-weight: 800 !important;
+    border-bottom: 2px solid var(--w-text) !important;
+  }
+
+  /* Hide desktop location/clock column */
+  .headerCol3 {
+    display: none !important;
+  }
+
+  /* Hero: hide the "→ About" label column */
+  .heroCol1 {
+    display: none !important;
+  }
+
+  /* Hero takes full width */
+  .heroCol23 {
+    grid-column: 1 / -1 !important;
+  }
+
+  /* Meta row hidden on mobile (already in hero strip) */
+  .metaCol1,
+  .metaCol2,
+  .metaCol3 {
+    display: none !important;
+  }
+
+  /* Full-width content block */
+  .fullWidthTabBlock {
+    grid-column: 1 / -1 !important;
+    gap: 28px;
+    padding-top: 24px;
+  }
+
+  /* Meta strip on mobile: 2 columns */
+  .aboutHeroMetaStrip {
+    gap: 20px !important;
+    padding-top: 12px !important;
+  }
+
+  .metaItemCluster {
+    min-width: 80px;
+  }
+
+  /* About narrative tighter on mobile */
+  .narrativeParagraph {
+    font-size: 13.5px !important;
+  }
+
+  /* Section cards: stack single column */
+  .aboutSixCardsGrid,
+  .aboutHobbiesGrid,
+  .aboutPhilosophyGrid,
+  .overviewCardsGrid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .skillsPillarGrid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Project images full-width */
+  .imageCardCol1,
+  .imageCardCol2,
+  .imageCardCol3 {
+    grid-column: 1 / -1 !important;
+    height: 240px !important;
+  }
+
+  .secondaryProjectsRow {
+    grid-column: 1 / -1 !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  /* See more link spans full */
+  .seeMoreWrapper {
+    grid-column: 1 / -1 !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Archive rows: stack vertically */
+  .archiveRowItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 12px 0;
+  }
+
+  .archivePillStack {
+    flex-wrap: wrap;
+  }
 }
