@@ -3589,15 +3589,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           borderRadius: "50%",
                           border: readerTheme === "dark" 
                             ? "1px solid rgba(255,255,255,0.15)" 
-                            : (readerTheme === "paper" ? "1px solid #D4CEBF" : "1px solid rgba(0,0,0,0.12)"),
+                            : ("1px solid rgba(0,0,0,0.12)"),
                           background: readerTheme === "dark"
                             ? "rgba(255,255,255,0.1)"
-                            : (readerTheme === "paper" ? "#EFECE1" : "#F0F0F2"),
+                            : ("#F0F0F2"),
                           display: "inline-flex",
                           alignItems: "center",
                           justifyContent: "center",
                           color: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 
-                            ? (readerTheme === "dark" ? "#FFFFFF" : (readerTheme === "paper" ? "#2C2A26" : "#111111")) 
+                            ? (readerTheme === "dark" ? "#FFFFFF" : "#111111") 
                             : (readerTheme === "dark" ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.25)"),
                           opacity: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? 1 : 0.45,
                           cursor: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? "pointer" : "not-allowed",
@@ -3627,15 +3627,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           borderRadius: "50%",
                           border: readerTheme === "dark" 
                             ? "1px solid rgba(255,255,255,0.15)" 
-                            : (readerTheme === "paper" ? "1px solid #D4CEBF" : "1px solid rgba(0,0,0,0.12)"),
+                            : ("1px solid rgba(0,0,0,0.12)"),
                           background: readerTheme === "dark"
                             ? "rgba(255,255,255,0.1)"
-                            : (readerTheme === "paper" ? "#EFECE1" : "#F0F0F2"),
+                            : ("#F0F0F2"),
                           display: "inline-flex",
                           alignItems: "center",
                           justifyContent: "center",
                           color: selectedPostIndex !== null && selectedPostIndex > 0 
-                            ? (readerTheme === "dark" ? "#FFFFFF" : (readerTheme === "paper" ? "#2C2A26" : "#111111")) 
+                            ? (readerTheme === "dark" ? "#FFFFFF" : "#111111") 
                             : (readerTheme === "dark" ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.25)"),
                           opacity: selectedPostIndex !== null && selectedPostIndex > 0 ? 1 : 0.45,
                           cursor: selectedPostIndex !== null && selectedPostIndex > 0 ? "pointer" : "not-allowed",
