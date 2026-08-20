@@ -2271,44 +2271,45 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: block !important;
           }
 
-          /* ── ROOT LAYOUT (IMMERSIVE 100VH CARD DECK ON MOBILE OVERVIEW) ── */
+          /* ── ROOT LAYOUT (IMMERSIVE 100% FULLSCREEN COVER ON MOBILE OVERVIEW) ── */
           .pj-root {
             display: flex !important;
             flex-direction: column !important;
-            position: relative !important;
-            top: auto !important;
-            left: auto !important;
-            right: auto !important;
-            bottom: auto !important;
+            position: fixed !important;
+            inset: 0 !important;
+            height: 100% !important;
             height: 100vh !important;
             height: 100dvh !important;
+            height: -webkit-fill-available !important;
             width: 100vw !important;
             overflow: hidden !important;
             padding: 0 !important;
             margin: 0 !important;
-            background: var(--bg-color, #0c0d0e) !important;
+            background: #0c0d0e !important;
             -webkit-overflow-scrolling: touch !important;
           }
 
           /* When reading an article or prologue, allow vertical scrolling */
           .pj-root.has-selected-post {
+            position: relative !important;
+            inset: auto !important;
             height: auto !important;
             min-height: 100vh !important;
             min-height: 100dvh !important;
             overflow-y: auto !important;
+            background: var(--bg-color, #FFFFFF) !important;
           }
 
-          /* ── HERO PHOTO FEATURED CARD (FULLSCREEN 100VH ON OVERVIEW) ── */
+          /* ── HERO PHOTO FEATURED CARD (FULLSCREEN 100% ON OVERVIEW) ── */
           .pj-left {
-            position: relative !important;
-            top: auto !important;
-            left: auto !important;
-            right: auto !important;
-            bottom: auto !important;
-            width: 100vw !important;
+            position: absolute !important;
+            inset: 0 !important;
+            width: 100% !important;
             max-width: 100vw !important;
+            height: 100% !important;
             height: 100vh !important;
             height: 100dvh !important;
+            height: -webkit-fill-available !important;
             margin: 0 !important;
             border-radius: 0 !important;
             border: none !important;
@@ -2318,8 +2319,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
           }
 
-          /* When article reader is open on mobile */
+          /* When article reader is open on mobile, shrink cover to top header */
           .pj-root.has-selected-post .pj-left {
+            position: relative !important;
+            inset: auto !important;
             height: 38vh !important;
             height: 38dvh !important;
             min-height: 240px !important;
@@ -2327,13 +2330,24 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             box-shadow: none !important;
           }
 
-          /* ── EDITORIAL CONTENT FEED: HIDDEN IN OVERVIEW ON MOBILE, VISIBLE WHEN READING ── */
-          .pj-right {
+          /* ── EDITORIAL CONTENT FEED: 100% HIDDEN IN OVERVIEW ON MOBILE, VISIBLE ONLY WHEN READING ── */
+          .pj-right,
+          .pj-right.fit-screen,
+          .pj-root:not(.has-selected-post) .pj-right {
             display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            max-height: 0 !important;
+            overflow: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
           }
 
           .pj-root.has-selected-post .pj-right {
             display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
             position: relative !important;
             top: auto !important;
             left: auto !important;
