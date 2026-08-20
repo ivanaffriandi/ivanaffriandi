@@ -2555,7 +2555,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             height: auto !important;
             min-height: 100vh !important;
             min-height: 100dvh !important;
-            overflow: visible !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            overscroll-behavior-y: auto !important;
             background: var(--bg-color, #FFFFFF) !important;
           }
 
@@ -2612,11 +2615,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             max-width: 100vw !important;
             max-height: none !important;
             height: auto !important;
+            min-height: 50vh !important;
             border-radius: 0 !important;
-            overflow: visible !important;
+            overflow-x: hidden !important;
+            overflow-y: visible !important;
             box-sizing: border-box !important;
             z-index: 1 !important;
-            padding: 1.8rem 1.25rem calc(2.5rem + env(safe-area-inset-bottom, 20px)) !important;
+            padding: 1.8rem 1.25rem calc(env(safe-area-inset-bottom, 24px) + 120px) !important;
             box-shadow: none !important;
           }
 
@@ -3649,9 +3654,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           fontWeight: 800,
                           letterSpacing: "0.08em",
                           textTransform: "uppercase",
-                          color: readerTheme === "dark" ? "#EDEDF0" : (readerTheme === "paper" ? "#38342C" : "#111111"),
-                          padding: "0.25rem 0.4rem",
+                          color: readerTheme === "dark" ? "#FFFFFF" : readerTheme === "paper" ? "#2C2820" : "#111111",
+                          background: readerTheme === "dark" ? "rgba(255,255,255,0.14)" : readerTheme === "paper" ? "rgba(0,0,0,0.07)" : "rgba(0,0,0,0.06)",
+                          padding: "0.22rem 0.55rem",
+                          borderRadius: "4px",
                           whiteSpace: "nowrap",
+                          border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(0,0,0,0.08)",
                         }}
                       >
                         {getReadingTime(selectedPost.content)} MIN READ
