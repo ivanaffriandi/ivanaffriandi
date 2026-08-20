@@ -3368,9 +3368,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           fontWeight: readerTheme === "paper" ? 800 : 550,
                           padding: "0.25rem 0.55rem",
                           borderRadius: "9999px",
-                          border: readerTheme === "paper" ? "1px solid #D4CEBF" : "1px solid transparent",
-                          background: readerTheme === "paper" ? "#EFECE1" : "transparent",
-                          color: "#2C2A26",
+                          border: readerTheme === "paper" 
+                            ? "1px solid #D4CEBF" 
+                            : "1px solid transparent",
+                          background: readerTheme === "paper" 
+                            ? "#EFECE1" 
+                            : "transparent",
+                          color: readerTheme === "paper" 
+                            ? "#2C2A26" 
+                            : (readerTheme === "dark" ? "rgba(255,255,255,0.7)" : "#7D7970"),
                           cursor: "pointer",
                           transition: "all 0.15s ease",
                         }}
@@ -3387,9 +3393,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           fontWeight: readerTheme === "light" ? 800 : 550,
                           padding: "0.25rem 0.55rem",
                           borderRadius: "9999px",
-                          border: readerTheme === "light" ? "1px solid #111111" : "1px solid transparent",
-                          background: readerTheme === "light" ? "#111111" : "transparent",
-                          color: readerTheme === "light" ? "#FFFFFF" : "var(--text-primary, #111111)",
+                          border: readerTheme === "light" 
+                            ? "1px solid #111111" 
+                            : "1px solid transparent",
+                          background: readerTheme === "light" 
+                            ? "#111111" 
+                            : "transparent",
+                          color: readerTheme === "light" 
+                            ? "#FFFFFF" 
+                            : (readerTheme === "dark" ? "rgba(255,255,255,0.7)" : "#777777"),
                           cursor: "pointer",
                           transition: "all 0.15s ease",
                         }}
@@ -3406,9 +3418,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           fontWeight: readerTheme === "dark" ? 800 : 550,
                           padding: "0.25rem 0.55rem",
                           borderRadius: "9999px",
-                          border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.3)" : "1px solid transparent",
-                          background: readerTheme === "dark" ? "rgba(255,255,255,0.18)" : "transparent",
-                          color: readerTheme === "dark" ? "#FFFFFF" : "var(--text-primary, #111111)",
+                          border: readerTheme === "dark" 
+                            ? "1px solid rgba(255,255,255,0.35)" 
+                            : "1px solid transparent",
+                          background: readerTheme === "dark" 
+                            ? "rgba(255,255,255,0.22)" 
+                            : "transparent",
+                          color: readerTheme === "dark" 
+                            ? "#FFFFFF" 
+                            : (readerTheme === "paper" ? "#7D7970" : "#777777"),
                           cursor: "pointer",
                           transition: "all 0.15s ease",
                         }}
