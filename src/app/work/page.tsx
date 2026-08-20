@@ -6,9 +6,38 @@ import styles from './work.module.css';
 
 type TabType = 'about' | 'projects' | 'skills' | 'process' | 'archive';
 
+// Crisp Inline SVG Icons for Top-Right Header
+const InstagramIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
+
+const GithubIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+    <path d="M9 18c-4.51 2-5-2-7-2" />
+  </svg>
+);
+
+const XIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 4l16 16m0-16L4 20" />
+  </svg>
+);
+
+const MailIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="20" height="16" x="2" y="4" rx="2" />
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+  </svg>
+);
+
 export default function WorkIvanPortfolioPage() {
   const [activeTab, setActiveTab] = useState<TabType>('about');
-  const [liveTime, setLiveTime] = useState('5:40 PM (WIB)');
+  const [liveTime, setLiveTime] = useState('7:45 PM (WIB)');
 
   // Real-time Indonesian WIB clock ticker
   useEffect(() => {
@@ -27,51 +56,6 @@ export default function WorkIvanPortfolioPage() {
     const timer = setInterval(updateTime, 1000);
     return () => clearInterval(timer);
   }, []);
-
-  const tabHeaders = {
-    about: {
-      headline: 'Affriandi, Ivan',
-      narrative:
-        'I build digital software, design clean interfaces, craft leather goods, and occasionally disappear into a mushroom field.',
-      duration: '2020 — Present',
-      client: 'Studio & Lab',
-      artDirection: 'Digital & Physical',
-    },
-    projects: {
-      headline: 'Selected Works',
-      narrative:
-        'A collection of live web applications, 3D configurators, and handcrafted physical goods.',
-      duration: '2025 — 2026',
-      client: 'Recent Projects',
-      artDirection: 'Web & Atelier',
-    },
-    skills: {
-      headline: 'Tools & Stack',
-      narrative:
-        'The technologies, frameworks, and workshop tools I use daily to build products.',
-      duration: 'Daily Stack',
-      client: 'Engineering & Craft',
-      artDirection: 'Full Stack',
-    },
-    process: {
-      headline: 'How I Work',
-      narrative:
-        'A simple three-step approach to turning ideas into fast, finished products.',
-      duration: 'Workflow',
-      client: 'Direct Collaboration',
-      artDirection: 'Plan → Build → Ship',
-    },
-    archive: {
-      headline: 'Services & Log',
-      narrative:
-        'Available services for hire and a complete chronological record of launched projects.',
-      duration: 'Open for Hire',
-      client: 'Clients & Studio',
-      artDirection: 'Full Archive',
-    },
-  };
-
-  const current = tabHeaders[activeTab];
 
   // Pure Typography Stream Rows for Skills Marquee
   const row1 = [
@@ -110,756 +94,767 @@ export default function WorkIvanPortfolioPage() {
     { num: '24', title: 'Journal Binding' },
   ];
 
+  const tabsConfig: { id: TabType; label: string; badge?: string }[] = [
+    { id: 'about', label: 'About' },
+    { id: 'projects', label: 'Projects', badge: 'Soon' },
+    { id: 'skills', label: 'Skills' },
+    { id: 'process', label: 'Process', badge: 'Soon' },
+    { id: 'archive', label: 'Services & Log', badge: 'Soon' },
+  ];
+
   return (
     <div className={styles.scandinavianViewport}>
-      <div className={styles.masterGridContainer}>
-        {/* ── ROW 1: HEADER (ALIGNED PRECISELY ACROSS 3 COLUMNS) ── */}
-        <div className={styles.headerCol1}>
-          <a href="https://work.ivanaffriandi.com" className={styles.brandLogo}>
-            Ivan&apos;s Work<sup>®</sup>
-          </a>
-          <span className={styles.mobileLiveClock}>{liveTime}</span>
-        </div>
+      <div className={styles.masterPageContainer}>
+        {/* ── 1. TOP HEADER BAR: BRAND (LEFT) & SOCIALS + EMAIL (RIGHT) ── */}
+        <header className={styles.topHeaderBar}>
+          <div className={styles.headerLeftBrand}>
+            <a href="https://ivanaffriandi.com" className={styles.brandLogo}>
+              Ivan&apos;s Work<sup>®</sup>
+            </a>
+            <span className={styles.liveClockBadge}>{liveTime}</span>
+          </div>
 
-        <div className={styles.headerCol2}>
-          <button
-            onClick={() => setActiveTab('about')}
-            className={`${styles.navItemBtn} ${activeTab === 'about' ? styles.navItemActive : ''}`}
-          >
-            About
-          </button>
-          <button
-            onClick={() => setActiveTab('projects')}
-            className={`${styles.navItemBtn} ${activeTab === 'projects' ? styles.navItemActive : ''}`}
-          >
-            Projects
-          </button>
-          <button
-            onClick={() => setActiveTab('skills')}
-            className={`${styles.navItemBtn} ${activeTab === 'skills' ? styles.navItemActive : ''}`}
-          >
-            Skills
-          </button>
-          <button
-            onClick={() => setActiveTab('process')}
-            className={`${styles.navItemBtn} ${activeTab === 'process' ? styles.navItemActive : ''}`}
-          >
-            Process
-          </button>
-          <button
-            onClick={() => setActiveTab('archive')}
-            className={`${styles.navItemBtn} ${activeTab === 'archive' ? styles.navItemActive : ''}`}
-          >
-            Services &amp; Log
-          </button>
-        </div>
-
-        <div className={styles.headerCol3}>
-          <span className={styles.locationOnlyText}>Tangerang, Indonesia</span>
-          <span className={styles.liveClockHeader}>{liveTime}</span>
-        </div>
-
-        {/* ── ROW 2: HERO TITLE & NARRATIVE (EXACT INDENT AT COL 2) ── */}
-        <div className={styles.heroCol1}>
-          <span className={styles.overviewLabel}>
-            → {activeTab === 'archive' ? 'Services & Log' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-          </span>
-        </div>
-
-        <div className={styles.heroCol23}>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
+          <div className={styles.headerRightSocials}>
+            <a
+              href="https://instagram.com/ivanaffriandi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.socialIconLink}
+              title="Instagram"
+              aria-label="Instagram"
             >
-              {activeTab === 'about' ? (
-                <div className={styles.aboutHeroHeader}>
-                  <div className={styles.aboutHeroPhotoAndNameRow}>
-                    <img
-                      src="/ivan-head.png"
-                      alt="Affriandi, Ivan"
-                      className={styles.aboutHeroPortrait}
-                    />
-                    <h1 className={styles.mainTitleHeading} style={{ margin: 0 }}>
-                      <span className={styles.nameLineBreak}>Affriandi,</span>
-                      <span className={styles.nameLineBreak}>Ivan</span>
-                    </h1>
-                  </div>
+              <InstagramIcon />
+            </a>
+            <a
+              href="https://github.com/ivanaffriandi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.socialIconLink}
+              title="GitHub"
+              aria-label="GitHub"
+            >
+              <GithubIcon />
+            </a>
+            <a
+              href="https://x.com/ivanaffriandi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.socialIconLink}
+              title="X (Twitter)"
+              aria-label="X (Twitter)"
+            >
+              <XIcon />
+            </a>
+            <a
+              href="mailto:hello@ivanaffriandi.com"
+              className={styles.emailIconLink}
+              title="Send an Email"
+              aria-label="Email Ivan"
+            >
+              <MailIcon />
+              <span className={styles.emailButtonText}>Email</span>
+            </a>
+          </div>
+        </header>
 
-                  <p className={styles.narrativeParagraph}>
-                    {current.narrative}
-                  </p>
-
-                  <div className={styles.aboutHeroMetaStrip}>
-                    <div className={styles.metaItemCluster}>
-                      <span className={styles.metaLabel}>Timeline</span>
-                      <span className={styles.metaValue}>{current.duration}</span>
-                    </div>
-
-                    <div className={styles.metaItemCluster}>
-                      <span className={styles.metaLabel}>Focus</span>
-                      <span className={styles.metaValue}>{current.client}</span>
-                    </div>
-
-                    <div className={styles.metaItemCluster}>
-                      <span className={styles.metaLabel}>Output</span>
-                      <span className={styles.metaValue}>{current.artDirection}</span>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <h1 className={styles.mainTitleHeading}>
-                    {current.headline}
-                  </h1>
-
-                  <p className={styles.narrativeParagraph}>
-                    {current.narrative}
-                  </p>
-                </>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* ── ROW 3: METADATA ROW (FOR OTHER TABS) ── */}
-        {activeTab !== 'about' && (
-          <>
-            <div className={styles.metaCol1}>
-              <span className={styles.metaLabel}>Discipline</span>
+        {/* ── 2. HERO IDENTITY BLOCK: ENLARGED PHOTO + PROPORTIONAL NAME + BIO ── */}
+        <section className={styles.heroSection}>
+          <div className={styles.heroIdentityRow}>
+            <div className={styles.portraitPhotoWrapper}>
+              <img
+                src="/ivan-head.png"
+                alt="Affriandi, Ivan"
+                className={styles.heroPortraitImg}
+              />
             </div>
 
-            <div className={styles.metaCol2}>
-              <div className={styles.metaItemCluster}>
-                <span className={styles.metaLabel}>Timeline</span>
-                <span className={styles.metaValue}>{current.duration}</span>
-              </div>
+            <div className={styles.heroNameAndBioCol}>
+              <h1 className={styles.heroNameTitle}>
+                <span className={styles.namePart}>Affriandi,</span>
+                <span className={styles.namePart}>Ivan</span>
+              </h1>
+              <p className={styles.heroTaglineParagraph}>
+                I build digital software, design clean interfaces, craft leather goods, and occasionally disappear into a mushroom field.
+              </p>
+            </div>
+          </div>
 
-              <div className={styles.metaItemCluster}>
-                <span className={styles.metaLabel}>Focus</span>
-                <span className={styles.metaValue}>{current.client}</span>
-              </div>
+          {/* ── 3. METADATA INFO STRIP ── */}
+          <div className={styles.metaInfoStrip}>
+            <div className={styles.metaItemCluster}>
+              <span className={styles.metaLabel}>Timeline</span>
+              <span className={styles.metaValue}>2020 — Present</span>
             </div>
 
-            <div className={styles.metaCol3}>
+            <div className={styles.metaItemCluster}>
+              <span className={styles.metaLabel}>Focus</span>
+              <span className={styles.metaValue}>Studio &amp; Lab</span>
+            </div>
+
+            <div className={styles.metaItemCluster}>
               <span className={styles.metaLabel}>Output</span>
-              <span className={styles.metaValue}>{current.artDirection}</span>
-            </div>
-          </>
-        )}
-
-        {/* ── ROW 4: DYNAMIC TAB VIEW CONTENTS ── */}
-
-        {/* 1. MASTER ABOUT TAB: FULL EDITORIAL STUDIO ARCHIVE (ZERO EMOJIS) */}
-        {activeTab === 'about' && (
-          <div className={styles.fullWidthTabBlock}>
-            {/* SECTION 01: WHO I AM PROSE */}
-            <div className={styles.aboutSectionHeader}>
-              <span className={styles.aboutSectionNumber}>01 · WHO I AM</span>
-              <h3 className={styles.aboutSectionTitle}>The Strange Mix</h3>
+              <span className={styles.metaValue}>Digital &amp; Physical</span>
             </div>
 
-            <div className={styles.aboutProseGrid}>
-              <p className={styles.aboutProseParagraph}>
-                My work sits somewhere between software engineering, clean UI/UX design, physical leather craftsmanship, and running servers I probably didn&apos;t need to self-host. I am not interested in being boxed into a single corporate identity.
-              </p>
-              <p className={styles.aboutProseParagraph}>
-                I can spend part of my day designing an interface in Figma, another writing Next.js code, and another hand-stitching a trifold leather journal with tea getting cold beside me. That contrast between digital pixels and tactile physical materials is where the fun lives.
-              </p>
-            </div>
-
-            {/* SECTION 02: WHAT I DO (6 CORE DISCIPLINE CARDS) */}
-            <div className={styles.aboutSectionHeader}>
-              <span className={styles.aboutSectionNumber}>02 · WHAT I DO</span>
-              <h3 className={styles.aboutSectionTitle}>Six Areas of Focus</h3>
-            </div>
-
-            <div className={styles.aboutSixCardsGrid}>
-              <div className={styles.aboutDisciplineCard}>
-                <span className={styles.aboutDisciplineNumber}>01 · DESIGN</span>
-                <h4 className={styles.aboutDisciplineTitle}>Product &amp; UI/UX</h4>
-                <p className={styles.aboutDisciplineDesc}>
-                  Clean, typography-driven interfaces, Figma design systems, generous whitespace, and obsessing over spacing, hierarchy, and micro-interactions that feel tactile.
-                </p>
-                <div className={styles.aboutDisciplineTags}>
-                  <span className={styles.miniPill}>Figma Systems</span>
-                  <span className={styles.miniPill}>Typography</span>
-                  <span className={styles.miniPill}>Interaction Design</span>
-                </div>
-              </div>
-
-              <div className={styles.aboutDisciplineCard}>
-                <span className={styles.aboutDisciplineNumber}>02 · CODE</span>
-                <h4 className={styles.aboutDisciplineTitle}>Software Engineering</h4>
-                <p className={styles.aboutDisciplineDesc}>
-                  Full-stack web applications built with Next.js 16, React 19, TypeScript, and modern APIs. Fast, lightweight code without bloated dependencies.
-                </p>
-                <div className={styles.aboutDisciplineTags}>
-                  <span className={styles.miniPill}>Next.js 16</span>
-                  <span className={styles.miniPill}>TypeScript</span>
-                  <span className={styles.miniPill}>React 19</span>
-                </div>
-              </div>
-
-              <div className={styles.aboutDisciplineCard}>
-                <span className={styles.aboutDisciplineNumber}>03 · INFRA</span>
-                <h4 className={styles.aboutDisciplineTitle}>Digital Independence</h4>
-                <p className={styles.aboutDisciplineDesc}>
-                  Self-hosted cloud VMs, private email servers (SMTP, Postfix, DKIM), and personal digital tools. The internet as something you build and inhabit, not just consume.
-                </p>
-                <div className={styles.aboutDisciplineTags}>
-                  <span className={styles.miniPill}>Self-Hosted</span>
-                  <span className={styles.miniPill}>Cloud VM</span>
-                  <span className={styles.miniPill}>Private Mail</span>
-                </div>
-              </div>
-
-              <div className={styles.aboutDisciplineCard}>
-                <span className={styles.aboutDisciplineNumber}>04 · ATELIER</span>
-                <h4 className={styles.aboutDisciplineTitle}>Physical Craft (SHŪ / EN)</h4>
-                <p className={styles.aboutDisciplineDesc}>
-                  Bespoke leather journals handcrafted from Italian vegetable-tanned hides, Japanese Moire lining, bookbinding, and solid 925 sterling silver charms.
-                </p>
-                <div className={styles.aboutDisciplineTags}>
-                  <span className={styles.miniPill}>Italian Leather</span>
-                  <span className={styles.miniPill}>Saddle Stitch</span>
-                  <span className={styles.miniPill}>925 Silver</span>
-                </div>
-              </div>
-
-              <div className={styles.aboutDisciplineCard}>
-                <span className={styles.aboutDisciplineNumber}>05 · EXPERIMENTS</span>
-                <h4 className={styles.aboutDisciplineTitle}>Creative Labs &amp; 3D</h4>
-                <p className={styles.aboutDisciplineDesc}>
-                  Real-time Three.js 3D WebGL configurators, GLSL procedural shaders, Web Audio sound synthesis, and tools built simply because &quot;I wonder if I can build that myself.&quot;
-                </p>
-                <div className={styles.aboutDisciplineTags}>
-                  <span className={styles.miniPill}>Three.js</span>
-                  <span className={styles.miniPill}>GLSL Shaders</span>
-                  <span className={styles.miniPill}>Web Audio</span>
-                </div>
-              </div>
-
-              <div className={styles.aboutDisciplineCard}>
-                <span className={styles.aboutDisciplineNumber}>06 · VISUALS</span>
-                <h4 className={styles.aboutDisciplineTitle}>Photography &amp; Notes</h4>
-                <p className={styles.aboutDisciplineDesc}>
-                  Documenting architectural forms, natural textures, analog moments, and quiet visual essays that document the process behind the work.
-                </p>
-                <div className={styles.aboutDisciplineTags}>
-                  <span className={styles.miniPill}>Visual Notes</span>
-                  <span className={styles.miniPill}>Documentary</span>
-                  <span className={styles.miniPill}>Texture Studies</span>
-                </div>
-              </div>
-            </div>
-
-            {/* SECTION 03: THE OTHER 50% (HOBBIES & HANDS - ZERO EMOJIS) */}
-            <div className={styles.aboutSectionHeader}>
-              <span className={styles.aboutSectionNumber}>03 · THE OTHER 50%</span>
-              <h3 className={styles.aboutSectionTitle}>Observation &amp; Tactile Making</h3>
-            </div>
-
-            <div className={styles.aboutHobbiesGrid}>
-              <div className={styles.aboutHobbyCard}>
-                <h4 className={styles.aboutHobbyTitle}>01 · Mushrooms &amp; Mycology</h4>
-                <p className={styles.aboutHobbyText}>
-                  Finding wild fungi, photographing them in the wild, reading field guides, taking notes, and slowly building an understanding of how they grow.
-                </p>
-              </div>
-
-              <div className={styles.aboutHobbyCard}>
-                <h4 className={styles.aboutHobbyTitle}>02 · Crochet &amp; Embroidery</h4>
-                <p className={styles.aboutHobbyText}>
-                  Fiber work, thread tension, and tactile patience. The satisfaction of making physical everyday objects with needles and yarn.
-                </p>
-              </div>
-
-              <div className={styles.aboutHobbyCard}>
-                <h4 className={styles.aboutHobbyTitle}>03 · Tea &amp; Quiet Mornings</h4>
-                <p className={styles.aboutHobbyText}>
-                  Hot green tea, quiet studio desks before the world wakes up, and sitting with interesting creative ideas until they click.
-                </p>
-              </div>
-
-              <div className={styles.aboutHobbyCard}>
-                <h4 className={styles.aboutHobbyTitle}>04 · Non-Fiction &amp; Kindle</h4>
-                <p className={styles.aboutHobbyText}>
-                  Collecting questions over answers. Books on design, architecture, intellectual history, culture, and human knowledge systems.
-                </p>
-              </div>
-
-              <div className={styles.aboutHobbyCard}>
-                <h4 className={styles.aboutHobbyTitle}>05 · Museums &amp; Galleries</h4>
-                <p className={styles.aboutHobbyText}>
-                  Wandering quiet historical archives, art museums, and observing how different eras constructed tools, typography, and visual culture.
-                </p>
-              </div>
-
-              <div className={styles.aboutHobbyCard}>
-                <h4 className={styles.aboutHobbyTitle}>06 · Plants &amp; Gardening</h4>
-                <p className={styles.aboutHobbyText}>
-                  Watching soil, foliage, and cuttings grow slowly on the studio terrace in Tangerang without any rush.
-                </p>
-              </div>
-            </div>
-
-            {/* SECTION 04: HOW I THINK (PHILOSOPHY) */}
-            <div className={styles.aboutSectionHeader}>
-              <span className={styles.aboutSectionNumber}>04 · WORKING PHILOSOPHY</span>
-              <h3 className={styles.aboutSectionTitle}>How I Approach Making</h3>
-            </div>
-
-            <div className={styles.aboutPhilosophyGrid}>
-              <div className={styles.aboutPhilosophyCard}>
-                <h4 className={styles.aboutPhilosophyHeadline}>Make things yourself.</h4>
-                <p className={styles.aboutPhilosophyBody}>
-                  If something interests me, I want to understand how it works under the hood and rebuild a version myself. Learning and creating are the exact same process.
-                </p>
-              </div>
-
-              <div className={styles.aboutPhilosophyCard}>
-                <h4 className={styles.aboutPhilosophyHeadline}>Simplify the complex.</h4>
-                <p className={styles.aboutPhilosophyBody}>
-                  Great design and clean code are about removing noise until only what matters is left. If an interface feels obvious, all the hard work happened behind the scenes.
-                </p>
-              </div>
-
-              <div className={styles.aboutPhilosophyCard}>
-                <h4 className={styles.aboutPhilosophyHeadline}>Boundaries are artificial.</h4>
-                <p className={styles.aboutPhilosophyBody}>
-                  Digital design informs code, code informs user interactions, and leather craft informs physical aesthetics. The contrast between pixels and raw materials keeps the work honest.
-                </p>
-              </div>
-            </div>
-
-            {/* SECTION 05: CURRENTLY (STATUS BOARD) */}
-            <div className={styles.aboutSectionHeader}>
-              <span className={styles.aboutSectionNumber}>05 · STATUS BOARD</span>
-              <h3 className={styles.aboutSectionTitle}>Currently</h3>
-            </div>
-
-            <div className={styles.aboutCurrentlyGrid}>
-              <div className={styles.aboutCurrentItem}>
-                <span className={styles.aboutCurrentLabel}>Reading</span>
-                <span className={styles.aboutCurrentVal}>Design history, philosophy &amp; fiction</span>
-              </div>
-              <div className={styles.aboutCurrentItem}>
-                <span className={styles.aboutCurrentLabel}>Making</span>
-                <span className={styles.aboutCurrentVal}>Next.js web apps + bespoke leather goods</span>
-              </div>
-              <div className={styles.aboutCurrentItem}>
-                <span className={styles.aboutCurrentLabel}>Learning</span>
-                <span className={styles.aboutCurrentVal}>Spanish, Dutch &amp; GLSL shader mathematics</span>
-              </div>
-              <div className={styles.aboutCurrentItem}>
-                <span className={styles.aboutCurrentLabel}>Exploring</span>
-                <span className={styles.aboutCurrentVal}>Wild mycology, photography &amp; fiber craft</span>
-              </div>
-              <div className={styles.aboutCurrentItem}>
-                <span className={styles.aboutCurrentLabel}>Building</span>
-                <span className={styles.aboutCurrentVal}>Independent personal web infrastructure</span>
-              </div>
-              <div className={styles.aboutCurrentItem}>
-                <span className={styles.aboutCurrentLabel}>Thinking About</span>
-                <span className={styles.aboutCurrentVal}>What to build and explore next</span>
-              </div>
-            </div>
-
-            {/* SECTION 06: SMALL THINGS I LIKE */}
-            <div className={styles.aboutSectionHeader}>
-              <span className={styles.aboutSectionNumber}>06 · SMALL THINGS I LIKE</span>
-              <h3 className={styles.aboutSectionTitle}>Human Details</h3>
-            </div>
-
-            <div className={styles.aboutLikesWrap}>
-              <span className={styles.aboutLikePill}>Good typography</span>
-              <span className={styles.aboutLikePill}>Quiet museums</span>
-              <span className={styles.aboutLikePill}>Old non-fiction books</span>
-              <span className={styles.aboutLikePill}>Leather patina</span>
-              <span className={styles.aboutLikePill}>Notebooks &amp; paper</span>
-              <span className={styles.aboutLikePill}>Hot tea</span>
-              <span className={styles.aboutLikePill}>Wild mushrooms</span>
-              <span className={styles.aboutLikePill}>Clean interfaces</span>
-              <span className={styles.aboutLikePill}>Weird technical rabbit holes</span>
-              <span className={styles.aboutLikePill}>Learning something complicated just for fun</span>
-            </div>
-
-            {/* SECTION 07: CONTACT CTA */}
-            <div className={styles.contactBannerWrap}>
-              <div className={styles.contactBannerLeft}>
-                <h4>Have an interesting problem or project?</h4>
-                <p>If you have a strange idea, an interesting challenge, or a project that sits between disciplines, I&apos;m probably interested.</p>
-              </div>
-              <a href="mailto:ivan@ivanaffriandi.com" className={styles.contactActionBtn}>
-                Say Hello ↗
-              </a>
+            <div className={styles.metaItemCluster}>
+              <span className={styles.metaLabel}>Location</span>
+              <span className={styles.metaValue}>Tangerang, ID</span>
             </div>
           </div>
-        )}
 
-        {/* 2. PROJECTS TAB */}
-        {activeTab === 'projects' && (
-          <>
-            <a
-              href="https://mail.ivanaffriandi.com"
-              target="_blank"
-              rel="noreferrer"
-              className={styles.imageCardCol1}
-            >
-              <img
-                src="/work-showcase/mail-dark.png"
-                alt="Private Mail Platform"
-              />
-              <div className={styles.cardOverlayInfo}>
-                <span>Private Mail Platform</span>
-                <span>Self-Hosted Cloud ↗</span>
-              </div>
-            </a>
+          {/* ── 4. REPOSITIONED NAVIGATION MENU (BELOW METADATA STRIP) ── */}
+          <nav className={styles.repositionedNavBar} aria-label="Portfolio Sections">
+            <div className={styles.navTabsTrack}>
+              {tabsConfig.map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`${styles.tabButton} ${isActive ? styles.tabButtonActive : ''}`}
+                    type="button"
+                  >
+                    <span className={styles.tabLabelText}>{tab.label}</span>
+                    {tab.badge && (
+                      <span className={`${styles.tabBadgePill} ${isActive ? styles.tabBadgePillActive : ''}`}>
+                        {tab.badge}
+                      </span>
+                    )}
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeUnderlineIndicator"
+                        className={styles.activeUnderline}
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </nav>
+        </section>
 
-            <a
-              href="https://ivanaffriandi.com/x"
-              target="_blank"
-              rel="noreferrer"
-              className={styles.imageCardCol2}
-            >
-              <img
-                src="/work-showcase/reader-dark-woods.png"
-                alt="Atmospheric Digital Reader"
-              />
-              <div className={styles.cardOverlayInfo}>
-                <span>Atmospheric Reader (/x)</span>
-                <span>Web Audio &amp; Books ↗</span>
-              </div>
-            </a>
-
-            <a
-              href="https://shuenstudio.com"
-              target="_blank"
-              rel="noreferrer"
-              className={styles.imageCardCol3}
-            >
-              <img
-                src="/work-showcase/reader-dark-fire.png"
-                alt="SHU / EN Leather Atelier"
-              />
-              <div className={styles.cardOverlayInfo}>
-                <span>SHŪ / EN Leather Goods</span>
-                <span>Bespoke Atelier ↗</span>
-              </div>
-            </a>
-
-            {/* Secondary Project Cards Strip */}
-            <div className={styles.secondaryProjectsRow}>
-              <a
-                href="https://shuenstudio.com"
-                target="_blank"
-                rel="noreferrer"
-                className={styles.secondaryProjectCard}
+        {/* ── 5. TAB VIEW CONTENTS ── */}
+        <main className={styles.mainContentArea}>
+          <AnimatePresence mode="wait">
+            {/* ── 1. ABOUT TAB: FULL EDITORIAL STUDIO ARCHIVE ── */}
+            {activeTab === 'about' && (
+              <motion.div
+                key="about"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className={styles.editorialTabBlock}
               >
-                <h3 className={styles.secondaryProjectTitle}>
-                  SHŪ / EN Leather Goods Atelier <span>↗</span>
-                </h3>
-                <p className={styles.secondaryProjectDesc}>
-                  Bespoke trifold journals handcrafted from Italian vegetable-tanned Nero leather, Japanese Moire lining, and solid 925 silver.
-                </p>
-                <div className={styles.secondaryProjectPills}>
-                  <span className={styles.miniPill}>Full-Grain Leather</span>
-                  <span className={styles.miniPill}>Solid 925 Silver</span>
-                  <span className={styles.miniPill}>Tangerang Atelier</span>
-                </div>
-              </a>
+                {/* SECTION 01: WHO I AM */}
+                <div className={styles.editorialSection}>
+                  <div className={styles.sectionHeader}>
+                    <span className={styles.sectionNumber}>01 · WHO I AM</span>
+                    <h2 className={styles.sectionTitle}>The Strange Mix</h2>
+                  </div>
 
-              <a
-                href="https://shuenstudio.com/po"
-                target="_blank"
-                rel="noreferrer"
-                className={styles.secondaryProjectCard}
+                  <div className={styles.proseGrid}>
+                    <p className={styles.proseParagraph}>
+                      My work sits somewhere between software engineering, clean UI/UX design, physical leather craftsmanship, and running servers I probably didn&apos;t need to self-host. I am not interested in being boxed into a single corporate identity.
+                    </p>
+                    <p className={styles.proseParagraph}>
+                      I can spend part of my day designing an interface in Figma, another writing Next.js code, and another hand-stitching a trifold leather journal with tea getting cold beside me. That contrast between digital pixels and tactile physical materials is where the fun lives.
+                    </p>
+                  </div>
+                </div>
+
+                {/* SECTION 02: WHAT I DO (6 DISCIPLINE CARDS) */}
+                <div className={styles.editorialSection}>
+                  <div className={styles.sectionHeader}>
+                    <span className={styles.sectionNumber}>02 · WHAT I DO</span>
+                    <h2 className={styles.sectionTitle}>Six Areas of Focus</h2>
+                  </div>
+
+                  <div className={styles.sixCardsGrid}>
+                    <div className={styles.disciplineCard}>
+                      <span className={styles.disciplineNum}>01 · DESIGN</span>
+                      <h3 className={styles.disciplineTitle}>Product &amp; UI/UX</h3>
+                      <p className={styles.disciplineDesc}>
+                        Clean, typography-driven interfaces, Figma design systems, generous whitespace, and obsessing over spacing, hierarchy, and micro-interactions that feel tactile.
+                      </p>
+                      <div className={styles.disciplineTags}>
+                        <span className={styles.miniPill}>Figma Systems</span>
+                        <span className={styles.miniPill}>Typography</span>
+                        <span className={styles.miniPill}>Interaction Design</span>
+                      </div>
+                    </div>
+
+                    <div className={styles.disciplineCard}>
+                      <span className={styles.disciplineNum}>02 · CODE</span>
+                      <h3 className={styles.disciplineTitle}>Software Engineering</h3>
+                      <p className={styles.disciplineDesc}>
+                        Full-stack web applications built with Next.js 16, React 19, TypeScript, and modern APIs. Fast, lightweight code without bloated dependencies.
+                      </p>
+                      <div className={styles.disciplineTags}>
+                        <span className={styles.miniPill}>Next.js 16</span>
+                        <span className={styles.miniPill}>TypeScript</span>
+                        <span className={styles.miniPill}>React 19</span>
+                      </div>
+                    </div>
+
+                    <div className={styles.disciplineCard}>
+                      <span className={styles.disciplineNum}>03 · INFRA</span>
+                      <h3 className={styles.disciplineTitle}>Digital Independence</h3>
+                      <p className={styles.disciplineDesc}>
+                        Self-hosted cloud VMs, private email servers (SMTP, Postfix, DKIM), and personal digital tools. The internet as something you build and inhabit, not just consume.
+                      </p>
+                      <div className={styles.disciplineTags}>
+                        <span className={styles.miniPill}>Self-Hosted</span>
+                        <span className={styles.miniPill}>Cloud VM</span>
+                        <span className={styles.miniPill}>Private Mail</span>
+                      </div>
+                    </div>
+
+                    <div className={styles.disciplineCard}>
+                      <span className={styles.disciplineNum}>04 · ATELIER</span>
+                      <h3 className={styles.disciplineTitle}>Physical Craft (SHŪ / EN)</h3>
+                      <p className={styles.disciplineDesc}>
+                        Bespoke leather journals handcrafted from Italian vegetable-tanned hides, Japanese Moire lining, bookbinding, and solid 925 sterling silver charms.
+                      </p>
+                      <div className={styles.disciplineTags}>
+                        <span className={styles.miniPill}>Italian Leather</span>
+                        <span className={styles.miniPill}>Saddle Stitch</span>
+                        <span className={styles.miniPill}>925 Silver</span>
+                      </div>
+                    </div>
+
+                    <div className={styles.disciplineCard}>
+                      <span className={styles.disciplineNum}>05 · EXPERIMENTS</span>
+                      <h3 className={styles.disciplineTitle}>Creative Labs &amp; 3D</h3>
+                      <p className={styles.disciplineDesc}>
+                        Real-time Three.js 3D WebGL configurators, GLSL procedural shaders, Web Audio sound synthesis, and tools built simply because &quot;I wonder if I can build that myself.&quot;
+                      </p>
+                      <div className={styles.disciplineTags}>
+                        <span className={styles.miniPill}>Three.js</span>
+                        <span className={styles.miniPill}>GLSL Shaders</span>
+                        <span className={styles.miniPill}>Web Audio</span>
+                      </div>
+                    </div>
+
+                    <div className={styles.disciplineCard}>
+                      <span className={styles.disciplineNum}>06 · VISUALS</span>
+                      <h3 className={styles.disciplineTitle}>Photography &amp; Notes</h3>
+                      <p className={styles.disciplineDesc}>
+                        Documenting architectural forms, natural textures, analog moments, and quiet visual essays that document the process behind the work.
+                      </p>
+                      <div className={styles.disciplineTags}>
+                        <span className={styles.miniPill}>Visual Notes</span>
+                        <span className={styles.miniPill}>Documentary</span>
+                        <span className={styles.miniPill}>Texture Studies</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SECTION 03: THE OTHER 50% */}
+                <div className={styles.editorialSection}>
+                  <div className={styles.sectionHeader}>
+                    <span className={styles.sectionNumber}>03 · THE OTHER 50%</span>
+                    <h2 className={styles.sectionTitle}>Observation &amp; Tactile Making</h2>
+                  </div>
+
+                  <div className={styles.hobbiesGrid}>
+                    <div className={styles.hobbyCard}>
+                      <h3 className={styles.hobbyTitle}>01 · Mushrooms &amp; Mycology</h3>
+                      <p className={styles.hobbyText}>
+                        Finding wild fungi, photographing them in the wild, reading field guides, taking notes, and slowly building an understanding of how they grow.
+                      </p>
+                    </div>
+
+                    <div className={styles.hobbyCard}>
+                      <h3 className={styles.hobbyTitle}>02 · Crochet &amp; Embroidery</h3>
+                      <p className={styles.hobbyText}>
+                        Fiber work, thread tension, and tactile patience. The satisfaction of making physical everyday objects with needles and yarn.
+                      </p>
+                    </div>
+
+                    <div className={styles.hobbyCard}>
+                      <h3 className={styles.hobbyTitle}>03 · Tea &amp; Quiet Mornings</h3>
+                      <p className={styles.hobbyText}>
+                        Hot green tea, quiet studio desks before the world wakes up, and sitting with interesting creative ideas until they click.
+                      </p>
+                    </div>
+
+                    <div className={styles.hobbyCard}>
+                      <h3 className={styles.hobbyTitle}>04 · Non-Fiction &amp; Kindle</h3>
+                      <p className={styles.hobbyText}>
+                        Collecting questions over answers. Books on design, architecture, intellectual history, culture, and human knowledge systems.
+                      </p>
+                    </div>
+
+                    <div className={styles.hobbyCard}>
+                      <h3 className={styles.hobbyTitle}>05 · Museums &amp; Galleries</h3>
+                      <p className={styles.hobbyText}>
+                        Wandering quiet historical archives, art museums, and observing how different eras constructed tools, typography, and visual culture.
+                      </p>
+                    </div>
+
+                    <div className={styles.hobbyCard}>
+                      <h3 className={styles.hobbyTitle}>06 · Plants &amp; Gardening</h3>
+                      <p className={styles.hobbyText}>
+                        Watching soil, foliage, and cuttings grow slowly on the studio terrace in Tangerang without any rush.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SECTION 04: WORKING PHILOSOPHY */}
+                <div className={styles.editorialSection}>
+                  <div className={styles.sectionHeader}>
+                    <span className={styles.sectionNumber}>04 · WORKING PHILOSOPHY</span>
+                    <h2 className={styles.sectionTitle}>How I Approach Making</h2>
+                  </div>
+
+                  <div className={styles.philosophyGrid}>
+                    <div className={styles.philosophyCard}>
+                      <h3 className={styles.philosophyHeadline}>Make things yourself.</h3>
+                      <p className={styles.philosophyBody}>
+                        If something interests me, I want to understand how it works under the hood and rebuild a version myself. Learning and creating are the exact same process.
+                      </p>
+                    </div>
+
+                    <div className={styles.philosophyCard}>
+                      <h3 className={styles.philosophyHeadline}>Simplify the complex.</h3>
+                      <p className={styles.philosophyBody}>
+                        Great design and clean code are about removing noise until only what matters is left. If an interface feels obvious, all the hard work happened behind the scenes.
+                      </p>
+                    </div>
+
+                    <div className={styles.philosophyCard}>
+                      <h3 className={styles.philosophyHeadline}>Boundaries are artificial.</h3>
+                      <p className={styles.philosophyBody}>
+                        Digital design informs code, code informs user interactions, and leather craft informs physical aesthetics. The contrast between pixels and raw materials keeps the work honest.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SECTION 05: CURRENTLY STATUS BOARD */}
+                <div className={styles.editorialSection}>
+                  <div className={styles.sectionHeader}>
+                    <span className={styles.sectionNumber}>05 · STATUS BOARD</span>
+                    <h2 className={styles.sectionTitle}>Currently</h2>
+                  </div>
+
+                  <div className={styles.currentlyGrid}>
+                    <div className={styles.currentItem}>
+                      <span className={styles.currentLabel}>Reading</span>
+                      <span className={styles.currentVal}>Design history, philosophy &amp; fiction</span>
+                    </div>
+                    <div className={styles.currentItem}>
+                      <span className={styles.currentLabel}>Making</span>
+                      <span className={styles.currentVal}>Next.js web apps + bespoke leather goods</span>
+                    </div>
+                    <div className={styles.currentItem}>
+                      <span className={styles.currentLabel}>Learning</span>
+                      <span className={styles.currentVal}>Spanish, Dutch &amp; GLSL shader mathematics</span>
+                    </div>
+                    <div className={styles.currentItem}>
+                      <span className={styles.currentLabel}>Exploring</span>
+                      <span className={styles.currentVal}>Wild mycology, photography &amp; fiber craft</span>
+                    </div>
+                    <div className={styles.currentItem}>
+                      <span className={styles.currentLabel}>Building</span>
+                      <span className={styles.currentVal}>Independent personal web infrastructure</span>
+                    </div>
+                    <div className={styles.currentItem}>
+                      <span className={styles.currentLabel}>Thinking About</span>
+                      <span className={styles.currentVal}>What to build and explore next</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SECTION 06: SMALL THINGS I LIKE */}
+                <div className={styles.editorialSection}>
+                  <div className={styles.sectionHeader}>
+                    <span className={styles.sectionNumber}>06 · SMALL THINGS I LIKE</span>
+                    <h2 className={styles.sectionTitle}>Human Details</h2>
+                  </div>
+
+                  <div className={styles.likesWrap}>
+                    <span className={styles.likePill}>Good typography</span>
+                    <span className={styles.likePill}>Quiet museums</span>
+                    <span className={styles.likePill}>Old non-fiction books</span>
+                    <span className={styles.likePill}>Leather patina</span>
+                    <span className={styles.likePill}>Notebooks &amp; paper</span>
+                    <span className={styles.likePill}>Hot tea</span>
+                    <span className={styles.likePill}>Wild mushrooms</span>
+                    <span className={styles.likePill}>Clean interfaces</span>
+                    <span className={styles.likePill}>Weird technical rabbit holes</span>
+                    <span className={styles.likePill}>Learning something complicated just for fun</span>
+                  </div>
+                </div>
+
+                {/* SECTION 07: CONTACT CTA */}
+                <div className={styles.contactBannerWrap}>
+                  <div className={styles.contactBannerLeft}>
+                    <h3>Have an interesting problem or project?</h3>
+                    <p>If you have a strange idea, an interesting challenge, or a project that sits between disciplines, I&apos;m probably interested.</p>
+                  </div>
+                  <a href="mailto:hello@ivanaffriandi.com" className={styles.contactActionBtn}>
+                    Say Hello ↗
+                  </a>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ── 2. PROJECTS TAB: ULTRA-SLEEK COMING SOON VIEW ── */}
+            {activeTab === 'projects' && (
+              <motion.div
+                key="projects"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className={styles.comingSoonContainer}
               >
-                <h3 className={styles.secondaryProjectTitle}>
-                  3D WebGL Configurator Engine <span>↗</span>
-                </h3>
-                <p className={styles.secondaryProjectDesc}>
-                  Interactive 3D product customizer with live Three.js camera controls, leather texture switching, and gold foil stamping.
-                </p>
-                <div className={styles.secondaryProjectPills}>
-                  <span className={styles.miniPill}>Three.js</span>
-                  <span className={styles.miniPill}>WebGL 2.0</span>
-                  <span className={styles.miniPill}>GLSL Shaders</span>
+                <div className={styles.comingSoonHeaderBlock}>
+                  <div className={styles.comingSoonBadgeRow}>
+                    <span className={styles.comingSoonBadge}>01 · ARCHIVE IN PROGRESS</span>
+                    <span className={styles.comingSoonDotLive} />
+                    <span className={styles.comingSoonDateText}>Curating Spring 2026</span>
+                  </div>
+                  <h2 className={styles.comingSoonTitle}>Selected Works &amp; Case Studies</h2>
+                  <p className={styles.comingSoonSubtitle}>
+                    Detailed interactive case studies, live WebGL 3D configurators, and private cloud architecture breakdowns are currently being compiled.
+                  </p>
                 </div>
-              </a>
 
-              <a
-                href="https://mail.ivanaffriandi.com"
-                target="_blank"
-                rel="noreferrer"
-                className={styles.secondaryProjectCard}
+                {/* Preview Teaser Cards Strip */}
+                <div className={styles.comingSoonGrid}>
+                  <div className={styles.comingSoonCard}>
+                    <div className={styles.cardHeaderStrip}>
+                      <span className={styles.cardScopePill}>CLOUD INFRA</span>
+                      <span className={styles.cardStatusLabel}>In Production · Writing Breakdown</span>
+                    </div>
+                    <h3 className={styles.comingSoonCardTitle}>Private Mail Platform</h3>
+                    <p className={styles.comingSoonCardDesc}>
+                      Self-hosted Oracle Cloud VM, automated Postfix/DKIM setup, AWS SES relay, and custom multi-mailbox management without third-party tracking.
+                    </p>
+                    <div className={styles.comingSoonCardFooter}>
+                      <span className={styles.miniPill}>Next.js 16</span>
+                      <span className={styles.miniPill}>AWS SES</span>
+                      <span className={styles.miniPill}>Docker</span>
+                      <span className={styles.miniPill}>Postfix</span>
+                    </div>
+                  </div>
+
+                  <div className={styles.comingSoonCard}>
+                    <div className={styles.cardHeaderStrip}>
+                      <span className={styles.cardScopePill}>WEB AUDIO &amp; APP</span>
+                      <span className={styles.cardStatusLabel}>Live at ivanaffriandi.com/x</span>
+                    </div>
+                    <h3 className={styles.comingSoonCardTitle}>Atmospheric Digital Reader (/x)</h3>
+                    <p className={styles.comingSoonCardDesc}>
+                      Distraction-free reading space with procedural sound synthesis, dual theme engine, and smooth spatial page transitions.
+                    </p>
+                    <div className={styles.comingSoonCardFooter}>
+                      <span className={styles.miniPill}>Web Audio API</span>
+                      <span className={styles.miniPill}>Framer Motion</span>
+                      <span className={styles.miniPill}>Typography</span>
+                    </div>
+                  </div>
+
+                  <div className={styles.comingSoonCard}>
+                    <div className={styles.cardHeaderStrip}>
+                      <span className={styles.cardScopePill}>ATELIER &amp; 3D</span>
+                      <span className={styles.cardStatusLabel}>Live at shuenstudio.com</span>
+                    </div>
+                    <h3 className={styles.comingSoonCardTitle}>SHŪ / EN Atelier &amp; 3D Configurator</h3>
+                    <p className={styles.comingSoonCardDesc}>
+                      Bespoke leather journals paired with a real-time Three.js 3D WebGL product customizer for texture switching and hot foil embossing.
+                    </p>
+                    <div className={styles.comingSoonCardFooter}>
+                      <span className={styles.miniPill}>Three.js</span>
+                      <span className={styles.miniPill}>Italian Leather</span>
+                      <span className={styles.miniPill}>Solid 925 Silver</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick CTA Actions */}
+                <div className={styles.comingSoonActionRow}>
+                  <a
+                    href="https://shuenstudio.com"
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.actionBtnSecondary}
+                  >
+                    Visit SHŪ / EN Atelier ↗
+                  </a>
+                  <a
+                    href="mailto:hello@ivanaffriandi.com?subject=Work%20Inquiry%20from%20Portfolio"
+                    className={styles.actionBtnPrimary}
+                  >
+                    Request Early Portfolio PDF ↗
+                  </a>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ── 3. SKILLS TAB: 4 PILLARS & MARQUEE ── */}
+            {activeTab === 'skills' && (
+              <motion.div
+                key="skills"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className={styles.skillsSectionWrapper}
               >
-                <h3 className={styles.secondaryProjectTitle}>
-                  Private Mail Server Stack <span>↗</span>
-                </h3>
-                <p className={styles.secondaryProjectDesc}>
-                  Personal self-hosted email infrastructure on Oracle Cloud VM with AWS SES relay, automated DKIM keys, and zero tracking.
-                </p>
-                <div className={styles.secondaryProjectPills}>
-                  <span className={styles.miniPill}>Oracle Cloud VM</span>
-                  <span className={styles.miniPill}>AWS SES</span>
-                  <span className={styles.miniPill}>DKIM Keys</span>
-                </div>
-              </a>
-            </div>
-          </>
-        )}
-
-        {/* 3. SKILLS TAB */}
-        {activeTab === 'skills' && (
-          <div className={styles.skillsSectionWrapper}>
-            <div className={styles.skillsPillarGrid}>
-              <div className={styles.skillPillarCard}>
-                <h3 className={styles.pillarCategoryTitle}>01 · FRONTEND</h3>
-                <p className={styles.pillarDesc}>Clean, fast web interfaces with smooth interactions.</p>
-                <div className={styles.pillarSkillList}>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Next.js 16</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> React 19 &amp; TypeScript</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Framer Motion</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Tailwind CSS</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Figma Systems</span>
-                </div>
-              </div>
-
-              <div className={styles.skillPillarCard}>
-                <h3 className={styles.pillarCategoryTitle}>02 · 3D &amp; AUDIO</h3>
-                <p className={styles.pillarDesc}>Interactive 3D WebGL models and procedural audio.</p>
-                <div className={styles.pillarSkillList}>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Three.js &amp; WebGL</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> GLSL Shaders</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> 3D Customizers</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Web Audio API</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Blender 3D</span>
-                </div>
-              </div>
-
-              <div className={styles.skillPillarCard}>
-                <h3 className={styles.pillarCategoryTitle}>03 · BACKEND</h3>
-                <p className={styles.pillarDesc}>Cloud servers, containerization, and secure APIs.</p>
-                <div className={styles.pillarSkillList}>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Node.js &amp; Python</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Oracle Cloud &amp; AWS SES</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Docker Compose</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> PostgreSQL &amp; Redis</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Cloudflare SSL</span>
-                </div>
-              </div>
-
-              <div className={styles.skillPillarCard}>
-                <h3 className={styles.pillarCategoryTitle}>04 · ATELIER</h3>
-                <p className={styles.pillarDesc}>Traditional bespoke leather goods made by hand.</p>
-                <div className={styles.pillarSkillList}>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Italian Leather</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Saddle Stitching</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Solid 925 Silver</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Edge Burnishing</span>
-                  <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Pattern Drafting</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Kinetic Marquee Stream */}
-            <div className={styles.skillsPureTypographyWrapper}>
-              <div className={styles.kineticRowTrack}>
-                <div className={styles.kineticMarqueeLeft}>
-                  {[...row1, ...row1, ...row1].map((item, idx) => (
-                    <div key={idx} className={styles.pureTextItem}>
-                      <span className={styles.pureTextIndex}>{item.num}</span>
-                      <span>{item.title}</span>
-                      <span className={styles.pureTextBullet}>/</span>
+                <div className={styles.skillsPillarGrid}>
+                  <div className={styles.skillPillarCard}>
+                    <h3 className={styles.pillarCategoryTitle}>01 · FRONTEND</h3>
+                    <p className={styles.pillarDesc}>Clean, fast web interfaces with smooth interactions.</p>
+                    <div className={styles.pillarSkillList}>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Next.js 16</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> React 19 &amp; TypeScript</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Framer Motion</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Tailwind CSS</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Figma Systems</span>
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
 
-              <div className={styles.kineticRowTrack}>
-                <div className={styles.kineticMarqueeRight}>
-                  {[...row2, ...row2, ...row2].map((item, idx) => (
-                    <div key={idx} className={styles.pureTextItem}>
-                      <span className={styles.pureTextIndex}>{item.num}</span>
-                      <span>{item.title}</span>
-                      <span className={styles.pureTextBullet}>/</span>
+                  <div className={styles.skillPillarCard}>
+                    <h3 className={styles.pillarCategoryTitle}>02 · 3D &amp; AUDIO</h3>
+                    <p className={styles.pillarDesc}>Interactive 3D WebGL models and procedural audio.</p>
+                    <div className={styles.pillarSkillList}>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Three.js &amp; WebGL</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> GLSL Shaders</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> 3D Customizers</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Web Audio API</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Blender 3D</span>
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
 
-              <div className={styles.kineticRowTrack}>
-                <div className={styles.kineticMarqueeLeft}>
-                  {[...row3, ...row3, ...row3].map((item, idx) => (
-                    <div key={idx} className={styles.pureTextItem}>
-                      <span className={styles.pureTextIndex}>{item.num}</span>
-                      <span>{item.title}</span>
-                      <span className={styles.pureTextBullet}>/</span>
+                  <div className={styles.skillPillarCard}>
+                    <h3 className={styles.pillarCategoryTitle}>03 · BACKEND</h3>
+                    <p className={styles.pillarDesc}>Cloud servers, containerization, and secure APIs.</p>
+                    <div className={styles.pillarSkillList}>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Node.js &amp; Python</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Oracle Cloud &amp; AWS SES</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Docker Compose</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> PostgreSQL &amp; Redis</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Cloudflare SSL</span>
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
 
-              <div className={styles.kineticRowTrack}>
-                <div className={styles.kineticMarqueeRight}>
-                  {[...row4, ...row4, ...row4].map((item, idx) => (
-                    <div key={idx} className={styles.pureTextItem}>
-                      <span className={styles.pureTextIndex}>{item.num}</span>
-                      <span>{item.title}</span>
-                      <span className={styles.pureTextBullet}>/</span>
+                  <div className={styles.skillPillarCard}>
+                    <h3 className={styles.pillarCategoryTitle}>04 · ATELIER</h3>
+                    <p className={styles.pillarDesc}>Traditional bespoke leather goods made by hand.</p>
+                    <div className={styles.pillarSkillList}>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Italian Leather</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Saddle Stitching</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Solid 925 Silver</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Edge Burnishing</span>
+                      <span className={styles.pillarSkillItem}><span className={styles.pillarSkillDot} /> Pattern Drafting</span>
                     </div>
-                  ))}
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        )}
 
-        {/* 4. PROCESS TAB */}
-        {activeTab === 'process' && (
-          <div className={styles.fullWidthTabBlock}>
-            <div className={styles.processStepGrid}>
-              <div className={styles.processCard}>
-                <span className={styles.processNum}>01</span>
-                <h3 className={styles.processTitle}>Plan &amp; Sketch</h3>
-                <p className={styles.processText}>
-                  Define clear project goals, sketch simple user flows in Figma, and design the system architecture.
-                </p>
-              </div>
-              <div className={styles.processCard}>
-                <span className={styles.processNum}>02</span>
-                <h3 className={styles.processTitle}>Build &amp; Refine</h3>
-                <p className={styles.processText}>
-                  Write clean Next.js and TypeScript code, polish animations, and test speed on mobile and desktop.
-                </p>
-              </div>
-              <div className={styles.processCard}>
-                <span className={styles.processNum}>03</span>
-                <h3 className={styles.processTitle}>Ship &amp; Launch</h3>
-                <p className={styles.processText}>
-                  Deploy to fast cloud servers, configure custom domains with SSL, and launch live with zero hassle.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 5. ARCHIVE & SERVICES TAB */}
-        {activeTab === 'archive' && (
-          <div className={styles.fullWidthTabBlock}>
-            {/* Services Grid */}
-            <div className={styles.overviewCardsGrid}>
-              <div className={styles.overviewFocusCard}>
-                <span className={styles.overviewFocusNumber}>01 · SERVICE</span>
-                <h3 className={styles.overviewFocusTitle}>Web &amp; App Development</h3>
-                <p className={styles.overviewFocusDesc}>
-                  Fast websites, SaaS platforms, and custom web apps built with Next.js 16 and TypeScript.
-                </p>
-              </div>
-              <div className={styles.overviewFocusCard}>
-                <span className={styles.overviewFocusNumber}>02 · SERVICE</span>
-                <h3 className={styles.overviewFocusTitle}>UI/UX &amp; Design Systems</h3>
-                <p className={styles.overviewFocusDesc}>
-                  Clean user interfaces, Figma design systems, and responsive mobile-first layouts.
-                </p>
-              </div>
-              <div className={styles.overviewFocusCard}>
-                <span className={styles.overviewFocusNumber}>03 · SERVICE</span>
-                <h3 className={styles.overviewFocusTitle}>3D Web &amp; Custom Atelier</h3>
-                <p className={styles.overviewFocusDesc}>
-                  Interactive 3D Three.js product customizers and bespoke leather goods from SHŪ / EN Studio.
-                </p>
-              </div>
-            </div>
-
-            {/* Archive Project Table */}
-            <div style={{ marginTop: '12px' }}>
-              <span className={styles.metaLabel} style={{ display: 'block', marginBottom: '12px' }}>
-                Complete Project Archive
-              </span>
-
-              <div className={styles.archiveTable}>
-                <a href="https://mail.ivanaffriandi.com" target="_blank" rel="noreferrer" className={styles.archiveRowItem}>
-                  <div className={styles.archiveLeftCol}>
-                    <h3 className={styles.archiveItemTitle}>Private Mail Platform</h3>
-                    <p className={styles.archiveItemSubtitle}>Self-hosted Oracle Cloud VM, AWS SES relay, automated DKIM keys.</p>
+                {/* Kinetic Marquee Stream */}
+                <div className={styles.skillsPureTypographyWrapper}>
+                  <div className={styles.kineticRowTrack}>
+                    <div className={styles.kineticMarqueeLeft}>
+                      {[...row1, ...row1, ...row1].map((item, idx) => (
+                        <div key={idx} className={styles.pureTextItem}>
+                          <span className={styles.pureTextIndex}>{item.num}</span>
+                          <span>{item.title}</span>
+                          <span className={styles.pureTextBullet}>/</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className={styles.archivePillStack}>
-                    <span className={styles.miniPill}>Next.js 16</span>
-                    <span className={styles.miniPill}>AWS SES</span>
-                    <span className={styles.miniPill}>Docker</span>
-                  </div>
-                  <span className={styles.archiveYearLabel}>2026</span>
-                </a>
 
-                <a href="https://ivanaffriandi.com/x" target="_blank" rel="noreferrer" className={styles.archiveRowItem}>
-                  <div className={styles.archiveLeftCol}>
-                    <h3 className={styles.archiveItemTitle}>Atmospheric Digital Reader (/x)</h3>
-                    <p className={styles.archiveItemSubtitle}>Minimalist digital reading app with Web Audio ambient sound synthesis.</p>
+                  <div className={styles.kineticRowTrack}>
+                    <div className={styles.kineticMarqueeRight}>
+                      {[...row2, ...row2, ...row2].map((item, idx) => (
+                        <div key={idx} className={styles.pureTextItem}>
+                          <span className={styles.pureTextIndex}>{item.num}</span>
+                          <span>{item.title}</span>
+                          <span className={styles.pureTextBullet}>/</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className={styles.archivePillStack}>
-                    <span className={styles.miniPill}>Web Audio API</span>
-                    <span className={styles.miniPill}>Framer Motion</span>
-                  </div>
-                  <span className={styles.archiveYearLabel}>2026</span>
-                </a>
 
-                <a href="https://shuenstudio.com" target="_blank" rel="noreferrer" className={styles.archiveRowItem}>
-                  <div className={styles.archiveLeftCol}>
-                    <h3 className={styles.archiveItemTitle}>SHŪ / EN Bespoke Leather Atelier</h3>
-                    <p className={styles.archiveItemSubtitle}>Handcrafted trifold leather goods with vegetable-tanned Nero leather and 925 silver.</p>
+                  <div className={styles.kineticRowTrack}>
+                    <div className={styles.kineticMarqueeLeft}>
+                      {[...row3, ...row3, ...row3].map((item, idx) => (
+                        <div key={idx} className={styles.pureTextItem}>
+                          <span className={styles.pureTextIndex}>{item.num}</span>
+                          <span>{item.title}</span>
+                          <span className={styles.pureTextBullet}>/</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className={styles.archivePillStack}>
-                    <span className={styles.miniPill}>Leathercraft</span>
-                    <span className={styles.miniPill}>925 Silver</span>
-                  </div>
-                  <span className={styles.archiveYearLabel}>2026</span>
-                </a>
 
-                <a href="https://shuenstudio.com/po" target="_blank" rel="noreferrer" className={styles.archiveRowItem}>
-                  <div className={styles.archiveLeftCol}>
-                    <h3 className={styles.archiveItemTitle}>3D WebGL Configurator Engine</h3>
-                    <p className={styles.archiveItemSubtitle}>Real-time procedural normal maps and gold foil embossing customizer.</p>
+                  <div className={styles.kineticRowTrack}>
+                    <div className={styles.kineticMarqueeRight}>
+                      {[...row4, ...row4, ...row4].map((item, idx) => (
+                        <div key={idx} className={styles.pureTextItem}>
+                          <span className={styles.pureTextIndex}>{item.num}</span>
+                          <span>{item.title}</span>
+                          <span className={styles.pureTextBullet}>/</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className={styles.archivePillStack}>
-                    <span className={styles.miniPill}>Three.js</span>
-                    <span className={styles.miniPill}>GLSL</span>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ── 4. PROCESS TAB: ULTRA-SLEEK COMING SOON VIEW ── */}
+            {activeTab === 'process' && (
+              <motion.div
+                key="process"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className={styles.comingSoonContainer}
+              >
+                <div className={styles.comingSoonHeaderBlock}>
+                  <div className={styles.comingSoonBadgeRow}>
+                    <span className={styles.comingSoonBadge}>02 · METHODOLOGY</span>
+                    <span className={styles.comingSoonDotLive} />
+                    <span className={styles.comingSoonDateText}>Framework Guide In Progress</span>
                   </div>
-                  <span className={styles.archiveYearLabel}>2025</span>
-                </a>
-              </div>
-            </div>
+                  <h2 className={styles.comingSoonTitle}>Design Engineering Framework</h2>
+                  <p className={styles.comingSoonSubtitle}>
+                    Documenting the end-to-end framework from Figma wireframes and physical pattern drafting to full-stack Next.js deployment and private cloud operations.
+                  </p>
+                </div>
 
-            {/* Quick Contact CTA */}
-            <div className={styles.contactBannerWrap}>
-              <div className={styles.contactBannerLeft}>
-                <h4>Have an interesting problem or project?</h4>
-                <p>If you have a strange idea, an interesting challenge, or a project that sits between disciplines, I&apos;m probably interested.</p>
-              </div>
-              <a href="mailto:ivan@ivanaffriandi.com" className={styles.contactActionBtn}>
-                Say Hello ↗
-              </a>
-            </div>
-          </div>
-        )}
+                <div className={styles.processComingSoonGrid}>
+                  <div className={styles.processPreviewCard}>
+                    <span className={styles.processPreviewStep}>STEP 01</span>
+                    <h3 className={styles.processPreviewHeading}>Architecture &amp; System Tokens</h3>
+                    <p className={styles.processPreviewText}>
+                      Structuring typographic scale, modular components in Figma, database schema modeling, and zero-bloat state architecture.
+                    </p>
+                  </div>
 
-        {/* ── ROW 5: SEE MORE LINK (RIGHT-ALIGNED UNDER COLUMN 3) ── */}
-        <div className={styles.seeMoreWrapper}>
+                  <div className={styles.processPreviewCard}>
+                    <span className={styles.processPreviewStep}>STEP 02</span>
+                    <h3 className={styles.processPreviewHeading}>Code &amp; Tactile Prototyping</h3>
+                    <p className={styles.processPreviewText}>
+                      Fast iterative loops in Next.js 16 &amp; TypeScript, testing 60fps micro-animations, and hand-cutting leather prototypes in the atelier.
+                    </p>
+                  </div>
+
+                  <div className={styles.processPreviewCard}>
+                    <span className={styles.processPreviewStep}>STEP 03</span>
+                    <h3 className={styles.processPreviewHeading}>Infrastructure &amp; Production Launch</h3>
+                    <p className={styles.processPreviewText}>
+                      Automated Docker containerization, edge CDN caching with Cloudflare, private DNS routing, and performance optimization.
+                    </p>
+                  </div>
+                </div>
+
+                <div className={styles.comingSoonActionRow}>
+                  <a
+                    href="mailto:hello@ivanaffriandi.com?subject=Design%20Engineering%20Workflow%20Inquiry"
+                    className={styles.actionBtnPrimary}
+                  >
+                    Discuss a Project Workflow ↗
+                  </a>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ── 5. SERVICES & LOG TAB: ULTRA-SLEEK COMING SOON VIEW ── */}
+            {activeTab === 'archive' && (
+              <motion.div
+                key="archive"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className={styles.comingSoonContainer}
+              >
+                <div className={styles.comingSoonHeaderBlock}>
+                  <div className={styles.comingSoonBadgeRow}>
+                    <span className={styles.comingSoonBadge}>03 · COMMISSIONS &amp; LOG</span>
+                    <span className={styles.comingSoonDotLive} />
+                    <span className={styles.comingSoonDateText}>Opening Q2 2026</span>
+                  </div>
+                  <h2 className={styles.comingSoonTitle}>Studio Services &amp; Public Log</h2>
+                  <p className={styles.comingSoonSubtitle}>
+                    Selective client commissioning slots, design engineering consulting, and a chronological release log are opening soon.
+                  </p>
+                </div>
+
+                <div className={styles.comingSoonGrid}>
+                  <div className={styles.comingSoonCard}>
+                    <div className={styles.cardHeaderStrip}>
+                      <span className={styles.cardScopePill}>SERVICE 01</span>
+                      <span className={styles.cardStatusLabel}>Open for Inquiries</span>
+                    </div>
+                    <h3 className={styles.comingSoonCardTitle}>Full-Stack Web Engineering</h3>
+                    <p className={styles.comingSoonCardDesc}>
+                      Fast, modern Next.js 16 web applications, custom platforms, and high-performance server architectures built with craftsmanship.
+                    </p>
+                  </div>
+
+                  <div className={styles.comingSoonCard}>
+                    <div className={styles.cardHeaderStrip}>
+                      <span className={styles.cardScopePill}>SERVICE 02</span>
+                      <span className={styles.cardStatusLabel}>Open for Inquiries</span>
+                    </div>
+                    <h3 className={styles.comingSoonCardTitle}>UI/UX &amp; Design Systems</h3>
+                    <p className={styles.comingSoonCardDesc}>
+                      Precision interface design, Figma component libraries, responsive layouts, and tactile micro-interactions with generous whitespace.
+                    </p>
+                  </div>
+
+                  <div className={styles.comingSoonCard}>
+                    <div className={styles.cardHeaderStrip}>
+                      <span className={styles.cardScopePill}>SERVICE 03</span>
+                      <span className={styles.cardStatusLabel}>Open for Inquiries</span>
+                    </div>
+                    <h3 className={styles.comingSoonCardTitle}>3D WebGL &amp; Custom Atelier</h3>
+                    <p className={styles.comingSoonCardDesc}>
+                      Interactive Three.js 3D product configurators, procedural shaders, and bespoke leather commissions from SHŪ / EN Studio.
+                    </p>
+                  </div>
+                </div>
+
+                <div className={styles.contactBannerWrap} style={{ marginTop: '24px' }}>
+                  <div className={styles.contactBannerLeft}>
+                    <h3>Interested in commissioning a project or consulting?</h3>
+                    <p>Send a brief note about what you are building, the timeline, and any initial requirements.</p>
+                  </div>
+                  <a href="mailto:hello@ivanaffriandi.com?subject=Studio%20Commission%20Inquiry" className={styles.contactActionBtn}>
+                    Inquire via Email ↗
+                  </a>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </main>
+
+        {/* ── 6. FOOTER BAR ── */}
+        <footer className={styles.pageFooterBar}>
+          <span className={styles.footerCopyrightText}>
+            © {new Date().getFullYear()} Affriandi, Ivan · All Rights Reserved
+          </span>
           <a
             href="https://shuenstudio.com"
             target="_blank"
             rel="noreferrer"
-            className={styles.seeMoreLink}
+            className={styles.footerAtelierLink}
           >
             Visit SHŪ / EN Atelier →
           </a>
-        </div>
+        </footer>
       </div>
     </div>
   );
