@@ -2406,8 +2406,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           .pj-root {
             display: flex !important;
             flex-direction: column !important;
-            position: relative !important;
+            position: fixed !important;
+            inset: 0 !important;
+            height: 100% !important;
             height: 100vh !important;
+            height: -webkit-fill-available !important;
             height: 100dvh !important;
             width: 100vw !important;
             overflow: hidden !important;
@@ -2427,12 +2430,14 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             background: var(--bg-color, #FFFFFF) !important;
           }
 
-          /* ── HERO PHOTO FEATURED CARD (SMOOTH TRANSITION TO 38DVH ON ARTICLE OPEN) ── */
+          /* ── HERO PHOTO FEATURED CARD (BLEEDS FULL SCREEN BEHIND BROWSER TOOLBAR) ── */
           .pj-left {
             position: relative !important;
             width: 100vw !important;
             max-width: 100vw !important;
+            height: 100% !important;
             height: 100vh !important;
+            height: -webkit-fill-available !important;
             height: 100dvh !important;
             margin: 0 !important;
             border-radius: 0 !important;
@@ -2488,7 +2493,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
           .pj-about-ig-grid { left: 0; height: 100%; }
 
-          /* ── HERO TEXT INSIDE LEFT PANEL (SAFE FROM SAFARI BOTTOM TOOLBAR) ── */
+          /* ── HERO TEXT INSIDE LEFT PANEL (NATURALLY RESTING RIGHT ABOVE MOBILE NAVIGATION BAR) ── */
           .pj-left-content {
             position: absolute !important;
             inset: 0 !important;
@@ -2497,13 +2502,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: flex !important;
             flex-direction: column !important;
             justify-content: flex-end !important;
-            padding: 3.5rem 1.35rem calc(5.2rem + env(safe-area-inset-bottom, 20px)) 1.35rem !important;
+            padding: 3.5rem 1.35rem calc(env(safe-area-inset-bottom, 24px) + 26px) 1.35rem !important;
             box-sizing: border-box !important;
             z-index: 10 !important;
           }
 
           .pj-hero-arrows {
-            bottom: calc(5.2rem + env(safe-area-inset-bottom, 20px)) !important;
+            bottom: calc(env(safe-area-inset-bottom, 24px) + 26px) !important;
             right: 1.25rem !important;
           }
 
