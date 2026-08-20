@@ -38,7 +38,7 @@ function extractAllImages(html: string): string[] {
   return urls;
 }
 
-function stripImagesFromHtml(html: string): string {
+function formatBloggerArticleHtml(html: string): string {
   if (!html) return "";
   let clean = html
     .replace(/<div class="separator"[^>]*>[\s\S]*?<\/div>/gi, "")
@@ -58,6 +58,15 @@ function stripImagesFromHtml(html: string): string {
 
   // Strip leading empty tags / whitespace
   clean = clean.replace(/^(\s*<br\s*\/?>|\s*&nbsp;|\s*)+/gi, "").trim();
+
+  // Ensure first paragraph gets novel-drop-cap class for guaranteed bold initial letter
+  if (clean.startsWith("<p")) {
+    clean = clean.replace(/<p([^>]*)>/i, '<p class="novel-drop-cap"$1>');
+  } else if (!clean.startsWith("<div") && !clean.startsWith("<h")) {
+    clean = `<p class="novel-drop-cap">${clean}</p>`;
+  } else if (clean.startsWith("<div")) {
+    clean = clean.replace(/<div([^>]*)>/i, '<div class="novel-drop-cap"$1>');
+  }
   return clean;
 }
 
@@ -463,25 +472,50 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     }
   }, [selectedPost, isReadingPrologue, readerTheme]);
 
-  // Track article reading scroll progress
+  // Track article reading scroll progress with high performance rAF
   useEffect(() => {
     if (!selectedPost && !isReadingPrologue) {
       setReadingProgress(0);
       return;
     }
     const rightCol = document.querySelector(".pj-right");
-    if (!rightCol) return;
 
+    let ticking = false;
     const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = rightCol;
-      const total = scrollHeight - clientHeight;
-      if (total > 0) {
-        setReadingProgress(Math.min(100, Math.max(0, (scrollTop / total) * 100)));
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const isMobile = window.innerWidth <= 860;
+          let scrollTop = 0;
+          let scrollHeight = 1;
+          let clientHeight = 1;
+
+          if (isMobile) {
+            scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+            scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || 1;
+            clientHeight = window.innerHeight || document.documentElement.clientHeight || 1;
+          } else if (rightCol) {
+            scrollTop = rightCol.scrollTop;
+            scrollHeight = rightCol.scrollHeight;
+            clientHeight = rightCol.clientHeight;
+          }
+
+          const total = scrollHeight - clientHeight;
+          if (total > 0) {
+            setReadingProgress(Math.min(100, Math.max(0, (scrollTop / total) * 100)));
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    rightCol.addEventListener("scroll", handleScroll);
-    return () => rightCol.removeEventListener("scroll", handleScroll);
+    if (rightCol) rightCol.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      if (rightCol) rightCol.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, [selectedPost, isReadingPrologue]);
 
   // Auto-play / cycle post gallery cover photos every 4.5 seconds
@@ -1646,34 +1680,34 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           font-size: 1.05rem !important;
           line-height: 1.85 !important;
           letter-spacing: -0.012em !important;
-          word-break: break-word;
+          word-break: break-word !important;
+          text-align: left !important;
           transition: background 0.2s ease, color 0.2s ease;
         }
 
         .novel-article-reader p,
         .novel-article-reader div,
         .novel-article-reader span,
-        .novel-article-reader li,
-        .novel-article-reader font,
+        .novel-article-reader li {
+          font-family: inherit !important;
+          font-size: 1.05rem !important;
+          line-height: 1.85 !important;
+          letter-spacing: -0.012em !important;
+        }
+
+        .novel-article-reader p {
+          margin: 0 0 1.45rem 0 !important;
+          padding: 0 !important;
+        }
+
+        .novel-article-reader span,
         .novel-article-reader b,
         .novel-article-reader strong,
         .novel-article-reader i,
         .novel-article-reader em,
-        .novel-article-reader b i,
-        .novel-article-reader strong em,
-        .novel-article-reader i b,
-        .novel-article-reader em strong,
-        .novel-article-reader b span,
-        .novel-article-reader strong span,
-        .novel-article-reader span b,
-        .novel-article-reader span strong,
-        .novel-article-reader span i,
-        .novel-article-reader span em {
-          font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-          font-size: 1.05rem !important;
-          line-height: 1.85 !important;
-          letter-spacing: -0.012em !important;
-          margin-bottom: 1.35rem !important;
+        .novel-article-reader a {
+          margin-bottom: 0 !important;
+          display: inline !important;
         }
 
         .novel-article-reader b,
@@ -1681,7 +1715,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .novel-article-reader b *,
         .novel-article-reader strong * {
           font-weight: 700 !important;
-          font-size: 1.05rem !important;
+          font-size: 100% !important;
         }
 
         .novel-article-reader i,
@@ -1689,7 +1723,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .novel-article-reader i *,
         .novel-article-reader em * {
           font-style: italic !important;
-          font-size: 1.05rem !important;
+          font-size: 100% !important;
         }
 
         .novel-article-reader b i,
@@ -1698,7 +1732,22 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .novel-article-reader em strong {
           font-weight: 700 !important;
           font-style: italic !important;
-          font-size: 1.05rem !important;
+          font-size: 100% !important;
+        }
+
+        /* ── UNIVERSAL GUARANTEED DROP-CAP ── */
+        .novel-drop-cap::first-letter,
+        .novel-article-reader > p:first-of-type::first-letter,
+        .novel-article-reader > div:first-of-type::first-letter,
+        .novel-article-reader > div:first-of-type > p:first-of-type::first-letter {
+          font-size: 3.5rem !important;
+          line-height: 0.82 !important;
+          float: left !important;
+          margin: 0.18rem 0.68rem 0.1rem 0 !important;
+          font-family: var(--font-serif, Georgia, serif) !important;
+          font-weight: 700 !important;
+          text-transform: uppercase !important;
+          display: block !important;
         }
 
         /* ── READING THEMES (PAPER, LIGHT, DARK) WITH RIGID CONTRAST RULES ── */
@@ -1711,7 +1760,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .pj-right.theme-paper .article-reader-chapter-title-desktop h1,
         .pj-right.theme-paper .novel-article-reader > p:first-of-type::first-letter,
         .pj-right.theme-paper .novel-article-reader > div:first-of-type > p:first-of-type::first-letter,
-        .pj-right.theme-paper .novel-article-reader > div:first-of-type::first-letter {
+        .pj-right.theme-paper .novel-article-reader > div:first-of-type::first-letter,
+        .pj-right.theme-paper .novel-drop-cap::first-letter {
           color: #2B2824 !important;
         }
 
@@ -1724,7 +1774,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .pj-right.theme-light .article-reader-chapter-title-desktop h1,
         .pj-right.theme-light .novel-article-reader > p:first-of-type::first-letter,
         .pj-right.theme-light .novel-article-reader > div:first-of-type > p:first-of-type::first-letter,
-        .pj-right.theme-light .novel-article-reader > div:first-of-type::first-letter {
+        .pj-right.theme-light .novel-article-reader > div:first-of-type::first-letter,
+        .pj-right.theme-light .novel-drop-cap::first-letter {
           color: #111111 !important;
         }
 
@@ -1737,7 +1788,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .pj-right.theme-dark .article-reader-chapter-title-desktop h1,
         .pj-right.theme-dark .novel-article-reader > p:first-of-type::first-letter,
         .pj-right.theme-dark .novel-article-reader > div:first-of-type > p:first-of-type::first-letter,
-        .pj-right.theme-dark .novel-article-reader > div:first-of-type::first-letter {
+        .pj-right.theme-dark .novel-article-reader > div:first-of-type::first-letter,
+        .pj-right.theme-dark .novel-drop-cap::first-letter {
           color: #EDEDF0 !important;
         }
 
@@ -3356,10 +3408,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       <span
                         style={{
                           fontSize: "0.62rem",
-                          fontWeight: 700,
+                          fontWeight: 800,
                           letterSpacing: "0.08em",
                           textTransform: "uppercase",
-                          color: readerTheme === "dark" ? "#88888e" : "var(--text-muted, #888888)",
+                          color: readerTheme === "dark" ? "#EDEDF0" : (readerTheme === "paper" ? "#38342C" : "#111111"),
                           padding: "0.25rem 0.5rem",
                           whiteSpace: "nowrap",
                         }}
@@ -3599,10 +3651,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       <span
                         style={{
                           fontSize: "0.62rem",
-                          fontWeight: 700,
+                          fontWeight: 800,
                           letterSpacing: "0.08em",
                           textTransform: "uppercase",
-                          color: readerTheme === "dark" ? "#88888e" : "var(--text-muted, #888888)",
+                          color: readerTheme === "dark" ? "#EDEDF0" : (readerTheme === "paper" ? "#38342C" : "#111111"),
                           padding: "0.25rem 0.4rem",
                           whiteSpace: "nowrap",
                         }}
@@ -3684,7 +3736,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     style={{
                       paddingTop: "0.6rem",
                     }}
-                    dangerouslySetInnerHTML={{ __html: stripImagesFromHtml(selectedPost.content) }}
+                    dangerouslySetInnerHTML={{ __html: formatBloggerArticleHtml(selectedPost.content) }}
                   />
 
                   {/* ── CENTERED END MARKER WITH HORIZONTAL ACCENT LINES ── */}
