@@ -229,10 +229,9 @@ export async function POST(request: Request) {
       }
     }
 
-    // Compute display name / identifier
+    // Compute display name
     const cleanName = name?.trim() || "";
-    const pseudoId = generatePseudoId(ip, ua);
-    const displayName = cleanName ? `${cleanName} (${pseudoId})` : `Anonymous (${pseudoId})`;
+    const displayName = cleanName || "Anonymous";
 
     const platform = getPlatform(referrer || "", entryPage || "");
 

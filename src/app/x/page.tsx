@@ -856,14 +856,7 @@ function AdminPageContent() {
                         &ldquo;{q.content}&rdquo;
                       </p>
 
-                      {/* SENDER METADATA SNIPPET (LOCATION & DEVICE) */}
-                      {(q.location || q.device) && (
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "0.66rem", color: "var(--text-secondary)", flexWrap: "wrap" }}>
-                          {q.location && <span>📍 {cleanLabel(q.location)}</span>}
-                          {q.device && <span>· 📱 {q.device}</span>}
-                          {q.ip && <span>· 🌐 {q.ip}</span>}
-                        </div>
-                      )}
+
 
                       {/* ALREADY ANSWERED VIEW */}
                       {q.answered && !isAnswering && (
