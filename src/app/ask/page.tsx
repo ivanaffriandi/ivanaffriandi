@@ -50,10 +50,11 @@ function TwoCardStackedQA({
           height: "100%",
           position: "relative",
           boxSizing: "border-box",
-          contain: "paint layout",
+          overflow: "hidden",
+          borderRadius: "28px",
         }}
       >
-        {/* ── CARD 1: QUESTION CARD (MORPHS WITH PURE GPU SPRING) ── */}
+        {/* ── CARD 1: QUESTION CARD (SPRING MORPH TOP HEADER) ── */}
         <div
           className={`qa-question-card ${isActive ? "qa-card-inverted" : "qa-card-normal"}`}
           onClick={() => {
@@ -64,9 +65,9 @@ function TwoCardStackedQA({
             top: 0,
             left: 0,
             right: 0,
-            height: isActive ? "146px" : "100%",
+            height: isActive ? "148px" : "100%",
             borderRadius: isActive ? "22px" : "28px",
-            padding: isActive ? "1rem 1.25rem" : "1.6rem 1.6rem 1.3rem",
+            padding: "1.2rem 1.4rem 1.1rem",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -74,16 +75,16 @@ function TwoCardStackedQA({
             cursor: isActive ? "default" : "pointer",
             boxShadow: "var(--ask-shadow)",
             overflow: "hidden",
-            zIndex: 2,
-            transition: "height 0.46s cubic-bezier(0.32, 0.72, 0, 1), padding 0.46s cubic-bezier(0.32, 0.72, 0, 1), border-radius 0.46s cubic-bezier(0.32, 0.72, 0, 1), background-color 0.35s cubic-bezier(0.32, 0.72, 0, 1), border-color 0.35s cubic-bezier(0.32, 0.72, 0, 1), color 0.35s cubic-bezier(0.32, 0.72, 0, 1)",
-            willChange: "height, padding, border-radius, background-color",
+            zIndex: 10,
+            transition: "height 0.44s cubic-bezier(0.2, 0.9, 0.3, 1), border-radius 0.44s cubic-bezier(0.2, 0.9, 0.3, 1), background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease",
+            willChange: "height, border-radius, background-color",
           }}
         >
           {/* TOP ROW: SENDER & DATE */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexShrink: 0 }}>
             <span
               style={{
-                fontSize: isActive ? "0.82rem" : "0.92rem",
+                fontSize: "0.88rem",
                 fontWeight: 800,
                 letterSpacing: "-0.01em",
               }}
@@ -107,17 +108,17 @@ function TwoCardStackedQA({
           </div>
 
           {/* QUOTE & QUESTION CONTENT */}
-          <div style={{ display: "flex", flexDirection: "column", gap: isActive ? "0.1rem" : "0.35rem", margin: isActive ? "0.15rem 0" : "0.6rem 0", flex: 1, overflow: "hidden" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem", flex: 1, overflow: "hidden", justifyContent: "center" }}>
             <div
               className="qa-quote-mark"
               style={{
                 lineHeight: 0.9,
-                fontSize: isActive ? "1.7rem" : "3rem",
+                fontSize: isActive ? "1.6rem" : "2.8rem",
                 fontFamily: "Georgia, serif",
                 fontWeight: 900,
                 userSelect: "none",
                 opacity: 0.95,
-                transition: "font-size 0.46s cubic-bezier(0.32, 0.72, 0, 1)",
+                transition: "font-size 0.44s cubic-bezier(0.2, 0.9, 0.3, 1)",
               }}
             >
               “
@@ -125,13 +126,13 @@ function TwoCardStackedQA({
 
             <p
               style={{
-                fontSize: isActive ? "0.84rem" : "1.02rem",
-                lineHeight: isActive ? 1.38 : 1.55,
+                fontSize: "0.96rem",
+                lineHeight: 1.5,
                 margin: 0,
                 fontWeight: 450,
                 letterSpacing: "-0.015em",
                 display: "-webkit-box",
-                WebkitLineClamp: isActive ? 3 : 5,
+                WebkitLineClamp: isActive ? 2 : 5,
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
               }}
@@ -141,18 +142,17 @@ function TwoCardStackedQA({
             </p>
           </div>
 
-          {/* COMPACT IOS FOOTER */}
+          {/* COMPACT IOS FOOTER (COLLAPSED STATE) */}
           <div
             style={{
               display: "flex",
               justifyContent: "flex-end",
               alignItems: "center",
-              paddingTop: "0.55rem",
+              paddingTop: "0.4rem",
               opacity: isActive ? 0 : 1,
-              maxHeight: isActive ? 0 : "40px",
+              transform: isActive ? "translate3d(0, 10px, 0)" : "translate3d(0, 0, 0)",
               pointerEvents: isActive ? "none" : "auto",
-              transition: "opacity 0.25s ease, max-height 0.46s cubic-bezier(0.32, 0.72, 0, 1)",
-              overflow: "hidden",
+              transition: "opacity 0.2s ease, transform 0.44s cubic-bezier(0.2, 0.9, 0.3, 1)",
               flexShrink: 0,
             }}
             className="qa-card-divider"
@@ -171,7 +171,7 @@ function TwoCardStackedQA({
           </div>
         </div>
 
-        {/* ── CARD 2: SEPARATE ANSWER CARD (PURE GPU SPRING TRANSLATE) ── */}
+        {/* ── CARD 2: SEPARATE ANSWER CARD (BUTTERY SPRING SLIDE) ── */}
         <div
           className="qa-answer-card"
           style={{
@@ -179,7 +179,7 @@ function TwoCardStackedQA({
             bottom: 0,
             left: 0,
             right: 0,
-            height: "calc(100% - 146px - 0.75rem)",
+            top: "156px",
             borderRadius: "24px",
             padding: "1.1rem 1.3rem 1rem",
             display: "flex",
@@ -190,11 +190,11 @@ function TwoCardStackedQA({
             background: "var(--ask-card-bg)",
             border: "1px solid var(--ask-border)",
             boxShadow: "var(--ask-shadow)",
-            zIndex: 1,
+            zIndex: 5,
             opacity: isActive ? 1 : 0,
-            transform: isActive ? "translate3d(0, 0, 0) scale(1)" : "translate3d(0, 35px, 0) scale(0.96)",
+            transform: isActive ? "translate3d(0, 0, 0)" : "translate3d(0, 100%, 0)",
             pointerEvents: isActive ? "auto" : "none",
-            transition: "transform 0.46s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.38s cubic-bezier(0.32, 0.72, 0, 1)",
+            transition: "transform 0.44s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.3s cubic-bezier(0.2, 0.9, 0.3, 1)",
             willChange: "transform, opacity",
           }}
         >
@@ -449,7 +449,7 @@ export default function AskPage() {
           text-decoration: none !important;
           line-height: 1 !important;
           cursor: pointer !important;
-          transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1) !important;
+          transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
         }
 
         .ask-home-btn:active {
@@ -473,7 +473,7 @@ export default function AskPage() {
           padding: 0 0.95rem !important;
           border-radius: 9999px !important;
           cursor: pointer !important;
-          transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1) !important;
+          transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
         }
 
         .ask-top-action-btn:active {
@@ -502,7 +502,7 @@ export default function AskPage() {
           border: 1px solid var(--ask-border);
           color: var(--ask-text);
           text-decoration: none;
-          transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+          transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
         }
 
         .ask-social-link:hover {
@@ -601,7 +601,7 @@ export default function AskPage() {
           color: var(--ask-text);
           cursor: pointer;
           line-height: 1;
-          transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+          transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
         }
 
         .ios-action-pill:hover {
