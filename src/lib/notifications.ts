@@ -1,11 +1,11 @@
 import nodemailer from "nodemailer";
 
 /**
- * Sends a premium HTML email notification to ivanaffriandi@kakao.com
+ * Sends a clean, simple HTML email notification for new questions.
  * Supports Resend API (highest priority) or Standard SMTP Nodemailer.
  */
 export async function sendNotificationEmail(subject: string, htmlContent: string): Promise<boolean> {
-  const recipient = "ivanaffriandi@kakao.com";
+  const recipient = process.env.ADMIN_EMAIL || "ivanaffriandi@kakao.com";
 
   // 1. Try Resend API (Fast HTTP fetch)
   const resendApiKey = process.env.RESEND_API_KEY;
@@ -26,7 +26,7 @@ export async function sendNotificationEmail(subject: string, htmlContent: string
       });
 
       if (res.ok) {
-        console.log(`[Resend Notification] Email sent successfully: "${subject}"`);
+        console.log(`[Resend Notification] Email sent to ${recipient}: "${subject}"`);
         return true;
       } else {
         const errorData = await res.text();
@@ -62,18 +62,16 @@ export async function sendNotificationEmail(subject: string, htmlContent: string
         html: htmlContent
       });
 
-      console.log(`[SMTP Notification] Email sent successfully: "${subject}"`);
+      console.log(`[SMTP Notification] Email sent to ${recipient}: "${subject}"`);
       return true;
     } catch (err) {
       console.error("[SMTP Notification Error]:", err);
     }
   }
 
-  // 3. Log warning if not configured
   console.warn(
     `[Notification Pending] Cannot send email notification for "${subject}".\n` +
-    `Reason: Neither RESEND_API_KEY nor SMTP environment variables are configured.\n` +
-    `Please configure RESEND_API_KEY or (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS) in your .env file.`
+    `Reason: Neither RESEND_API_KEY nor SMTP environment variables are configured.`
   );
   return false;
 }

@@ -53,6 +53,7 @@ function AdminPageContent() {
   const [loading, setLoading] = useState(true);
   const [loginError, setLoginError] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [activeTab, setActiveTab] = useState<AdminTab>("inbox");
   const [inboxFilter, setInboxFilter] = useState<"pending" | "answered">("pending");
@@ -71,7 +72,13 @@ function AdminPageContent() {
   const [isSubmittingIP, setIsSubmittingIP] = useState(false);
   const [ipError, setIpError] = useState("");
 
-  // Confirmation Modal
+  // Block Modal for specific Question
+  const [blockQuestionModal, setBlockQuestionModal] = useState<{
+    isOpen: boolean;
+    question: QuestionItem | null;
+  }>({ isOpen: false, question: null });
+
+  // Generic Confirmation Modal
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     title: string;
@@ -80,6 +87,11 @@ function AdminPageContent() {
     cancelText?: string;
     onConfirm: () => void | Promise<void>;
   }>({ isOpen: false, title: "", message: "", confirmText: "Delete", cancelText: "Cancel", onConfirm: () => {} });
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   const triggerConfirm = (title: string, message: string, onConfirm: () => void | Promise<void>, confirmText = "Delete") => {
     setConfirmModal({
@@ -236,6 +248,7 @@ function AdminPageContent() {
         );
         setAnsweringQuestionId(null);
         setAnswerText("");
+        showToast("Answer published ✦");
       }
     } catch (e) {
       console.error("Failed to answer question:", e);
@@ -249,8 +262,36 @@ function AdminPageContent() {
       const success = await deleteQuestion(id);
       if (success) {
         setAdminQuestions((prev) => prev.filter((q) => q.id !== id));
+        showToast("Question deleted");
       }
     });
+  };
+
+  const handleBlockSenderFromQuestion = async (deleteAfterBlock: boolean) => {
+    const q = blockQuestionModal.question;
+    if (!q) return;
+    const targetIp = q.ip || "127.0.0.1";
+    try {
+      const res = await fetch("/api/blocked-ips", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ip: targetIp,
+          note: `Blocked sender: ${q.name || "Anonymous"} (${cleanLabel(q.location || "unknown")})`,
+        }),
+      });
+
+      if (deleteAfterBlock) {
+        await deleteQuestion(q.id);
+        setAdminQuestions((prev) => prev.filter((item) => item.id !== q.id));
+      }
+
+      await loadBlockedIPs();
+      setBlockQuestionModal({ isOpen: false, question: null });
+      showToast(`IP ${targetIp} Blocked ✦`);
+    } catch (err) {
+      console.error("Failed to block sender:", err);
+    }
   };
 
   const handleBlockIP = async (e: React.FormEvent) => {
@@ -268,6 +309,7 @@ function AdminPageContent() {
         setNewIPToBlock("");
         setNewIPNote("");
         loadBlockedIPs();
+        showToast("IP added to firewall ✦");
       } else {
         const data = await res.json();
         setIpError(data.error || "Failed to block IP");
@@ -285,6 +327,7 @@ function AdminPageContent() {
         const res = await fetch(`/api/blocked-ips?id=${encodeURIComponent(id)}`, { method: "DELETE" });
         if (res.ok) {
           setBlockedIPs((prev) => prev.filter((item) => item.id !== id));
+          showToast("IP unblocked");
         }
       } catch (err) {
         console.error("Failed to unblock IP", err);
@@ -521,7 +564,7 @@ function AdminPageContent() {
         }
       `}</style>
 
-      {/* ── TOP HEADER (NO TITLE, SWITCH BUTTON AT TOP LEFT, REFRESH ICON & SIGN OUT AT RIGHT) ── */}
+      {/* ── TOP HEADER (SWITCH AT TOP LEFT, REFRESH ICON & SIGN OUT AT RIGHT) ── */}
       <header
         style={{
           width: "100%",
@@ -631,7 +674,7 @@ function AdminPageContent() {
 
       {/* ── MAIN CONTENT CONTAINER ── */}
       <main className="admin-page-container">
-        {/* ── 1. INBOX TAB (NO 'ALL' BUTTON) ── */}
+        {/* ── 1. INBOX TAB (NO 'ALL' BUTTON, WITH BLOCK SENDER ICON) ── */}
         {activeTab === "inbox" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
             {/* FILTER PILLS (ONLY PENDING & ANSWERED) */}
@@ -692,7 +735,7 @@ function AdminPageContent() {
                           )}
                         </div>
 
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                           <span style={{ fontSize: "0.62rem", color: "var(--text-secondary)" }}>
                             {new Date(q.published).toLocaleDateString("en-US", {
                               month: "short",
@@ -702,20 +745,48 @@ function AdminPageContent() {
                             })}
                           </span>
 
+                          {/* BLOCK SENDER ICON BUTTON */}
+                          <button
+                            type="button"
+                            onClick={() => setBlockQuestionModal({ isOpen: true, question: q })}
+                            style={{
+                              border: "none",
+                              background: "rgba(255,59,48,0.08)",
+                              color: "#ff3b30",
+                              cursor: "pointer",
+                              padding: "4px 6px",
+                              borderRadius: "6px",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              lineHeight: 1,
+                            }}
+                            title="Block Sender IP"
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="12" cy="12" r="10" />
+                              <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                            </svg>
+                          </button>
+
+                          {/* DELETE ICON BUTTON */}
                           <button
                             type="button"
                             onClick={() => handleDeleteQuestion(q.id)}
                             style={{
                               border: "none",
                               background: "transparent",
-                              color: "#ff453a",
+                              color: "var(--text-secondary)",
                               cursor: "pointer",
-                              padding: "2px",
+                              padding: "4px",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              justifyContent: "center",
                               lineHeight: 1,
                             }}
-                            title="Delete"
+                            title="Delete Question"
                           >
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                               <polyline points="3 6 5 6 21 6" />
                               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                             </svg>
@@ -727,6 +798,15 @@ function AdminPageContent() {
                       <p style={{ fontSize: "0.92rem", lineHeight: 1.55, margin: 0, color: "var(--text-primary)", whiteSpace: "pre-wrap" }}>
                         &ldquo;{q.content}&rdquo;
                       </p>
+
+                      {/* SENDER METADATA SNIPPET (LOCATION & DEVICE) */}
+                      {(q.location || q.device) && (
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "0.66rem", color: "var(--text-secondary)" }}>
+                          {q.location && <span>📍 {cleanLabel(q.location)}</span>}
+                          {q.device && <span>· 📱 {q.device}</span>}
+                          {q.ip && <span>· 🌐 {q.ip}</span>}
+                        </div>
+                      )}
 
                       {/* ALREADY ANSWERED VIEW */}
                       {q.answered && !isAnswering && (
@@ -825,7 +905,7 @@ function AdminPageContent() {
           </div>
         )}
 
-        {/* ── 2. ANALYTICS & VISITOR INTELLIGENCE TAB (DETAILED, CLEAN & READABLE) ── */}
+        {/* ── 2. ANALYTICS & VISITOR INTELLIGENCE TAB ── */}
         {activeTab === "analytics" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
             {/* OVERVIEW STATS (4-GRID) */}
@@ -971,7 +1051,7 @@ function AdminPageContent() {
               </div>
             </div>
 
-            {/* LIVE SESSIONS LOG (RICH & DETAILED) */}
+            {/* LIVE SESSIONS LOG */}
             <div className="admin-card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                 <span style={{ fontSize: "0.85rem", fontWeight: 850, color: "var(--text-primary)" }}>
@@ -1138,7 +1218,138 @@ function AdminPageContent() {
         )}
       </main>
 
-      {/* ── CONFIRMATION MODAL ── */}
+      {/* ── IOS-STYLED MODAL: BLOCK SENDER CONFIRMATION ── */}
+      <AnimatePresence>
+        {blockQuestionModal.isOpen && blockQuestionModal.question && (
+          <div style={{ position: "fixed", inset: 0, zIndex: 100000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1.2rem" }}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setBlockQuestionModal({ isOpen: false, question: null })}
+              style={{ position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)" }}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.93, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.93, y: 10 }}
+              transition={{ type: "spring", stiffness: 450, damping: 32 }}
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "320px",
+                backgroundColor: "var(--card-bg-1)",
+                border: "1px solid var(--border-color)",
+                borderRadius: "22px",
+                padding: "1.4rem",
+                boxShadow: "0 24px 60px rgba(0,0,0,0.25)",
+                zIndex: 1,
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+              }}
+            >
+              <div>
+                <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(255,59,48,0.12)", color: "#ff3b30", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 0.75rem" }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                  </svg>
+                </div>
+                <h3 style={{ fontSize: "1rem", fontWeight: 850, margin: "0 0 4px", color: "var(--text-primary)", textAlign: "center" }}>
+                  Block Sender IP
+                </h3>
+                <p style={{ fontSize: "0.76rem", color: "var(--text-secondary)", margin: 0, textAlign: "center", lineHeight: 1.4 }}>
+                  This IP address will be permanently blocked from submitting questions and visiting the portal.
+                </p>
+              </div>
+
+              {/* SENDER DETAILS BOX */}
+              <div style={{ background: "var(--bg-secondary)", borderRadius: "14px", padding: "10px 12px", display: "flex", flexDirection: "column", gap: "5px", fontSize: "0.72rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "var(--text-secondary)" }}>Sender:</span>
+                  <span style={{ fontWeight: 800, color: "var(--text-primary)" }}>{blockQuestionModal.question.name || "Anonymous"}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "var(--text-secondary)" }}>IP Address:</span>
+                  <span style={{ fontWeight: 800, color: "#ff3b30" }}>{blockQuestionModal.question.ip || "127.0.0.1"}</span>
+                </div>
+                {blockQuestionModal.question.location && (
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ color: "var(--text-secondary)" }}>Location:</span>
+                    <span style={{ fontWeight: 700, color: "var(--text-primary)" }}>{cleanLabel(blockQuestionModal.question.location)}</span>
+                  </div>
+                )}
+                {blockQuestionModal.question.device && (
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ color: "var(--text-secondary)" }}>Device:</span>
+                    <span style={{ fontWeight: 600, color: "var(--text-secondary)" }}>{blockQuestionModal.question.device}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* ACTION BUTTONS */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <button
+                  type="button"
+                  onClick={() => handleBlockSenderFromQuestion(true)}
+                  style={{
+                    width: "100%",
+                    padding: "10px",
+                    borderRadius: "12px",
+                    border: "none",
+                    background: "#ff3b30",
+                    color: "#fff",
+                    fontSize: "0.8rem",
+                    fontWeight: 800,
+                    cursor: "pointer",
+                  }}
+                >
+                  Block IP &amp; Delete Question
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleBlockSenderFromQuestion(false)}
+                  style={{
+                    width: "100%",
+                    padding: "9px",
+                    borderRadius: "12px",
+                    border: "1px solid var(--border-color)",
+                    background: "var(--bg-secondary)",
+                    color: "var(--text-primary)",
+                    fontSize: "0.78rem",
+                    fontWeight: 750,
+                    cursor: "pointer",
+                  }}
+                >
+                  Block IP Only
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setBlockQuestionModal({ isOpen: false, question: null })}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    borderRadius: "12px",
+                    border: "none",
+                    background: "transparent",
+                    color: "var(--text-secondary)",
+                    fontSize: "0.75rem",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── GENERIC CONFIRMATION MODAL ── */}
       <AnimatePresence>
         {confirmModal.isOpen && (
           <div style={{ position: "fixed", inset: 0, zIndex: 100000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
@@ -1216,6 +1427,33 @@ function AdminPageContent() {
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      {/* ── TOAST NOTIFICATION ── */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            style={{
+              position: "fixed",
+              top: "1.2rem",
+              left: "50%",
+              transform: "translateX(-50%)",
+              backgroundColor: "var(--text-primary)",
+              color: "var(--bg-color)",
+              padding: "7px 16px",
+              borderRadius: "9999px",
+              fontSize: "0.72rem",
+              fontWeight: 850,
+              zIndex: 100001,
+              boxShadow: "0 16px 40px rgba(0,0,0,0.25)",
+            }}
+          >
+            {toastMessage}
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
