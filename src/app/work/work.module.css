@@ -1,33 +1,37 @@
 /* ============================================================
-   IVAN AFFRIANDI · SEAMLESS EDITORIAL PORTFOLIO (NO BOX CARDS)
+   IVAN AFFRIANDI · COMPACT SINGLE-VIEWPORT HERO PROFILE
+   Zero-Scroll Compact Layout · Expandable Socials · Seamless Head
    ============================================================ */
 
 :root {
-  --w-bg: #f9f9f8;
+  --w-bg: #ffffff;
   --w-text: #111113;
-  --w-text-muted: #55555c;
-  --w-text-sub: #888892;
-  --w-border: rgba(0, 0, 0, 0.08);
-  --w-border-light: rgba(0, 0, 0, 0.04);
-  --w-pill-bg: #eeeeea;
-  --w-pill-text: #1a1a1e;
+  --w-text-muted: #55555e;
+  --w-text-sub: #888894;
+  --w-border: rgba(0, 0, 0, 0.09);
+  --w-pill-bg: #f2f2f0;
+  --w-pill-hover: #e8e8e5;
+  --w-btn-bg: #111113;
+  --w-btn-text: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --w-bg: #0c0c0e;
+    --w-bg: #09090b;
     --w-text: #f4f4f6;
     --w-text-muted: #a1a1aa;
     --w-text-sub: #71717a;
     --w-border: rgba(255, 255, 255, 0.1);
-    --w-border-light: rgba(255, 255, 255, 0.05);
-    --w-pill-bg: #1a1a20;
-    --w-pill-text: #e4e4eb;
+    --w-pill-bg: #18181d;
+    --w-pill-hover: #22222a;
+    --w-btn-bg: #f4f4f6;
+    --w-btn-text: #09090b;
   }
 }
 
-.fullViewport {
+.viewportRoot {
   min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
   background-color: var(--w-bg);
   color: var(--w-text);
@@ -36,72 +40,89 @@
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   margin: 0;
-  padding: 0;
-}
-
-.fullViewport *::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-
-.fullViewport * {
-  -ms-overflow-style: none !important;
-  scrollbar-width: none !important;
-}
-
-.pageContainer {
-  max-width: 620px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 24px 20px 80px;
-  box-sizing: border-box;
+  padding: 16px 20px 24px;
   display: flex;
   flex-direction: column;
-  gap: 36px;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
 }
 
-@media (max-width: 640px) {
-  .pageContainer {
-    padding: 16px 18px 60px;
-    gap: 28px;
+@media (max-width: 480px) {
+  .viewportRoot {
+    padding: 14px 16px 20px;
   }
 }
 
-/* ── 1. CLEAN TOP NAVBAR ── */
+.compactContainer {
+  max-width: 480px;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+/* ── 1. TOP NAVBAR WITH EXPANDABLE SOCIALS ── */
 .topNavbar {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 18px;
+  padding: 8px 14px;
   background-color: var(--w-bg);
   border: 1px solid var(--w-border);
   border-radius: 9999px;
   box-sizing: border-box;
-  position: sticky;
-  top: 14px;
   z-index: 50;
-  backdrop-filter: blur(16px);
 }
 
 .logoMonogram {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 900;
   letter-spacing: -0.04em;
   color: var(--w-text);
   text-decoration: none;
+  padding: 2px 6px;
 }
 
-.navRightGroup {
+.socialExpandWrap {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
-.socialBtn {
-  width: 32px;
-  height: 32px;
+.socialToggleBtn {
+  border: 1px solid var(--w-border);
+  background: var(--w-pill-bg);
+  color: var(--w-text);
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.socialToggleBtn:hover {
+  background: var(--w-pill-hover);
+}
+
+.expandedSocialIcons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.microSocialBtn {
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -113,56 +134,39 @@
   transition: all 0.15s ease;
 }
 
-.socialBtn:hover {
+.microSocialBtn:hover {
   color: var(--w-text);
-  border-color: var(--w-text);
   transform: translateY(-1px);
 }
 
-.socialBtn:active {
-  transform: scale(0.92);
-}
-
-/* ── 2. HERO PROFILE (SEAMLESS HEAD INTEGRATION) ── */
-.heroProfileBlock {
+/* ── 2. HERO CONTENT (BIG SEAMLESS HEAD & NAME) ── */
+.heroCenterContent {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding-top: 8px;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  margin: auto 0;
 }
 
-.heroTopRow {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-
-@media (max-width: 520px) {
-  .heroTopRow {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-}
-
-.heroSeamlessHeadWrap {
-  width: 110px;
-  height: 110px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.seamlessHeadWrap {
+  width: 130px;
+  height: 130px;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 4px;
 }
 
-@media (max-width: 520px) {
-  .heroSeamlessHeadWrap {
-    width: 96px;
-    height: 96px;
+@media (max-width: 480px) {
+  .seamlessHeadWrap {
+    width: 110px;
+    height: 110px;
   }
 }
 
-.heroHeadImg {
+.seamlessHeadImg {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -170,243 +174,97 @@
   transition: transform 0.3s ease;
 }
 
-.heroHeadImg:hover {
-  transform: scale(1.06) rotate(-2deg);
+.seamlessHeadImg:hover {
+  transform: scale(1.05) rotate(-2deg);
 }
 
-.heroInfoTextGroup {
+.heroHeadingBlock {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.heroName {
-  font-size: 1.65rem;
+.heroBigName {
+  font-size: clamp(1.8rem, 6.5vw, 2.4rem);
   font-weight: 850;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
   color: var(--w-text);
+  line-height: 1.1;
   margin: 0;
 }
 
-.heroRole {
-  font-size: 0.88rem;
+.heroRoleSubtitle {
+  font-size: 0.92rem;
   font-weight: 700;
   color: var(--w-text-muted);
   margin: 0;
 }
 
-.heroBio {
+.heroBioParagraph {
   font-size: 0.94rem;
-  line-height: 1.65;
-  color: var(--w-text-muted);
-  margin: 0;
-}
-
-/* ── 3. SECTION TITLES ── */
-.sectionBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.sectionHeaderRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  border-bottom: 1.5px solid var(--w-border);
-  padding-bottom: 8px;
-}
-
-.sectionTitle {
-  font-size: 1.05rem;
-  font-weight: 850;
-  letter-spacing: -0.02em;
-  color: var(--w-text);
-  margin: 0;
-}
-
-.sectionTag {
-  font-size: 0.65rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--w-text-sub);
-}
-
-/* ── 4. FEATURED PROJECTS (SEAMLESS ROWS, NO BOX CARDS) ── */
-.projectsList {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.projectRowItem {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--w-border);
-}
-
-.projectRowItem:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.projectRowTop {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.projectName {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--w-text);
-  margin: 0;
-}
-
-.projectBadge {
-  font-size: 0.62rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--w-text-sub);
-  background: var(--w-pill-bg);
-  padding: 2px 8px;
-  border-radius: 6px;
-}
-
-.projectDesc {
-  font-size: 0.88rem;
   line-height: 1.6;
   color: var(--w-text-muted);
-  margin: 0;
+  margin: 4px 0 0;
 }
 
-.projectTagsGroup {
+.disciplinePillsRow {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 2px;
+  margin-top: 6px;
 }
 
-.projectTagItem {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: var(--w-pill-text);
-  background: var(--w-pill-bg);
-  padding: 3px 8px;
-  border-radius: 6px;
-}
-
-/* ── 5. CAPABILITIES & STACK ── */
-.skillsCategoriesGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px 24px;
-}
-
-@media (max-width: 520px) {
-  .skillsCategoriesGrid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-}
-
-.skillGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.skillGroupLabel {
+.disciplinePill {
   font-size: 0.72rem;
-  font-weight: 850;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--w-text-sub);
-}
-
-.skillPillsFlex {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.skillPillItem {
-  font-size: 0.76rem;
-  font-weight: 700;
+  font-weight: 750;
   color: var(--w-text);
   background: var(--w-pill-bg);
   padding: 4px 10px;
-  border-radius: 6px;
+  border-radius: 8px;
+  border: 1px solid var(--w-border);
 }
 
-/* ── 6. BACKGROUND / PROSE ── */
-.editorialProse {
-  font-size: 0.92rem;
-  line-height: 1.7;
-  color: var(--w-text-muted);
+/* ── 3. FOOTER (EMAIL CTA BUTTON & COPYRIGHT) ── */
+.compactFooter {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--w-border);
+  box-sizing: border-box;
 }
 
-.editorialProse p {
-  margin: 0;
-}
-
-/* ── 7. FOOTER WITH LARGE EMAIL BUTTON & COPYRIGHT ── */
-.footerArea {
+.emailCtaButton {
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding-top: 32px;
-  border-top: 1.5px solid var(--w-border);
-}
-
-.emailCtaRow {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.emailCtaLabel {
-  font-size: 0.76rem;
-  font-weight: 850;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--w-text-sub);
-}
-
-.emailCtaBtn {
-  display: inline-flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 14px 20px;
-  background-color: var(--w-text);
-  color: var(--w-bg);
-  border-radius: 16px;
+  align-items: center;
+  padding: 14px 18px;
+  background-color: var(--w-btn-bg);
+  color: var(--w-btn-text);
+  border-radius: 18px;
   text-decoration: none;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 800;
+  box-sizing: border-box;
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
-.emailCtaBtn:hover {
-  opacity: 0.85;
+.emailCtaButton:hover {
+  opacity: 0.88;
   transform: translateY(-1px);
 }
 
-.emailCtaBtn:active {
+.emailCtaButton:active {
   transform: scale(0.98);
 }
 
-.copyrightRow {
+.copyrightLine {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   color: var(--w-text-sub);
+  padding: 0 4px;
 }
