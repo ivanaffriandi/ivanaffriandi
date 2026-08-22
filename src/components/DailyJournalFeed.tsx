@@ -3514,122 +3514,108 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       BACK TO JOURNAL
                     </button>
 
-                    {/* HORIZONTAL RULE LINE SPANNING TO PILLBAR */}
-                    <div style={{ flex: 1, height: "1px", background: "var(--border-strong, rgba(125,125,125,0.45))", opacity: 0.85 }} />
-
-                    {/* ── UNIFIED READING THEME PILLBAR (PINNED TO RIGHT) ── */}
-                    <div
+                    {/* LEFT CORNER: REAL-TIME LIKE BUTTON */}
+                    <button
+                      onClick={handleToggleLike}
+                      title={likesMap[activePostId || ""]?.hasLiked ? "Unlike" : "Like"}
+                      aria-label="Like"
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
-                        background: readerTheme === "dark" ? "rgba(255,255,255,0.08)" : "var(--bg-secondary, rgba(125,125,125,0.08))",
-                        border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.15)" : "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
+                        justifyContent: "center",
+                        gap: "0.36rem",
+                        height: "28px",
+                        padding: "0 0.75rem",
                         borderRadius: "9999px",
-                        padding: "0.22rem 0.35rem",
-                        gap: "0.28rem",
-                        boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
+                        cursor: "pointer",
+                        transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                        border: likesMap[activePostId || ""]?.hasLiked
+                          ? "1px solid rgba(255, 45, 85, 0.6)"
+                          : (readerTheme === "dark" ? "1px solid rgba(255,255,255,0.2)" : "1px solid rgba(0,0,0,0.14)"),
+                        background: likesMap[activePostId || ""]?.hasLiked
+                          ? (readerTheme === "dark" ? "rgba(255, 45, 85, 0.22)" : "rgba(255, 45, 85, 0.1)")
+                          : (readerTheme === "dark" ? "rgba(255,255,255,0.1)" : "#FFFFFF"),
+                        color: likesMap[activePostId || ""]?.hasLiked
+                          ? "#FF2D55"
+                          : (readerTheme === "dark" ? "#FFFFFF" : "#111113"),
+                        transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.04)" : "scale(1)",
                         flexShrink: 0,
                       }}
                     >
-                      {/* REAL-TIME LIKE BUTTON (ICON ONLY WITH HEART PULSE) */}
-                      <button
-                        onClick={handleToggleLike}
-                        title={likesMap[activePostId || ""]?.hasLiked ? "Unlike" : "Like"}
-                        aria-label="Like"
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill={likesMap[activePostId || ""]?.hasLiked ? "currentColor" : "none"}
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "0.32rem",
-                          height: "26px",
-                          padding: "0 0.65rem",
-                          borderRadius: "9999px",
-                          cursor: "pointer",
-                          transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                          border: likesMap[activePostId || ""]?.hasLiked
-                            ? "1px solid rgba(255, 45, 85, 0.6)"
-                            : (readerTheme === "dark" ? "1px solid rgba(255,255,255,0.25)" : "1px solid rgba(0,0,0,0.2)"),
-                          background: likesMap[activePostId || ""]?.hasLiked
-                            ? (readerTheme === "dark" ? "rgba(255, 45, 85, 0.25)" : "rgba(255, 45, 85, 0.12)")
-                            : (readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "#FFFFFF"),
-                          color: likesMap[activePostId || ""]?.hasLiked
-                            ? "#FF2D55"
-                            : (readerTheme === "dark" ? "#FFFFFF" : "#111113"),
-                          transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.05)" : "scale(1)",
+                          transition: "transform 0.2s ease",
+                          transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.15)" : "scale(1)",
                         }}
                       >
-                        <svg
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill={likesMap[activePostId || ""]?.hasLiked ? "currentColor" : "none"}
-                          stroke="currentColor"
-                          strokeWidth="2.4"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          style={{
-                            transition: "transform 0.2s ease",
-                            transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.15)" : "scale(1)",
-                          }}
-                        >
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                        </svg>
-                        {likesMap[activePostId || ""]?.count && likesMap[activePostId || ""]!.count > 0 ? (
-                          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.02em" }}>
-                            {likesMap[activePostId || ""]!.count}
-                          </span>
-                        ) : null}
-                      </button>
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
+                      {likesMap[activePostId || ""]?.count && likesMap[activePostId || ""]!.count > 0 ? (
+                        <span style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.02em" }}>
+                          {likesMap[activePostId || ""]!.count}
+                        </span>
+                      ) : null}
+                    </button>
 
-                      <div style={{ width: "1px", height: "12px", background: readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "var(--border-subtle, rgba(125,125,125,0.18))" }} />
+                    {/* HORIZONTAL RULE LINE SPANNING TO THEME BUTTON */}
+                    <div style={{ flex: 1, height: "1px", background: "var(--border-strong, rgba(125,125,125,0.35))", opacity: 0.85 }} />
 
-                      {/* THEME TOGGLE: LIGHT ↔ DARK */}
-                      <button
-                        onClick={() => setReaderTheme(readerTheme === "dark" ? "light" : "dark")}
-                        title={`Switch to ${readerTheme === "dark" ? "Light" : "Dark"} mode`}
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "0.32rem",
-                          fontSize: "0.64rem",
-                          fontWeight: 700,
-                          letterSpacing: "0.04em",
-                          textTransform: "uppercase",
-                          padding: "0.22rem 0.6rem",
-                          borderRadius: "9999px",
-                          border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.3)" : "1px solid #111111",
-                          background: readerTheme === "dark" ? "rgba(255,255,255,0.2)" : "#111111",
-                          color: "#FFFFFF",
-                          cursor: "pointer",
-                          transition: "all 0.15s ease",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {readerTheme === "light" ? (
-                          <>
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                            </svg>
-                            <span>Dark</span>
-                          </>
-                        ) : (
-                          <>
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                              <circle cx="12" cy="12" r="5" />
-                              <line x1="12" y1="1" x2="12" y2="3" />
-                              <line x1="12" y1="21" x2="12" y2="23" />
-                              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                              <line x1="1" y1="12" x2="3" y2="12" />
-                              <line x1="21" y1="12" x2="23" y2="12" />
-                              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                            </svg>
-                            <span>Light</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
+                    {/* RIGHT CORNER: THEME TOGGLE (LIGHT ↔ DARK) */}
+                    <button
+                      onClick={() => setReaderTheme(readerTheme === "dark" ? "light" : "dark")}
+                      title={`Switch to ${readerTheme === "dark" ? "Light" : "Dark"} mode`}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.35rem",
+                        height: "28px",
+                        fontSize: "0.66rem",
+                        fontWeight: 750,
+                        letterSpacing: "0.04em",
+                        textTransform: "uppercase",
+                        padding: "0 0.75rem",
+                        borderRadius: "9999px",
+                        border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.25)" : "1px solid #111111",
+                        background: readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "#111111",
+                        color: "#FFFFFF",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                        whiteSpace: "nowrap",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {readerTheme === "light" ? (
+                        <>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                          </svg>
+                          <span>Dark</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="5" />
+                            <line x1="12" y1="1" x2="12" y2="3" />
+                            <line x1="12" y1="21" x2="12" y2="23" />
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                            <line x1="1" y1="12" x2="3" y2="12" />
+                            <line x1="21" y1="12" x2="23" y2="12" />
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                          </svg>
+                          <span>Light</span>
+                        </>
+                      )}
+                    </button>
                   </div>
 
                   {/* PROLOGUE BODY */}
@@ -3755,200 +3741,108 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       BACK TO JOURNAL
                     </button>
 
-                    {/* HORIZONTAL RULE LINE SPANNING TO PILLBAR */}
-                    <div style={{ flex: 1, height: "1px", background: "var(--border-strong, rgba(125,125,125,0.45))", opacity: 0.85 }} />
-
-                    {/* ── UNIFIED READING THEME PILLBAR (WITH PREV/NEXT ON FAR-LEFT & SINGLE THEME BUTTON) ── */}
-                    <div
+                    {/* LEFT CORNER: REAL-TIME LIKE BUTTON */}
+                    <button
+                      onClick={handleToggleLike}
+                      title={likesMap[activePostId || ""]?.hasLiked ? "Unlike" : "Like"}
+                      aria-label="Like"
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
-                        background: readerTheme === "dark" ? "rgba(255,255,255,0.08)" : "var(--bg-secondary, rgba(125,125,125,0.08))",
-                        border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.15)" : "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
+                        justifyContent: "center",
+                        gap: "0.36rem",
+                        height: "28px",
+                        padding: "0 0.75rem",
                         borderRadius: "9999px",
-                        padding: "0.22rem 0.35rem",
-                        gap: "0.28rem",
-                        boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
+                        cursor: "pointer",
+                        transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                        border: likesMap[activePostId || ""]?.hasLiked
+                          ? "1px solid rgba(255, 45, 85, 0.6)"
+                          : (readerTheme === "dark" ? "1px solid rgba(255,255,255,0.2)" : "1px solid rgba(0,0,0,0.14)"),
+                        background: likesMap[activePostId || ""]?.hasLiked
+                          ? (readerTheme === "dark" ? "rgba(255, 45, 85, 0.22)" : "rgba(255, 45, 85, 0.1)")
+                          : (readerTheme === "dark" ? "rgba(255,255,255,0.1)" : "#FFFFFF"),
+                        color: likesMap[activePostId || ""]?.hasLiked
+                          ? "#FF2D55"
+                          : (readerTheme === "dark" ? "#FFFFFF" : "#111113"),
+                        transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.04)" : "scale(1)",
                         flexShrink: 0,
                       }}
                     >
-                      {/* PREVIOUS CHAPTER BUTTON (FAR LEFT) */}
-                      <button
-                        disabled={selectedPostIndex === null || selectedPostIndex >= sortedPosts.length - 1}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1) {
-                            setSelectedPostIndex(selectedPostIndex + 1);
-                          }
-                        }}
-                        title="Previous Chapter"
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill={likesMap[activePostId || ""]?.hasLiked ? "currentColor" : "none"}
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         style={{
-                          width: "28px",
-                          height: "28px",
-                          borderRadius: "50%",
-                          border: readerTheme === "dark" 
-                            ? "1px solid rgba(255,255,255,0.15)" 
-                            : ("1px solid rgba(0,0,0,0.12)"),
-                          background: readerTheme === "dark"
-                            ? "rgba(255,255,255,0.1)"
-                            : ("#F0F0F2"),
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 
-                            ? (readerTheme === "dark" ? "#FFFFFF" : "#111111") 
-                            : (readerTheme === "dark" ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.25)"),
-                          opacity: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? 1 : 0.45,
-                          cursor: selectedPostIndex !== null && selectedPostIndex < sortedPosts.length - 1 ? "pointer" : "not-allowed",
-                          transition: "all 0.15s ease",
-                          padding: 0,
-                          touchAction: "manipulation",
+                          transition: "transform 0.2s ease",
+                          transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.15)" : "scale(1)",
                         }}
                       >
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="15 18 9 12 15 6" />
-                        </svg>
-                      </button>
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
+                      {likesMap[activePostId || ""]?.count && likesMap[activePostId || ""]!.count > 0 ? (
+                        <span style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.02em" }}>
+                          {likesMap[activePostId || ""]!.count}
+                        </span>
+                      ) : null}
+                    </button>
 
-                      {/* NEXT CHAPTER BUTTON (FAR LEFT) */}
-                      <button
-                        disabled={selectedPostIndex === null || selectedPostIndex <= 0}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (selectedPostIndex !== null && selectedPostIndex > 0) {
-                            setSelectedPostIndex(selectedPostIndex - 1);
-                          }
-                        }}
-                        title="Next Chapter"
-                        style={{
-                          width: "28px",
-                          height: "28px",
-                          borderRadius: "50%",
-                          border: readerTheme === "dark" 
-                            ? "1px solid rgba(255,255,255,0.15)" 
-                            : ("1px solid rgba(0,0,0,0.12)"),
-                          background: readerTheme === "dark"
-                            ? "rgba(255,255,255,0.1)"
-                            : ("#F0F0F2"),
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: selectedPostIndex !== null && selectedPostIndex > 0 
-                            ? (readerTheme === "dark" ? "#FFFFFF" : "#111111") 
-                            : (readerTheme === "dark" ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.25)"),
-                          opacity: selectedPostIndex !== null && selectedPostIndex > 0 ? 1 : 0.45,
-                          cursor: selectedPostIndex !== null && selectedPostIndex > 0 ? "pointer" : "not-allowed",
-                          transition: "all 0.15s ease",
-                          padding: 0,
-                          touchAction: "manipulation",
-                        }}
-                      >
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="9 18 15 12 9 6" />
-                        </svg>
-                      </button>
+                    {/* HORIZONTAL RULE LINE SPANNING TO THEME BUTTON */}
+                    <div style={{ flex: 1, height: "1px", background: "var(--border-strong, rgba(125,125,125,0.35))", opacity: 0.85 }} />
 
-                      <div style={{ width: "1px", height: "12px", background: readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "var(--border-subtle, rgba(125,125,125,0.18))" }} />
-
-                      {/* REAL-TIME LIKE BUTTON (ICON ONLY WITH HEART PULSE) */}
-                      <button
-                        onClick={handleToggleLike}
-                        title={likesMap[activePostId || ""]?.hasLiked ? "Unlike" : "Like"}
-                        aria-label="Like"
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "0.32rem",
-                          height: "26px",
-                          padding: "0 0.65rem",
-                          borderRadius: "9999px",
-                          cursor: "pointer",
-                          transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                          border: likesMap[activePostId || ""]?.hasLiked
-                            ? "1px solid rgba(255, 45, 85, 0.6)"
-                            : (readerTheme === "dark" ? "1px solid rgba(255,255,255,0.25)" : "1px solid rgba(0,0,0,0.2)"),
-                          background: likesMap[activePostId || ""]?.hasLiked
-                            ? (readerTheme === "dark" ? "rgba(255, 45, 85, 0.25)" : "rgba(255, 45, 85, 0.12)")
-                            : (readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "#FFFFFF"),
-                          color: likesMap[activePostId || ""]?.hasLiked
-                            ? "#FF2D55"
-                            : (readerTheme === "dark" ? "#FFFFFF" : "#111113"),
-                          transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.05)" : "scale(1)",
-                        }}
-                      >
-                        <svg
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill={likesMap[activePostId || ""]?.hasLiked ? "currentColor" : "none"}
-                          stroke="currentColor"
-                          strokeWidth="2.4"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          style={{
-                            transition: "transform 0.2s ease",
-                            transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.15)" : "scale(1)",
-                          }}
-                        >
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                        </svg>
-                        {likesMap[activePostId || ""]?.count && likesMap[activePostId || ""]!.count > 0 ? (
-                          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.02em" }}>
-                            {likesMap[activePostId || ""]!.count}
-                          </span>
-                        ) : null}
-                      </button>
-
-                      <div style={{ width: "1px", height: "12px", background: readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "var(--border-subtle, rgba(125,125,125,0.18))" }} />
-
-                      {/* THEME TOGGLE: LIGHT ↔ DARK */}
-                      <button
-                        onClick={() => setReaderTheme(readerTheme === "dark" ? "light" : "dark")}
-                        title={`Switch to ${readerTheme === "dark" ? "Light" : "Dark"} mode`}
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "0.32rem",
-                          fontSize: "0.64rem",
-                          fontWeight: 700,
-                          letterSpacing: "0.04em",
-                          textTransform: "uppercase",
-                          padding: "0.22rem 0.6rem",
-                          borderRadius: "9999px",
-                          border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.3)" : "1px solid #111111",
-                          background: readerTheme === "dark" ? "rgba(255,255,255,0.2)" : "#111111",
-                          color: "#FFFFFF",
-                          cursor: "pointer",
-                          transition: "all 0.15s ease",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {readerTheme === "light" ? (
-                          <>
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                            </svg>
-                            <span>Dark</span>
-                          </>
-                        ) : (
-                          <>
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                              <circle cx="12" cy="12" r="5" />
-                              <line x1="12" y1="1" x2="12" y2="3" />
-                              <line x1="12" y1="21" x2="12" y2="23" />
-                              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                              <line x1="1" y1="12" x2="3" y2="12" />
-                              <line x1="21" y1="12" x2="23" y2="12" />
-                              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                            </svg>
-                            <span>Light</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
+                    {/* RIGHT CORNER: THEME TOGGLE (LIGHT ↔ DARK) */}
+                    <button
+                      onClick={() => setReaderTheme(readerTheme === "dark" ? "light" : "dark")}
+                      title={`Switch to ${readerTheme === "dark" ? "Light" : "Dark"} mode`}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.35rem",
+                        height: "28px",
+                        fontSize: "0.66rem",
+                        fontWeight: 750,
+                        letterSpacing: "0.04em",
+                        textTransform: "uppercase",
+                        padding: "0 0.75rem",
+                        borderRadius: "9999px",
+                        border: readerTheme === "dark" ? "1px solid rgba(255,255,255,0.25)" : "1px solid #111111",
+                        background: readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "#111111",
+                        color: "#FFFFFF",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                        whiteSpace: "nowrap",
+                        flexShrink: 0,
+                      }}
+                    >
+                      {readerTheme === "light" ? (
+                        <>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                          </svg>
+                          <span>Dark</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="5" />
+                            <line x1="12" y1="1" x2="12" y2="3" />
+                            <line x1="12" y1="21" x2="12" y2="23" />
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                            <line x1="1" y1="12" x2="3" y2="12" />
+                            <line x1="21" y1="12" x2="23" y2="12" />
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                          </svg>
+                          <span>Light</span>
+                        </>
+                      )}
+                    </button>
                   </div>
 
                   {/* ── ARTICLE CHAPTER HEADER BANNER (DESKTOP ONLY - ON MOBILE TOP COVER SHOWS THIS) ── */}
