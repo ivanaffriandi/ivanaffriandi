@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import styles from './work.module.css';
 
@@ -32,72 +32,24 @@ const MailIcon = () => (
   </svg>
 );
 
-const SunIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="5" />
-    <line x1="12" y1="1" x2="12" y2="3" />
-    <line x1="12" y1="21" x2="12" y2="23" />
-    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-    <line x1="1" y1="12" x2="3" y2="12" />
-    <line x1="21" y1="12" x2="23" y2="12" />
-    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-  </svg>
-);
-
-const MoonIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-  </svg>
-);
-
-export default function WorkPortfolioPage() {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-
-  useEffect(() => {
-    // Check initial system or stored preference
-    if (typeof window !== 'undefined') {
-      const isLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-      setTheme(isLight ? 'light' : 'dark');
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
-
+export default function WorkSeamlessPortfolioPage() {
   return (
-    <div className={`${styles.fullViewport} ${theme === 'dark' ? styles.themeDark : styles.themeLight}`} style={{ backgroundColor: 'var(--p-bg)', color: 'var(--p-text-main)' }}>
+    <div className={styles.fullViewport}>
       <div className={styles.pageContainer}>
         {/* ── 1. CLEAN TOP NAVBAR ── */}
         <header className={styles.topNavbar}>
-          {/* Top Left: Minimalist IA Monogram Logo */}
-          <Link href="/" className={styles.navBrandLink} title="Ivan Affriandi">
-            <span className={styles.logoMonogram}>IA</span>
-            <span className={styles.navStatusBadge}>
-              <span className={styles.statusDot} />
-              <span>Available</span>
-            </span>
+          {/* Top Left: Minimalist IA Monogram */}
+          <Link href="/" className={styles.logoMonogram} title="Ivan Affriandi">
+            IA
           </Link>
 
-          {/* Top Right: Social Media Icons & Dark/Light Mode Toggle */}
+          {/* Top Right: Social Media Icons */}
           <div className={styles.navRightGroup}>
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className={styles.iconBtn}
-              title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
-              aria-label="Toggle Theme"
-            >
-              {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-            </button>
-
             <a
               href="https://instagram.com/ivanaffriandi"
               target="_blank"
               rel="noopener noreferrer"
-              className={styles.iconBtn}
+              className={styles.socialBtn}
               title="Instagram"
               aria-label="Instagram"
             >
@@ -108,7 +60,7 @@ export default function WorkPortfolioPage() {
               href="https://github.com/ivanaffriandi"
               target="_blank"
               rel="noopener noreferrer"
-              className={styles.iconBtn}
+              className={styles.socialBtn}
               title="GitHub"
               aria-label="GitHub"
             >
@@ -119,8 +71,8 @@ export default function WorkPortfolioPage() {
               href="https://x.com/ivanaffriandi"
               target="_blank"
               rel="noopener noreferrer"
-              className={styles.iconBtn}
-              title="X (Twitter)"
+              className={styles.socialBtn}
+              title="X"
               aria-label="X"
             >
               <XIcon />
@@ -128,8 +80,8 @@ export default function WorkPortfolioPage() {
 
             <a
               href="mailto:hello@ivanaffriandi.com"
-              className={styles.iconBtn}
-              title="Email"
+              className={styles.socialBtn}
+              title="Email Ivan"
               aria-label="Email"
             >
               <MailIcon />
@@ -137,15 +89,19 @@ export default function WorkPortfolioPage() {
           </div>
         </header>
 
-        {/* ── 2. HERO PROFILE SECTION ── */}
-        <section className={styles.heroProfileCard}>
-          <div className={styles.heroProfileTop}>
-            <img
-              src="/ivan-head.png"
-              alt="Ivan Affriandi"
-              className={styles.heroAvatarImg}
-            />
-            <div className={styles.heroTitleGroup}>
+        {/* ── 2. HERO PROFILE (SEAMLESS LARGE HEAD ON PAGE) ── */}
+        <section className={styles.heroProfileBlock}>
+          <div className={styles.heroTopRow}>
+            {/* Seamless Cutout Head */}
+            <div className={styles.heroSeamlessHeadWrap}>
+              <img
+                src="/ivan-head.png"
+                alt="Ivan Affriandi"
+                className={styles.heroHeadImg}
+              />
+            </div>
+
+            <div className={styles.heroInfoTextGroup}>
               <h1 className={styles.heroName}>Ivan Affriandi</h1>
               <p className={styles.heroRole}>Software Engineer &amp; Bespoke Leather Artisan</p>
             </div>
@@ -156,155 +112,157 @@ export default function WorkPortfolioPage() {
           </p>
         </section>
 
-        {/* ── 3. FEATURED WORKS & SYSTEMS ── */}
-        <section>
-          <div className={styles.sectionHeader}>
+        {/* ── 3. FEATURED WORKS (SEAMLESS LIST, NO BOX CARDS) ── */}
+        <section className={styles.sectionBlock}>
+          <div className={styles.sectionHeaderRow}>
             <h2 className={styles.sectionTitle}>Featured Projects</h2>
             <span className={styles.sectionTag}>Selected Works</span>
           </div>
 
-          <div className={styles.projectsGrid}>
-            <div className={styles.projectCard}>
-              <div className={styles.projectCardTop}>
-                <h3 className={styles.projectName}>
-                  SHU / EN Studio Atelier
-                </h3>
+          <div className={styles.projectsList}>
+            <div className={styles.projectRowItem}>
+              <div className={styles.projectRowTop}>
+                <h3 className={styles.projectName}>SHU / EN Studio Atelier</h3>
                 <span className={styles.projectBadge}>Craft &amp; Web</span>
               </div>
               <p className={styles.projectDesc}>
                 Handcrafted bespoke leather goods atelier paired with an interactive 3D product showcase. Built with Italian vegetable-tanned hides and custom Next.js e-commerce architecture.
               </p>
-              <div className={styles.projectTagsRow}>
-                <span className={styles.projectTag}>Next.js</span>
-                <span className={styles.projectTag}>Three.js</span>
-                <span className={styles.projectTag}>Italian Leather</span>
-                <span className={styles.projectTag}>925 Silver</span>
+              <div className={styles.projectTagsGroup}>
+                <span className={styles.projectTagItem}>Next.js</span>
+                <span className={styles.projectTagItem}>Three.js</span>
+                <span className={styles.projectTagItem}>Italian Leather</span>
+                <span className={styles.projectTagItem}>925 Silver</span>
               </div>
             </div>
 
-            <div className={styles.projectCard}>
-              <div className={styles.projectCardTop}>
-                <h3 className={styles.projectName}>
-                  Spatial 3D &amp; Shader Experiments
-                </h3>
+            <div className={styles.projectRowItem}>
+              <div className={styles.projectRowTop}>
+                <h3 className={styles.projectName}>Spatial 3D &amp; Shader Experiments</h3>
                 <span className={styles.projectBadge}>Creative Tech</span>
               </div>
               <p className={styles.projectDesc}>
                 Real-time procedural GLSL shaders, 3D interactive mesh configurators, and Web Audio synthesizers exploring tactile digital interactions.
               </p>
-              <div className={styles.projectTagsRow}>
-                <span className={styles.projectTag}>WebGL 2.0</span>
-                <span className={styles.projectTag}>GLSL</span>
-                <span className={styles.projectTag}>Web Audio API</span>
-                <span className={styles.projectTag}>Blender 3D</span>
+              <div className={styles.projectTagsGroup}>
+                <span className={styles.projectTagItem}>WebGL 2.0</span>
+                <span className={styles.projectTagItem}>GLSL Shaders</span>
+                <span className={styles.projectTagItem}>Web Audio API</span>
+                <span className={styles.projectTagItem}>Blender 3D</span>
               </div>
             </div>
 
-            <div className={styles.projectCard}>
-              <div className={styles.projectCardTop}>
-                <h3 className={styles.projectName}>
-                  Self-Hosted Infrastructure &amp; Mail Relays
-                </h3>
+            <div className={styles.projectRowItem}>
+              <div className={styles.projectRowTop}>
+                <h3 className={styles.projectName}>Self-Hosted Infrastructure &amp; Relays</h3>
                 <span className={styles.projectBadge}>Systems</span>
               </div>
               <p className={styles.projectDesc}>
                 Private cloud VMs, automated Docker microservices, dedicated SMTP relay clusters, and privacy-first web telemetry engines.
               </p>
-              <div className={styles.projectTagsRow}>
-                <span className={styles.projectTag}>Oracle Cloud</span>
-                <span className={styles.projectTag}>Docker</span>
-                <span className={styles.projectTag}>PostgreSQL</span>
-                <span className={styles.projectTag}>Cloudflare Edge</span>
+              <div className={styles.projectTagsGroup}>
+                <span className={styles.projectTagItem}>Oracle Cloud</span>
+                <span className={styles.projectTagItem}>Docker</span>
+                <span className={styles.projectTagItem}>PostgreSQL</span>
+                <span className={styles.projectTagItem}>Cloudflare Edge</span>
               </div>
             </div>
 
-            <div className={styles.projectCard}>
-              <div className={styles.projectCardTop}>
-                <h3 className={styles.projectName}>
-                  Minimalist Q&amp;A &amp; Visitor Stream
-                </h3>
+            <div className={styles.projectRowItem}>
+              <div className={styles.projectRowTop}>
+                <h3 className={styles.projectName}>Minimalist Q&amp;A Engine</h3>
                 <span className={styles.projectBadge}>Web App</span>
               </div>
               <p className={styles.projectDesc}>
                 Interactive anonymous question-and-answer platform featuring real-time Firebase syncing, security IP firewall controls, and instant email dispatch.
               </p>
-              <div className={styles.projectTagsRow}>
-                <span className={styles.projectTag}>Next.js 16</span>
-                <span className={styles.projectTag}>React 19</span>
-                <span className={styles.projectTag}>Firebase Realtime</span>
-                <span className={styles.projectTag}>Framer Motion</span>
+              <div className={styles.projectTagsGroup}>
+                <span className={styles.projectTagItem}>Next.js 16</span>
+                <span className={styles.projectTagItem}>React 19</span>
+                <span className={styles.projectTagItem}>Firebase Realtime</span>
+                <span className={styles.projectTagItem}>Framer Motion</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── 4. CAPABILITIES MATRIX ── */}
-        <section>
-          <div className={styles.sectionHeader}>
+        {/* ── 4. CAPABILITIES & STACK ── */}
+        <section className={styles.sectionBlock}>
+          <div className={styles.sectionHeaderRow}>
             <h2 className={styles.sectionTitle}>Capabilities &amp; Stack</h2>
             <span className={styles.sectionTag}>Technical Specs</span>
           </div>
 
-          <div className={styles.skillsCard}>
-            <div className={styles.skillCategoryBlock}>
-              <span className={styles.skillCategoryLabel}>Frontend &amp; Design Systems</span>
-              <div className={styles.skillBadgesFlex}>
-                {['Next.js 16 (App Router)', 'React 19', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Figma Tokens', 'Micro-interactions'].map((s) => (
-                  <span key={s} className={styles.skillPill}>{s}</span>
+          <div className={styles.skillsCategoriesGrid}>
+            <div className={styles.skillGroup}>
+              <span className={styles.skillGroupLabel}>Frontend &amp; Systems</span>
+              <div className={styles.skillPillsFlex}>
+                {['Next.js 16 (App Router)', 'React 19', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Figma Tokens'].map((s) => (
+                  <span key={s} className={styles.skillPillItem}>{s}</span>
                 ))}
               </div>
             </div>
 
-            <div className={styles.skillCategoryBlock}>
-              <span className={styles.skillCategoryLabel}>Creative 3D &amp; Audio</span>
-              <div className={styles.skillBadgesFlex}>
+            <div className={styles.skillGroup}>
+              <span className={styles.skillGroupLabel}>Creative Tech &amp; 3D</span>
+              <div className={styles.skillPillsFlex}>
                 {['Three.js', 'WebGL 2.0', 'GLSL Shaders', '3D Configurator', 'Web Audio API', 'Blender'].map((s) => (
-                  <span key={s} className={styles.skillPill}>{s}</span>
+                  <span key={s} className={styles.skillPillItem}>{s}</span>
                 ))}
               </div>
             </div>
 
-            <div className={styles.skillCategoryBlock}>
-              <span className={styles.skillCategoryLabel}>Cloud &amp; Infrastructure</span>
-              <div className={styles.skillBadgesFlex}>
+            <div className={styles.skillGroup}>
+              <span className={styles.skillGroupLabel}>Cloud &amp; Infrastructure</span>
+              <div className={styles.skillPillsFlex}>
                 {['Oracle Cloud VM', 'Docker & Compose', 'PostgreSQL', 'Redis Cache', 'Cloudflare Edge SSL'].map((s) => (
-                  <span key={s} className={styles.skillPill}>{s}</span>
+                  <span key={s} className={styles.skillPillItem}>{s}</span>
                 ))}
               </div>
             </div>
 
-            <div className={styles.skillCategoryBlock}>
-              <span className={styles.skillCategoryLabel}>Physical Atelier &amp; Leather</span>
-              <div className={styles.skillBadgesFlex}>
-                {['Italian Vegetable-Tanned Leather', 'Pattern Drafting', 'Hand Saddle Stitching', 'Tokonole Burnishing', '925 Silver'].map((s) => (
-                  <span key={s} className={styles.skillPill}>{s}</span>
+            <div className={styles.skillGroup}>
+              <span className={styles.skillGroupLabel}>Physical Atelier &amp; Leather</span>
+              <div className={styles.skillPillsFlex}>
+                {['Italian Vegetable Leather', 'Pattern Drafting', 'Hand Saddle Stitching', 'Edge Burnishing', '925 Silver'].map((s) => (
+                  <span key={s} className={styles.skillPillItem}>{s}</span>
                 ))}
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── 5. ABOUT & BACKGROUND ── */}
-        <section>
-          <div className={styles.sectionHeader}>
+        {/* ── 5. BACKGROUND / ESSAY ── */}
+        <section className={styles.sectionBlock}>
+          <div className={styles.sectionHeaderRow}>
             <h2 className={styles.sectionTitle}>The Strange Mix</h2>
             <span className={styles.sectionTag}>Background</span>
           </div>
 
-          <div className={styles.skillsCard} style={{ fontSize: '0.88rem', lineHeight: '1.65', color: 'var(--p-text-muted)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <p style={{ margin: 0 }}>
+          <div className={styles.editorialProse}>
+            <p>
               I never really figured out how to fit into a single corporate job title, and honestly, I stopped trying a long time ago. Some days I am deep in VS Code tuning Next.js rendering performance and spinning up self-hosted cloud containers. Other days I am in Figma obsessing over spatial layout tokens, or saddle-stitching an Italian vegetable-tanned leather notebook cover with hot tea getting cold next to me.
             </p>
-            <p style={{ margin: 0 }}>
+            <p>
               For me, the fun has always been building things from scratch. Whether it is an interactive web tool with zero bloated dependencies or a physical leather wallet designed to outlive all of us, the contrast between glowing pixels and raw tangible materials keeps my mind sharp and happy.
             </p>
           </div>
         </section>
 
-        {/* ── 6. FOOTER ── */}
-        <footer className={styles.footerSection}>
-          <span>&copy; {new Date().getFullYear()} Ivan Affriandi</span>
-          <span>Tangerang, Indonesia</span>
+        {/* ── 6. FOOTER WITH LARGE EMAIL BUTTON & COPYRIGHT ── */}
+        <footer className={styles.footerArea}>
+          <div className={styles.emailCtaRow}>
+            <span className={styles.emailCtaLabel}>Have a project in mind?</span>
+            <a href="mailto:hello@ivanaffriandi.com" className={styles.emailCtaBtn}>
+              <span>hello@ivanaffriandi.com</span>
+              <span>Send an Email ↗</span>
+            </a>
+          </div>
+
+          <div className={styles.copyrightRow}>
+            <span>&copy; {new Date().getFullYear()} Ivan Affriandi</span>
+            <span>Tangerang, Indonesia</span>
+          </div>
         </footer>
       </div>
     </div>
