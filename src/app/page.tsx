@@ -77,7 +77,7 @@ const FUN_PHRASES = [
   "Tap my head again :)",
 ];
 
-// Ultra-dense matrix dataset for 26 continuous running rows
+// Ultra-dense matrix dataset for continuous running rows
 const MATRIX_ROWS = [
   "UI/UX DESIGN • NEXT.JS 16 • TYPESCRIPT • THREE.JS • ITALIAN LEATHER • FIGMA TOKENS • WEBGL 2.0 • REACT 19 • ",
   "INDONESIAN (NATIVE) • ENGLISH (FLUENT) • DUTCH (NEDERLANDS) • SUNDANESE • TYPOGRAPHY SYSTEMS • ",
@@ -226,10 +226,11 @@ export default function AvantGardeHomepage() {
   const currentFullText = FUN_PHRASES[phraseIndex];
   const isMarqueeActive = phraseIndex === 6; // State right before "Tap my head again :)"
 
-  // Filtered Search Results
+  // Filtered Search Results (ONLY calculated when query is non-empty)
   const searchResults = useMemo(() => {
-    if (!searchQuery.trim()) return SEARCH_DATABASE;
-    const q = searchQuery.toLowerCase();
+    const trimmed = searchQuery.trim();
+    if (!trimmed) return [];
+    const q = trimmed.toLowerCase();
     return SEARCH_DATABASE.filter(
       (item) =>
         item.title.toLowerCase().includes(q) ||
@@ -237,6 +238,8 @@ export default function AvantGardeHomepage() {
         item.category.toLowerCase().includes(q)
     );
   }, [searchQuery]);
+
+  const hasTyped = searchQuery.trim().length > 0;
 
   // Letter-by-Letter Typing Effect
   useEffect(() => {
@@ -321,16 +324,20 @@ export default function AvantGardeHomepage() {
       </AnimatePresence>
 
       <div className={styles.mainContainer}>
-        {/* ── 1. 3-ISLAND FLOATING TOP NAVBAR (CIRCULAR IA + SEARCH PILLBAR + CIRCULAR MENU) ── */}
+        {/* ── 1. TOP-ALIGNED 3-ISLAND NAVBAR (CIRCULAR IA + EXPANDING SEARCH PILL + CIRCULAR MENU) ── */}
         <header className={styles.topThreeIslandsRow}>
           {/* Left Island: Standalone Circular IA Button */}
           <Link href="/" className={styles.circularLogoIsland} title="Ivan Affriandi">
             IA
           </Link>
 
-          {/* Center Island: Standalone Search Pillbar with Inline Expanding Results */}
+          {/* Center Island: Standalone Search Pillbar with Horizontal Expanding Focus */}
           <div className={styles.centerSearchIslandWrap}>
-            <div className={styles.centerSearchPillbar}>
+            <div
+              className={`${styles.centerSearchPillbar} ${
+                isSearchFocused ? styles.centerSearchPillbarActive : ''
+              }`}
+            >
               <span className={styles.searchIconSvg}>
                 <SearchIcon />
               </span>
@@ -354,16 +361,16 @@ export default function AvantGardeHomepage() {
                   type="button"
                   onClick={() => setSearchQuery('')}
                   className={styles.clearSearchBtn}
-                  title="Clear"
+                  title="Clear search"
                 >
                   <CloseXIcon />
                 </button>
               )}
             </div>
 
-            {/* Expandable Results Dropdown (Opens right under search pillbar on focus/typing) */}
+            {/* Expandable Results Dropdown (ONLY shown when query has typed characters) */}
             <AnimatePresence>
-              {isSearchFocused && (
+              {isSearchFocused && hasTyped && (
                 <motion.div
                   initial={{ opacity: 0, y: -6, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -379,7 +386,10 @@ export default function AvantGardeHomepage() {
                         target={item.isExternal ? '_blank' : undefined}
                         rel={item.isExternal ? 'noopener noreferrer' : undefined}
                         className={styles.searchResultRow}
-                        onClick={() => setIsSearchFocused(false)}
+                        onClick={() => {
+                          setIsSearchFocused(false);
+                          setSearchQuery('');
+                        }}
                       >
                         <div className={styles.searchResultRowLeft}>
                           <span className={styles.searchResultRowTitle}>{item.title}</span>
@@ -390,7 +400,7 @@ export default function AvantGardeHomepage() {
                     ))
                   ) : (
                     <div className={styles.searchEmptyRow}>
-                      No results found for &ldquo;{searchQuery}&rdquo;
+                      No matching results found for &ldquo;{searchQuery}&rdquo;
                     </div>
                   )}
                 </motion.div>
