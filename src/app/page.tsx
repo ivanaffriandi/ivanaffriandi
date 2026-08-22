@@ -37,7 +37,7 @@ const RoundedEmailIcon = () => (
 
 // Minimal Close (✕) Icon
 const MinimalCloseIcon = () => (
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <line x1="18" y1="6" x2="6" y2="18" />
     <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
@@ -305,18 +305,19 @@ export default function AvantGardeHomepage() {
         </footer>
       </div>
 
-      {/* ── FULL-SCREEN SIMPLE MINIMALIST MENU OVERLAY (PURE MENU LINKS) ── */}
+      {/* ── FULL-SCREEN FLICKER-FREE COMPACT MENU OVERLAY ── */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2, ease: [0.25, 1, 0.5, 1] }}
             className={styles.fullScreenMenuOverlay}
           >
-            {/* Top Right: Clean Close Button */}
+            {/* Header: Brand Name + Close Button */}
             <div className={styles.fullScreenMenuHeader}>
+              <span className={styles.menuBrandTitle}>AFFRIANDI, IVAN</span>
               <button
                 type="button"
                 onClick={() => setIsMenuOpen(false)}
@@ -328,7 +329,7 @@ export default function AvantGardeHomepage() {
               </button>
             </div>
 
-            {/* Center / Navigation List */}
+            {/* Navigation List: Blog, Work (Soon), Ask */}
             <div className={styles.fullScreenNavList}>
               <a
                 href="https://blog.ivanaffriandi.com"
@@ -338,6 +339,16 @@ export default function AvantGardeHomepage() {
                 <span className={styles.navItemDot} />
                 <span>Blog</span>
               </a>
+
+              {/* Work (Disabled / Soon) */}
+              <div
+                className={`${styles.fullScreenNavItem} ${styles.navItemDisabled}`}
+                title="Work portfolio coming soon"
+              >
+                <span className={styles.navItemDot} />
+                <span>Work</span>
+                <span className={styles.soonBadge}>Soon</span>
+              </div>
 
               <Link
                 href="/ask"
@@ -349,8 +360,8 @@ export default function AvantGardeHomepage() {
               </Link>
             </div>
 
-            {/* Bottom Spacer */}
-            <div style={{ height: '36px' }} />
+            {/* Bottom Safe Area Space */}
+            <div style={{ height: '24px' }} />
           </motion.div>
         )}
       </AnimatePresence>
