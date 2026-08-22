@@ -50,9 +50,10 @@ function TwoCardStackedQA({
           height: "100%",
           position: "relative",
           boxSizing: "border-box",
+          transform: "translateZ(0)",
         }}
       >
-        {/* ── CARD 1: QUESTION CARD (ANIMATES HEIGHT & COLOR MORPH) ── */}
+        {/* ── CARD 1: QUESTION CARD ── */}
         <motion.div
           animate={{
             height: isActive ? 144 : "100%",
@@ -82,7 +83,9 @@ function TwoCardStackedQA({
             boxShadow: "var(--ask-shadow)",
             overflow: "hidden",
             zIndex: 10,
-            willChange: "height, border-radius",
+            transform: "translateZ(0)",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
           }}
         >
           {/* TOP ROW: SENDER & DATE */}
@@ -147,7 +150,7 @@ function TwoCardStackedQA({
             </p>
           </div>
 
-          {/* COMPACT IOS FOOTER (COLLAPSED STATE) */}
+          {/* COMPACT IOS FOOTER */}
           <div
             style={{
               display: "flex",
@@ -175,7 +178,7 @@ function TwoCardStackedQA({
           </div>
         </motion.div>
 
-        {/* ── CARD 2: SEPARATE ANSWER CARD (SLIDES UP FROM BOTTOM LIKE IOS MODAL) ── */}
+        {/* ── CARD 2: SEPARATE ANSWER CARD (SLIDES UP FROM BOTTOM) ── */}
         <motion.div
           initial={false}
           animate={{
@@ -208,7 +211,9 @@ function TwoCardStackedQA({
             boxShadow: "var(--ask-shadow)",
             zIndex: 5,
             pointerEvents: isActive ? "auto" : "none",
-            willChange: "transform, opacity",
+            transform: "translateZ(0)",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
           }}
         >
           {/* TOP ROW: IVAN & DATE */}
@@ -344,7 +349,6 @@ export default function AskPage() {
     <div
       className="ask-viewport-root"
       onClick={() => {
-        // Tapping anywhere outside the cards closes any open answer
         if (activeQAId !== null) setActiveQAId(null);
       }}
     >
@@ -359,7 +363,7 @@ export default function AskPage() {
           --ask-badge-bg: rgba(0, 0, 0, 0.05);
           --ask-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
           
-          /* INVERTED CARD IN LIGHT MODE (BLACK BG, WHITE TEXT) */
+          /* INVERTED CARD IN LIGHT MODE */
           --ask-inv-bg: #121212;
           --ask-inv-text: #FFFFFF;
           --ask-inv-sub: #A0A0A0;
@@ -376,7 +380,7 @@ export default function AskPage() {
             --ask-badge-bg: rgba(255, 255, 255, 0.07);
             --ask-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6);
 
-            /* INVERTED CARD IN DARK MODE (WHITE BG, BLACK TEXT) */
+            /* INVERTED CARD IN DARK MODE */
             --ask-inv-bg: #FFFFFF;
             --ask-inv-text: #121212;
             --ask-inv-sub: #555555;
@@ -393,14 +397,14 @@ export default function AskPage() {
           --ask-badge-bg: rgba(255, 255, 255, 0.07);
           --ask-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6);
 
-          /* INVERTED CARD IN DARK MODE (WHITE BG, BLACK TEXT) */
+          /* INVERTED CARD IN DARK MODE */
           --ask-inv-bg: #FFFFFF;
           --ask-inv-text: #121212;
           --ask-inv-sub: #555555;
           --ask-inv-border: rgba(0, 0, 0, 0.14);
         }
 
-        /* ── LOCK VIEWPORT TO 100% SINGLE SCREEN (NO VERTICAL SCROLL) ── */
+        /* ── LOCK VIEWPORT (GPU COMPOSITED, NO FLICKERING) ── */
         body, html, .layout-wrapper, .content-wrapper, main, main > div {
           margin: 0 !important;
           padding: 0 !important;
@@ -427,6 +431,9 @@ export default function AskPage() {
           color: var(--ask-text);
           padding: calc(env(safe-area-inset-top, 0px) + 1.2rem) 0 calc(env(safe-area-inset-bottom, 0px) + 1.6rem) 0;
           user-select: none;
+          transform: translateZ(0);
+          backface-visibility: hidden;
+          WebkitBackfaceVisibility: hidden;
         }
 
         /* ── TOP BAR: HOME AT LEFT, ASK AT RIGHT ── */
@@ -548,6 +555,7 @@ export default function AskPage() {
           padding: 0.4rem calc((100vw - min(88vw, 360px)) / 2);
           box-sizing: border-box;
           -webkit-overflow-scrolling: touch;
+          transform: translateZ(0);
         }
 
         .qa-carousel-track::-webkit-scrollbar {
@@ -560,6 +568,7 @@ export default function AskPage() {
           position: relative;
           flex-shrink: 0;
           scroll-snap-align: center;
+          transform: translateZ(0);
         }
 
         /* ── CARD STATES ── */
@@ -646,19 +655,18 @@ export default function AskPage() {
           color: var(--ask-text-sub);
         }
 
-        /* ── IMMERSIVE BLURRED BACKDROP FOR ASK DRAWER (NO 'X' BUTTON) ── */
+        /* ── IMMERSIVE BACKDROP (PURE GPU COMPOSITE, ZERO RE-RASTER FLICKER) ── */
         .ask-drawer-backdrop {
           position: fixed;
           inset: 0;
-          background: rgba(0, 0, 0, 0.78);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
+          background: rgba(0, 0, 0, 0.72);
           z-index: 9999;
           display: flex;
           align-items: flex-end;
           justify-content: center;
           padding: 0 1rem calc(env(safe-area-inset-bottom, 0px) + 1.25rem);
           box-sizing: border-box;
+          transform: translateZ(0);
         }
 
         .ask-drawer-card {
@@ -672,6 +680,9 @@ export default function AskPage() {
           box-sizing: border-box;
           box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
           position: relative;
+          transform: translateZ(0);
+          backface-visibility: hidden;
+          WebkitBackfaceVisibility: hidden;
         }
 
         .ask-drawer-header {
@@ -840,7 +851,7 @@ export default function AskPage() {
         )}
       </div>
 
-      {/* ── CLEAN BOTTOM DRAWER WITH SPRING ANIMATION & DEEP BLUR BACKDROP ── */}
+      {/* ── CLEAN BOTTOM DRAWER WITH BUTTERY SPRING ANIMATION (NO BLUR REPAINT FLASH) ── */}
       <AnimatePresence>
         {isDrawerOpen && (
           <motion.div
@@ -848,7 +859,7 @@ export default function AskPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.28 }}
+            transition={{ duration: 0.22 }}
             onClick={() => setIsDrawerOpen(false)}
           >
             <motion.div
