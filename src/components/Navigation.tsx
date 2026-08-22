@@ -141,8 +141,8 @@ export default function Navigation() {
     }
   }, []);
 
-  // Hide navigation ONLY on /work
-  if (pathname?.startsWith("/work") || isWorkDomain) {
+  // Hide navigation on /work and /ask
+  if (pathname?.startsWith("/work") || pathname?.startsWith("/ask") || isWorkDomain) {
     return null;
   }
 

@@ -3,31 +3,19 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
+import Link from "next/link";
 
-const CATEGORIES = [
-  { id: "all", label: "All Questions" },
-  { id: "tech", label: "Tech & Code" },
-  { id: "design", label: "Design & 3D" },
-  { id: "philosophy", label: "Philosophy & Books" },
-  { id: "personal", label: "Personal" },
-];
-
-function getCategoryFromText(text: string): string {
-  const lower = (text || "").toLowerCase();
-  if (lower.includes("tech") || lower.includes("stack") || lower.includes("coding") || lower.includes("rust") || lower.includes("next") || lower.includes("code") || lower.includes("react") || lower.includes("tutor")) {
-    return "tech";
-  }
-  if (lower.includes("design") || lower.includes("ui") || lower.includes("ux") || lower.includes("3d") || lower.includes("render") || lower.includes("studio") || lower.includes("object")) {
-    return "design";
-  }
-  if (lower.includes("buku") || lower.includes("book") || lower.includes("baca") || lower.includes("mind") || lower.includes("perspektif") || lower.includes("pikiran") || lower.includes("filsafat") || lower.includes("philosophy")) {
-    return "philosophy";
-  }
-  return "personal";
-}
-
-function FlippableQACard({ qa }: { qa: any }) {
-  const [isFlipped, setIsFlipped] = useState(false);
+function TwoCardStackedQA({
+  qa,
+  isActive,
+  onOpen,
+  onClose,
+}: {
+  qa: any;
+  isActive: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+}) {
   const rawAnswer = typeof qa.answer === "string" ? qa.answer.trim() : "";
   const hasAnswer =
     rawAnswer.length > 0 &&
@@ -35,196 +23,240 @@ function FlippableQACard({ qa }: { qa: any }) {
     rawAnswer.toLowerCase() !== "undefined";
 
   const questionText = qa.content || qa.question || "";
-  const categoryId = getCategoryFromText(questionText);
-  const categoryLabel = CATEGORIES.find((c) => c.id === categoryId)?.label || "Question";
+  const senderName = qa.name ? qa.name : qa.author ? qa.author : "Anonymous";
 
   const answerText = hasAnswer
     ? rawAnswer
-    : questionText.toLowerCase().includes("tech") || questionText.toLowerCase().includes("stack") || questionText.toLowerCase().includes("coding")
-    ? "I rely on Next.js & React for web applications, custom Rust (Axum) for high-performance microservices, Tailwind/CSS for styling, and Figma for design systems."
-    : questionText.toLowerCase().includes("baca") || questionText.toLowerCase().includes("book")
-    ? "Some of my favorite reads include 'The Design of Everyday Things' by Don Norman, 'Meditations' by Marcus Aurelius, and works on minimal architecture."
+    : questionText.toLowerCase().includes("tech") ||
+      questionText.toLowerCase().includes("stack") ||
+      questionText.toLowerCase().includes("coding")
+    ? "I rely on Next.js & React for frontends, Rust (Axum) for high-performance microservices, Tailwind/CSS for expressive design systems, and Figma for craft."
+    : questionText.toLowerCase().includes("baca") ||
+      questionText.toLowerCase().includes("book")
+    ? "Some of my favorite foundational reads include 'The Design of Everyday Things' by Don Norman, 'Meditations' by Marcus Aurelius, and works on architecture & minimalism."
     : "Thank you for asking! I approach every project with focus on clean aesthetics, tactile interaction details, high performance, and intuitive design.";
 
   return (
     <div
-      style={{
-        perspective: "1200px",
-        cursor: "pointer",
-        width: "100%",
+      className="qa-card-wrapper"
+      onClick={(e) => {
+        e.stopPropagation();
       }}
-      onClick={() => setIsFlipped(!isFlipped)}
     >
-      <motion.div
-        animate={{ rotateY: isFlipped ? 180 : 0 }}
-        transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
+      <div
+        className="qa-stack-container"
         style={{
           width: "100%",
-          transformStyle: "preserve-3d",
-          willChange: "transform",
+          height: "100%",
+          position: "relative",
+          boxSizing: "border-box",
+          contain: "paint layout",
         }}
       >
-        {!isFlipped ? (
-          /* FRONT SIDE (QUESTION) */
-          <div
-            style={{
-              backfaceVisibility: "hidden",
-              WebkitBackfaceVisibility: "hidden",
-              background: "linear-gradient(145deg, #18181b 0%, #111113 100%)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              borderRadius: "18px",
-              padding: "1.35rem 1.4rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.95rem",
-              boxSizing: "border-box",
-              boxShadow: "0 8px 30px rgba(0,0,0,0.35)",
-              minHeight: "135px",
-              justifyContent: "space-between",
-              transition: "border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease",
-            }}
-            className="qa-card-hover"
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <span
-                  style={{
-                    fontSize: "0.58rem",
-                    fontWeight: 700,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    color: "rgba(255,255,255,0.55)",
-                    fontFamily: "var(--font-sans, -apple-system, sans-serif)",
-                  }}
-                >
-                  {qa.name ? qa.name : qa.author ? qa.author : "ANONYMOUS"}
-                </span>
-                <span
-                  style={{
-                    fontSize: "0.52rem",
-                    fontWeight: 600,
-                    color: "rgba(255,255,255,0.35)",
-                    backgroundColor: "rgba(255,255,255,0.06)",
-                    padding: "2px 6px",
-                    borderRadius: "4px",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {categoryLabel}
-                </span>
-              </div>
+        {/* ── CARD 1: QUESTION CARD (MORPHS WITH PURE GPU SPRING) ── */}
+        <div
+          className={`qa-question-card ${isActive ? "qa-card-inverted" : "qa-card-normal"}`}
+          onClick={() => {
+            if (!isActive) onOpen();
+          }}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: isActive ? "146px" : "100%",
+            borderRadius: isActive ? "22px" : "28px",
+            padding: isActive ? "1rem 1.25rem" : "1.6rem 1.6rem 1.3rem",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            boxSizing: "border-box",
+            cursor: isActive ? "default" : "pointer",
+            boxShadow: "var(--ask-shadow)",
+            overflow: "hidden",
+            zIndex: 2,
+            transition: "height 0.46s cubic-bezier(0.32, 0.72, 0, 1), padding 0.46s cubic-bezier(0.32, 0.72, 0, 1), border-radius 0.46s cubic-bezier(0.32, 0.72, 0, 1), background-color 0.35s cubic-bezier(0.32, 0.72, 0, 1), border-color 0.35s cubic-bezier(0.32, 0.72, 0, 1), color 0.35s cubic-bezier(0.32, 0.72, 0, 1)",
+            willChange: "height, padding, border-radius, background-color",
+          }}
+        >
+          {/* TOP ROW: SENDER & DATE */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexShrink: 0 }}>
+            <span
+              style={{
+                fontSize: isActive ? "0.82rem" : "0.92rem",
+                fontWeight: 800,
+                letterSpacing: "-0.01em",
+              }}
+              className={isActive ? "qa-inv-primary" : "qa-text-primary"}
+            >
+              {senderName}
+            </span>
+            <span
+              style={{
+                fontSize: "0.62rem",
+                fontWeight: 500,
+              }}
+              className={isActive ? "qa-inv-muted" : "qa-text-muted"}
+            >
+              {new Date(qa.published || Date.now()).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </span>
+          </div>
 
-              <span
-                style={{
-                  fontSize: "0.58rem",
-                  fontWeight: 700,
-                  letterSpacing: "0.06em",
-                  color: "rgba(255,255,255,0.75)",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.3rem",
-                  fontFamily: "var(--font-sans, -apple-system, sans-serif)",
-                  backgroundColor: "rgba(255,255,255,0.08)",
-                  padding: "3px 8px",
-                  borderRadius: "20px",
-                }}
-              >
-                FLIP ↺
-              </span>
+          {/* QUOTE & QUESTION CONTENT */}
+          <div style={{ display: "flex", flexDirection: "column", gap: isActive ? "0.1rem" : "0.35rem", margin: isActive ? "0.15rem 0" : "0.6rem 0", flex: 1, overflow: "hidden" }}>
+            <div
+              className="qa-quote-mark"
+              style={{
+                lineHeight: 0.9,
+                fontSize: isActive ? "1.7rem" : "3rem",
+                fontFamily: "Georgia, serif",
+                fontWeight: 900,
+                userSelect: "none",
+                opacity: 0.95,
+                transition: "font-size 0.46s cubic-bezier(0.32, 0.72, 0, 1)",
+              }}
+            >
+              “
             </div>
 
+            <p
+              style={{
+                fontSize: isActive ? "0.84rem" : "1.02rem",
+                lineHeight: isActive ? 1.38 : 1.55,
+                margin: 0,
+                fontWeight: 450,
+                letterSpacing: "-0.015em",
+                display: "-webkit-box",
+                WebkitLineClamp: isActive ? 3 : 5,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+              className={isActive ? "qa-inv-primary" : "qa-text-primary"}
+            >
+              {questionText}
+            </p>
+          </div>
+
+          {/* COMPACT IOS FOOTER */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              paddingTop: "0.55rem",
+              opacity: isActive ? 0 : 1,
+              maxHeight: isActive ? 0 : "40px",
+              pointerEvents: isActive ? "none" : "auto",
+              transition: "opacity 0.25s ease, max-height 0.46s cubic-bezier(0.32, 0.72, 0, 1)",
+              overflow: "hidden",
+              flexShrink: 0,
+            }}
+            className="qa-card-divider"
+          >
+            <button
+              type="button"
+              className="ios-action-pill"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpen();
+              }}
+            >
+              <span>Read answer</span>
+              <span className="ios-chevron">›</span>
+            </button>
+          </div>
+        </div>
+
+        {/* ── CARD 2: SEPARATE ANSWER CARD (PURE GPU SPRING TRANSLATE) ── */}
+        <div
+          className="qa-answer-card"
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "calc(100% - 146px - 0.75rem)",
+            borderRadius: "24px",
+            padding: "1.1rem 1.3rem 1rem",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            boxSizing: "border-box",
+            overflow: "hidden",
+            background: "var(--ask-card-bg)",
+            border: "1px solid var(--ask-border)",
+            boxShadow: "var(--ask-shadow)",
+            zIndex: 1,
+            opacity: isActive ? 1 : 0,
+            transform: isActive ? "translate3d(0, 0, 0) scale(1)" : "translate3d(0, 35px, 0) scale(0.96)",
+            pointerEvents: isActive ? "auto" : "none",
+            transition: "transform 0.46s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.38s cubic-bezier(0.32, 0.72, 0, 1)",
+            willChange: "transform, opacity",
+          }}
+        >
+          {/* TOP ROW: IVAN & DATE */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.35rem", flexShrink: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
+              <span style={{ fontSize: "0.88rem", fontWeight: 800, letterSpacing: "-0.01em" }} className="qa-text-primary">
+                Ivan
+              </span>
+              <span style={{ fontSize: "0.75rem" }} className="qa-text-primary">✦</span>
+            </div>
+
+            <span style={{ fontSize: "0.62rem", fontWeight: 500 }} className="qa-text-muted">
+              {new Date(qa.answeredAt || qa.published || Date.now()).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </span>
+          </div>
+
+          {/* SCROLLABLE ANSWER TEXT */}
+          <div style={{ flex: 1, overflowY: "auto", paddingRight: "0.2rem", margin: "0.2rem 0 0.35rem" }}>
             <p
               style={{
                 fontSize: "0.92rem",
-                lineHeight: 1.55,
-                color: "rgba(255,255,255,0.95)",
+                lineHeight: 1.6,
                 margin: 0,
-                fontFamily: "var(--font-sans, -apple-system, sans-serif)",
-                fontWeight: 500,
-                letterSpacing: "-0.015em",
-              }}
-            >
-              “{questionText}”
-            </p>
-
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "0.2rem" }}>
-              <span style={{ fontSize: "0.56rem", color: "rgba(255,255,255,0.4)" }}>
-                {new Date(qa.published || Date.now()).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-              </span>
-              <span style={{ fontSize: "0.56rem", color: "rgba(255,255,255,0.85)", fontWeight: 600 }}>
-                Read Answer →
-              </span>
-            </div>
-          </div>
-        ) : (
-          /* BACK SIDE (ANSWER) */
-          <div
-            style={{
-              backfaceVisibility: "hidden",
-              WebkitBackfaceVisibility: "hidden",
-              transform: "rotateY(180deg)",
-              background: "linear-gradient(145deg, #121214 0%, #09090b 100%)",
-              border: "1px solid rgba(255,255,255,0.12)",
-              color: "#FFFFFF",
-              borderRadius: "18px",
-              padding: "1.35rem 1.4rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.95rem",
-              boxSizing: "border-box",
-              boxShadow: "0 14px 40px rgba(0,0,0,0.45)",
-              minHeight: "135px",
-              justifyContent: "space-between",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "0.5rem" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "rgba(255,255,255,0.8)", boxShadow: "0 0 6px rgba(255,255,255,0.4)" }} />
-                <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.1em", color: "#FFFFFF", fontFamily: "var(--font-sans, -apple-system, sans-serif)" }}>
-                  IVAN
-                </span>
-              </div>
-              <span
-                style={{
-                  fontSize: "0.56rem",
-                  fontWeight: 700,
-                  letterSpacing: "0.06em",
-                  color: "rgba(255,255,255,0.7)",
-                  fontFamily: "var(--font-sans, -apple-system, sans-serif)",
-                  backgroundColor: "rgba(255,255,255,0.08)",
-                  padding: "3px 8px",
-                  borderRadius: "20px",
-                }}
-              >
-                BACK ↻
-              </span>
-            </div>
-
-            <p
-              style={{
-                fontSize: "0.88rem",
-                lineHeight: 1.62,
-                margin: 0,
-                color: "rgba(255,255,255,0.92)",
-                fontFamily: "var(--font-sans, -apple-system, sans-serif)",
-                fontWeight: 400,
                 letterSpacing: "-0.01em",
+                whiteSpace: "pre-wrap",
               }}
+              className="qa-text-primary"
             >
               {answerText}
             </p>
-
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "0.2rem" }}>
-              <span style={{ fontSize: "0.54rem", color: "rgba(255,255,255,0.45)", fontFamily: "var(--font-sans, -apple-system, sans-serif)" }}>
-                Answered · {new Date(qa.answeredAt || qa.published || Date.now()).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-              </span>
-              <span style={{ fontSize: "0.54rem", color: "rgba(255,255,255,0.3)" }}>
-                Personal Response
-              </span>
-            </div>
           </div>
-        )}
-      </motion.div>
+
+          {/* COMPACT IOS BACK BUTTON */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              paddingTop: "0.45rem",
+              borderTop: "1px solid var(--ask-border)",
+              flexShrink: 0,
+            }}
+          >
+            <button
+              type="button"
+              className="ios-action-pill"
+              onClick={(e) => {
+                e.stopPropagation();
+                onClose();
+              }}
+            >
+              <span className="ios-chevron-back">‹</span>
+              <span>Back</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -232,13 +264,13 @@ function FlippableQACard({ qa }: { qa: any }) {
 export default function AskPage() {
   const [qaList, setQaList] = useState<any[]>([]);
   const [loadingQA, setLoadingQA] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
   const [senderName, setSenderName] = useState("");
   const [qaContent, setQaContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [showToast, setShowToast] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [activeQAId, setActiveQAId] = useState<string | number | null>(null);
 
   const fetchQuestions = async () => {
     try {
@@ -264,31 +296,6 @@ export default function AskPage() {
       .sort((a, b) => new Date(b.published || 0).getTime() - new Date(a.published || 0).getTime());
   }, [qaList]);
 
-  const filteredQAs = useMemo(() => {
-    return sortedQAs.filter((qa) => {
-      const content = (qa.content || qa.question || "").toLowerCase();
-      const name = (qa.name || qa.author || "").toLowerCase();
-      const answer = (qa.answer || "").toLowerCase();
-
-      // Category filter
-      if (selectedCategory !== "all") {
-        const cat = getCategoryFromText(content);
-        if (cat !== selectedCategory) return false;
-      }
-
-      // Search filter
-      if (searchQuery.trim().length > 0) {
-        const query = searchQuery.toLowerCase().trim();
-        return content.includes(query) || name.includes(query) || answer.includes(query);
-      }
-
-      return true;
-    });
-  }, [sortedQAs, selectedCategory, searchQuery]);
-
-  const leftCol = useMemo(() => filteredQAs.filter((_, i) => i % 2 === 0), [filteredQAs]);
-  const rightCol = useMemo(() => filteredQAs.filter((_, i) => i % 2 === 1), [filteredQAs]);
-
   const handleQASubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!qaContent.trim() || isSubmitting) return;
@@ -303,9 +310,15 @@ export default function AskPage() {
       if (!res.ok) throw new Error("Failed to send question");
       setQaContent("");
       setSenderName("");
-      confetti({ particleCount: 80, spread: 70, origin: { y: 0.8 }, colors: ["#3b82f6", "#ffffff", "#60a5fa"] });
+      setIsDrawerOpen(false);
+      confetti({
+        particleCount: 70,
+        spread: 60,
+        origin: { y: 0.85 },
+        colors: ["#FFFFFF", "#888888", "#000000"],
+      });
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 4000);
+      setTimeout(() => setShowToast(false), 3000);
       fetchQuestions();
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to send question");
@@ -315,481 +328,605 @@ export default function AskPage() {
   };
 
   return (
-    <div className="ask-page-container">
+    <div
+      className="ask-viewport-root"
+      onClick={() => {
+        // Tapping anywhere outside the cards closes any open answer
+        if (activeQAId !== null) setActiveQAId(null);
+      }}
+    >
       <style>{`
-        /* ── FORCE LAYOUT WRAPPER OVERRIDE FOR SAFARI ── */
+        /* ── SYSTEM THEME SYNCHRONIZATION VIA CSS VARIABLES ── */
+        :root {
+          --ask-bg: var(--bg-color, #F6F6F4);
+          --ask-card-bg: var(--card-bg-1, #FFFFFF);
+          --ask-text: var(--text-primary, #121212);
+          --ask-text-sub: var(--text-secondary, #525252);
+          --ask-border: var(--border-color, rgba(0, 0, 0, 0.08));
+          --ask-badge-bg: rgba(0, 0, 0, 0.05);
+          --ask-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+          
+          /* INVERTED CARD IN LIGHT MODE (BLACK BG, WHITE TEXT) */
+          --ask-inv-bg: #121212;
+          --ask-inv-text: #FFFFFF;
+          --ask-inv-sub: #A0A0A0;
+          --ask-inv-border: rgba(255, 255, 255, 0.14);
+        }
+
+        @media (prefers-color-scheme: dark) {
+          :root:not([data-theme="light"]) {
+            --ask-bg: var(--bg-color, #121212);
+            --ask-card-bg: var(--card-bg-1, #1A1A1A);
+            --ask-text: var(--text-primary, #F6F6F4);
+            --ask-text-sub: var(--text-secondary, #A0A0A0);
+            --ask-border: var(--border-color, rgba(255, 255, 255, 0.1));
+            --ask-badge-bg: rgba(255, 255, 255, 0.07);
+            --ask-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6);
+
+            /* INVERTED CARD IN DARK MODE (WHITE BG, BLACK TEXT) */
+            --ask-inv-bg: #FFFFFF;
+            --ask-inv-text: #121212;
+            --ask-inv-sub: #555555;
+            --ask-inv-border: rgba(0, 0, 0, 0.14);
+          }
+        }
+
+        html[data-theme="dark"] {
+          --ask-bg: var(--bg-color, #121212);
+          --ask-card-bg: var(--card-bg-1, #1A1A1A);
+          --ask-text: var(--text-primary, #F6F6F4);
+          --ask-text-sub: var(--text-secondary, #A0A0A0);
+          --ask-border: var(--border-color, rgba(255, 255, 255, 0.1));
+          --ask-badge-bg: rgba(255, 255, 255, 0.07);
+          --ask-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6);
+
+          /* INVERTED CARD IN DARK MODE (WHITE BG, BLACK TEXT) */
+          --ask-inv-bg: #FFFFFF;
+          --ask-inv-text: #121212;
+          --ask-inv-sub: #555555;
+          --ask-inv-border: rgba(0, 0, 0, 0.14);
+        }
+
+        /* ── LOCK VIEWPORT TO 100% SINGLE SCREEN (NO VERTICAL SCROLL) ── */
         body, html, .layout-wrapper, .content-wrapper, main, main > div {
           margin: 0 !important;
           padding: 0 !important;
           max-width: 100% !important;
           width: 100% !important;
-        }
-
-        /* ── ASK PAGE CONTAINER (PINNED VIEWPORT GRID) ── */
-        .ask-page-container {
-          position: fixed !important;
-          top: 0 !important;
-          left: 0 !important;
-          right: 0 !important;
-          bottom: 0 !important;
-          width: 100vw !important;
-          height: 100vh !important;
-          background: #09090b;
-          color: #FFFFFF;
-          font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
-          display: grid !important;
-          grid-template-columns: 440px 1fr !important;
+          height: 100% !important;
           overflow: hidden !important;
+          background: var(--ask-bg) !important;
+        }
+
+        .ask-viewport-root {
+          position: fixed !important;
+          inset: 0 !important;
+          width: 100vw !important;
+          height: 100dvh !important;
+          max-height: 100dvh !important;
+          overflow: hidden !important;
+          display: flex !important;
+          flex-direction: column !important;
+          justify-content: space-between !important;
           box-sizing: border-box !important;
-          z-index: 100 !important;
+          font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+          background: var(--ask-bg);
+          color: var(--ask-text);
+          padding: calc(env(safe-area-inset-top, 0px) + 1.2rem) 0 calc(env(safe-area-inset-bottom, 0px) + 1.6rem) 0;
+          user-select: none;
         }
 
-        /* ── RIGHT FEED: ANSWERED QUESTIONS (DARK) ── */
-        .ask-left-stream {
+        /* ── TOP BAR: HOME AT LEFT, ASK AT RIGHT ── */
+        .ask-top-bar {
           width: 100%;
-          min-width: 0;
-          height: 100vh;
-          overflow-y: auto;
-          overflow-x: hidden;
+          padding: 0 1.5rem;
           box-sizing: border-box;
-          padding: 2.2rem 2.4rem;
           display: flex;
-          flex-direction: column;
-          gap: 1.25rem;
-          background: #09090b;
-        }
-
-        .ask-left-stream::-webkit-scrollbar { width: 4px; }
-        .ask-left-stream::-webkit-scrollbar-track { background: transparent; }
-        .ask-left-stream::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
-
-        .ask-stream-header {
-          display: flex;
-          flex-direction: column;
-          gap: 0.9rem;
-          padding-bottom: 0.5rem;
-          padding-bottom: 1.1rem;
-        }
-
-        .ask-header-top {
-          display: flex;
-          align-items: baseline;
+          align-items: center;
           justify-content: space-between;
-          gap: 1rem;
+          z-index: 20;
+          flex-shrink: 0;
         }
 
-        .ask-stream-title {
-          font-size: clamp(1.4rem, 2vw, 1.85rem);
-          font-weight: 800;
-          letter-spacing: -0.03em;
-          color: #FFFFFF;
-          margin: 0;
+        .ask-home-btn {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 0.35rem !important;
+          height: 34px !important;
+          box-sizing: border-box !important;
+          background: var(--ask-badge-bg) !important;
+          backdrop-filter: blur(16px) !important;
+          -webkit-backdrop-filter: blur(16px) !important;
+          border: 1px solid var(--ask-border) !important;
+          color: var(--ask-text) !important;
+          font-size: 0.65rem !important;
+          font-weight: 800 !important;
+          letter-spacing: 0.08em !important;
+          text-transform: uppercase !important;
+          padding: 0 0.85rem !important;
+          border-radius: 9999px !important;
+          text-decoration: none !important;
+          line-height: 1 !important;
+          cursor: pointer !important;
+          transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1) !important;
         }
 
-        .ask-filter-row {
-          display: flex;
-          align-items: center;
-          gap: 0.4rem;
-          overflow-x: auto;
-          no-scrollbar;
-          padding-bottom: 0.2rem;
+        .ask-home-btn:active {
+          transform: scale(0.95) !important;
         }
 
-        .ask-filter-chip {
-          padding: 4px 12px;
-          border-radius: 20px;
-          font-size: 0.7rem;
-          font-weight: 600;
-          letter-spacing: -0.01em;
-          border: 1px solid rgba(255,255,255,0.08);
-          background: rgba(255,255,255,0.04);
-          color: rgba(255,255,255,0.6);
-          cursor: pointer;
-          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-          white-space: nowrap;
+        .ask-top-action-btn {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 0.45rem !important;
+          height: 34px !important;
+          box-sizing: border-box !important;
+          background: var(--ask-text) !important;
+          color: var(--ask-bg) !important;
+          border: none !important;
+          font-size: 0.68rem !important;
+          font-weight: 800 !important;
+          letter-spacing: 0.06em !important;
+          text-transform: uppercase !important;
+          padding: 0 0.95rem !important;
+          border-radius: 9999px !important;
+          cursor: pointer !important;
+          transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1) !important;
         }
 
-        .ask-filter-chip:hover {
-          background: rgba(255,255,255,0.09);
-          color: #FFFFFF;
-          border-color: rgba(255,255,255,0.18);
+        .ask-top-action-btn:active {
+          transform: scale(0.95) !important;
         }
 
-        .ask-filter-chip.active {
-          background: #FFFFFF;
-          color: #000000;
-          border-color: #FFFFFF;
-          font-weight: 700;
-          box-shadow: 0 2px 10px rgba(255,255,255,0.2);
-        }
-
-        .ask-search-box {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 12px;
-          padding: 0.45rem 0.85rem;
+        /* ── CENTER SOCIAL ICONS (INSTAGRAM & X) ── */
+        .ask-center-social-wrap {
           width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0.1rem 0;
+          flex-shrink: 0;
+        }
+
+        .ask-social-link {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: var(--ask-badge-bg);
+          border: 1px solid var(--ask-border);
+          color: var(--ask-text);
+          text-decoration: none;
+          transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+
+        .ask-social-link:hover {
+          background: var(--ask-border);
+          transform: translateY(-2px);
+        }
+
+        .ask-social-link:active {
+          transform: scale(0.92);
+        }
+
+        /* ── BOTTOM STACK: PER-CARD CAROUSEL ── */
+        .ask-bottom-stack {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
           box-sizing: border-box;
-          transition: border-color 0.2s ease, background 0.2s ease;
+          z-index: 10;
         }
 
-        .ask-search-box:focus-within {
-          border-color: rgba(255, 255, 255, 0.35);
-          background: rgba(255, 255, 255, 0.08);
-        }
-
-        .ask-search-input {
-          background: transparent;
-          border: none;
-          outline: none;
-          color: #FFFFFF;
-          font-size: 0.8rem;
+        .qa-carousel-track {
           width: 100%;
+          display: flex;
+          align-items: flex-end;
+          gap: 1.15rem;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          scroll-behavior: smooth;
+          padding: 0.4rem calc((100vw - min(88vw, 360px)) / 2);
+          box-sizing: border-box;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .qa-carousel-track::-webkit-scrollbar {
+          display: none;
+        }
+
+        .qa-card-wrapper {
+          width: min(88vw, 360px);
+          height: clamp(370px, 60vh, 460px);
+          position: relative;
+          flex-shrink: 0;
+          scroll-snap-align: center;
+        }
+
+        /* ── CARD STATES ── */
+        .qa-card-normal {
+          background: var(--ask-card-bg) !important;
+          border: 1px solid var(--ask-border) !important;
+          color: var(--ask-text) !important;
+        }
+
+        .qa-card-inverted {
+          background: var(--ask-inv-bg) !important;
+          border: 1px solid var(--ask-inv-border) !important;
+          color: var(--ask-inv-text) !important;
+        }
+
+        .qa-text-primary {
+          color: var(--ask-text) !important;
+        }
+
+        .qa-text-muted {
+          color: var(--ask-text-sub) !important;
+        }
+
+        .qa-inv-primary {
+          color: var(--ask-inv-text) !important;
+        }
+
+        .qa-inv-muted {
+          color: var(--ask-inv-sub) !important;
+        }
+
+        .qa-quote-mark {
+          color: inherit !important;
+        }
+
+        .qa-card-divider {
+          border-top: 1px solid var(--ask-border) !important;
+        }
+
+        /* ── COMPACT IOS ACTION PILL BUTTONS ── */
+        .ios-action-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.28rem;
+          padding: 0.3rem 0.72rem;
+          border-radius: 9999px;
+          background: var(--ask-badge-bg);
+          border: 1px solid var(--ask-border);
+          font-size: 0.65rem;
+          font-weight: 750;
+          letter-spacing: -0.01em;
+          color: var(--ask-text);
+          cursor: pointer;
+          line-height: 1;
+          transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+
+        .ios-action-pill:hover {
+          background: var(--ask-border);
+        }
+
+        .ios-action-pill:active {
+          transform: scale(0.93);
+          opacity: 0.7;
+        }
+
+        .ios-chevron {
+          font-size: 0.85rem;
+          line-height: 1;
+          font-weight: 800;
+          color: var(--ask-text-sub);
+        }
+
+        .ios-chevron-back {
+          font-size: 0.85rem;
+          line-height: 1;
+          font-weight: 800;
+          color: var(--ask-text-sub);
+        }
+
+        /* ── IMMERSIVE BLURRED BACKDROP FOR ASK DRAWER (NO 'X' BUTTON) ── */
+        .ask-drawer-backdrop {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.78);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          z-index: 9999;
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
+          padding: 0 1rem calc(env(safe-area-inset-bottom, 0px) + 1.25rem);
+          box-sizing: border-box;
+        }
+
+        .ask-drawer-card {
+          background: var(--ask-card-bg);
+          color: var(--ask-text);
+          border: 1px solid var(--ask-border);
+          border-radius: 28px;
+          max-width: 440px;
+          width: 100%;
+          padding: 1.6rem 1.6rem 1.6rem;
+          box-sizing: border-box;
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+          position: relative;
+        }
+
+        .ask-drawer-header {
+          margin-bottom: 1.15rem;
+        }
+
+        .ask-drawer-title {
+          font-size: 1.2rem;
+          font-weight: 850;
+          margin: 0;
+          letter-spacing: -0.02em;
+          color: var(--ask-text);
+        }
+
+        .ask-drawer-input {
+          width: 100%;
+          background: var(--ask-badge-bg);
+          border: 1px solid var(--ask-border);
+          border-radius: 14px;
+          padding: 0.75rem 0.95rem;
+          color: var(--ask-text);
+          font-size: 0.85rem;
+          outline: none;
+          box-sizing: border-box;
           font-family: inherit;
         }
 
-        .ask-search-input::placeholder {
-          color: rgba(255, 255, 255, 0.35);
+        .ask-drawer-input::placeholder,
+        .ask-drawer-textarea::placeholder {
+          color: var(--ask-text-sub);
+          opacity: 0.6;
         }
 
-        .ask-masonry-grid {
-          display: grid;
-          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-          gap: 1.1rem;
-          align-items: start;
-          width: 100%;
-        }
-
-        .qa-card-hover:hover {
-          border-color: rgba(255, 255, 255, 0.2) !important;
-          transform: translateY(-2px);
-          box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5) !important;
-        }
-
-        /* ── LEFT COLUMN: STICKY OCEAN HERO PHOTO ASK QUESTION FORM ── */
-        .ask-right-hero-form {
-          position: relative;
-          width: 100%;
-          height: 100vh;
-          background: #000000;
-          overflow: hidden;
-          box-sizing: border-box;
-          border-right: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .ask-hero-bg-photo {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          background-image: url("/images/ocean_hero_mono.png");
-          background-size: cover;
-          background-position: center bottom;
-          filter: grayscale(100%) contrast(1.15);
-          z-index: 1;
-          transition: transform 1.2s ease-out;
-        }
-
-        .ask-hero-overlay-dark {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(
-            to bottom,
-            #000000 0%,
-            #000000 35px,
-            rgba(0,0,0,0.65) 110px,
-            rgba(0,0,0,0.96) 100%
-          );
-          z-index: 2;
-        }
-
-        .ask-hero-content-wrap {
-          position: relative;
-          z-index: 3;
-          display: flex;
-          flex-direction: column;
-          height: 100%;
-          justify-content: flex-end;
-          padding: 2.4rem 2rem 2.4rem 5rem;
-          box-sizing: border-box;
-          color: #FFFFFF;
-        }
-
-        .ask-form-title {
-          font-size: 1.45rem;
-          font-weight: 800;
-          margin: 0 0 0.35rem 0;
-          color: #FFFFFF;
-          letter-spacing: -0.02em;
-        }
-
-        .ask-form-sub {
-          font-size: 0.8rem;
-          line-height: 1.5;
-          color: rgba(255,255,255,0.72);
-          font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, sans-serif);
-          margin: 0 0 1.25rem 0;
-        }
-
-        .ask-form-card-inner {
-          display: flex;
-          flex-direction: column;
-          gap: 0.85rem;
-        }
-
-        .ask-input-box {
-          background: rgba(255, 255, 255, 0.08);
-          backdrop-filter: blur(24px);
-          -webkit-backdrop-filter: blur(24px);
-          border: 1px solid rgba(255, 255, 255, 0.16);
+        .ask-drawer-textarea-box {
+          background: var(--ask-badge-bg);
+          border: 1px solid var(--ask-border);
           border-radius: 14px;
-          padding: 0.75rem 1rem;
-          transition: all 0.25s ease;
+          padding: 0.75rem 0.95rem;
         }
 
-        .ask-input-box:focus-within {
-          border-color: rgba(255, 255, 255, 0.5);
-          box-shadow: 0 0 18px rgba(255, 255, 255, 0.12);
-          background: rgba(255, 255, 255, 0.12);
-        }
-
-        .ask-text-field {
-          color: #FFFFFF;
+        .ask-drawer-textarea {
+          color: var(--ask-text);
           width: 100%;
           background: transparent;
           border: none;
           outline: none;
+          resize: none;
           font-size: 0.88rem;
-          font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, sans-serif);
-          letter-spacing: -0.01em;
+          line-height: 1.5;
+          box-sizing: border-box;
+          font-family: inherit;
         }
 
-        .ask-text-field::placeholder {
-          color: rgba(255, 255, 255, 0.4);
-          font-style: normal;
-          font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, sans-serif);
-        }
-
-        .ask-submit-btn {
-          background: #FFFFFF;
-          color: #111111;
+        .ask-drawer-submit-btn {
+          width: 100%;
+          background: var(--ask-text);
+          color: var(--ask-bg);
           border: none;
-          border-radius: 20px;
-          padding: 0.72rem 1.6rem;
-          font-size: 0.68rem;
-          font-weight: 800;
-          letter-spacing: 0.12em;
+          border-radius: 9999px;
+          padding: 0.85rem 1.4rem;
+          font-size: 0.76rem;
+          font-weight: 850;
+          letter-spacing: 0.06em;
           text-transform: uppercase;
           cursor: pointer;
-          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 0 4px 20px rgba(255, 255, 255, 0.25);
-          align-self: flex-start;
-          margin-top: 0.4rem;
-          font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, sans-serif);
+          margin-top: 0.3rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.4rem;
         }
 
-        .ask-submit-btn:hover:not(:disabled) {
-          background: #EAEAEA;
-          transform: translateY(-2px);
-          box-shadow: 0 6px 24px rgba(255, 255, 255, 0.35);
-        }
-
-        .ask-submit-btn:active:not(:disabled) {
-          transform: scale(0.96);
-        }
-
-        .ask-submit-btn:disabled {
-          opacity: 0.35;
+        .ask-drawer-submit-btn:disabled {
+          opacity: 0.4;
           cursor: not-allowed;
-          box-shadow: none;
-        }
-
-        /* ─────────────────────────────────────────────
-           PREMIUM MOBILE LAYOUT FOR /ask PAGE
-           ───────────────────────────────────────────── */
-        @media (max-width: 920px) {
-          .ask-page-container {
-            position: relative !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100% !important;
-            height: auto !important;
-            min-height: 100dvh !important;
-            padding-top: 54px !important;
-            grid-template-columns: 1fr !important;
-            overflow: visible !important;
-            background: #080808 !important;
-          }
-
-          .ask-right-hero-form {
-            position: relative !important;
-            width: 100% !important;
-            height: auto !important;
-            min-height: 380px !important;
-            border-right: none !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-          }
-
-          .ask-hero-content-wrap {
-            padding: 2rem 1.4rem !important;
-            justify-content: flex-end !important;
-          }
-
-          .ask-left-stream {
-            height: auto !important;
-            padding: 2rem 1.25rem 5rem !important;
-            background: #09090b !important;
-          }
-
-          .ask-masonry-grid {
-            grid-template-columns: 1fr !important;
-          }
         }
       `}</style>
 
-      {/* ── LEFT: STICKY OCEAN HERO PHOTO ASK QUESTION FORM ── */}
-      <div className="ask-right-hero-form">
-        <div className="ask-hero-bg-photo" />
-        <div className="ask-hero-overlay-dark" />
+      {/* ── TOP BAR: HOME AT LEFT, ASK AT RIGHT ── */}
+      <div className="ask-top-bar" onClick={(e) => e.stopPropagation()}>
+        <Link
+          href="/"
+          className="ask-home-btn"
+          title="Return to Homepage"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          <span>HOME</span>
+        </Link>
 
-        <div className="ask-hero-content-wrap">
-          <h3 className="ask-form-title">Ask Ivan Anything</h3>
-          <p className="ask-form-sub">
-            Ask anonymously or with your handle. Read &amp; replied personally.
-          </p>
-
-          <form onSubmit={handleQASubmit} className="ask-form-card-inner">
-            {errorMsg && (
-              <div style={{ border: "1px solid rgba(255,100,100,0.3)", borderRadius: "10px", padding: "8px 12px", color: "#ff6b6b", fontSize: "0.74rem", background: "rgba(255,50,50,0.1)" }}>
-                {errorMsg}
-              </div>
-            )}
-
-            <div className="ask-input-box">
-              <textarea
-                value={qaContent}
-                onChange={(e) => setQaContent(e.target.value)}
-                placeholder="Write your question..."
-                maxLength={300}
-                rows={3}
-                disabled={isSubmitting}
-                className="ask-text-field"
-                style={{ resize: "none" }}
-              />
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.4rem", paddingTop: "0.35rem", borderTop: "1px solid rgba(255,255,255,0.12)" }}>
-                <span style={{ fontSize: "0.56rem", color: "rgba(255,255,255,0.55)", fontFamily: "var(--font-sans, -apple-system, sans-serif)" }}>
-                  Anonymous
-                </span>
-                <span style={{ fontSize: "0.54rem", color: qaContent.length > 250 ? "#f87171" : "rgba(255,255,255,0.55)", fontWeight: qaContent.length > 250 ? 700 : 400 }}>
-                  {qaContent.length} / 300
-                </span>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting || !qaContent.trim()}
-              className="ask-submit-btn"
-            >
-              {isSubmitting ? "SENDING..." : "SEND QUESTION ✦"}
-            </button>
-          </form>
-        </div>
+        {/* TOP-RIGHT ASK BUTTON WITH FEATHER QUILL ICON */}
+        <button
+          type="button"
+          onClick={() => setIsDrawerOpen(true)}
+          className="ask-top-action-btn"
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
+            <line x1="16" y1="8" x2="2" y2="22" />
+            <line x1="17.5" y1="15" x2="9" y2="15" />
+          </svg>
+          <span>Ask</span>
+        </button>
       </div>
 
-      {/* ── RIGHT STREAM: ANSWERED QUESTIONS WITH 3D FLIPPABLE CARDS ── */}
-      <div className="ask-left-stream">
-        <div className="ask-stream-header">
-          <div className="ask-header-top">
-            <h1 className="ask-stream-title">Questions &amp; Answers</h1>
-            <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)" }}>
-              {filteredQAs.length} {filteredQAs.length === 1 ? "Question" : "Questions"}
-            </span>
-          </div>
+      {/* ── CENTER SOCIAL ICONS: INSTAGRAM & X ── */}
+      <div className="ask-center-social-wrap" onClick={(e) => e.stopPropagation()}>
+        {/* INSTAGRAM */}
+        <a
+          href="https://instagram.com/ivanaffriandi"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ask-social-link"
+          title="Instagram @ivanaffriandi"
+          aria-label="Instagram"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+          </svg>
+        </a>
 
-          {/* Search Input Bar */}
-          <div className="ask-search-box">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search answered questions, topics, or keywords..."
-              className="ask-search-input"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery("")}
-                style={{ background: "none", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: "0.75rem", padding: "0 4px" }}
-              >
-                ✕
-              </button>
-            )}
-          </div>
-        </div>
+        {/* X / TWITTER */}
+        <a
+          href="https://x.com/ivanaffriandi"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ask-social-link"
+          title="X @ivanaffriandi"
+          aria-label="X"
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.258 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
+          </svg>
+        </a>
+      </div>
 
+      {/* ── BOTTOM STACK: PER-CARD TWO-STACK CAROUSEL ── */}
+      <div className="ask-bottom-stack">
         {loadingQA ? (
-          <div style={{ padding: "5rem 0", textAlign: "center", color: "rgba(255,255,255,0.4)", fontSize: "0.85rem" }}>
-            Loading answered questions…
+          <div style={{ width: "100%", textAlign: "center", padding: "2rem 0", color: "var(--ask-text-sub)", fontSize: "0.85rem" }}>
+            Loading…
           </div>
-        ) : filteredQAs.length === 0 ? (
-          <div style={{ padding: "5rem 0", textAlign: "center", color: "rgba(255,255,255,0.4)", fontSize: "0.85rem", display: "flex", flexDirection: "column", gap: "0.5rem", alignItems: "center" }}>
-            <p style={{ margin: 0, fontWeight: 600, color: "rgba(255,255,255,0.7)" }}>No matching questions found.</p>
-            <p style={{ margin: 0, fontSize: "0.76rem" }}>Try searching with different keywords or switch categories.</p>
+        ) : sortedQAs.length === 0 ? (
+          <div style={{ width: "100%", textAlign: "center", padding: "2rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
+            <p style={{ margin: 0, fontWeight: 700, fontSize: "0.95rem" }}>No questions yet</p>
           </div>
         ) : (
-          <div className="ask-masonry-grid">
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
-              {leftCol.map((qa) => (
-                <FlippableQACard key={qa.id || qa.published} qa={qa} />
-              ))}
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
-              {rightCol.map((qa) => (
-                <FlippableQACard key={qa.id || qa.published} qa={qa} />
-              ))}
-            </div>
+          <div className="qa-carousel-track">
+            {sortedQAs.map((qa, index) => {
+              const currentId = qa.id || index;
+              return (
+                <TwoCardStackedQA
+                  key={currentId}
+                  qa={qa}
+                  isActive={activeQAId === currentId}
+                  onOpen={() => setActiveQAId(currentId)}
+                  onClose={() => setActiveQAId(null)}
+                />
+              );
+            })}
           </div>
         )}
       </div>
 
-      {/* TOAST NOTIFICATION */}
+      {/* ── CLEAN BOTTOM DRAWER WITH SPRING ANIMATION & DEEP BLUR BACKDROP ── */}
+      <AnimatePresence>
+        {isDrawerOpen && (
+          <motion.div
+            className="ask-drawer-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.28 }}
+            onClick={() => setIsDrawerOpen(false)}
+          >
+            <motion.div
+              className="ask-drawer-card"
+              initial={{ y: "100%", opacity: 0.6 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "100%", opacity: 0.6 }}
+              transition={{
+                type: "spring",
+                stiffness: 320,
+                damping: 30,
+                mass: 0.8,
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* HEADER (NO 'X' BUTTON) */}
+              <div className="ask-drawer-header">
+                <h2 className="ask-drawer-title">
+                  Ask a Question
+                </h2>
+              </div>
+
+              {errorMsg && (
+                <div style={{ border: "1px solid rgba(255,100,100,0.3)", borderRadius: "10px", padding: "7px 10px", color: "#ff6b6b", fontSize: "0.74rem", background: "rgba(255,50,50,0.1)", marginBottom: "0.85rem" }}>
+                  {errorMsg}
+                </div>
+              )}
+
+              <form onSubmit={handleQASubmit} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                {/* SENDER NAME */}
+                <input
+                  type="text"
+                  value={senderName}
+                  onChange={(e) => setSenderName(e.target.value)}
+                  placeholder="Name or @handle (optional)"
+                  className="ask-drawer-input"
+                />
+
+                {/* QUESTION TEXTAREA */}
+                <div className="ask-drawer-textarea-box">
+                  <textarea
+                    value={qaContent}
+                    onChange={(e) => setQaContent(e.target.value)}
+                    placeholder="Write your question..."
+                    maxLength={300}
+                    rows={3}
+                    disabled={isSubmitting}
+                    className="ask-drawer-textarea"
+                  />
+                </div>
+
+                {/* SUBMIT BUTTON */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !qaContent.trim()}
+                  className="ask-drawer-submit-btn"
+                >
+                  <span>Send</span>
+                  <span>✦</span>
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── SIMPLE TOP-CENTER TOAST NOTIFICATION: SENT ✦ ── */}
       <AnimatePresence>
         {showToast && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 380, damping: 28 }}
             style={{
               position: "fixed",
-              bottom: "2rem",
-              right: "2rem",
-              backgroundColor: "rgba(20,20,24,0.95)",
-              color: "#FFFFFF",
-              padding: "14px 24px",
-              borderRadius: "24px",
-              fontSize: "0.82rem",
-              fontWeight: 700,
-              zIndex: 9999,
-              boxShadow: "0 16px 45px rgba(0,0,0,0.5)",
-              border: "1px solid rgba(255,255,255,0.15)",
-              backdropFilter: "blur(20px)",
+              top: "1.3rem",
+              left: "50%",
+              transform: "translateX(-50%)",
+              backgroundColor: "var(--ask-card-bg)",
+              color: "var(--ask-text)",
+              padding: "7px 16px",
+              borderRadius: "9999px",
+              fontSize: "0.72rem",
+              fontWeight: 850,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              zIndex: 99999,
+              boxShadow: "0 16px 40px rgba(0,0,0,0.28)",
+              border: "1px solid var(--ask-border)",
               display: "flex",
               alignItems: "center",
-              gap: "0.6rem",
+              gap: "0.4rem",
             }}
           >
-            <span style={{ color: "#3b82f6" }}>✦</span>
-            <span>Question sent successfully! Ivan will review it shortly.</span>
+            <span>SENT</span>
+            <span style={{ fontSize: "0.75rem" }}>✦</span>
           </motion.div>
         )}
       </AnimatePresence>

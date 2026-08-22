@@ -98,19 +98,23 @@ function FlippableQACard({ qa, darkTheme = false }: { qa: any; darkTheme?: boole
   const rawAnswer = typeof qa.answer === "string" ? qa.answer.trim() : "";
   const hasAnswer = rawAnswer.length > 0 && rawAnswer.toLowerCase() !== "null" && rawAnswer.toLowerCase() !== "undefined";
 
+  const questionText = qa.content || qa.question || "";
+  const senderName = qa.name ? qa.name : qa.author ? qa.author : "ANONYMOUS";
+  const initial = senderName.replace(/@/g, "").trim().charAt(0).toUpperCase() || "A";
+
   // Thoughtful answer fallback matching Ivan's persona if answer is missing
   const answerText = hasAnswer
     ? rawAnswer
-    : qa.content.toLowerCase().includes("tech") || qa.content.toLowerCase().includes("stack")
+    : questionText.toLowerCase().includes("tech") || questionText.toLowerCase().includes("stack")
     ? "I rely on Next.js & React for frontends, Rust (Axum/Tokio) for high-performance microservices, Tailwind/CSS for styling, and Figma for design systems."
-    : qa.content.toLowerCase().includes("time") || qa.content.toLowerCase().includes("project")
-    ? "Project timelines typically range from 1–2 weeks for a focused minimal web application, up to 4–6 weeks for full design systems & custom backends."
+    : questionText.toLowerCase().includes("baca") || questionText.toLowerCase().includes("book")
+    ? "Some of my favorite foundational reads include 'The Design of Everyday Things' by Don Norman, 'Meditations' by Marcus Aurelius, and works on architecture & minimalism."
     : "Thank you for asking! I approach every project with focus on clean aesthetics, tactile interaction details, high performance, and intuitive design.";
 
   return (
     <div
       style={{
-        perspective: "1000px",
+        perspective: "1200px",
         cursor: "pointer",
         width: "100%",
       }}
@@ -118,7 +122,7 @@ function FlippableQACard({ qa, darkTheme = false }: { qa: any; darkTheme?: boole
     >
       <motion.div
         animate={{ rotateY: isFlipped ? 180 : 0 }}
-        transition={{ duration: 0.52, ease: [0.23, 1, 0.32, 1] }}
+        transition={{ duration: 0.52, ease: [0.16, 1, 0.3, 1] }}
         style={{
           width: "100%",
           transformStyle: "preserve-3d",
@@ -131,70 +135,101 @@ function FlippableQACard({ qa, darkTheme = false }: { qa: any; darkTheme?: boole
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
               background: darkTheme ? "rgba(255, 255, 255, 0.05)" : "#FAFAFA",
-              border: darkTheme ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0,0,0,0.06)",
-              borderRadius: "14px",
-              padding: "1rem 1.15rem",
+              border: darkTheme ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0,0,0,0.08)",
+              borderRadius: "20px",
+              padding: "1.2rem 1.35rem",
               display: "flex",
               flexDirection: "column",
-              gap: "0.75rem",
+              gap: "0.85rem",
               boxSizing: "border-box",
-              boxShadow: darkTheme ? "0 4px 20px rgba(0,0,0,0.25)" : "0 1px 4px rgba(0,0,0,0.03)",
-              minHeight: "115px",
+              boxShadow: darkTheme ? "0 8px 30px rgba(0,0,0,0.35)" : "0 4px 14px rgba(0,0,0,0.04)",
+              minHeight: "130px",
               justifyContent: "space-between",
+              transition: "all 0.2s ease",
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: darkTheme ? "rgba(255,255,255,0.5)" : "#888888" }}>
-                {qa.name ? qa.name : qa.author ? qa.author : "ANONYMOUS"} · {new Date(qa.published || Date.now()).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-              </span>
-              <span style={{ fontSize: "0.52rem", fontWeight: 800, letterSpacing: "0.08em", color: darkTheme ? "#FFFFFF" : "#111111", background: darkTheme ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.05)", padding: "2px 8px", borderRadius: "9999px", display: "flex", alignItems: "center", gap: "0.2rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
+                <div
+                  style={{
+                    width: "24px",
+                    height: "24px",
+                    borderRadius: "50%",
+                    background: "linear-gradient(135deg, #cbf382 0%, #38ef7d 100%)",
+                    color: "#0d1203",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "0.65rem",
+                    fontWeight: 800,
+                  }}
+                >
+                  {initial}
+                </div>
+                <span style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", color: darkTheme ? "rgba(255,255,255,0.7)" : "#555555" }}>
+                  {senderName}
+                </span>
+              </div>
+
+              <span style={{ fontSize: "0.56rem", fontWeight: 800, letterSpacing: "0.06em", color: darkTheme ? "#FFFFFF" : "#111111", background: darkTheme ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)", padding: "3px 8px", borderRadius: "9999px", display: "flex", alignItems: "center", gap: "0.25rem" }}>
                 FLIP ↺
               </span>
             </div>
 
-            <p style={{ fontSize: "0.9rem", lineHeight: 1.5, color: darkTheme ? "#FFFFFF" : "#111111", margin: 0, fontFamily: "var(--font-serif, Georgia, serif)" }}>
-              “{qa.content || qa.question}”
-            </p>
+            <div style={{ display: "flex", gap: "0.5rem", alignItems: "flex-start" }}>
+              <span style={{ color: "#cbf382", fontSize: "1.4rem", lineHeight: 1, fontFamily: "Georgia, serif", fontWeight: 900 }}>“</span>
+              <p style={{ fontSize: "0.92rem", lineHeight: 1.55, color: darkTheme ? "#FFFFFF" : "#111111", margin: 0, fontWeight: 500 }}>
+                {questionText}
+              </p>
+            </div>
 
-            <span style={{ fontSize: "0.52rem", color: darkTheme ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)", textAlign: "right" }}>
-              Tap to read Ivan’s answer →
-            </span>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "0.3rem", borderTop: darkTheme ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.04)" }}>
+              <span style={{ fontSize: "0.54rem", color: darkTheme ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.4)" }}>
+                {new Date(qa.published || Date.now()).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+              </span>
+              <span style={{ fontSize: "0.56rem", color: "#cbf382", fontWeight: 700 }}>
+                Read Answer →
+              </span>
+            </div>
           </div>
         ) : (
-          /* BACK SIDE (ANSWER - NATURAL ADAPTIVE HEIGHT) */
+          /* BACK SIDE (ANSWER) */
           <div
             style={{
               backfaceVisibility: "hidden",
               WebkitBackfaceVisibility: "hidden",
               transform: "rotateY(180deg)",
-              background: darkTheme ? "radial-gradient(ellipse at top, #1c1d24 0%, #0e0f12 100%)" : "#111111",
+              background: "linear-gradient(160deg, #18191e 0%, #0d0e12 100%)",
               color: "#FFFFFF",
-              borderRadius: "14px",
-              border: darkTheme ? "1px solid rgba(255, 255, 255, 0.16)" : "none",
-              padding: "1rem 1.15rem",
+              borderRadius: "20px",
+              border: "1px solid rgba(203, 243, 130, 0.35)",
+              padding: "1.2rem 1.35rem",
               display: "flex",
               flexDirection: "column",
-              gap: "0.75rem",
+              gap: "0.85rem",
               boxSizing: "border-box",
-              boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
-              minHeight: "115px",
+              boxShadow: "0 12px 36px rgba(0,0,0,0.5)",
+              minHeight: "130px",
               justifyContent: "space-between",
             }}
           >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.12)", paddingBottom: "0.45rem" }}>
-              <span style={{ fontSize: "0.58rem", fontWeight: 800, letterSpacing: "0.12em", color: "#FFFFFF" }}>
-                IVAN
-              </span>
-              <span style={{ fontSize: "0.52rem", fontWeight: 800, letterSpacing: "0.08em", color: "rgba(255,255,255,0.7)", background: "rgba(255,255,255,0.1)", padding: "2px 8px", borderRadius: "9999px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "0.45rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.1em", color: "#FFFFFF" }}>
+                  IVAN AFFRIANDI
+                </span>
+                <span style={{ color: "#cbf382", fontSize: "0.75rem" }}>✦</span>
+              </div>
+              <span style={{ fontSize: "0.54rem", fontWeight: 800, letterSpacing: "0.06em", color: "rgba(255,255,255,0.7)", background: "rgba(255,255,255,0.1)", padding: "3px 8px", borderRadius: "9999px" }}>
                 BACK ↻
               </span>
             </div>
 
-            <p style={{ fontSize: "0.85rem", lineHeight: 1.58, margin: 0, color: "rgba(255,255,255,0.95)", fontFamily: "var(--font-serif, Georgia, serif)" }}>
+            <p style={{ fontSize: "0.88rem", lineHeight: 1.6, margin: 0, color: "rgba(255,255,255,0.95)" }}>
               {answerText}
             </p>
 
-            <span style={{ fontSize: "0.52rem", color: "rgba(255,255,255,0.45)", textAlign: "right" }}>
+            <span style={{ fontSize: "0.54rem", color: "rgba(255,255,255,0.45)", textAlign: "right" }}>
               Answered · {new Date(qa.answeredAt || qa.published || Date.now()).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
             </span>
           </div>
