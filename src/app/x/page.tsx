@@ -456,6 +456,9 @@ function AdminPageContent() {
         paddingBottom: "80px",
         boxSizing: "border-box",
         width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
       }}
     >
       <style>{`
@@ -472,9 +475,31 @@ function AdminPageContent() {
           scrollbar-width: none !important;
         }
 
-        /* Comfortable Page Width & Beautiful Margins */
+        /* Top Sticky Header */
+        .admin-sticky-header {
+          width: 100%;
+          background-color: var(--bg-color);
+          border-bottom: 1px solid var(--border-color);
+          position: sticky;
+          top: 0;
+          z-index: 99;
+          display: flex;
+          justify-content: center;
+        }
+
+        .admin-header-inner {
+          max-width: 440px;
+          width: 100%;
+          padding: 12px 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          box-sizing: border-box;
+        }
+
+        /* Page Content: Perfectly Contained with generous 24px margins */
         .admin-page-container {
-          max-width: 520px;
+          max-width: 440px;
           width: 100%;
           margin: 0 auto;
           padding: 20px 20px 80px 20px;
@@ -484,13 +509,7 @@ function AdminPageContent() {
           gap: 14px;
         }
 
-        @media (max-width: 480px) {
-          .admin-page-container {
-            padding: 16px 18px 70px 18px;
-            gap: 12px;
-          }
-        }
-
+        /* Distinct Floating iOS Card */
         .admin-card {
           background-color: var(--card-bg-1);
           border: 1px solid var(--border-color);
@@ -513,12 +532,12 @@ function AdminPageContent() {
           background-color: var(--card-bg-1);
           border: 1px solid var(--border-color);
           border-radius: 18px;
-          padding: 1.1rem 1.15rem;
+          padding: 14px 16px;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
           justifyContent: space-between;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.02);
+          box-shadow: 0 4px 16px rgba(0,0,0,0.02);
         }
 
         .admin-pill-btn {
@@ -622,119 +641,107 @@ function AdminPageContent() {
         }
       `}</style>
 
-      {/* ── TOP HEADER (SOLID, SWITCH AT TOP LEFT, REFRESH & SIGN OUT AT RIGHT) ── */}
-      <header
-        style={{
-          width: "100%",
-          borderBottom: "1px solid var(--border-color)",
-          padding: "0.85rem 1.25rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          boxSizing: "border-box",
-          position: "sticky",
-          top: 0,
-          backgroundColor: "var(--bg-color)",
-          zIndex: 99,
-        }}
-      >
-        {/* TOP LEFT: SEGMENTED SWITCH BUTTONS */}
-        <div style={{ display: "flex", background: "var(--bg-secondary)", borderRadius: "9999px", padding: "2px", border: "1px solid var(--border-color)" }}>
-          <button
-            type="button"
-            onClick={() => handleTabChange("inbox")}
-            style={{
-              border: "none",
-              background: activeTab === "inbox" ? "var(--card-bg-1)" : "transparent",
-              color: activeTab === "inbox" ? "var(--text-primary)" : "var(--text-secondary)",
-              padding: "5px 14px",
-              borderRadius: "9999px",
-              fontSize: "0.74rem",
-              fontWeight: 800,
-              cursor: "pointer",
-              boxShadow: activeTab === "inbox" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              transition: "all 0.15s ease",
-            }}
-          >
-            <span>Inbox</span>
-            {pendingQuestionsCount > 0 && (
-              <span style={{ background: "#FF3B30", color: "#fff", fontSize: "0.58rem", fontWeight: 850, padding: "1px 5px", borderRadius: "9999px" }}>
-                {pendingQuestionsCount}
-              </span>
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleTabChange("analytics")}
-            style={{
-              border: "none",
-              background: activeTab === "analytics" ? "var(--card-bg-1)" : "transparent",
-              color: activeTab === "analytics" ? "var(--text-primary)" : "var(--text-secondary)",
-              padding: "5px 14px",
-              borderRadius: "9999px",
-              fontSize: "0.74rem",
-              fontWeight: 800,
-              cursor: "pointer",
-              boxShadow: activeTab === "analytics" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-              transition: "all 0.15s ease",
-            }}
-          >
-            Analytics
-          </button>
-        </div>
-
-        {/* TOP RIGHT: REFRESH ICON & SIGN OUT */}
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <button
-            type="button"
-            onClick={loadData}
-            title="Refresh data"
-            className="icon-btn"
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className={isRefreshing ? "rotating-icon" : ""}
+      {/* ── TOP HEADER ── */}
+      <header className="admin-sticky-header">
+        <div className="admin-header-inner">
+          {/* TOP LEFT: SEGMENTED SWITCH BUTTONS */}
+          <div style={{ display: "flex", background: "var(--bg-secondary)", borderRadius: "9999px", padding: "2px", border: "1px solid var(--border-color)" }}>
+            <button
+              type="button"
+              onClick={() => handleTabChange("inbox")}
+              style={{
+                border: "none",
+                background: activeTab === "inbox" ? "var(--card-bg-1)" : "transparent",
+                color: activeTab === "inbox" ? "var(--text-primary)" : "var(--text-secondary)",
+                padding: "5px 14px",
+                borderRadius: "9999px",
+                fontSize: "0.74rem",
+                fontWeight: 800,
+                cursor: "pointer",
+                boxShadow: activeTab === "inbox" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                transition: "all 0.15s ease",
+              }}
             >
-              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-            </svg>
-          </button>
+              <span>Inbox</span>
+              {pendingQuestionsCount > 0 && (
+                <span style={{ background: "#FF3B30", color: "#fff", fontSize: "0.58rem", fontWeight: 850, padding: "1px 5px", borderRadius: "9999px" }}>
+                  {pendingQuestionsCount}
+                </span>
+              )}
+            </button>
 
-          <button
-            type="button"
-            onClick={handleLogout}
-            style={{
-              border: "1px solid var(--border-color)",
-              background: "var(--bg-secondary)",
-              color: "var(--text-secondary)",
-              borderRadius: "9999px",
-              padding: "6px 12px",
-              fontSize: "0.7rem",
-              fontWeight: 750,
-              cursor: "pointer",
-            }}
-          >
-            Sign Out
-          </button>
+            <button
+              type="button"
+              onClick={() => handleTabChange("analytics")}
+              style={{
+                border: "none",
+                background: activeTab === "analytics" ? "var(--card-bg-1)" : "transparent",
+                color: activeTab === "analytics" ? "var(--text-primary)" : "var(--text-secondary)",
+                padding: "5px 14px",
+                borderRadius: "9999px",
+                fontSize: "0.74rem",
+                fontWeight: 800,
+                cursor: "pointer",
+                boxShadow: activeTab === "analytics" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
+                transition: "all 0.15s ease",
+              }}
+            >
+              Analytics
+            </button>
+          </div>
+
+          {/* TOP RIGHT: REFRESH ICON & SIGN OUT */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <button
+              type="button"
+              onClick={loadData}
+              title="Refresh data"
+              className="icon-btn"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={isRefreshing ? "rotating-icon" : ""}
+              >
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              style={{
+                border: "1px solid var(--border-color)",
+                background: "var(--bg-secondary)",
+                color: "var(--text-secondary)",
+                borderRadius: "9999px",
+                padding: "6px 12px",
+                fontSize: "0.7rem",
+                fontWeight: 750,
+                cursor: "pointer",
+              }}
+            >
+              Sign Out
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* ── MAIN CONTENT CONTAINER (NICE PADDING & MARGINS) ── */}
+      {/* ── MAIN CONTENT CONTAINER ── */}
       <main className="admin-page-container">
         {/* ── 1. INBOX TAB ── */}
         {activeTab === "inbox" && (
           <>
-            {/* FILTER PILLS (ONLY PENDING & ANSWERED) */}
+            {/* FILTER PILLS */}
             <div style={{ display: "flex", gap: "8px" }}>
               <button
                 type="button"
@@ -757,7 +764,7 @@ function AdminPageContent() {
 
             {/* QUESTIONS LIST */}
             {filteredQuestions.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "3.5rem 1rem", border: "1px dashed var(--border-color)", borderRadius: "22px" }}>
+              <div style={{ textAlign: "center", padding: "3.5rem 1rem", border: "1px dashed var(--border-color)", borderRadius: "20px" }}>
                 <p style={{ fontSize: "0.88rem", fontWeight: 750, color: "var(--text-primary)", margin: "0 0 4px" }}>
                   No {inboxFilter} questions
                 </p>
@@ -855,8 +862,6 @@ function AdminPageContent() {
                       <p style={{ fontSize: "0.92rem", lineHeight: 1.55, margin: 0, color: "var(--text-primary)", whiteSpace: "pre-wrap" }}>
                         &ldquo;{q.content}&rdquo;
                       </p>
-
-
 
                       {/* ALREADY ANSWERED VIEW */}
                       {q.answered && !isAnswering && (
@@ -998,7 +1003,7 @@ function AdminPageContent() {
               </div>
             </div>
 
-            {/* DETAILED BREAKDOWNS (FULL WIDTH CARDS WITH CLEAN PADDING) */}
+            {/* DETAILED BREAKDOWNS (CONTAINED CARDS) */}
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               {/* TOP REFERRERS */}
               <div className="admin-card">
