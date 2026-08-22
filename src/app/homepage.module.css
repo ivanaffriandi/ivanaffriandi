@@ -1,8 +1,5 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · 100% MATHEMATICAL SYMMETRICAL MARGINS
-   Top Navbar: top: 18px, left: 18px, right: 18px
-   Center Stage: 50% / 50% True Dead Center
-   Bottom Bar: bottom: 18px, left: 18px, right: 18px
+   AVANT-GARDE HOMEPAGE · PIXEL-PERFECT VERTICAL ALIGNMENT NAVBAR
    ============================================================ */
 
 :root {
@@ -77,12 +74,13 @@
   pointer-events: auto;
 }
 
-/* ── ZONE 1: TOP NAVBAR (EXACT 18PX MARGIN ALL-AROUND) ── */
+/* ── ZONE 1: TOP NAVBAR (PERFECT 1:1 CENTER ALIGNMENT) ── */
 .topNavbarRow {
   position: absolute !important;
-  top: 18px !important;
-  left: 18px !important;
-  right: 18px !important;
+  top: 12px !important;
+  left: 16px !important;
+  right: 16px !important;
+  height: 40px !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
@@ -91,16 +89,18 @@
 }
 
 .textLogoIsland {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   text-decoration: none;
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   font-weight: 900;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--h-text);
-  padding: 0;
+  height: 100%;
   line-height: 1;
+  padding: 0;
+  margin: 0;
   transition: opacity 0.15s ease;
 }
 
@@ -118,9 +118,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4.5px;
+  gap: 4px;
   cursor: pointer;
   padding: 0;
+  margin: 0;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
   transition: transform 0.15s ease, border-color 0.15s ease;
@@ -132,7 +133,7 @@
 }
 
 .menuBarEqual {
-  width: 15px;
+  width: 14px;
   height: 2px;
   background-color: var(--h-text);
   border-radius: 2px;
@@ -331,12 +332,13 @@
   z-index: 2;
 }
 
-/* ── ZONE 3: BOTTOM ACTION BAR (EXACT 18PX MARGIN ALL-AROUND) ── */
+/* ── ZONE 3: BOTTOM ACTION BAR (BOTTOM: 14PX) ── */
 .bottomActionBar {
   position: absolute !important;
-  bottom: 18px !important;
-  left: 18px !important;
-  right: 18px !important;
+  bottom: 14px !important;
+  left: 16px !important;
+  right: 16px !important;
+  height: 40px !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
