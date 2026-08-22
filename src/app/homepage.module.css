@@ -1,5 +1,6 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · MINIMAL TOP NAVBAR & SLEEK MENU EXPANDER
+   AVANT-GARDE HOMEPAGE · TOP-ALIGNED NAVBAR, CONTINUOUS CARET,
+   ULTRA-DENSE WALL & HIGH-CONTRAST CENTER HERO STAGE
    ============================================================ */
 
 :root {
@@ -13,11 +14,12 @@
   --h-btn-bg: #111113;
   --h-btn-text: #ffffff;
   --h-caret: #111113;
-  --h-head-filter: contrast(108%);
-  --h-marquee-color: rgba(0, 0, 0, 0.18);
+  --h-head-filter: contrast(110%) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12));
+  --h-marquee-color: rgba(0, 0, 0, 0.16);
   --h-island-bg: #ffffff;
-  --h-menu-pill-bg: rgba(255, 255, 255, 0.95);
+  --h-menu-pill-bg: rgba(255, 255, 255, 0.96);
   --h-menu-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
+  --h-hero-scrim: radial-gradient(circle at center, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.8) 45%, rgba(255, 255, 255, 0) 75%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -32,11 +34,12 @@
     --h-btn-bg: #f4f4f6;
     --h-btn-text: #09090b;
     --h-caret: #f4f4f6;
-    --h-head-filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 2px rgba(255, 255, 255, 0.9)) drop-shadow(0 4px 16px rgba(255, 255, 255, 0.18)) contrast(110%);
-    --h-marquee-color: rgba(255, 255, 255, 0.2);
+    --h-head-filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 2.5px rgba(255, 255, 255, 0.95)) drop-shadow(0 8px 28px rgba(0, 0, 0, 0.6)) contrast(112%);
+    --h-marquee-color: rgba(255, 255, 255, 0.18);
     --h-island-bg: #09090b;
-    --h-menu-pill-bg: rgba(18, 18, 22, 0.95);
+    --h-menu-pill-bg: rgba(18, 18, 22, 0.96);
     --h-menu-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+    --h-hero-scrim: radial-gradient(circle at center, rgba(9, 9, 11, 0.94) 0%, rgba(9, 9, 11, 0.8) 45%, rgba(9, 9, 11, 0) 75%);
   }
 }
 
@@ -51,7 +54,7 @@
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   margin: 0;
-  padding: 12px 20px 20px;
+  padding: max(12px, env(safe-area-inset-top)) 20px max(16px, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -63,7 +66,7 @@
 
 @media (max-width: 480px) {
   .homepageViewport {
-    padding: 10px 16px 18px;
+    padding: max(10px, env(safe-area-inset-top)) 16px max(14px, env(safe-area-inset-bottom));
   }
 }
 
@@ -81,7 +84,7 @@
   z-index: 10;
 }
 
-/* ── 1. TOP NAVBAR (CLEAN TWO SIDES: IA & SLEEK MENU) ── */
+/* ── 1. TOP NAVBAR (FLUSH TOP-ALIGNED) ── */
 .topNavbarRow {
   width: 100%;
   display: flex;
@@ -90,6 +93,7 @@
   box-sizing: border-box;
   z-index: 50;
   position: relative;
+  margin-top: 0;
 }
 
 .circularLogoIsland {
@@ -123,7 +127,6 @@
   position: relative;
 }
 
-/* Floating Smooth Menu Pills (Slide in next to the button) */
 .floatingMenuPillsRow {
   display: flex;
   align-items: center;
@@ -189,7 +192,7 @@
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── 2. CENTER HERO STAGE ── */
+/* ── 2. CENTER HERO STAGE (WITH HIGH-CONTRAST SCRIM GLOW) ── */
 .centerHeroStage {
   width: 100%;
   flex: 1;
@@ -201,7 +204,17 @@
   margin: auto 0;
   position: relative;
   text-align: center;
-  z-index: 10;
+  z-index: 20;
+}
+
+.heroContrastScrim {
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  background: var(--h-hero-scrim);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
 }
 
 .bigHeadTapWrap {
@@ -213,6 +226,7 @@
   position: relative;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  z-index: 2;
 }
 
 .bigHeadTapImg {
@@ -232,6 +246,7 @@
   padding: 0 16px;
   cursor: pointer;
   max-width: 360px;
+  z-index: 2;
 }
 
 .handwritingText {
@@ -244,19 +259,21 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  text-shadow: 0 2px 12px var(--h-bg);
 }
 
+/* Always continuously blinking typing caret */
 .typingCaret {
   display: inline-block;
   width: 2px;
   height: 1.2em;
   background-color: var(--h-caret);
-  margin-left: 3px;
+  margin-left: 4px;
   border-radius: 1px;
-  animation: blink 0.9s infinite;
+  animation: caretBlinkInfinite 0.85s steps(2, start) infinite !important;
 }
 
-@keyframes blink {
+@keyframes caretBlinkInfinite {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
 }
@@ -267,10 +284,11 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--h-text-muted);
-  opacity: 0.5;
+  opacity: 0.6;
+  z-index: 2;
 }
 
-/* ── 3. ULTRA DENSE WALL-TO-WALL RUNNING SKILLS MATRIX (26+ ROWS) ── */
+/* ── 3. ULTRA DENSE WALL-TO-WALL RUNNING SKILLS MATRIX (34+ TIGHT ROWS) ── */
 .marqueeWallBackground {
   position: absolute;
   inset: 0;
@@ -292,19 +310,19 @@
   width: 100%;
   overflow: hidden;
   display: flex;
-  line-height: 0.95;
+  line-height: 0.88;
 }
 
 .marqueeRowContent {
   display: flex;
   white-space: nowrap;
-  font-size: clamp(0.62rem, 1.6vw, 0.78rem);
+  font-size: clamp(0.56rem, 1.4vw, 0.72rem);
   font-weight: 900;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--h-marquee-color);
   user-select: none;
-  line-height: 1;
+  line-height: 0.88;
 }
 
 /* ── 4. BOTTOM ACTION BAR ── */
@@ -316,7 +334,7 @@
   gap: 10px;
   padding-top: 8px;
   box-sizing: border-box;
-  z-index: 10;
+  z-index: 20;
 }
 
 .socialIconsGroup {

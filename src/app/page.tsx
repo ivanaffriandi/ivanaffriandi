@@ -63,7 +63,7 @@ const FUN_PHRASES = [
   "Tap my head again :)",
 ];
 
-// Ultra-dense matrix dataset for continuous running rows
+// Ultra-dense matrix dataset for 34 continuous running rows
 const MATRIX_ROWS = [
   "UI/UX DESIGN • NEXT.JS 16 • TYPESCRIPT • THREE.JS • ITALIAN LEATHER • FIGMA TOKENS • WEBGL 2.0 • REACT 19 • ",
   "INDONESIAN (NATIVE) • ENGLISH (FLUENT) • DUTCH (NEDERLANDS) • SUNDANESE • TYPOGRAPHY SYSTEMS • ",
@@ -91,13 +91,20 @@ const MATRIX_ROWS = [
   "WILD MUSHROOM FORAGING • MYCOLOGY FIELD NOTES • MACRO PHOTOGRAPHY • ANALOG TEXTURES • LOOSE-LEAF TEA • ",
   "FIBER ARTS • HAND CROCHET • SADDLE STITCHED JOURNALS • ARCHITECTURAL ESSAYS • SPATIAL 3D • ",
   "ZERO BLOAT COMPUTING • MINIMALIST SOFTWARE ARCHITECTURES • SELF-HOSTED SERVICES • LINUX SYSADMIN • ",
+  "INTERACTION DESIGN • SPATIAL LAYOUT • MICRO-INTERACTIONS • DESIGN SYSTEM TOKENS • ACCESSIBILITY A11Y • ",
+  "TUSCAN VEGETABLE TANNED LEATHER • JAPANESE MOIRE SILK LINING • BESPOKE JOURNAL COVERS • WAXED THREAD • ",
+  "NEXT.JS APP ROUTER • REACT SERVER COMPONENTS • JAVASCRIPT ES2026 • RUST AXUM • EDGE WORKERS • ",
+  "CREATIVE WRITING • TECH ESSAYS • PRODUCT STRATEGY • SWISS MINIMALISM • HIGH FIDELITY PROTOTYPING • ",
+  "USER EXPERIENCE RESEARCH • WIREFRAMING • COMPONENT LIBRARIES • BRAND IDENTITY • EDITORIAL CURATION • ",
+  "FULL STACK ARCHITECTURE • DATABASE INDEXING • REST & GRAPHQL • PRISMA ORM • BASH SCRIPTING • ",
+  "HAND CUT LEATHER PATTERNS • PRICKING IRONS • BEESWAX EDGE POLISH • HERITAGE CRAFTSMANSHIP • ",
+  "FOREST TRAIL NAVIGATION • FUNGI SPORE PRINTS • BOTANICAL SKETCHING • BOTANICAL WATERCOLORS • ",
 ];
 
 export default function AvantGardeHomepage() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [phraseIndex, setPhraseIndex] = useState<number>(0);
   const [displayText, setDisplayText] = useState<string>('');
-  const [isTyping, setIsTyping] = useState<boolean>(true);
   const headControls = useAnimation();
 
   const currentFullText = FUN_PHRASES[phraseIndex];
@@ -107,14 +114,12 @@ export default function AvantGardeHomepage() {
   useEffect(() => {
     let charIndex = 0;
     setDisplayText('');
-    setIsTyping(true);
 
     const interval = setInterval(() => {
       if (charIndex < currentFullText.length) {
         setDisplayText(currentFullText.slice(0, charIndex + 1));
         charIndex++;
       } else {
-        setIsTyping(false);
         clearInterval(interval);
       }
     }, 42);
@@ -147,7 +152,7 @@ export default function AvantGardeHomepage() {
 
   return (
     <div className={styles.homepageViewport}>
-      {/* ── ULTRA-DENSE FULL-SCREEN HARDWARE-ACCELERATED RUNNING WALL MATRIX (26 ROWS) ── */}
+      {/* ── ULTRA-DENSE FULL-SCREEN HARDWARE-ACCELERATED RUNNING WALL MATRIX (34 ROWS) ── */}
       <AnimatePresence>
         {isMarqueeActive && (
           <motion.div
@@ -186,7 +191,7 @@ export default function AvantGardeHomepage() {
       </AnimatePresence>
 
       <div className={styles.mainContainer}>
-        {/* ── 1. CLEAN TOP NAVBAR (CIRCULAR IA ON LEFT, SLEEK EXPANDABLE MENU ON RIGHT) ── */}
+        {/* ── 1. CLEAN TOP NAVBAR (FLUSH TOP ALIGNED) ── */}
         <header className={styles.topNavbarRow}>
           {/* Left: Standalone Circular IA Button */}
           <Link href="/" className={styles.circularLogoIsland} title="Ivan Affriandi">
@@ -248,13 +253,16 @@ export default function AvantGardeHomepage() {
           </div>
         </header>
 
-        {/* ── 2. CENTER HERO STAGE (DEAD-CENTER FOCAL POINT) ── */}
+        {/* ── 2. CENTER HERO STAGE (WITH CONTRAST SCRIM & ALWAYS-BLINKING CARET) ── */}
         <main
           className={styles.centerHeroStage}
           onClick={() => {
             if (isMenuOpen) setIsMenuOpen(false);
           }}
         >
+          {/* Radial Contrast Scrim to keep head & text razor-sharp over running text */}
+          <div className={styles.heroContrastScrim} />
+
           <motion.div
             animate={headControls}
             whileHover={{ scale: 1.05 }}
