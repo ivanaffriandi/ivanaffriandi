@@ -16,6 +16,15 @@ function TwoCardStackedQA({
   onOpen: () => void;
   onClose: () => void;
 }) {
+  const [expandedCard, setExpandedCard] = useState<"answer" | "question">("answer");
+
+  // Reset focus to answer whenever newly opened
+  useEffect(() => {
+    if (isActive) {
+      setExpandedCard("answer");
+    }
+  }, [isActive]);
+
   const rawAnswer = typeof qa.answer === "string" ? qa.answer.trim() : "";
   const hasAnswer =
     rawAnswer.length > 0 &&
@@ -35,6 +44,20 @@ function TwoCardStackedQA({
       questionText.toLowerCase().includes("book")
     ? "Some of my favorite foundational reads include 'The Design of Everyday Things' by Don Norman, 'Meditations' by Marcus Aurelius, and works on architecture & minimalism."
     : "Thank you for asking! I approach every project with focus on clean aesthetics, tactile interaction details, high performance, and intuitive design.";
+
+  // Dynamic heights when active
+  const isQuestionExpanded = isActive && expandedCard === "question";
+  const isAnswerExpanded = isActive && expandedCard === "answer";
+
+  const questionHeight = !isActive
+    ? "100%"
+    : isQuestionExpanded
+    ? "calc(100% - 96px - 0.75rem)"
+    : 104;
+
+  const answerHeight = isAnswerExpanded
+    ? "calc(100% - 104px - 0.75rem)"
+    : 96;
 
   return (
     <div
@@ -56,10 +79,10 @@ function TwoCardStackedQA({
           borderRadius: "28px",
         }}
       >
-        {/* ── CARD 1: QUESTION CARD (TAP ANYWHERE TO OPEN ANSWER) ── */}
+        {/* ── CARD 1: QUESTION CARD (TAP TO EXPAND WHEN MINIMIZED) ── */}
         <motion.div
           animate={{
-            height: isActive ? 154 : "100%",
+            height: questionHeight,
             borderRadius: isActive ? 22 : 28,
           }}
           transition={{
@@ -69,20 +92,29 @@ function TwoCardStackedQA({
             mass: 0.8,
           }}
           className={`qa-question-card ${isActive ? "qa-card-inverted" : "qa-card-normal"}`}
-          onClick={() => {
-            if (!isActive) onOpen();
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!isActive) {
+              onOpen();
+            } else if (!isQuestionExpanded) {
+              setExpandedCard("question");
+            }
           }}
           style={{
             position: "absolute",
             top: 0,
             left: 0,
             right: 0,
-            padding: isActive ? "1rem 1.3rem 0.9rem" : "1.3rem 1.4rem 1.1rem",
+            padding: !isActive
+              ? "1.3rem 1.4rem 1.1rem"
+              : isQuestionExpanded
+              ? "1.1rem 1.3rem 1rem"
+              : "0.75rem 1.15rem 0.65rem",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
             boxSizing: "border-box",
-            cursor: isActive ? "default" : "pointer",
+            cursor: !isActive || !isQuestionExpanded ? "pointer" : "default",
             boxShadow: "var(--ask-shadow)",
             overflow: "hidden",
             zIndex: 10,
@@ -92,19 +124,38 @@ function TwoCardStackedQA({
         >
           {/* TOP ROW: SENDER & DATE */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexShrink: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
+              <span
+                style={{
+                  fontSize: isActive && !isQuestionExpanded ? "0.8rem" : "0.88rem",
+                  fontWeight: 800,
+                  letterSpacing: "-0.01em",
+                }}
+                className={isActive ? "qa-inv-primary" : "qa-text-primary"}
+              >
+                {senderName}
+              </span>
+              {isActive && !isQuestionExpanded && (
+                <span
+                  style={{
+                    fontSize: "0.55rem",
+                    padding: "2px 6px",
+                    borderRadius: "9999px",
+                    background: "rgba(255, 255, 255, 0.15)",
+                    color: "var(--ask-inv-text)",
+                    fontWeight: 700,
+                    letterSpacing: "0.04em",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  tap to expand
+                </span>
+              )}
+            </div>
+
             <span
               style={{
-                fontSize: "0.88rem",
-                fontWeight: 800,
-                letterSpacing: "-0.01em",
-              }}
-              className={isActive ? "qa-inv-primary" : "qa-text-primary"}
-            >
-              {senderName}
-            </span>
-            <span
-              style={{
-                fontSize: "0.62rem",
+                fontSize: "0.6rem",
                 fontWeight: 500,
               }}
               className={isActive ? "qa-inv-muted" : "qa-text-muted"}
@@ -125,27 +176,20 @@ function TwoCardStackedQA({
               flexDirection: "column",
               gap: "0.15rem",
               flex: 1,
-              overflowY: "auto",
+              overflowY: isQuestionExpanded ? "auto" : "hidden",
               overscrollBehavior: "contain",
               WebkitOverflowScrolling: "touch",
               scrollbarWidth: "none",
               msOverflowStyle: "none",
-              justifyContent: "center",
-              margin: isActive ? "0.1rem 0" : "0.4rem 0",
-            }}
-            onClick={(e) => {
-              if (!isActive) {
-                onOpen();
-              } else {
-                e.stopPropagation();
-              }
+              justifyContent: !isActive ? "center" : isQuestionExpanded ? "flex-start" : "center",
+              margin: !isActive ? "0.4rem 0" : isQuestionExpanded ? "0.3rem 0" : "0.1rem 0",
             }}
           >
             <div
               className="qa-quote-mark"
               style={{
                 lineHeight: 0.9,
-                fontSize: isActive ? "1.6rem" : "2.8rem",
+                fontSize: !isActive ? "2.8rem" : isQuestionExpanded ? "2.2rem" : "1.3rem",
                 fontFamily: "Georgia, serif",
                 fontWeight: 900,
                 userSelect: "none",
@@ -159,12 +203,14 @@ function TwoCardStackedQA({
 
             <p
               style={{
-                fontSize: isActive ? "0.9rem" : "0.98rem",
-                lineHeight: 1.5,
+                fontSize: isActive && !isQuestionExpanded ? "0.82rem" : "0.96rem",
+                lineHeight: isActive && !isQuestionExpanded ? 1.35 : 1.55,
                 margin: 0,
                 fontWeight: 450,
                 letterSpacing: "-0.015em",
-                whiteSpace: "pre-wrap",
+                whiteSpace: isQuestionExpanded || !isActive ? "pre-wrap" : "nowrap",
+                overflow: "hidden",
+                textOverflow: isQuestionExpanded || !isActive ? "clip" : "ellipsis",
                 wordBreak: "break-word",
               }}
               className={isActive ? "qa-inv-primary" : "qa-text-primary"}
@@ -173,7 +219,7 @@ function TwoCardStackedQA({
             </p>
           </div>
 
-          {/* COMPACT IOS FOOTER */}
+          {/* COMPACT IOS FOOTER (COLLAPSED STATE) */}
           {!isActive && (
             <div
               style={{
@@ -200,11 +246,12 @@ function TwoCardStackedQA({
           )}
         </motion.div>
 
-        {/* ── CARD 2: SEPARATE ANSWER CARD ── */}
+        {/* ── CARD 2: SEPARATE ANSWER CARD (TAP TO EXPAND WHEN MINIMIZED) ── */}
         <motion.div
           initial={false}
           animate={{
             y: isActive ? 0 : 320,
+            height: answerHeight,
             opacity: isActive ? 1 : 0,
             scale: isActive ? 1 : 0.94,
           }}
@@ -215,18 +262,24 @@ function TwoCardStackedQA({
             mass: 0.8,
           }}
           className="qa-answer-card"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (isActive && !isAnswerExpanded) {
+              setExpandedCard("answer");
+            }
+          }}
           style={{
             position: "absolute",
             bottom: 0,
             left: 0,
             right: 0,
-            height: "calc(100% - 162px)",
             borderRadius: "24px",
-            padding: "1.1rem 1.3rem 1rem",
+            padding: isAnswerExpanded ? "1.1rem 1.3rem 0.95rem" : "0.75rem 1.15rem 0.65rem",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
             boxSizing: "border-box",
+            cursor: isActive && !isAnswerExpanded ? "pointer" : "default",
             overflow: "hidden",
             background: "var(--ask-card-bg)",
             border: "1px solid var(--ask-border)",
@@ -234,19 +287,35 @@ function TwoCardStackedQA({
             zIndex: 5,
             pointerEvents: isActive ? "auto" : "none",
             touchAction: "pan-x",
-            willChange: "transform, opacity",
+            willChange: "transform, opacity, height",
           }}
         >
           {/* TOP ROW: IVAN & DATE */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.35rem", flexShrink: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-              <span style={{ fontSize: "0.88rem", fontWeight: 800, letterSpacing: "-0.01em" }} className="qa-text-primary">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: isAnswerExpanded ? "0.35rem" : "0.15rem", flexShrink: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
+              <span style={{ fontSize: isAnswerExpanded ? "0.88rem" : "0.8rem", fontWeight: 800, letterSpacing: "-0.01em" }} className="qa-text-primary">
                 Ivan
               </span>
               <span style={{ fontSize: "0.75rem" }} className="qa-text-primary">✦</span>
+              {isActive && !isAnswerExpanded && (
+                <span
+                  style={{
+                    fontSize: "0.55rem",
+                    padding: "2px 6px",
+                    borderRadius: "9999px",
+                    background: "var(--ask-badge-bg)",
+                    color: "var(--ask-text-sub)",
+                    fontWeight: 700,
+                    letterSpacing: "0.04em",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  tap to expand
+                </span>
+              )}
             </div>
 
-            <span style={{ fontSize: "0.62rem", fontWeight: 500 }} className="qa-text-muted">
+            <span style={{ fontSize: "0.6rem", fontWeight: 500 }} className="qa-text-muted">
               {new Date(qa.answeredAt || qa.published || Date.now()).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
@@ -255,28 +324,29 @@ function TwoCardStackedQA({
             </span>
           </div>
 
-          {/* SCROLLABLE ANSWER CONTENT */}
+          {/* SCROLLABLE / EXPANDABLE ANSWER CONTENT */}
           <div
             className="qa-no-scrollbar"
             style={{
               flex: 1,
-              overflowY: "auto",
+              overflowY: isAnswerExpanded ? "auto" : "hidden",
               overscrollBehavior: "contain",
               WebkitOverflowScrolling: "touch",
               scrollbarWidth: "none",
               msOverflowStyle: "none",
               paddingRight: "0.1rem",
-              margin: "0.2rem 0 0.35rem",
+              margin: isAnswerExpanded ? "0.2rem 0 0.35rem" : "0.1rem 0",
             }}
-            onClick={(e) => e.stopPropagation()}
           >
             <p
               style={{
-                fontSize: "0.92rem",
-                lineHeight: 1.6,
+                fontSize: isAnswerExpanded ? "0.92rem" : "0.82rem",
+                lineHeight: isAnswerExpanded ? 1.6 : 1.35,
                 margin: 0,
                 letterSpacing: "-0.01em",
-                whiteSpace: "pre-wrap",
+                whiteSpace: isAnswerExpanded ? "pre-wrap" : "nowrap",
+                overflow: "hidden",
+                textOverflow: isAnswerExpanded ? "clip" : "ellipsis",
                 wordBreak: "break-word",
               }}
               className="qa-text-primary"
@@ -291,8 +361,8 @@ function TwoCardStackedQA({
               display: "flex",
               justifyContent: "flex-start",
               alignItems: "center",
-              paddingTop: "0.45rem",
-              borderTop: "1px solid var(--ask-border)",
+              paddingTop: isAnswerExpanded ? "0.45rem" : "0.25rem",
+              borderTop: isAnswerExpanded ? "1px solid var(--ask-border)" : "none",
               flexShrink: 0,
             }}
           >
