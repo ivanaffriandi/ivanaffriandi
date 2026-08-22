@@ -1,47 +1,39 @@
 /* ============================================================
-   IVAN'S WORK · ICONIC POSTER EDITORIAL DESIGN SYSTEM
-   Seamless Head Integration & Refined Swiss Typography
+   IVAN'S WORK · DARK EDITORIAL MONOGRAPH & MAGAZINE SYSTEM
+   Inspired by Brutalist Research Monographs, Editorial Dark Cards
    ============================================================ */
 
 :root {
-  --w-bg: #ffffff;
-  --w-text: #0e0e10;
-  --w-text-muted: #4a4a52;
-  --w-text-sub: #7a7a85;
-  --w-border: rgba(0, 0, 0, 0.12);
-  --w-border-light: rgba(0, 0, 0, 0.06);
-  --w-card-bg: #f9f9f8;
-  --w-card-hover: #f3f3f1;
-  --w-pill-bg: #f0f0ee;
-  --w-pill-text: #1a1a1e;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --w-bg: #09090b;
-    --w-text: #f5f5f7;
-    --w-text-muted: #a1a1aa;
-    --w-text-sub: #71717a;
-    --w-border: rgba(255, 255, 255, 0.14);
-    --w-border-light: rgba(255, 255, 255, 0.07);
-    --w-card-bg: #141417;
-    --w-card-hover: #1b1b20;
-    --w-pill-bg: #1f1f26;
-    --w-pill-text: #e4e4eb;
-  }
+  --e-bg: #09090b;
+  --e-card-bg: #121215;
+  --e-card-border: rgba(255, 255, 255, 0.1);
+  --e-text: #f5f5f7;
+  --e-text-muted: #a1a1aa;
+  --e-text-dim: #71717a;
+  --e-accent-glow: linear-gradient(180deg, rgba(255, 75, 38, 0) 0%, rgba(255, 69, 0, 0.85) 100%);
+  --e-pill: #1c1c22;
 }
 
 .fullDesktopViewport {
   min-height: 100vh;
   width: 100%;
-  background-color: var(--w-bg);
-  color: var(--w-text);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-color: #e5e5e5;
+  color: var(--e-text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   margin: 0;
-  padding: 0;
+  padding: 32px 16px 80px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+@media (prefers-color-scheme: dark) {
+  .fullDesktopViewport {
+    background-color: #050507;
+  }
 }
 
 .fullDesktopViewport *::-webkit-scrollbar {
@@ -55,388 +47,279 @@
   scrollbar-width: none !important;
 }
 
-.editorialContainer {
-  max-width: 900px;
+/* Magazine Cards Column */
+.magazineCardsContainer {
+  max-width: 440px;
   width: 100%;
   margin: 0 auto;
-  padding: 24px 24px 100px;
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 24px;
 }
 
-@media (max-width: 640px) {
-  .editorialContainer {
-    padding: 16px 18px 80px;
-    gap: 24px;
+/* Single Editorial Card Device Frame */
+.editorialMonographCard {
+  background-color: #0c0c0e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 36px;
+  padding: 28px 24px 34px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+  color: #f5f5f7;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .fullDesktopViewport {
+    padding: 12px 12px 60px;
+    background-color: #000000;
+  }
+  .editorialMonographCard {
+    border-radius: 28px;
+    padding: 22px 18px 28px;
   }
 }
 
-/* ── 1. CLEAN EDITORIAL HEADER ── */
-.topEditorialNav {
+/* ── CARD HEADER ── */
+.cardTopNavRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--w-text);
-  box-sizing: border-box;
 }
 
-.navBrandLink {
-  font-size: 0.86rem;
-  font-weight: 850;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--w-text);
+.geometricLogoMark {
+  display: flex;
+  align-items: center;
+  gap: 3px;
   text-decoration: none;
+}
+
+.logoCircleSolid {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #f5f5f7;
+}
+
+.logoSemiCircle {
+  width: 7px;
+  height: 14px;
+  border-radius: 0 14px 14px 0;
+  background: #f5f5f7;
+}
+
+.hamburgerIconBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hamburgerLine {
+  width: 20px;
+  height: 2px;
+  background: #f5f5f7;
+  border-radius: 2px;
+}
+
+/* ── CARD 1: EDITORIAL HOOK & PROSE ── */
+.editorialHeadlineText {
+  font-size: 1.35rem;
+  font-weight: 750;
+  line-height: 1.35;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+  margin: 0;
+}
+
+.authorAvatarsRow {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.navStatusDot {
-  width: 7px;
-  height: 7px;
+.authorAvatarThumb {
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: #34c759;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  filter: grayscale(100%) contrast(110%);
 }
 
-.navRightLinks {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.navLinkItem {
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--w-text);
-  text-decoration: none;
-  transition: opacity 0.15s ease;
-}
-
-.navLinkItem:hover {
-  opacity: 0.5;
-}
-
-/* ── 2. INTRO EDITORIAL BANNER ── */
-.heroIntroBlock {
+.editorialBodyProse {
+  font-size: 0.84rem;
+  line-height: 1.65;
+  color: #a1a1aa;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding-top: 4px;
+  gap: 12px;
 }
 
-.largeStatementText {
-  font-size: clamp(1.15rem, 3.2vw, 1.6rem);
-  font-weight: 750;
-  line-height: 1.45;
-  letter-spacing: -0.025em;
-  color: var(--w-text);
+.editorialBodyProse p {
   margin: 0;
 }
 
-.metadataStripRow {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  width: 100%;
-  padding-top: 8px;
-  border-top: 1px solid var(--w-border);
-}
-
-@media (max-width: 640px) {
-  .metadataStripRow {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-}
-
-.metaItemCol {
+/* ── CARD 2: DIALOGUE & VISUAL WITH AMBIENT GRADIENT ── */
+.dialogueList {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 14px;
 }
 
-.metaColLabel {
-  font-size: 0.65rem;
+.dialogueItem {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 8px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.dialogueSpeaker {
   font-weight: 850;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--w-text-sub);
+  color: #ffffff;
+  letter-spacing: 0.04em;
 }
 
-.metaColValue {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--w-text);
-  line-height: 1.35;
+.dialogueContent {
+  color: #d4d4d8;
 }
 
-/* ── 3. ICONIC POSTER HEADLINE: I V [SEAMLESS HEAD] N ── */
-.heroPosterWrap {
+.portraitVisualWrap {
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 18px 0 10px;
-  user-select: none;
-  border-top: 1.5px solid var(--w-text);
-  border-bottom: 1.5px solid var(--w-text);
-  background: transparent;
-}
-
-.heroPosterNameRow {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(8px, 3.5vw, 36px);
-  line-height: 1;
-}
-
-.hugeLetter {
-  font-size: clamp(4.2rem, 19vw, 14.5rem);
-  font-weight: 900;
-  line-height: 0.82;
-  letter-spacing: -0.04em;
-  color: var(--w-text);
-  text-transform: uppercase;
-  display: inline-block;
-}
-
-/* SEAMLESS HEAD (NO BOX, NO BORDER, NATURALLY BLENDING INTO BACKGROUND) */
-.headLetterWrapper {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: clamp(4.2rem, 19vw, 14.5rem);
-  width: clamp(4.2rem, 19vw, 14.5rem);
+  height: 340px;
+  border-radius: 20px;
+  overflow: hidden;
   position: relative;
-  background: transparent;
-  border: none;
-  box-shadow: none;
+  background: #18181c;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.headImageCutout {
+.portraitGraphicImg {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center 30%;
   filter: grayscale(100%) contrast(110%);
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s ease;
-  pointer-events: auto;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 
-.headLetterWrapper:hover .headImageCutout {
-  transform: scale(1.1) rotate(-2deg);
-  filter: grayscale(0%) contrast(100%);
+.ambientVermilionGlow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: var(--e-accent-glow);
+  z-index: 2;
+  mix-blend-mode: screen;
+  pointer-events: none;
 }
 
-/* ── 4. SEGMENTED EDITORIAL TABS ── */
-.tabFilterRow {
+/* ── CARD 3: THE FORMULA / TECHNICAL BLUEPRINT & [INDEX] ── */
+.formulaHeader {
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.formulaTitle {
+  font-size: 0.88rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.formulaSubtitle {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #a1a1aa;
+}
+
+.formulaDiagramWrap {
   width: 100%;
-  border-bottom: 1px solid var(--w-border);
-  padding-bottom: 14px;
-}
-
-.editorialTabBtn {
-  border: none;
-  background: var(--w-pill-bg);
-  color: var(--w-text-muted);
-  padding: 8px 18px;
-  border-radius: 9999px;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.editorialTabBtn:hover {
-  color: var(--w-text);
-}
-
-.editorialTabBtnActive {
-  background: var(--w-text) !important;
-  color: var(--w-bg) !important;
-}
-
-/* ── 5. CONTENT BLOCKS & CARDS ── */
-.contentBlock {
+  padding: 18px 0;
   display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.contentBlockTitleRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  border-bottom: 1px solid var(--w-border);
-  padding-bottom: 10px;
-}
-
-.contentBlockTitle {
-  font-size: 1.25rem;
-  font-weight: 850;
-  letter-spacing: -0.02em;
-  color: var(--w-text);
-  margin: 0;
-}
-
-.contentBlockTag {
-  font-size: 0.65rem;
-  font-weight: 850;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--w-text-sub);
-}
-
-.twoColProse {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 36px;
-  font-size: 0.94rem;
-  line-height: 1.7;
-  color: var(--w-text-muted);
-}
-
-@media (max-width: 720px) {
-  .twoColProse {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    font-size: 0.9rem;
-  }
-}
-
-/* Disciplines Bento Grid */
-.disciplineGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-}
-
-@media (max-width: 780px) {
-  .disciplineGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .disciplineGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.disciplineCard {
-  border: 1px solid var(--w-border);
-  border-radius: 18px;
-  padding: 20px;
-  background: var(--w-card-bg);
-  display: flex;
-  flex-direction: column;
-  justifyContent: space-between;
-  gap: 12px;
-  transition: all 0.2s ease;
-}
-
-.disciplineCard:hover {
-  background: var(--w-card-hover);
-  border-color: var(--w-text);
-  transform: translateY(-2px);
-}
-
-.disciplineCardHead {
-  display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
-.disciplineCardTitle {
-  font-size: 0.95rem;
-  font-weight: 800;
-  color: var(--w-text);
-  margin: 0;
+.formulaDiagramSvg {
+  max-width: 100%;
+  height: auto;
+  stroke: #ffffff;
+  color: #ffffff;
 }
 
-.disciplinePill {
-  font-size: 0.62rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--w-text-sub);
-  background: var(--w-pill-bg);
-  padding: 2px 7px;
-  border-radius: 9999px;
+.indexBigMarker {
+  font-size: 2.2rem;
+  font-weight: 850;
+  color: #ffffff;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-top: 4px;
 }
 
-.disciplineText {
-  font-size: 0.84rem;
+.formulaProse {
+  font-size: 0.82rem;
   line-height: 1.6;
-  color: var(--w-text-muted);
+  color: #a1a1aa;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.formulaProse p {
   margin: 0;
 }
 
-.tagRow {
+/* ── QUICK NAV MODAL OVERLAY ── */
+.navMenuModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(16px);
+  z-index: 1000;
   display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
-.tagItem {
-  font-size: 0.66rem;
-  font-weight: 700;
-  color: var(--w-pill-text);
-  background: var(--w-pill-bg);
-  padding: 3px 8px;
-  border-radius: 6px;
-}
-
-/* Skills Matrix */
-.skillsListBlock {
+.navMenuCard {
+  background: #141418;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px;
+  width: 100%;
+  max-width: 320px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.skillGroupCard {
-  border: 1px solid var(--w-border);
-  border-radius: 18px;
-  padding: 20px 22px;
-  background: var(--w-card-bg);
+.navModalLink {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #f5f5f7;
+  text-decoration: none;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.skillGroupHeading {
-  font-size: 0.78rem;
-  font-weight: 850;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--w-text-sub);
-  margin: 0;
-}
-
-.skillPillsFlex {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.skillPillBadge {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--w-text);
-  background: var(--w-bg);
-  border: 1px solid var(--w-border);
-  padding: 6px 14px;
-  border-radius: 9999px;
+  justify-content: space-between;
+  align-items: center;
 }
