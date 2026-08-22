@@ -1,8 +1,5 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · PERFECT 14PX SYMMETRICAL MARGINS
-   Top Navbar: top 14px, left 14px, right 14px
-   Center Stage: 50% / 50% Dead Center
-   Bottom Bar: bottom 14px, left 14px, right 14px
+   AVANT-GARDE HOMEPAGE · ULTRA-FLUSH TOP NAVBAR & FULL-SCREEN MENU
    ============================================================ */
 
 :root {
@@ -77,10 +74,10 @@
   pointer-events: auto;
 }
 
-/* ── ZONE 1: TOP NAVBAR (EXACT 14PX MARGIN TO TOP, MATCHING BOTTOM BAR) ── */
+/* ── ZONE 1: TOP NAVBAR (ULTRA-FLUSH TO TOP: 0PX) ── */
 .topNavbarRow {
   position: absolute !important;
-  top: 14px !important;
+  top: 0px !important;
   left: 14px !important;
   right: 14px !important;
   display: flex !important;
@@ -88,6 +85,7 @@
   align-items: center !important;
   z-index: 60 !important;
   box-sizing: border-box;
+  padding-top: 2px !important;
 }
 
 .textLogoIsland {
@@ -99,7 +97,7 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--h-text);
-  padding: 4px 0;
+  padding: 2px 0;
   transition: opacity 0.15s ease;
 }
 
@@ -151,7 +149,7 @@
   flex-direction: column;
   justify-content: space-between;
   box-sizing: border-box;
-  padding: 24px 28px 48px;
+  padding: 20px 24px 40px;
   overflow: hidden;
   user-select: none;
 }
@@ -330,7 +328,7 @@
   z-index: 2;
 }
 
-/* ── ZONE 3: BOTTOM ACTION BAR (EXACT 14PX MARGIN TO BOTTOM) ── */
+/* ── ZONE 3: BOTTOM ACTION BAR (BOTTOM: 14PX) ── */
 .bottomActionBar {
   position: absolute !important;
   bottom: 14px !important;
