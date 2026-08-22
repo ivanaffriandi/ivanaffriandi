@@ -1,5 +1,5 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE WITH INTERACTIVE MOMENTS GALLERY & EXPANDABLE PROFILE
+   AVANT-GARDE HOMEPAGE: IN-PLACE MOMENTS GALLERY & FULL PROFILE
    ============================================================ */
 
 :root {
@@ -9,7 +9,7 @@
   --h-text-sub: #888894;
   --h-border: rgba(0, 0, 0, 0.08);
   --h-pill-bg: #f2f2f0;
-  --h-pill-hover: #e6e6e2;
+  --h-pill-hover: #e8e8e4;
   --h-btn-bg: #111113;
   --h-btn-text: #ffffff;
 }
@@ -51,14 +51,24 @@
 
 @media (max-width: 480px) {
   .homepageViewport {
-    padding: 14px 16px 16px;
+    padding: 14px 16px 18px;
   }
 }
 
-/* ── 1. TOP NAVBAR (IA & BLOG / ASK) ── */
+.mainContainer {
+  max-width: 480px;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+/* ── 1. TOP NAVBAR ── */
 .topNavbar {
   width: 100%;
-  max-width: 480px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -82,7 +92,7 @@
 .navLinksGroup {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .navLinkPill {
@@ -92,7 +102,7 @@
   text-transform: uppercase;
   color: var(--h-text);
   text-decoration: none;
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: 9999px;
   background: var(--h-pill-bg);
   transition: all 0.15s ease;
@@ -103,10 +113,9 @@
   transform: translateY(-1px);
 }
 
-/* ── 2. MOMENTS GALLERY (CENTER STAGE) ── */
+/* ── 2. VIEW 1: THE GALLERY (CENTER STAGE) ── */
 .galleryStageArea {
   width: 100%;
-  max-width: 480px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -131,34 +140,34 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  height: 280px;
+  height: 270px;
+  overflow: visible;
 }
 
 @media (max-width: 480px) {
   .carouselFilmStrip {
-    height: 250px;
+    height: 240px;
   }
 }
 
 .activePhotoFrame {
-  width: 240px;
-  height: 240px;
+  width: 230px;
+  height: 230px;
   border-radius: 12px;
   overflow: hidden;
   background: #18181c;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
   z-index: 10;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
 }
 
 @media (max-width: 480px) {
   .activePhotoFrame {
-    width: 210px;
-    height: 210px;
+    width: 200px;
+    height: 200px;
   }
 }
 
@@ -169,29 +178,44 @@
   filter: contrast(105%);
 }
 
+.sideThumbContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  z-index: 5;
+}
+
+.sideThumbContainerLeft {
+  left: -20px;
+}
+
+.sideThumbContainerRight {
+  right: -20px;
+}
+
 .sidePreviewPhoto {
-  width: 70px;
-  height: 70px;
+  width: 64px;
+  height: 64px;
   border-radius: 8px;
   overflow: hidden;
-  position: absolute;
   opacity: 0.45;
   filter: grayscale(100%);
   cursor: pointer;
   transition: opacity 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .sidePreviewPhoto {
+    width: 52px;
+    height: 52px;
+  }
 }
 
 .sidePreviewPhoto:hover {
-  opacity: 0.8;
+  opacity: 0.85;
   transform: scale(1.05);
-}
-
-.sidePreviewLeft {
-  left: 10px;
-}
-
-.sidePreviewRight {
-  right: 10px;
 }
 
 .momentCaptionText {
@@ -204,184 +228,181 @@
   min-height: 24px;
 }
 
-/* ── 3. BOTTOM BAR (AFFRIANDI, IVAN + TRIGGER) ── */
-.bottomTriggerBar {
+/* ── 3. BOTTOM TRIGGER (HEAD & NAME AT BOTTOM LEFT) ── */
+.bottomActionBar {
   width: 100%;
-  max-width: 480px;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  padding-top: 12px;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 8px;
 }
 
-.bottomBrandName {
-  font-size: 0.88rem;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  color: var(--h-text);
-  line-height: 1;
-}
-
-.bottomProfileTriggerBtn {
+.bottomLeftTriggerBtn {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: var(--h-pill-bg);
   border: 1px solid var(--h-border);
-  padding: 5px 12px 5px 6px;
+  padding: 5px 14px 5px 6px;
   border-radius: 9999px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.bottomProfileTriggerBtn:hover {
+.bottomLeftTriggerBtn:hover {
   background: var(--h-pill-hover);
   transform: translateY(-2px);
 }
 
-.bottomProfileTriggerBtn:active {
+.bottomLeftTriggerBtn:active {
   transform: scale(0.95);
 }
 
 .triggerHeadImg {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   object-fit: contain;
   border-radius: 50%;
 }
 
-.triggerBtnLabel {
-  font-size: 0.72rem;
-  font-weight: 800;
+.triggerNameLabel {
+  font-size: 0.76rem;
+  font-weight: 850;
+  letter-spacing: -0.01em;
   color: var(--h-text);
 }
 
-/* ── 4. EXPANDED FULL PROFILE MODAL / SHEET ── */
-.profileExpandedOverlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(16px);
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  box-sizing: border-box;
-}
-
-.profileExpandedCard {
+/* ── 4. VIEW 2: IN-PAGE FULL PROFILE VIEW ── */
+.fullProfileViewArea {
   width: 100%;
-  max-width: 440px;
-  background-color: var(--h-bg);
-  border: 1px solid var(--h-border);
-  border-radius: 28px;
-  padding: 24px 22px 20px;
-  box-sizing: border-box;
+  flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 16px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
-  position: relative;
+  margin: auto 0;
+  box-sizing: border-box;
 }
 
-.profileCardCloseBtn {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
+.profileTopActions {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.backToGalleryBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: var(--h-pill-bg);
   border: 1px solid var(--h-border);
   color: var(--h-text);
-  font-size: 0.85rem;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
   font-weight: 800;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: all 0.15s ease;
 }
 
-.profileCardCloseBtn:hover {
+.backToGalleryBtn:hover {
   background: var(--h-pill-hover);
-  transform: scale(1.08);
+  transform: translateY(-1px);
 }
 
-.modalHeadRow {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.modalHeadImg {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-}
-
-.modalTitleGroup {
+.profileCenterBody {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  align-items: flex-start;
+  gap: 14px;
 }
 
-.modalBigName {
-  font-size: 1.45rem;
+.profileLargeHeadWrap {
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+@media (max-width: 480px) {
+  .profileLargeHeadWrap {
+    width: 95px;
+    height: 95px;
+  }
+}
+
+.profileLargeHeadImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: contrast(108%);
+  transition: transform 0.3s ease;
+}
+
+.profileHeadingGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.profileBigName {
+  font-size: clamp(1.6rem, 5.5vw, 2.1rem);
   font-weight: 850;
   letter-spacing: -0.03em;
   color: var(--h-text);
+  line-height: 1.1;
   margin: 0;
-  line-height: 1.15;
 }
 
-.modalRoleText {
-  font-size: 0.82rem;
+.profileRoleSubtitle {
+  font-size: 0.86rem;
   font-weight: 700;
   color: var(--h-text-muted);
   margin: 0;
 }
 
-.modalBioText {
-  font-size: 0.88rem;
+.profileBioText {
+  font-size: 0.9rem;
   line-height: 1.6;
   color: var(--h-text-muted);
-  margin: 0;
+  margin: 2px 0 0;
 }
 
-.modalPillsWrap {
+.disciplinePillsWrap {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 5px;
+  margin-top: 4px;
 }
 
-.modalSkillPill {
+.disciplinePillItem {
   font-size: 0.7rem;
   font-weight: 750;
   color: var(--h-text);
   background: var(--h-pill-bg);
-  padding: 4px 10px;
+  padding: 4px 9px;
   border-radius: 6px;
+  border: 1px solid var(--h-border);
 }
 
-.modalEmailCta {
+.profileEmailCtaBtn {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 13px 18px;
   background-color: var(--h-btn-bg);
   color: var(--h-btn-text);
-  border-radius: 14px;
+  border-radius: 16px;
   text-decoration: none;
-  font-size: 0.84rem;
+  font-size: 0.86rem;
   font-weight: 800;
   box-sizing: border-box;
-  margin-top: 4px;
+  transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
-.modalEmailCta:hover {
+.profileEmailCtaBtn:hover {
   opacity: 0.88;
+  transform: translateY(-1px);
 }
