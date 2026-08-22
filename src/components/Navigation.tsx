@@ -141,8 +141,15 @@ export default function Navigation() {
     }
   }, []);
 
-  // Hide navigation on /work and /ask
-  if (pathname?.startsWith("/work") || pathname?.startsWith("/ask") || isWorkDomain) {
+  // Hide navigation on /work, /ask, and admin pages (/x, /admin, /hq-panel)
+  if (
+    pathname?.startsWith("/work") ||
+    pathname?.startsWith("/ask") ||
+    pathname?.startsWith("/x") ||
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/hq-panel") ||
+    isWorkDomain
+  ) {
     return null;
   }
 
