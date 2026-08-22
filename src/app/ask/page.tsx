@@ -41,6 +41,7 @@ function TwoCardStackedQA({
       className="qa-card-wrapper"
       onClick={(e) => {
         e.stopPropagation();
+        if (!isActive) onOpen();
       }}
     >
       <div
@@ -55,7 +56,7 @@ function TwoCardStackedQA({
           borderRadius: "28px",
         }}
       >
-        {/* ── CARD 1: QUESTION CARD (CENTERED TEXT, NO UGLY SCROLLBAR) ── */}
+        {/* ── CARD 1: QUESTION CARD (TAP ANYWHERE TO OPEN ANSWER) ── */}
         <motion.div
           animate={{
             height: isActive ? 154 : "100%",
@@ -116,7 +117,7 @@ function TwoCardStackedQA({
             </span>
           </div>
 
-          {/* QUOTE & QUESTION CONTENT (BEAUTIFULLY CENTERED, INVISIBLE SCROLL) */}
+          {/* QUOTE & QUESTION CONTENT */}
           <div
             className="qa-no-scrollbar"
             style={{
@@ -133,7 +134,11 @@ function TwoCardStackedQA({
               margin: isActive ? "0.1rem 0" : "0.4rem 0",
             }}
             onClick={(e) => {
-              e.stopPropagation();
+              if (!isActive) {
+                onOpen();
+              } else {
+                e.stopPropagation();
+              }
             }}
           >
             <div
@@ -195,7 +200,7 @@ function TwoCardStackedQA({
           )}
         </motion.div>
 
-        {/* ── CARD 2: SEPARATE ANSWER CARD (NO UGLY SCROLLBAR) ── */}
+        {/* ── CARD 2: SEPARATE ANSWER CARD ── */}
         <motion.div
           initial={false}
           animate={{
@@ -250,7 +255,7 @@ function TwoCardStackedQA({
             </span>
           </div>
 
-          {/* SCROLLABLE ANSWER CONTENT (INVISIBLE CLEAN SCROLLBAR) */}
+          {/* SCROLLABLE ANSWER CONTENT */}
           <div
             className="qa-no-scrollbar"
             style={{
