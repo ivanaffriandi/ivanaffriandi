@@ -1,6 +1,6 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · TOP-ALIGNED FLUSH NAVBAR, CONTINUOUS CARET,
-   ULTRA-DENSE WALL & HIGH-CONTRAST CENTER HERO STAGE
+   AVANT-GARDE HOMEPAGE · FIXED FULL-VIEWPORT LAYOUT
+   Top Flush Navbar · Dead-Center Hero Stage · Visible Bottom Bar
    ============================================================ */
 
 :root {
@@ -19,7 +19,7 @@
   --h-island-bg: #ffffff;
   --h-menu-pill-bg: rgba(255, 255, 255, 0.96);
   --h-menu-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
-  --h-hero-scrim: radial-gradient(circle at center, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.8) 45%, rgba(255, 255, 255, 0) 75%);
+  --h-hero-scrim: radial-gradient(circle at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 45%, rgba(255, 255, 255, 0) 75%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -39,14 +39,16 @@
     --h-island-bg: #09090b;
     --h-menu-pill-bg: rgba(18, 18, 22, 0.96);
     --h-menu-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
-    --h-hero-scrim: radial-gradient(circle at center, rgba(9, 9, 11, 0.94) 0%, rgba(9, 9, 11, 0.8) 45%, rgba(9, 9, 11, 0) 75%);
+    --h-hero-scrim: radial-gradient(circle at center, rgba(9, 9, 11, 0.95) 0%, rgba(9, 9, 11, 0.8) 45%, rgba(9, 9, 11, 0) 75%);
   }
 }
 
 .homepageViewport {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
   height: 100vh;
   height: 100dvh;
-  width: 100%;
   background-color: var(--h-bg);
   color: var(--h-text);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
@@ -54,19 +56,19 @@
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   margin: 0;
-  padding: 0 16px 14px;
+  padding: max(12px, env(safe-area-inset-top)) 20px max(14px, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   overflow: hidden;
-  position: relative;
   user-select: none;
+  z-index: 100;
 }
 
 @media (max-width: 480px) {
   .homepageViewport {
-    padding: 0 14px 12px;
+    padding: max(10px, env(safe-area-inset-top)) 16px max(12px, env(safe-area-inset-bottom));
   }
 }
 
@@ -84,7 +86,7 @@
   z-index: 10;
 }
 
-/* ── 1. TOP NAVBAR (FLUSH TOP EDGE) ── */
+/* ── 1. TOP NAVBAR (FLUSH TOP-ALIGNED) ── */
 .topNavbarRow {
   width: 100%;
   display: flex;
@@ -93,7 +95,7 @@
   box-sizing: border-box;
   z-index: 50;
   position: relative;
-  padding-top: 12px;
+  margin-top: 0;
 }
 
 .circularLogoIsland {
@@ -192,7 +194,7 @@
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── 2. CENTER HERO STAGE (WITH HIGH-CONTRAST SCRIM GLOW) ── */
+/* ── 2. CENTER HERO STAGE (PERFECT DEAD-CENTER POSITIONING) ── */
 .centerHeroStage {
   width: 100%;
   flex: 1;
@@ -218,8 +220,8 @@
 }
 
 .bigHeadTapWrap {
-  width: clamp(170px, 46vw, 240px);
-  height: clamp(170px, 46vw, 240px);
+  width: clamp(165px, 44vw, 230px);
+  height: clamp(165px, 44vw, 230px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -288,7 +290,7 @@
   z-index: 2;
 }
 
-/* ── 3. ULTRA DENSE WALL-TO-WALL RUNNING SKILLS MATRIX (34+ TIGHT ROWS) ── */
+/* ── 3. ULTRA DENSE WALL-TO-WALL RUNNING SKILLS MATRIX ── */
 .marqueeWallBackground {
   position: absolute;
   inset: 0;
@@ -325,16 +327,16 @@
   line-height: 0.88;
 }
 
-/* ── 4. BOTTOM ACTION BAR ── */
+/* ── 4. BOTTOM ACTION BAR (PINNED TO BOTTOM) ── */
 .bottomActionBar {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  padding-top: 8px;
+  padding-bottom: 2px;
   box-sizing: border-box;
-  z-index: 20;
+  z-index: 50;
 }
 
 .socialIconsGroup {
