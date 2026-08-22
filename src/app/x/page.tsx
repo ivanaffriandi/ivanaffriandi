@@ -40,7 +40,7 @@ function getTopCounts(items: string[]) {
     acc[item] = (acc[item] || 0) + 1;
     return acc;
   }, {});
-  return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
 }
 
 function formatRelativeTime(dateStr?: string): string {
@@ -472,37 +472,52 @@ function AdminPageContent() {
           scrollbar-width: none !important;
         }
 
+        /* Comfortable Page Width & Beautiful Margins */
         .admin-page-container {
-          max-width: 680px;
+          max-width: 580px;
           width: 100%;
           margin: 0 auto;
-          padding: 1.4rem 1.25rem 3rem;
+          padding: 1.5rem 1.25rem 3.5rem;
           box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          gap: 1.2rem;
+        }
+
+        @media (max-width: 480px) {
+          .admin-page-container {
+            padding: 1.2rem 1.15rem 3rem;
+          }
         }
 
         .admin-card {
           background-color: var(--card-bg-1);
           border: 1px solid var(--border-color);
-          border-radius: 20px;
-          padding: 1.3rem;
+          border-radius: 22px;
+          padding: 1.25rem 1.35rem;
           box-sizing: border-box;
           box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+          width: 100%;
         }
 
-        .admin-grid-2col {
+        /* 2x2 Compact Metric Grid */
+        .admin-stats-2x2 {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 12px;
+          gap: 10px;
+          width: 100%;
         }
 
-        @media (max-width: 640px) {
-          .admin-grid-2col {
-            grid-template-columns: 1fr !important;
-            gap: 10px !important;
-          }
-          .admin-page-container {
-            padding: 1rem 1rem 2.5rem;
-          }
+        .admin-stat-card {
+          background-color: var(--card-bg-1);
+          border: 1px solid var(--border-color);
+          border-radius: 18px;
+          padding: 1.1rem 1.15rem;
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          justifyContent: space-between;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.02);
         }
 
         .admin-pill-btn {
@@ -564,7 +579,7 @@ function AdminPageContent() {
           background: var(--bg-secondary);
           border-radius: 9999px;
           overflow: hidden;
-          margin-top: 4px;
+          margin-top: 5px;
         }
 
         .progress-bar-fill {
@@ -606,7 +621,7 @@ function AdminPageContent() {
         }
       `}</style>
 
-      {/* ── TOP HEADER (SOLID OPAQUE BACKGROUND, NO TITLE, SWITCH AT TOP LEFT) ── */}
+      {/* ── TOP HEADER (SOLID, SWITCH AT TOP LEFT, REFRESH & SIGN OUT AT RIGHT) ── */}
       <header
         style={{
           width: "100%",
@@ -713,11 +728,11 @@ function AdminPageContent() {
         </div>
       </header>
 
-      {/* ── MAIN CONTENT CONTAINER ── */}
+      {/* ── MAIN CONTENT CONTAINER (NICE PADDING & MARGINS) ── */}
       <main className="admin-page-container">
         {/* ── 1. INBOX TAB ── */}
         {activeTab === "inbox" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+          <>
             {/* FILTER PILLS (ONLY PENDING & ANSWERED) */}
             <div style={{ display: "flex", gap: "8px" }}>
               <button
@@ -741,7 +756,7 @@ function AdminPageContent() {
 
             {/* QUESTIONS LIST */}
             {filteredQuestions.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "3.5rem 1rem", border: "1px dashed var(--border-color)", borderRadius: "20px" }}>
+              <div style={{ textAlign: "center", padding: "3.5rem 1rem", border: "1px dashed var(--border-color)", borderRadius: "22px" }}>
                 <p style={{ fontSize: "0.88rem", fontWeight: 750, color: "var(--text-primary)", margin: "0 0 4px" }}>
                   No {inboxFilter} questions
                 </p>
@@ -943,56 +958,56 @@ function AdminPageContent() {
                 })}
               </div>
             )}
-          </div>
+          </>
         )}
 
-        {/* ── 2. ANALYTICS & VISITOR INTELLIGENCE TAB (NO SQUISHING / CUT-OFFS) ── */}
+        {/* ── 2. ANALYTICS & VISITOR INTELLIGENCE TAB ── */}
         {activeTab === "analytics" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
-            {/* OVERVIEW STATS (RESPONSIVE GRID) */}
-            <div className="admin-grid-2col">
-              <div className="admin-card" style={{ padding: "1.15rem" }}>
-                <span style={{ fontSize: "0.68rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+          <>
+            {/* OVERVIEW STATS (2x2 COMPACT GRID) */}
+            <div className="admin-stats-2x2">
+              <div className="admin-stat-card">
+                <span style={{ fontSize: "0.65rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Unique IP Sessions
                 </span>
-                <div style={{ fontSize: "1.65rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "4px" }}>
+                <div style={{ fontSize: "1.55rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "4px" }}>
                   {analyticsSessions.length}
                 </div>
               </div>
 
-              <div className="admin-card" style={{ padding: "1.15rem" }}>
-                <span style={{ fontSize: "0.68rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+              <div className="admin-stat-card">
+                <span style={{ fontSize: "0.65rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Total Page Loads
                 </span>
-                <div style={{ fontSize: "1.65rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "4px" }}>
+                <div style={{ fontSize: "1.55rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "4px" }}>
                   {totalVisits}
                 </div>
               </div>
 
-              <div className="admin-card" style={{ padding: "1.15rem" }}>
-                <span style={{ fontSize: "0.68rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+              <div className="admin-stat-card">
+                <span style={{ fontSize: "0.65rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Questions Received
                 </span>
-                <div style={{ fontSize: "1.65rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "4px" }}>
+                <div style={{ fontSize: "1.55rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "4px" }}>
                   {adminQuestions.length}
                 </div>
               </div>
 
-              <div className="admin-card" style={{ padding: "1.15rem" }}>
-                <span style={{ fontSize: "0.68rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+              <div className="admin-stat-card">
+                <span style={{ fontSize: "0.65rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Firewall Status
                 </span>
-                <div style={{ fontSize: "1rem", fontWeight: 800, color: "#34c759", marginTop: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
-                  <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#34c759" }} />
+                <div style={{ fontSize: "0.92rem", fontWeight: 800, color: "#34c759", marginTop: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#34c759" }} />
                   <span>{blockedIPs.length} Blocked</span>
                 </div>
               </div>
             </div>
 
-            {/* DETAILED BREAKDOWNS (FULL WIDTH CARDS ON MOBILE) */}
-            <div className="admin-grid-2col">
-              {/* TOP PLATFORMS */}
-              <div className="admin-card" style={{ padding: "1.1rem" }}>
+            {/* DETAILED BREAKDOWNS (FULL WIDTH CARDS WITH CLEAN PADDING) */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              {/* TOP REFERRERS */}
+              <div className="admin-card">
                 <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Top Referrers
                 </span>
@@ -1017,7 +1032,7 @@ function AdminPageContent() {
               </div>
 
               {/* TOP CITIES */}
-              <div className="admin-card" style={{ padding: "1.1rem" }}>
+              <div className="admin-card">
                 <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Top Cities
                 </span>
@@ -1042,7 +1057,7 @@ function AdminPageContent() {
               </div>
 
               {/* TOP PAGES */}
-              <div className="admin-card" style={{ padding: "1.1rem" }}>
+              <div className="admin-card">
                 <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Top Pages
                 </span>
@@ -1067,7 +1082,7 @@ function AdminPageContent() {
               </div>
 
               {/* TOP DEVICES */}
-              <div className="admin-card" style={{ padding: "1.1rem" }}>
+              <div className="admin-card">
                 <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Top Devices
                 </span>
@@ -1092,7 +1107,7 @@ function AdminPageContent() {
               </div>
             </div>
 
-            {/* LIVE SESSIONS LOG (NO OVERLAPPING OR CLIPPED TEXT) */}
+            {/* LIVE SESSIONS LOG */}
             <div className="admin-card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                 <span style={{ fontSize: "0.85rem", fontWeight: 850, color: "var(--text-primary)" }}>
@@ -1256,7 +1271,7 @@ function AdminPageContent() {
                 </div>
               )}
             </div>
-          </div>
+          </>
         )}
       </main>
 
