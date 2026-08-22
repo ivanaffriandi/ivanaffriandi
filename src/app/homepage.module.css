@@ -1,6 +1,6 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · FIXED FULL-VIEWPORT LAYOUT
-   Top Flush Navbar · Dead-Center Hero Stage · Visible Bottom Bar
+   AVANT-GARDE HOMEPAGE · ABSOLUTE BOUNDS ZERO-OVERFLOW LAYOUT
+   Top Flush Navbar · Absolute Dead-Center Hero · Guaranteed Visible Bottom Bar
    ============================================================ */
 
 :root {
@@ -45,7 +45,10 @@
 
 .homepageViewport {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100vw;
   height: 100vh;
   height: 100dvh;
@@ -56,37 +59,30 @@
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   margin: 0;
-  padding: max(12px, env(safe-area-inset-top)) 20px max(14px, env(safe-area-inset-bottom));
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+  padding: 0;
   overflow: hidden;
   user-select: none;
   z-index: 100;
 }
 
-@media (max-width: 480px) {
-  .homepageViewport {
-    padding: max(10px, env(safe-area-inset-top)) 16px max(12px, env(safe-area-inset-bottom));
-  }
-}
-
 .mainContainer {
-  max-width: 460px;
-  width: 100%;
-  height: 100%;
-  flex: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: max(10px, env(safe-area-inset-top)) 16px max(14px, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
-  position: relative;
   z-index: 10;
 }
 
-/* ── 1. TOP NAVBAR (FLUSH TOP-ALIGNED) ── */
+/* ── 1. TOP NAVBAR (TOP EDGE FLUSH) ── */
 .topNavbarRow {
   width: 100%;
   display: flex;
@@ -95,7 +91,7 @@
   box-sizing: border-box;
   z-index: 50;
   position: relative;
-  margin-top: 0;
+  flex-shrink: 0;
 }
 
 .circularLogoIsland {
@@ -194,7 +190,7 @@
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── 2. CENTER HERO STAGE (PERFECT DEAD-CENTER POSITIONING) ── */
+/* ── 2. CENTER HERO STAGE (TRUE DEAD-CENTER POSITIONING) ── */
 .centerHeroStage {
   width: 100%;
   flex: 1;
@@ -202,8 +198,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  margin: auto 0;
+  gap: 14px;
+  margin: 0;
   position: relative;
   text-align: center;
   z-index: 20;
@@ -211,8 +207,8 @@
 
 .heroContrastScrim {
   position: absolute;
-  width: 340px;
-  height: 340px;
+  width: 320px;
+  height: 320px;
   background: var(--h-hero-scrim);
   border-radius: 50%;
   pointer-events: none;
@@ -220,8 +216,8 @@
 }
 
 .bigHeadTapWrap {
-  width: clamp(165px, 44vw, 230px);
-  height: clamp(165px, 44vw, 230px);
+  width: clamp(150px, 42vw, 220px);
+  height: clamp(150px, 42vw, 220px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -243,7 +239,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
+  min-height: 44px;
   text-align: center;
   padding: 0 16px;
   cursor: pointer;
@@ -253,7 +249,7 @@
 
 .handwritingText {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
-  font-size: clamp(1.2rem, 4.2vw, 1.5rem);
+  font-size: clamp(1.15rem, 4vw, 1.45rem);
   font-weight: 850;
   letter-spacing: -0.03em;
   color: var(--h-text);
@@ -327,16 +323,18 @@
   line-height: 0.88;
 }
 
-/* ── 4. BOTTOM ACTION BAR (PINNED TO BOTTOM) ── */
+/* ── 4. BOTTOM ACTION BAR (GUARANTEED VISIBLE AT BOTTOM) ── */
 .bottomActionBar {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  padding-bottom: 2px;
+  padding: 0;
+  margin: 0;
   box-sizing: border-box;
   z-index: 50;
+  flex-shrink: 0;
 }
 
 .socialIconsGroup {
