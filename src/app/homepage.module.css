@@ -1,5 +1,5 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE: CLEAN GALLERY & EDITORIAL SIGNATURE
+   AVANT-GARDE HOMEPAGE · HORIZONTAL FILMSTRIP & BIG HEAD TITLE
    ============================================================ */
 
 :root {
@@ -35,7 +35,7 @@
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   margin: 0;
-  padding: 16px 20px 24px;
+  padding: 18px 20px 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -62,13 +62,13 @@
   box-sizing: border-box;
 }
 
-/* ── 1. TOP NAVBAR ── */
+/* ── 1. TOP NAVBAR (IA & ICON BUTTONS ONLY) ── */
 .topNavbar {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 16px;
+  padding: 8px 14px;
   background-color: var(--h-bg);
   border: 1px solid var(--h-border);
   border-radius: 9999px;
@@ -85,31 +85,36 @@
   padding: 2px 4px;
 }
 
-.navLinksGroup {
+.navIconsGroup {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
-.navLinkPill {
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+.navIconBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--h-text);
-  text-decoration: none;
-  padding: 4px 12px;
-  border-radius: 9999px;
   background: var(--h-pill-bg);
+  border: 1px solid var(--h-border);
+  text-decoration: none;
   transition: all 0.15s ease;
 }
 
-.navLinkPill:hover {
+.navIconBtn:hover {
   background: var(--h-pill-hover);
   transform: translateY(-1px);
 }
 
-/* ── 2. CENTER GALLERY ── */
+.navIconBtn:active {
+  transform: scale(0.92);
+}
+
+/* ── 2. CENTER FILMSTRIP LOOKBOOK GALLERY (INSPIRED BY REFERENCE) ── */
 .galleryStageArea {
   width: 100%;
   flex: 1;
@@ -119,104 +124,102 @@
   align-items: center;
   margin: auto 0;
   position: relative;
+  overflow: hidden;
 }
 
-.momentDateLabel {
-  font-size: 0.74rem;
-  font-weight: 800;
+.momentDateHeader {
+  font-size: 0.72rem;
+  font-weight: 850;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--h-text);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
-.carouselFilmStrip {
+.filmstripViewport {
   width: 100%;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  height: 270px;
+  height: 280px;
 }
 
 @media (max-width: 480px) {
-  .carouselFilmStrip {
+  .filmstripViewport {
     height: 240px;
   }
 }
 
-.activePhotoFrame {
-  width: 240px;
-  height: 240px;
-  border-radius: 16px;
-  overflow: hidden;
-  background: #18181c;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
-  z-index: 10;
-  cursor: pointer;
+.filmstripTrack {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.filmstripItem {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+  background: #18181c;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Center Active Photo (Larger, Full Contrast) */
+.activeFilmstripItem {
+  width: 180px;
+  height: 240px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+  z-index: 10;
 }
 
 @media (max-width: 480px) {
-  .activePhotoFrame {
-    width: 210px;
+  .activeFilmstripItem {
+    width: 155px;
     height: 210px;
-    border-radius: 14px;
   }
 }
 
-.activePhotoImg {
+.activeFilmstripItem img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: contrast(105%);
+  filter: contrast(106%);
 }
 
-.sideThumbContainer {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  position: absolute;
+/* Side Peek Photos (Smaller, Muted Lookbook Vibe) */
+.peekFilmstripItem {
+  width: 90px;
+  height: 150px;
+  opacity: 0.4;
+  filter: grayscale(100%);
   z-index: 5;
 }
 
-.sideThumbContainerLeft {
-  left: -20px;
-}
-
-.sideThumbContainerRight {
-  right: -20px;
-}
-
-.sidePreviewPhoto {
-  width: 68px;
-  height: 68px;
-  border-radius: 10px;
-  overflow: hidden;
-  opacity: 0.45;
-  filter: grayscale(100%);
-  cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  flex-shrink: 0;
-}
-
 @media (max-width: 480px) {
-  .sidePreviewPhoto {
-    width: 54px;
-    height: 54px;
-    border-radius: 8px;
+  .peekFilmstripItem {
+    width: 70px;
+    height: 125px;
   }
 }
 
-.sidePreviewPhoto:hover {
-  opacity: 0.85;
-  transform: scale(1.05);
+.peekFilmstripItem:hover {
+  opacity: 0.8;
+  transform: scale(1.04);
 }
 
-.momentCaptionText {
-  font-size: 0.78rem;
+.peekFilmstripItem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.momentCaptionLabel {
+  font-size: 0.76rem;
   line-height: 1.45;
   color: var(--h-text-muted);
   text-align: center;
@@ -225,50 +228,49 @@
   min-height: 22px;
 }
 
-/* ── 3. BOTTOM EDITORIAL SIGNATURE (BIG HEAD & TITLE) ── */
-.bottomSignatureArea {
+/* ── 3. BOTTOM EDITORIAL HEAD & BIG NAME ONLY (NO ROLES) ── */
+.bottomTitleBar {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding-top: 8px;
+  gap: 16px;
+  padding-top: 6px;
 }
 
-.signatureHeadWrap {
-  width: 44px;
-  height: 44px;
+.bigHeadCutoutWrap {
+  width: 72px;
+  height: 72px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
-.signatureHeadImg {
+@media (max-width: 480px) {
+  .bigHeadCutoutWrap {
+    width: 62px;
+    height: 62px;
+  }
+}
+
+.bigHeadCutoutImg {
   width: 100%;
   height: 100%;
   object-fit: contain;
   filter: contrast(108%);
+  transition: transform 0.3s ease;
 }
 
-.signatureTextBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
+.bigHeadCutoutWrap:hover .bigHeadCutoutImg {
+  transform: scale(1.08) rotate(-3deg);
 }
 
-.signatureName {
-  font-size: 1.05rem;
-  font-weight: 850;
-  letter-spacing: -0.025em;
+.bigNameHeading {
+  font-size: clamp(1.45rem, 5.5vw, 1.95rem);
+  font-weight: 900;
+  letter-spacing: -0.035em;
   color: var(--h-text);
-  margin: 0;
-  line-height: 1.15;
-}
-
-.signatureRole {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--h-text-muted);
+  line-height: 1.05;
   margin: 0;
 }

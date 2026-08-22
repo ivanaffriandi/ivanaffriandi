@@ -6,6 +6,23 @@ import Link from 'next/link';
 import styles from './homepage.module.css';
 import momentsData from './moments-data.json';
 
+// Fountain Pen / Quill Nib Icon for Blog
+const QuillPenIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 19l7-7 3 3-7 7-3-3z" />
+    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+    <path d="M2 2l7.586 7.586" />
+    <circle cx="11" cy="11" r="2" />
+  </svg>
+);
+
+// Minimalist Message / Ask Icon
+const AskChatIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+  </svg>
+);
+
 interface MomentPhoto {
   id: string;
   image: string;
@@ -13,14 +30,15 @@ interface MomentPhoto {
   caption?: string;
 }
 
-export default function CleanMomentsHomepage() {
+export default function LookbookMomentsHomepage() {
   const [moments] = useState<MomentPhoto[]>(momentsData as MomentPhoto[]);
-  const [currentIndex, setCurrentIndex] = useState<number>(0); // Start at index 0 (09 FEB 2026)
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const activeMoment = moments[currentIndex] || moments[0];
   const prevMoment = moments[(currentIndex - 1 + moments.length) % moments.length];
   const prevPrevMoment = moments[(currentIndex - 2 + moments.length) % moments.length];
   const nextMoment = moments[(currentIndex + 1) % moments.length];
+  const nextNextMoment = moments[(currentIndex + 2) % moments.length];
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : moments.length - 1));
@@ -44,115 +62,114 @@ export default function CleanMomentsHomepage() {
   return (
     <div className={styles.homepageViewport}>
       <div className={styles.mainContainer}>
-        {/* ── 1. TOP NAVBAR (IA & BLOG / ASK) ── */}
+        {/* ── 1. TOP NAVBAR (IA LOGO & PEN / ASK ICON BUTTONS) ── */}
         <header className={styles.topNavbar}>
           <Link href="/" className={styles.logoMonogram} title="Ivan Affriandi">
             IA
           </Link>
 
-          <nav className={styles.navLinksGroup}>
+          <nav className={styles.navIconsGroup}>
             <a
               href="https://blog.ivanaffriandi.com"
-              className={styles.navLinkPill}
-              title="Blog"
+              className={styles.navIconBtn}
+              title="Blog & Essays"
+              aria-label="Blog"
             >
-              Blog
+              <QuillPenIcon />
             </a>
-            <Link href="/ask" className={styles.navLinkPill} title="Ask Anonymous">
-              Ask
+            <Link
+              href="/ask"
+              className={styles.navIconBtn}
+              title="Ask Anonymous"
+              aria-label="Ask Anonymous"
+            >
+              <AskChatIcon />
             </Link>
           </nav>
         </header>
 
-        {/* ── 2. CENTER MOMENTS GALLERY ── */}
+        {/* ── 2. CENTER LOOKBOOK FILMSTRIP GALLERY ── */}
         <main className={styles.galleryStageArea}>
-          {/* Moment Date Label */}
-          <span className={styles.momentDateLabel}>{activeMoment.date}</span>
+          {/* Date Label */}
+          <span className={styles.momentDateHeader}>{activeMoment.date}</span>
 
-          {/* Filmstrip with Seamless Swap Animation */}
-          <div className={styles.carouselFilmStrip}>
-            {/* Left Side Previews */}
-            <div className={`${styles.sideThumbContainer} ${styles.sideThumbContainerLeft}`}>
+          {/* Horizontal Filmstrip Viewport */}
+          <div className={styles.filmstripViewport}>
+            <div className={styles.filmstripTrack}>
+              {/* Outer Left Preview */}
               <div
-                className={styles.sidePreviewPhoto}
+                className={`${styles.filmstripItem} ${styles.peekFilmstripItem}`}
                 onClick={() => setCurrentIndex((prev) => (prev - 2 + moments.length) % moments.length)}
-                title="Earlier photo"
+                title="Previous photo"
               >
-                <img
-                  src={prevPrevMoment.image}
-                  alt="Earlier photo"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
+                <img src={prevPrevMoment.image} alt="Lookbook thumbnail" />
               </div>
+
+              {/* Inner Left Preview */}
               <div
-                className={styles.sidePreviewPhoto}
+                className={`${styles.filmstripItem} ${styles.peekFilmstripItem}`}
                 onClick={handlePrev}
                 title="Previous photo"
               >
-                <img
-                  src={prevMoment.image}
-                  alt="Previous photo"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
+                <img src={prevMoment.image} alt="Lookbook thumbnail" />
               </div>
-            </div>
 
-            {/* Center Active Photo */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeMoment.id}
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.2 }}
-                className={styles.activePhotoFrame}
-                onClick={handleNext}
-                title="Click for next photo"
-              >
-                <img
-                  src={activeMoment.image}
-                  alt={activeMoment.caption || 'Moment'}
-                  className={styles.activePhotoImg}
-                />
-              </motion.div>
-            </AnimatePresence>
+              {/* Center Active Photo with Smooth Transition */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeMoment.id}
+                  initial={{ opacity: 0, scale: 0.94 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.94 }}
+                  transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                  className={`${styles.filmstripItem} ${styles.activeFilmstripItem}`}
+                  onClick={handleNext}
+                  title="Click to view next moment"
+                >
+                  <img
+                    src={activeMoment.image}
+                    alt={activeMoment.caption || 'Moment photo'}
+                  />
+                </motion.div>
+              </AnimatePresence>
 
-            {/* Right Side Preview */}
-            <div className={`${styles.sideThumbContainer} ${styles.sideThumbContainerRight}`}>
+              {/* Inner Right Preview */}
               <div
-                className={styles.sidePreviewPhoto}
+                className={`${styles.filmstripItem} ${styles.peekFilmstripItem}`}
                 onClick={handleNext}
                 title="Next photo"
               >
-                <img
-                  src={nextMoment.image}
-                  alt="Next photo"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
+                <img src={nextMoment.image} alt="Lookbook thumbnail" />
+              </div>
+
+              {/* Outer Right Preview */}
+              <div
+                className={`${styles.filmstripItem} ${styles.peekFilmstripItem}`}
+                onClick={() => setCurrentIndex((prev) => (prev + 2) % moments.length)}
+                title="Next photo"
+              >
+                <img src={nextNextMoment.image} alt="Lookbook thumbnail" />
               </div>
             </div>
           </div>
 
           {/* Caption */}
-          <p className={styles.momentCaptionText}>
-            {activeMoment.caption ? activeMoment.caption.slice(0, 85) : ''}
+          <p className={styles.momentCaptionLabel}>
+            {activeMoment.caption ? activeMoment.caption.slice(0, 80) : ''}
           </p>
         </main>
 
-        {/* ── 3. BOTTOM EDITORIAL SIGNATURE (HEAD & NAME TITLE, NON-BUTTON) ── */}
-        <footer className={styles.bottomSignatureArea}>
-          <div className={styles.signatureHeadWrap}>
+        {/* ── 3. BOTTOM EDITORIAL HEAD & BIG NAME ONLY (NO ROLES) ── */}
+        <footer className={styles.bottomTitleBar}>
+          <div className={styles.bigHeadCutoutWrap}>
             <img
               src="/ivan-head.png"
               alt="Ivan"
-              className={styles.signatureHeadImg}
+              className={styles.bigHeadCutoutImg}
             />
           </div>
 
-          <div className={styles.signatureTextBlock}>
-            <h1 className={styles.signatureName}>Ivan Affriandi</h1>
-            <p className={styles.signatureRole}>Software Engineer &amp; Bespoke Leather Artisan</p>
-          </div>
+          <h1 className={styles.bigNameHeading}>Ivan Affriandi</h1>
         </footer>
       </div>
     </div>
