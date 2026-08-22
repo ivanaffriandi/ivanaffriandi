@@ -1,5 +1,8 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · ULTRA-FLUSH TOP NAVBAR & FULL-SCREEN MENU
+   AVANT-GARDE HOMEPAGE · 100% MATHEMATICAL SYMMETRICAL MARGINS
+   Top Navbar: top: 18px, left: 18px, right: 18px
+   Center Stage: 50% / 50% True Dead Center
+   Bottom Bar: bottom: 18px, left: 18px, right: 18px
    ============================================================ */
 
 :root {
@@ -74,30 +77,30 @@
   pointer-events: auto;
 }
 
-/* ── ZONE 1: TOP NAVBAR (ULTRA-FLUSH TO TOP: 0PX) ── */
+/* ── ZONE 1: TOP NAVBAR (EXACT 18PX MARGIN ALL-AROUND) ── */
 .topNavbarRow {
   position: absolute !important;
-  top: 0px !important;
-  left: 14px !important;
-  right: 14px !important;
+  top: 18px !important;
+  left: 18px !important;
+  right: 18px !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
   z-index: 60 !important;
   box-sizing: border-box;
-  padding-top: 2px !important;
 }
 
 .textLogoIsland {
   display: inline-flex;
   align-items: center;
   text-decoration: none;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 900;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--h-text);
-  padding: 2px 0;
+  padding: 0;
+  line-height: 1;
   transition: opacity 0.15s ease;
 }
 
@@ -149,7 +152,7 @@
   flex-direction: column;
   justify-content: space-between;
   box-sizing: border-box;
-  padding: 20px 24px 40px;
+  padding: 24px 28px 48px;
   overflow: hidden;
   user-select: none;
 }
@@ -228,7 +231,7 @@
   color: var(--h-text-muted);
 }
 
-/* ── ZONE 2: CENTER HERO STAGE (DEAD-CENTER: 50%, 50%) ── */
+/* ── ZONE 2: CENTER HERO STAGE (TRUE DEAD-CENTER: 50%, 50%) ── */
 .centerHeroStage {
   position: absolute !important;
   top: 50% !important;
@@ -328,12 +331,12 @@
   z-index: 2;
 }
 
-/* ── ZONE 3: BOTTOM ACTION BAR (BOTTOM: 14PX) ── */
+/* ── ZONE 3: BOTTOM ACTION BAR (EXACT 18PX MARGIN ALL-AROUND) ── */
 .bottomActionBar {
   position: absolute !important;
-  bottom: 14px !important;
-  left: 14px !important;
-  right: 14px !important;
+  bottom: 18px !important;
+  left: 18px !important;
+  right: 18px !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
