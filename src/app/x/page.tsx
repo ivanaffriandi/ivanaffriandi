@@ -474,29 +474,30 @@ function AdminPageContent() {
 
         /* Comfortable Page Width & Beautiful Margins */
         .admin-page-container {
-          max-width: 580px;
+          max-width: 520px;
           width: 100%;
           margin: 0 auto;
-          padding: 1.5rem 1.25rem 3.5rem;
+          padding: 20px 20px 80px 20px;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
-          gap: 1.2rem;
+          gap: 14px;
         }
 
         @media (max-width: 480px) {
           .admin-page-container {
-            padding: 1.2rem 1.15rem 3rem;
+            padding: 16px 18px 70px 18px;
+            gap: 12px;
           }
         }
 
         .admin-card {
           background-color: var(--card-bg-1);
           border: 1px solid var(--border-color);
-          border-radius: 22px;
-          padding: 1.25rem 1.35rem;
+          border-radius: 20px;
+          padding: 16px 18px;
           box-sizing: border-box;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+          box-shadow: 0 4px 20px rgba(0,0,0,0.03);
           width: 100%;
         }
 

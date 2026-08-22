@@ -128,11 +128,13 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { page, referrer, utmSource } = body;
 
-    // Capture IP Address
-    let ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "127.0.0.1";
-    if (ip.includes(",")) {
-      ip = ip.split(",")[0].trim();
-    }
+    // Capture True Client IP (Priority: Cloudflare -> True-Client -> X-Real-IP -> X-Forwarded-For)
+    let ip =
+      request.headers.get("cf-connecting-ip") ||
+      request.headers.get("true-client-ip") ||
+      request.headers.get("x-real-ip") ||
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      "127.0.0.1";
 
     const encodedIp = ip.replace(/\./g, "_").replace(/:/g, "_");
 

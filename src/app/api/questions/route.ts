@@ -162,11 +162,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Content is required" }, { status: 400 });
     }
 
-    // Capture IP Address
-    let ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "127.0.0.1";
-    if (ip.includes(",")) {
-      ip = ip.split(",")[0].trim();
-    }
+    // Capture True Client IP (Priority: Cloudflare -> True-Client -> X-Real-IP -> X-Forwarded-For)
+    let ip =
+      request.headers.get("cf-connecting-ip") ||
+      request.headers.get("true-client-ip") ||
+      request.headers.get("x-real-ip") ||
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      "127.0.0.1";
 
     // --- IP BLOCKLIST ---
     const defaultBlocked = ["114.10.25.175", "103.174.18.46", "180.254.78.88"];
@@ -188,7 +190,7 @@ export async function POST(request: Request) {
 
     if (isBlocked) {
       return NextResponse.json(
-        { error: `You have been blocked from interacting. IP ${ip} has been logged for malicious activity.` },
+        { error: `You have been blocked from interacting. IP ${ip} has been logged.` },
         { status: 403 }
       );
     }
@@ -198,24 +200,28 @@ export async function POST(request: Request) {
     const ua = request.headers.get("user-agent") || "";
     const device = parseUserAgent(ua);
 
-    // Capture Geolocation
-    const country = request.headers.get("x-vercel-ip-country") || "";
-    const region = request.headers.get("x-vercel-ip-country-region") || "";
-    const city = request.headers.get("x-vercel-ip-city") || "";
+    // Capture Real-Time Geolocation (Cloudflare Edge -> Vercel Edge -> ip-api fallback)
+    const cfCity = request.headers.get("cf-ipcity") || request.headers.get("x-vercel-ip-city") || "";
+    const cfRegion = request.headers.get("cf-region") || request.headers.get("x-vercel-ip-country-region") || "";
+    const cfCountry = request.headers.get("cf-ipcountry") || request.headers.get("x-vercel-ip-country") || "";
 
     let location = "Unknown Location";
-    if (city || country) {
-      const parts = [city, region, country].filter(Boolean);
+    if (cfCity || cfCountry) {
+      const parts = [cfCity, cfRegion, cfCountry].filter(Boolean);
       location = parts.join(", ");
-    } else {
-      // Fallback: ip-api.com lookup
+    }
+    
+    // If headers only gave country or empty, fetch real-time IP Geolocation
+    if ((!cfCity || location === "Unknown Location") && ip && ip !== "127.0.0.1" && !ip.startsWith("192.168.") && !ip.startsWith("10.") && ip !== "::1") {
       try {
-        const geoRes = await fetch(`http://ip-api.com/json/${ip}`, { signal: AbortSignal.timeout(2000) });
+        const geoRes = await fetch(`http://ip-api.com/json/${ip}?fields=status,message,country,regionName,city,district`, { signal: AbortSignal.timeout(2500) });
         if (geoRes.ok) {
           const geoData = await geoRes.json();
           if (geoData.status === "success") {
-            const parts = [geoData.city, geoData.regionName, geoData.country].filter(Boolean);
-            location = parts.join(", ");
+            const parts = [geoData.district, geoData.city, geoData.regionName, geoData.country].filter(Boolean);
+            if (parts.length > 0) {
+              location = parts.join(", ");
+            }
           }
         }
       } catch (err) {
