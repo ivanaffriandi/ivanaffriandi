@@ -51,7 +51,7 @@ function formatRelativeTime(dateStr?: string): string {
   if (mins < 60) return `${mins}m ago`;
   const hours = Math.floor(mins / 60);
   if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
+  const days = Math.floor(days / 24);
   return `${days}d ago`;
 }
 
@@ -456,9 +456,6 @@ function AdminPageContent() {
         paddingBottom: "80px",
         boxSizing: "border-box",
         width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
       }}
     >
       <style>{`
@@ -475,7 +472,7 @@ function AdminPageContent() {
           scrollbar-width: none !important;
         }
 
-        /* Top Sticky Header */
+        /* Top Sticky Header: Full Width Header */
         .admin-sticky-header {
           width: 100%;
           background-color: var(--bg-color);
@@ -483,38 +480,29 @@ function AdminPageContent() {
           position: sticky;
           top: 0;
           z-index: 99;
-          display: flex;
-          justify-content: center;
-        }
-
-        .admin-header-inner {
-          max-width: 440px;
-          width: 100%;
-          padding: 12px 20px;
+          padding: 0.85rem 1.25rem;
           display: flex;
           justify-content: space-between;
           align-items: center;
           box-sizing: border-box;
         }
 
-        /* Page Content: Perfectly Contained with generous 24px margins */
+        /* Page Content: Full viewport container with generous paddings */
         .admin-page-container {
-          max-width: 440px;
           width: 100%;
-          margin: 0 auto;
-          padding: 20px 20px 80px 20px;
+          padding: 1.25rem 1.25rem 5rem;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
-          gap: 14px;
+          gap: 1rem;
         }
 
-        /* Distinct Floating iOS Card */
+        /* Distinct Floating iOS Card with generous internal padding */
         .admin-card {
           background-color: var(--card-bg-1);
           border: 1px solid var(--border-color);
           border-radius: 20px;
-          padding: 16px 18px;
+          padding: 1.35rem 1.4rem;
           box-sizing: border-box;
           box-shadow: 0 4px 20px rgba(0,0,0,0.03);
           width: 100%;
@@ -532,7 +520,7 @@ function AdminPageContent() {
           background-color: var(--card-bg-1);
           border: 1px solid var(--border-color);
           border-radius: 18px;
-          padding: 14px 16px;
+          padding: 1.2rem 1.25rem;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
@@ -566,7 +554,7 @@ function AdminPageContent() {
           background: var(--bg-secondary);
           border: 1px solid var(--border-color);
           border-radius: 12px;
-          padding: 0.75rem 0.9rem;
+          padding: 0.85rem 1rem;
           color: var(--text-primary);
           font-size: 0.85rem;
           outline: none;
@@ -577,9 +565,9 @@ function AdminPageContent() {
         }
 
         .admin-action-btn {
-          padding: 7px 14px;
+          padding: 8px 16px;
           border-radius: 9999px;
-          font-size: 0.72rem;
+          font-size: 0.74rem;
           font-weight: 800;
           cursor: pointer;
           border: none;
@@ -599,7 +587,7 @@ function AdminPageContent() {
           background: var(--bg-secondary);
           border-radius: 9999px;
           overflow: hidden;
-          margin-top: 5px;
+          margin-top: 6px;
         }
 
         .progress-bar-fill {
@@ -641,98 +629,96 @@ function AdminPageContent() {
         }
       `}</style>
 
-      {/* ── TOP HEADER ── */}
+      {/* ── TOP HEADER (ORIGINAL POSITION ACROSS THE TOP) ── */}
       <header className="admin-sticky-header">
-        <div className="admin-header-inner">
-          {/* TOP LEFT: SEGMENTED SWITCH BUTTONS */}
-          <div style={{ display: "flex", background: "var(--bg-secondary)", borderRadius: "9999px", padding: "2px", border: "1px solid var(--border-color)" }}>
-            <button
-              type="button"
-              onClick={() => handleTabChange("inbox")}
-              style={{
-                border: "none",
-                background: activeTab === "inbox" ? "var(--card-bg-1)" : "transparent",
-                color: activeTab === "inbox" ? "var(--text-primary)" : "var(--text-secondary)",
-                padding: "5px 14px",
-                borderRadius: "9999px",
-                fontSize: "0.74rem",
-                fontWeight: 800,
-                cursor: "pointer",
-                boxShadow: activeTab === "inbox" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                transition: "all 0.15s ease",
-              }}
-            >
-              <span>Inbox</span>
-              {pendingQuestionsCount > 0 && (
-                <span style={{ background: "#FF3B30", color: "#fff", fontSize: "0.58rem", fontWeight: 850, padding: "1px 5px", borderRadius: "9999px" }}>
-                  {pendingQuestionsCount}
-                </span>
-              )}
-            </button>
+        {/* TOP LEFT: SEGMENTED SWITCH BUTTONS */}
+        <div style={{ display: "flex", background: "var(--bg-secondary)", borderRadius: "9999px", padding: "2px", border: "1px solid var(--border-color)" }}>
+          <button
+            type="button"
+            onClick={() => handleTabChange("inbox")}
+            style={{
+              border: "none",
+              background: activeTab === "inbox" ? "var(--card-bg-1)" : "transparent",
+              color: activeTab === "inbox" ? "var(--text-primary)" : "var(--text-secondary)",
+              padding: "5px 14px",
+              borderRadius: "9999px",
+              fontSize: "0.74rem",
+              fontWeight: 800,
+              cursor: "pointer",
+              boxShadow: activeTab === "inbox" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              transition: "all 0.15s ease",
+            }}
+          >
+            <span>Inbox</span>
+            {pendingQuestionsCount > 0 && (
+              <span style={{ background: "#FF3B30", color: "#fff", fontSize: "0.58rem", fontWeight: 850, padding: "1px 5px", borderRadius: "9999px" }}>
+                {pendingQuestionsCount}
+              </span>
+            )}
+          </button>
 
-            <button
-              type="button"
-              onClick={() => handleTabChange("analytics")}
-              style={{
-                border: "none",
-                background: activeTab === "analytics" ? "var(--card-bg-1)" : "transparent",
-                color: activeTab === "analytics" ? "var(--text-primary)" : "var(--text-secondary)",
-                padding: "5px 14px",
-                borderRadius: "9999px",
-                fontSize: "0.74rem",
-                fontWeight: 800,
-                cursor: "pointer",
-                boxShadow: activeTab === "analytics" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-                transition: "all 0.15s ease",
-              }}
-            >
-              Analytics
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => handleTabChange("analytics")}
+            style={{
+              border: "none",
+              background: activeTab === "analytics" ? "var(--card-bg-1)" : "transparent",
+              color: activeTab === "analytics" ? "var(--text-primary)" : "var(--text-secondary)",
+              padding: "5px 14px",
+              borderRadius: "9999px",
+              fontSize: "0.74rem",
+              fontWeight: 800,
+              cursor: "pointer",
+              boxShadow: activeTab === "analytics" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
+              transition: "all 0.15s ease",
+            }}
+          >
+            Analytics
+          </button>
+        </div>
 
-          {/* TOP RIGHT: REFRESH ICON & SIGN OUT */}
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <button
-              type="button"
-              onClick={loadData}
-              title="Refresh data"
-              className="icon-btn"
+        {/* TOP RIGHT: REFRESH ICON & SIGN OUT */}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <button
+            type="button"
+            onClick={loadData}
+            title="Refresh data"
+            className="icon-btn"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={isRefreshing ? "rotating-icon" : ""}
             >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={isRefreshing ? "rotating-icon" : ""}
-              >
-                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-              </svg>
-            </button>
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+            </svg>
+          </button>
 
-            <button
-              type="button"
-              onClick={handleLogout}
-              style={{
-                border: "1px solid var(--border-color)",
-                background: "var(--bg-secondary)",
-                color: "var(--text-secondary)",
-                borderRadius: "9999px",
-                padding: "6px 12px",
-                fontSize: "0.7rem",
-                fontWeight: 750,
-                cursor: "pointer",
-              }}
-            >
-              Sign Out
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={handleLogout}
+            style={{
+              border: "1px solid var(--border-color)",
+              background: "var(--bg-secondary)",
+              color: "var(--text-secondary)",
+              borderRadius: "9999px",
+              padding: "6px 12px",
+              fontSize: "0.7rem",
+              fontWeight: 750,
+              cursor: "pointer",
+            }}
+          >
+            Sign Out
+          </button>
         </div>
       </header>
 
@@ -784,12 +770,12 @@ function AdminPageContent() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="admin-card"
-                      style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}
+                      style={{ display: "flex", flexDirection: "column", gap: "0.9rem" }}
                     >
                       {/* CARD HEADER */}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                          <span style={{ fontSize: "0.85rem", fontWeight: 800, color: "var(--text-primary)" }}>
+                          <span style={{ fontSize: "0.88rem", fontWeight: 800, color: "var(--text-primary)" }}>
                             {q.name || "Anonymous"}
                           </span>
                           {!q.answered && (
@@ -859,7 +845,7 @@ function AdminPageContent() {
                       </div>
 
                       {/* QUESTION BODY */}
-                      <p style={{ fontSize: "0.92rem", lineHeight: 1.55, margin: 0, color: "var(--text-primary)", whiteSpace: "pre-wrap" }}>
+                      <p style={{ fontSize: "0.92rem", lineHeight: 1.6, margin: 0, color: "var(--text-primary)", whiteSpace: "pre-wrap" }}>
                         &ldquo;{q.content}&rdquo;
                       </p>
 
@@ -969,7 +955,7 @@ function AdminPageContent() {
                 <span style={{ fontSize: "0.65rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Unique IP Sessions
                 </span>
-                <div style={{ fontSize: "1.55rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "4px" }}>
+                <div style={{ fontSize: "1.55rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "6px" }}>
                   {analyticsSessions.length}
                 </div>
               </div>
@@ -978,7 +964,7 @@ function AdminPageContent() {
                 <span style={{ fontSize: "0.65rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Total Page Loads
                 </span>
-                <div style={{ fontSize: "1.55rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "4px" }}>
+                <div style={{ fontSize: "1.55rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "6px" }}>
                   {totalVisits}
                 </div>
               </div>
@@ -987,7 +973,7 @@ function AdminPageContent() {
                 <span style={{ fontSize: "0.65rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Questions Received
                 </span>
-                <div style={{ fontSize: "1.55rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "4px" }}>
+                <div style={{ fontSize: "1.55rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "6px" }}>
                   {adminQuestions.length}
                 </div>
               </div>
@@ -996,25 +982,25 @@ function AdminPageContent() {
                 <span style={{ fontSize: "0.65rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Firewall Status
                 </span>
-                <div style={{ fontSize: "0.92rem", fontWeight: 800, color: "#34c759", marginTop: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
+                <div style={{ fontSize: "0.92rem", fontWeight: 800, color: "#34c759", marginTop: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
                   <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#34c759" }} />
                   <span>{blockedIPs.length} Blocked</span>
                 </div>
               </div>
             </div>
 
-            {/* DETAILED BREAKDOWNS (CONTAINED CARDS) */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {/* DETAILED BREAKDOWNS (WITH SPACIOUS INTERNAL MARGINS) */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
               {/* TOP REFERRERS */}
               <div className="admin-card">
-                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: "14px" }}>
                   Top Referrers
                 </span>
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "12px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   {topPlatforms.map(([name, count]) => {
                     const pct = Math.round((count / maxPlatformCount) * 100);
                     return (
-                      <div key={name}>
+                      <div key={name} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.78rem" }}>
                           <span style={{ color: "var(--text-primary)", fontWeight: 650, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                             {name}
@@ -1032,14 +1018,14 @@ function AdminPageContent() {
 
               {/* TOP CITIES */}
               <div className="admin-card">
-                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: "14px" }}>
                   Top Cities
                 </span>
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "12px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   {topLocations.map(([name, count]) => {
                     const pct = Math.round((count / maxLocationCount) * 100);
                     return (
-                      <div key={name}>
+                      <div key={name} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.78rem" }}>
                           <span style={{ color: "var(--text-primary)", fontWeight: 650, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                             {name}
@@ -1057,14 +1043,14 @@ function AdminPageContent() {
 
               {/* TOP PAGES */}
               <div className="admin-card">
-                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: "14px" }}>
                   Top Pages
                 </span>
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "12px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   {topPages.map(([name, count]) => {
                     const pct = Math.round((count / maxPageCount) * 100);
                     return (
-                      <div key={name}>
+                      <div key={name} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.78rem" }}>
                           <span style={{ color: "var(--text-primary)", fontWeight: 650, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                             {name}
@@ -1082,14 +1068,14 @@ function AdminPageContent() {
 
               {/* TOP DEVICES */}
               <div className="admin-card">
-                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: "14px" }}>
                   Top Devices
                 </span>
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "12px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   {topDevices.map(([name, count]) => {
                     const pct = Math.round((count / maxDeviceCount) * 100);
                     return (
-                      <div key={name}>
+                      <div key={name} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.78rem" }}>
                           <span style={{ color: "var(--text-primary)", fontWeight: 650, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                             {name}
@@ -1108,7 +1094,7 @@ function AdminPageContent() {
 
             {/* LIVE SESSIONS LOG */}
             <div className="admin-card">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.2rem" }}>
                 <span style={{ fontSize: "0.85rem", fontWeight: 850, color: "var(--text-primary)" }}>
                   Recent Visitor Stream
                 </span>
