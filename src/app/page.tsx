@@ -115,7 +115,7 @@ export default function AvantGardeHomepage() {
   return (
     <div className={styles.homepageViewport}>
       <div className={styles.mainContainer}>
-        {/* ── 1. TOP NAVBAR (IA LOGO & 2-LINE MENU TOGGLE) ── */}
+        {/* ── 1. TOP NAVBAR (IA LOGO & CLEAN NO-CIRCLE 2-LINE MENU) ── */}
         <header className={styles.topNavbar}>
           <Link href="/" className={styles.logoMonogram} title="Ivan Affriandi">
             IA
@@ -151,31 +151,31 @@ export default function AvantGardeHomepage() {
               )}
             </AnimatePresence>
 
-            {/* 2-Line Minimalist Hamburger Button */}
+            {/* 2-Line Minimalist Button (Clean, NO Circle Background) */}
             <button
               type="button"
               onClick={() => setIsMenuOpen((prev) => !prev)}
-              className={styles.twoLineMenuBtn}
+              className={styles.cleanTwoLineBtn}
               title="Toggle Menu"
               aria-label="Toggle Navigation Menu"
             >
               <span
-                className={styles.menuBar}
+                className={styles.equalMenuBar}
                 style={{
-                  transform: isMenuOpen ? 'rotate(45deg) translate(2px, 2px)' : 'none',
+                  transform: isMenuOpen ? 'rotate(45deg) translate(2.5px, 2.5px)' : 'none',
                 }}
               />
               <span
-                className={styles.menuBar}
+                className={styles.equalMenuBar}
                 style={{
-                  transform: isMenuOpen ? 'rotate(-45deg) translate(2px, -2px)' : 'none',
+                  transform: isMenuOpen ? 'rotate(-45deg) translate(2.5px, -2.5px)' : 'none',
                 }}
               />
             </button>
           </div>
         </header>
 
-        {/* ── 2. CENTER HERO STAGE (PERFECT DEAD-CENTER FOCAL POINT) ── */}
+        {/* ── 2. CENTER HERO STAGE (STICKER OUTLINE HEAD IN DARK MODE) ── */}
         <main className={styles.centerHeroStage}>
           <motion.div
             animate={headControls}

@@ -1,6 +1,5 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · UI/UX DESIGNER & WRITER
-   Dead-Center Alignment · Zero Scroll · 2-Line Menu Expander
+   AVANT-GARDE HOMEPAGE · REFINED NAVBAR & DARK STICKER HEAD
    ============================================================ */
 
 :root {
@@ -14,6 +13,7 @@
   --h-btn-bg: #111113;
   --h-btn-text: #ffffff;
   --h-caret: #111113;
+  --h-head-filter: contrast(108%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -28,6 +28,8 @@
     --h-btn-bg: #f4f4f6;
     --h-btn-text: #09090b;
     --h-caret: #f4f4f6;
+    /* Clean white sticker die-cut outline in Dark Mode */
+    --h-head-filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 2px rgba(255, 255, 255, 0.85)) drop-shadow(0 4px 16px rgba(255, 255, 255, 0.15)) contrast(110%);
   }
 }
 
@@ -70,7 +72,7 @@
   box-sizing: border-box;
 }
 
-/* ── 1. TOP NAVBAR (IA LOGO & 2-LINE MENU TOGGLE) ── */
+/* ── 1. TOP NAVBAR (IA LOGO & NO-CIRCLE 2-LINE MENU) ── */
 .topNavbar {
   width: 100%;
   display: flex;
@@ -127,36 +129,37 @@
   transform: translateY(-1px);
 }
 
-.twoLineMenuBtn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+/* 2-Line Menu Button (Clean, NO Circle Background) */
+.cleanTwoLineBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 4px;
-  background: var(--h-pill-bg);
-  border: 1px solid var(--h-border);
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.15s ease;
+  transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
-.twoLineMenuBtn:hover {
-  background: var(--h-pill-hover);
-  transform: scale(1.05);
+.cleanTwoLineBtn:hover {
+  opacity: 0.7;
 }
 
-.menuBar {
-  width: 14px;
+.cleanTwoLineBtn:active {
+  transform: scale(0.92);
+}
+
+.equalMenuBar {
+  width: 16px;
   height: 2px;
   background-color: var(--h-text);
   border-radius: 2px;
-  transition: all 0.2s ease;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── 2. CENTER HERO STAGE (PERFECT DEAD-CENTER FOCAL POINT) ── */
+/* ── 2. CENTER HERO STAGE (STICKER HEAD IN DARK MODE) ── */
 .centerHeroStage {
   width: 100%;
   flex: 1;
@@ -185,8 +188,8 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: contrast(110%);
-  transition: filter 0.3s ease;
+  filter: var(--h-head-filter);
+  transition: filter 0.3s ease, transform 0.3s ease;
 }
 
 .typewriterTextWrap {
