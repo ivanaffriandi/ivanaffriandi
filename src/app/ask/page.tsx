@@ -694,34 +694,28 @@ export default function AskPage() {
           background: var(--ask-card-bg);
           border: 1px solid var(--ask-border);
           color: var(--ask-text);
-          transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
         }
 
         .qa-card-inverted {
           background: var(--ask-inv-bg);
           border: 1px solid var(--ask-inv-border);
           color: var(--ask-inv-text);
-          transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
         }
 
         .qa-text-primary {
           color: var(--ask-text);
-          transition: color 0.4s ease;
         }
 
         .qa-text-muted {
           color: var(--ask-text-sub);
-          transition: color 0.4s ease;
         }
 
         .qa-inv-primary {
           color: var(--ask-inv-text);
-          transition: color 0.4s ease;
         }
 
         .qa-inv-muted {
           color: var(--ask-inv-sub);
-          transition: color 0.4s ease;
         }
 
         .qa-quote-mark {
@@ -783,7 +777,7 @@ export default function AskPage() {
           width: 100%;
           padding: 1.6rem 1.6rem 1.6rem;
           box-sizing: border-box;
-          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
           position: relative;
         }
 
@@ -957,24 +951,24 @@ export default function AskPage() {
       <AnimatePresence>
         {isDrawerOpen && (
           <React.Fragment key="ask-drawer-wrapper">
-            {/* 1. Independent GPU Dimming Backdrop (Separated Layer) */}
+            {/* 1. Subtle, gentle backdrop (No harsh black flash) */}
             <motion.div
               key="ask-backdrop"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
+              transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
               style={{
                 position: "fixed",
                 inset: 0,
-                backgroundColor: "rgba(0, 0, 0, 0.65)",
+                backgroundColor: "rgba(0, 0, 0, 0.38)",
                 zIndex: 9998,
                 touchAction: "none",
               }}
               onClick={() => setIsDrawerOpen(false)}
             />
 
-            {/* 2. Pure Hardware-Accelerated Sliding Sheet (No Opacity Morphing) */}
+            {/* 2. Pure Hardware-Accelerated Sliding Sheet */}
             <div
               key="ask-sheet-container"
               style={{
@@ -991,9 +985,9 @@ export default function AskPage() {
             >
               <motion.div
                 className="ask-drawer-card"
-                initial={{ y: "115%" }}
+                initial={{ y: "110%" }}
                 animate={{ y: "0%" }}
-                exit={{ y: "115%" }}
+                exit={{ y: "110%" }}
                 transition={{
                   type: "spring",
                   stiffness: 340,
