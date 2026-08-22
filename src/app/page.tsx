@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import Link from 'next/link';
 import confetti from 'canvas-confetti';
@@ -19,20 +19,6 @@ const FeatherPenIcon = () => (
 const AskChatIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-  </svg>
-);
-
-const SearchIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-);
-
-const CloseXIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="18" y1="6" x2="6" y2="18" />
-    <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 );
 
@@ -107,139 +93,15 @@ const MATRIX_ROWS = [
   "ZERO BLOAT COMPUTING • MINIMALIST SOFTWARE ARCHITECTURES • SELF-HOSTED SERVICES • LINUX SYSADMIN • ",
 ];
 
-// Comprehensive Site-Wide Search Index
-interface SearchItem {
-  id: string;
-  title: string;
-  category: 'BLOG' | 'ASK' | 'CRAFT' | 'PORTFOLIO' | 'LINK';
-  description: string;
-  url: string;
-  isExternal?: boolean;
-}
-
-const SEARCH_DATABASE: SearchItem[] = [
-  {
-    id: 'b-1',
-    title: 'Designing with Zero Bloat',
-    category: 'BLOG',
-    description: 'Why minimalist interfaces and ultra-fast architectures always win.',
-    url: 'https://blog.ivanaffriandi.com',
-    isExternal: true,
-  },
-  {
-    id: 'b-2',
-    title: 'Reflections on Saddle Stitching & Code',
-    category: 'BLOG',
-    description: 'Parallels between traditional leather craft and software architecture.',
-    url: 'https://blog.ivanaffriandi.com',
-    isExternal: true,
-  },
-  {
-    id: 'b-3',
-    title: 'Mycology Field Notes & Forest Trails',
-    category: 'BLOG',
-    description: 'Foraging wild fungi and appreciating natural algorithms.',
-    url: 'https://blog.ivanaffriandi.com',
-    isExternal: true,
-  },
-  {
-    id: 'a-1',
-    title: 'Ask Anonymous Portal',
-    category: 'ASK',
-    description: 'Ask me anything anonymously or view answered letters and reflections.',
-    url: '/ask',
-  },
-  {
-    id: 'c-1',
-    title: 'SHŪ / EN Studio Atelier',
-    category: 'CRAFT',
-    description: 'Bespoke leather goods handcrafted in Tuscan vegetable-tanned leather.',
-    url: 'https://instagram.com/ivanaffriandi',
-    isExternal: true,
-  },
-  {
-    id: 'c-2',
-    title: 'Solid 925 Sterling Silver & Moire Silk',
-    category: 'CRAFT',
-    description: 'Custom jewelry accents and vintage kimono silk linings for journals.',
-    url: 'https://instagram.com/ivanaffriandi',
-    isExternal: true,
-  },
-  {
-    id: 'p-1',
-    title: 'UI/UX Design Systems & Spatial Tokens',
-    category: 'PORTFOLIO',
-    description: 'Component architecture, micro-interactions, and Figma design tokens.',
-    url: 'mailto:hello@ivanaffriandi.com',
-  },
-  {
-    id: 'p-2',
-    title: 'Next.js 16 & High Performance Web',
-    category: 'PORTFOLIO',
-    description: 'Full-stack web engineering, React 19, TypeScript, and server components.',
-    url: 'https://github.com/ivanaffriandi',
-    isExternal: true,
-  },
-  {
-    id: 'l-1',
-    title: 'GitHub Repositories',
-    category: 'LINK',
-    description: 'Open source experiments, systems, and web projects.',
-    url: 'https://github.com/ivanaffriandi',
-    isExternal: true,
-  },
-  {
-    id: 'l-2',
-    title: 'Instagram Visual Journal',
-    category: 'LINK',
-    description: 'Daily atelier snapshots, photography moments, and studio craft.',
-    url: 'https://instagram.com/ivanaffriandi',
-    isExternal: true,
-  },
-  {
-    id: 'l-3',
-    title: 'X (Twitter) Feed',
-    category: 'LINK',
-    description: 'Thoughts on design, technology, and engineering.',
-    url: 'https://x.com/ivanaffriandi',
-    isExternal: true,
-  },
-  {
-    id: 'l-4',
-    title: 'Email Inquiry & Collaborations',
-    category: 'LINK',
-    description: 'Get in touch for design projects, writing, or bespoke commissions.',
-    url: 'mailto:hello@ivanaffriandi.com',
-  },
-];
-
 export default function AvantGardeHomepage() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>('');
   const [phraseIndex, setPhraseIndex] = useState<number>(0);
   const [displayText, setDisplayText] = useState<string>('');
   const [isTyping, setIsTyping] = useState<boolean>(true);
   const headControls = useAnimation();
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const currentFullText = FUN_PHRASES[phraseIndex];
   const isMarqueeActive = phraseIndex === 6; // State right before "Tap my head again :)"
-
-  // Filtered Search Results (ONLY calculated when query is non-empty)
-  const searchResults = useMemo(() => {
-    const trimmed = searchQuery.trim();
-    if (!trimmed) return [];
-    const q = trimmed.toLowerCase();
-    return SEARCH_DATABASE.filter(
-      (item) =>
-        item.title.toLowerCase().includes(q) ||
-        item.description.toLowerCase().includes(q) ||
-        item.category.toLowerCase().includes(q)
-    );
-  }, [searchQuery]);
-
-  const hasTyped = searchQuery.trim().length > 0;
 
   // Letter-by-Letter Typing Effect
   useEffect(() => {
@@ -324,129 +186,27 @@ export default function AvantGardeHomepage() {
       </AnimatePresence>
 
       <div className={styles.mainContainer}>
-        {/* ── 1. TOP-ALIGNED 3-ISLAND NAVBAR (CIRCULAR IA + EXPANDING SEARCH PILL + CIRCULAR MENU) ── */}
-        <header className={styles.topThreeIslandsRow}>
-          {/* Left Island: Standalone Circular IA Button */}
+        {/* ── 1. CLEAN TOP NAVBAR (CIRCULAR IA ON LEFT, SLEEK EXPANDABLE MENU ON RIGHT) ── */}
+        <header className={styles.topNavbarRow}>
+          {/* Left: Standalone Circular IA Button */}
           <Link href="/" className={styles.circularLogoIsland} title="Ivan Affriandi">
             IA
           </Link>
 
-          {/* Center Island: Standalone Search Pillbar with Horizontal Expanding Focus */}
-          <div className={styles.centerSearchIslandWrap}>
-            <div
-              className={`${styles.centerSearchPillbar} ${
-                isSearchFocused ? styles.centerSearchPillbarActive : ''
-              }`}
-            >
-              <span className={styles.searchIconSvg}>
-                <SearchIcon />
-              </span>
-              <input
-                ref={searchInputRef}
-                type="text"
-                placeholder="Search ivanaffriandi.com..."
-                value={searchQuery}
-                onFocus={() => {
-                  setIsSearchFocused(true);
-                  setIsMenuOpen(false);
-                }}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setIsSearchFocused(true);
-                }}
-                className={styles.searchDirectInput}
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className={styles.clearSearchBtn}
-                  title="Clear search"
-                >
-                  <CloseXIcon />
-                </button>
-              )}
-            </div>
-
-            {/* Expandable Results Dropdown (ONLY shown when query has typed characters) */}
-            <AnimatePresence>
-              {isSearchFocused && hasTyped && (
-                <motion.div
-                  initial={{ opacity: 0, y: -6, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -6, scale: 0.98 }}
-                  transition={{ duration: 0.16 }}
-                  className={styles.searchDropdownCard}
-                >
-                  {searchResults.length > 0 ? (
-                    searchResults.map((item) => (
-                      <a
-                        key={item.id}
-                        href={item.url}
-                        target={item.isExternal ? '_blank' : undefined}
-                        rel={item.isExternal ? 'noopener noreferrer' : undefined}
-                        className={styles.searchResultRow}
-                        onClick={() => {
-                          setIsSearchFocused(false);
-                          setSearchQuery('');
-                        }}
-                      >
-                        <div className={styles.searchResultRowLeft}>
-                          <span className={styles.searchResultRowTitle}>{item.title}</span>
-                          <span className={styles.searchResultRowSub}>{item.description}</span>
-                        </div>
-                        <span className={styles.searchCategoryTag}>{item.category}</span>
-                      </a>
-                    ))
-                  ) : (
-                    <div className={styles.searchEmptyRow}>
-                      No matching results found for &ldquo;{searchQuery}&rdquo;
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Right Island: Standalone Circular Menu Button */}
-          <div className={styles.rightMenuIslandWrap}>
-            <button
-              type="button"
-              onClick={() => {
-                setIsMenuOpen((prev) => !prev);
-                setIsSearchFocused(false);
-              }}
-              className={styles.circularMenuIslandBtn}
-              title="Toggle Menu"
-              aria-label="Toggle Menu"
-            >
-              <span
-                className={styles.menuBarEqual}
-                style={{
-                  transform: isMenuOpen ? 'rotate(45deg) translate(2px, 2px)' : 'none',
-                }}
-              />
-              <span
-                className={styles.menuBarEqual}
-                style={{
-                  transform: isMenuOpen ? 'rotate(-45deg) translate(2px, -2px)' : 'none',
-                }}
-              />
-            </button>
-
-            {/* Floating Menu Dropdown */}
+          {/* Right: Expandable Menu Group with Horizontal Smooth Transition */}
+          <div className={styles.menuExpanderGroup}>
             <AnimatePresence>
               {isMenuOpen && (
                 <motion.div
-                  initial={{ opacity: 0, y: -6, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -6, scale: 0.95 }}
-                  transition={{ duration: 0.16 }}
-                  className={styles.menuDropdownIslandCard}
+                  initial={{ opacity: 0, x: 12, scale: 0.92 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: 12, scale: 0.92 }}
+                  transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                  className={styles.floatingMenuPillsRow}
                 >
                   <a
                     href="https://blog.ivanaffriandi.com"
-                    className={styles.menuDropdownLink}
+                    className={styles.menuPillLink}
                     title="Blog & Journal"
                   >
                     <FeatherPenIcon />
@@ -454,7 +214,7 @@ export default function AvantGardeHomepage() {
                   </a>
                   <Link
                     href="/ask"
-                    className={styles.menuDropdownLink}
+                    className={styles.menuPillLink}
                     title="Ask Anonymous"
                   >
                     <AskChatIcon />
@@ -463,6 +223,28 @@ export default function AvantGardeHomepage() {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Circular Hamburger Button */}
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+              className={styles.circularMenuIslandBtn}
+              title="Toggle Menu"
+              aria-label="Toggle Menu"
+            >
+              <span
+                className={styles.menuBarEqual}
+                style={{
+                  transform: isMenuOpen ? 'rotate(45deg) translate(2.5px, 2.5px)' : 'none',
+                }}
+              />
+              <span
+                className={styles.menuBarEqual}
+                style={{
+                  transform: isMenuOpen ? 'rotate(-45deg) translate(2.5px, -2.5px)' : 'none',
+                }}
+              />
+            </button>
           </div>
         </header>
 
@@ -470,8 +252,7 @@ export default function AvantGardeHomepage() {
         <main
           className={styles.centerHeroStage}
           onClick={() => {
-            setIsSearchFocused(false);
-            setIsMenuOpen(false);
+            if (isMenuOpen) setIsMenuOpen(false);
           }}
         >
           <motion.div
