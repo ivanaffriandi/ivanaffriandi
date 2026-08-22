@@ -110,6 +110,23 @@ export default function AvantGardeHomepage() {
   const currentFullText = FUN_PHRASES[phraseIndex];
   const isMarqueeActive = phraseIndex === 6; // State right before "Tap my head again :)"
 
+  // Lock body & html scrolling completely on iPhone / Mobile browsers
+  useEffect(() => {
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    const originalTouchAction = document.body.style.touchAction;
+
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
+    return () => {
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
+      document.body.style.touchAction = originalTouchAction;
+    };
+  }, []);
+
   // Letter-by-Letter Typing Effect
   useEffect(() => {
     let charIndex = 0;
@@ -151,7 +168,10 @@ export default function AvantGardeHomepage() {
   };
 
   return (
-    <div className={styles.homepageViewport}>
+    <div
+      className={styles.homepageViewport}
+      onTouchMove={(e) => e.preventDefault()}
+    >
       {/* ── ULTRA-DENSE FULL-SCREEN HARDWARE-ACCELERATED RUNNING WALL MATRIX (34 ROWS) ── */}
       <AnimatePresence>
         {isMarqueeActive && (
@@ -191,11 +211,11 @@ export default function AvantGardeHomepage() {
       </AnimatePresence>
 
       <div className={styles.mainContainer}>
-        {/* ── 1. CLEAN TOP NAVBAR (FLUSH TOP ALIGNED) ── */}
+        {/* ── ZONE 1: TOP NAVBAR (TOP EDGE: 8PX) ── */}
         <header className={styles.topNavbarRow}>
-          {/* Left: Standalone Circular IA Button */}
-          <Link href="/" className={styles.circularLogoIsland} title="Ivan Affriandi">
-            IA
+          {/* Left: "Affriandi, Ivan." Clean Typography Logo */}
+          <Link href="/" className={styles.textLogoIsland} title="Ivan Affriandi">
+            Affriandi, Ivan.
           </Link>
 
           {/* Right: Expandable Menu Group with Horizontal Smooth Transition */}
@@ -253,7 +273,7 @@ export default function AvantGardeHomepage() {
           </div>
         </header>
 
-        {/* ── 2. CENTER HERO STAGE (WITH CONTRAST SCRIM & ALWAYS-BLINKING CARET) ── */}
+        {/* ── ZONE 2: CENTER HERO STAGE (DEAD-CENTER: 50%, 50%) ── */}
         <main
           className={styles.centerHeroStage}
           onClick={() => {
@@ -290,7 +310,7 @@ export default function AvantGardeHomepage() {
           </span>
         </main>
 
-        {/* ── 3. BOTTOM BAR (SOCIAL ICONS & EMAIL CTA BUTTON) ── */}
+        {/* ── ZONE 3: BOTTOM ACTION BAR (BOTTOM: 14PX) ── */}
         <footer className={styles.bottomActionBar}>
           {/* Social Media Links */}
           <div className={styles.socialIconsGroup}>

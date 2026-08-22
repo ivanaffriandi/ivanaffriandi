@@ -1,8 +1,8 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · ABSOLUTE 3-ZONE GEOMETRIC PRECISION
-   Zone 1: Top Navbar (top: 14px)
-   Zone 2: Center Hero Stage (top: 50%, left: 50%, translate(-50%, -50%))
-   Zone 3: Bottom Action Bar (bottom: 18px)
+   AVANT-GARDE HOMEPAGE · ABSOLUTE ZERO-SCROLL SINGLE SCREEN
+   Top Navbar: Affriandi, Ivan. (top: 8px)
+   Center Hero Stage: Absolute Dead Center (50%, 50%)
+   Bottom Action Bar: Fixed Bottom (bottom: 14px)
    ============================================================ */
 
 :root {
@@ -45,6 +45,7 @@
   }
 }
 
+/* 100% Locked Zero-Scroll Viewport */
 .homepageViewport {
   position: fixed !important;
   inset: 0 !important;
@@ -59,6 +60,8 @@
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
   user-select: none;
   z-index: 99999 !important;
 }
@@ -75,12 +78,12 @@
   pointer-events: auto;
 }
 
-/* ── ZONE 1: TOP NAVBAR ── */
+/* ── ZONE 1: TOP NAVBAR (FLUSH AT TOP: 8PX) ── */
 .topNavbarRow {
   position: absolute !important;
-  top: max(14px, env(safe-area-inset-top)) !important;
-  left: 18px !important;
-  right: 18px !important;
+  top: max(8px, env(safe-area-inset-top)) !important;
+  left: 16px !important;
+  right: 16px !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
@@ -88,28 +91,21 @@
   box-sizing: border-box;
 }
 
-.circularLogoIsland {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background-color: var(--h-island-bg);
-  border: 1.5px solid var(--h-border);
-  display: flex;
+/* "Affriandi, Ivan." Clean Text Logo */
+.textLogoIsland {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
   text-decoration: none;
-  font-size: 0.92rem;
-  font-weight: 900;
-  letter-spacing: -0.04em;
+  font-size: 0.86rem;
+  font-weight: 850;
+  letter-spacing: -0.025em;
   color: var(--h-text);
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  padding: 4px 2px;
+  transition: opacity 0.15s ease;
 }
 
-.circularLogoIsland:hover {
-  transform: scale(1.06);
-  border-color: var(--h-text);
+.textLogoIsland:hover {
+  opacity: 0.75;
 }
 
 .menuExpanderGroup {
@@ -154,8 +150,8 @@
 }
 
 .circularMenuIslandBtn {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background-color: var(--h-island-bg);
   border: 1.5px solid var(--h-border);
@@ -184,7 +180,7 @@
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── ZONE 2: CENTER HERO STAGE (ABSOLUTE DEAD-CENTER) ── */
+/* ── ZONE 2: CENTER HERO STAGE (DEAD-CENTER: 50%, 50%) ── */
 .centerHeroStage {
   position: absolute !important;
   top: 50% !important;
@@ -284,12 +280,12 @@
   z-index: 2;
 }
 
-/* ── ZONE 3: BOTTOM ACTION BAR (PINNED TO BOTTOM) ── */
+/* ── ZONE 3: BOTTOM ACTION BAR (PINNED AT BOTTOM: 14PX) ── */
 .bottomActionBar {
   position: absolute !important;
-  bottom: max(18px, env(safe-area-inset-bottom)) !important;
-  left: 18px !important;
-  right: 18px !important;
+  bottom: max(14px, env(safe-area-inset-bottom)) !important;
+  left: 16px !important;
+  right: 16px !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
