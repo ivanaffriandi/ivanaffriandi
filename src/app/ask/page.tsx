@@ -533,7 +533,7 @@ export default function AskPage() {
           scrollbar-width: none !important;
         }
 
-        /* ── LOCK VIEWPORT ── */
+        /* ── LOCK VIEWPORT (PERFECTLY SOLID, ZERO FLICKER) ── */
         body, html, .layout-wrapper, .content-wrapper, main, main > div {
           margin: 0 !important;
           padding: 0 !important;
@@ -767,7 +767,7 @@ export default function AskPage() {
           color: var(--ask-text-sub);
         }
 
-        /* ── DRAWER SHEET CARD ── */
+        /* ── DRAWER SHEET CARD (DEEP ELEVATION SHADOW OVER STATIC BG) ── */
         .ask-drawer-card {
           background: var(--ask-card-bg);
           color: var(--ask-text);
@@ -777,7 +777,7 @@ export default function AskPage() {
           width: 100%;
           padding: 1.6rem 1.6rem 1.6rem;
           box-sizing: border-box;
-          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--ask-border);
           position: relative;
         }
 
@@ -947,21 +947,17 @@ export default function AskPage() {
         )}
       </div>
 
-      {/* ── BUTTERY SMOOTH ZERO-FLICKER DRAWER SHEET ── */}
+      {/* ── ZERO-FLICKER DRAWER SHEET (100% STATIC SCREEN BACKGROUND) ── */}
       <AnimatePresence>
         {isDrawerOpen && (
           <React.Fragment key="ask-drawer-wrapper">
-            {/* 1. Subtle, gentle backdrop (No harsh black flash) */}
-            <motion.div
-              key="ask-backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+            {/* 1. Transparent Outside Tap Catcher (Zero Dimming / Zero Background Shift) */}
+            <div
+              key="ask-backdrop-invisible"
               style={{
                 position: "fixed",
                 inset: 0,
-                backgroundColor: "rgba(0, 0, 0, 0.38)",
+                backgroundColor: "transparent",
                 zIndex: 9998,
                 touchAction: "none",
               }}
@@ -985,9 +981,9 @@ export default function AskPage() {
             >
               <motion.div
                 className="ask-drawer-card"
-                initial={{ y: "110%" }}
+                initial={{ y: "115%" }}
                 animate={{ y: "0%" }}
-                exit={{ y: "110%" }}
+                exit={{ y: "115%" }}
                 transition={{
                   type: "spring",
                   stiffness: 340,
