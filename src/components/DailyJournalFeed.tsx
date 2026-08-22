@@ -1782,8 +1782,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
 
         .imessage-bubble-outgoing {
-          background: #111111;
-          color: #FFFFFF;
+          background: #111113 !important;
+          color: #FFFFFF !important;
           padding: 0.8rem 1.15rem;
           border-radius: 18px 18px 4px 18px;
           max-width: 88%;
@@ -1791,6 +1791,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           line-height: 1.5;
           font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif);
           box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+        .imessage-bubble-outgoing,
+        .imessage-bubble-outgoing * {
+          color: #FFFFFF !important;
         }
 
         /* ── BLOG MODAL CONTENT BODY & INLINE IMAGES & DROP CAP ── */
@@ -2946,13 +2950,17 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           }
 
           .imessage-bubble-outgoing {
-            background: var(--text-primary, #111111) !important;
-            color: var(--bg-color, #FFFFFF) !important;
+            background: #111113 !important;
+            color: #FFFFFF !important;
             font-size: 0.85rem !important;
             line-height: 1.45 !important;
             max-width: 90% !important;
-            border-radius: 16px !important;
+            border-radius: 18px 18px 4px 18px !important;
             padding: 0.75rem 1rem !important;
+          }
+          .imessage-bubble-outgoing,
+          .imessage-bubble-outgoing * {
+            color: #FFFFFF !important;
           }
 
           /* ── CHAPTERS HORIZONTAL SNAP CAROUSEL ON MOBILE ── */
@@ -3478,43 +3486,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "flex-end",
+                      justifyContent: "space-between",
+                      gap: "0.85rem",
                       width: "100%",
-                      paddingBottom: "0.25rem",
-                      gap: "0.75rem",
+                      paddingBottom: "0.85rem",
+                      borderBottom: "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
+                      marginBottom: "1rem",
                     }}
                   >
-                    {/* BACK BUTTON (DESKTOP ONLY - ON MOBILE TOP BAR HANDLES THIS) */}
-                    <button
-                      className="reader-back-btn-desktop"
-                      onClick={() => setIsReadingPrologue(false)}
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "0.45rem",
-                        background: "var(--bg-secondary, rgba(125,125,125,0.08))",
-                        border: "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
-                        color: "var(--text-primary, #111111)",
-                        fontSize: "0.66rem",
-                        fontWeight: 700,
-                        letterSpacing: "0.08em",
-                        textTransform: "uppercase",
-                        cursor: "pointer",
-                        padding: "0.38rem 0.88rem",
-                        borderRadius: "9999px",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-                        transition: "all 0.2s ease",
-                        flexShrink: 0,
-                      }}
-                    >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12" />
-                        <polyline points="12 19 5 12 12 5" />
-                      </svg>
-                      BACK TO JOURNAL
-                    </button>
-
-                    {/* LEFT CORNER: REAL-TIME LIKE BUTTON */}
+                    {/* LEFT CORNER: SOLID REAL-TIME LIKE BUTTON */}
                     <button
                       onClick={handleToggleLike}
                       title={likesMap[activePostId || ""]?.hasLiked ? "Unlike" : "Like"}
@@ -3525,19 +3505,17 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         justifyContent: "center",
                         gap: "0.36rem",
                         height: "28px",
-                        padding: "0 0.75rem",
+                        padding: "0 0.8rem",
                         borderRadius: "9999px",
                         cursor: "pointer",
                         transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
                         border: likesMap[activePostId || ""]?.hasLiked
-                          ? "1px solid rgba(255, 45, 85, 0.6)"
-                          : (readerTheme === "dark" ? "1px solid rgba(255,255,255,0.2)" : "1px solid rgba(0,0,0,0.14)"),
+                          ? "1px solid #FF2D55"
+                          : (readerTheme === "dark" ? "1px solid rgba(255,255,255,0.25)" : "1px solid #111111"),
                         background: likesMap[activePostId || ""]?.hasLiked
-                          ? (readerTheme === "dark" ? "rgba(255, 45, 85, 0.22)" : "rgba(255, 45, 85, 0.1)")
-                          : (readerTheme === "dark" ? "rgba(255,255,255,0.1)" : "#FFFFFF"),
-                        color: likesMap[activePostId || ""]?.hasLiked
                           ? "#FF2D55"
-                          : (readerTheme === "dark" ? "#FFFFFF" : "#111113"),
+                          : (readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "#111111"),
+                        color: "#FFFFFF",
                         transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.04)" : "scale(1)",
                         flexShrink: 0,
                       }}
@@ -3546,8 +3524,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         width="13"
                         height="13"
                         viewBox="0 0 24 24"
-                        fill={likesMap[activePostId || ""]?.hasLiked ? "currentColor" : "none"}
-                        stroke="currentColor"
+                        fill={likesMap[activePostId || ""]?.hasLiked ? "#FFFFFF" : "none"}
+                        stroke="#FFFFFF"
                         strokeWidth="2.4"
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -3559,7 +3537,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                       </svg>
                       {likesMap[activePostId || ""]?.count && likesMap[activePostId || ""]!.count > 0 ? (
-                        <span style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.02em" }}>
+                        <span style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.02em", color: "#FFFFFF" }}>
                           {likesMap[activePostId || ""]!.count}
                         </span>
                       ) : null}
@@ -3633,28 +3611,44 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       I didn&apos;t build this space to compete with the world&apos;s noise. This page is simply a conscious effort to gather scattered fragments of thoughts, observations, and subtle details that often slip away, stitching them back together one by one. A quiet corner to nurture clarity, before everything gets swept along by the relentless pace of our days.
                     </p>
 
-                    <div className="imessage-chat-wrap" style={{ margin: "2rem 0", gap: "0.75rem", display: "flex", flexDirection: "column" }}>
-                      <div className="imessage-row-incoming" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.3rem" }}>
-                        <span className="imessage-sender-tag" style={{ marginLeft: "0.5rem", fontSize: "0.54rem" }}>
+                    <div className="imessage-chat-wrap" style={{ margin: "2.25rem 0", gap: "0.95rem", display: "flex", flexDirection: "column" }}>
+                      <div className="imessage-row-incoming" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.35rem" }}>
+                        <span className="imessage-sender-tag" style={{ marginLeft: "0.6rem", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.06em" }}>
                           FRIEND
                         </span>
-                        <div className="imessage-bubble-incoming">
-                          &ldquo;If naturally everything eventually fades and wears out, why go through the trouble of weaving these memories into a space?&rdquo;
+                        <div
+                          className="imessage-bubble-incoming"
+                          style={{
+                            background: readerTheme === "dark" ? "rgba(255, 255, 255, 0.12)" : "#EBEBED",
+                            color: readerTheme === "dark" ? "#EDEDF0" : "#111113",
+                            padding: "0.8rem 1.15rem",
+                            borderRadius: "18px 18px 18px 4px",
+                            fontSize: "0.9rem",
+                            lineHeight: 1.48,
+                            maxWidth: "85%",
+                          }}
+                        >
+                          If naturally everything eventually fades and wears out, why go through the trouble of weaving these memories into a space?
                         </div>
                       </div>
 
-                      <div className="imessage-row-outgoing" style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.3rem" }}>
-                        <span className="imessage-sender-tag" style={{ marginRight: "0.5rem", fontSize: "0.54rem" }}>
+                      <div className="imessage-row-outgoing" style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.35rem" }}>
+                        <span className="imessage-sender-tag" style={{ marginRight: "0.6rem", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.06em" }}>
                           IVAN
                         </span>
                         <div
                           className="imessage-bubble-outgoing"
                           style={{
-                            color: readerTheme === "dark" ? "#111113" : "#FFFFFF",
-                            backgroundColor: readerTheme === "dark" ? "#EDEDF0" : "#111113",
+                            background: readerTheme === "dark" ? "#3A3A3C" : "#111113",
+                            color: "#FFFFFF",
+                            padding: "0.8rem 1.15rem",
+                            borderRadius: "18px 18px 4px 18px",
+                            fontSize: "0.9rem",
+                            lineHeight: 1.48,
+                            maxWidth: "85%",
                           }}
                         >
-                          &ldquo;Not to try and stop time, but to remember that we were truly alive within it. To me, reading and observing things slowly is the only anchor keeping us from losing ourselves.&rdquo;
+                          Not to try and stop time, but to remember that we were truly alive within it. To me, reading and observing things slowly is the only anchor keeping us from losing ourselves.
                         </div>
                       </div>
                     </div>
@@ -3741,7 +3735,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       BACK TO JOURNAL
                     </button>
 
-                    {/* LEFT CORNER: REAL-TIME LIKE BUTTON */}
+                    {/* LEFT CORNER: SOLID REAL-TIME LIKE BUTTON */}
                     <button
                       onClick={handleToggleLike}
                       title={likesMap[activePostId || ""]?.hasLiked ? "Unlike" : "Like"}
@@ -3752,19 +3746,17 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         justifyContent: "center",
                         gap: "0.36rem",
                         height: "28px",
-                        padding: "0 0.75rem",
+                        padding: "0 0.8rem",
                         borderRadius: "9999px",
                         cursor: "pointer",
                         transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
                         border: likesMap[activePostId || ""]?.hasLiked
-                          ? "1px solid rgba(255, 45, 85, 0.6)"
-                          : (readerTheme === "dark" ? "1px solid rgba(255,255,255,0.2)" : "1px solid rgba(0,0,0,0.14)"),
+                          ? "1px solid #FF2D55"
+                          : (readerTheme === "dark" ? "1px solid rgba(255,255,255,0.25)" : "1px solid #111111"),
                         background: likesMap[activePostId || ""]?.hasLiked
-                          ? (readerTheme === "dark" ? "rgba(255, 45, 85, 0.22)" : "rgba(255, 45, 85, 0.1)")
-                          : (readerTheme === "dark" ? "rgba(255,255,255,0.1)" : "#FFFFFF"),
-                        color: likesMap[activePostId || ""]?.hasLiked
                           ? "#FF2D55"
-                          : (readerTheme === "dark" ? "#FFFFFF" : "#111113"),
+                          : (readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "#111111"),
+                        color: "#FFFFFF",
                         transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.04)" : "scale(1)",
                         flexShrink: 0,
                       }}
@@ -3773,8 +3765,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         width="13"
                         height="13"
                         viewBox="0 0 24 24"
-                        fill={likesMap[activePostId || ""]?.hasLiked ? "currentColor" : "none"}
-                        stroke="currentColor"
+                        fill={likesMap[activePostId || ""]?.hasLiked ? "#FFFFFF" : "none"}
+                        stroke="#FFFFFF"
                         strokeWidth="2.4"
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -3786,7 +3778,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                       </svg>
                       {likesMap[activePostId || ""]?.count && likesMap[activePostId || ""]!.count > 0 ? (
-                        <span style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.02em" }}>
+                        <span style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.02em", color: "#FFFFFF" }}>
                           {likesMap[activePostId || ""]!.count}
                         </span>
                       ) : null}
@@ -4052,8 +4044,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                             <span className="imessage-sender-tag" style={{ marginLeft: "0.5rem", fontSize: "0.52rem" }}>
                               FRIEND
                             </span>
-                            <div className="imessage-bubble-incoming" style={{ padding: "0.5rem 0.85rem", fontSize: "0.78rem", lineHeight: 1.4 }}>
-                              &ldquo;If naturally everything eventually fades and wears out, why go through the trouble of weaving these memories into a space?&rdquo;
+                            <div className="imessage-bubble-incoming" style={{ padding: "0.55rem 0.95rem", fontSize: "0.82rem", lineHeight: 1.45, borderRadius: "16px 16px 16px 4px" }}>
+                              If naturally everything eventually fades and wears out, why go through the trouble of weaving these memories into a space?
                             </div>
                           </div>
 
@@ -4065,14 +4057,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                             <div
                               className="imessage-bubble-outgoing"
                               style={{
-                                padding: "0.5rem 0.85rem",
-                                fontSize: "0.78rem",
-                                lineHeight: 1.4,
-                                color: readerTheme === "dark" ? "#111113" : "#FFFFFF",
-                                backgroundColor: readerTheme === "dark" ? "#EDEDF0" : "#111113",
+                                padding: "0.55rem 0.95rem",
+                                fontSize: "0.82rem",
+                                lineHeight: 1.45,
+                                color: "#FFFFFF",
+                                backgroundColor: "#111113",
+                                borderRadius: "16px 16px 4px 16px",
                               }}
                             >
-                              &ldquo;Not to try and stop time, but to remember that we were truly alive within it. To me, reading and observing things slowly is the only anchor keeping us from losing ourselves.&rdquo;
+                              Not to try and stop time, but to remember that we were truly alive within it. To me, reading and observing things slowly is the only anchor keeping us from losing ourselves.
                             </div>
                           </div>
                         </div>
