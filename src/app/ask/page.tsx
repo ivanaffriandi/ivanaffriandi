@@ -50,11 +50,10 @@ function TwoCardStackedQA({
           height: "100%",
           position: "relative",
           boxSizing: "border-box",
-          overflow: "hidden",
           borderRadius: "28px",
         }}
       >
-        {/* ── CARD 1: QUESTION CARD (SPRING MORPH TOP HEADER) ── */}
+        {/* ── CARD 1: QUESTION CARD (BUTTERY APPLE SPRING MORPH) ── */}
         <div
           className={`qa-question-card ${isActive ? "qa-card-inverted" : "qa-card-normal"}`}
           onClick={() => {
@@ -67,7 +66,7 @@ function TwoCardStackedQA({
             right: 0,
             height: isActive ? "148px" : "100%",
             borderRadius: isActive ? "22px" : "28px",
-            padding: "1.2rem 1.4rem 1.1rem",
+            padding: "1.25rem 1.4rem 1.1rem",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -76,7 +75,7 @@ function TwoCardStackedQA({
             boxShadow: "var(--ask-shadow)",
             overflow: "hidden",
             zIndex: 10,
-            transition: "height 0.44s cubic-bezier(0.2, 0.9, 0.3, 1), border-radius 0.44s cubic-bezier(0.2, 0.9, 0.3, 1), background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease",
+            transition: "height 0.48s cubic-bezier(0.2, 0.9, 0.3, 1), border-radius 0.48s cubic-bezier(0.2, 0.9, 0.3, 1), background-color 0.45s ease, border-color 0.45s ease, color 0.45s ease",
             willChange: "height, border-radius, background-color",
           }}
         >
@@ -87,6 +86,7 @@ function TwoCardStackedQA({
                 fontSize: "0.88rem",
                 fontWeight: 800,
                 letterSpacing: "-0.01em",
+                transition: "color 0.45s ease",
               }}
               className={isActive ? "qa-inv-primary" : "qa-text-primary"}
             >
@@ -96,6 +96,7 @@ function TwoCardStackedQA({
               style={{
                 fontSize: "0.62rem",
                 fontWeight: 500,
+                transition: "color 0.45s ease",
               }}
               className={isActive ? "qa-inv-muted" : "qa-text-muted"}
             >
@@ -118,7 +119,7 @@ function TwoCardStackedQA({
                 fontWeight: 900,
                 userSelect: "none",
                 opacity: 0.95,
-                transition: "font-size 0.44s cubic-bezier(0.2, 0.9, 0.3, 1)",
+                transition: "font-size 0.48s cubic-bezier(0.2, 0.9, 0.3, 1), color 0.45s ease",
               }}
             >
               “
@@ -135,6 +136,7 @@ function TwoCardStackedQA({
                 WebkitLineClamp: isActive ? 2 : 5,
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
+                transition: "color 0.45s ease",
               }}
               className={isActive ? "qa-inv-primary" : "qa-text-primary"}
             >
@@ -152,7 +154,7 @@ function TwoCardStackedQA({
               opacity: isActive ? 0 : 1,
               transform: isActive ? "translate3d(0, 10px, 0)" : "translate3d(0, 0, 0)",
               pointerEvents: isActive ? "none" : "auto",
-              transition: "opacity 0.2s ease, transform 0.44s cubic-bezier(0.2, 0.9, 0.3, 1)",
+              transition: "opacity 0.25s ease, transform 0.48s cubic-bezier(0.2, 0.9, 0.3, 1)",
               flexShrink: 0,
             }}
             className="qa-card-divider"
@@ -194,7 +196,7 @@ function TwoCardStackedQA({
             opacity: isActive ? 1 : 0,
             transform: isActive ? "translate3d(0, 0, 0)" : "translate3d(0, 100%, 0)",
             pointerEvents: isActive ? "auto" : "none",
-            transition: "transform 0.44s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.3s cubic-bezier(0.2, 0.9, 0.3, 1)",
+            transition: "transform 0.48s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.35s cubic-bezier(0.2, 0.9, 0.3, 1)",
             willChange: "transform, opacity",
           }}
         >
@@ -549,41 +551,41 @@ export default function AskPage() {
           scroll-snap-align: center;
         }
 
-        /* ── CARD STATES ── */
+        /* ── CARD STATES (NO !IMPORTANT TO ALLOW 100% SMOOTH COLOR INTERPOLATION) ── */
         .qa-card-normal {
-          background: var(--ask-card-bg) !important;
-          border: 1px solid var(--ask-border) !important;
-          color: var(--ask-text) !important;
+          background: var(--ask-card-bg);
+          border: 1px solid var(--ask-border);
+          color: var(--ask-text);
         }
 
         .qa-card-inverted {
-          background: var(--ask-inv-bg) !important;
-          border: 1px solid var(--ask-inv-border) !important;
-          color: var(--ask-inv-text) !important;
+          background: var(--ask-inv-bg);
+          border: 1px solid var(--ask-inv-border);
+          color: var(--ask-inv-text);
         }
 
         .qa-text-primary {
-          color: var(--ask-text) !important;
+          color: var(--ask-text);
         }
 
         .qa-text-muted {
-          color: var(--ask-text-sub) !important;
+          color: var(--ask-text-sub);
         }
 
         .qa-inv-primary {
-          color: var(--ask-inv-text) !important;
+          color: var(--ask-inv-text);
         }
 
         .qa-inv-muted {
-          color: var(--ask-inv-sub) !important;
+          color: var(--ask-inv-sub);
         }
 
         .qa-quote-mark {
-          color: inherit !important;
+          color: inherit;
         }
 
         .qa-card-divider {
-          border-top: 1px solid var(--ask-border) !important;
+          border-top: 1px solid var(--ask-border);
         }
 
         /* ── COMPACT IOS ACTION PILL BUTTONS ── */
