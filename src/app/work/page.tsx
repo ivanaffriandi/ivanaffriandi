@@ -13,71 +13,66 @@ export default function WorkEditorialPage() {
   return (
     <div className={styles.fullDesktopViewport}>
       <div className={styles.editorialContainer}>
-        {/* ── 1. SWISS EDITORIAL TOP NAVIGATION ── */}
+        {/* ── 1. CLEAN EDITORIAL HEADER ── */}
         <header className={styles.topEditorialNav}>
-          <div className={styles.navLeftSection}>
-            <Link href="/" style={{ color: 'inherit', textDecoration: 'none' }}>
-              INDEX / 01
-            </Link>
-          </div>
-
-          <Link href="/" className={styles.navCenterTitle}>
-            Ivan Affriandi &mdash; Studio &amp; Archive
+          <Link href="/" className={styles.navBrandLink}>
+            <span className={styles.navStatusDot} />
+            <span>Ivan Affriandi</span>
           </Link>
 
           <div className={styles.navRightLinks}>
-            <Link href="/" className={styles.navLinkText}>
+            <Link href="/" className={styles.navLinkItem}>
               Home
             </Link>
-            <Link href="/ask" className={styles.navLinkText}>
+            <Link href="/ask" className={styles.navLinkItem}>
               Ask
             </Link>
-            <a href="mailto:hello@ivanaffriandi.com" className={styles.navLinkText}>
+            <a href="mailto:hello@ivanaffriandi.com" className={styles.navLinkItem}>
               Contact
             </a>
           </div>
         </header>
 
-        {/* ── 2. EDITORIAL STATEMENT & METADATA GRID ── */}
-        <section className={styles.editorialTopGrid}>
-          <p className={styles.statementParagraph}>
-            Software engineer by day, bespoke leather artisan by night, and wild mushroom forager when I need to step away from screens. Building lightweight digital systems and crafting heirloom physical goods in my studio.
-          </p>
+        {/* ── 2. INTRO EDITORIAL STATEMENT & METADATA ── */}
+        <section className={styles.heroIntroBlock}>
+          <h1 className={styles.largeStatementText}>
+            Software engineer by day, bespoke leather artisan by night, and wild mushroom forager when I need to step away from screens. Building lightweight digital systems and crafting heirloom physical goods.
+          </h1>
 
-          <div className={styles.metaInfoColumns}>
-            <div className={styles.metaColItem}>
-              <span className={styles.metaColTitle}>Location</span>
-              <span className={styles.metaColText}>Tangerang, Indonesia (WIB)</span>
+          <div className={styles.metadataStripRow}>
+            <div className={styles.metaItemCol}>
+              <span className={styles.metaColLabel}>Base</span>
+              <span className={styles.metaColValue}>Tangerang, ID</span>
             </div>
 
-            <div className={styles.metaColItem}>
-              <span className={styles.metaColTitle}>Disciplines</span>
-              <span className={styles.metaColText}>Full-Stack &amp; Atelier</span>
+            <div className={styles.metaItemCol}>
+              <span className={styles.metaColLabel}>Discipline</span>
+              <span className={styles.metaColValue}>Full-Stack &amp; Atelier</span>
             </div>
 
-            <div className={styles.metaColItem}>
-              <span className={styles.metaColTitle}>Core Stack</span>
-              <span className={styles.metaColText}>Next.js, React, TypeScript</span>
+            <div className={styles.metaItemCol}>
+              <span className={styles.metaColLabel}>Core Stack</span>
+              <span className={styles.metaColValue}>Next.js &amp; TypeScript</span>
             </div>
 
-            <div className={styles.metaColItem}>
-              <span className={styles.metaColTitle}>Availability</span>
-              <span className={styles.metaColText}>Open for Select Projects</span>
+            <div className={styles.metaItemCol}>
+              <span className={styles.metaColLabel}>Status</span>
+              <span className={styles.metaColValue}>Available for Projects</span>
             </div>
           </div>
         </section>
 
-        {/* ── 3. ICONIC POSTER HEADLINE: I V [HEAD] N ── */}
+        {/* ── 3. ICONIC POSTER HEADLINE: I V [SEAMLESS HEAD] N ── */}
         <section className={styles.heroPosterWrap} aria-label="Ivan">
           <div className={styles.heroPosterNameRow}>
             <span className={styles.hugeLetter}>I</span>
             <span className={styles.hugeLetter}>V</span>
 
-            {/* Ivan's Head replaces the letter 'A' */}
-            <div className={styles.headAsLetterA} title="Ivan">
+            {/* Seamless Head Cutout replacing letter A */}
+            <div className={styles.headLetterWrapper} title="Ivan">
               <img
                 src="/ivan-head.png"
-                alt="Ivan Affriandi"
+                alt="Ivan"
                 className={styles.headImageCutout}
               />
             </div>
@@ -86,7 +81,7 @@ export default function WorkEditorialPage() {
           </div>
         </section>
 
-        {/* ── 4. SEGMENTED TAB SWITCHER ── */}
+        {/* ── 4. SEGMENTED TABS ── */}
         <nav className={styles.tabFilterRow} aria-label="Portfolio Views">
           <button
             type="button"
@@ -119,34 +114,34 @@ export default function WorkEditorialPage() {
             {activeTab === 'about' && (
               <motion.div
                 key="about"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.22 }}
-                style={{ display: 'flex', flexDirection: 'column', gap: '36px' }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+                style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}
               >
-                {/* SECTION 01: THE STRANGE MIX */}
+                {/* THE STRANGE MIX */}
                 <section className={styles.contentBlock}>
                   <div className={styles.contentBlockTitleRow}>
                     <h2 className={styles.contentBlockTitle}>The Strange Mix</h2>
-                    <span className={styles.contentBlockTag}>Editorial Note</span>
+                    <span className={styles.contentBlockTag}>Personal Note</span>
                   </div>
 
                   <div className={styles.twoColProse}>
                     <p>
-                      I never figured out how to fit into a single corporate job title, and honestly, I stopped trying a long time ago. Some days I am deep in VS Code tuning Next.js rendering performance and spinning up self-hosted cloud containers. Other days I am in Figma obsessing over spatial tokens, or saddle-stitching an Italian vegetable-tanned leather notebook cover with hot tea getting cold next to me.
+                      I never really figured out how to fit into a single corporate job title, and honestly, I stopped trying a long time ago. Some days I am deep in VS Code tuning Next.js rendering performance and spinning up self-hosted cloud containers. Other days I am in Figma obsessing over spatial tokens, or saddle-stitching an Italian vegetable-tanned leather notebook cover with hot tea getting cold next to me.
                     </p>
                     <p>
-                      For me, the joy has always been in building things from scratch. Whether it is a lightweight web tool with zero bloated dependencies or a physical leather wallet designed to outlive all of us, the contrast between glowing screen pixels and tangible raw materials keeps my mind sharp and creative.
+                      For me, the fun has always been building things from scratch. Whether it is an interactive web tool with zero bloated dependencies or a physical leather wallet designed to outlive all of us, the contrast between glowing screen pixels and raw tangible materials is what keeps my mind sharp and happy.
                     </p>
                   </div>
                 </section>
 
-                {/* SECTION 02: DISCIPLINES */}
+                {/* SIX DISCIPLINES */}
                 <section className={styles.contentBlock}>
                   <div className={styles.contentBlockTitleRow}>
-                    <h2 className={styles.contentBlockTitle}>Areas of Discipline</h2>
-                    <span className={styles.contentBlockTag}>Six Focus Areas</span>
+                    <h2 className={styles.contentBlockTitle}>Areas of Focus</h2>
+                    <span className={styles.contentBlockTag}>Disciplines</span>
                   </div>
 
                   <div className={styles.disciplineGrid}>
@@ -156,7 +151,7 @@ export default function WorkEditorialPage() {
                         <span className={styles.disciplinePill}>Design</span>
                       </div>
                       <p className={styles.disciplineText}>
-                        Clean interfaces, sharp typography, and generous whitespace. I obsess over spatial balance, visual hierarchy, and micro-interactions that feel snappy and effortless.
+                        Clean interfaces, sharp typography, and generous whitespace. I obsess over spatial balance, visual hierarchy, and micro-interactions that feel snappy and effortless to use.
                       </p>
                       <div className={styles.tagRow}>
                         <span className={styles.tagItem}>Figma</span>
@@ -247,10 +242,10 @@ export default function WorkEditorialPage() {
             {activeTab === 'skills' && (
               <motion.div
                 key="skills"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.22 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
                 className={styles.skillsListBlock}
               >
                 <div className={styles.skillGroupCard}>
@@ -294,21 +289,21 @@ export default function WorkEditorialPage() {
             {activeTab === 'philosophy' && (
               <motion.div
                 key="philosophy"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.22 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
                 style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
               >
-                <div className={styles.twoColProse} style={{ background: 'var(--w-card-bg)', padding: '28px', borderRadius: '18px', border: '1px solid var(--w-border)' }}>
+                <div className={styles.twoColProse} style={{ background: 'var(--w-card-bg)', padding: '24px', borderRadius: '18px', border: '1px solid var(--w-border)' }}>
                   <div>
-                    <h3 className={styles.disciplineCardTitle} style={{ marginBottom: '12px' }}>Zero Bloat, Maximum Speed</h3>
+                    <h3 className={styles.disciplineCardTitle} style={{ marginBottom: '10px' }}>Zero Bloat, Maximum Speed</h3>
                     <p style={{ margin: 0 }}>
                       Every kilobyte sent over the wire should justify its existence. I prefer writing clean, handcrafted CSS and modular TypeScript over downloading massive component libraries. If an interaction can be done with simple CSS or native browser APIs, it stays that way.
                     </p>
                   </div>
                   <div>
-                    <h3 className={styles.disciplineCardTitle} style={{ marginBottom: '12px' }}>Tactility in Code &amp; Craft</h3>
+                    <h3 className={styles.disciplineCardTitle} style={{ marginBottom: '10px' }}>Tactility in Code &amp; Craft</h3>
                     <p style={{ margin: 0 }}>
                       Working with physical leather teaches you patience: one misplaced punch hole ruins an entire evening of work. That same obsession with craftsmanship carries over into digital interfaces, from easing curves to spatial rhythm.
                     </p>
