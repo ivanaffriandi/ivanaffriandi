@@ -35,9 +35,9 @@ const RoundedEmailIcon = () => (
   </svg>
 );
 
-// Close (✕) Icon
+// Minimal Close (✕) Icon
 const MinimalCloseIcon = () => (
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
     <line x1="18" y1="6" x2="6" y2="18" />
     <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
@@ -203,7 +203,7 @@ export default function AvantGardeHomepage() {
       </AnimatePresence>
 
       <div className={styles.mainContainer}>
-        {/* ── ZONE 1: TOP NAVBAR (FLUSH AT TOP: 4PX) ── */}
+        {/* ── ZONE 1: TOP NAVBAR (PERFECT 1:1 CENTER ALIGNMENT) ── */}
         <header className={styles.topNavbarRow}>
           {/* Left: "AFFRIANDI, IVAN" Uppercase No Period */}
           <Link href="/" className={styles.textLogoIsland} title="Ivan Affriandi">
@@ -305,26 +305,18 @@ export default function AvantGardeHomepage() {
         </footer>
       </div>
 
-      {/* ── FULL-SCREEN EDITORIAL MENU OVERLAY (YUAN JIE INSPIRED) ── */}
+      {/* ── FULL-SCREEN SIMPLE MINIMALIST MENU OVERLAY (PURE MENU LINKS) ── */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className={styles.fullScreenMenuOverlay}
           >
-            {/* Top: Name & Role Header + Clean Close Button */}
+            {/* Top Right: Clean Close Button */}
             <div className={styles.fullScreenMenuHeader}>
-              <div className={styles.menuProfileBlock}>
-                <span className={styles.menuProfileName}>Ivan Affriandi*</span>
-                <span className={styles.menuProfileSubtitle}>
-                  UI/UX Designer & Writer<br />
-                  Based in Indonesia
-                </span>
-              </div>
-
               <button
                 type="button"
                 onClick={() => setIsMenuOpen(false)}
@@ -336,14 +328,15 @@ export default function AvantGardeHomepage() {
               </button>
             </div>
 
-            {/* Bottom: Clean Editorial Nav Links */}
+            {/* Center / Navigation List */}
             <div className={styles.fullScreenNavList}>
               <a
                 href="https://blog.ivanaffriandi.com"
                 className={styles.fullScreenNavItem}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Blog
+                <span className={styles.navItemDot} />
+                <span>Blog</span>
               </a>
 
               <Link
@@ -351,9 +344,13 @@ export default function AvantGardeHomepage() {
                 className={styles.fullScreenNavItem}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Ask
+                <span className={styles.navItemDot} />
+                <span>Ask</span>
               </Link>
             </div>
+
+            {/* Bottom Spacer */}
+            <div style={{ height: '36px' }} />
           </motion.div>
         )}
       </AnimatePresence>
