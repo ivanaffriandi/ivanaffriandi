@@ -63,6 +63,28 @@ const FUN_PHRASES = [
   "Tap my head again :)",
 ];
 
+// Dense Matrix Row Datasets for 20 continuous running lines
+const MATRIX_ROWS = [
+  "UI/UX DESIGN • NEXT.JS 16 • TYPESCRIPT • THREE.JS • ITALIAN LEATHER • FIGMA TOKENS • WEBGL 2.0 • REACT 19 • ",
+  "INDONESIAN (NATIVE) • ENGLISH (FLUENT) • DUTCH (NEDERLANDS) • SUNDANESE • TYPOGRAPHY SYSTEMS • ",
+  "SHŪ / EN STUDIO ATELIER • SADDLE STITCHING • 925 STERLING SILVER • TOKONOLE BURNISHING • PATTERN DRAFTING • ",
+  "GLSL PROCEDURAL SHADERS • WEB AUDIO API • BLENDER 3D • FRAMER MOTION • TAILWIND CSS • ZERO BLOAT • ",
+  "ORACLE CLOUD VM • DOCKER COMPOSE • POSTGRESQL • REDIS CACHE • AWS SES RELAYS • CLOUDFLARE SSL • ",
+  "WILD MUSHROOM FORAGING • MYCOLOGY FIELD NOTES • MACRO PHOTOGRAPHY • ANALOG TEXTURES • LOOSE-LEAF TEA • ",
+  "FIBER ARTS • HAND CROCHET • SADDLE STITCHED JOURNALS • ARCHITECTURAL ESSAYS • SPATIAL 3D • ",
+  "ZERO BLOAT COMPUTING • MINIMALIST SOFTWARE ARCHITECTURES • SELF-HOSTED SERVICES • LINUX SYSADMIN • ",
+  "INTERACTION DESIGN • SPATIAL LAYOUT • MICRO-INTERACTIONS • DESIGN SYSTEM TOKENS • ACCESSIBILITY A11Y • ",
+  "TUSCAN VEGETABLE TANNED LEATHER • JAPANESE MOIRE SILK LINING • BESPOKE JOURNAL COVERS • WAXED THREAD • ",
+  "NEXT.JS APP ROUTER • REACT SERVER COMPONENTS • JAVASCRIPT ES2026 • RUST AXUM • EDGE WORKERS • ",
+  "CREATIVE WRITING • TECH ESSAYS • PRODUCT STRATEGY • SWISS MINIMALISM • HIGH FIDELITY PROTOTYPING • ",
+  "USER EXPERIENCE RESEARCH • WIREFRAMING • COMPONENT LIBRARIES • BRAND IDENTITY • EDITORIAL CURATION • ",
+  "FULL STACK ARCHITECTURE • DATABASE INDEXING • REST & GRAPHQL • PRISMA ORM • BASH SCRIPTING • ",
+  "HAND CUT LEATHER PATTERNS • PRICKING IRONS • BEESWAX EDGE POLISH • HERITAGE CRAFTSMANSHIP • ",
+  "FOREST TRAIL NAVIGATION • FUNGI SPORE PRINTS • BOTANICAL SKETCHING • BOTANICAL WATERCOLORS • ",
+  "DARK MODE SPECIALIST • MICRO-ANIMATIONS • PERFORMANCE OPTIMIZATION • WEB VITALS 100/100 • ",
+  "DISTRIBUTED SYSTEMS • DOCKER CONTAINERIZATION • NGINX REVERSE PROXY • SYSTEMD SERVICES • ",
+];
+
 export default function AvantGardeHomepage() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [phraseIndex, setPhraseIndex] = useState<number>(0);
@@ -117,7 +139,7 @@ export default function AvantGardeHomepage() {
 
   return (
     <div className={styles.homepageViewport}>
-      {/* ── FULL-SCREEN DENSE MARQUEE RUNNING TEXT MATRIX (16+ ROWS INFINITE) ── */}
+      {/* ── ULTRA-DENSE FULL-SCREEN HARDWARE-ACCELERATED RUNNING WALL MATRIX ── */}
       <AnimatePresence>
         {isMarqueeActive && (
           <motion.div
@@ -127,101 +149,69 @@ export default function AvantGardeHomepage() {
             transition={{ duration: 0.35 }}
             className={styles.marqueeWallBackground}
           >
-            {/* Row 1 */}
-            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollLeft}`}>
-              <span>UI/UX DESIGN &bull; NEXT.JS 16 &bull; TYPESCRIPT &bull; THREE.JS &bull; ITALIAN LEATHER &bull; FIGMA TOKENS &bull; WEBGL 2.0 &bull; REACT 19 &bull; UI/UX DESIGN &bull; NEXT.JS 16 &bull; TYPESCRIPT &bull; THREE.JS &bull; ITALIAN LEATHER &bull; FIGMA TOKENS &bull; WEBGL 2.0 &bull; REACT 19 &bull;&nbsp;</span>
-              <span>UI/UX DESIGN &bull; NEXT.JS 16 &bull; TYPESCRIPT &bull; THREE.JS &bull; ITALIAN LEATHER &bull; FIGMA TOKENS &bull; WEBGL 2.0 &bull; REACT 19 &bull; UI/UX DESIGN &bull; NEXT.JS 16 &bull; TYPESCRIPT &bull; THREE.JS &bull; ITALIAN LEATHER &bull; FIGMA TOKENS &bull; WEBGL 2.0 &bull; REACT 19 &bull;&nbsp;</span>
-            </div>
+            {MATRIX_ROWS.map((text, idx) => {
+              const isEven = idx % 2 === 0;
+              const duration = 20 + (idx % 4) * 3; // Varied smooth speeds
+              const repeatText = `${text} ${text} ${text} ${text} `;
 
-            {/* Row 2 */}
-            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollRight}`}>
-              <span>INDONESIAN (NATIVE) &bull; ENGLISH (FLUENT) &bull; DUTCH (NEDERLANDS) &bull; SUNDANESE &bull; TYPOGRAPHY SYSTEMS &bull; INDONESIAN (NATIVE) &bull; ENGLISH (FLUENT) &bull; DUTCH (NEDERLANDS) &bull; SUNDANESE &bull; TYPOGRAPHY SYSTEMS &bull;&nbsp;</span>
-              <span>INDONESIAN (NATIVE) &bull; ENGLISH (FLUENT) &bull; DUTCH (NEDERLANDS) &bull; SUNDANESE &bull; TYPOGRAPHY SYSTEMS &bull; INDONESIAN (NATIVE) &bull; ENGLISH (FLUENT) &bull; DUTCH (NEDERLANDS) &bull; SUNDANESE &bull; TYPOGRAPHY SYSTEMS &bull;&nbsp;</span>
-            </div>
-
-            {/* Row 3 */}
-            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollLeftFast}`}>
-              <span>SHU / EN STUDIO ATELIER &bull; SADDLE STITCHING &bull; 925 STERLING SILVER &bull; TOKONOLE BURNISHING &bull; PATTERN DRAFTING &bull; SHU / EN STUDIO ATELIER &bull; SADDLE STITCHING &bull; 925 STERLING SILVER &bull; TOKONOLE BURNISHING &bull; PATTERN DRAFTING &bull;&nbsp;</span>
-              <span>SHU / EN STUDIO ATELIER &bull; SADDLE STITCHING &bull; 925 STERLING SILVER &bull; TOKONOLE BURNISHING &bull; PATTERN DRAFTING &bull; SHU / EN STUDIO ATELIER &bull; SADDLE STITCHING &bull; 925 STERLING SILVER &bull; TOKONOLE BURNISHING &bull; PATTERN DRAFTING &bull;&nbsp;</span>
-            </div>
-
-            {/* Row 4 */}
-            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollRightFast}`}>
-              <span>GLSL PROCEDURAL SHADERS &bull; WEB AUDIO API &bull; BLENDER 3D &bull; FRAMER MOTION &bull; TAILWIND CSS &bull; GLSL PROCEDURAL SHADERS &bull; WEB AUDIO API &bull; BLENDER 3D &bull; FRAMER MOTION &bull; TAILWIND CSS &bull;&nbsp;</span>
-              <span>GLSL PROCEDURAL SHADERS &bull; WEB AUDIO API &bull; BLENDER 3D &bull; FRAMER MOTION &bull; TAILWIND CSS &bull; GLSL PROCEDURAL SHADERS &bull; WEB AUDIO API &bull; BLENDER 3D &bull; FRAMER MOTION &bull; TAILWIND CSS &bull;&nbsp;</span>
-            </div>
-
-            {/* Row 5 */}
-            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollLeft}`}>
-              <span>ORACLE CLOUD VM &bull; DOCKER COMPOSE &bull; POSTGRESQL &bull; REDIS CACHE &bull; AWS SES RELAYS &bull; CLOUDFLARE SSL &bull; ORACLE CLOUD VM &bull; DOCKER COMPOSE &bull; POSTGRESQL &bull; REDIS CACHE &bull; AWS SES RELAYS &bull; CLOUDFLARE SSL &bull;&nbsp;</span>
-              <span>ORACLE CLOUD VM &bull; DOCKER COMPOSE &bull; POSTGRESQL &bull; REDIS CACHE &bull; AWS SES RELAYS &bull; CLOUDFLARE SSL &bull; ORACLE CLOUD VM &bull; DOCKER COMPOSE &bull; POSTGRESQL &bull; REDIS CACHE &bull; AWS SES RELAYS &bull; CLOUDFLARE SSL &bull;&nbsp;</span>
-            </div>
-
-            {/* Row 6 */}
-            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollRight}`}>
-              <span>WILD MUSHROOM FORAGING &bull; MYCOLOGY FIELD NOTES &bull; MACRO PHOTOGRAPHY &bull; ANALOG TEXTURES &bull; WILD MUSHROOM FORAGING &bull; MYCOLOGY FIELD NOTES &bull; MACRO PHOTOGRAPHY &bull; ANALOG TEXTURES &bull;&nbsp;</span>
-              <span>WILD MUSHROOM FORAGING &bull; MYCOLOGY FIELD NOTES &bull; MACRO PHOTOGRAPHY &bull; ANALOG TEXTURES &bull; WILD MUSHROOM FORAGING &bull; MYCOLOGY FIELD NOTES &bull; MACRO PHOTOGRAPHY &bull; ANALOG TEXTURES &bull;&nbsp;</span>
-            </div>
-
-            {/* Row 7 */}
-            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollLeftFast}`}>
-              <span>FIBER ARTS &bull; HAND CROCHET &bull; LOOSE-LEAF TEA BREWING &bull; ARCHITECTURAL ESSAYS &bull; FIBER ARTS &bull; HAND CROCHET &bull; LOOSE-LEAF TEA BREWING &bull; ARCHITECTURAL ESSAYS &bull;&nbsp;</span>
-              <span>FIBER ARTS &bull; HAND CROCHET &bull; LOOSE-LEAF TEA BREWING &bull; ARCHITECTURAL ESSAYS &bull; FIBER ARTS &bull; HAND CROCHET &bull; LOOSE-LEAF TEA BREWING &bull; ARCHITECTURAL ESSAYS &bull;&nbsp;</span>
-            </div>
-
-            {/* Row 8 */}
-            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollRightFast}`}>
-              <span>ZERO BLOAT COMPUTING &bull; MINIMALIST SOFTWARE ARCHITECTURES &bull; SELF-HOSTED SERVICES &bull; ZERO BLOAT COMPUTING &bull; MINIMALIST SOFTWARE ARCHITECTURES &bull; SELF-HOSTED SERVICES &bull;&nbsp;</span>
-              <span>ZERO BLOAT COMPUTING &bull; MINIMALIST SOFTWARE ARCHITECTURES &bull; SELF-HOSTED SERVICES &bull; ZERO BLOAT COMPUTING &bull; MINIMALIST SOFTWARE ARCHITECTURES &bull; SELF-HOSTED SERVICES &bull;&nbsp;</span>
-            </div>
-
-            {/* Row 9 */}
-            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollLeft}`}>
-              <span>INTERACTION DESIGN &bull; SPATIAL LAYOUT &bull; MICRO-INTERACTIONS &bull; DESIGN SYSTEM TOKENS &bull; INTERACTION DESIGN &bull; SPATIAL LAYOUT &bull; MICRO-INTERACTIONS &bull; DESIGN SYSTEM TOKENS &bull;&nbsp;</span>
-              <span>INTERACTION DESIGN &bull; SPATIAL LAYOUT &bull; MICRO-INTERACTIONS &bull; DESIGN SYSTEM TOKENS &bull; INTERACTION DESIGN &bull; SPATIAL LAYOUT &bull; MICRO-INTERACTIONS &bull; DESIGN SYSTEM TOKENS &bull;&nbsp;</span>
-            </div>
-
-            {/* Row 10 */}
-            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollRight}`}>
-              <span>TUSCAN VEGETABLE TANNED LEATHER &bull; JAPANESE MOIRE SILK LINING &bull; BESPOKE JOURNAL COVERS &bull; TUSCAN VEGETABLE TANNED LEATHER &bull; JAPANESE MOIRE SILK LINING &bull; BESPOKE JOURNAL COVERS &bull;&nbsp;</span>
-              <span>TUSCAN VEGETABLE TANNED LEATHER &bull; JAPANESE MOIRE SILK LINING &bull; BESPOKE JOURNAL COVERS &bull; TUSCAN VEGETABLE TANNED LEATHER &bull; JAPANESE MOIRE SILK LINING &bull; BESPOKE JOURNAL COVERS &bull;&nbsp;</span>
-            </div>
-
-            {/* Row 11 */}
-            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollLeftFast}`}>
-              <span>NEXT.JS APP ROUTER &bull; REACT SERVER COMPONENTS &bull; JAVASCRIPT ES2026 &bull; RUST AXUM &bull; NEXT.JS APP ROUTER &bull; REACT SERVER COMPONENTS &bull; JAVASCRIPT ES2026 &bull; RUST AXUM &bull;&nbsp;</span>
-              <span>NEXT.JS APP ROUTER &bull; REACT SERVER COMPONENTS &bull; JAVASCRIPT ES2026 &bull; RUST AXUM &bull; NEXT.JS APP ROUTER &bull; REACT SERVER COMPONENTS &bull; JAVASCRIPT ES2026 &bull; RUST AXUM &bull;&nbsp;</span>
-            </div>
-
-            {/* Row 12 */}
-            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollRightFast}`}>
-              <span>CREATIVE WRITING &bull; TECH ESSAYS &bull; PRODUCT STRATEGY &bull; SWISS MINIMALISM &bull; CREATIVE WRITING &bull; TECH ESSAYS &bull; PRODUCT STRATEGY &bull; SWISS MINIMALISM &bull;&nbsp;</span>
-              <span>CREATIVE WRITING &bull; TECH ESSAYS &bull; PRODUCT STRATEGY &bull; SWISS MINIMALISM &bull; CREATIVE WRITING &bull; TECH ESSAYS &bull; PRODUCT STRATEGY &bull; SWISS MINIMALISM &bull;&nbsp;</span>
-            </div>
+              return (
+                <div key={idx} className={styles.marqueeRowWrap}>
+                  <motion.div
+                    className={styles.marqueeRowContent}
+                    animate={{
+                      x: isEven ? [0, -800] : [-800, 0],
+                    }}
+                    transition={{
+                      repeat: Infinity,
+                      ease: 'linear',
+                      duration,
+                    }}
+                  >
+                    <span>{repeatText}</span>
+                    <span>{repeatText}</span>
+                  </motion.div>
+                </div>
+              );
+            })}
           </motion.div>
         )}
       </AnimatePresence>
 
       <div className={styles.mainContainer}>
-        {/* ── 1. TOP NAVBAR (IA LOGO & CLEAN NO-CIRCLE 2-LINE MENU) ── */}
-        <header className={styles.topNavbar}>
-          <Link href="/" className={styles.logoMonogram} title="Ivan Affriandi">
+        {/* ── 1. MODULAR TOP NAVBAR (CIRCULAR IA + CENTER PILL + CIRCULAR MENU) ── */}
+        <header className={styles.topNavModularRow}>
+          {/* Left Circular IA Logo */}
+          <Link href="/" className={styles.circularLogoBtn} title="Ivan Affriandi">
             IA
           </Link>
 
-          <div className={styles.navRightExpandWrap}>
-            <AnimatePresence>
-              {isMenuOpen && (
+          {/* Center Dynamic Island Pill */}
+          <div className={styles.centerNavDynamicPill}>
+            <AnimatePresence mode="wait">
+              {!isMenuOpen ? (
                 <motion.div
-                  initial={{ opacity: 0, x: 8, scale: 0.95 }}
-                  animate={{ opacity: 1, x: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: 8, scale: 0.95 }}
-                  transition={{ duration: 0.18 }}
-                  className={styles.expandedNavPills}
+                  key="live-status"
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  transition={{ duration: 0.15 }}
+                  className={styles.centerStatusLive}
+                >
+                  <span className={styles.liveDotGreen} />
+                  <span>Available for Projects</span>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="menu-actions"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.15 }}
+                  className={styles.centerNavActionsGroup}
                 >
                   <a
                     href="https://blog.ivanaffriandi.com"
-                    className={styles.navActionPill}
+                    className={styles.navActionLink}
                     title="Blog & Journal"
                   >
                     <FeatherPenIcon />
@@ -229,7 +219,7 @@ export default function AvantGardeHomepage() {
                   </a>
                   <Link
                     href="/ask"
-                    className={styles.navActionPill}
+                    className={styles.navActionLink}
                     title="Ask Anonymous"
                   >
                     <AskChatIcon />
@@ -238,29 +228,29 @@ export default function AvantGardeHomepage() {
                 </motion.div>
               )}
             </AnimatePresence>
-
-            {/* 2-Line Minimalist Button (Clean, NO Circle Background) */}
-            <button
-              type="button"
-              onClick={() => setIsMenuOpen((prev) => !prev)}
-              className={styles.cleanTwoLineBtn}
-              title="Toggle Menu"
-              aria-label="Toggle Navigation Menu"
-            >
-              <span
-                className={styles.equalMenuBar}
-                style={{
-                  transform: isMenuOpen ? 'rotate(45deg) translate(2.5px, 2.5px)' : 'none',
-                }}
-              />
-              <span
-                className={styles.equalMenuBar}
-                style={{
-                  transform: isMenuOpen ? 'rotate(-45deg) translate(2.5px, -2.5px)' : 'none',
-                }}
-              />
-            </button>
           </div>
+
+          {/* Right Circular Menu Button */}
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+            className={styles.circularMenuBtn}
+            title="Toggle Navigation Menu"
+            aria-label="Toggle Menu"
+          >
+            <span
+              className={styles.menuBarEqual}
+              style={{
+                transform: isMenuOpen ? 'rotate(45deg) translate(2px, 2px)' : 'none',
+              }}
+            />
+            <span
+              className={styles.menuBarEqual}
+              style={{
+                transform: isMenuOpen ? 'rotate(-45deg) translate(2px, -2px)' : 'none',
+              }}
+            />
+          </button>
         </header>
 
         {/* ── 2. CENTER HERO STAGE (DEAD-CENTER FOCAL POINT) ── */}
