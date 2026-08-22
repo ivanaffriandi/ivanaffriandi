@@ -18,6 +18,16 @@ function cleanLabel(str: string): string {
   }
 }
 
+function cleanPath(urlOrPath: string): string {
+  if (!urlOrPath) return "/";
+  try {
+    const raw = urlOrPath.split("?")[0].split("#")[0];
+    return raw || "/";
+  } catch {
+    return urlOrPath;
+  }
+}
+
 function getSessionEntries(visitorSessions: Record<string, any>) {
   return Object.entries(visitorSessions || {})
     .map(([id, session]) => ({ id, ...(session || {}) }))
@@ -272,7 +282,7 @@ function AdminPageContent() {
     if (!q) return;
     const targetIp = q.ip || "127.0.0.1";
     try {
-      const res = await fetch("/api/blocked-ips", {
+      await fetch("/api/blocked-ips", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -427,7 +437,7 @@ function AdminPageContent() {
 
   const topPlatforms = getTopCounts(analyticsSessions.map((s: any) => s.lastPlatform || s.firstPlatform || "Direct / Bookmark"));
   const topLocations = getTopCounts(analyticsSessions.map((s: any) => s.geo?.city || s.location || "Unknown Location"));
-  const topPages = getTopCounts(analyticsSessions.flatMap((s: any) => (Array.isArray(s.history) ? s.history : []).map((h: any) => h.page || s.lastPage || "/")));
+  const topPages = getTopCounts(analyticsSessions.flatMap((s: any) => (Array.isArray(s.history) ? s.history : []).map((h: any) => cleanPath(h.page || s.lastPage || "/"))));
   const topDevices = getTopCounts(analyticsSessions.map((s: any) => s.deviceDetails?.deviceType || s.device || "Unknown Device"));
 
   const maxPlatformCount = Math.max(...topPlatforms.map(([, c]) => c), 1);
@@ -437,6 +447,7 @@ function AdminPageContent() {
 
   return (
     <div
+      className="admin-root-view"
       style={{
         minHeight: "100vh",
         backgroundColor: "var(--bg-color)",
@@ -444,11 +455,26 @@ function AdminPageContent() {
         fontFamily: iosFontStack,
         paddingBottom: "80px",
         boxSizing: "border-box",
+        width: "100%",
       }}
     >
       <style>{`
+        /* Scrollbar elimination */
+        *::-webkit-scrollbar,
+        .admin-no-scrollbar::-webkit-scrollbar {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
+
+        * {
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
+        }
+
         .admin-page-container {
           max-width: 680px;
+          width: 100%;
           margin: 0 auto;
           padding: 1.4rem 1.25rem 3rem;
           box-sizing: border-box;
@@ -461,6 +487,22 @@ function AdminPageContent() {
           padding: 1.3rem;
           box-sizing: border-box;
           box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
+
+        .admin-grid-2col {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+        }
+
+        @media (max-width: 640px) {
+          .admin-grid-2col {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+          }
+          .admin-page-container {
+            padding: 1rem 1rem 2.5rem;
+          }
         }
 
         .admin-pill-btn {
@@ -564,7 +606,7 @@ function AdminPageContent() {
         }
       `}</style>
 
-      {/* ── TOP HEADER (SWITCH AT TOP LEFT, REFRESH ICON & SIGN OUT AT RIGHT) ── */}
+      {/* ── TOP HEADER (SOLID OPAQUE BACKGROUND, NO TITLE, SWITCH AT TOP LEFT) ── */}
       <header
         style={{
           width: "100%",
@@ -577,8 +619,7 @@ function AdminPageContent() {
           position: "sticky",
           top: 0,
           backgroundColor: "var(--bg-color)",
-          backdropFilter: "blur(20px)",
-          zIndex: 50,
+          zIndex: 99,
         }}
       >
         {/* TOP LEFT: SEGMENTED SWITCH BUTTONS */}
@@ -674,7 +715,7 @@ function AdminPageContent() {
 
       {/* ── MAIN CONTENT CONTAINER ── */}
       <main className="admin-page-container">
-        {/* ── 1. INBOX TAB (NO 'ALL' BUTTON, WITH BLOCK SENDER ICON) ── */}
+        {/* ── 1. INBOX TAB ── */}
         {activeTab === "inbox" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
             {/* FILTER PILLS (ONLY PENDING & ANSWERED) */}
@@ -801,7 +842,7 @@ function AdminPageContent() {
 
                       {/* SENDER METADATA SNIPPET (LOCATION & DEVICE) */}
                       {(q.location || q.device) && (
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "0.66rem", color: "var(--text-secondary)" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "0.66rem", color: "var(--text-secondary)", flexWrap: "wrap" }}>
                           {q.location && <span>📍 {cleanLabel(q.location)}</span>}
                           {q.device && <span>· 📱 {q.device}</span>}
                           {q.ip && <span>· 🌐 {q.ip}</span>}
@@ -839,7 +880,7 @@ function AdminPageContent() {
                         </div>
                       )}
 
-                      {/* REPLY FORM (INLINE OR OPENED) */}
+                      {/* REPLY FORM */}
                       {!q.answered && !isAnswering && (
                         <div style={{ display: "flex", justifyContent: "flex-end" }}>
                           <button
@@ -905,11 +946,11 @@ function AdminPageContent() {
           </div>
         )}
 
-        {/* ── 2. ANALYTICS & VISITOR INTELLIGENCE TAB ── */}
+        {/* ── 2. ANALYTICS & VISITOR INTELLIGENCE TAB (NO SQUISHING / CUT-OFFS) ── */}
         {activeTab === "analytics" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
-            {/* OVERVIEW STATS (4-GRID) */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px" }}>
+            {/* OVERVIEW STATS (RESPONSIVE GRID) */}
+            <div className="admin-grid-2col">
               <div className="admin-card" style={{ padding: "1.15rem" }}>
                 <span style={{ fontSize: "0.68rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Unique IP Sessions
@@ -948,8 +989,8 @@ function AdminPageContent() {
               </div>
             </div>
 
-            {/* DETAILED BREAKDOWNS (WITH PROGRESS BARS) */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px" }}>
+            {/* DETAILED BREAKDOWNS (FULL WIDTH CARDS ON MOBILE) */}
+            <div className="admin-grid-2col">
               {/* TOP PLATFORMS */}
               <div className="admin-card" style={{ padding: "1.1rem" }}>
                 <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
@@ -960,11 +1001,11 @@ function AdminPageContent() {
                     const pct = Math.round((count / maxPlatformCount) * 100);
                     return (
                       <div key={name}>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.78rem" }}>
                           <span style={{ color: "var(--text-primary)", fontWeight: 650, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                             {name}
                           </span>
-                          <span style={{ color: "var(--text-secondary)", fontWeight: 800, marginLeft: "6px" }}>{count}</span>
+                          <span style={{ color: "var(--text-secondary)", fontWeight: 800, marginLeft: "8px" }}>{count}</span>
                         </div>
                         <div className="progress-track">
                           <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
@@ -985,11 +1026,11 @@ function AdminPageContent() {
                     const pct = Math.round((count / maxLocationCount) * 100);
                     return (
                       <div key={name}>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.78rem" }}>
                           <span style={{ color: "var(--text-primary)", fontWeight: 650, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                             {name}
                           </span>
-                          <span style={{ color: "var(--text-secondary)", fontWeight: 800, marginLeft: "6px" }}>{count}</span>
+                          <span style={{ color: "var(--text-secondary)", fontWeight: 800, marginLeft: "8px" }}>{count}</span>
                         </div>
                         <div className="progress-track">
                           <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
@@ -1010,11 +1051,11 @@ function AdminPageContent() {
                     const pct = Math.round((count / maxPageCount) * 100);
                     return (
                       <div key={name}>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.78rem" }}>
                           <span style={{ color: "var(--text-primary)", fontWeight: 650, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                             {name}
                           </span>
-                          <span style={{ color: "var(--text-secondary)", fontWeight: 800, marginLeft: "6px" }}>{count}</span>
+                          <span style={{ color: "var(--text-secondary)", fontWeight: 800, marginLeft: "8px" }}>{count}</span>
                         </div>
                         <div className="progress-track">
                           <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
@@ -1035,11 +1076,11 @@ function AdminPageContent() {
                     const pct = Math.round((count / maxDeviceCount) * 100);
                     return (
                       <div key={name}>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.78rem" }}>
                           <span style={{ color: "var(--text-primary)", fontWeight: 650, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                             {name}
                           </span>
-                          <span style={{ color: "var(--text-secondary)", fontWeight: 800, marginLeft: "6px" }}>{count}</span>
+                          <span style={{ color: "var(--text-secondary)", fontWeight: 800, marginLeft: "8px" }}>{count}</span>
                         </div>
                         <div className="progress-track">
                           <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
@@ -1051,7 +1092,7 @@ function AdminPageContent() {
               </div>
             </div>
 
-            {/* LIVE SESSIONS LOG */}
+            {/* LIVE SESSIONS LOG (NO OVERLAPPING OR CLIPPED TEXT) */}
             <div className="admin-card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                 <span style={{ fontSize: "0.85rem", fontWeight: 850, color: "var(--text-primary)" }}>
@@ -1062,13 +1103,13 @@ function AdminPageContent() {
                 </span>
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxHeight: "420px", overflowY: "auto" }}>
+              <div className="admin-no-scrollbar" style={{ display: "flex", flexDirection: "column", gap: "10px", maxHeight: "480px", overflowY: "auto" }}>
                 {analyticsSessions.slice(0, 40).map((session: any) => {
                   const locationName = cleanLabel(session.geo?.city || session.location || "Unknown Location");
                   const ipAddress = session.ip || session.id;
                   const platform = cleanLabel(session.lastPlatform || session.firstPlatform || "Direct");
                   const device = cleanLabel(session.deviceDetails?.deviceType || session.device || "Browser");
-                  const lastPath = session.lastPage || "/";
+                  const lastCleanPath = cleanPath(session.lastPage || "/");
 
                   return (
                     <div
@@ -1076,17 +1117,18 @@ function AdminPageContent() {
                       style={{
                         background: "var(--bg-secondary)",
                         borderRadius: "14px",
-                        padding: "10px 12px",
+                        padding: "12px 14px",
                         display: "flex",
                         justifyContent: "space-between",
-                        alignItems: "center",
+                        alignItems: "flex-start",
                         fontSize: "0.76rem",
-                        gap: "10px",
+                        gap: "12px",
+                        boxSizing: "border-box",
                       }}
                     >
-                      <div style={{ display: "flex", flexDirection: "column", gap: "3px", flex: 1, minWidth: 0 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                          <span style={{ fontWeight: 800, color: "var(--text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "4px", flex: 1, minWidth: 0 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+                          <span style={{ fontWeight: 800, color: "var(--text-primary)" }}>
                             {locationName}
                           </span>
                           <span style={{ fontSize: "0.64rem", color: "var(--text-secondary)", opacity: 0.7 }}>
@@ -1094,9 +1136,9 @@ function AdminPageContent() {
                           </span>
                         </div>
 
-                        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.68rem", color: "var(--text-secondary)", flexWrap: "wrap" }}>
-                          <span style={{ background: "var(--border-color)", padding: "1px 6px", borderRadius: "4px", fontWeight: 650, color: "var(--text-primary)" }}>
-                            {lastPath}
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.68rem", color: "var(--text-secondary)", flexWrap: "wrap", marginTop: "2px" }}>
+                          <span style={{ background: "var(--border-color)", padding: "1px 6px", borderRadius: "4px", fontWeight: 700, color: "var(--text-primary)", fontSize: "0.65rem" }}>
+                            {lastCleanPath}
                           </span>
                           <span>{platform}</span>
                           <span>·</span>
@@ -1106,8 +1148,8 @@ function AdminPageContent() {
                         </div>
                       </div>
 
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-                        <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0, marginTop: "2px" }}>
+                        <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", background: "var(--card-bg-1)", padding: "2px 6px", borderRadius: "6px", border: "1px solid var(--border-color)" }}>
                           {session.count}x
                         </span>
                         <button
@@ -1120,7 +1162,7 @@ function AdminPageContent() {
                             border: "none",
                             background: "rgba(255,59,48,0.1)",
                             color: "#ff3b30",
-                            padding: "4px 8px",
+                            padding: "4px 9px",
                             borderRadius: "6px",
                             fontSize: "0.64rem",
                             fontWeight: 800,
