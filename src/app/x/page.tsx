@@ -5,10 +5,18 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAllQuestionsForAdmin, answerQuestion, deleteQuestion, QuestionItem } from "@/lib/questions";
 
-const iosSpring = { type: "spring" as const, stiffness: 420, damping: 32 };
 const iosFontStack = '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
 
 type AdminTab = "inbox" | "analytics";
+
+function cleanLabel(str: string): string {
+  if (!str) return "Unknown";
+  try {
+    return decodeURIComponent(str).replace(/%20/g, " ").trim();
+  } catch {
+    return str.replace(/%20/g, " ").trim();
+  }
+}
 
 function getSessionEntries(visitorSessions: Record<string, any>) {
   return Object.entries(visitorSessions || {})
@@ -17,34 +25,37 @@ function getSessionEntries(visitorSessions: Record<string, any>) {
 }
 
 function getTopCounts(items: string[]) {
-  const counts = items.filter(Boolean).reduce<Record<string, number>>((acc, item) => {
+  const counts = items.filter(Boolean).reduce<Record<string, number>>((acc, raw) => {
+    const item = cleanLabel(raw);
     acc[item] = (acc[item] || 0) + 1;
     return acc;
   }, {});
-  return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+}
+
+function formatRelativeTime(dateStr?: string): string {
+  if (!dateStr) return "Just now";
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
 }
 
 function AdminPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    setTheme(mq.matches ? "dark" : "light");
-    const handler = (e: MediaQueryListEvent) => setTheme(e.matches ? "dark" : "light");
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   const [loginError, setLoginError] = useState("");
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const [activeTab, setActiveTab] = useState<AdminTab>("inbox");
-  const [inboxFilter, setInboxFilter] = useState<"all" | "pending" | "answered">("pending");
+  const [inboxFilter, setInboxFilter] = useState<"pending" | "answered">("pending");
 
   // Questions
   const [adminQuestions, setAdminQuestions] = useState<QuestionItem[]>([]);
@@ -126,13 +137,15 @@ function AdminPageContent() {
   };
 
   const loadData = async () => {
+    setIsRefreshing(true);
     try {
       const list = await getAllQuestionsForAdmin();
       setAdminQuestions(list.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime()));
-      loadVisitorSessions();
-      loadBlockedIPs();
+      await Promise.all([loadVisitorSessions(), loadBlockedIPs()]);
     } catch (err) {
       console.error("Failed to load admin data:", err);
+    } finally {
+      setTimeout(() => setIsRefreshing(false), 400);
     }
   };
 
@@ -358,6 +371,8 @@ function AdminPageContent() {
   }
 
   const pendingQuestionsCount = adminQuestions.filter((q) => !q.answered).length;
+  const answeredQuestionsCount = adminQuestions.filter((q) => q.answered).length;
+
   const filteredQuestions = adminQuestions.filter((q) => {
     if (inboxFilter === "pending") return !q.answered;
     if (inboxFilter === "answered") return q.answered;
@@ -366,10 +381,16 @@ function AdminPageContent() {
 
   const analyticsSessions = getSessionEntries(visitorSessions);
   const totalVisits = analyticsSessions.reduce((sum: number, session: any) => sum + (Number(session.count) || 0), 0);
+
   const topPlatforms = getTopCounts(analyticsSessions.map((s: any) => s.lastPlatform || s.firstPlatform || "Direct / Bookmark"));
   const topLocations = getTopCounts(analyticsSessions.map((s: any) => s.geo?.city || s.location || "Unknown Location"));
   const topPages = getTopCounts(analyticsSessions.flatMap((s: any) => (Array.isArray(s.history) ? s.history : []).map((h: any) => h.page || s.lastPage || "/")));
   const topDevices = getTopCounts(analyticsSessions.map((s: any) => s.deviceDetails?.deviceType || s.device || "Unknown Device"));
+
+  const maxPlatformCount = Math.max(...topPlatforms.map(([, c]) => c), 1);
+  const maxLocationCount = Math.max(...topLocations.map(([, c]) => c), 1);
+  const maxPageCount = Math.max(...topPages.map(([, c]) => c), 1);
+  const maxDeviceCount = Math.max(...topDevices.map(([, c]) => c), 1);
 
   return (
     <div
@@ -383,11 +404,10 @@ function AdminPageContent() {
       }}
     >
       <style>{`
-        /* Global CSS Reset for HQ */
         .admin-page-container {
           max-width: 680px;
           margin: 0 auto;
-          padding: 1.5rem 1.25rem 3rem;
+          padding: 1.4rem 1.25rem 3rem;
           box-sizing: border-box;
         }
 
@@ -397,7 +417,7 @@ function AdminPageContent() {
           border-radius: 20px;
           padding: 1.3rem;
           box-sizing: border-box;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.03);
         }
 
         .admin-pill-btn {
@@ -452,14 +472,61 @@ function AdminPageContent() {
         .admin-action-btn:active {
           transform: scale(0.95);
         }
+
+        .progress-track {
+          height: 4px;
+          width: 100%;
+          background: var(--bg-secondary);
+          border-radius: 9999px;
+          overflow: hidden;
+          margin-top: 4px;
+        }
+
+        .progress-bar-fill {
+          height: 100%;
+          background: var(--text-primary);
+          border-radius: 9999px;
+          transition: width 0.4s ease;
+        }
+
+        .icon-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: var(--bg-secondary);
+          border: 1px solid var(--border-color);
+          color: var(--text-secondary);
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+
+        .icon-btn:hover {
+          color: var(--text-primary);
+          border-color: var(--text-primary);
+        }
+
+        .icon-btn:active {
+          transform: scale(0.92);
+        }
+
+        .rotating-icon {
+          animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+          100% { transform: rotate(360deg); }
+        }
       `}</style>
 
-      {/* ── TOP HEADER (CLEAN & MINIMALIST) ── */}
+      {/* ── TOP HEADER (NO TITLE, SWITCH BUTTON AT TOP LEFT, REFRESH ICON & SIGN OUT AT RIGHT) ── */}
       <header
         style={{
           width: "100%",
           borderBottom: "1px solid var(--border-color)",
-          padding: "1rem 1.5rem",
+          padding: "0.85rem 1.25rem",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -471,130 +538,120 @@ function AdminPageContent() {
           zIndex: 50,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-          <span style={{ fontSize: "0.92rem", fontWeight: 900, letterSpacing: "-0.02em" }}>
-            Ivan HQ
-          </span>
+        {/* TOP LEFT: SEGMENTED SWITCH BUTTONS */}
+        <div style={{ display: "flex", background: "var(--bg-secondary)", borderRadius: "9999px", padding: "2px", border: "1px solid var(--border-color)" }}>
+          <button
+            type="button"
+            onClick={() => handleTabChange("inbox")}
+            style={{
+              border: "none",
+              background: activeTab === "inbox" ? "var(--card-bg-1)" : "transparent",
+              color: activeTab === "inbox" ? "var(--text-primary)" : "var(--text-secondary)",
+              padding: "5px 14px",
+              borderRadius: "9999px",
+              fontSize: "0.74rem",
+              fontWeight: 800,
+              cursor: "pointer",
+              boxShadow: activeTab === "inbox" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              transition: "all 0.15s ease",
+            }}
+          >
+            <span>Inbox</span>
+            {pendingQuestionsCount > 0 && (
+              <span style={{ background: "#FF3B30", color: "#fff", fontSize: "0.58rem", fontWeight: 850, padding: "1px 5px", borderRadius: "9999px" }}>
+                {pendingQuestionsCount}
+              </span>
+            )}
+          </button>
 
-          {/* Segmented control: Inbox & Analytics */}
-          <div style={{ display: "flex", background: "var(--bg-secondary)", borderRadius: "9999px", padding: "2px" }}>
-            <button
-              type="button"
-              onClick={() => handleTabChange("inbox")}
-              style={{
-                border: "none",
-                background: activeTab === "inbox" ? "var(--card-bg-1)" : "transparent",
-                color: activeTab === "inbox" ? "var(--text-primary)" : "var(--text-secondary)",
-                padding: "4px 12px",
-                borderRadius: "9999px",
-                fontSize: "0.72rem",
-                fontWeight: 800,
-                cursor: "pointer",
-                boxShadow: activeTab === "inbox" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
-              }}
-            >
-              <span>Inbox</span>
-              {pendingQuestionsCount > 0 && (
-                <span style={{ background: "#FF3B30", color: "#fff", fontSize: "0.55rem", padding: "1px 5px", borderRadius: "9999px" }}>
-                  {pendingQuestionsCount}
-                </span>
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleTabChange("analytics")}
-              style={{
-                border: "none",
-                background: activeTab === "analytics" ? "var(--card-bg-1)" : "transparent",
-                color: activeTab === "analytics" ? "var(--text-primary)" : "var(--text-secondary)",
-                padding: "4px 12px",
-                borderRadius: "9999px",
-                fontSize: "0.72rem",
-                fontWeight: 800,
-                cursor: "pointer",
-                boxShadow: activeTab === "analytics" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-              }}
-            >
-              Analytics
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => handleTabChange("analytics")}
+            style={{
+              border: "none",
+              background: activeTab === "analytics" ? "var(--card-bg-1)" : "transparent",
+              color: activeTab === "analytics" ? "var(--text-primary)" : "var(--text-secondary)",
+              padding: "5px 14px",
+              borderRadius: "9999px",
+              fontSize: "0.74rem",
+              fontWeight: 800,
+              cursor: "pointer",
+              boxShadow: activeTab === "analytics" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
+              transition: "all 0.15s ease",
+            }}
+          >
+            Analytics
+          </button>
         </div>
 
-        {/* LOGOUT */}
-        <button
-          type="button"
-          onClick={handleLogout}
-          style={{
-            border: "1px solid var(--border-color)",
-            background: "var(--bg-secondary)",
-            color: "var(--text-secondary)",
-            borderRadius: "9999px",
-            padding: "5px 11px",
-            fontSize: "0.68rem",
-            fontWeight: 750,
-            cursor: "pointer",
-          }}
-        >
-          Sign Out
-        </button>
+        {/* TOP RIGHT: REFRESH ICON & SIGN OUT */}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <button
+            type="button"
+            onClick={loadData}
+            title="Refresh data"
+            className="icon-btn"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={isRefreshing ? "rotating-icon" : ""}
+            >
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            style={{
+              border: "1px solid var(--border-color)",
+              background: "var(--bg-secondary)",
+              color: "var(--text-secondary)",
+              borderRadius: "9999px",
+              padding: "6px 12px",
+              fontSize: "0.7rem",
+              fontWeight: 750,
+              cursor: "pointer",
+            }}
+          >
+            Sign Out
+          </button>
+        </div>
       </header>
 
       {/* ── MAIN CONTENT CONTAINER ── */}
       <main className="admin-page-container">
-        {/* ── 1. INBOX TAB (Q&A QUESTIONS) ── */}
+        {/* ── 1. INBOX TAB (NO 'ALL' BUTTON) ── */}
         {activeTab === "inbox" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
-            {/* FILTER PILLS */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex", gap: "6px" }}>
-                <button
-                  type="button"
-                  onClick={() => setInboxFilter("pending")}
-                  className={`admin-pill-btn ${inboxFilter === "pending" ? "admin-pill-active" : ""}`}
-                >
-                  <span>Pending</span>
-                  <span>({pendingQuestionsCount})</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setInboxFilter("answered")}
-                  className={`admin-pill-btn ${inboxFilter === "answered" ? "admin-pill-active" : ""}`}
-                >
-                  <span>Answered</span>
-                  <span>({adminQuestions.filter((q) => q.answered).length})</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setInboxFilter("all")}
-                  className={`admin-pill-btn ${inboxFilter === "all" ? "admin-pill-active" : ""}`}
-                >
-                  <span>All</span>
-                  <span>({adminQuestions.length})</span>
-                </button>
-              </div>
+            {/* FILTER PILLS (ONLY PENDING & ANSWERED) */}
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button
+                type="button"
+                onClick={() => setInboxFilter("pending")}
+                className={`admin-pill-btn ${inboxFilter === "pending" ? "admin-pill-active" : ""}`}
+              >
+                <span>Pending</span>
+                <span>({pendingQuestionsCount})</span>
+              </button>
 
               <button
                 type="button"
-                onClick={loadData}
-                style={{
-                  border: "none",
-                  background: "transparent",
-                  color: "var(--text-secondary)",
-                  fontSize: "0.75rem",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "4px",
-                }}
+                onClick={() => setInboxFilter("answered")}
+                className={`admin-pill-btn ${inboxFilter === "answered" ? "admin-pill-active" : ""}`}
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-                </svg>
-                <span>Refresh</span>
+                <span>Answered</span>
+                <span>({answeredQuestionsCount})</span>
               </button>
             </div>
 
@@ -605,7 +662,7 @@ function AdminPageContent() {
                   No {inboxFilter} questions
                 </p>
                 <p style={{ fontSize: "0.74rem", color: "var(--text-secondary)", margin: 0 }}>
-                  Questions submitted on the /ask page will appear here.
+                  Questions from the /ask page will appear here.
                 </p>
               </div>
             ) : (
@@ -768,190 +825,240 @@ function AdminPageContent() {
           </div>
         )}
 
-        {/* ── 2. ANALYTICS & VISITOR INTELLIGENCE TAB ── */}
+        {/* ── 2. ANALYTICS & VISITOR INTELLIGENCE TAB (DETAILED, CLEAN & READABLE) ── */}
         {activeTab === "analytics" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
-            {/* OVERVIEW STATS */}
+            {/* OVERVIEW STATS (4-GRID) */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px" }}>
-              <div className="admin-card" style={{ padding: "1.1rem" }}>
-                <span style={{ fontSize: "0.68rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+              <div className="admin-card" style={{ padding: "1.15rem" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Unique IP Sessions
                 </span>
-                <div style={{ fontSize: "1.6rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "4px" }}>
+                <div style={{ fontSize: "1.65rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "4px" }}>
                   {analyticsSessions.length}
                 </div>
               </div>
 
-              <div className="admin-card" style={{ padding: "1.1rem" }}>
-                <span style={{ fontSize: "0.68rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+              <div className="admin-card" style={{ padding: "1.15rem" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Total Page Loads
                 </span>
-                <div style={{ fontSize: "1.6rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "4px" }}>
+                <div style={{ fontSize: "1.65rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "4px" }}>
                   {totalVisits}
                 </div>
               </div>
 
-              <div className="admin-card" style={{ padding: "1.1rem" }}>
-                <span style={{ fontSize: "0.68rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+              <div className="admin-card" style={{ padding: "1.15rem" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Questions Received
                 </span>
-                <div style={{ fontSize: "1.6rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "4px" }}>
+                <div style={{ fontSize: "1.65rem", fontWeight: 900, color: "var(--text-primary)", marginTop: "4px" }}>
                   {adminQuestions.length}
                 </div>
               </div>
 
-              <div className="admin-card" style={{ padding: "1.1rem" }}>
-                <span style={{ fontSize: "0.68rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+              <div className="admin-card" style={{ padding: "1.15rem" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 750, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Firewall Status
                 </span>
-                <div style={{ fontSize: "0.95rem", fontWeight: 800, color: "#34c759", marginTop: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
+                <div style={{ fontSize: "1rem", fontWeight: 800, color: "#34c759", marginTop: "8px", display: "flex", alignItems: "center", gap: "6px" }}>
                   <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#34c759" }} />
                   <span>{blockedIPs.length} Blocked</span>
                 </div>
               </div>
             </div>
 
-            {/* BREAKDOWN CARDS (2x2) */}
+            {/* DETAILED BREAKDOWNS (WITH PROGRESS BARS) */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px" }}>
               {/* TOP PLATFORMS */}
-              <div className="admin-card" style={{ padding: "1rem" }}>
-                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase" }}>
-                  Top Platforms
+              <div className="admin-card" style={{ padding: "1.1rem" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                  Top Referrers
                 </span>
-                <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "10px" }}>
-                  {topPlatforms.map(([name, count]) => (
-                    <div key={name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
-                      <span style={{ color: "var(--text-primary)", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {name}
-                      </span>
-                      <span style={{ color: "var(--text-secondary)", fontWeight: 800 }}>{count}</span>
-                    </div>
-                  ))}
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "12px" }}>
+                  {topPlatforms.map(([name, count]) => {
+                    const pct = Math.round((count / maxPlatformCount) * 100);
+                    return (
+                      <div key={name}>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+                          <span style={{ color: "var(--text-primary)", fontWeight: 650, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {name}
+                          </span>
+                          <span style={{ color: "var(--text-secondary)", fontWeight: 800, marginLeft: "6px" }}>{count}</span>
+                        </div>
+                        <div className="progress-track">
+                          <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
               {/* TOP CITIES */}
-              <div className="admin-card" style={{ padding: "1rem" }}>
-                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase" }}>
+              <div className="admin-card" style={{ padding: "1.1rem" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Top Cities
                 </span>
-                <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "10px" }}>
-                  {topLocations.map(([name, count]) => (
-                    <div key={name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
-                      <span style={{ color: "var(--text-primary)", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {name}
-                      </span>
-                      <span style={{ color: "var(--text-secondary)", fontWeight: 800 }}>{count}</span>
-                    </div>
-                  ))}
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "12px" }}>
+                  {topLocations.map(([name, count]) => {
+                    const pct = Math.round((count / maxLocationCount) * 100);
+                    return (
+                      <div key={name}>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+                          <span style={{ color: "var(--text-primary)", fontWeight: 650, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {name}
+                          </span>
+                          <span style={{ color: "var(--text-secondary)", fontWeight: 800, marginLeft: "6px" }}>{count}</span>
+                        </div>
+                        <div className="progress-track">
+                          <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
               {/* TOP PAGES */}
-              <div className="admin-card" style={{ padding: "1rem" }}>
-                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase" }}>
+              <div className="admin-card" style={{ padding: "1.1rem" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Top Pages
                 </span>
-                <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "10px" }}>
-                  {topPages.map(([name, count]) => (
-                    <div key={name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
-                      <span style={{ color: "var(--text-primary)", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {name}
-                      </span>
-                      <span style={{ color: "var(--text-secondary)", fontWeight: 800 }}>{count}</span>
-                    </div>
-                  ))}
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "12px" }}>
+                  {topPages.map(([name, count]) => {
+                    const pct = Math.round((count / maxPageCount) * 100);
+                    return (
+                      <div key={name}>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+                          <span style={{ color: "var(--text-primary)", fontWeight: 650, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {name}
+                          </span>
+                          <span style={{ color: "var(--text-secondary)", fontWeight: 800, marginLeft: "6px" }}>{count}</span>
+                        </div>
+                        <div className="progress-track">
+                          <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
               {/* TOP DEVICES */}
-              <div className="admin-card" style={{ padding: "1rem" }}>
-                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase" }}>
+              <div className="admin-card" style={{ padding: "1.1rem" }}>
+                <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Top Devices
                 </span>
-                <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "10px" }}>
-                  {topDevices.map(([name, count]) => (
-                    <div key={name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
-                      <span style={{ color: "var(--text-primary)", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {name}
-                      </span>
-                      <span style={{ color: "var(--text-secondary)", fontWeight: 800 }}>{count}</span>
-                    </div>
-                  ))}
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "12px" }}>
+                  {topDevices.map(([name, count]) => {
+                    const pct = Math.round((count / maxDeviceCount) * 100);
+                    return (
+                      <div key={name}>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+                          <span style={{ color: "var(--text-primary)", fontWeight: 650, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {name}
+                          </span>
+                          <span style={{ color: "var(--text-secondary)", fontWeight: 800, marginLeft: "6px" }}>{count}</span>
+                        </div>
+                        <div className="progress-track">
+                          <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
 
-            {/* LIVE SESSIONS LOG */}
+            {/* LIVE SESSIONS LOG (RICH & DETAILED) */}
             <div className="admin-card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                <span style={{ fontSize: "0.82rem", fontWeight: 850, color: "var(--text-primary)" }}>
-                  Recent Visitor Sessions
+                <span style={{ fontSize: "0.85rem", fontWeight: 850, color: "var(--text-primary)" }}>
+                  Recent Visitor Stream
                 </span>
-                <button
-                  type="button"
-                  onClick={loadVisitorSessions}
-                  style={{ border: "none", background: "transparent", color: "var(--text-secondary)", fontSize: "0.7rem", cursor: "pointer" }}
-                >
-                  Refresh
-                </button>
+                <span style={{ fontSize: "0.68rem", color: "var(--text-secondary)" }}>
+                  {analyticsSessions.length} total sessions
+                </span>
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxHeight: "360px", overflowY: "auto" }}>
-                {analyticsSessions.slice(0, 30).map((session: any) => (
-                  <div
-                    key={session.id}
-                    style={{
-                      background: "var(--bg-secondary)",
-                      borderRadius: "12px",
-                      padding: "10px 12px",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      fontSize: "0.76rem",
-                    }}
-                  >
-                    <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                      <div style={{ fontWeight: 800, color: "var(--text-primary)" }}>
-                        {session.geo?.city || session.location || "Unknown"} · <span style={{ opacity: 0.6 }}>{session.ip || session.id}</span>
-                      </div>
-                      <div style={{ color: "var(--text-secondary)", fontSize: "0.68rem" }}>
-                        {session.lastPage || "/"} · {session.deviceDetails?.deviceType || session.device || "Device"}
-                      </div>
-                    </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxHeight: "420px", overflowY: "auto" }}>
+                {analyticsSessions.slice(0, 40).map((session: any) => {
+                  const locationName = cleanLabel(session.geo?.city || session.location || "Unknown Location");
+                  const ipAddress = session.ip || session.id;
+                  const platform = cleanLabel(session.lastPlatform || session.firstPlatform || "Direct");
+                  const device = cleanLabel(session.deviceDetails?.deviceType || session.device || "Browser");
+                  const lastPath = session.lastPage || "/";
 
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <span style={{ fontSize: "0.65rem", color: "var(--text-secondary)" }}>
-                        {session.count}x
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setNewIPToBlock(session.ip || session.id);
-                          setNewIPNote(`Blocked from analytics list (${session.geo?.city || "unknown"})`);
-                        }}
-                        style={{
-                          border: "none",
-                          background: "rgba(255,59,48,0.1)",
-                          color: "#ff3b30",
-                          padding: "3px 8px",
-                          borderRadius: "6px",
-                          fontSize: "0.62rem",
-                          fontWeight: 800,
-                          cursor: "pointer",
-                        }}
-                      >
-                        Block
-                      </button>
+                  return (
+                    <div
+                      key={session.id}
+                      style={{
+                        background: "var(--bg-secondary)",
+                        borderRadius: "14px",
+                        padding: "10px 12px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        fontSize: "0.76rem",
+                        gap: "10px",
+                      }}
+                    >
+                      <div style={{ display: "flex", flexDirection: "column", gap: "3px", flex: 1, minWidth: 0 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                          <span style={{ fontWeight: 800, color: "var(--text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {locationName}
+                          </span>
+                          <span style={{ fontSize: "0.64rem", color: "var(--text-secondary)", opacity: 0.7 }}>
+                            · {ipAddress}
+                          </span>
+                        </div>
+
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.68rem", color: "var(--text-secondary)", flexWrap: "wrap" }}>
+                          <span style={{ background: "var(--border-color)", padding: "1px 6px", borderRadius: "4px", fontWeight: 650, color: "var(--text-primary)" }}>
+                            {lastPath}
+                          </span>
+                          <span>{platform}</span>
+                          <span>·</span>
+                          <span>{device}</span>
+                          <span>·</span>
+                          <span>{formatRelativeTime(session.lastSeen)}</span>
+                        </div>
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+                        <span style={{ fontSize: "0.68rem", fontWeight: 800, color: "var(--text-secondary)" }}>
+                          {session.count}x
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewIPToBlock(ipAddress);
+                            setNewIPNote(`Blocked from visitor stream (${locationName})`);
+                          }}
+                          style={{
+                            border: "none",
+                            background: "rgba(255,59,48,0.1)",
+                            color: "#ff3b30",
+                            padding: "4px 8px",
+                            borderRadius: "6px",
+                            fontSize: "0.64rem",
+                            fontWeight: 800,
+                            cursor: "pointer",
+                          }}
+                        >
+                          Block
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
-            {/* BLOCK IP FIREWALL FORM */}
+            {/* BLOCK IP FIREWALL */}
             <div className="admin-card">
-              <span style={{ fontSize: "0.82rem", fontWeight: 850, color: "var(--text-primary)", display: "block", marginBottom: "0.8rem" }}>
+              <span style={{ fontSize: "0.85rem", fontWeight: 850, color: "var(--text-primary)", display: "block", marginBottom: "0.8rem" }}>
                 IP Firewall &amp; Security
               </span>
 
@@ -1005,7 +1112,7 @@ function AdminPageContent() {
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        padding: "6px 10px",
+                        padding: "7px 10px",
                         background: "var(--bg-secondary)",
                         borderRadius: "8px",
                         fontSize: "0.72rem",
