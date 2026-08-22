@@ -1,5 +1,5 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE: IN-PLACE MOMENTS GALLERY & FULL PROFILE
+   AVANT-GARDE HOMEPAGE: CLEAN GALLERY & EDITORIAL SIGNATURE
    ============================================================ */
 
 :root {
@@ -10,8 +10,6 @@
   --h-border: rgba(0, 0, 0, 0.08);
   --h-pill-bg: #f2f2f0;
   --h-pill-hover: #e8e8e4;
-  --h-btn-bg: #111113;
-  --h-btn-text: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,8 +21,6 @@
     --h-border: rgba(255, 255, 255, 0.1);
     --h-pill-bg: #18181d;
     --h-pill-hover: #22222a;
-    --h-btn-bg: #f4f4f6;
-    --h-btn-text: #09090b;
   }
 }
 
@@ -39,7 +35,7 @@
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   margin: 0;
-  padding: 16px 20px 20px;
+  padding: 16px 20px 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -51,7 +47,7 @@
 
 @media (max-width: 480px) {
   .homepageViewport {
-    padding: 14px 16px 18px;
+    padding: 14px 16px 20px;
   }
 }
 
@@ -113,7 +109,7 @@
   transform: translateY(-1px);
 }
 
-/* ── 2. VIEW 1: THE GALLERY (CENTER STAGE) ── */
+/* ── 2. CENTER GALLERY ── */
 .galleryStageArea {
   width: 100%;
   flex: 1;
@@ -126,12 +122,12 @@
 }
 
 .momentDateLabel {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--h-text);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .carouselFilmStrip {
@@ -141,7 +137,6 @@
   justify-content: center;
   position: relative;
   height: 270px;
-  overflow: visible;
 }
 
 @media (max-width: 480px) {
@@ -151,9 +146,9 @@
 }
 
 .activePhotoFrame {
-  width: 230px;
-  height: 230px;
-  border-radius: 12px;
+  width: 240px;
+  height: 240px;
+  border-radius: 16px;
   overflow: hidden;
   background: #18181c;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
@@ -166,8 +161,9 @@
 
 @media (max-width: 480px) {
   .activePhotoFrame {
-    width: 200px;
-    height: 200px;
+    width: 210px;
+    height: 210px;
+    border-radius: 14px;
   }
 }
 
@@ -195,9 +191,9 @@
 }
 
 .sidePreviewPhoto {
-  width: 64px;
-  height: 64px;
-  border-radius: 8px;
+  width: 68px;
+  height: 68px;
+  border-radius: 10px;
   overflow: hidden;
   opacity: 0.45;
   filter: grayscale(100%);
@@ -208,8 +204,9 @@
 
 @media (max-width: 480px) {
   .sidePreviewPhoto {
-    width: 52px;
-    height: 52px;
+    width: 54px;
+    height: 54px;
+    border-radius: 8px;
   }
 }
 
@@ -225,184 +222,53 @@
   text-align: center;
   max-width: 280px;
   margin-top: 14px;
-  min-height: 24px;
+  min-height: 22px;
 }
 
-/* ── 3. BOTTOM TRIGGER (HEAD & NAME AT BOTTOM LEFT) ── */
-.bottomActionBar {
+/* ── 3. BOTTOM EDITORIAL SIGNATURE (BIG HEAD & TITLE) ── */
+.bottomSignatureArea {
   width: 100%;
   display: flex;
-  justify-content: flex-start;
   align-items: center;
+  gap: 12px;
   padding-top: 8px;
 }
 
-.bottomLeftTriggerBtn {
+.signatureHeadWrap {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: var(--h-pill-bg);
-  border: 1px solid var(--h-border);
-  padding: 5px 14px 5px 6px;
-  border-radius: 9999px;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  justify-content: center;
 }
 
-.bottomLeftTriggerBtn:hover {
-  background: var(--h-pill-hover);
-  transform: translateY(-2px);
-}
-
-.bottomLeftTriggerBtn:active {
-  transform: scale(0.95);
-}
-
-.triggerHeadImg {
-  width: 26px;
-  height: 26px;
-  object-fit: contain;
-  border-radius: 50%;
-}
-
-.triggerNameLabel {
-  font-size: 0.76rem;
-  font-weight: 850;
-  letter-spacing: -0.01em;
-  color: var(--h-text);
-}
-
-/* ── 4. VIEW 2: IN-PAGE FULL PROFILE VIEW ── */
-.fullProfileViewArea {
-  width: 100%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 16px;
-  margin: auto 0;
-  box-sizing: border-box;
-}
-
-.profileTopActions {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-}
-
-.backToGalleryBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--h-pill-bg);
-  border: 1px solid var(--h-border);
-  color: var(--h-text);
-  padding: 5px 12px;
-  border-radius: 9999px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.backToGalleryBtn:hover {
-  background: var(--h-pill-hover);
-  transform: translateY(-1px);
-}
-
-.profileCenterBody {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-.profileLargeHeadWrap {
-  width: 110px;
-  height: 110px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-@media (max-width: 480px) {
-  .profileLargeHeadWrap {
-    width: 95px;
-    height: 95px;
-  }
-}
-
-.profileLargeHeadImg {
+.signatureHeadImg {
   width: 100%;
   height: 100%;
   object-fit: contain;
   filter: contrast(108%);
-  transition: transform 0.3s ease;
 }
 
-.profileHeadingGroup {
+.signatureTextBlock {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 1px;
 }
 
-.profileBigName {
-  font-size: clamp(1.6rem, 5.5vw, 2.1rem);
+.signatureName {
+  font-size: 1.05rem;
   font-weight: 850;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
   color: var(--h-text);
-  line-height: 1.1;
   margin: 0;
+  line-height: 1.15;
 }
 
-.profileRoleSubtitle {
-  font-size: 0.86rem;
+.signatureRole {
+  font-size: 0.68rem;
   font-weight: 700;
+  letter-spacing: 0.02em;
   color: var(--h-text-muted);
   margin: 0;
-}
-
-.profileBioText {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--h-text-muted);
-  margin: 2px 0 0;
-}
-
-.disciplinePillsWrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 4px;
-}
-
-.disciplinePillItem {
-  font-size: 0.7rem;
-  font-weight: 750;
-  color: var(--h-text);
-  background: var(--h-pill-bg);
-  padding: 4px 9px;
-  border-radius: 6px;
-  border: 1px solid var(--h-border);
-}
-
-.profileEmailCtaBtn {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 13px 18px;
-  background-color: var(--h-btn-bg);
-  color: var(--h-btn-text);
-  border-radius: 16px;
-  text-decoration: none;
-  font-size: 0.86rem;
-  font-weight: 800;
-  box-sizing: border-box;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
-
-.profileEmailCtaBtn:hover {
-  opacity: 0.88;
-  transform: translateY(-1px);
 }
