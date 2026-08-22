@@ -50,11 +50,20 @@ function TwoCardStackedQA({
           height: "100%",
           position: "relative",
           boxSizing: "border-box",
-          borderRadius: "28px",
         }}
       >
-        {/* ── CARD 1: QUESTION CARD (BUTTERY APPLE SPRING MORPH) ── */}
-        <div
+        {/* ── CARD 1: QUESTION CARD (ANIMATES HEIGHT & COLOR MORPH) ── */}
+        <motion.div
+          animate={{
+            height: isActive ? 144 : "100%",
+            borderRadius: isActive ? 22 : 28,
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 280,
+            damping: 26,
+            mass: 0.8,
+          }}
           className={`qa-question-card ${isActive ? "qa-card-inverted" : "qa-card-normal"}`}
           onClick={() => {
             if (!isActive) onOpen();
@@ -64,9 +73,7 @@ function TwoCardStackedQA({
             top: 0,
             left: 0,
             right: 0,
-            height: isActive ? "148px" : "100%",
-            borderRadius: isActive ? "22px" : "28px",
-            padding: "1.25rem 1.4rem 1.1rem",
+            padding: "1.2rem 1.4rem 1.1rem",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -75,8 +82,7 @@ function TwoCardStackedQA({
             boxShadow: "var(--ask-shadow)",
             overflow: "hidden",
             zIndex: 10,
-            transition: "height 0.48s cubic-bezier(0.2, 0.9, 0.3, 1), border-radius 0.48s cubic-bezier(0.2, 0.9, 0.3, 1), background-color 0.45s ease, border-color 0.45s ease, color 0.45s ease",
-            willChange: "height, border-radius, background-color",
+            willChange: "height, border-radius",
           }}
         >
           {/* TOP ROW: SENDER & DATE */}
@@ -86,7 +92,6 @@ function TwoCardStackedQA({
                 fontSize: "0.88rem",
                 fontWeight: 800,
                 letterSpacing: "-0.01em",
-                transition: "color 0.45s ease",
               }}
               className={isActive ? "qa-inv-primary" : "qa-text-primary"}
             >
@@ -96,7 +101,6 @@ function TwoCardStackedQA({
               style={{
                 fontSize: "0.62rem",
                 fontWeight: 500,
-                transition: "color 0.45s ease",
               }}
               className={isActive ? "qa-inv-muted" : "qa-text-muted"}
             >
@@ -119,7 +123,7 @@ function TwoCardStackedQA({
                 fontWeight: 900,
                 userSelect: "none",
                 opacity: 0.95,
-                transition: "font-size 0.48s cubic-bezier(0.2, 0.9, 0.3, 1), color 0.45s ease",
+                transition: "font-size 0.3s ease",
               }}
             >
               “
@@ -136,7 +140,6 @@ function TwoCardStackedQA({
                 WebkitLineClamp: isActive ? 2 : 5,
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
-                transition: "color 0.45s ease",
               }}
               className={isActive ? "qa-inv-primary" : "qa-text-primary"}
             >
@@ -152,9 +155,8 @@ function TwoCardStackedQA({
               alignItems: "center",
               paddingTop: "0.4rem",
               opacity: isActive ? 0 : 1,
-              transform: isActive ? "translate3d(0, 10px, 0)" : "translate3d(0, 0, 0)",
               pointerEvents: isActive ? "none" : "auto",
-              transition: "opacity 0.25s ease, transform 0.48s cubic-bezier(0.2, 0.9, 0.3, 1)",
+              transition: "opacity 0.2s ease",
               flexShrink: 0,
             }}
             className="qa-card-divider"
@@ -171,17 +173,29 @@ function TwoCardStackedQA({
               <span className="ios-chevron">›</span>
             </button>
           </div>
-        </div>
+        </motion.div>
 
-        {/* ── CARD 2: SEPARATE ANSWER CARD (BUTTERY SPRING SLIDE) ── */}
-        <div
+        {/* ── CARD 2: SEPARATE ANSWER CARD (SLIDES UP FROM BOTTOM LIKE IOS MODAL) ── */}
+        <motion.div
+          initial={false}
+          animate={{
+            y: isActive ? 0 : 320,
+            opacity: isActive ? 1 : 0,
+            scale: isActive ? 1 : 0.94,
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 280,
+            damping: 26,
+            mass: 0.8,
+          }}
           className="qa-answer-card"
           style={{
             position: "absolute",
             bottom: 0,
             left: 0,
             right: 0,
-            top: "156px",
+            height: "calc(100% - 154px)",
             borderRadius: "24px",
             padding: "1.1rem 1.3rem 1rem",
             display: "flex",
@@ -193,10 +207,7 @@ function TwoCardStackedQA({
             border: "1px solid var(--ask-border)",
             boxShadow: "var(--ask-shadow)",
             zIndex: 5,
-            opacity: isActive ? 1 : 0,
-            transform: isActive ? "translate3d(0, 0, 0)" : "translate3d(0, 100%, 0)",
             pointerEvents: isActive ? "auto" : "none",
-            transition: "transform 0.48s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.35s cubic-bezier(0.2, 0.9, 0.3, 1)",
             willChange: "transform, opacity",
           }}
         >
@@ -257,7 +268,7 @@ function TwoCardStackedQA({
               <span>Back</span>
             </button>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
@@ -551,33 +562,39 @@ export default function AskPage() {
           scroll-snap-align: center;
         }
 
-        /* ── CARD STATES (NO !IMPORTANT TO ALLOW 100% SMOOTH COLOR INTERPOLATION) ── */
+        /* ── CARD STATES ── */
         .qa-card-normal {
           background: var(--ask-card-bg);
           border: 1px solid var(--ask-border);
           color: var(--ask-text);
+          transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
         }
 
         .qa-card-inverted {
           background: var(--ask-inv-bg);
           border: 1px solid var(--ask-inv-border);
           color: var(--ask-inv-text);
+          transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
         }
 
         .qa-text-primary {
           color: var(--ask-text);
+          transition: color 0.4s ease;
         }
 
         .qa-text-muted {
           color: var(--ask-text-sub);
+          transition: color 0.4s ease;
         }
 
         .qa-inv-primary {
           color: var(--ask-inv-text);
+          transition: color 0.4s ease;
         }
 
         .qa-inv-muted {
           color: var(--ask-inv-sub);
+          transition: color 0.4s ease;
         }
 
         .qa-quote-mark {
