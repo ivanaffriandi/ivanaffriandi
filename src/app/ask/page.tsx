@@ -50,13 +50,15 @@ function TwoCardStackedQA({
           height: "100%",
           position: "relative",
           boxSizing: "border-box",
-          transform: "translateZ(0)",
+          overflow: "hidden",
+          touchAction: "pan-x",
+          borderRadius: "28px",
         }}
       >
-        {/* ── CARD 1: QUESTION CARD ── */}
+        {/* ── CARD 1: QUESTION CARD (LOCKED CARD, SCROLLABLE TEXT IF LONG) ── */}
         <motion.div
           animate={{
-            height: isActive ? 144 : "100%",
+            height: isActive ? 154 : "100%",
             borderRadius: isActive ? 22 : 28,
           }}
           transition={{
@@ -74,7 +76,7 @@ function TwoCardStackedQA({
             top: 0,
             left: 0,
             right: 0,
-            padding: "1.2rem 1.4rem 1.1rem",
+            padding: isActive ? "0.95rem 1.25rem 0.85rem" : "1.3rem 1.4rem 1.1rem",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -83,13 +85,12 @@ function TwoCardStackedQA({
             boxShadow: "var(--ask-shadow)",
             overflow: "hidden",
             zIndex: 10,
-            transform: "translateZ(0)",
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
+            touchAction: "pan-x",
+            willChange: "height, border-radius",
           }}
         >
           {/* TOP ROW: SENDER & DATE */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexShrink: 0 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexShrink: 0, marginBottom: "0.2rem" }}>
             <span
               style={{
                 fontSize: "0.88rem",
@@ -115,17 +116,33 @@ function TwoCardStackedQA({
             </span>
           </div>
 
-          {/* QUOTE & QUESTION CONTENT */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem", flex: 1, overflow: "hidden", justifyContent: "center" }}>
+          {/* QUOTE & QUESTION CONTENT (SCROLLABLE TEXT IF LONG) */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.15rem",
+              flex: 1,
+              overflowY: "auto",
+              overscrollBehavior: "contain",
+              WebkitOverflowScrolling: "touch",
+              paddingRight: "0.15rem",
+            }}
+            onClick={(e) => {
+              // Allow text scrolling without triggering card clicks
+              e.stopPropagation();
+            }}
+          >
             <div
               className="qa-quote-mark"
               style={{
                 lineHeight: 0.9,
-                fontSize: isActive ? "1.6rem" : "2.8rem",
+                fontSize: isActive ? "1.5rem" : "2.8rem",
                 fontFamily: "Georgia, serif",
                 fontWeight: 900,
                 userSelect: "none",
                 opacity: 0.95,
+                flexShrink: 0,
                 transition: "font-size 0.3s ease",
               }}
             >
@@ -134,15 +151,13 @@ function TwoCardStackedQA({
 
             <p
               style={{
-                fontSize: "0.96rem",
+                fontSize: isActive ? "0.88rem" : "0.98rem",
                 lineHeight: 1.5,
                 margin: 0,
                 fontWeight: 450,
                 letterSpacing: "-0.015em",
-                display: "-webkit-box",
-                WebkitLineClamp: isActive ? 2 : 5,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
               }}
               className={isActive ? "qa-inv-primary" : "qa-text-primary"}
             >
@@ -151,34 +166,33 @@ function TwoCardStackedQA({
           </div>
 
           {/* COMPACT IOS FOOTER */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              paddingTop: "0.4rem",
-              opacity: isActive ? 0 : 1,
-              pointerEvents: isActive ? "none" : "auto",
-              transition: "opacity 0.2s ease",
-              flexShrink: 0,
-            }}
-            className="qa-card-divider"
-          >
-            <button
-              type="button"
-              className="ios-action-pill"
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpen();
+          {!isActive && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                paddingTop: "0.4rem",
+                flexShrink: 0,
               }}
+              className="qa-card-divider"
             >
-              <span>Read answer</span>
-              <span className="ios-chevron">›</span>
-            </button>
-          </div>
+              <button
+                type="button"
+                className="ios-action-pill"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpen();
+                }}
+              >
+                <span>Read answer</span>
+                <span className="ios-chevron">›</span>
+              </button>
+            </div>
+          )}
         </motion.div>
 
-        {/* ── CARD 2: SEPARATE ANSWER CARD (SLIDES UP FROM BOTTOM) ── */}
+        {/* ── CARD 2: SEPARATE ANSWER CARD (LOCKED CARD, SCROLLABLE ANSWER TEXT) ── */}
         <motion.div
           initial={false}
           animate={{
@@ -198,7 +212,7 @@ function TwoCardStackedQA({
             bottom: 0,
             left: 0,
             right: 0,
-            height: "calc(100% - 154px)",
+            height: "calc(100% - 162px)",
             borderRadius: "24px",
             padding: "1.1rem 1.3rem 1rem",
             display: "flex",
@@ -211,9 +225,8 @@ function TwoCardStackedQA({
             boxShadow: "var(--ask-shadow)",
             zIndex: 5,
             pointerEvents: isActive ? "auto" : "none",
-            transform: "translateZ(0)",
-            backfaceVisibility: "hidden",
-            WebkitBackfaceVisibility: "hidden",
+            touchAction: "pan-x",
+            willChange: "transform, opacity",
           }}
         >
           {/* TOP ROW: IVAN & DATE */}
@@ -234,8 +247,18 @@ function TwoCardStackedQA({
             </span>
           </div>
 
-          {/* SCROLLABLE ANSWER TEXT */}
-          <div style={{ flex: 1, overflowY: "auto", paddingRight: "0.2rem", margin: "0.2rem 0 0.35rem" }}>
+          {/* SCROLLABLE ANSWER CONTENT (ONLY THE TEXT SCROLLS) */}
+          <div
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              overscrollBehavior: "contain",
+              WebkitOverflowScrolling: "touch",
+              paddingRight: "0.2rem",
+              margin: "0.2rem 0 0.35rem",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <p
               style={{
                 fontSize: "0.92rem",
@@ -243,6 +266,7 @@ function TwoCardStackedQA({
                 margin: 0,
                 letterSpacing: "-0.01em",
                 whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
               }}
               className="qa-text-primary"
             >
@@ -655,7 +679,7 @@ export default function AskPage() {
           color: var(--ask-text-sub);
         }
 
-        /* ── IMMERSIVE BACKDROP (PURE GPU COMPOSITE, ZERO RE-RASTER FLICKER) ── */
+        /* ── IMMERSIVE BACKDROP (PURE GPU COMPOSITE) ── */
         .ask-drawer-backdrop {
           position: fixed;
           inset: 0;
@@ -851,7 +875,7 @@ export default function AskPage() {
         )}
       </div>
 
-      {/* ── CLEAN BOTTOM DRAWER WITH BUTTERY SPRING ANIMATION (NO BLUR REPAINT FLASH) ── */}
+      {/* ── CLEAN BOTTOM DRAWER WITH SPRING ANIMATION ── */}
       <AnimatePresence>
         {isDrawerOpen && (
           <motion.div
