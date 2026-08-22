@@ -55,7 +55,7 @@ function TwoCardStackedQA({
           borderRadius: "28px",
         }}
       >
-        {/* ── CARD 1: QUESTION CARD (LOCKED CARD, SCROLLABLE TEXT IF LONG) ── */}
+        {/* ── CARD 1: QUESTION CARD (CENTERED TEXT, NO UGLY SCROLLBAR) ── */}
         <motion.div
           animate={{
             height: isActive ? 154 : "100%",
@@ -76,7 +76,7 @@ function TwoCardStackedQA({
             top: 0,
             left: 0,
             right: 0,
-            padding: isActive ? "0.95rem 1.25rem 0.85rem" : "1.3rem 1.4rem 1.1rem",
+            padding: isActive ? "1rem 1.3rem 0.9rem" : "1.3rem 1.4rem 1.1rem",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -90,7 +90,7 @@ function TwoCardStackedQA({
           }}
         >
           {/* TOP ROW: SENDER & DATE */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexShrink: 0, marginBottom: "0.2rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexShrink: 0 }}>
             <span
               style={{
                 fontSize: "0.88rem",
@@ -116,8 +116,9 @@ function TwoCardStackedQA({
             </span>
           </div>
 
-          {/* QUOTE & QUESTION CONTENT (SCROLLABLE TEXT IF LONG) */}
+          {/* QUOTE & QUESTION CONTENT (BEAUTIFULLY CENTERED, INVISIBLE SCROLL) */}
           <div
+            className="qa-no-scrollbar"
             style={{
               display: "flex",
               flexDirection: "column",
@@ -126,10 +127,12 @@ function TwoCardStackedQA({
               overflowY: "auto",
               overscrollBehavior: "contain",
               WebkitOverflowScrolling: "touch",
-              paddingRight: "0.15rem",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              justifyContent: "center",
+              margin: isActive ? "0.1rem 0" : "0.4rem 0",
             }}
             onClick={(e) => {
-              // Allow text scrolling without triggering card clicks
               e.stopPropagation();
             }}
           >
@@ -137,7 +140,7 @@ function TwoCardStackedQA({
               className="qa-quote-mark"
               style={{
                 lineHeight: 0.9,
-                fontSize: isActive ? "1.5rem" : "2.8rem",
+                fontSize: isActive ? "1.6rem" : "2.8rem",
                 fontFamily: "Georgia, serif",
                 fontWeight: 900,
                 userSelect: "none",
@@ -151,7 +154,7 @@ function TwoCardStackedQA({
 
             <p
               style={{
-                fontSize: isActive ? "0.88rem" : "0.98rem",
+                fontSize: isActive ? "0.9rem" : "0.98rem",
                 lineHeight: 1.5,
                 margin: 0,
                 fontWeight: 450,
@@ -192,7 +195,7 @@ function TwoCardStackedQA({
           )}
         </motion.div>
 
-        {/* ── CARD 2: SEPARATE ANSWER CARD (LOCKED CARD, SCROLLABLE ANSWER TEXT) ── */}
+        {/* ── CARD 2: SEPARATE ANSWER CARD (NO UGLY SCROLLBAR) ── */}
         <motion.div
           initial={false}
           animate={{
@@ -247,14 +250,17 @@ function TwoCardStackedQA({
             </span>
           </div>
 
-          {/* SCROLLABLE ANSWER CONTENT (ONLY THE TEXT SCROLLS) */}
+          {/* SCROLLABLE ANSWER CONTENT (INVISIBLE CLEAN SCROLLBAR) */}
           <div
+            className="qa-no-scrollbar"
             style={{
               flex: 1,
               overflowY: "auto",
               overscrollBehavior: "contain",
               WebkitOverflowScrolling: "touch",
-              paddingRight: "0.2rem",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              paddingRight: "0.1rem",
               margin: "0.2rem 0 0.35rem",
             }}
             onClick={(e) => e.stopPropagation()}
@@ -428,7 +434,21 @@ export default function AskPage() {
           --ask-inv-border: rgba(0, 0, 0, 0.14);
         }
 
-        /* ── LOCK VIEWPORT (GPU COMPOSITED, NO FLICKERING) ── */
+        /* ── HIDE ALL SCROLLBARS CLEANLY ── */
+        .qa-no-scrollbar::-webkit-scrollbar,
+        .qa-carousel-track::-webkit-scrollbar,
+        *::-webkit-scrollbar {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
+
+        .qa-no-scrollbar {
+          -ms-overflow-style: none !important;
+          scrollbar-width: none !important;
+        }
+
+        /* ── LOCK VIEWPORT ── */
         body, html, .layout-wrapper, .content-wrapper, main, main > div {
           margin: 0 !important;
           padding: 0 !important;
@@ -580,10 +600,6 @@ export default function AskPage() {
           box-sizing: border-box;
           -webkit-overflow-scrolling: touch;
           transform: translateZ(0);
-        }
-
-        .qa-carousel-track::-webkit-scrollbar {
-          display: none;
         }
 
         .qa-card-wrapper {
