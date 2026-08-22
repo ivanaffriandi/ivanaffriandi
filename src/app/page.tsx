@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import Link from 'next/link';
 import confetti from 'canvas-confetti';
@@ -19,6 +19,13 @@ const FeatherPenIcon = () => (
 const AskChatIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+  </svg>
+);
+
+const SearchIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" />
+    <line x1="21" y1="21" x2="16.65" y2="16.65" />
   </svg>
 );
 
@@ -63,7 +70,7 @@ const FUN_PHRASES = [
   "Tap my head again :)",
 ];
 
-// Dense Matrix Row Datasets for 20 continuous running lines
+// Ultra-dense matrix dataset for 26 continuous running rows
 const MATRIX_ROWS = [
   "UI/UX DESIGN • NEXT.JS 16 • TYPESCRIPT • THREE.JS • ITALIAN LEATHER • FIGMA TOKENS • WEBGL 2.0 • REACT 19 • ",
   "INDONESIAN (NATIVE) • ENGLISH (FLUENT) • DUTCH (NEDERLANDS) • SUNDANESE • TYPOGRAPHY SYSTEMS • ",
@@ -83,10 +90,126 @@ const MATRIX_ROWS = [
   "FOREST TRAIL NAVIGATION • FUNGI SPORE PRINTS • BOTANICAL SKETCHING • BOTANICAL WATERCOLORS • ",
   "DARK MODE SPECIALIST • MICRO-ANIMATIONS • PERFORMANCE OPTIMIZATION • WEB VITALS 100/100 • ",
   "DISTRIBUTED SYSTEMS • DOCKER CONTAINERIZATION • NGINX REVERSE PROXY • SYSTEMD SERVICES • ",
+  "UI/UX DESIGN • NEXT.JS 16 • TYPESCRIPT • THREE.JS • ITALIAN LEATHER • FIGMA TOKENS • WEBGL 2.0 • REACT 19 • ",
+  "INDONESIAN (NATIVE) • ENGLISH (FLUENT) • DUTCH (NEDERLANDS) • SUNDANESE • TYPOGRAPHY SYSTEMS • ",
+  "SHŪ / EN STUDIO ATELIER • SADDLE STITCHING • 925 STERLING SILVER • TOKONOLE BURNISHING • PATTERN DRAFTING • ",
+  "GLSL PROCEDURAL SHADERS • WEB AUDIO API • BLENDER 3D • FRAMER MOTION • TAILWIND CSS • ZERO BLOAT • ",
+  "ORACLE CLOUD VM • DOCKER COMPOSE • POSTGRESQL • REDIS CACHE • AWS SES RELAYS • CLOUDFLARE SSL • ",
+  "WILD MUSHROOM FORAGING • MYCOLOGY FIELD NOTES • MACRO PHOTOGRAPHY • ANALOG TEXTURES • LOOSE-LEAF TEA • ",
+  "FIBER ARTS • HAND CROCHET • SADDLE STITCHED JOURNALS • ARCHITECTURAL ESSAYS • SPATIAL 3D • ",
+  "ZERO BLOAT COMPUTING • MINIMALIST SOFTWARE ARCHITECTURES • SELF-HOSTED SERVICES • LINUX SYSADMIN • ",
+];
+
+// Comprehensive Site-Wide Search Index
+interface SearchItem {
+  id: string;
+  title: string;
+  category: 'BLOG' | 'ASK' | 'CRAFT' | 'PORTFOLIO' | 'LINK';
+  description: string;
+  url: string;
+  isExternal?: boolean;
+}
+
+const SEARCH_DATABASE: SearchItem[] = [
+  {
+    id: 'b-1',
+    title: 'Designing with Zero Bloat',
+    category: 'BLOG',
+    description: 'Why minimalist interfaces and ultra-fast architectures always win.',
+    url: 'https://blog.ivanaffriandi.com',
+    isExternal: true,
+  },
+  {
+    id: 'b-2',
+    title: 'Reflections on Saddle Stitching & Code',
+    category: 'BLOG',
+    description: 'Parallels between traditional leather craft and software architecture.',
+    url: 'https://blog.ivanaffriandi.com',
+    isExternal: true,
+  },
+  {
+    id: 'b-3',
+    title: 'Mycology Field Notes & Forest Trails',
+    category: 'BLOG',
+    description: 'Foraging wild fungi and appreciating natural algorithms.',
+    url: 'https://blog.ivanaffriandi.com',
+    isExternal: true,
+  },
+  {
+    id: 'a-1',
+    title: 'Ask Anonymous Portal',
+    category: 'ASK',
+    description: 'Ask me anything anonymously or view answered letters and reflections.',
+    url: '/ask',
+  },
+  {
+    id: 'c-1',
+    title: 'SHŪ / EN Studio Atelier',
+    category: 'CRAFT',
+    description: 'Bespoke leather goods handcrafted in Tuscan vegetable-tanned leather.',
+    url: 'https://instagram.com/ivanaffriandi',
+    isExternal: true,
+  },
+  {
+    id: 'c-2',
+    title: 'Solid 925 Sterling Silver & Moire Silk',
+    category: 'CRAFT',
+    description: 'Custom jewelry accents and vintage kimono silk linings for journals.',
+    url: 'https://instagram.com/ivanaffriandi',
+    isExternal: true,
+  },
+  {
+    id: 'p-1',
+    title: 'UI/UX Design Systems & Spatial Tokens',
+    category: 'PORTFOLIO',
+    description: 'Component architecture, micro-interactions, and Figma design tokens.',
+    url: 'mailto:hello@ivanaffriandi.com',
+  },
+  {
+    id: 'p-2',
+    title: 'Next.js 16 & High Performance Web',
+    category: 'PORTFOLIO',
+    description: 'Full-stack web engineering, React 19, TypeScript, and server components.',
+    url: 'https://github.com/ivanaffriandi',
+    isExternal: true,
+  },
+  {
+    id: 'l-1',
+    title: 'GitHub Repositories',
+    category: 'LINK',
+    description: 'Open source experiments, systems, and web projects.',
+    url: 'https://github.com/ivanaffriandi',
+    isExternal: true,
+  },
+  {
+    id: 'l-2',
+    title: 'Instagram Visual Journal',
+    category: 'LINK',
+    description: 'Daily atelier snapshots, photography moments, and studio craft.',
+    url: 'https://instagram.com/ivanaffriandi',
+    isExternal: true,
+  },
+  {
+    id: 'l-3',
+    title: 'X (Twitter) Feed',
+    category: 'LINK',
+    description: 'Thoughts on design, technology, and engineering.',
+    url: 'https://x.com/ivanaffriandi',
+    isExternal: true,
+  },
+  {
+    id: 'l-4',
+    title: 'Email Inquiry & Collaborations',
+    category: 'LINK',
+    description: 'Get in touch for design projects, writing, or bespoke commissions.',
+    url: 'mailto:hello@ivanaffriandi.com',
+  },
 ];
 
 export default function AvantGardeHomepage() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [phraseIndex, setPhraseIndex] = useState<number>(0);
   const [displayText, setDisplayText] = useState<string>('');
   const [isTyping, setIsTyping] = useState<boolean>(true);
@@ -94,6 +217,36 @@ export default function AvantGardeHomepage() {
 
   const currentFullText = FUN_PHRASES[phraseIndex];
   const isMarqueeActive = phraseIndex === 6; // State right before "Tap my head again :)"
+
+  // Keyboard Shortcut (⌘K and / to open search, Esc to close)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchOpen((prev) => !prev);
+      } else if (e.key === '/' && !isSearchOpen && document.activeElement?.tagName !== 'INPUT') {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      } else if (e.key === 'Escape' && isSearchOpen) {
+        setIsSearchOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isSearchOpen]);
+
+  // Filtered Search Results
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return SEARCH_DATABASE;
+    const q = searchQuery.toLowerCase();
+    return SEARCH_DATABASE.filter(
+      (item) =>
+        item.title.toLowerCase().includes(q) ||
+        item.description.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
 
   // Letter-by-Letter Typing Effect
   useEffect(() => {
@@ -139,7 +292,7 @@ export default function AvantGardeHomepage() {
 
   return (
     <div className={styles.homepageViewport}>
-      {/* ── ULTRA-DENSE FULL-SCREEN HARDWARE-ACCELERATED RUNNING WALL MATRIX ── */}
+      {/* ── ULTRA-DENSE FULL-SCREEN HARDWARE-ACCELERATED RUNNING WALL MATRIX (26 ROWS) ── */}
       <AnimatePresence>
         {isMarqueeActive && (
           <motion.div
@@ -151,7 +304,7 @@ export default function AvantGardeHomepage() {
           >
             {MATRIX_ROWS.map((text, idx) => {
               const isEven = idx % 2 === 0;
-              const duration = 20 + (idx % 4) * 3; // Varied smooth speeds
+              const duration = 18 + (idx % 5) * 2.5;
               const repeatText = `${text} ${text} ${text} ${text} `;
 
               return (
@@ -159,7 +312,7 @@ export default function AvantGardeHomepage() {
                   <motion.div
                     className={styles.marqueeRowContent}
                     animate={{
-                      x: isEven ? [0, -800] : [-800, 0],
+                      x: isEven ? [0, -900] : [-900, 0],
                     }}
                     transition={{
                       repeat: Infinity,
@@ -178,40 +331,41 @@ export default function AvantGardeHomepage() {
       </AnimatePresence>
 
       <div className={styles.mainContainer}>
-        {/* ── 1. MODULAR TOP NAVBAR (CIRCULAR IA + CENTER PILL + CIRCULAR MENU) ── */}
-        <header className={styles.topNavModularRow}>
-          {/* Left Circular IA Logo */}
-          <Link href="/" className={styles.circularLogoBtn} title="Ivan Affriandi">
+        {/* ── 1. UNIFIED SINGLE PILL NAVBAR WITH SEARCH IN THE MIDDLE ── */}
+        <header className={styles.topNavbar}>
+          {/* Left: IA Monogram */}
+          <Link href="/" className={styles.logoMonogram} title="Ivan Affriandi">
             IA
           </Link>
 
-          {/* Center Dynamic Island Pill */}
-          <div className={styles.centerNavDynamicPill}>
-            <AnimatePresence mode="wait">
-              {!isMenuOpen ? (
+          {/* Center: Search Trigger Pill */}
+          <button
+            type="button"
+            onClick={() => setIsSearchOpen(true)}
+            className={styles.centerSearchBtn}
+            title="Search ivanaffriandi.com (⌘K)"
+          >
+            <div className={styles.searchIconTextWrap}>
+              <SearchIcon />
+              <span>Search...</span>
+            </div>
+            <span className={styles.searchKbdBadge}>⌘K</span>
+          </button>
+
+          {/* Right: Expandable Menu Group */}
+          <div className={styles.navRightExpandWrap}>
+            <AnimatePresence>
+              {isMenuOpen && (
                 <motion.div
-                  key="live-status"
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 4 }}
-                  transition={{ duration: 0.15 }}
-                  className={styles.centerStatusLive}
-                >
-                  <span className={styles.liveDotGreen} />
-                  <span>Available for Projects</span>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="menu-actions"
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.15 }}
-                  className={styles.centerNavActionsGroup}
+                  initial={{ opacity: 0, x: 8, scale: 0.95 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: 8, scale: 0.95 }}
+                  transition={{ duration: 0.18 }}
+                  className={styles.expandedNavPills}
                 >
                   <a
                     href="https://blog.ivanaffriandi.com"
-                    className={styles.navActionLink}
+                    className={styles.navActionPill}
                     title="Blog & Journal"
                   >
                     <FeatherPenIcon />
@@ -219,7 +373,7 @@ export default function AvantGardeHomepage() {
                   </a>
                   <Link
                     href="/ask"
-                    className={styles.navActionLink}
+                    className={styles.navActionPill}
                     title="Ask Anonymous"
                   >
                     <AskChatIcon />
@@ -228,29 +382,29 @@ export default function AvantGardeHomepage() {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
 
-          {/* Right Circular Menu Button */}
-          <button
-            type="button"
-            onClick={() => setIsMenuOpen((prev) => !prev)}
-            className={styles.circularMenuBtn}
-            title="Toggle Navigation Menu"
-            aria-label="Toggle Menu"
-          >
-            <span
-              className={styles.menuBarEqual}
-              style={{
-                transform: isMenuOpen ? 'rotate(45deg) translate(2px, 2px)' : 'none',
-              }}
-            />
-            <span
-              className={styles.menuBarEqual}
-              style={{
-                transform: isMenuOpen ? 'rotate(-45deg) translate(2px, -2px)' : 'none',
-              }}
-            />
-          </button>
+            {/* 2-Line Minimalist Hamburger Button */}
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+              className={styles.cleanTwoLineBtn}
+              title="Toggle Menu"
+              aria-label="Toggle Navigation Menu"
+            >
+              <span
+                className={styles.equalMenuBar}
+                style={{
+                  transform: isMenuOpen ? 'rotate(45deg) translate(2.5px, 2.5px)' : 'none',
+                }}
+              />
+              <span
+                className={styles.equalMenuBar}
+                style={{
+                  transform: isMenuOpen ? 'rotate(-45deg) translate(2.5px, -2.5px)' : 'none',
+                }}
+              />
+            </button>
+          </div>
         </header>
 
         {/* ── 2. CENTER HERO STAGE (DEAD-CENTER FOCAL POINT) ── */}
@@ -331,6 +485,71 @@ export default function AvantGardeHomepage() {
           </a>
         </footer>
       </div>
+
+      {/* ── 4. SITE-WIDE SEARCH ENGINE MODAL (COMMAND PALETTE) ── */}
+      <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsSearchOpen(false)}
+            className={styles.searchModalOverlay}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: -10 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: -10 }}
+              onClick={(e) => e.stopPropagation()}
+              className={styles.searchModalCard}
+            >
+              <div className={styles.searchModalHeader}>
+                <SearchIcon />
+                <input
+                  type="text"
+                  autoFocus
+                  placeholder="Search blog, ask, craft, moments & links..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={styles.searchModalInput}
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsSearchOpen(false)}
+                  className={styles.searchCloseKeyBtn}
+                >
+                  ESC
+                </button>
+              </div>
+
+              <div className={styles.searchResultsList}>
+                {searchResults.length > 0 ? (
+                  searchResults.map((item) => (
+                    <a
+                      key={item.id}
+                      href={item.url}
+                      target={item.isExternal ? '_blank' : undefined}
+                      rel={item.isExternal ? 'noopener noreferrer' : undefined}
+                      className={styles.searchResultItem}
+                      onClick={() => setIsSearchOpen(false)}
+                    >
+                      <div className={styles.searchResultLeft}>
+                        <span className={styles.searchResultTitle}>{item.title}</span>
+                        <span className={styles.searchResultSub}>{item.description}</span>
+                      </div>
+                      <span className={styles.searchResultBadge}>{item.category}</span>
+                    </a>
+                  ))
+                ) : (
+                  <div className={styles.searchEmptyState}>
+                    No results found for &ldquo;{searchQuery}&rdquo;
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
