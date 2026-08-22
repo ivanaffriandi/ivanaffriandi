@@ -43,10 +43,11 @@ const XIcon = () => (
   </svg>
 );
 
-const SendMailIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="22" y1="2" x2="11" y2="13" />
-    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+// Rounded Envelope Email Icon
+const RoundedEmailIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="20" height="16" x="2" y="4" rx="4" ry="4" />
+    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
   </svg>
 );
 
@@ -58,6 +59,7 @@ const FUN_PHRASES = [
   "Big fan of minimalism and fast websites.",
   "I also handcraft leather goods in my studio.",
   "Probably foraging wild mushrooms right now.",
+  "Here is my full technical & craft matrix:",
   "Tap my head again :)",
 ];
 
@@ -69,6 +71,7 @@ export default function AvantGardeHomepage() {
   const headControls = useAnimation();
 
   const currentFullText = FUN_PHRASES[phraseIndex];
+  const isMarqueeActive = phraseIndex === 6; // State right before "Tap my head again :)"
 
   // Letter-by-Letter Typing Effect
   useEffect(() => {
@@ -114,6 +117,55 @@ export default function AvantGardeHomepage() {
 
   return (
     <div className={styles.homepageViewport}>
+      {/* ── FULL-SCREEN BACKGROUND SKILLS MARQUEE BRICK WALL ── */}
+      <AnimatePresence>
+        {isMarqueeActive && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className={styles.marqueeWallBackground}
+          >
+            {/* Row 1: Left */}
+            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollLeft}`}>
+              <span>Next.js 16 &bull; UI/UX Design &bull; TypeScript &bull; Three.js &bull; Italian Leather &bull; Figma Tokens &bull; WebGL 2.0 &bull; Next.js 16 &bull; UI/UX Design &bull; TypeScript &bull; Three.js &bull; Italian Leather &bull; Figma Tokens &bull; WebGL 2.0 &bull;&nbsp;</span>
+              <span>Next.js 16 &bull; UI/UX Design &bull; TypeScript &bull; Three.js &bull; Italian Leather &bull; Figma Tokens &bull; WebGL 2.0 &bull; Next.js 16 &bull; UI/UX Design &bull; TypeScript &bull; Three.js &bull; Italian Leather &bull; Figma Tokens &bull; WebGL 2.0 &bull;&nbsp;</span>
+            </div>
+
+            {/* Row 2: Right */}
+            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollRight}`}>
+              <span>React 19 &bull; Bespoke Atelier &bull; System Architecture &bull; 925 Solid Silver &bull; Framer Motion &bull; Docker Compose &bull; React 19 &bull; Bespoke Atelier &bull; System Architecture &bull; 925 Solid Silver &bull; Framer Motion &bull; Docker Compose &bull;&nbsp;</span>
+              <span>React 19 &bull; Bespoke Atelier &bull; System Architecture &bull; 925 Solid Silver &bull; Framer Motion &bull; Docker Compose &bull; React 19 &bull; Bespoke Atelier &bull; System Architecture &bull; 925 Solid Silver &bull; Framer Motion &bull; Docker Compose &bull;&nbsp;</span>
+            </div>
+
+            {/* Row 3: Left */}
+            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollLeft}`}>
+              <span>Spatial 3D Design &bull; GLSL Shaders &bull; Wild Fungi &bull; Minimalist Typography &bull; PostgreSQL &bull; Saddle Stitching &bull; Spatial 3D Design &bull; GLSL Shaders &bull; Wild Fungi &bull; Minimalist Typography &bull; PostgreSQL &bull; Saddle Stitching &bull;&nbsp;</span>
+              <span>Spatial 3D Design &bull; GLSL Shaders &bull; Wild Fungi &bull; Minimalist Typography &bull; PostgreSQL &bull; Saddle Stitching &bull; Spatial 3D Design &bull; GLSL Shaders &bull; Wild Fungi &bull; Minimalist Typography &bull; PostgreSQL &bull; Saddle Stitching &bull;&nbsp;</span>
+            </div>
+
+            {/* Row 4: Right */}
+            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollRight}`}>
+              <span>Interaction Systems &bull; Zero Bloat &bull; Cloud VMs &bull; Tokyo Moire Silk &bull; Web Audio API &bull; Redis Cache &bull; Interaction Systems &bull; Zero Bloat &bull; Cloud VMs &bull; Tokyo Moire Silk &bull; Web Audio API &bull; Redis Cache &bull;&nbsp;</span>
+              <span>Interaction Systems &bull; Zero Bloat &bull; Cloud VMs &bull; Tokyo Moire Silk &bull; Web Audio API &bull; Redis Cache &bull; Interaction Systems &bull; Zero Bloat &bull; Cloud VMs &bull; Tokyo Moire Silk &bull; Web Audio API &bull; Redis Cache &bull;&nbsp;</span>
+            </div>
+
+            {/* Row 5: Left */}
+            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollLeft}`}>
+              <span>Product Strategy &bull; Dark Mode &bull; Precision Drafting &bull; Dedicated SMTP Relays &bull; Micro-interactions &bull; Product Strategy &bull; Dark Mode &bull; Precision Drafting &bull; Dedicated SMTP Relays &bull; Micro-interactions &bull;&nbsp;</span>
+              <span>Product Strategy &bull; Dark Mode &bull; Precision Drafting &bull; Dedicated SMTP Relays &bull; Micro-interactions &bull; Product Strategy &bull; Dark Mode &bull; Precision Drafting &bull; Dedicated SMTP Relays &bull; Micro-interactions &bull;&nbsp;</span>
+            </div>
+
+            {/* Row 6: Right */}
+            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollRight}`}>
+              <span>Editorial Systems &bull; Creative Direction &bull; Next.js 16 &bull; Tokonole Edge Burnishing &bull; Figma Architecture &bull; Editorial Systems &bull; Creative Direction &bull; Next.js 16 &bull; Tokonole Edge Burnishing &bull; Figma Architecture &bull;&nbsp;</span>
+              <span>Editorial Systems &bull; Creative Direction &bull; Next.js 16 &bull; Tokonole Edge Burnishing &bull; Figma Architecture &bull; Editorial Systems &bull; Creative Direction &bull; Next.js 16 &bull; Tokonole Edge Burnishing &bull; Figma Architecture &bull;&nbsp;</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className={styles.mainContainer}>
         {/* ── 1. TOP NAVBAR (IA LOGO & CLEAN NO-CIRCLE 2-LINE MENU) ── */}
         <header className={styles.topNavbar}>
@@ -175,7 +227,7 @@ export default function AvantGardeHomepage() {
           </div>
         </header>
 
-        {/* ── 2. CENTER HERO STAGE (STICKER OUTLINE HEAD IN DARK MODE) ── */}
+        {/* ── 2. CENTER HERO STAGE (DEAD-CENTER FOCAL POINT) ── */}
         <main className={styles.centerHeroStage}>
           <motion.div
             animate={headControls}
@@ -242,13 +294,13 @@ export default function AvantGardeHomepage() {
             </a>
           </div>
 
-          {/* Send Email Button */}
+          {/* Send Email Button with Rounded Envelope Icon */}
           <a
             href="mailto:hello@ivanaffriandi.com"
             className={styles.sendEmailCtaBtn}
             title="Send Email"
           >
-            <SendMailIcon />
+            <RoundedEmailIcon />
             <span>Send Email</span>
           </a>
         </footer>

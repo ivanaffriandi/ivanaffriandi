@@ -1,5 +1,5 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · REFINED NAVBAR & DARK STICKER HEAD
+   AVANT-GARDE HOMEPAGE · REFINED OUTLINE NAVBAR & MARQUEE WALL
    ============================================================ */
 
 :root {
@@ -7,13 +7,14 @@
   --h-text: #111113;
   --h-text-muted: #666670;
   --h-text-sub: #888894;
-  --h-border: rgba(0, 0, 0, 0.08);
+  --h-border: rgba(0, 0, 0, 0.13);
   --h-pill-bg: #f2f2f0;
   --h-pill-hover: #e8e8e4;
   --h-btn-bg: #111113;
   --h-btn-text: #ffffff;
   --h-caret: #111113;
   --h-head-filter: contrast(108%);
+  --h-marquee-color: rgba(0, 0, 0, 0.07);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,14 +23,14 @@
     --h-text: #f4f4f6;
     --h-text-muted: #a1a1aa;
     --h-text-sub: #71717a;
-    --h-border: rgba(255, 255, 255, 0.1);
+    --h-border: rgba(255, 255, 255, 0.18);
     --h-pill-bg: #18181d;
     --h-pill-hover: #22222a;
     --h-btn-bg: #f4f4f6;
     --h-btn-text: #09090b;
     --h-caret: #f4f4f6;
-    /* Clean white sticker die-cut outline in Dark Mode */
     --h-head-filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 2px rgba(255, 255, 255, 0.85)) drop-shadow(0 4px 16px rgba(255, 255, 255, 0.15)) contrast(110%);
+    --h-marquee-color: rgba(255, 255, 255, 0.08);
   }
 }
 
@@ -70,9 +71,11 @@
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
+  position: relative;
+  z-index: 10;
 }
 
-/* ── 1. TOP NAVBAR (IA LOGO & NO-CIRCLE 2-LINE MENU) ── */
+/* ── 1. TOP NAVBAR (DEFINED CLEAN OUTLINE) ── */
 .topNavbar {
   width: 100%;
   display: flex;
@@ -80,10 +83,12 @@
   align-items: center;
   padding: 8px 14px;
   background-color: var(--h-bg);
-  border: 1px solid var(--h-border);
+  border: 1.5px solid var(--h-border);
   border-radius: 9999px;
   box-sizing: border-box;
   z-index: 40;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
 }
 
 .logoMonogram {
@@ -129,7 +134,6 @@
   transform: translateY(-1px);
 }
 
-/* 2-Line Menu Button (Clean, NO Circle Background) */
 .cleanTwoLineBtn {
   background: transparent;
   border: none;
@@ -139,7 +143,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 4.5px;
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
 
@@ -159,7 +163,7 @@
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── 2. CENTER HERO STAGE (STICKER HEAD IN DARK MODE) ── */
+/* ── 2. CENTER HERO STAGE (DEAD-CENTER FOCAL POINT) ── */
 .centerHeroStage {
   width: 100%;
   flex: 1;
@@ -171,6 +175,7 @@
   margin: auto 0;
   position: relative;
   text-align: center;
+  z-index: 10;
 }
 
 .bigHeadTapWrap {
@@ -239,7 +244,54 @@
   opacity: 0.5;
 }
 
-/* ── 3. BOTTOM ACTION BAR ── */
+/* ── 3. FULL-SCREEN BACKGROUND SKILLS MARQUEE BRICK PATTERN ── */
+.marqueeWallBackground {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  opacity: 0.85;
+}
+
+.marqueeTrackRow {
+  display: flex;
+  white-space: nowrap;
+  width: max-content;
+  font-size: clamp(0.78rem, 2.2vw, 1.05rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--h-marquee-color);
+  user-select: none;
+  line-height: 1;
+}
+
+.marqueeScrollLeft {
+  animation: scrollMarqueeLeft 28s linear infinite;
+}
+
+.marqueeScrollRight {
+  animation: scrollMarqueeRight 32s linear infinite;
+}
+
+@keyframes scrollMarqueeLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes scrollMarqueeRight {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+/* ── 4. BOTTOM ACTION BAR ── */
 .bottomActionBar {
   width: 100%;
   display: flex;
@@ -248,6 +300,7 @@
   gap: 10px;
   padding-top: 8px;
   box-sizing: border-box;
+  z-index: 10;
 }
 
 .socialIconsGroup {
@@ -283,8 +336,8 @@
 .sendEmailCtaBtn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 15px;
+  gap: 7px;
+  padding: 8px 16px;
   background-color: var(--h-btn-bg);
   color: var(--h-btn-text);
   border-radius: 9999px;
