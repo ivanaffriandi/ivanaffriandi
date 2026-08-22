@@ -1,8 +1,5 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · ABSOLUTE ZERO-SCROLL SINGLE SCREEN
-   Top Navbar: Affriandi, Ivan. (top: 8px)
-   Center Hero Stage: Absolute Dead Center (50%, 50%)
-   Bottom Action Bar: Fixed Bottom (bottom: 14px)
+   AVANT-GARDE HOMEPAGE · ZERO-GAP TOP NAVBAR & FULL-SCREEN MENU
    ============================================================ */
 
 :root {
@@ -19,8 +16,7 @@
   --h-head-filter: contrast(110%) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12));
   --h-marquee-color: rgba(0, 0, 0, 0.16);
   --h-island-bg: #ffffff;
-  --h-menu-pill-bg: rgba(255, 255, 255, 0.96);
-  --h-menu-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
+  --h-fullscreen-menu-bg: rgba(255, 255, 255, 0.98);
   --h-hero-scrim: radial-gradient(circle at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 45%, rgba(255, 255, 255, 0) 75%);
 }
 
@@ -39,13 +35,12 @@
     --h-head-filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 2.5px rgba(255, 255, 255, 0.95)) drop-shadow(0 8px 28px rgba(0, 0, 0, 0.6)) contrast(112%);
     --h-marquee-color: rgba(255, 255, 255, 0.18);
     --h-island-bg: #09090b;
-    --h-menu-pill-bg: rgba(18, 18, 22, 0.96);
-    --h-menu-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+    --h-fullscreen-menu-bg: rgba(9, 9, 11, 0.98);
     --h-hero-scrim: radial-gradient(circle at center, rgba(9, 9, 11, 0.95) 0%, rgba(9, 9, 11, 0.8) 45%, rgba(9, 9, 11, 0) 75%);
   }
 }
 
-/* 100% Locked Zero-Scroll Viewport */
+/* 100% Fixed Zero-Scroll Viewport */
 .homepageViewport {
   position: fixed !important;
   inset: 0 !important;
@@ -78,10 +73,10 @@
   pointer-events: auto;
 }
 
-/* ── ZONE 1: TOP NAVBAR (FLUSH AT TOP: 8PX) ── */
+/* ── ZONE 1: TOP NAVBAR (ZERO-GAP TOP FLUSH: 12PX) ── */
 .topNavbarRow {
   position: absolute !important;
-  top: max(8px, env(safe-area-inset-top)) !important;
+  top: 12px !important;
   left: 16px !important;
   right: 16px !important;
   display: flex !important;
@@ -91,62 +86,20 @@
   box-sizing: border-box;
 }
 
-/* "Affriandi, Ivan." Clean Text Logo */
 .textLogoIsland {
   display: inline-flex;
   align-items: center;
   text-decoration: none;
-  font-size: 0.86rem;
+  font-size: 0.9rem;
   font-weight: 850;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
   color: var(--h-text);
-  padding: 4px 2px;
+  padding: 4px 0;
   transition: opacity 0.15s ease;
 }
 
 .textLogoIsland:hover {
   opacity: 0.75;
-}
-
-.menuExpanderGroup {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  position: relative;
-}
-
-.floatingMenuPillsRow {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background-color: var(--h-menu-pill-bg);
-  border: 1.5px solid var(--h-border);
-  padding: 4px 6px;
-  border-radius: 9999px;
-  box-shadow: var(--h-menu-shadow);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-.menuPillLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: 9999px;
-  font-size: 0.74rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--h-text);
-  background: var(--h-pill-bg);
-  text-decoration: none;
-  transition: all 0.15s ease;
-}
-
-.menuPillLink:hover {
-  background: var(--h-pill-hover);
-  transform: translateY(-1px);
 }
 
 .circularMenuIslandBtn {
@@ -178,6 +131,113 @@
   background-color: var(--h-text);
   border-radius: 2px;
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── FULL-SCREEN ANIMATED MENU OVERLAY (SELAYAR PENUH) ── */
+.fullScreenMenuOverlay {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  background: var(--h-fullscreen-menu-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 100000 !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 16px 20px 24px;
+}
+
+.fullScreenMenuHeader {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fullScreenCloseBtn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--h-pill-bg);
+  border: 1.5px solid var(--h-border);
+  color: var(--h-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: transform 0.15s ease;
+}
+
+.fullScreenCloseBtn:hover {
+  transform: scale(1.08);
+}
+
+.fullScreenNavList {
+  width: 100%;
+  max-width: 440px;
+  margin: auto auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.fullScreenNavItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: var(--h-pill-bg);
+  border: 1.5px solid var(--h-border);
+  text-decoration: none;
+  color: var(--h-text);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fullScreenNavItem:hover {
+  background: var(--h-pill-hover);
+  transform: translateY(-2px);
+  border-color: var(--h-text);
+}
+
+.navItemTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navItemTitle {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navItemSubtext {
+  font-size: 0.8rem;
+  font-weight: 550;
+  color: var(--h-text-muted);
+}
+
+.fullScreenMenuFooter {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--h-text-sub);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 /* ── ZONE 2: CENTER HERO STAGE (DEAD-CENTER: 50%, 50%) ── */
@@ -280,10 +340,10 @@
   z-index: 2;
 }
 
-/* ── ZONE 3: BOTTOM ACTION BAR (PINNED AT BOTTOM: 14PX) ── */
+/* ── ZONE 3: BOTTOM ACTION BAR (BOTTOM: 14PX) ── */
 .bottomActionBar {
   position: absolute !important;
-  bottom: max(14px, env(safe-area-inset-bottom)) !important;
+  bottom: 14px !important;
   left: 16px !important;
   right: 16px !important;
   display: flex !important;

@@ -8,7 +8,7 @@ import styles from './homepage.module.css';
 
 // Feather Pen / Quill Icon for Blog
 const FeatherPenIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
     <line x1="16" y1="8" x2="2" y2="22" />
     <line x1="17.5" y1="15" x2="15" y2="17.5" />
@@ -17,8 +17,15 @@ const FeatherPenIcon = () => (
 
 // Minimalist Message / Ask Icon
 const AskChatIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+  </svg>
+);
+
+const ArrowRightIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14" />
+    <path d="m12 5 7 7-7 7" />
   </svg>
 );
 
@@ -185,7 +192,7 @@ export default function AvantGardeHomepage() {
             {MATRIX_ROWS.map((text, idx) => {
               const isEven = idx % 2 === 0;
               const duration = 18 + (idx % 5) * 2.5;
-              const repeatText = `${text} ${text} ${text} ${text} `;
+              const repeatText = `${text} ${text} ${text} `;
 
               return (
                 <div key={idx} className={styles.marqueeRowWrap}>
@@ -211,75 +218,28 @@ export default function AvantGardeHomepage() {
       </AnimatePresence>
 
       <div className={styles.mainContainer}>
-        {/* ── ZONE 1: TOP NAVBAR (TOP EDGE: 8PX) ── */}
+        {/* ── ZONE 1: TOP NAVBAR (FLUSH TOP AT 12PX) ── */}
         <header className={styles.topNavbarRow}>
           {/* Left: "Affriandi, Ivan." Clean Typography Logo */}
           <Link href="/" className={styles.textLogoIsland} title="Ivan Affriandi">
             Affriandi, Ivan.
           </Link>
 
-          {/* Right: Expandable Menu Group with Horizontal Smooth Transition */}
-          <div className={styles.menuExpanderGroup}>
-            <AnimatePresence>
-              {isMenuOpen && (
-                <motion.div
-                  initial={{ opacity: 0, x: 12, scale: 0.92 }}
-                  animate={{ opacity: 1, x: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: 12, scale: 0.92 }}
-                  transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                  className={styles.floatingMenuPillsRow}
-                >
-                  <a
-                    href="https://blog.ivanaffriandi.com"
-                    className={styles.menuPillLink}
-                    title="Blog & Journal"
-                  >
-                    <FeatherPenIcon />
-                    <span>Blog</span>
-                  </a>
-                  <Link
-                    href="/ask"
-                    className={styles.menuPillLink}
-                    title="Ask Anonymous"
-                  >
-                    <AskChatIcon />
-                    <span>Ask</span>
-                  </Link>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Circular Hamburger Button */}
-            <button
-              type="button"
-              onClick={() => setIsMenuOpen((prev) => !prev)}
-              className={styles.circularMenuIslandBtn}
-              title="Toggle Menu"
-              aria-label="Toggle Menu"
-            >
-              <span
-                className={styles.menuBarEqual}
-                style={{
-                  transform: isMenuOpen ? 'rotate(45deg) translate(2.5px, 2.5px)' : 'none',
-                }}
-              />
-              <span
-                className={styles.menuBarEqual}
-                style={{
-                  transform: isMenuOpen ? 'rotate(-45deg) translate(2.5px, -2.5px)' : 'none',
-                }}
-              />
-            </button>
-          </div>
+          {/* Right: Circular Hamburger Button */}
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen(true)}
+            className={styles.circularMenuIslandBtn}
+            title="Open Menu"
+            aria-label="Open Menu"
+          >
+            <span className={styles.menuBarEqual} />
+            <span className={styles.menuBarEqual} />
+          </button>
         </header>
 
         {/* ── ZONE 2: CENTER HERO STAGE (DEAD-CENTER: 50%, 50%) ── */}
-        <main
-          className={styles.centerHeroStage}
-          onClick={() => {
-            if (isMenuOpen) setIsMenuOpen(false);
-          }}
-        >
+        <main className={styles.centerHeroStage}>
           {/* Radial Contrast Scrim to keep head & text razor-sharp over running text */}
           <div className={styles.heroContrastScrim} />
 
@@ -359,6 +319,75 @@ export default function AvantGardeHomepage() {
           </a>
         </footer>
       </div>
+
+      {/* ── FULL-SCREEN ANIMATED OVERLAY MENU (SELAYAR PENUH) ── */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className={styles.fullScreenMenuOverlay}
+          >
+            {/* Header of Full-Screen Menu */}
+            <div className={styles.fullScreenMenuHeader}>
+              <span className={styles.textLogoIsland}>Affriandi, Ivan.</span>
+              <button
+                type="button"
+                onClick={() => setIsMenuOpen(false)}
+                className={styles.fullScreenCloseBtn}
+                title="Close Menu"
+                aria-label="Close Menu"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Navigation List Items */}
+            <div className={styles.fullScreenNavList}>
+              <a
+                href="https://blog.ivanaffriandi.com"
+                className={styles.fullScreenNavItem}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <div className={styles.navItemTitleRow}>
+                  <span className={styles.navItemTitle}>
+                    <FeatherPenIcon />
+                    Blog
+                  </span>
+                  <ArrowRightIcon />
+                </div>
+                <span className={styles.navItemSubtext}>
+                  Essays, technology, design thinking & studio notes
+                </span>
+              </a>
+
+              <Link
+                href="/ask"
+                className={styles.fullScreenNavItem}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <div className={styles.navItemTitleRow}>
+                  <span className={styles.navItemTitle}>
+                    <AskChatIcon />
+                    Ask
+                  </span>
+                  <ArrowRightIcon />
+                </div>
+                <span className={styles.navItemSubtext}>
+                  Ask anything anonymously — thoughts, advice & feedback
+                </span>
+              </Link>
+            </div>
+
+            {/* Footer of Full-Screen Menu */}
+            <div className={styles.fullScreenMenuFooter}>
+              <span>Design & Crafted by Ivan Affriandi</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
