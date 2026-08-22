@@ -1,14 +1,18 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · BIG HEAD & TYPEWRITER HANDWRITING
+   AVANT-GARDE HOMEPAGE · UI/UX DESIGNER & WRITER
+   Zero-Scroll Compact Layout · 2-Line Menu Toggle · Bottom Socials & Email
    ============================================================ */
 
 :root {
   --h-bg: #ffffff;
   --h-text: #111113;
   --h-text-muted: #666670;
+  --h-text-sub: #888894;
   --h-border: rgba(0, 0, 0, 0.08);
   --h-pill-bg: #f2f2f0;
   --h-pill-hover: #e8e8e4;
+  --h-btn-bg: #111113;
+  --h-btn-text: #ffffff;
   --h-caret: #111113;
 }
 
@@ -17,9 +21,12 @@
     --h-bg: #09090b;
     --h-text: #f4f4f6;
     --h-text-muted: #a1a1aa;
+    --h-text-sub: #71717a;
     --h-border: rgba(255, 255, 255, 0.1);
     --h-pill-bg: #18181d;
     --h-pill-hover: #22222a;
+    --h-btn-bg: #f4f4f6;
+    --h-btn-text: #09090b;
     --h-caret: #f4f4f6;
   }
 }
@@ -35,7 +42,7 @@
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   margin: 0;
-  padding: 16px 20px 24px;
+  padding: 16px 20px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -47,7 +54,7 @@
 
 @media (max-width: 480px) {
   .homepageViewport {
-    padding: 14px 16px 20px;
+    padding: 14px 16px 18px;
   }
 }
 
@@ -63,13 +70,13 @@
   box-sizing: border-box;
 }
 
-/* ── 1. TOP NAVBAR ── */
+/* ── 1. TOP NAVBAR (IA LOGO & 2-LINE MENU TOGGLE) ── */
 .topNavbar {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 12px;
+  padding: 8px 14px;
   background-color: var(--h-bg);
   border: 1px solid var(--h-border);
   border-radius: 9999px;
@@ -77,57 +84,79 @@
   z-index: 40;
 }
 
-.navAvatarLink {
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.logoMonogram {
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--h-text);
   text-decoration: none;
-  transition: transform 0.2s ease;
+  padding: 2px 4px;
 }
 
-.navAvatarLink:hover {
-  transform: scale(1.12);
-}
-
-.navAvatarImg {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: contrast(108%);
-}
-
-.navIconsGroup {
+.navRightExpandWrap {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.navIconBtn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+.expandedNavPills {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 6px;
+}
+
+.navActionPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--h-text);
   background: var(--h-pill-bg);
   border: 1px solid var(--h-border);
+  padding: 5px 11px;
+  border-radius: 9999px;
   text-decoration: none;
   transition: all 0.15s ease;
 }
 
-.navIconBtn:hover {
+.navActionPill:hover {
   background: var(--h-pill-hover);
   transform: translateY(-1px);
 }
 
-.navIconBtn:active {
-  transform: scale(0.92);
+.twoLineMenuBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: var(--h-pill-bg);
+  border: 1px solid var(--h-border);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.15s ease;
 }
 
-/* ── 2. CENTER STAGE (BIG HEAD & HANDWRITING TYPING TEXT) ── */
+.twoLineMenuBtn:hover {
+  background: var(--h-pill-hover);
+  transform: scale(1.05);
+}
+
+.menuBar {
+  width: 14px;
+  height: 2px;
+  background-color: var(--h-text);
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+/* ── 2. CENTER HERO STAGE (BIG HEAD & HANDWRITING TYPING) ── */
 .centerHeroStage {
   width: 100%;
   flex: 1;
@@ -135,14 +164,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 18px;
+  gap: 16px;
   margin: auto 0;
   position: relative;
 }
 
 .bigHeadTapWrap {
-  width: clamp(170px, 45vw, 240px);
-  height: clamp(170px, 45vw, 240px);
+  width: clamp(165px, 44vw, 230px);
+  height: clamp(165px, 44vw, 230px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -159,14 +188,14 @@
   transition: filter 0.3s ease;
 }
 
-/* Handwriting Typography Typing Text */
 .typewriterTextWrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 36px;
+  min-height: 40px;
   text-align: center;
-  padding: 0 10px;
+  padding: 0 12px;
+  cursor: pointer;
 }
 
 .handwritingText {
@@ -175,7 +204,7 @@
   font-weight: 850;
   letter-spacing: -0.03em;
   color: var(--h-text);
-  line-height: 1.2;
+  line-height: 1.25;
   display: inline-flex;
   align-items: center;
 }
@@ -196,17 +225,74 @@
 }
 
 .tapHintText {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 750;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--h-text-muted);
-  opacity: 0.6;
-  margin-top: 4px;
+  opacity: 0.55;
 }
 
-/* ── 3. BOTTOM CLEAN SPACER ── */
-.bottomEmptyBar {
+/* ── 3. BOTTOM BAR (SOCIAL ICONS & EMAIL CTA BUTTON) ── */
+.bottomActionBar {
   width: 100%;
-  height: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding-top: 8px;
+  box-sizing: border-box;
+}
+
+.socialIconsGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.socialCircleBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--h-text-muted);
+  background: var(--h-pill-bg);
+  border: 1px solid var(--h-border);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.socialCircleBtn:hover {
+  color: var(--h-text);
+  border-color: var(--h-text);
+  transform: translateY(-1px);
+}
+
+.socialCircleBtn:active {
+  transform: scale(0.92);
+}
+
+.sendEmailCtaBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background-color: var(--h-btn-bg);
+  color: var(--h-btn-text);
+  border-radius: 9999px;
+  text-decoration: none;
+  font-size: 0.76rem;
+  font-weight: 800;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.sendEmailCtaBtn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.sendEmailCtaBtn:active {
+  transform: scale(0.96);
 }
