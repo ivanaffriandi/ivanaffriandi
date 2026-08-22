@@ -1,5 +1,5 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · TOP-ALIGNED NAVBAR, CONTINUOUS CARET,
+   AVANT-GARDE HOMEPAGE · TOP-ALIGNED FLUSH NAVBAR, CONTINUOUS CARET,
    ULTRA-DENSE WALL & HIGH-CONTRAST CENTER HERO STAGE
    ============================================================ */
 
@@ -54,7 +54,7 @@
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   margin: 0;
-  padding: max(12px, env(safe-area-inset-top)) 20px max(16px, env(safe-area-inset-bottom));
+  padding: 0 16px 14px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -66,7 +66,7 @@
 
 @media (max-width: 480px) {
   .homepageViewport {
-    padding: max(10px, env(safe-area-inset-top)) 16px max(14px, env(safe-area-inset-bottom));
+    padding: 0 14px 12px;
   }
 }
 
@@ -84,7 +84,7 @@
   z-index: 10;
 }
 
-/* ── 1. TOP NAVBAR (FLUSH TOP-ALIGNED) ── */
+/* ── 1. TOP NAVBAR (FLUSH TOP EDGE) ── */
 .topNavbarRow {
   width: 100%;
   display: flex;
@@ -93,7 +93,7 @@
   box-sizing: border-box;
   z-index: 50;
   position: relative;
-  margin-top: 0;
+  padding-top: 12px;
 }
 
 .circularLogoIsland {
