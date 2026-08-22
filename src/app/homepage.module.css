@@ -1,5 +1,5 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · ICONIC BIG HEAD CANVAS & CLEAN NAVBAR
+   AVANT-GARDE HOMEPAGE · BIG HEAD & TYPEWRITER HANDWRITING
    ============================================================ */
 
 :root {
@@ -9,6 +9,7 @@
   --h-border: rgba(0, 0, 0, 0.08);
   --h-pill-bg: #f2f2f0;
   --h-pill-hover: #e8e8e4;
+  --h-caret: #111113;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -19,6 +20,7 @@
     --h-border: rgba(255, 255, 255, 0.1);
     --h-pill-bg: #18181d;
     --h-pill-hover: #22222a;
+    --h-caret: #f4f4f6;
   }
 }
 
@@ -33,7 +35,7 @@
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   margin: 0;
-  padding: 16px 20px 20px;
+  padding: 16px 20px 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -45,7 +47,7 @@
 
 @media (max-width: 480px) {
   .homepageViewport {
-    padding: 14px 16px 18px;
+    padding: 14px 16px 20px;
   }
 }
 
@@ -57,10 +59,11 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
   box-sizing: border-box;
 }
 
-/* ── 1. TOP NAVBAR (HEAD AVATAR ON LEFT, ICONS ON RIGHT) ── */
+/* ── 1. TOP NAVBAR ── */
 .topNavbar {
   width: 100%;
   display: flex;
@@ -85,7 +88,7 @@
 }
 
 .navAvatarLink:hover {
-  transform: scale(1.1);
+  transform: scale(1.12);
 }
 
 .navAvatarImg {
@@ -124,39 +127,85 @@
   transform: scale(0.92);
 }
 
-/* ── 2. CENTER ICONIC BIG HEAD ── */
-.centerHeadStage {
+/* ── 2. CENTER STAGE (BIG HEAD & HANDWRITING TYPING TEXT) ── */
+.centerHeroStage {
   width: 100%;
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 18px;
   margin: auto 0;
+  position: relative;
 }
 
-.bigCenterHeadWrap {
-  width: clamp(200px, 50vw, 280px);
-  height: clamp(200px, 50vw, 280px);
+.bigHeadTapWrap {
+  width: clamp(170px, 45vw, 240px);
+  height: clamp(170px, 45vw, 240px);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.bigCenterHeadImg {
+.bigHeadTapImg {
   width: 100%;
   height: 100%;
   object-fit: contain;
   filter: contrast(110%);
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: pointer;
+  transition: filter 0.3s ease;
 }
 
-.bigCenterHeadWrap:hover .bigCenterHeadImg {
-  transform: scale(1.06) rotate(-2deg);
+/* Handwriting Typography Typing Text */
+.typewriterTextWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  text-align: center;
+  padding: 0 10px;
 }
 
-/* ── 3. BOTTOM AREA ── */
+.handwritingText {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
+  font-size: clamp(1.2rem, 4.2vw, 1.55rem);
+  font-weight: 850;
+  letter-spacing: -0.03em;
+  color: var(--h-text);
+  line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
+}
+
+.typingCaret {
+  display: inline-block;
+  width: 2px;
+  height: 1.2em;
+  background-color: var(--h-caret);
+  margin-left: 3px;
+  border-radius: 1px;
+  animation: blink 0.9s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.tapHintText {
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--h-text-muted);
+  opacity: 0.6;
+  margin-top: 4px;
+}
+
+/* ── 3. BOTTOM CLEAN SPACER ── */
 .bottomEmptyBar {
   width: 100%;
   height: 12px;
