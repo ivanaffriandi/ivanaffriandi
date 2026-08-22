@@ -6,29 +6,6 @@ import Link from 'next/link';
 import confetti from 'canvas-confetti';
 import styles from './homepage.module.css';
 
-// Feather Pen / Quill Icon for Blog
-const FeatherPenIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
-    <line x1="16" y1="8" x2="2" y2="22" />
-    <line x1="17.5" y1="15" x2="15" y2="17.5" />
-  </svg>
-);
-
-// Minimalist Message / Ask Icon
-const AskChatIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-  </svg>
-);
-
-const ArrowRightIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M5 12h14" />
-    <path d="m12 5 7 7-7 7" />
-  </svg>
-);
-
 const InstagramIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
@@ -55,6 +32,14 @@ const RoundedEmailIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect width="20" height="16" x="2" y="4" rx="4" ry="4" />
     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+  </svg>
+);
+
+// Close (✕) Icon
+const MinimalCloseIcon = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 );
 
@@ -218,7 +203,7 @@ export default function AvantGardeHomepage() {
       </AnimatePresence>
 
       <div className={styles.mainContainer}>
-        {/* ── ZONE 1: TOP NAVBAR (PERFECTLY FLUSH AT TOP: 4PX) ── */}
+        {/* ── ZONE 1: TOP NAVBAR (FLUSH AT TOP: 4PX) ── */}
         <header className={styles.topNavbarRow}>
           {/* Left: "AFFRIANDI, IVAN" Uppercase No Period */}
           <Link href="/" className={styles.textLogoIsland} title="Ivan Affriandi">
@@ -320,19 +305,26 @@ export default function AvantGardeHomepage() {
         </footer>
       </div>
 
-      {/* ── FULL-SCREEN ANIMATED OVERLAY MENU (SELAYAR PENUH) ── */}
+      {/* ── FULL-SCREEN EDITORIAL MENU OVERLAY (YUAN JIE INSPIRED) ── */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
             className={styles.fullScreenMenuOverlay}
           >
-            {/* Header of Full-Screen Menu */}
+            {/* Top: Name & Role Header + Clean Close Button */}
             <div className={styles.fullScreenMenuHeader}>
-              <span className={styles.textLogoIsland}>AFFRIANDI, IVAN</span>
+              <div className={styles.menuProfileBlock}>
+                <span className={styles.menuProfileName}>Ivan Affriandi*</span>
+                <span className={styles.menuProfileSubtitle}>
+                  UI/UX Designer & Writer<br />
+                  Based in Indonesia
+                </span>
+              </div>
+
               <button
                 type="button"
                 onClick={() => setIsMenuOpen(false)}
@@ -340,27 +332,18 @@ export default function AvantGardeHomepage() {
                 title="Close Menu"
                 aria-label="Close Menu"
               >
-                ✕
+                <MinimalCloseIcon />
               </button>
             </div>
 
-            {/* Navigation List Items */}
+            {/* Bottom: Clean Editorial Nav Links */}
             <div className={styles.fullScreenNavList}>
               <a
                 href="https://blog.ivanaffriandi.com"
                 className={styles.fullScreenNavItem}
                 onClick={() => setIsMenuOpen(false)}
               >
-                <div className={styles.navItemTitleRow}>
-                  <span className={styles.navItemTitle}>
-                    <FeatherPenIcon />
-                    Blog
-                  </span>
-                  <ArrowRightIcon />
-                </div>
-                <span className={styles.navItemSubtext}>
-                  Essays, technology, design thinking & studio notes
-                </span>
+                Blog
               </a>
 
               <Link
@@ -368,22 +351,8 @@ export default function AvantGardeHomepage() {
                 className={styles.fullScreenNavItem}
                 onClick={() => setIsMenuOpen(false)}
               >
-                <div className={styles.navItemTitleRow}>
-                  <span className={styles.navItemTitle}>
-                    <AskChatIcon />
-                    Ask
-                  </span>
-                  <ArrowRightIcon />
-                </div>
-                <span className={styles.navItemSubtext}>
-                  Ask anything anonymously — thoughts, advice & feedback
-                </span>
+                Ask
               </Link>
-            </div>
-
-            {/* Footer of Full-Screen Menu */}
-            <div className={styles.fullScreenMenuFooter}>
-              <span>Design & Crafted by Ivan Affriandi</span>
             </div>
           </motion.div>
         )}

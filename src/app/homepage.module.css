@@ -1,12 +1,12 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · FLUSH TOP NAVBAR & FULL-SCREEN MENU
+   AVANT-GARDE HOMEPAGE · YUAN JIE INSPIRED MINIMALIST MENU
    ============================================================ */
 
 :root {
   --h-bg: #ffffff;
   --h-text: #111113;
-  --h-text-muted: #666670;
-  --h-text-sub: #888894;
+  --h-text-muted: #73737a;
+  --h-text-sub: #8e8e98;
   --h-border: rgba(0, 0, 0, 0.12);
   --h-pill-bg: #f3f3f1;
   --h-pill-hover: #e8e8e4;
@@ -16,7 +16,7 @@
   --h-head-filter: contrast(110%) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12));
   --h-marquee-color: rgba(0, 0, 0, 0.16);
   --h-island-bg: #ffffff;
-  --h-fullscreen-menu-bg: rgba(255, 255, 255, 0.98);
+  --h-fullscreen-menu-bg: #f5f5f3;
   --h-hero-scrim: radial-gradient(circle at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 45%, rgba(255, 255, 255, 0) 75%);
 }
 
@@ -35,7 +35,7 @@
     --h-head-filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 2.5px rgba(255, 255, 255, 0.95)) drop-shadow(0 8px 28px rgba(0, 0, 0, 0.6)) contrast(112%);
     --h-marquee-color: rgba(255, 255, 255, 0.18);
     --h-island-bg: #09090b;
-    --h-fullscreen-menu-bg: rgba(9, 9, 11, 0.98);
+    --h-fullscreen-menu-bg: #0e0e11;
     --h-hero-scrim: radial-gradient(circle at center, rgba(9, 9, 11, 0.95) 0%, rgba(9, 9, 11, 0.8) 45%, rgba(9, 9, 11, 0) 75%);
   }
 }
@@ -73,7 +73,7 @@
   pointer-events: auto;
 }
 
-/* ── ZONE 1: TOP NAVBAR (PERFECTLY FLUSH AT TOP: 4PX) ── */
+/* ── ZONE 1: TOP NAVBAR (FLUSH AT TOP: 4PX) ── */
 .topNavbarRow {
   position: absolute !important;
   top: 4px !important;
@@ -134,7 +134,7 @@
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── FULL-SCREEN ANIMATED MENU OVERLAY (SELAYAR PENUH) ── */
+/* ── FULL-SCREEN EDITORIAL MENU OVERLAY (YUAN JIE INSPIRED) ── */
 .fullScreenMenuOverlay {
   position: fixed !important;
   inset: 0 !important;
@@ -142,14 +142,14 @@
   height: 100vh !important;
   height: 100dvh !important;
   background: var(--h-fullscreen-menu-bg);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
   z-index: 100000 !important;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   box-sizing: border-box;
-  padding: 12px 18px 20px;
+  padding: 24px 28px 48px;
+  overflow: hidden;
+  user-select: none;
 }
 
 .fullScreenMenuHeader {
@@ -158,87 +158,72 @@
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+}
+
+.menuProfileBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menuProfileName {
+  font-size: 2.2rem;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  color: var(--h-text);
+  line-height: 1.05;
+}
+
+.menuProfileSubtitle {
+  font-size: 0.96rem;
+  font-weight: 400;
+  color: var(--h-text-muted);
+  line-height: 1.4;
 }
 
 .fullScreenCloseBtn {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: var(--h-pill-bg);
-  border: 1.5px solid var(--h-border);
+  background: transparent;
+  border: none;
   color: var(--h-text);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 1rem;
-  transition: transform 0.15s ease;
+  padding: 4px;
+  margin-top: 2px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
 .fullScreenCloseBtn:hover {
-  transform: scale(1.08);
+  opacity: 0.7;
+  transform: scale(1.1);
 }
 
 .fullScreenNavList {
   width: 100%;
   max-width: 440px;
-  margin: auto auto;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
+  padding-bottom: 24px;
 }
 
 .fullScreenNavItem {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 16px 18px;
-  border-radius: 18px;
-  background: var(--h-pill-bg);
-  border: 1.5px solid var(--h-border);
-  text-decoration: none;
+  font-size: 1.85rem;
+  font-weight: 450;
+  letter-spacing: -0.03em;
   color: var(--h-text);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  transition: transform 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  width: fit-content;
+  display: inline-block;
 }
 
 .fullScreenNavItem:hover {
-  background: var(--h-pill-hover);
-  transform: translateY(-2px);
-  border-color: var(--h-text);
-}
-
-.navItemTitleRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.navItemTitle {
-  font-size: 1.45rem;
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.navItemSubtext {
-  font-size: 0.8rem;
-  font-weight: 550;
+  transform: translateX(4px);
   color: var(--h-text-muted);
-}
-
-.fullScreenMenuFooter {
-  width: 100%;
-  max-width: 440px;
-  margin: 0 auto;
-  text-align: center;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--h-text-sub);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
 }
 
 /* ── ZONE 2: CENTER HERO STAGE (DEAD-CENTER: 50%, 50%) ── */
