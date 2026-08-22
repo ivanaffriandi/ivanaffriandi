@@ -1,5 +1,5 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · FLUID FLICKER-FREE MENU & COMPACT LIST
+   AVANT-GARDE HOMEPAGE · NATIVE IOS SLIDE MENU (FLICKER-FREE)
    ============================================================ */
 
 :root {
@@ -16,7 +16,7 @@
   --h-head-filter: contrast(110%) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12));
   --h-marquee-color: rgba(0, 0, 0, 0.16);
   --h-island-bg: #ffffff;
-  --h-fullscreen-menu-bg: #f7f7f5;
+  --h-fullscreen-menu-bg: #ffffff;
   --h-badge-bg: rgba(0, 0, 0, 0.06);
   --h-badge-text: #8e8e98;
   --h-hero-scrim: radial-gradient(circle at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 45%, rgba(255, 255, 255, 0) 75%);
@@ -37,7 +37,7 @@
     --h-head-filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 2.5px rgba(255, 255, 255, 0.95)) drop-shadow(0 8px 28px rgba(0, 0, 0, 0.6)) contrast(112%);
     --h-marquee-color: rgba(255, 255, 255, 0.18);
     --h-island-bg: #09090b;
-    --h-fullscreen-menu-bg: #0c0c0e;
+    --h-fullscreen-menu-bg: #09090b;
     --h-badge-bg: rgba(255, 255, 255, 0.1);
     --h-badge-text: #71717a;
     --h-hero-scrim: radial-gradient(circle at center, rgba(9, 9, 11, 0.95) 0%, rgba(9, 9, 11, 0.8) 45%, rgba(9, 9, 11, 0) 75%);
@@ -144,23 +144,28 @@
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── FULL-SCREEN FLICKER-FREE COMPACT MENU OVERLAY ── */
+/* ── NATIVE IOS SLIDE MENU OVERLAY (100% SOLID & ZERO FLICKER) ── */
 .fullScreenMenuOverlay {
   position: fixed !important;
-  inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
   height: 100dvh !important;
-  background: var(--h-fullscreen-menu-bg);
+  background: var(--h-fullscreen-menu-bg) !important;
   z-index: 100000 !important;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   box-sizing: border-box;
-  padding: 14px 20px 32px;
+  padding: 12px 16px 28px;
   overflow: hidden;
   user-select: none;
-  will-change: opacity, transform;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  will-change: transform;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
@@ -184,6 +189,8 @@
 }
 
 .fullScreenCloseBtn {
+  width: 36px;
+  height: 36px;
   background: transparent;
   border: none;
   color: var(--h-text);
@@ -191,7 +198,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  padding: 4px;
+  padding: 0;
   margin: 0;
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
@@ -207,7 +214,7 @@
   margin: auto auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
   padding: 0;
 }
 

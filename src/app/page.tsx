@@ -305,14 +305,14 @@ export default function AvantGardeHomepage() {
         </footer>
       </div>
 
-      {/* ── FULL-SCREEN FLICKER-FREE COMPACT MENU OVERLAY ── */}
+      {/* ── NATIVE IOS SLIDE MENU OVERLAY (ZERO-FLICKER SLIDE SHEET) ── */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.2, ease: [0.25, 1, 0.5, 1] }}
+            initial={{ y: '-100%' }}
+            animate={{ y: '0%' }}
+            exit={{ y: '-100%' }}
+            transition={{ duration: 0.36, ease: [0.32, 0.72, 0, 1] }}
             className={styles.fullScreenMenuOverlay}
           >
             {/* Header: Brand Name + Close Button */}
@@ -360,8 +360,8 @@ export default function AvantGardeHomepage() {
               </Link>
             </div>
 
-            {/* Bottom Safe Area Space */}
-            <div style={{ height: '24px' }} />
+            {/* Bottom Space */}
+            <div style={{ height: '16px' }} />
           </motion.div>
         )}
       </AnimatePresence>
