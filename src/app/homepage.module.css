@@ -1,5 +1,5 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · REFINED OUTLINE NAVBAR & MARQUEE WALL
+   AVANT-GARDE HOMEPAGE · DENSE RUNNING TEXT WALL MATRIX
    ============================================================ */
 
 :root {
@@ -14,7 +14,7 @@
   --h-btn-text: #ffffff;
   --h-caret: #111113;
   --h-head-filter: contrast(108%);
-  --h-marquee-color: rgba(0, 0, 0, 0.07);
+  --h-marquee-color: rgba(0, 0, 0, 0.14);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -30,7 +30,7 @@
     --h-btn-text: #09090b;
     --h-caret: #f4f4f6;
     --h-head-filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 2px rgba(255, 255, 255, 0.85)) drop-shadow(0 4px 16px rgba(255, 255, 255, 0.15)) contrast(110%);
-    --h-marquee-color: rgba(255, 255, 255, 0.08);
+    --h-marquee-color: rgba(255, 255, 255, 0.16);
   }
 }
 
@@ -75,7 +75,7 @@
   z-index: 10;
 }
 
-/* ── 1. TOP NAVBAR (DEFINED CLEAN OUTLINE) ── */
+/* ── 1. TOP NAVBAR ── */
 .topNavbar {
   width: 100%;
   display: flex;
@@ -163,7 +163,7 @@
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── 2. CENTER HERO STAGE (DEAD-CENTER FOCAL POINT) ── */
+/* ── 2. CENTER HERO STAGE ── */
 .centerHeroStage {
   width: 100%;
   flex: 1;
@@ -244,7 +244,7 @@
   opacity: 0.5;
 }
 
-/* ── 3. FULL-SCREEN BACKGROUND SKILLS MARQUEE BRICK PATTERN ── */
+/* ── 3. FULL-SCREEN DENSE MARQUEE WALL MATRIX (INFINITE TICKER) ── */
 .marqueeWallBackground {
   position: absolute;
   inset: 0;
@@ -256,29 +256,39 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  opacity: 0.85;
+  justify-content: space-between;
+  gap: 2px;
+  padding: 4px 0;
+  box-sizing: border-box;
 }
 
 .marqueeTrackRow {
   display: flex;
   white-space: nowrap;
   width: max-content;
-  font-size: clamp(0.78rem, 2.2vw, 1.05rem);
+  font-size: clamp(0.72rem, 1.9vw, 0.92rem);
   font-weight: 900;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--h-marquee-color);
   user-select: none;
-  line-height: 1;
+  line-height: 1.15;
 }
 
 .marqueeScrollLeft {
-  animation: scrollMarqueeLeft 28s linear infinite;
+  animation: scrollMarqueeLeft 24s linear infinite;
 }
 
 .marqueeScrollRight {
-  animation: scrollMarqueeRight 32s linear infinite;
+  animation: scrollMarqueeRight 26s linear infinite;
+}
+
+.marqueeScrollLeftFast {
+  animation: scrollMarqueeLeft 19s linear infinite;
+}
+
+.marqueeScrollRightFast {
+  animation: scrollMarqueeRight 21s linear infinite;
 }
 
 @keyframes scrollMarqueeLeft {

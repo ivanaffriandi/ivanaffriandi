@@ -117,50 +117,86 @@ export default function AvantGardeHomepage() {
 
   return (
     <div className={styles.homepageViewport}>
-      {/* ── FULL-SCREEN BACKGROUND SKILLS MARQUEE BRICK WALL ── */}
+      {/* ── FULL-SCREEN DENSE MARQUEE RUNNING TEXT MATRIX (16+ ROWS INFINITE) ── */}
       <AnimatePresence>
         {isMarqueeActive && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.35 }}
             className={styles.marqueeWallBackground}
           >
-            {/* Row 1: Left */}
+            {/* Row 1 */}
             <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollLeft}`}>
-              <span>Next.js 16 &bull; UI/UX Design &bull; TypeScript &bull; Three.js &bull; Italian Leather &bull; Figma Tokens &bull; WebGL 2.0 &bull; Next.js 16 &bull; UI/UX Design &bull; TypeScript &bull; Three.js &bull; Italian Leather &bull; Figma Tokens &bull; WebGL 2.0 &bull;&nbsp;</span>
-              <span>Next.js 16 &bull; UI/UX Design &bull; TypeScript &bull; Three.js &bull; Italian Leather &bull; Figma Tokens &bull; WebGL 2.0 &bull; Next.js 16 &bull; UI/UX Design &bull; TypeScript &bull; Three.js &bull; Italian Leather &bull; Figma Tokens &bull; WebGL 2.0 &bull;&nbsp;</span>
+              <span>UI/UX DESIGN &bull; NEXT.JS 16 &bull; TYPESCRIPT &bull; THREE.JS &bull; ITALIAN LEATHER &bull; FIGMA TOKENS &bull; WEBGL 2.0 &bull; REACT 19 &bull; UI/UX DESIGN &bull; NEXT.JS 16 &bull; TYPESCRIPT &bull; THREE.JS &bull; ITALIAN LEATHER &bull; FIGMA TOKENS &bull; WEBGL 2.0 &bull; REACT 19 &bull;&nbsp;</span>
+              <span>UI/UX DESIGN &bull; NEXT.JS 16 &bull; TYPESCRIPT &bull; THREE.JS &bull; ITALIAN LEATHER &bull; FIGMA TOKENS &bull; WEBGL 2.0 &bull; REACT 19 &bull; UI/UX DESIGN &bull; NEXT.JS 16 &bull; TYPESCRIPT &bull; THREE.JS &bull; ITALIAN LEATHER &bull; FIGMA TOKENS &bull; WEBGL 2.0 &bull; REACT 19 &bull;&nbsp;</span>
             </div>
 
-            {/* Row 2: Right */}
+            {/* Row 2 */}
             <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollRight}`}>
-              <span>React 19 &bull; Bespoke Atelier &bull; System Architecture &bull; 925 Solid Silver &bull; Framer Motion &bull; Docker Compose &bull; React 19 &bull; Bespoke Atelier &bull; System Architecture &bull; 925 Solid Silver &bull; Framer Motion &bull; Docker Compose &bull;&nbsp;</span>
-              <span>React 19 &bull; Bespoke Atelier &bull; System Architecture &bull; 925 Solid Silver &bull; Framer Motion &bull; Docker Compose &bull; React 19 &bull; Bespoke Atelier &bull; System Architecture &bull; 925 Solid Silver &bull; Framer Motion &bull; Docker Compose &bull;&nbsp;</span>
+              <span>INDONESIAN (NATIVE) &bull; ENGLISH (FLUENT) &bull; DUTCH (NEDERLANDS) &bull; SUNDANESE &bull; TYPOGRAPHY SYSTEMS &bull; INDONESIAN (NATIVE) &bull; ENGLISH (FLUENT) &bull; DUTCH (NEDERLANDS) &bull; SUNDANESE &bull; TYPOGRAPHY SYSTEMS &bull;&nbsp;</span>
+              <span>INDONESIAN (NATIVE) &bull; ENGLISH (FLUENT) &bull; DUTCH (NEDERLANDS) &bull; SUNDANESE &bull; TYPOGRAPHY SYSTEMS &bull; INDONESIAN (NATIVE) &bull; ENGLISH (FLUENT) &bull; DUTCH (NEDERLANDS) &bull; SUNDANESE &bull; TYPOGRAPHY SYSTEMS &bull;&nbsp;</span>
             </div>
 
-            {/* Row 3: Left */}
+            {/* Row 3 */}
+            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollLeftFast}`}>
+              <span>SHU / EN STUDIO ATELIER &bull; SADDLE STITCHING &bull; 925 STERLING SILVER &bull; TOKONOLE BURNISHING &bull; PATTERN DRAFTING &bull; SHU / EN STUDIO ATELIER &bull; SADDLE STITCHING &bull; 925 STERLING SILVER &bull; TOKONOLE BURNISHING &bull; PATTERN DRAFTING &bull;&nbsp;</span>
+              <span>SHU / EN STUDIO ATELIER &bull; SADDLE STITCHING &bull; 925 STERLING SILVER &bull; TOKONOLE BURNISHING &bull; PATTERN DRAFTING &bull; SHU / EN STUDIO ATELIER &bull; SADDLE STITCHING &bull; 925 STERLING SILVER &bull; TOKONOLE BURNISHING &bull; PATTERN DRAFTING &bull;&nbsp;</span>
+            </div>
+
+            {/* Row 4 */}
+            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollRightFast}`}>
+              <span>GLSL PROCEDURAL SHADERS &bull; WEB AUDIO API &bull; BLENDER 3D &bull; FRAMER MOTION &bull; TAILWIND CSS &bull; GLSL PROCEDURAL SHADERS &bull; WEB AUDIO API &bull; BLENDER 3D &bull; FRAMER MOTION &bull; TAILWIND CSS &bull;&nbsp;</span>
+              <span>GLSL PROCEDURAL SHADERS &bull; WEB AUDIO API &bull; BLENDER 3D &bull; FRAMER MOTION &bull; TAILWIND CSS &bull; GLSL PROCEDURAL SHADERS &bull; WEB AUDIO API &bull; BLENDER 3D &bull; FRAMER MOTION &bull; TAILWIND CSS &bull;&nbsp;</span>
+            </div>
+
+            {/* Row 5 */}
             <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollLeft}`}>
-              <span>Spatial 3D Design &bull; GLSL Shaders &bull; Wild Fungi &bull; Minimalist Typography &bull; PostgreSQL &bull; Saddle Stitching &bull; Spatial 3D Design &bull; GLSL Shaders &bull; Wild Fungi &bull; Minimalist Typography &bull; PostgreSQL &bull; Saddle Stitching &bull;&nbsp;</span>
-              <span>Spatial 3D Design &bull; GLSL Shaders &bull; Wild Fungi &bull; Minimalist Typography &bull; PostgreSQL &bull; Saddle Stitching &bull; Spatial 3D Design &bull; GLSL Shaders &bull; Wild Fungi &bull; Minimalist Typography &bull; PostgreSQL &bull; Saddle Stitching &bull;&nbsp;</span>
+              <span>ORACLE CLOUD VM &bull; DOCKER COMPOSE &bull; POSTGRESQL &bull; REDIS CACHE &bull; AWS SES RELAYS &bull; CLOUDFLARE SSL &bull; ORACLE CLOUD VM &bull; DOCKER COMPOSE &bull; POSTGRESQL &bull; REDIS CACHE &bull; AWS SES RELAYS &bull; CLOUDFLARE SSL &bull;&nbsp;</span>
+              <span>ORACLE CLOUD VM &bull; DOCKER COMPOSE &bull; POSTGRESQL &bull; REDIS CACHE &bull; AWS SES RELAYS &bull; CLOUDFLARE SSL &bull; ORACLE CLOUD VM &bull; DOCKER COMPOSE &bull; POSTGRESQL &bull; REDIS CACHE &bull; AWS SES RELAYS &bull; CLOUDFLARE SSL &bull;&nbsp;</span>
             </div>
 
-            {/* Row 4: Right */}
+            {/* Row 6 */}
             <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollRight}`}>
-              <span>Interaction Systems &bull; Zero Bloat &bull; Cloud VMs &bull; Tokyo Moire Silk &bull; Web Audio API &bull; Redis Cache &bull; Interaction Systems &bull; Zero Bloat &bull; Cloud VMs &bull; Tokyo Moire Silk &bull; Web Audio API &bull; Redis Cache &bull;&nbsp;</span>
-              <span>Interaction Systems &bull; Zero Bloat &bull; Cloud VMs &bull; Tokyo Moire Silk &bull; Web Audio API &bull; Redis Cache &bull; Interaction Systems &bull; Zero Bloat &bull; Cloud VMs &bull; Tokyo Moire Silk &bull; Web Audio API &bull; Redis Cache &bull;&nbsp;</span>
+              <span>WILD MUSHROOM FORAGING &bull; MYCOLOGY FIELD NOTES &bull; MACRO PHOTOGRAPHY &bull; ANALOG TEXTURES &bull; WILD MUSHROOM FORAGING &bull; MYCOLOGY FIELD NOTES &bull; MACRO PHOTOGRAPHY &bull; ANALOG TEXTURES &bull;&nbsp;</span>
+              <span>WILD MUSHROOM FORAGING &bull; MYCOLOGY FIELD NOTES &bull; MACRO PHOTOGRAPHY &bull; ANALOG TEXTURES &bull; WILD MUSHROOM FORAGING &bull; MYCOLOGY FIELD NOTES &bull; MACRO PHOTOGRAPHY &bull; ANALOG TEXTURES &bull;&nbsp;</span>
             </div>
 
-            {/* Row 5: Left */}
+            {/* Row 7 */}
+            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollLeftFast}`}>
+              <span>FIBER ARTS &bull; HAND CROCHET &bull; LOOSE-LEAF TEA BREWING &bull; ARCHITECTURAL ESSAYS &bull; FIBER ARTS &bull; HAND CROCHET &bull; LOOSE-LEAF TEA BREWING &bull; ARCHITECTURAL ESSAYS &bull;&nbsp;</span>
+              <span>FIBER ARTS &bull; HAND CROCHET &bull; LOOSE-LEAF TEA BREWING &bull; ARCHITECTURAL ESSAYS &bull; FIBER ARTS &bull; HAND CROCHET &bull; LOOSE-LEAF TEA BREWING &bull; ARCHITECTURAL ESSAYS &bull;&nbsp;</span>
+            </div>
+
+            {/* Row 8 */}
+            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollRightFast}`}>
+              <span>ZERO BLOAT COMPUTING &bull; MINIMALIST SOFTWARE ARCHITECTURES &bull; SELF-HOSTED SERVICES &bull; ZERO BLOAT COMPUTING &bull; MINIMALIST SOFTWARE ARCHITECTURES &bull; SELF-HOSTED SERVICES &bull;&nbsp;</span>
+              <span>ZERO BLOAT COMPUTING &bull; MINIMALIST SOFTWARE ARCHITECTURES &bull; SELF-HOSTED SERVICES &bull; ZERO BLOAT COMPUTING &bull; MINIMALIST SOFTWARE ARCHITECTURES &bull; SELF-HOSTED SERVICES &bull;&nbsp;</span>
+            </div>
+
+            {/* Row 9 */}
             <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollLeft}`}>
-              <span>Product Strategy &bull; Dark Mode &bull; Precision Drafting &bull; Dedicated SMTP Relays &bull; Micro-interactions &bull; Product Strategy &bull; Dark Mode &bull; Precision Drafting &bull; Dedicated SMTP Relays &bull; Micro-interactions &bull;&nbsp;</span>
-              <span>Product Strategy &bull; Dark Mode &bull; Precision Drafting &bull; Dedicated SMTP Relays &bull; Micro-interactions &bull; Product Strategy &bull; Dark Mode &bull; Precision Drafting &bull; Dedicated SMTP Relays &bull; Micro-interactions &bull;&nbsp;</span>
+              <span>INTERACTION DESIGN &bull; SPATIAL LAYOUT &bull; MICRO-INTERACTIONS &bull; DESIGN SYSTEM TOKENS &bull; INTERACTION DESIGN &bull; SPATIAL LAYOUT &bull; MICRO-INTERACTIONS &bull; DESIGN SYSTEM TOKENS &bull;&nbsp;</span>
+              <span>INTERACTION DESIGN &bull; SPATIAL LAYOUT &bull; MICRO-INTERACTIONS &bull; DESIGN SYSTEM TOKENS &bull; INTERACTION DESIGN &bull; SPATIAL LAYOUT &bull; MICRO-INTERACTIONS &bull; DESIGN SYSTEM TOKENS &bull;&nbsp;</span>
             </div>
 
-            {/* Row 6: Right */}
+            {/* Row 10 */}
             <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollRight}`}>
-              <span>Editorial Systems &bull; Creative Direction &bull; Next.js 16 &bull; Tokonole Edge Burnishing &bull; Figma Architecture &bull; Editorial Systems &bull; Creative Direction &bull; Next.js 16 &bull; Tokonole Edge Burnishing &bull; Figma Architecture &bull;&nbsp;</span>
-              <span>Editorial Systems &bull; Creative Direction &bull; Next.js 16 &bull; Tokonole Edge Burnishing &bull; Figma Architecture &bull; Editorial Systems &bull; Creative Direction &bull; Next.js 16 &bull; Tokonole Edge Burnishing &bull; Figma Architecture &bull;&nbsp;</span>
+              <span>TUSCAN VEGETABLE TANNED LEATHER &bull; JAPANESE MOIRE SILK LINING &bull; BESPOKE JOURNAL COVERS &bull; TUSCAN VEGETABLE TANNED LEATHER &bull; JAPANESE MOIRE SILK LINING &bull; BESPOKE JOURNAL COVERS &bull;&nbsp;</span>
+              <span>TUSCAN VEGETABLE TANNED LEATHER &bull; JAPANESE MOIRE SILK LINING &bull; BESPOKE JOURNAL COVERS &bull; TUSCAN VEGETABLE TANNED LEATHER &bull; JAPANESE MOIRE SILK LINING &bull; BESPOKE JOURNAL COVERS &bull;&nbsp;</span>
+            </div>
+
+            {/* Row 11 */}
+            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollLeftFast}`}>
+              <span>NEXT.JS APP ROUTER &bull; REACT SERVER COMPONENTS &bull; JAVASCRIPT ES2026 &bull; RUST AXUM &bull; NEXT.JS APP ROUTER &bull; REACT SERVER COMPONENTS &bull; JAVASCRIPT ES2026 &bull; RUST AXUM &bull;&nbsp;</span>
+              <span>NEXT.JS APP ROUTER &bull; REACT SERVER COMPONENTS &bull; JAVASCRIPT ES2026 &bull; RUST AXUM &bull; NEXT.JS APP ROUTER &bull; REACT SERVER COMPONENTS &bull; JAVASCRIPT ES2026 &bull; RUST AXUM &bull;&nbsp;</span>
+            </div>
+
+            {/* Row 12 */}
+            <div className={`${styles.marqueeTrackRow} ${styles.marqueeScrollRightFast}`}>
+              <span>CREATIVE WRITING &bull; TECH ESSAYS &bull; PRODUCT STRATEGY &bull; SWISS MINIMALISM &bull; CREATIVE WRITING &bull; TECH ESSAYS &bull; PRODUCT STRATEGY &bull; SWISS MINIMALISM &bull;&nbsp;</span>
+              <span>CREATIVE WRITING &bull; TECH ESSAYS &bull; PRODUCT STRATEGY &bull; SWISS MINIMALISM &bull; CREATIVE WRITING &bull; TECH ESSAYS &bull; PRODUCT STRATEGY &bull; SWISS MINIMALISM &bull;&nbsp;</span>
             </div>
           </motion.div>
         )}
