@@ -232,12 +232,11 @@ body:has([class*="fullDesktopViewport"]) main,
 html:has([class*="admin-root-view"]),
 body:has([class*="admin-root-view"]),
 body:has([class*="admin-root-view"]) .layout-wrapper,
-body:has([class*="admin-root-view"]) .content-wrapper,
-body:has([class*="admin-root-view"]) main {
+body:has([class*="admin-root-view"]) .content-wrapper {
   padding: 0 !important;
   margin: 0 !important;
-  max-width: 100vw !important;
-  width: 100vw !important;
+  max-width: 100% !important;
+  width: 100% !important;
   min-height: 100vh !important;
   background: transparent !important;
   background-color: transparent !important;

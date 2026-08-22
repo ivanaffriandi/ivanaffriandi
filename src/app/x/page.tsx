@@ -636,98 +636,110 @@ function AdminPageContent() {
         }
       `}</style>
 
-      {/* ── TOP HEADER (CENTERED WITH SAME 24PX MARGIN) ── */}
-      <header className="admin-sticky-header">
-        <div className="admin-header-content">
-          {/* TOP LEFT: SEGMENTED SWITCH BUTTONS */}
-          <div style={{ display: "flex", background: "var(--bg-secondary)", borderRadius: "9999px", padding: "2px", border: "1px solid var(--border-color)" }}>
-            <button
-              type="button"
-              onClick={() => handleTabChange("inbox")}
-              style={{
-                border: "none",
-                background: activeTab === "inbox" ? "var(--card-bg-1)" : "transparent",
-                color: activeTab === "inbox" ? "var(--text-primary)" : "var(--text-secondary)",
-                padding: "5px 14px",
-                borderRadius: "9999px",
-                fontSize: "0.74rem",
-                fontWeight: 800,
-                cursor: "pointer",
-                boxShadow: activeTab === "inbox" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                transition: "all 0.15s ease",
-              }}
-            >
-              <span>Inbox</span>
-              {pendingQuestionsCount > 0 && (
-                <span style={{ background: "#FF3B30", color: "#fff", fontSize: "0.58rem", fontWeight: 850, padding: "1px 5px", borderRadius: "9999px" }}>
-                  {pendingQuestionsCount}
-                </span>
-              )}
-            </button>
+      {/* ── TOP HEADER (ORIGINAL FULL WIDTH POSITION) ── */}
+      <header
+        style={{
+          width: "100%",
+          backgroundColor: "var(--bg-color)",
+          borderBottom: "1px solid var(--border-color)",
+          position: "sticky",
+          top: 0,
+          zIndex: 99,
+          padding: "0.85rem 1.25rem",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          boxSizing: "border-box",
+        }}
+      >
+        {/* TOP LEFT: SEGMENTED SWITCH BUTTONS */}
+        <div style={{ display: "flex", background: "var(--bg-secondary)", borderRadius: "9999px", padding: "2px", border: "1px solid var(--border-color)" }}>
+          <button
+            type="button"
+            onClick={() => handleTabChange("inbox")}
+            style={{
+              border: "none",
+              background: activeTab === "inbox" ? "var(--card-bg-1)" : "transparent",
+              color: activeTab === "inbox" ? "var(--text-primary)" : "var(--text-secondary)",
+              padding: "5px 14px",
+              borderRadius: "9999px",
+              fontSize: "0.74rem",
+              fontWeight: 800,
+              cursor: "pointer",
+              boxShadow: activeTab === "inbox" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              transition: "all 0.15s ease",
+            }}
+          >
+            <span>Inbox</span>
+            {pendingQuestionsCount > 0 && (
+              <span style={{ background: "#FF3B30", color: "#fff", fontSize: "0.58rem", fontWeight: 850, padding: "1px 5px", borderRadius: "9999px" }}>
+                {pendingQuestionsCount}
+              </span>
+            )}
+          </button>
 
-            <button
-              type="button"
-              onClick={() => handleTabChange("analytics")}
-              style={{
-                border: "none",
-                background: activeTab === "analytics" ? "var(--card-bg-1)" : "transparent",
-                color: activeTab === "analytics" ? "var(--text-primary)" : "var(--text-secondary)",
-                padding: "5px 14px",
-                borderRadius: "9999px",
-                fontSize: "0.74rem",
-                fontWeight: 800,
-                cursor: "pointer",
-                boxShadow: activeTab === "analytics" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-                transition: "all 0.15s ease",
-              }}
-            >
-              Analytics
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => handleTabChange("analytics")}
+            style={{
+              border: "none",
+              background: activeTab === "analytics" ? "var(--card-bg-1)" : "transparent",
+              color: activeTab === "analytics" ? "var(--text-primary)" : "var(--text-secondary)",
+              padding: "5px 14px",
+              borderRadius: "9999px",
+              fontSize: "0.74rem",
+              fontWeight: 800,
+              cursor: "pointer",
+              boxShadow: activeTab === "analytics" ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
+              transition: "all 0.15s ease",
+            }}
+          >
+            Analytics
+          </button>
+        </div>
 
-          {/* TOP RIGHT: REFRESH ICON & SIGN OUT */}
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <button
-              type="button"
-              onClick={loadData}
-              title="Refresh data"
-              className="icon-btn"
+        {/* TOP RIGHT: REFRESH ICON & SIGN OUT */}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <button
+            type="button"
+            onClick={loadData}
+            title="Refresh data"
+            className="icon-btn"
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={isRefreshing ? "rotating-icon" : ""}
             >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={isRefreshing ? "rotating-icon" : ""}
-              >
-                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-              </svg>
-            </button>
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+            </svg>
+          </button>
 
-            <button
-              type="button"
-              onClick={handleLogout}
-              style={{
-                border: "1px solid var(--border-color)",
-                background: "var(--bg-secondary)",
-                color: "var(--text-secondary)",
-                borderRadius: "9999px",
-                padding: "6px 12px",
-                fontSize: "0.7rem",
-                fontWeight: 750,
-                cursor: "pointer",
-              }}
-            >
-              Sign Out
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={handleLogout}
+            style={{
+              border: "1px solid var(--border-color)",
+              background: "var(--bg-secondary)",
+              color: "var(--text-secondary)",
+              borderRadius: "9999px",
+              padding: "6px 12px",
+              fontSize: "0.7rem",
+              fontWeight: 750,
+              cursor: "pointer",
+            }}
+          >
+            Sign Out
+          </button>
         </div>
       </header>
 
