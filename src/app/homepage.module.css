@@ -1,5 +1,8 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · BULLETPROOF ABSOLUTE FULLSCREEN FIX
+   AVANT-GARDE HOMEPAGE · ABSOLUTE 3-ZONE GEOMETRIC PRECISION
+   Zone 1: Top Navbar (top: 14px)
+   Zone 2: Center Hero Stage (top: 50%, left: 50%, translate(-50%, -50%))
+   Zone 3: Bottom Action Bar (bottom: 18px)
    ============================================================ */
 
 :root {
@@ -42,7 +45,6 @@
   }
 }
 
-/* 100% Fixed Screen Viewport without any parent overflow bugs */
 .homepageViewport {
   position: fixed !important;
   inset: 0 !important;
@@ -61,41 +63,29 @@
   z-index: 99999 !important;
 }
 
-/* Pinned layout inside fixed viewport */
 .mainContainer {
   position: absolute !important;
-  top: 0 !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
+  inset: 0 !important;
   width: 100% !important;
-  max-width: 440px !important;
   height: 100% !important;
-  height: 100dvh !important;
+  max-width: 440px !important;
+  margin: 0 auto !important;
+  left: 0 !important;
+  right: 0 !important;
+  pointer-events: auto;
+}
+
+/* ── ZONE 1: TOP NAVBAR ── */
+.topNavbarRow {
+  position: absolute !important;
+  top: max(14px, env(safe-area-inset-top)) !important;
+  left: 18px !important;
+  right: 18px !important;
   display: flex !important;
-  flex-direction: column !important;
   justify-content: space-between !important;
   align-items: center !important;
-  box-sizing: border-box !important;
-  padding: 14px 18px 20px !important;
-  z-index: 10 !important;
-}
-
-@media (max-width: 480px) {
-  .mainContainer {
-    padding: 12px 16px 18px !important;
-  }
-}
-
-/* ── 1. TOP NAVBAR (AT THE TOP) ── */
-.topNavbarRow {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  z-index: 60 !important;
   box-sizing: border-box;
-  z-index: 50;
-  position: relative;
-  flex-shrink: 0;
 }
 
 .circularLogoIsland {
@@ -194,19 +184,24 @@
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── 2. CENTER HERO STAGE (EXACT DEAD-CENTER VERTICAL & HORIZONTAL) ── */
+/* ── ZONE 2: CENTER HERO STAGE (ABSOLUTE DEAD-CENTER) ── */
 .centerHeroStage {
-  width: 100%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin: auto 0;
-  position: relative;
-  text-align: center;
-  z-index: 20;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 100% !important;
+  max-width: 360px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  margin: 0 !important;
+  padding: 0 16px !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+  z-index: 20 !important;
 }
 
 .heroContrastScrim {
@@ -289,55 +284,20 @@
   z-index: 2;
 }
 
-/* ── 3. ULTRA DENSE WALL-TO-WALL RUNNING SKILLS MATRIX ── */
-.marqueeWallBackground {
-  position: absolute;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
-
-.marqueeRowWrap {
-  width: 100%;
-  overflow: hidden;
-  display: flex;
-  line-height: 0.88;
-}
-
-.marqueeRowContent {
-  display: flex;
-  white-space: nowrap;
-  font-size: clamp(0.56rem, 1.4vw, 0.72rem);
-  font-weight: 900;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--h-marquee-color);
-  user-select: none;
-  line-height: 0.88;
-}
-
-/* ── 4. BOTTOM ACTION BAR (GUARANTEED VISIBLE AT BOTTOM) ── */
+/* ── ZONE 3: BOTTOM ACTION BAR (PINNED TO BOTTOM) ── */
 .bottomActionBar {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  z-index: 50;
-  flex-shrink: 0;
+  position: absolute !important;
+  bottom: max(18px, env(safe-area-inset-bottom)) !important;
+  left: 18px !important;
+  right: 18px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  z-index: 60 !important;
 }
 
 .socialIconsGroup {
@@ -391,4 +351,41 @@
 
 .sendEmailCtaBtn:active {
   transform: scale(0.96);
+}
+
+/* ── WALL-TO-WALL RUNNING SKILLS MATRIX ── */
+.marqueeWallBackground {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.marqueeRowWrap {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  line-height: 0.88;
+}
+
+.marqueeRowContent {
+  display: flex;
+  white-space: nowrap;
+  font-size: clamp(0.56rem, 1.4vw, 0.72rem);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--h-marquee-color);
+  user-select: none;
+  line-height: 0.88;
 }
