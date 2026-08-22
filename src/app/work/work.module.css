@@ -52,8 +52,7 @@
 .fullDesktopViewport {
   min-height: 100vh;
   min-height: 100dvh;
-  width: 100vw;
-  width: 100dvw;
+  width: 100%;
   background-color: var(--w-bg);
   color: var(--w-text);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif;
@@ -62,21 +61,19 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* Wide Page Container (Expands gracefully across desktop) */
+/* Wide Page Container (Expands naturally across desktop like a real website) */
 .widePageContainer {
-  max-width: 1380px;
+  max-width: 960px;
   width: 100%;
   margin: 0 auto;
-  padding: 40px 56px 100px 56px;
+  padding: 48px 32px 100px 32px;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 36px;
   box-sizing: border-box;
 }
 
