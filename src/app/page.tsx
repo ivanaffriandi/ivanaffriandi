@@ -1,162 +1,222 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import styles from './homepage.module.css';
+import momentsData from './moments-data.json';
 
-const InstagramIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-  </svg>
-);
+interface MomentPhoto {
+  id: string;
+  image: string;
+  date: string;
+  caption?: string;
+}
 
-const GithubIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-    <path d="M9 18c-4.51 2-5-2-7-2" />
-  </svg>
-);
+export default function AvantGardeHomepage() {
+  const [moments] = useState<MomentPhoto[]>(momentsData as MomentPhoto[]);
+  const [currentIndex, setCurrentIndex] = useState<number>(2); // Start at index 2 for "16 JAN 2026"
+  const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
 
-const XIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 4l16 16m0-16L4 20" />
-  </svg>
-);
+  const activeMoment = moments[currentIndex] || moments[0];
+  const prevMoment = moments[(currentIndex - 1 + moments.length) % moments.length];
+  const nextMoment = moments[(currentIndex + 1) % moments.length];
 
-const MailIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect width="20" height="16" x="2" y="4" rx="2" />
-    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-  </svg>
-);
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : moments.length - 1));
+  };
 
-export default function Homepage() {
-  const [isSocialExpanded, setIsSocialExpanded] = useState(false);
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev < moments.length - 1 ? prev + 1 : 0));
+  };
+
+  // Keyboard Navigation (Left / Right Arrow Keys)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isProfileOpen) {
+        if (e.key === 'Escape') setIsProfileOpen(false);
+        return;
+      }
+      if (e.key === 'ArrowLeft') handlePrev();
+      if (e.key === 'ArrowRight') handleNext();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isProfileOpen, moments.length]);
 
   return (
-    <div className={styles.viewportRoot}>
-      <div className={styles.compactContainer}>
-        {/* ── 1. TOP NAVBAR (IA LOGO & EXPANDABLE SOCIAL BUTTON) ── */}
-        <header className={styles.topNavbar}>
-          <Link href="/" className={styles.logoMonogram} title="Home">
-            IA
+    <div className={styles.homepageViewport}>
+      {/* ── 1. TOP NAVBAR (IA & BLOG / ASK) ── */}
+      <header className={styles.topNavbar}>
+        <Link href="/" className={styles.logoMonogram} title="Ivan Affriandi">
+          IA
+        </Link>
+
+        <nav className={styles.navLinksGroup}>
+          <a
+            href="https://blog.ivanaffriandi.com"
+            className={styles.navLinkPill}
+            title="Blog"
+          >
+            Blog
+          </a>
+          <Link href="/ask" className={styles.navLinkPill} title="Ask Anonymous">
+            Ask
           </Link>
+        </nav>
+      </header>
 
-          <div className={styles.socialExpandWrap}>
-            <AnimatePresence>
-              {isSocialExpanded && (
-                <motion.div
-                  initial={{ opacity: 0, x: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, x: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: 10, scale: 0.95 }}
-                  transition={{ duration: 0.18 }}
-                  className={styles.expandedSocialIcons}
-                >
-                  <a
-                    href="https://instagram.com/ivanaffriandi"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.microSocialBtn}
-                    title="Instagram"
-                    aria-label="Instagram"
-                  >
-                    <InstagramIcon />
-                  </a>
-                  <a
-                    href="https://github.com/ivanaffriandi"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.microSocialBtn}
-                    title="GitHub"
-                    aria-label="GitHub"
-                  >
-                    <GithubIcon />
-                  </a>
-                  <a
-                    href="https://x.com/ivanaffriandi"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.microSocialBtn}
-                    title="X"
-                    aria-label="X"
-                  >
-                    <XIcon />
-                  </a>
-                  <a
-                    href="mailto:hello@ivanaffriandi.com"
-                    className={styles.microSocialBtn}
-                    title="Email"
-                    aria-label="Email"
-                  >
-                    <MailIcon />
-                  </a>
-                </motion.div>
-              )}
-            </AnimatePresence>
+      {/* ── 2. CENTER MOMENTS GALLERY (INSTAGRAM INTEGRATED) ── */}
+      <main className={styles.galleryStageArea}>
+        {/* Date Label */}
+        <span className={styles.momentDateLabel}>{activeMoment.date}</span>
 
-            <button
-              type="button"
-              onClick={() => setIsSocialExpanded((prev) => !prev)}
-              className={styles.socialToggleBtn}
-              title="Social Media Links"
-              aria-label="Toggle Social Links"
-            >
-              <span>Socials</span>
-              <motion.span
-                animate={{ rotate: isSocialExpanded ? 180 : 0 }}
-                transition={{ duration: 0.2 }}
-                style={{ display: 'inline-block', fontSize: '0.65rem' }}
-              >
-                ▾
-              </motion.span>
-            </button>
-          </div>
-        </header>
-
-        {/* ── 2. MAIN CENTER HERO (SEAMLESS LARGE HEAD & BOLD PROFILE) ── */}
-        <main className={styles.heroCenterContent}>
-          <div className={styles.seamlessHeadWrap}>
+        {/* Photographic Filmstrip Carousel */}
+        <div className={styles.carouselFilmStrip}>
+          {/* Left Preview Photo */}
+          <div
+            className={`${styles.sidePreviewPhoto} ${styles.sidePreviewLeft}`}
+            onClick={handlePrev}
+            title="Previous Moment"
+          >
             <img
-              src="/ivan-head.png"
-              alt="Ivan Affriandi"
-              className={styles.seamlessHeadImg}
+              src={prevMoment.image}
+              alt="Previous moment"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </div>
 
-          <div className={styles.heroHeadingBlock}>
-            <h1 className={styles.heroBigName}>Ivan Affriandi</h1>
-            <p className={styles.heroRoleSubtitle}>Software Engineer &amp; Bespoke Leather Artisan</p>
+          {/* Active Center Photo with Smooth Animation */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeMoment.id}
+              initial={{ opacity: 0, scale: 0.94 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.94 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              className={styles.activePhotoFrame}
+              onClick={handleNext}
+              title="Next Moment"
+            >
+              <img
+                src={activeMoment.image}
+                alt={activeMoment.caption || 'Ivan Moment'}
+                className={styles.activePhotoImg}
+              />
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Right Preview Photo */}
+          <div
+            className={`${styles.sidePreviewPhoto} ${styles.sidePreviewRight}`}
+            onClick={handleNext}
+            title="Next Moment"
+          >
+            <img
+              src={nextMoment.image}
+              alt="Next moment"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
           </div>
+        </div>
 
-          <p className={styles.heroBioParagraph}>
-            Software engineer by day, bespoke leather artisan by night, and wild mushroom forager when I need to step away from screens. I build high-performance web systems with zero bloat and craft tactile physical goods by hand in my studio.
-          </p>
+        {/* Caption */}
+        <p className={styles.momentCaptionText}>
+          {activeMoment.caption ? activeMoment.caption.slice(0, 75) : ''}
+        </p>
+      </main>
 
-          <div className={styles.disciplinePillsRow}>
-            <span className={styles.disciplinePill}>Next.js 16</span>
-            <span className={styles.disciplinePill}>TypeScript</span>
-            <span className={styles.disciplinePill}>Three.js</span>
-            <span className={styles.disciplinePill}>Italian Leather</span>
-            <span className={styles.disciplinePill}>SHU / EN Atelier</span>
-          </div>
-        </main>
+      {/* ── 3. BOTTOM TRIGGER BAR (AFFRIANDI, IVAN + EXPAND TRIGGER) ── */}
+      <footer className={styles.bottomTriggerBar}>
+        <span className={styles.bottomBrandName}>AFFRIANDI, IVAN</span>
 
-        {/* ── 3. FOOTER (EMAIL CTA BUTTON & COPYRIGHT) ── */}
-        <footer className={styles.compactFooter}>
-          <a href="mailto:hello@ivanaffriandi.com" className={styles.emailCtaButton}>
-            <span>hello@ivanaffriandi.com</span>
-            <span>Send an Email ↗</span>
-          </a>
+        {/* Interactive Bottom-Right Profile Trigger Button */}
+        <button
+          type="button"
+          onClick={() => setIsProfileOpen(true)}
+          className={styles.bottomProfileTriggerBtn}
+          title="About Ivan"
+          aria-label="Open Profile Details"
+        >
+          <img
+            src="/ivan-head.png"
+            alt="Ivan"
+            className={styles.triggerHeadImg}
+          />
+          <span className={styles.triggerBtnLabel}>About</span>
+        </button>
+      </footer>
 
-          <div className={styles.copyrightLine}>
-            <span>&copy; {new Date().getFullYear()} Ivan Affriandi</span>
-            <span>Tangerang, Indonesia</span>
-          </div>
-        </footer>
-      </div>
+      {/* ── 4. EXPANDED FULL PROFILE MODAL / SHEET ── */}
+      <AnimatePresence>
+        {isProfileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={styles.profileExpandedOverlay}
+            onClick={() => setIsProfileOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.92, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.92, y: 20 }}
+              transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+              className={styles.profileExpandedCard}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={() => setIsProfileOpen(false)}
+                className={styles.profileCardCloseBtn}
+                title="Close"
+                aria-label="Close Profile"
+              >
+                ✕
+              </button>
+
+              {/* Profile Head & Title */}
+              <div className={styles.modalHeadRow}>
+                <img
+                  src="/ivan-head.png"
+                  alt="Ivan Affriandi"
+                  className={styles.modalHeadImg}
+                />
+                <div className={styles.modalTitleGroup}>
+                  <h2 className={styles.modalBigName}>Ivan Affriandi</h2>
+                  <p className={styles.modalRoleText}>Software Engineer &amp; Bespoke Leather Artisan</p>
+                </div>
+              </div>
+
+              {/* Natural Bio */}
+              <p className={styles.modalBioText}>
+                Software engineer by day, bespoke leather artisan by night, and wild mushroom forager when I need to step away from screens. I build high-performance web systems with zero bloat and craft tactile physical goods by hand in my studio.
+              </p>
+
+              {/* Discipline Pills */}
+              <div className={styles.modalPillsWrap}>
+                <span className={styles.modalSkillPill}>Next.js 16</span>
+                <span className={styles.modalSkillPill}>TypeScript</span>
+                <span className={styles.modalSkillPill}>Three.js</span>
+                <span className={styles.modalSkillPill}>Italian Leather</span>
+                <span className={styles.modalSkillPill}>SHU / EN Atelier</span>
+              </div>
+
+              {/* Email CTA Button */}
+              <a
+                href="mailto:hello@ivanaffriandi.com"
+                className={styles.modalEmailCta}
+                title="Send Email"
+              >
+                <span>hello@ivanaffriandi.com</span>
+                <span>Send an Email ↗</span>
+              </a>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

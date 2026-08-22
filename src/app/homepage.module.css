@@ -1,270 +1,387 @@
 /* ============================================================
-   IVAN AFFRIANDI · HOMEPAGE (ivanaffriandi.com)
-   Zero-Scroll Compact Hero Profile · Expandable Socials · Seamless Head
+   AVANT-GARDE HOMEPAGE WITH INTERACTIVE MOMENTS GALLERY & EXPANDABLE PROFILE
    ============================================================ */
 
 :root {
-  --w-bg: #ffffff;
-  --w-text: #111113;
-  --w-text-muted: #55555e;
-  --w-text-sub: #888894;
-  --w-border: rgba(0, 0, 0, 0.09);
-  --w-pill-bg: #f2f2f0;
-  --w-pill-hover: #e8e8e5;
-  --w-btn-bg: #111113;
-  --w-btn-text: #ffffff;
+  --h-bg: #ffffff;
+  --h-text: #111113;
+  --h-text-muted: #666670;
+  --h-text-sub: #888894;
+  --h-border: rgba(0, 0, 0, 0.08);
+  --h-pill-bg: #f2f2f0;
+  --h-pill-hover: #e6e6e2;
+  --h-btn-bg: #111113;
+  --h-btn-text: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --w-bg: #09090b;
-    --w-text: #f4f4f6;
-    --w-text-muted: #a1a1aa;
-    --w-text-sub: #71717a;
-    --w-border: rgba(255, 255, 255, 0.1);
-    --w-pill-bg: #18181d;
-    --w-pill-hover: #22222a;
-    --w-btn-bg: #f4f4f6;
-    --w-btn-text: #09090b;
+    --h-bg: #09090b;
+    --h-text: #f4f4f6;
+    --h-text-muted: #a1a1aa;
+    --h-text-sub: #71717a;
+    --h-border: rgba(255, 255, 255, 0.1);
+    --h-pill-bg: #18181d;
+    --h-pill-hover: #22222a;
+    --h-btn-bg: #f4f4f6;
+    --h-btn-text: #09090b;
   }
 }
 
-.viewportRoot {
-  min-height: 100vh;
-  min-height: 100dvh;
+.homepageViewport {
+  height: 100vh;
+  height: 100dvh;
   width: 100%;
-  background-color: var(--w-bg);
-  color: var(--w-text);
+  background-color: var(--h-bg);
+  color: var(--h-text);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
   margin: 0;
-  padding: 16px 20px 24px;
+  padding: 16px 20px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   overflow: hidden;
+  position: relative;
+  user-select: none;
 }
 
 @media (max-width: 480px) {
-  .viewportRoot {
-    padding: 14px 16px 20px;
+  .homepageViewport {
+    padding: 14px 16px 16px;
   }
 }
 
-.compactContainer {
-  max-width: 480px;
-  width: 100%;
-  height: 100%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 20px;
-  box-sizing: border-box;
-}
-
-/* ── 1. TOP NAVBAR WITH EXPANDABLE SOCIALS ── */
+/* ── 1. TOP NAVBAR (IA & BLOG / ASK) ── */
 .topNavbar {
   width: 100%;
+  max-width: 480px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 14px;
-  background-color: var(--w-bg);
-  border: 1px solid var(--w-border);
+  padding: 8px 16px;
+  background-color: var(--h-bg);
+  border: 1px solid var(--h-border);
   border-radius: 9999px;
   box-sizing: border-box;
-  z-index: 50;
+  z-index: 40;
 }
 
 .logoMonogram {
   font-size: 1.05rem;
   font-weight: 900;
   letter-spacing: -0.04em;
-  color: var(--w-text);
+  color: var(--h-text);
   text-decoration: none;
-  padding: 2px 6px;
+  padding: 2px 4px;
 }
 
-.socialExpandWrap {
+.navLinksGroup {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
 }
 
-.socialToggleBtn {
-  border: 1px solid var(--w-border);
-  background: var(--w-pill-bg);
-  color: var(--w-text);
-  padding: 6px 12px;
-  border-radius: 9999px;
+.navLinkPill {
   font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--h-text);
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background: var(--h-pill-bg);
+  transition: all 0.15s ease;
+}
+
+.navLinkPill:hover {
+  background: var(--h-pill-hover);
+  transform: translateY(-1px);
+}
+
+/* ── 2. MOMENTS GALLERY (CENTER STAGE) ── */
+.galleryStageArea {
+  width: 100%;
+  max-width: 480px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: auto 0;
+  position: relative;
+}
+
+.momentDateLabel {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--h-text);
+  margin-bottom: 12px;
+}
+
+.carouselFilmStrip {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 280px;
+}
+
+@media (max-width: 480px) {
+  .carouselFilmStrip {
+    height: 250px;
+  }
+}
+
+.activePhotoFrame {
+  width: 240px;
+  height: 240px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #18181c;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
+  z-index: 10;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+@media (max-width: 480px) {
+  .activePhotoFrame {
+    width: 210px;
+    height: 210px;
+  }
+}
+
+.activePhotoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(105%);
+}
+
+.sidePreviewPhoto {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  overflow: hidden;
+  position: absolute;
+  opacity: 0.45;
+  filter: grayscale(100%);
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.sidePreviewPhoto:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+.sidePreviewLeft {
+  left: 10px;
+}
+
+.sidePreviewRight {
+  right: 10px;
+}
+
+.momentCaptionText {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--h-text-muted);
+  text-align: center;
+  max-width: 280px;
+  margin-top: 14px;
+  min-height: 24px;
+}
+
+/* ── 3. BOTTOM BAR (AFFRIANDI, IVAN + TRIGGER) ── */
+.bottomTriggerBar {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-top: 12px;
+}
+
+.bottomBrandName {
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--h-text);
+  line-height: 1;
+}
+
+.bottomProfileTriggerBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--h-pill-bg);
+  border: 1px solid var(--h-border);
+  padding: 5px 12px 5px 6px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bottomProfileTriggerBtn:hover {
+  background: var(--h-pill-hover);
+  transform: translateY(-2px);
+}
+
+.bottomProfileTriggerBtn:active {
+  transform: scale(0.95);
+}
+
+.triggerHeadImg {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.triggerBtnLabel {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--h-text);
+}
+
+/* ── 4. EXPANDED FULL PROFILE MODAL / SHEET ── */
+.profileExpandedOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(16px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.profileExpandedCard {
+  width: 100%;
+  max-width: 440px;
+  background-color: var(--h-bg);
+  border: 1px solid var(--h-border);
+  border-radius: 28px;
+  padding: 24px 22px 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  position: relative;
+}
+
+.profileCardCloseBtn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--h-pill-bg);
+  border: 1px solid var(--h-border);
+  color: var(--h-text);
+  font-size: 0.85rem;
   font-weight: 800;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 5px;
-  transition: all 0.15s ease;
-}
-
-.socialToggleBtn:hover {
-  background: var(--w-pill-hover);
-}
-
-.expandedSocialIcons {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.microSocialBtn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  color: var(--w-text-muted);
-  background: var(--w-pill-bg);
-  border: 1px solid var(--w-border);
-  text-decoration: none;
   transition: all 0.15s ease;
 }
 
-.microSocialBtn:hover {
-  color: var(--w-text);
-  transform: translateY(-1px);
+.profileCardCloseBtn:hover {
+  background: var(--h-pill-hover);
+  transform: scale(1.08);
 }
 
-/* ── 2. HERO CONTENT (BIG SEAMLESS HEAD & NAME) ── */
-.heroCenterContent {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-  width: 100%;
-  margin: auto 0;
-}
-
-.seamlessHeadWrap {
-  width: 130px;
-  height: 130px;
-  position: relative;
+.modalHeadRow {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  margin-bottom: 4px;
+  gap: 16px;
 }
 
-@media (max-width: 480px) {
-  .seamlessHeadWrap {
-    width: 110px;
-    height: 110px;
-  }
-}
-
-.seamlessHeadImg {
-  width: 100%;
-  height: 100%;
+.modalHeadImg {
+  width: 80px;
+  height: 80px;
   object-fit: contain;
-  filter: contrast(108%);
-  transition: transform 0.3s ease;
 }
 
-.seamlessHeadImg:hover {
-  transform: scale(1.05) rotate(-2deg);
-}
-
-.heroHeadingBlock {
+.modalTitleGroup {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
-.heroBigName {
-  font-size: clamp(1.8rem, 6.5vw, 2.4rem);
+.modalBigName {
+  font-size: 1.45rem;
   font-weight: 850;
-  letter-spacing: -0.035em;
-  color: var(--w-text);
-  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--h-text);
   margin: 0;
+  line-height: 1.15;
 }
 
-.heroRoleSubtitle {
-  font-size: 0.92rem;
+.modalRoleText {
+  font-size: 0.82rem;
   font-weight: 700;
-  color: var(--w-text-muted);
+  color: var(--h-text-muted);
   margin: 0;
 }
 
-.heroBioParagraph {
-  font-size: 0.94rem;
+.modalBioText {
+  font-size: 0.88rem;
   line-height: 1.6;
-  color: var(--w-text-muted);
-  margin: 4px 0 0;
+  color: var(--h-text-muted);
+  margin: 0;
 }
 
-.disciplinePillsRow {
+.modalPillsWrap {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 6px;
 }
 
-.disciplinePill {
-  font-size: 0.72rem;
+.modalSkillPill {
+  font-size: 0.7rem;
   font-weight: 750;
-  color: var(--w-text);
-  background: var(--w-pill-bg);
+  color: var(--h-text);
+  background: var(--h-pill-bg);
   padding: 4px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--w-border);
+  border-radius: 6px;
 }
 
-/* ── 3. FOOTER (EMAIL CTA BUTTON & COPYRIGHT) ── */
-.compactFooter {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding-top: 14px;
-  border-top: 1px solid var(--w-border);
-  box-sizing: border-box;
-}
-
-.emailCtaButton {
+.modalEmailCta {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 18px;
-  background-color: var(--w-btn-bg);
-  color: var(--w-btn-text);
-  border-radius: 18px;
+  padding: 12px 16px;
+  background-color: var(--h-btn-bg);
+  color: var(--h-btn-text);
+  border-radius: 14px;
   text-decoration: none;
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   font-weight: 800;
   box-sizing: border-box;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  margin-top: 4px;
 }
 
-.emailCtaButton:hover {
+.modalEmailCta:hover {
   opacity: 0.88;
-  transform: translateY(-1px);
-}
-
-.emailCtaButton:active {
-  transform: scale(0.98);
-}
-
-.copyrightLine {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.72rem;
-  color: var(--w-text-sub);
-  padding: 0 4px;
 }
