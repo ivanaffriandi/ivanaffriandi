@@ -27,18 +27,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. If visiting on work subdomain (e.g. work.ivanaffriandi.com)
+  // 2. If visiting on work subdomain (e.g. work.ivanaffriandi.com) -> redirect to homepage
   if (isWorkSubdomain) {
-    // If URL contains /work, strip it to keep URL purely work.ivanaffriandi.com/...
-    if (pathname.startsWith('/work')) {
-      const cleanPath = pathname.replace(/^\/work/, '') || '/';
-      return NextResponse.redirect(new URL(cleanPath + search, request.url), 308);
-    }
-    // Rewrite all paths under work subdomain to internal /work page
-    if (!pathname.startsWith('/api') && !pathname.startsWith('/_next')) {
-      return NextResponse.rewrite(new URL(`/work${pathname === '/' ? '' : pathname}`, request.url));
-    }
-    return NextResponse.next();
+    return NextResponse.redirect(new URL('https://ivanaffriandi.com/', request.url), 308);
+  }
+
+  // 3. If accessing /work path directly -> redirect to homepage
+  if (pathname === '/work' || pathname.startsWith('/work/')) {
+    return NextResponse.redirect(new URL('/', request.url), 308);
   }
 
   return NextResponse.next();

@@ -1,0 +1,270 @@
+/* ============================================================
+   IVAN AFFRIANDI · HOMEPAGE (ivanaffriandi.com)
+   Zero-Scroll Compact Hero Profile · Expandable Socials · Seamless Head
+   ============================================================ */
+
+:root {
+  --w-bg: #ffffff;
+  --w-text: #111113;
+  --w-text-muted: #55555e;
+  --w-text-sub: #888894;
+  --w-border: rgba(0, 0, 0, 0.09);
+  --w-pill-bg: #f2f2f0;
+  --w-pill-hover: #e8e8e5;
+  --w-btn-bg: #111113;
+  --w-btn-text: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --w-bg: #09090b;
+    --w-text: #f4f4f6;
+    --w-text-muted: #a1a1aa;
+    --w-text-sub: #71717a;
+    --w-border: rgba(255, 255, 255, 0.1);
+    --w-pill-bg: #18181d;
+    --w-pill-hover: #22222a;
+    --w-btn-bg: #f4f4f6;
+    --w-btn-text: #09090b;
+  }
+}
+
+.viewportRoot {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  background-color: var(--w-bg);
+  color: var(--w-text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 16px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .viewportRoot {
+    padding: 14px 16px 20px;
+  }
+}
+
+.compactContainer {
+  max-width: 480px;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+/* ── 1. TOP NAVBAR WITH EXPANDABLE SOCIALS ── */
+.topNavbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  background-color: var(--w-bg);
+  border: 1px solid var(--w-border);
+  border-radius: 9999px;
+  box-sizing: border-box;
+  z-index: 50;
+}
+
+.logoMonogram {
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--w-text);
+  text-decoration: none;
+  padding: 2px 6px;
+}
+
+.socialExpandWrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.socialToggleBtn {
+  border: 1px solid var(--w-border);
+  background: var(--w-pill-bg);
+  color: var(--w-text);
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.socialToggleBtn:hover {
+  background: var(--w-pill-hover);
+}
+
+.expandedSocialIcons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.microSocialBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--w-text-muted);
+  background: var(--w-pill-bg);
+  border: 1px solid var(--w-border);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.microSocialBtn:hover {
+  color: var(--w-text);
+  transform: translateY(-1px);
+}
+
+/* ── 2. HERO CONTENT (BIG SEAMLESS HEAD & NAME) ── */
+.heroCenterContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  margin: auto 0;
+}
+
+.seamlessHeadWrap {
+  width: 130px;
+  height: 130px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 480px) {
+  .seamlessHeadWrap {
+    width: 110px;
+    height: 110px;
+  }
+}
+
+.seamlessHeadImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: contrast(108%);
+  transition: transform 0.3s ease;
+}
+
+.seamlessHeadImg:hover {
+  transform: scale(1.05) rotate(-2deg);
+}
+
+.heroHeadingBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.heroBigName {
+  font-size: clamp(1.8rem, 6.5vw, 2.4rem);
+  font-weight: 850;
+  letter-spacing: -0.035em;
+  color: var(--w-text);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.heroRoleSubtitle {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--w-text-muted);
+  margin: 0;
+}
+
+.heroBioParagraph {
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: var(--w-text-muted);
+  margin: 4px 0 0;
+}
+
+.disciplinePillsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.disciplinePill {
+  font-size: 0.72rem;
+  font-weight: 750;
+  color: var(--w-text);
+  background: var(--w-pill-bg);
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--w-border);
+}
+
+/* ── 3. FOOTER (EMAIL CTA BUTTON & COPYRIGHT) ── */
+.compactFooter {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--w-border);
+  box-sizing: border-box;
+}
+
+.emailCtaButton {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background-color: var(--w-btn-bg);
+  color: var(--w-btn-text);
+  border-radius: 18px;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 800;
+  box-sizing: border-box;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.emailCtaButton:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.emailCtaButton:active {
+  transform: scale(0.98);
+}
+
+.copyrightLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  color: var(--w-text-sub);
+  padding: 0 4px;
+}
