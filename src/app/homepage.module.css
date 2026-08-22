@@ -1,5 +1,5 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · BULLETPROOF FIXED 100DVH DIRECT FLEXBOX
+   AVANT-GARDE HOMEPAGE · BULLETPROOF ABSOLUTE FULLSCREEN FIX
    ============================================================ */
 
 :root {
@@ -42,13 +42,10 @@
   }
 }
 
-/* Fixed viewport pinned directly to screen */
+/* 100% Fixed Screen Viewport without any parent overflow bugs */
 .homepageViewport {
   position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
+  inset: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
   height: 100dvh !important;
@@ -57,39 +54,39 @@
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  box-sizing: border-box !important;
   margin: 0 !important;
-  padding: max(14px, env(safe-area-inset-top)) 20px max(18px, env(safe-area-inset-bottom)) !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: space-between !important;
-  align-items: center !important;
+  padding: 0 !important;
   overflow: hidden !important;
   user-select: none;
   z-index: 99999 !important;
 }
 
+/* Pinned layout inside fixed viewport */
+.mainContainer {
+  position: absolute !important;
+  top: 0 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 100% !important;
+  max-width: 440px !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+  padding: 14px 18px 20px !important;
+  z-index: 10 !important;
+}
+
 @media (max-width: 480px) {
-  .homepageViewport {
-    padding: max(12px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)) !important;
+  .mainContainer {
+    padding: 12px 16px 18px !important;
   }
 }
 
-.mainContainer {
-  max-width: 440px;
-  width: 100%;
-  height: 100%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  box-sizing: border-box;
-  position: relative;
-  z-index: 10;
-}
-
-/* ── 1. TOP NAVBAR ── */
+/* ── 1. TOP NAVBAR (AT THE TOP) ── */
 .topNavbarRow {
   width: 100%;
   display: flex;
@@ -197,7 +194,7 @@
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── 2. CENTER HERO STAGE (DEAD-CENTER IN VIEWPORT) ── */
+/* ── 2. CENTER HERO STAGE (EXACT DEAD-CENTER VERTICAL & HORIZONTAL) ── */
 .centerHeroStage {
   width: 100%;
   flex: 1;
@@ -205,7 +202,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 12px;
   margin: auto 0;
   position: relative;
   text-align: center;
@@ -214,8 +211,8 @@
 
 .heroContrastScrim {
   position: absolute;
-  width: 320px;
-  height: 320px;
+  width: 300px;
+  height: 300px;
   background: var(--h-hero-scrim);
   border-radius: 50%;
   pointer-events: none;
@@ -223,8 +220,8 @@
 }
 
 .bigHeadTapWrap {
-  width: clamp(145px, 40vw, 210px);
-  height: clamp(145px, 40vw, 210px);
+  width: clamp(140px, 36vw, 195px);
+  height: clamp(140px, 36vw, 195px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -246,17 +243,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 42px;
+  min-height: 40px;
   text-align: center;
-  padding: 0 16px;
+  padding: 0 14px;
   cursor: pointer;
-  max-width: 360px;
+  max-width: 340px;
   z-index: 2;
 }
 
 .handwritingText {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
-  font-size: clamp(1.15rem, 4vw, 1.45rem);
+  font-size: clamp(1.15rem, 3.8vw, 1.4rem);
   font-weight: 850;
   letter-spacing: -0.03em;
   color: var(--h-text);
@@ -329,7 +326,7 @@
   line-height: 0.88;
 }
 
-/* ── 4. BOTTOM ACTION BAR ── */
+/* ── 4. BOTTOM ACTION BAR (GUARANTEED VISIBLE AT BOTTOM) ── */
 .bottomActionBar {
   width: 100%;
   display: flex;
