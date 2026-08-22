@@ -218,11 +218,11 @@ export default function AvantGardeHomepage() {
       </AnimatePresence>
 
       <div className={styles.mainContainer}>
-        {/* ── ZONE 1: TOP NAVBAR (FLUSH TOP AT 12PX) ── */}
+        {/* ── ZONE 1: TOP NAVBAR (PERFECTLY FLUSH AT TOP: 4PX) ── */}
         <header className={styles.topNavbarRow}>
-          {/* Left: "Affriandi, Ivan." Clean Typography Logo */}
+          {/* Left: "AFFRIANDI, IVAN" Uppercase No Period */}
           <Link href="/" className={styles.textLogoIsland} title="Ivan Affriandi">
-            Affriandi, Ivan.
+            AFFRIANDI, IVAN
           </Link>
 
           {/* Right: Circular Hamburger Button */}
@@ -332,7 +332,7 @@ export default function AvantGardeHomepage() {
           >
             {/* Header of Full-Screen Menu */}
             <div className={styles.fullScreenMenuHeader}>
-              <span className={styles.textLogoIsland}>Affriandi, Ivan.</span>
+              <span className={styles.textLogoIsland}>AFFRIANDI, IVAN</span>
               <button
                 type="button"
                 onClick={() => setIsMenuOpen(false)}

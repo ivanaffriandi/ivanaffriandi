@@ -1,5 +1,5 @@
 /* ============================================================
-   AVANT-GARDE HOMEPAGE · ZERO-GAP TOP NAVBAR & FULL-SCREEN MENU
+   AVANT-GARDE HOMEPAGE · FLUSH TOP NAVBAR & FULL-SCREEN MENU
    ============================================================ */
 
 :root {
@@ -73,12 +73,12 @@
   pointer-events: auto;
 }
 
-/* ── ZONE 1: TOP NAVBAR (ZERO-GAP TOP FLUSH: 12PX) ── */
+/* ── ZONE 1: TOP NAVBAR (PERFECTLY FLUSH AT TOP: 4PX) ── */
 .topNavbarRow {
   position: absolute !important;
-  top: 12px !important;
-  left: 16px !important;
-  right: 16px !important;
+  top: 4px !important;
+  left: 14px !important;
+  right: 14px !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
@@ -90,9 +90,10 @@
   display: inline-flex;
   align-items: center;
   text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 850;
-  letter-spacing: -0.03em;
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--h-text);
   padding: 4px 0;
   transition: opacity 0.15s ease;
@@ -148,7 +149,7 @@
   flex-direction: column;
   justify-content: space-between;
   box-sizing: border-box;
-  padding: 16px 20px 24px;
+  padding: 12px 18px 20px;
 }
 
 .fullScreenMenuHeader {
@@ -185,7 +186,7 @@
   margin: auto auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
 .fullScreenNavItem {
@@ -214,7 +215,7 @@
 }
 
 .navItemTitle {
-  font-size: 1.5rem;
+  font-size: 1.45rem;
   font-weight: 900;
   letter-spacing: -0.03em;
   display: flex;
@@ -344,8 +345,8 @@
 .bottomActionBar {
   position: absolute !important;
   bottom: 14px !important;
-  left: 16px !important;
-  right: 16px !important;
+  left: 14px !important;
+  right: 14px !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
