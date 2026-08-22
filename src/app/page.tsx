@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import Link from 'next/link';
 import confetti from 'canvas-confetti';
@@ -23,9 +23,16 @@ const AskChatIcon = () => (
 );
 
 const SearchIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="11" cy="11" r="8" />
     <line x1="21" y1="21" x2="16.65" y2="16.65" />
+  </svg>
+);
+
+const CloseXIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 );
 
@@ -208,33 +215,16 @@ const SEARCH_DATABASE: SearchItem[] = [
 
 export default function AvantGardeHomepage() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [phraseIndex, setPhraseIndex] = useState<number>(0);
   const [displayText, setDisplayText] = useState<string>('');
   const [isTyping, setIsTyping] = useState<boolean>(true);
   const headControls = useAnimation();
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const currentFullText = FUN_PHRASES[phraseIndex];
   const isMarqueeActive = phraseIndex === 6; // State right before "Tap my head again :)"
-
-  // Keyboard Shortcut (⌘K and / to open search, Esc to close)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        setIsSearchOpen((prev) => !prev);
-      } else if (e.key === '/' && !isSearchOpen && document.activeElement?.tagName !== 'INPUT') {
-        e.preventDefault();
-        setIsSearchOpen(true);
-      } else if (e.key === 'Escape' && isSearchOpen) {
-        setIsSearchOpen(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isSearchOpen]);
 
   // Filtered Search Results
   const searchResults = useMemo(() => {
@@ -331,41 +321,122 @@ export default function AvantGardeHomepage() {
       </AnimatePresence>
 
       <div className={styles.mainContainer}>
-        {/* ── 1. UNIFIED SINGLE PILL NAVBAR WITH SEARCH IN THE MIDDLE ── */}
-        <header className={styles.topNavbar}>
-          {/* Left: IA Monogram */}
-          <Link href="/" className={styles.logoMonogram} title="Ivan Affriandi">
+        {/* ── 1. 3-ISLAND FLOATING TOP NAVBAR (CIRCULAR IA + SEARCH PILLBAR + CIRCULAR MENU) ── */}
+        <header className={styles.topThreeIslandsRow}>
+          {/* Left Island: Standalone Circular IA Button */}
+          <Link href="/" className={styles.circularLogoIsland} title="Ivan Affriandi">
             IA
           </Link>
 
-          {/* Center: Search Trigger Pill */}
-          <button
-            type="button"
-            onClick={() => setIsSearchOpen(true)}
-            className={styles.centerSearchBtn}
-            title="Search ivanaffriandi.com (⌘K)"
-          >
-            <div className={styles.searchIconTextWrap}>
-              <SearchIcon />
-              <span>Search...</span>
+          {/* Center Island: Standalone Search Pillbar with Inline Expanding Results */}
+          <div className={styles.centerSearchIslandWrap}>
+            <div className={styles.centerSearchPillbar}>
+              <span className={styles.searchIconSvg}>
+                <SearchIcon />
+              </span>
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search ivanaffriandi.com..."
+                value={searchQuery}
+                onFocus={() => {
+                  setIsSearchFocused(true);
+                  setIsMenuOpen(false);
+                }}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setIsSearchFocused(true);
+                }}
+                className={styles.searchDirectInput}
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className={styles.clearSearchBtn}
+                  title="Clear"
+                >
+                  <CloseXIcon />
+                </button>
+              )}
             </div>
-            <span className={styles.searchKbdBadge}>⌘K</span>
-          </button>
 
-          {/* Right: Expandable Menu Group */}
-          <div className={styles.navRightExpandWrap}>
+            {/* Expandable Results Dropdown (Opens right under search pillbar on focus/typing) */}
+            <AnimatePresence>
+              {isSearchFocused && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                  transition={{ duration: 0.16 }}
+                  className={styles.searchDropdownCard}
+                >
+                  {searchResults.length > 0 ? (
+                    searchResults.map((item) => (
+                      <a
+                        key={item.id}
+                        href={item.url}
+                        target={item.isExternal ? '_blank' : undefined}
+                        rel={item.isExternal ? 'noopener noreferrer' : undefined}
+                        className={styles.searchResultRow}
+                        onClick={() => setIsSearchFocused(false)}
+                      >
+                        <div className={styles.searchResultRowLeft}>
+                          <span className={styles.searchResultRowTitle}>{item.title}</span>
+                          <span className={styles.searchResultRowSub}>{item.description}</span>
+                        </div>
+                        <span className={styles.searchCategoryTag}>{item.category}</span>
+                      </a>
+                    ))
+                  ) : (
+                    <div className={styles.searchEmptyRow}>
+                      No results found for &ldquo;{searchQuery}&rdquo;
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Right Island: Standalone Circular Menu Button */}
+          <div className={styles.rightMenuIslandWrap}>
+            <button
+              type="button"
+              onClick={() => {
+                setIsMenuOpen((prev) => !prev);
+                setIsSearchFocused(false);
+              }}
+              className={styles.circularMenuIslandBtn}
+              title="Toggle Menu"
+              aria-label="Toggle Menu"
+            >
+              <span
+                className={styles.menuBarEqual}
+                style={{
+                  transform: isMenuOpen ? 'rotate(45deg) translate(2px, 2px)' : 'none',
+                }}
+              />
+              <span
+                className={styles.menuBarEqual}
+                style={{
+                  transform: isMenuOpen ? 'rotate(-45deg) translate(2px, -2px)' : 'none',
+                }}
+              />
+            </button>
+
+            {/* Floating Menu Dropdown */}
             <AnimatePresence>
               {isMenuOpen && (
                 <motion.div
-                  initial={{ opacity: 0, x: 8, scale: 0.95 }}
-                  animate={{ opacity: 1, x: 0, scale: 1 }}
-                  exit={{ opacity: 0, x: 8, scale: 0.95 }}
-                  transition={{ duration: 0.18 }}
-                  className={styles.expandedNavPills}
+                  initial={{ opacity: 0, y: -6, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.95 }}
+                  transition={{ duration: 0.16 }}
+                  className={styles.menuDropdownIslandCard}
                 >
                   <a
                     href="https://blog.ivanaffriandi.com"
-                    className={styles.navActionPill}
+                    className={styles.menuDropdownLink}
                     title="Blog & Journal"
                   >
                     <FeatherPenIcon />
@@ -373,7 +444,7 @@ export default function AvantGardeHomepage() {
                   </a>
                   <Link
                     href="/ask"
-                    className={styles.navActionPill}
+                    className={styles.menuDropdownLink}
                     title="Ask Anonymous"
                   >
                     <AskChatIcon />
@@ -382,33 +453,17 @@ export default function AvantGardeHomepage() {
                 </motion.div>
               )}
             </AnimatePresence>
-
-            {/* 2-Line Minimalist Hamburger Button */}
-            <button
-              type="button"
-              onClick={() => setIsMenuOpen((prev) => !prev)}
-              className={styles.cleanTwoLineBtn}
-              title="Toggle Menu"
-              aria-label="Toggle Navigation Menu"
-            >
-              <span
-                className={styles.equalMenuBar}
-                style={{
-                  transform: isMenuOpen ? 'rotate(45deg) translate(2.5px, 2.5px)' : 'none',
-                }}
-              />
-              <span
-                className={styles.equalMenuBar}
-                style={{
-                  transform: isMenuOpen ? 'rotate(-45deg) translate(2.5px, -2.5px)' : 'none',
-                }}
-              />
-            </button>
           </div>
         </header>
 
         {/* ── 2. CENTER HERO STAGE (DEAD-CENTER FOCAL POINT) ── */}
-        <main className={styles.centerHeroStage}>
+        <main
+          className={styles.centerHeroStage}
+          onClick={() => {
+            setIsSearchFocused(false);
+            setIsMenuOpen(false);
+          }}
+        >
           <motion.div
             animate={headControls}
             whileHover={{ scale: 1.05 }}
@@ -485,71 +540,6 @@ export default function AvantGardeHomepage() {
           </a>
         </footer>
       </div>
-
-      {/* ── 4. SITE-WIDE SEARCH ENGINE MODAL (COMMAND PALETTE) ── */}
-      <AnimatePresence>
-        {isSearchOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsSearchOpen(false)}
-            className={styles.searchModalOverlay}
-          >
-            <motion.div
-              initial={{ scale: 0.95, y: -10 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: -10 }}
-              onClick={(e) => e.stopPropagation()}
-              className={styles.searchModalCard}
-            >
-              <div className={styles.searchModalHeader}>
-                <SearchIcon />
-                <input
-                  type="text"
-                  autoFocus
-                  placeholder="Search blog, ask, craft, moments & links..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className={styles.searchModalInput}
-                />
-                <button
-                  type="button"
-                  onClick={() => setIsSearchOpen(false)}
-                  className={styles.searchCloseKeyBtn}
-                >
-                  ESC
-                </button>
-              </div>
-
-              <div className={styles.searchResultsList}>
-                {searchResults.length > 0 ? (
-                  searchResults.map((item) => (
-                    <a
-                      key={item.id}
-                      href={item.url}
-                      target={item.isExternal ? '_blank' : undefined}
-                      rel={item.isExternal ? 'noopener noreferrer' : undefined}
-                      className={styles.searchResultItem}
-                      onClick={() => setIsSearchOpen(false)}
-                    >
-                      <div className={styles.searchResultLeft}>
-                        <span className={styles.searchResultTitle}>{item.title}</span>
-                        <span className={styles.searchResultSub}>{item.description}</span>
-                      </div>
-                      <span className={styles.searchResultBadge}>{item.category}</span>
-                    </a>
-                  ))
-                ) : (
-                  <div className={styles.searchEmptyState}>
-                    No results found for &ldquo;{searchQuery}&rdquo;
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
