@@ -50,13 +50,15 @@ const SendMailIcon = () => (
   </svg>
 );
 
+// Casual, easy-to-understand English phrases
 const FUN_PHRASES = [
   "Hi, I'm Ivan!",
   "UI/UX Designer & Writer.",
-  "Crafting thoughtful digital interfaces.",
-  "Writing essays on systems & craft.",
-  "Designing with zero bloat & precision.",
-  "Steeping green tea at 6 AM.",
+  "I design clean apps and write about stuff.",
+  "Big fan of minimalism and fast websites.",
+  "I also handcraft leather goods in my studio.",
+  "Probably foraging wild mushrooms right now.",
+  "Tap my head again :)",
 ];
 
 export default function AvantGardeHomepage() {
@@ -68,7 +70,7 @@ export default function AvantGardeHomepage() {
 
   const currentFullText = FUN_PHRASES[phraseIndex];
 
-  // Typewriter Letter-by-Letter Effect
+  // Letter-by-Letter Typing Effect
   useEffect(() => {
     let charIndex = 0;
     setDisplayText('');
@@ -82,7 +84,7 @@ export default function AvantGardeHomepage() {
         setIsTyping(false);
         clearInterval(interval);
       }
-    }, 45);
+    }, 42);
 
     return () => clearInterval(interval);
   }, [currentFullText]);
@@ -99,7 +101,7 @@ export default function AvantGardeHomepage() {
       confetti({
         particleCount: 26,
         spread: 55,
-        origin: { y: 0.52 },
+        origin: { y: 0.5 },
         colors: ['#111113', '#55555e', '#888894', '#e8e8e4', '#ff4500'],
         disableForReducedMotion: true,
       });
@@ -173,7 +175,7 @@ export default function AvantGardeHomepage() {
           </div>
         </header>
 
-        {/* ── 2. CENTER STAGE (BIG HEAD & HANDWRITING TYPING TEXT) ── */}
+        {/* ── 2. CENTER HERO STAGE (PERFECT DEAD-CENTER FOCAL POINT) ── */}
         <main className={styles.centerHeroStage}>
           <motion.div
             animate={headControls}

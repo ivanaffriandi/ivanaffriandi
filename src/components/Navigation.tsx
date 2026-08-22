@@ -141,8 +141,9 @@ export default function Navigation() {
     }
   }, []);
 
-  // Hide navigation on /work, /ask, and admin pages (/x, /admin, /hq-panel)
+  // Hide navigation on homepage, /work, /ask, and admin pages (/x, /admin, /hq-panel)
   if (
+    pathname === "/" ||
     pathname?.startsWith("/work") ||
     pathname?.startsWith("/ask") ||
     pathname?.startsWith("/x") ||
@@ -150,11 +151,6 @@ export default function Navigation() {
     pathname?.startsWith("/hq-panel") ||
     isWorkDomain
   ) {
-    return null;
-  }
-
-  // Hide on main domain homepage (ivanaffriandi.com at "/") only if NOT on blog subdomain
-  if (pathname === "/" && typeof window !== "undefined" && !window.location.hostname.startsWith("blog.") && !window.location.hostname.includes("blog.ivanaffriandi.com")) {
     return null;
   }
 
