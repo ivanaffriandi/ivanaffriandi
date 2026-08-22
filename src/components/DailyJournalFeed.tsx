@@ -699,7 +699,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
       category: "INTRO NARRATIVE",
       date: "READING",
       title: "PROLOGUE",
-      excerpt: "Most of this gets written late at night, usually when the screen is the only light in the room and the city noise has finally died down. Passing thoughts turn into essays...",
+      excerpt: "Ada alasan mengapa dunia selalu terasa lebih lapang saat melewati pukul tiga dini hari. Resah kota sudah kehabisan tenaga, menyisakan hening yang pekat, sejuknya embun yang mulai turun...",
       img: "/nature_hero.png",
       post: null,
       isPrologue: true,
@@ -3635,19 +3635,25 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   {/* PROLOGUE BODY */}
                   <div className="novel-article-reader">
                     <p className="novel-drop-cap">
-                      Most of this gets written late at night, usually when the screen is the only light in the room and the city noise has finally died down. It’s where passing thoughts turn into essays, and random observations get a second life.
+                      Ada alasan mengapa dunia selalu terasa lebih lapang saat melewati pukul tiga dini hari. Resah kota sudah kehabisan tenaga, menyisakan hening yang pekat, sejuknya embun yang mulai turun, dan pendar layu dari satu-satunya layar yang menyala di atas meja kayu.
+                    </p>
+                    <p style={{ fontWeight: 600, margin: "1.25rem 0 0.85rem" }}>
+                      Namaku Ivan.
                     </p>
                     <p>
-                      I build software, take photos, and obsess over small details. Instead of keeping all of that in separate boxes, I wanted a quiet corner on the internet where everything could just breathe together.
+                      Jika diamati, segala hal di semesta ini memang berangsur bergerak menuju ketidakteraturan. Benda-benda merapuh, ingatan menumpul, dan waktu mengikis apa saja tanpa pengecualian. Namun, justru dalam kesadaran akan kerapuhan itulah, aku menemukan ruang untuk benar-benar merasa ada. Aku menaruh hati pada hal-hal yang tidak sempurna—pada jejaring kehidupan tak kasat mata yang diam-diam saling menopang, dan pada keyakinan bahwa di dasar yang paling dalam, kebaikan itu selalu ada dan layak untuk dijaga.
+                    </p>
+                    <p>
+                      Tempat ini kubangun bukan untuk menyaingi bisingnya dunia. Halaman ini hanyalah sebuah upaya sadar untuk memungut kembali kepingan-kepingan pikiran, pengamatan, dan hal-hal subtil yang sering kali luput, lalu menjahitnya satu per satu agar kembali utuh. Sebuah sudut sunyi untuk merawat kewarasan, sebelum semuanya ikut tersapu oleh waktu yang terus memaksa kita seharian.
                     </p>
 
                     <div className="imessage-chat-wrap" style={{ margin: "2rem 0", gap: "0.75rem", display: "flex", flexDirection: "column" }}>
                       <div className="imessage-row-incoming" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.3rem" }}>
                         <span className="imessage-sender-tag" style={{ marginLeft: "0.5rem", fontSize: "0.54rem" }}>
-                          FRIEND
+                          TEMAN
                         </span>
                         <div className="imessage-bubble-incoming">
-                          &ldquo;Wait, so what is this place exactly? A blog? A portfolio?&rdquo;
+                          &ldquo;Bila secara alamiah semua hal pada akhirnya akan pudar dan menjadi usang, untuk apa bersusah payah merangkai ingatan-ingatan ini dalam sebuah ruang?&rdquo;
                         </div>
                       </div>
 
@@ -3656,13 +3662,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           IVAN
                         </span>
                         <div className="imessage-bubble-outgoing">
-                          &ldquo;Honestly? Just a running log. Things I build, photos I take, and ideas I can&apos;t stop chewing on.&rdquo;
+                          &ldquo;Bukan untuk mencoba menghentikan waktu, melainkan untuk menyadari bahwa kita pernah benar-benar hidup di dalamnya. Bagiku, membaca dan mengamati sesuatu secara perlahan adalah satu-satunya jangkar agar kita tidak kehilangan diri sendiri.&rdquo;
                         </div>
                       </div>
                     </div>
 
-                    <p style={{ fontStyle: "italic", opacity: 0.8 }}>
-                      Grab a drink. Make yourself at home.
+                    <p style={{ fontStyle: "italic", opacity: 0.85, marginTop: "1.5rem" }}>
+                      Tarik napas panjang, temukan ruang jedamu dan tinggalkan yang memberatkanmu.
                     </p>
                   </div>
 
@@ -4125,10 +4131,16 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       {/* LEFT COLUMN: ATMOSPHERIC NARRATIVE */}
                       <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
                         <p className="novel-intro-paragraph novel-drop-cap" style={{ fontSize: "0.86rem", lineHeight: 1.62, margin: 0 }}>
-                          Most of this gets written late at night, usually when the screen is the only light in the room and the city noise has finally died down. It&apos;s where passing thoughts turn into essays, and random observations get a second life.
+                          Ada alasan mengapa dunia selalu terasa lebih lapang saat melewati pukul tiga dini hari. Resah kota sudah kehabisan tenaga, menyisakan hening yang pekat, sejuknya embun yang mulai turun, dan pendar layu dari satu-satunya layar yang menyala di atas meja kayu.
+                        </p>
+                        <p className="novel-intro-paragraph" style={{ fontSize: "0.84rem", lineHeight: 1.62, margin: 0, fontWeight: 600 }}>
+                          Namaku Ivan.
                         </p>
                         <p className="novel-intro-paragraph" style={{ fontSize: "0.84rem", lineHeight: 1.62, margin: 0 }}>
-                          I build software, take photos, and obsess over small details. Instead of keeping all of that in separate boxes, I wanted a quiet corner on the internet where everything could just breathe together.
+                          Jika diamati, segala hal di semesta ini memang berangsur bergerak menuju ketidakteraturan. Benda-benda merapuh, ingatan menumpul, dan waktu mengikis apa saja tanpa pengecualian. Namun, justru dalam kesadaran akan kerapuhan itulah, aku menemukan ruang untuk benar-benar merasa ada. Aku menaruh hati pada hal-hal yang tidak sempurna—pada jejaring kehidupan tak kasat mata yang diam-diam saling menopang, dan pada keyakinan bahwa di dasar yang paling dalam, kebaikan itu selalu ada dan layak untuk dijaga.
+                        </p>
+                        <p className="novel-intro-paragraph" style={{ fontSize: "0.84rem", lineHeight: 1.62, margin: 0 }}>
+                          Tempat ini kubangun bukan untuk menyaingi bisingnya dunia. Halaman ini hanyalah sebuah upaya sadar untuk memungut kembali kepingan-kepingan pikiran, pengamatan, dan hal-hal subtil yang sering kali luput, lalu menjahitnya satu per satu agar kembali utuh. Sebuah sudut sunyi untuk merawat kewarasan, sebelum semuanya ikut tersapu oleh waktu yang terus memaksa kita seharian.
                         </p>
                       </div>
 
@@ -4138,10 +4150,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                           {/* Incoming Friend Message */}
                           <div className="imessage-row-incoming">
                             <span className="imessage-sender-tag" style={{ marginLeft: "0.5rem", fontSize: "0.52rem" }}>
-                              FRIEND
+                              TEMAN
                             </span>
                             <div className="imessage-bubble-incoming" style={{ padding: "0.5rem 0.85rem", fontSize: "0.78rem", lineHeight: 1.4 }}>
-                              &ldquo;Wait, so what is this place exactly? A blog? A portfolio?&rdquo;
+                              &ldquo;Bila secara alamiah semua hal pada akhirnya akan pudar dan menjadi usang, untuk apa bersusah payah merangkai ingatan-ingatan ini dalam sebuah ruang?&rdquo;
                             </div>
                           </div>
 
@@ -4151,13 +4163,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                               IVAN
                             </span>
                             <div className="imessage-bubble-outgoing" style={{ padding: "0.5rem 0.85rem", fontSize: "0.78rem", lineHeight: 1.4 }}>
-                              &ldquo;Honestly? Just a running log. Things I build, photos I take, and ideas I can&apos;t stop chewing on.&rdquo;
+                              &ldquo;Bukan untuk mencoba menghentikan waktu, melainkan untuk menyadari bahwa kita pernah benar-benar hidup di dalamnya. Bagiku, membaca dan mengamati sesuatu secara perlahan adalah satu-satunya jangkar agar kita tidak kehilangan diri sendiri.&rdquo;
                             </div>
                           </div>
                         </div>
 
                         <p className="novel-intro-paragraph" style={{ opacity: 0.72, fontSize: "0.76rem", fontStyle: "italic", borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))", paddingTop: "0.4rem", margin: 0 }}>
-                          Grab a drink. Make yourself at home.
+                          Tarik napas panjang, temukan ruang jedamu dan tinggalkan yang memberatkanmu.
                         </p>
                       </div>
                     </div>
@@ -5265,7 +5277,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                             A Quiet Corner on the Internet
                           </h4>
                           <p style={{ fontSize: "0.72rem", color: "rgba(255,255,255,0.55)", margin: 0, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                            Most of this gets written late at night when the screen is the only light…
+                            Ada alasan mengapa dunia selalu terasa lebih lapang saat melewati pukul tiga dini hari…
                           </p>
                         </div>
                       </div>
