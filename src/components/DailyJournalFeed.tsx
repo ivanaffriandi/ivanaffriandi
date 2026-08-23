@@ -768,17 +768,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     setTouchStartPos(null);
   };
 
-  // Auto-cycle hero photo / flipboard cards every 6s
-  const advanceHero = useCallback(() => {
-    handleNextHero();
-  }, [handleNextHero]);
-
-  useEffect(() => {
-    if (flipboardCards.length <= 1) return;
-    const t = setInterval(advanceHero, 6000);
-    return () => clearInterval(t);
-  }, [advanceHero, flipboardCards.length]);
-
   // Instagram gallery state
   const [igMedia, setIgMedia] = useState<any[]>([]);
 
@@ -3414,25 +3403,22 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   custom={slideDirection}
                   variants={{
                     enter: (dir: number) => ({
-                      x: dir > 0 ? "50%" : "-50%",
-                      opacity: 0,
-                      scale: 1.05,
+                      x: dir > 0 ? "100%" : "-100%",
+                      opacity: 1,
                     }),
                     center: {
                       x: "0%",
                       opacity: 1,
-                      scale: 1,
                     },
                     exit: (dir: number) => ({
-                      x: dir > 0 ? "-50%" : "50%",
-                      opacity: 0,
-                      scale: 0.98,
+                      x: dir > 0 ? "-100%" : "100%",
+                      opacity: 1,
                     }),
                   }}
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.38, ease: [0.32, 0.72, 0, 1] }}
                   style={{
                     position: "absolute",
                     inset: 0,
@@ -3441,7 +3427,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     objectFit: "cover",
                     objectPosition: "center",
                     display: "block",
-                    willChange: "transform, opacity",
+                    willChange: "transform",
                   }}
                 />
               </AnimatePresence>
@@ -3520,13 +3506,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 </h1>
               </>
             ) : (
-              <AnimatePresence mode="wait" custom={slideDirection} initial={false}>
+              <AnimatePresence custom={slideDirection} initial={false}>
                 <motion.div
                   key={`hero-text-${heroIndex}`}
                   custom={slideDirection}
                   variants={{
                     enter: (dir: number) => ({
-                      x: dir > 0 ? 35 : -35,
+                      x: dir > 0 ? 40 : -40,
                       opacity: 0,
                     }),
                     center: {
@@ -3534,15 +3520,16 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       opacity: 1,
                     },
                     exit: (dir: number) => ({
-                      x: dir > 0 ? -35 : 35,
+                      x: dir > 0 ? -40 : 40,
                       opacity: 0,
+                      position: "absolute",
                     }),
                   }}
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-                  style={{ willChange: "transform, opacity" }}
+                  transition={{ duration: 0.38, ease: [0.32, 0.72, 0, 1] }}
+                  style={{ willChange: "transform, opacity", width: "100%" }}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.5rem", flexWrap: "nowrap" }}>
                     <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
