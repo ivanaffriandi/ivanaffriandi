@@ -96,6 +96,32 @@ function getRelativeTimeString(dateStr: string): string {
   return `${diffYears} ${diffYears === 1 ? "year" : "years"} ago`;
 }
 
+function getPostChapterLabel(post: any, allPosts: any[]): string {
+  if (!post) return "ESSAY";
+  
+  // 1. If title explicitly has Chapter X: e.g. "Chapter 2: ..."
+  const titleMatch = post.title.match(/^(?:chapter|ch\.?)\s*(\d+)[:\s.-]*/i);
+  if (titleMatch) {
+    return `CHAPTER ${titleMatch[1].padStart(2, "0")}`;
+  }
+
+  // 2. If it's from the original serial chapters (Blogger collection)
+  const bloggerPosts = allPosts.filter(
+    (p) => p.source === "blogger" || (!p.source && !p.url?.includes("medium.com"))
+  );
+  const bloggerIdx = bloggerPosts.findIndex((p) => p.id === post.id);
+  if (bloggerIdx !== -1) {
+    const chNum = bloggerPosts.length - bloggerIdx;
+    return `CHAPTER ${String(chNum).padStart(2, "0")}`;
+  }
+
+  // 3. For Medium / standalone stories
+  if (post.labels && post.labels.length > 0) {
+    return post.labels[0].toUpperCase();
+  }
+  return "ESSAY";
+}
+
 function FlippableQACard({ qa, darkTheme = false }: { qa: any; darkTheme?: boolean }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const rawAnswer = typeof qa.answer === "string" ? qa.answer.trim() : "";
@@ -684,10 +710,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
       const extracted = extractCoverImage(p.content);
       const isBadImg = !extracted || extracted.includes("ocean_hero_mono.png");
       const cover = isBadImg ? fallbackCovers[(idx + 1) % fallbackCovers.length] : extracted;
-      const chapterNum = `CHAPTER ${String(sortedPosts.length - idx).padStart(2, "0")}`;
+      const chapterLabel = getPostChapterLabel(p, sortedPosts);
       return {
         id: p.id,
-        category: chapterNum,
+        category: chapterLabel,
         date: p.published ? formatDate(p.published, locale) : "ESSAY",
         title: p.title,
         excerpt: stripHtml(p.content || "").slice(0, 135) + "…",
@@ -3404,7 +3430,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
                     {isReadingPrologue
                       ? "INTRO NARRATIVE"
-                      : `CHAPTER ${String(sortedPosts.length - (selectedPostIndex ?? 0)).padStart(2, "0")}`}
+                      : (selectedPost ? getPostChapterLabel(selectedPost, sortedPosts) : "ESSAY")}
                   </span>
                   {selectedPost && selectedPost.published && (
                     <>
@@ -4167,7 +4193,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   <div className="article-reader-chapter-title-desktop" style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.4rem" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
                       <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
-                        CHAPTER {String(sortedPosts.length - (selectedPostIndex ?? 0)).padStart(2, "0")}
+                        {selectedPost ? getPostChapterLabel(selectedPost, sortedPosts) : "ESSAY"}
                       </span>
                       <span style={{ color: "var(--border-subtle)", opacity: 0.6 }}>·</span>
                       <span style={{ fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--text-muted)", textTransform: "uppercase" }}>
@@ -4274,7 +4300,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         .map((p) => {
                           const pIdx = sortedPosts.findIndex((item) => item.id === p.id);
                           const pCover = extractCoverImage(p.content) || fallbackHero;
-                          const pChapter = String(sortedPosts.length - pIdx).padStart(2, "0");
+                          const pChapter = getPostChapterLabel(p, sortedPosts);
                           const pRelative = getRelativeTimeString(p.published);
 
                           return (
@@ -4306,7 +4332,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                                 />
                               </div>
                               <div style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--text-muted)", textTransform: "uppercase" }}>
-                                CHAPTER {pChapter}
+                                {pChapter}
                               </div>
                               <div
                                 style={{
@@ -4435,7 +4461,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         const excerpt = stripHtml(post.content).slice(0, 110) + "…";
                         const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
                         const relativeTime = getRelativeTimeString(post.published);
-                        const chapterNum = String(sortedPosts.length - postIdx).padStart(2, "0");
+                        const chapterLabel = getPostChapterLabel(post, sortedPosts);
 
                         return (
                           <div
@@ -4460,7 +4486,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                             <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", minWidth: 0, flex: 1, justifyContent: "space-between" }}>
                               <div>
                                 <div className="blog-card-date">
-                                  CHAPTER {chapterNum}
+                                  {chapterLabel}
                                 </div>
                                 <h3 className="blog-card-title">{post.title}</h3>
                                 <div style={{ fontSize: "0.52rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginTop: "0.15rem" }}>
@@ -5403,7 +5429,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             {/* Matching Chapters */}
             {filteredPosts.map((post) => {
               const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
-              const chapterNum = String(sortedPosts.length - postIdx).padStart(2, "0");
+              const chapterLabel = getPostChapterLabel(post, sortedPosts);
               const postCover = extractCoverImage(post.content) || fallbackCovers[(postIdx + 1) % fallbackCovers.length];
               const readTime = getReadingTime(post.content || "");
 
@@ -5446,7 +5472,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       {post.title}
                     </h4>
                     <span style={{ fontSize: "0.62rem", color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap" }}>
-                      Chapter {chapterNum} · {formatDate(post.published, locale)} · {readTime}m
+                      {chapterLabel} · {formatDate(post.published, locale)} · {readTime}m
                     </span>
                   </div>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>
