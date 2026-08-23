@@ -320,8 +320,8 @@
 }
 
 .bigHeadTapWrap {
-  width: clamp(130px, 34vw, 185px);
-  height: clamp(130px, 34vw, 185px);
+  width: clamp(140px, 36vw, 195px);
+  height: clamp(140px, 36vw, 195px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -329,12 +329,6 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   z-index: 2;
-  transition: width 0.32s cubic-bezier(0.16, 1, 0.3, 1), height 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.bigHeadTapWrapCompact {
-  width: clamp(72px, 18vw, 92px);
-  height: clamp(72px, 18vw, 92px);
 }
 
 .bigHeadTapImg {

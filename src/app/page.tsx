@@ -402,17 +402,17 @@ export default function AvantGardeHomepage() {
           <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <motion.div
               animate={{
-                scale: phraseIndex === 1 ? 0.65 : 1,
-                y: phraseIndex === 1 ? -8 : 0,
+                scale: phraseIndex === 1 ? 0.72 : 1,
+                y: phraseIndex === 1 ? -6 : 0,
               }}
               transition={{
                 type: "spring",
-                stiffness: 360,
-                damping: 24,
+                stiffness: 380,
+                damping: 26,
                 mass: 0.8,
               }}
-              whileHover={{ scale: (phraseIndex === 1 ? 0.65 : 1) * 1.05 }}
-              whileTap={{ scale: (phraseIndex === 1 ? 0.65 : 1) * 0.92 }}
+              whileHover={{ scale: (phraseIndex === 1 ? 0.72 : 1) * 1.05 }}
+              whileTap={{ scale: (phraseIndex === 1 ? 0.72 : 1) * 0.92 }}
               onClick={handleHeadTap}
               className={styles.bigHeadTapWrap}
               title="Tap me!"
@@ -424,13 +424,13 @@ export default function AvantGardeHomepage() {
               />
             </motion.div>
 
-            {/* EXPLOSIVE MUSHROOM BURST RIGHT ON TOP OF HEAD (DUARRRR!) */}
+            {/* DENSE & LIVELY MUSHROOM + SPARKLE BURST (RAME & CUTE!) */}
             <AnimatePresence>
               {showMushroomParticles && (
                 <div
                   style={{
                     position: "absolute",
-                    top: "-15px",
+                    top: "0px",
                     left: "50%",
                     transform: "translateX(-50%)",
                     width: "0px",
@@ -440,13 +440,28 @@ export default function AvantGardeHomepage() {
                   }}
                 >
                   {[
-                    { id: 1, x: -110, y: -90, rotate: -28, delay: 0, size: "2.4rem", scale: 1.4 },
-                    { id: 2, x: 110, y: -95, rotate: 28, delay: 0.02, size: "2.4rem", scale: 1.4 },
-                    { id: 3, x: -55, y: -140, rotate: -12, delay: 0.04, size: "2.8rem", scale: 1.6 },
-                    { id: 4, x: 55, y: -145, rotate: 14, delay: 0.04, size: "2.8rem", scale: 1.6 },
-                    { id: 5, x: 0, y: -165, rotate: 0, delay: 0.06, size: "3.2rem", scale: 1.8 },
-                    { id: 6, x: -145, y: -45, rotate: -40, delay: 0.03, size: "2.1rem", scale: 1.2 },
-                    { id: 7, x: 145, y: -50, rotate: 40, delay: 0.03, size: "2.1rem", scale: 1.2 },
+                    // Center high fountain
+                    { id: 1, x: 0, y: -130, rotate: 0, delay: 0, size: "1.45rem", emoji: "🍄" },
+                    { id: 2, x: -22, y: -150, rotate: -10, delay: 0.02, size: "1.2rem", emoji: "🍄" },
+                    { id: 3, x: 22, y: -145, rotate: 10, delay: 0.03, size: "1.25rem", emoji: "🍄" },
+                    // Left arc
+                    { id: 4, x: -48, y: -115, rotate: -18, delay: 0.01, size: "1.35rem", emoji: "🍄" },
+                    { id: 5, x: -78, y: -95, rotate: -26, delay: 0.03, size: "1.15rem", emoji: "🍄" },
+                    { id: 6, x: -108, y: -70, rotate: -36, delay: 0.04, size: "1.3rem", emoji: "🍄" },
+                    { id: 7, x: -135, y: -40, rotate: -45, delay: 0.06, size: "1.05rem", emoji: "🍄" },
+                    { id: 8, x: -62, y: -135, rotate: -15, delay: 0.05, size: "1.1rem", emoji: "🍄" },
+                    // Right arc
+                    { id: 9, x: 48, y: -120, rotate: 18, delay: 0.01, size: "1.35rem", emoji: "🍄" },
+                    { id: 10, x: 78, y: -100, rotate: 26, delay: 0.03, size: "1.15rem", emoji: "🍄" },
+                    { id: 11, x: 108, y: -75, rotate: 36, delay: 0.04, size: "1.3rem", emoji: "🍄" },
+                    { id: 12, x: 135, y: -45, rotate: 45, delay: 0.06, size: "1.05rem", emoji: "🍄" },
+                    { id: 13, x: 62, y: -140, rotate: 15, delay: 0.05, size: "1.1rem", emoji: "🍄" },
+                    // Sparkle accents ✨
+                    { id: 14, x: -32, y: -80, rotate: 12, delay: 0.02, size: "1.0rem", emoji: "✨" },
+                    { id: 15, x: 32, y: -85, rotate: -12, delay: 0.03, size: "1.0rem", emoji: "✨" },
+                    { id: 16, x: -92, y: -110, rotate: 20, delay: 0.05, size: "0.95rem", emoji: "✨" },
+                    { id: 17, x: 92, y: -115, rotate: -20, delay: 0.05, size: "0.95rem", emoji: "✨" },
+                    { id: 18, x: 0, y: -85, rotate: 0, delay: 0.01, size: "1.1rem", emoji: "✨" },
                   ].map((item) => (
                     <motion.div
                       key={item.id}
@@ -455,12 +470,12 @@ export default function AvantGardeHomepage() {
                         opacity: [0, 1, 1, 0],
                         y: [0, item.y * 1.15, item.y],
                         x: [0, item.x * 1.1, item.x],
-                        scale: [0.1, item.scale * 1.3, item.scale, 0.7],
+                        scale: [0.1, 1.25, 1, 0.7],
                         rotate: item.rotate,
                       }}
                       exit={{ opacity: 0, scale: 0 }}
                       transition={{
-                        duration: 1.4,
+                        duration: 1.35,
                         delay: item.delay,
                         ease: [0.16, 1, 0.3, 1],
                       }}
@@ -470,11 +485,11 @@ export default function AvantGardeHomepage() {
                         left: 0,
                         fontSize: item.size,
                         lineHeight: 1,
-                        filter: "drop-shadow(0 10px 24px rgba(0,0,0,0.3))",
+                        filter: "drop-shadow(0 6px 16px rgba(0,0,0,0.22))",
                         transform: "translate(-50%, -50%)",
                       }}
                     >
-                      🍄
+                      {item.emoji}
                     </motion.div>
                   ))}
                 </div>
