@@ -315,9 +315,9 @@ export default function AvantGardeHomepage() {
             transition={{ duration: 0.36, ease: [0.32, 0.72, 0, 1] }}
             className={styles.fullScreenMenuOverlay}
           >
-            {/* Header: Brand Name + Close Button */}
+            {/* Header: Close Button on Top-Right (No brand name) */}
             <div className={styles.fullScreenMenuHeader}>
-              <span className={styles.menuBrandTitle}>AFFRIANDI, IVAN</span>
+              <div />
               <button
                 type="button"
                 onClick={() => setIsMenuOpen(false)}

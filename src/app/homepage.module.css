@@ -211,11 +211,14 @@
 .fullScreenNavList {
   width: 100%;
   max-width: 440px;
-  margin: auto auto;
+  margin: 0;
+  margin-top: auto !important;
   display: flex;
   flex-direction: column;
+  align-items: flex-start !important;
+  text-align: left !important;
   gap: 18px;
-  padding: 0;
+  padding: 0 0 12px 0;
 }
 
 .fullScreenNavItem {
@@ -472,8 +475,8 @@
 .marqueeRowContent {
   display: flex;
   white-space: nowrap;
-  font-size: clamp(0.56rem, 1.4vw, 0.72rem);
-  font-weight: 900;
+  font-size: clamp(0.48rem, 1.15vw, 0.62rem);
+  font-weight: 500;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--h-marquee-color);
