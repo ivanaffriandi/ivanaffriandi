@@ -13,13 +13,13 @@
   --h-btn-bg: #111113;
   --h-btn-text: #ffffff;
   --h-caret: #111113;
-  --h-head-filter: contrast(110%) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12));
+  --h-head-filter: contrast(106%);
   --h-marquee-color: rgba(0, 0, 0, 0.16);
   --h-island-bg: #ffffff;
   --h-fullscreen-menu-bg: #ffffff;
   --h-badge-bg: rgba(0, 0, 0, 0.06);
   --h-badge-text: #8e8e98;
-  --h-hero-scrim: radial-gradient(circle at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.8) 45%, rgba(255, 255, 255, 0) 75%);
+  --h-hero-scrim: radial-gradient(circle at center, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.85) 45%, rgba(255, 255, 255, 0) 75%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -34,13 +34,13 @@
     --h-btn-bg: #f4f4f6;
     --h-btn-text: #09090b;
     --h-caret: #f4f4f6;
-    --h-head-filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 2.5px rgba(255, 255, 255, 0.95)) drop-shadow(0 8px 28px rgba(0, 0, 0, 0.6)) contrast(112%);
+    --h-head-filter: contrast(106%);
     --h-marquee-color: rgba(255, 255, 255, 0.18);
     --h-island-bg: #09090b;
     --h-fullscreen-menu-bg: #09090b;
     --h-badge-bg: rgba(255, 255, 255, 0.1);
     --h-badge-text: #71717a;
-    --h-hero-scrim: radial-gradient(circle at center, rgba(9, 9, 11, 0.95) 0%, rgba(9, 9, 11, 0.8) 45%, rgba(9, 9, 11, 0) 75%);
+    --h-hero-scrim: radial-gradient(circle at center, rgba(9, 9, 11, 0.96) 0%, rgba(9, 9, 11, 0.85) 45%, rgba(9, 9, 11, 0) 75%);
   }
 }
 

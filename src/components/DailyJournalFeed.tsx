@@ -338,6 +338,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const [selectedPostIndex, setSelectedPostIndex] = useState<number | null>(null);
   const [selectedIgItem, setSelectedIgItem] = useState<any | null>(null);
   const [heroIndex, setHeroIndex] = useState<number>(0);
+  const [slideDirection, setSlideDirection] = useState<number>(1);
   const [gridIndices, setGridIndices] = useState<number[]>([0, 1, 2, 3, 4, 5, 6, 7, 8]);
   const [isHoveringIg, setIsHoveringIg] = useState<boolean>(false);
   const [activeFilter, setActiveFilter] = useState<string>("ALL");
@@ -740,6 +741,16 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     });
   };
 
+  const handleNextHero = useCallback(() => {
+    setSlideDirection(1);
+    setHeroIndex((prev) => (prev < flipboardCards.length - 1 ? prev + 1 : 0));
+  }, [flipboardCards.length]);
+
+  const handlePrevHero = useCallback(() => {
+    setSlideDirection(-1);
+    setHeroIndex((prev) => (prev > 0 ? prev - 1 : flipboardCards.length - 1));
+  }, [flipboardCards.length]);
+
   const handleHeroTouchEnd = (e: React.TouchEvent) => {
     if (!touchStartPos) return;
     const diffX = touchStartPos.x - e.changedTouches[0].clientX;
@@ -748,9 +759,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     if (Math.abs(diffX) > 40 || Math.abs(diffY) > 40) {
       if (Math.abs(diffX) > Math.abs(diffY)) {
         if (diffX > 0) {
-          setHeroIndex((prev) => (prev + 1) % flipboardCards.length);
+          handleNextHero();
         } else {
-          setHeroIndex((prev) => (prev - 1 + flipboardCards.length) % flipboardCards.length);
+          handlePrevHero();
         }
       }
     }
@@ -759,8 +770,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
   // Auto-cycle hero photo / flipboard cards every 6s
   const advanceHero = useCallback(() => {
-    setHeroIndex((prev) => (prev + 1) % flipboardCards.length);
-  }, [flipboardCards.length]);
+    handleNextHero();
+  }, [handleNextHero]);
 
   useEffect(() => {
     if (flipboardCards.length <= 1) return;
@@ -966,9 +977,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
       if (!selectedPost && !isReadingPrologue) {
         if (e.key === "ArrowLeft") {
-          setHeroIndex((prev) => (prev > 0 ? prev - 1 : flipboardCards.length - 1));
+          handlePrevHero();
         } else if (e.key === "ArrowRight") {
-          setHeroIndex((prev) => (prev < flipboardCards.length - 1 ? prev + 1 : 0));
+          handleNextHero();
         }
       } else if (selectedPost || isReadingPrologue) {
         if (e.key === "Escape") {
@@ -3369,7 +3380,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             </div>
           </div>
 
-          {/* SOLID IMAGE LAYER - ZERO FLICKER OR RE-RENDER BLINKS */}
+          {/* SOLID IMAGE LAYER WITH SMOOTH SLIDE TRANSITION */}
           <div
             className="pj-photo-layer"
             style={{
@@ -3382,19 +3393,59 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               background: "#0c0d0e",
             }}
           >
-            <img
-              key={isReadingPrologue ? "prologue-hero" : selectedPost ? `post-${selectedPost.id}-${postPhotoIndex}` : `overview-${heroIndex}`}
-              src={isReadingPrologue ? "/nature_hero.png" : selectedPost ? selectedPostImages[postPhotoIndex % selectedPostImages.length] : currentFlipCard.img}
-              alt={isReadingPrologue ? "Prologue" : selectedPost ? selectedPost.title : currentFlipCard.title}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "center",
-                display: "block",
-                transition: "opacity 0.35s ease",
-              }}
-            />
+            {isReadingPrologue || selectedPost ? (
+              <img
+                src={isReadingPrologue ? "/nature_hero.png" : selectedPostImages[postPhotoIndex % selectedPostImages.length]}
+                alt={isReadingPrologue ? "Prologue" : selectedPost ? selectedPost.title : "Hero"}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center",
+                  display: "block",
+                }}
+              />
+            ) : (
+              <AnimatePresence custom={slideDirection} initial={false}>
+                <motion.img
+                  key={`hero-img-${heroIndex}`}
+                  src={currentFlipCard.img}
+                  alt={currentFlipCard.title}
+                  custom={slideDirection}
+                  variants={{
+                    enter: (dir: number) => ({
+                      x: dir > 0 ? "50%" : "-50%",
+                      opacity: 0,
+                      scale: 1.05,
+                    }),
+                    center: {
+                      x: "0%",
+                      opacity: 1,
+                      scale: 1,
+                    },
+                    exit: (dir: number) => ({
+                      x: dir > 0 ? "-50%" : "50%",
+                      opacity: 0,
+                      scale: 0.98,
+                    }),
+                  }}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center",
+                    display: "block",
+                    willChange: "transform, opacity",
+                  }}
+                />
+              </AnimatePresence>
+            )}
           </div>
 
           <div
@@ -3434,44 +3485,96 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               }
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.5rem", flexWrap: "nowrap" }}>
-              <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
-                {isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue)
-                  ? "INTRO NARRATIVE"
-                  : selectedPost
-                  ? `CHAPTER ${String(sortedPosts.length - (selectedPostIndex ?? 0)).padStart(2, "0")}`
-                  : currentFlipCard.category}
-              </span>
-              {((!selectedPost && currentFlipCard.date && !currentFlipCard.isPrologue) || (selectedPost && selectedPost.published)) && (
-                <>
-                  <span style={{ color: "rgba(255, 255, 255, 0.4)", fontSize: "0.65rem" }}>·</span>
-                  <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.65)" }}>
-                    {selectedPost ? formatDate(selectedPost.published, locale) : currentFlipCard.date}
+            {isReadingPrologue || selectedPost ? (
+              <>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.5rem", flexWrap: "nowrap" }}>
+                  <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
+                    {isReadingPrologue
+                      ? "INTRO NARRATIVE"
+                      : `CHAPTER ${String(sortedPosts.length - (selectedPostIndex ?? 0)).padStart(2, "0")}`}
                   </span>
-                </>
-              )}
-            </div>
+                  {selectedPost && selectedPost.published && (
+                    <>
+                      <span style={{ color: "rgba(255, 255, 255, 0.4)", fontSize: "0.65rem" }}>·</span>
+                      <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.65)" }}>
+                        {formatDate(selectedPost.published, locale)}
+                      </span>
+                    </>
+                  )}
+                </div>
 
-            <h1
-              className="pj-title"
-              style={{
-                fontSize: isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue) ? "2.3rem" : undefined,
-                fontWeight: isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue) ? 750 : 600,
-                letterSpacing: isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue) ? "-0.03em" : "-0.02em",
-                textTransform: isReadingPrologue || (!selectedPost && currentFlipCard.isPrologue) ? "uppercase" : "none",
-              }}
-            >
-              {isReadingPrologue
-                ? "PROLOGUE"
-                : selectedPost
-                ? selectedPost.title
-                : currentFlipCard.title}
-            </h1>
+                <h1
+                  className="pj-title"
+                  style={{
+                    fontSize: isReadingPrologue ? "2.3rem" : undefined,
+                    fontWeight: isReadingPrologue ? 750 : 600,
+                    letterSpacing: isReadingPrologue ? "-0.03em" : "-0.02em",
+                    textTransform: isReadingPrologue ? "uppercase" : "none",
+                  }}
+                >
+                  {isReadingPrologue
+                    ? "PROLOGUE"
+                    : selectedPost
+                    ? selectedPost.title
+                    : currentFlipCard.title}
+                </h1>
+              </>
+            ) : (
+              <AnimatePresence mode="wait" custom={slideDirection} initial={false}>
+                <motion.div
+                  key={`hero-text-${heroIndex}`}
+                  custom={slideDirection}
+                  variants={{
+                    enter: (dir: number) => ({
+                      x: dir > 0 ? 35 : -35,
+                      opacity: 0,
+                    }),
+                    center: {
+                      x: 0,
+                      opacity: 1,
+                    },
+                    exit: (dir: number) => ({
+                      x: dir > 0 ? -35 : 35,
+                      opacity: 0,
+                    }),
+                  }}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ willChange: "transform, opacity" }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.5rem", flexWrap: "nowrap" }}>
+                    <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
+                      {currentFlipCard.isPrologue ? "INTRO NARRATIVE" : currentFlipCard.category}
+                    </span>
+                    {currentFlipCard.date && !currentFlipCard.isPrologue && (
+                      <>
+                        <span style={{ color: "rgba(255, 255, 255, 0.4)", fontSize: "0.65rem" }}>·</span>
+                        <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.65)" }}>
+                          {currentFlipCard.date}
+                        </span>
+                      </>
+                    )}
+                  </div>
 
-            {!selectedPost && !isReadingPrologue && (
-              <p className="pj-excerpt">
-                {currentFlipCard.excerpt}
-              </p>
+                  <h1
+                    className="pj-title"
+                    style={{
+                      fontSize: currentFlipCard.isPrologue ? "2.3rem" : undefined,
+                      fontWeight: currentFlipCard.isPrologue ? 750 : 600,
+                      letterSpacing: currentFlipCard.isPrologue ? "-0.03em" : "-0.02em",
+                      textTransform: currentFlipCard.isPrologue ? "uppercase" : "none",
+                    }}
+                  >
+                    {currentFlipCard.title}
+                  </h1>
+
+                  <p className="pj-excerpt">
+                    {currentFlipCard.excerpt}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
             )}
 
             {/* Dots indicator: for article photo gallery when open, or for flipboard in overview mode (MAX 5 VISIBLE STRIPS WINDOW) */}
@@ -3499,6 +3602,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         className={`pj-dot${i === (heroIndex % total) ? " active" : ""}`}
                         onClick={(e) => {
                           e.stopPropagation();
+                          setSlideDirection(i > heroIndex ? 1 : -1);
                           setHeroIndex(i);
                         }}
                       />
@@ -3519,6 +3623,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         className={`pj-dot${i === current ? " active" : ""}`}
                         onClick={(e) => {
                           e.stopPropagation();
+                          setSlideDirection(i > heroIndex ? 1 : -1);
                           setHeroIndex(i);
                         }}
                       />
@@ -3528,11 +3633,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 })()}
               </div>
             ) : null}
-
-            {/* Mobile Overview: Clean & minimal without footer */}
           </div>
 
-          {!selectedPost && !isReadingPrologue ? (
+          {/* DESKTOP/MOBILE COMPACT PREV/NEXT OVERVIEW HERO CONTROLS */}
+          {!selectedPost && !isReadingPrologue && flipboardCards.length > 1 && (
             <div
               className="pj-hero-arrows"
               style={{
@@ -3549,12 +3653,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setHeroIndex((prev) => (prev > 0 ? prev - 1 : flipboardCards.length - 1));
+                  handlePrevHero();
                 }}
                 onTouchStart={(e) => e.stopPropagation()}
                 onTouchEnd={(e) => {
                   e.stopPropagation();
-                  setHeroIndex((prev) => (prev > 0 ? prev - 1 : flipboardCards.length - 1));
+                  handlePrevHero();
                 }}
                 title="Previous Story"
                 aria-label="Previous Story"
@@ -3588,12 +3692,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setHeroIndex((prev) => (prev < flipboardCards.length - 1 ? prev + 1 : 0));
+                  handleNextHero();
                 }}
                 onTouchStart={(e) => e.stopPropagation()}
                 onTouchEnd={(e) => {
                   e.stopPropagation();
-                  setHeroIndex((prev) => (prev < flipboardCards.length - 1 ? prev + 1 : 0));
+                  handleNextHero();
                 }}
                 title="Next Story"
                 aria-label="Next Story"
@@ -3623,7 +3727,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 </svg>
               </button>
             </div>
-          ) : null}
+          )}
         </div>
 
         {/* RIGHT COLUMN: SINGLE-SCREEN COMPACT EDITORIAL LAYOUT */}

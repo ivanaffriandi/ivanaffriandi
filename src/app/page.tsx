@@ -225,8 +225,8 @@ export default function AvantGardeHomepage() {
 
         {/* ── ZONE 2: CENTER HERO STAGE (DEAD-CENTER: 50%, 50%) ── */}
         <main className={styles.centerHeroStage}>
-          {/* Radial Contrast Scrim to keep head & text razor-sharp over running text */}
-          <div className={styles.heroContrastScrim} />
+          {/* Radial Contrast Scrim only when running text is active */}
+          {isMarqueeActive && <div className={styles.heroContrastScrim} />}
 
           <motion.div
             animate={headControls}
