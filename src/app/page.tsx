@@ -47,29 +47,26 @@ const MinimalCloseIcon = () => (
 const FUN_PHRASES = [
   "Hi, I'm Ivan! A UI/UX designer & writer based in Jakarta.",
   "Here are a few recent stories from my journal:",
-  "I also craft bespoke leather, silver goods, & run creative studios:",
+  "I also craft bespoke leather, silver goods, & teach at my academy:",
   "Here is my full technical & craft matrix:",
   "Tap my head to loop back :)",
 ];
 
 const CREATIVE_STUDIOS = [
   {
-    name: "SHŪ / EN Studio",
-    tag: "Leather Atelier",
+    name: "SHŪ / EN",
     url: "https://shuenstudio.com",
     icon: "🧵",
   },
   {
     name: "KVR Objects",
-    tag: "925 Silver & Metal",
     url: "https://kvr-objects.com",
     icon: "✦",
   },
   {
-    name: "Equilibrium Academy",
-    tag: "Design & Research",
+    name: "Equilibrium",
     url: "https://equilibriumians.com",
-    icon: "◎",
+    icon: "🎓",
   },
 ];
 
@@ -225,7 +222,7 @@ export default function AvantGardeHomepage() {
 
   const currentFullText = FUN_PHRASES[phraseIndex];
   const isMarqueeActive = phraseIndex === 3; // State for "Here is my full technical & craft matrix:"
-  const isCompactHero = phraseIndex === 1 || phraseIndex === 2;
+  const isCompactHero = phraseIndex === 1;
 
   // Fetch latest blog posts for compact preview
   useEffect(() => {
@@ -464,15 +461,15 @@ export default function AvantGardeHomepage() {
             )}
           </AnimatePresence>
 
-          {/* COMPACT CREATIVE STUDIOS WIDGET (APPEARS ON PHRASE 2) */}
+          {/* HORIZONTAL SIMPLE CREATIVE STUDIOS & ACADEMY LINKS */}
           <AnimatePresence>
             {phraseIndex === 2 && (
               <motion.div
-                initial={{ opacity: 0, y: 14, scale: 0.97 }}
+                initial={{ opacity: 0, y: 10, scale: 0.97 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 14, scale: 0.97 }}
-                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                className={styles.compactBlogsContainer}
+                exit={{ opacity: 0, y: 10, scale: 0.97 }}
+                transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+                className={styles.horizontalStudiosContainer}
               >
                 {CREATIVE_STUDIOS.map((studio, idx) => (
                   <a
@@ -480,17 +477,12 @@ export default function AvantGardeHomepage() {
                     href={studio.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={styles.compactBlogItem}
+                    className={styles.horizontalStudioItem}
                     title={studio.name}
                   >
-                    <div className={styles.compactStudioIconWrap}>
-                      <span>{studio.icon}</span>
-                    </div>
-                    <div className={styles.compactBlogInfo}>
-                      <h4 className={styles.compactBlogTitle}>{studio.name}</h4>
-                      <span className={styles.compactBlogMeta}>{studio.tag}</span>
-                    </div>
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={styles.compactBlogChevron}>
+                    <span className={styles.horizontalStudioIcon}>{studio.icon}</span>
+                    <span>{studio.name}</span>
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className={styles.horizontalStudioChevron}>
                       <path d="M7 17L17 7M17 7H7M17 7V17" />
                     </svg>
                   </a>

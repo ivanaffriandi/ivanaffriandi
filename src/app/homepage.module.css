@@ -498,6 +498,66 @@
   color: var(--h-text);
 }
 
+/* ── HORIZONTAL SIMPLE CREATIVE STUDIOS & ACADEMY ROW ── */
+.horizontalStudiosContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  max-width: 340px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+  z-index: 2;
+}
+
+.horizontalStudioItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 11px;
+  border-radius: 9999px;
+  background: var(--h-journal-pill-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--h-journal-pill-border);
+  box-shadow: var(--h-journal-pill-shadow);
+  text-decoration: none;
+  color: var(--h-text);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.horizontalStudioItem:hover {
+  transform: translateY(-1.5px);
+  background: var(--h-journal-pill-hover);
+  border-color: var(--h-text);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.horizontalStudioItem:active {
+  transform: scale(0.96);
+}
+
+.horizontalStudioIcon {
+  font-size: 0.76rem;
+  line-height: 1;
+}
+
+.horizontalStudioChevron {
+  color: var(--h-text-sub);
+  margin-left: 1px;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.horizontalStudioItem:hover .horizontalStudioChevron {
+  transform: translate(1px, -1px);
+  color: var(--h-text);
+}
+
 .tapHintText {
   font-size: 0.65rem;
   font-weight: 750;
