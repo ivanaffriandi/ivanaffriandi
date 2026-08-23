@@ -365,6 +365,7 @@
   text-shadow: 0 2px 12px var(--h-bg);
   word-break: normal;
   overflow-wrap: break-word;
+  white-space: pre-line;
 }
 
 .typingCaret {

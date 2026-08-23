@@ -45,7 +45,7 @@ const MinimalCloseIcon = () => (
 
 // Casual, easy-to-understand English phrases
 const FUN_PHRASES = [
-  "Hi, I'm Ivan! A UI/UX designer & writer based in Jakarta.",
+  "Hi, I'm Ivan!\nA UI/UX designer & writer based in Jakarta.",
   "Here are a few recent stories from my journal:",
   "I also craft bespoke leather, silver goods, & teach at my academy:",
   "Here is my full technical & craft matrix:",
@@ -114,8 +114,9 @@ const MATRIX_ROWS = [
   "FOREST TRAIL NAVIGATION • FUNGI SPORE PRINTS • BOTANICAL SKETCHING • BOTANICAL WATERCOLORS • ",
 ];
 
-// Enhanced authentic vintage mechanical typewriter sound engine via Web Audio API
+// Pre-buffered instant Web Audio API mechanical typewriter sound engine
 let audioCtx: AudioContext | null = null;
+let cachedNoiseBuffer: AudioBuffer | null = null;
 
 const getAudioContext = (): AudioContext | null => {
   if (typeof window === 'undefined') return null;
@@ -125,86 +126,89 @@ const getAudioContext = (): AudioContext | null => {
       audioCtx = new AudioContextClass();
     }
   }
-  if (audioCtx && audioCtx.state === 'suspended') {
-    audioCtx.resume().catch(() => {});
+  if (audioCtx) {
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(() => {});
+    }
+    if (!cachedNoiseBuffer && audioCtx.sampleRate) {
+      const bufferSize = Math.floor(audioCtx.sampleRate * 0.035);
+      cachedNoiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = cachedNoiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        const decay = Math.exp(-i / (audioCtx.sampleRate * 0.007));
+        output[i] = (Math.random() * 2 - 1) * decay;
+      }
+    }
   }
   return audioCtx;
 };
 
-const playTypewriterClick = (isSpace = false) => {
+const playTypewriterClick = (char: string) => {
   try {
     const ctx = getAudioContext();
-    if (!ctx || ctx.state !== 'running') return;
+    if (!ctx || ctx.state !== 'running' || !cachedNoiseBuffer) return;
 
     const now = ctx.currentTime;
+    const isSpace = char === ' ';
+    const isEnter = char === '\n';
     const randomSeed = Math.random();
 
-    // 1. PRIMARY MECHANICAL HAMMER CLACK (Crisp metal-on-platen strike)
-    const bufferSize = Math.floor(ctx.sampleRate * 0.028);
-    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const output = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      const decay = Math.exp(-i / (ctx.sampleRate * 0.006));
-      output[i] = (Math.random() * 2 - 1) * decay;
-    }
-
+    // 1. Primary Hammer Strike
     const noiseSource = ctx.createBufferSource();
-    noiseSource.buffer = noiseBuffer;
+    noiseSource.buffer = cachedNoiseBuffer;
 
     const filter = ctx.createBiquadFilter();
     filter.type = 'bandpass';
-    const strikeFreq = isSpace ? 1100 + randomSeed * 200 : 2800 + (randomSeed - 0.5) * 600;
+    const strikeFreq = isEnter ? 850 : isSpace ? 1100 + randomSeed * 200 : 2700 + (randomSeed - 0.5) * 500;
     filter.frequency.setValueAtTime(strikeFreq, now);
-    filter.Q.setValueAtTime(isSpace ? 2.5 : 4.5, now);
+    filter.Q.setValueAtTime(isSpace || isEnter ? 2.2 : 4.0, now);
 
     const noiseGain = ctx.createGain();
-    const strikeVol = isSpace ? 0.14 : 0.18 + (randomSeed - 0.5) * 0.04;
+    const strikeVol = isEnter ? 0.22 : isSpace ? 0.13 : 0.17 + (randomSeed - 0.5) * 0.04;
     noiseGain.gain.setValueAtTime(strikeVol, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.026);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + (isEnter ? 0.04 : 0.025));
 
     noiseSource.connect(filter);
     filter.connect(noiseGain);
     noiseGain.connect(ctx.destination);
 
     noiseSource.start(now);
-    noiseSource.stop(now + 0.028);
 
-    // 2. LEVER LINKAGE SNAP (Mechanical linkage micro-click)
-    if (!isSpace) {
+    // 2. Typebar Linkage Snap
+    if (!isSpace && !isEnter) {
       const snapOsc = ctx.createOscillator();
       snapOsc.type = 'square';
-      const snapFreq = 1600 + (randomSeed - 0.5) * 400;
+      const snapFreq = 1600 + (randomSeed - 0.5) * 350;
       snapOsc.frequency.setValueAtTime(snapFreq, now);
-      snapOsc.frequency.exponentialRampToValueAtTime(snapFreq * 0.3, now + 0.012);
+      snapOsc.frequency.exponentialRampToValueAtTime(snapFreq * 0.25, now + 0.01);
 
       const snapGain = ctx.createGain();
-      snapGain.gain.setValueAtTime(0.06, now);
-      snapGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.012);
+      snapGain.gain.setValueAtTime(0.05, now);
+      snapGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.01);
 
       snapOsc.connect(snapGain);
       snapGain.connect(ctx.destination);
 
       snapOsc.start(now);
-      snapOsc.stop(now + 0.012);
+      snapOsc.stop(now + 0.01);
     }
 
-    // 3. TYPEBAR METALLIC RESONANCE / CHASSIS THUD
+    // 3. Chassis Thud
     const bodyOsc = ctx.createOscillator();
-    bodyOsc.type = isSpace ? 'sine' : 'triangle';
-    const bodyFreq = isSpace ? 210 + (randomSeed - 0.5) * 30 : 680 + (randomSeed - 0.5) * 120;
+    bodyOsc.type = isEnter ? 'sawtooth' : isSpace ? 'sine' : 'triangle';
+    const bodyFreq = isEnter ? 150 : isSpace ? 200 + (randomSeed - 0.5) * 20 : 620 + (randomSeed - 0.5) * 100;
     bodyOsc.frequency.setValueAtTime(bodyFreq, now);
-    bodyOsc.frequency.exponentialRampToValueAtTime(bodyFreq * 0.7, now + 0.035);
+    bodyOsc.frequency.exponentialRampToValueAtTime(bodyFreq * 0.6, now + (isEnter ? 0.05 : 0.03));
 
     const bodyGain = ctx.createGain();
-    const bodyVol = isSpace ? 0.1 : 0.07;
-    bodyGain.gain.setValueAtTime(bodyVol, now);
-    bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+    bodyGain.gain.setValueAtTime(isEnter ? 0.14 : isSpace ? 0.09 : 0.06, now);
+    bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + (isEnter ? 0.05 : 0.03));
 
     bodyOsc.connect(bodyGain);
     bodyGain.connect(ctx.destination);
 
     bodyOsc.start(now);
-    bodyOsc.stop(now + 0.035);
+    bodyOsc.stop(now + (isEnter ? 0.05 : 0.03));
   } catch {
     // Audio safe fallback
   }
@@ -273,23 +277,30 @@ export default function AvantGardeHomepage() {
     };
   }, []);
 
-  // Letter-by-Letter Typing Effect with Synced Typewriter Audio
+  // Letter-by-Letter Typing Effect with Instant Synced Audio
   useEffect(() => {
     let charIndex = 0;
     setDisplayText('');
 
-    const interval = setInterval(() => {
+    let timer: NodeJS.Timeout;
+
+    const typeNextChar = () => {
       if (charIndex < currentFullText.length) {
         const nextChar = currentFullText[charIndex];
-        setDisplayText(currentFullText.slice(0, charIndex + 1));
-        playTypewriterClick(nextChar === ' ');
+        const updatedText = currentFullText.slice(0, charIndex + 1);
+        setDisplayText(updatedText);
+        playTypewriterClick(nextChar);
         charIndex++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 45);
 
-    return () => clearInterval(interval);
+        // Natural cadence: slightly pause on newline or punctuation
+        const delay = nextChar === '\n' ? 190 : (nextChar === '.' || nextChar === '!' || nextChar === ':') ? 95 : 44;
+        timer = setTimeout(typeNextChar, delay);
+      }
+    };
+
+    timer = setTimeout(typeNextChar, 100);
+
+    return () => clearTimeout(timer);
   }, [currentFullText]);
 
   // Head Tap Reaction
