@@ -398,20 +398,89 @@ export default function AvantGardeHomepage() {
           {/* Radial Contrast Scrim only when running text is active */}
           {isMarqueeActive && <div className={styles.heroContrastScrim} />}
 
-          <motion.div
-            animate={headControls}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.92 }}
-            onClick={handleHeadTap}
-            className={`${styles.bigHeadTapWrap}${phraseIndex === 1 ? ` ${styles.bigHeadTapWrapCompact}` : ''}`}
-            title="Tap me!"
-          >
-            <img
-              src="/ivan-head.png"
-              alt="Ivan Affriandi"
-              className={styles.bigHeadTapImg}
-            />
-          </motion.div>
+          {/* HEAD WRAPPER WITH SILKY SMOOTH PHYSICAL SPRING SCALING */}
+          <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <motion.div
+              animate={{
+                scale: phraseIndex === 1 ? 0.65 : 1,
+                y: phraseIndex === 1 ? -8 : 0,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 360,
+                damping: 24,
+                mass: 0.8,
+              }}
+              whileHover={{ scale: (phraseIndex === 1 ? 0.65 : 1) * 1.05 }}
+              whileTap={{ scale: (phraseIndex === 1 ? 0.65 : 1) * 0.92 }}
+              onClick={handleHeadTap}
+              className={styles.bigHeadTapWrap}
+              title="Tap me!"
+            >
+              <img
+                src="/ivan-head.png"
+                alt="Ivan Affriandi"
+                className={styles.bigHeadTapImg}
+              />
+            </motion.div>
+
+            {/* EXPLOSIVE MUSHROOM BURST RIGHT ON TOP OF HEAD (DUARRRR!) */}
+            <AnimatePresence>
+              {showMushroomParticles && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "-15px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: "0px",
+                    height: "0px",
+                    pointerEvents: "none",
+                    zIndex: 999,
+                  }}
+                >
+                  {[
+                    { id: 1, x: -110, y: -90, rotate: -28, delay: 0, size: "2.4rem", scale: 1.4 },
+                    { id: 2, x: 110, y: -95, rotate: 28, delay: 0.02, size: "2.4rem", scale: 1.4 },
+                    { id: 3, x: -55, y: -140, rotate: -12, delay: 0.04, size: "2.8rem", scale: 1.6 },
+                    { id: 4, x: 55, y: -145, rotate: 14, delay: 0.04, size: "2.8rem", scale: 1.6 },
+                    { id: 5, x: 0, y: -165, rotate: 0, delay: 0.06, size: "3.2rem", scale: 1.8 },
+                    { id: 6, x: -145, y: -45, rotate: -40, delay: 0.03, size: "2.1rem", scale: 1.2 },
+                    { id: 7, x: 145, y: -50, rotate: 40, delay: 0.03, size: "2.1rem", scale: 1.2 },
+                  ].map((item) => (
+                    <motion.div
+                      key={item.id}
+                      initial={{ opacity: 0, y: 0, x: 0, scale: 0.1, rotate: 0 }}
+                      animate={{
+                        opacity: [0, 1, 1, 0],
+                        y: [0, item.y * 1.15, item.y],
+                        x: [0, item.x * 1.1, item.x],
+                        scale: [0.1, item.scale * 1.3, item.scale, 0.7],
+                        rotate: item.rotate,
+                      }}
+                      exit={{ opacity: 0, scale: 0 }}
+                      transition={{
+                        duration: 1.4,
+                        delay: item.delay,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        fontSize: item.size,
+                        lineHeight: 1,
+                        filter: "drop-shadow(0 10px 24px rgba(0,0,0,0.3))",
+                        transform: "translate(-50%, -50%)",
+                      }}
+                    >
+                      🍄
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </AnimatePresence>
+          </div>
 
           <div className={styles.typewriterTextWrap} onClick={handleHeadTap}>
             <span className={styles.handwritingText}>
@@ -424,9 +493,9 @@ export default function AvantGardeHomepage() {
           <AnimatePresence>
             {phraseIndex === 1 && (
               <motion.div
-                initial={{ opacity: 0, y: 12, scale: 0.97 }}
+                initial={{ opacity: 0, y: 14, scale: 0.97 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 12, scale: 0.97 }}
+                exit={{ opacity: 0, y: 14, scale: 0.97 }}
                 transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                 className={styles.compactBlogsContainer}
               >
@@ -456,47 +525,6 @@ export default function AvantGardeHomepage() {
                   );
                 })}
               </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* FLOATING MUSHROOM BURST ANIMATION ON PHRASE 2 */}
-          <AnimatePresence>
-            {showMushroomParticles && (
-              <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 100 }}>
-                {[
-                  { id: 1, x: -75, y: -70, rotate: -18, delay: 0, size: "1.85rem" },
-                  { id: 2, x: 75, y: -80, rotate: 16, delay: 0.06, size: "1.9rem" },
-                  { id: 3, x: -35, y: -110, rotate: -8, delay: 0.12, size: "2.3rem" },
-                  { id: 4, x: 35, y: -115, rotate: 12, delay: 0.16, size: "2.2rem" },
-                  { id: 5, x: -105, y: -45, rotate: -25, delay: 0.08, size: "1.5rem" },
-                  { id: 6, x: 105, y: -50, rotate: 22, delay: 0.14, size: "1.6rem" },
-                ].map((item) => (
-                  <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, y: 15, x: item.x, scale: 0.2, rotate: 0 }}
-                    animate={{
-                      opacity: [0, 1, 1, 0],
-                      y: item.y,
-                      x: item.x,
-                      scale: [0.2, 1.25, 1.1, 0.8],
-                      rotate: item.rotate,
-                    }}
-                    exit={{ opacity: 0, scale: 0 }}
-                    transition={{ duration: 1.6, delay: item.delay, ease: [0.16, 1, 0.3, 1] }}
-                    style={{
-                      position: "absolute",
-                      top: "22%",
-                      left: "50%",
-                      fontSize: item.size,
-                      lineHeight: 1,
-                      filter: "drop-shadow(0 6px 14px rgba(0,0,0,0.18))",
-                      transform: "translateX(-50%)",
-                    }}
-                  >
-                    🍄
-                  </motion.div>
-                ))}
-              </div>
             )}
           </AnimatePresence>
 
