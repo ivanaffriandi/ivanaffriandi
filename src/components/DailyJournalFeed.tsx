@@ -3380,6 +3380,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               zIndex: 1,
               overflow: "hidden",
               background: "#0c0d0e",
+              transform: "translate3d(0, 0, 0)",
+              WebkitTransform: "translate3d(0, 0, 0)",
+              backfaceVisibility: "hidden",
+              WebkitBackfaceVisibility: "hidden",
             }}
           >
             {isReadingPrologue || selectedPost ? (
@@ -3428,6 +3432,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     objectPosition: "center",
                     display: "block",
                     willChange: "transform",
+                    transform: "translate3d(0, 0, 0)",
+                    WebkitTransform: "translate3d(0, 0, 0)",
+                    backfaceVisibility: "hidden",
+                    WebkitBackfaceVisibility: "hidden",
                   }}
                 />
               </AnimatePresence>
@@ -3506,7 +3514,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 </h1>
               </>
             ) : (
-              <div style={{ display: "grid", gridTemplateColumns: "100%", width: "100%", position: "relative" }}>
+              <div style={{ position: "relative", width: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", minHeight: "160px" }}>
                 <AnimatePresence custom={slideDirection} initial={false}>
                   <motion.div
                     key={`hero-text-${heroIndex}`}
@@ -3519,10 +3527,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       center: {
                         x: 0,
                         opacity: 1,
+                        position: "relative",
                       },
                       exit: (dir: number) => ({
                         x: dir > 0 ? -30 : 30,
                         opacity: 0,
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
                       }),
                     }}
                     initial="enter"
@@ -3530,9 +3543,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     exit="exit"
                     transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
                     style={{
-                      gridArea: "1 / 1 / 2 / 2",
                       width: "100%",
                       willChange: "transform, opacity",
+                      transform: "translateZ(0)",
+                      backfaceVisibility: "hidden",
+                      WebkitBackfaceVisibility: "hidden",
                     }}
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.5rem", flexWrap: "nowrap" }}>
