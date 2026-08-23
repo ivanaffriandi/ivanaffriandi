@@ -107,12 +107,16 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutM
 
 async function fetchMediumPosts(): Promise<BlogPost[]> {
   try {
-    const res = await fetchWithTimeout(MEDIUM_FEED_URL, {
+    // 30-second sliding cache buster to ensure edits & updates on Medium are fetched fresh
+    const cacheBustUrl = `${MEDIUM_FEED_URL}?_t=${Math.floor(Date.now() / 30000)}`;
+    const res = await fetchWithTimeout(cacheBustUrl, {
       headers: {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "application/rss+xml, application/xml, text/xml, */*",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
       },
-      next: { revalidate: 60 },
+      cache: "no-store",
     });
 
     if (!res.ok) throw new Error(`Medium RSS HTTP ${res.status}`);
