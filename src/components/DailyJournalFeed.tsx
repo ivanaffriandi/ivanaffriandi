@@ -3506,62 +3506,67 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 </h1>
               </>
             ) : (
-              <AnimatePresence custom={slideDirection} initial={false}>
-                <motion.div
-                  key={`hero-text-${heroIndex}`}
-                  custom={slideDirection}
-                  variants={{
-                    enter: (dir: number) => ({
-                      x: dir > 0 ? 40 : -40,
-                      opacity: 0,
-                    }),
-                    center: {
-                      x: 0,
-                      opacity: 1,
-                    },
-                    exit: (dir: number) => ({
-                      x: dir > 0 ? -40 : 40,
-                      opacity: 0,
-                      position: "absolute",
-                    }),
-                  }}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ duration: 0.38, ease: [0.32, 0.72, 0, 1] }}
-                  style={{ willChange: "transform, opacity", width: "100%" }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.5rem", flexWrap: "nowrap" }}>
-                    <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
-                      {currentFlipCard.isPrologue ? "INTRO NARRATIVE" : currentFlipCard.category}
-                    </span>
-                    {currentFlipCard.date && !currentFlipCard.isPrologue && (
-                      <>
-                        <span style={{ color: "rgba(255, 255, 255, 0.4)", fontSize: "0.65rem" }}>·</span>
-                        <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.65)" }}>
-                          {currentFlipCard.date}
-                        </span>
-                      </>
-                    )}
-                  </div>
-
-                  <h1
-                    className="pj-title"
+              <div style={{ display: "grid", gridTemplateColumns: "100%", width: "100%", position: "relative" }}>
+                <AnimatePresence custom={slideDirection} initial={false}>
+                  <motion.div
+                    key={`hero-text-${heroIndex}`}
+                    custom={slideDirection}
+                    variants={{
+                      enter: (dir: number) => ({
+                        x: dir > 0 ? 30 : -30,
+                        opacity: 0,
+                      }),
+                      center: {
+                        x: 0,
+                        opacity: 1,
+                      },
+                      exit: (dir: number) => ({
+                        x: dir > 0 ? -30 : 30,
+                        opacity: 0,
+                      }),
+                    }}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
                     style={{
-                      fontSize: currentFlipCard.isPrologue ? "2.3rem" : undefined,
-                      fontWeight: currentFlipCard.isPrologue ? 750 : 600,
-                      letterSpacing: currentFlipCard.isPrologue ? "-0.03em" : "-0.02em",
-                      textTransform: currentFlipCard.isPrologue ? "uppercase" : "none",
+                      gridArea: "1 / 1 / 2 / 2",
+                      width: "100%",
+                      willChange: "transform, opacity",
                     }}
                   >
-                    {currentFlipCard.title}
-                  </h1>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.5rem", flexWrap: "nowrap" }}>
+                      <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
+                        {currentFlipCard.isPrologue ? "INTRO NARRATIVE" : currentFlipCard.category}
+                      </span>
+                      {currentFlipCard.date && !currentFlipCard.isPrologue && (
+                        <>
+                          <span style={{ color: "rgba(255, 255, 255, 0.4)", fontSize: "0.65rem" }}>·</span>
+                          <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.65)" }}>
+                            {currentFlipCard.date}
+                          </span>
+                        </>
+                      )}
+                    </div>
 
-                  <p className="pj-excerpt">
-                    {currentFlipCard.excerpt}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
+                    <h1
+                      className="pj-title"
+                      style={{
+                        fontSize: currentFlipCard.isPrologue ? "2.3rem" : undefined,
+                        fontWeight: currentFlipCard.isPrologue ? 750 : 600,
+                        letterSpacing: currentFlipCard.isPrologue ? "-0.03em" : "-0.02em",
+                        textTransform: currentFlipCard.isPrologue ? "uppercase" : "none",
+                      }}
+                    >
+                      {currentFlipCard.title}
+                    </h1>
+
+                    <p className="pj-excerpt">
+                      {currentFlipCard.excerpt}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
             )}
 
             {/* Dots indicator: for article photo gallery when open, or for flipboard in overview mode (MAX 5 VISIBLE STRIPS WINDOW) */}
