@@ -1986,52 +1986,29 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           color: #111111 !important;
         }
 
+        .imessage-bubble-outgoing,
+        .imessage-bubble-outgoing *,
+        .novel-article-reader .imessage-bubble-outgoing,
+        .novel-article-reader .imessage-bubble-outgoing *,
+        .pj-right.theme-light .novel-article-reader .imessage-bubble-outgoing,
+        .pj-right.theme-light .novel-article-reader .imessage-bubble-outgoing *,
+        .pj-right.theme-paper .novel-article-reader .imessage-bubble-outgoing,
+        .pj-right.theme-paper .novel-article-reader .imessage-bubble-outgoing *,
+        .pj-right.theme-dark .novel-article-reader .imessage-bubble-outgoing,
+        .pj-right.theme-dark .novel-article-reader .imessage-bubble-outgoing *,
+        .mobile-reader-modal .imessage-bubble-outgoing,
+        .mobile-reader-modal .imessage-bubble-outgoing * {
+          color: #FFFFFF !important;
+          background: #111113 !important;
+        }
+
         .novel-article-reader .imessage-bubble-outgoing {
-          background: #111111 !important;
           border: 1px solid transparent !important;
           border-radius: 16px 16px 4px 16px !important;
           padding: 0.75rem 1.1rem !important;
           font-size: 0.92rem !important;
           line-height: 1.5 !important;
           max-width: 88% !important;
-        }
-        .novel-article-reader .imessage-bubble-outgoing,
-        .novel-article-reader .imessage-bubble-outgoing * {
-          color: #FFFFFF !important;
-        }
-
-        /* Paper Theme Chat Bubbles */
-        .pj-right.theme-paper .novel-article-reader .imessage-bubble-incoming {
-          background: #E8E3D7 !important;
-          border-color: #DCD6C8 !important;
-        }
-        .pj-right.theme-paper .novel-article-reader .imessage-bubble-incoming,
-        .pj-right.theme-paper .novel-article-reader .imessage-bubble-incoming * {
-          color: #2B2824 !important;
-        }
-        .pj-right.theme-paper .novel-article-reader .imessage-bubble-outgoing {
-          background: #2B2824 !important;
-        }
-        .pj-right.theme-paper .novel-article-reader .imessage-bubble-outgoing,
-        .pj-right.theme-paper .novel-article-reader .imessage-bubble-outgoing * {
-          color: #FAF7F0 !important;
-        }
-
-        /* Dark Theme Chat Bubbles */
-        .pj-right.theme-dark .novel-article-reader .imessage-bubble-incoming {
-          background: rgba(255, 255, 255, 0.12) !important;
-          border-color: rgba(255, 255, 255, 0.16) !important;
-        }
-        .pj-right.theme-dark .novel-article-reader .imessage-bubble-incoming,
-        .pj-right.theme-dark .novel-article-reader .imessage-bubble-incoming * {
-          color: #EDEDF0 !important;
-        }
-        .pj-right.theme-dark .novel-article-reader .imessage-bubble-outgoing {
-          background: #EDEDF0 !important;
-        }
-        .pj-right.theme-dark .novel-article-reader .imessage-bubble-outgoing,
-        .pj-right.theme-dark .novel-article-reader .imessage-bubble-outgoing * {
-          color: #121316 !important;
         }
         .pj-right.theme-dark .imessage-sender-tag {
           color: rgba(255, 255, 255, 0.6) !important;
@@ -3483,14 +3460,18 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   zIndex: 1,
                 }}
               >
-                <div
+                <motion.div
+                  animate={{ x: `-${(heroIndex % flipboardCards.length) * 100}%` }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 280,
+                    damping: 28,
+                    mass: 0.8,
+                  }}
                   style={{
                     display: "flex",
-                    width: `${flipboardCards.length * 100}%`,
+                    width: "100%",
                     height: "100%",
-                    transform: `translate3d(-${(heroIndex % flipboardCards.length) * (100 / flipboardCards.length)}%, 0, 0)`,
-                    transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-                    willChange: "transform",
                   }}
                 >
                   {flipboardCards.map((card, idx) => (
@@ -3498,7 +3479,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       key={card.id || idx}
                       style={{
                         position: "relative",
-                        width: `${100 / flipboardCards.length}%`,
+                        width: "100%",
                         height: "100%",
                         flexShrink: 0,
                         overflow: "hidden",
@@ -3595,7 +3576,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       </div>
                     </div>
                   ))}
-                </div>
+                </motion.div>
               </div>
 
               {/* Dots indicator for flipboard overview mode */}
@@ -3979,7 +3960,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         <div
                           className="imessage-bubble-outgoing"
                           style={{
-                            background: readerTheme === "dark" ? "#3A3A3C" : "#111113",
+                            background: "#111113",
                             color: "#FFFFFF",
                             padding: "0.8rem 1.15rem",
                             borderRadius: "18px 18px 4px 18px",
@@ -3988,7 +3969,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                             maxWidth: "85%",
                           }}
                         >
-                          Not to try and stop time, but to remember that we were truly alive within it. To me, reading and observing things slowly is the only anchor keeping us from losing ourselves.
+                          <span style={{ color: "#FFFFFF !important", display: "inline-block" }}>
+                            Not to try and stop time, but to remember that we were truly alive within it. To me, reading and observing things slowly is the only anchor keeping us from losing ourselves.
+                          </span>
                         </div>
                       </div>
                     </div>
