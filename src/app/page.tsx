@@ -56,17 +56,14 @@ const CREATIVE_STUDIOS = [
   {
     name: "SHŪ / EN",
     url: "https://shuenstudio.com",
-    icon: "🧵",
   },
   {
     name: "KVR Objects",
     url: "https://kvr-objects.com",
-    icon: "✦",
   },
   {
     name: "Equilibrium",
     url: "https://equilibriumians.com",
-    icon: "🎓",
   },
 ];
 
@@ -299,9 +296,8 @@ export default function AvantGardeHomepage() {
   const handleHeadTap = () => {
     getAudioContext();
     headControls.start({
-      scale: [1, 0.86, 1.16, 0.94, 1.04, 1],
-      rotate: [0, -12, 10, -5, 2, 0],
-      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+      rotate: [0, -10, 8, -4, 2, 0],
+      transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
     });
 
     try {
@@ -397,17 +393,17 @@ export default function AvantGardeHomepage() {
               }}
               transition={{
                 type: "spring",
-                stiffness: 380,
-                damping: 26,
-                mass: 0.8,
+                stiffness: 260,
+                damping: 22,
+                mass: 0.7,
               }}
-              whileHover={{ scale: (isCompactHero ? 0.72 : 1) * 1.05 }}
-              whileTap={{ scale: (isCompactHero ? 0.72 : 1) * 0.92 }}
+              whileTap={{ scale: (isCompactHero ? 0.72 : 1) * 0.94 }}
               onClick={handleHeadTap}
               className={styles.bigHeadTapWrap}
               title="Tap me!"
             >
-              <img
+              <motion.img
+                animate={headControls}
                 src="/ivan-head.png"
                 alt="Ivan Affriandi"
                 className={styles.bigHeadTapImg}
@@ -480,7 +476,6 @@ export default function AvantGardeHomepage() {
                     className={styles.horizontalStudioItem}
                     title={studio.name}
                   >
-                    <span className={styles.horizontalStudioIcon}>{studio.icon}</span>
                     <span>{studio.name}</span>
                     <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className={styles.horizontalStudioChevron}>
                       <path d="M7 17L17 7M17 7H7M17 7V17" />

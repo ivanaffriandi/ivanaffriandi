@@ -503,7 +503,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 8px;
   width: 100%;
   max-width: 340px;
   margin-top: 6px;
@@ -514,8 +514,8 @@
 .horizontalStudioItem {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 11px;
+  gap: 5px;
+  padding: 6px 13px;
   border-radius: 9999px;
   background: var(--h-journal-pill-bg);
   backdrop-filter: blur(20px);
@@ -524,7 +524,7 @@
   box-shadow: var(--h-journal-pill-shadow);
   text-decoration: none;
   color: var(--h-text);
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: -0.01em;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -540,11 +540,6 @@
 
 .horizontalStudioItem:active {
   transform: scale(0.96);
-}
-
-.horizontalStudioIcon {
-  font-size: 0.76rem;
-  line-height: 1;
 }
 
 .horizontalStudioChevron {
