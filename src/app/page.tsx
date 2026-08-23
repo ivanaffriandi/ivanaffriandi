@@ -47,8 +47,7 @@ const MinimalCloseIcon = () => (
 const FUN_PHRASES = [
   "Hi, I'm Ivan! A UI/UX designer & writer based in Jakarta.",
   "Here are a few recent stories from my journal:",
-  "I also handcraft bespoke leather goods in my studio.",
-  "Probably foraging wild mushrooms in the forest right now.",
+  "I also handcraft bespoke leather goods & forage wild mushrooms in the forest.",
   "Here is my full technical & craft matrix:",
   "Tap my head to loop back :)",
 ];
@@ -204,7 +203,24 @@ export default function AvantGardeHomepage() {
   const headControls = useAnimation();
 
   const currentFullText = FUN_PHRASES[phraseIndex];
-  const isMarqueeActive = phraseIndex === 4; // State for "Here is my full technical & craft matrix:"
+  const isMarqueeActive = phraseIndex === 3; // State for "Here is my full technical & craft matrix:"
+
+  // Mushroom animation celebration when typing reaches "mushroom"
+  useEffect(() => {
+    if (phraseIndex === 2 && displayText.toLowerCase().includes('mushroom')) {
+      try {
+        confetti({
+          particleCount: 45,
+          spread: 65,
+          origin: { y: 0.58 },
+          colors: ['#e63946', '#2a9d8f', '#ffffff', '#e9c46a', '#f4a261'],
+          disableForReducedMotion: true,
+        });
+      } catch {
+        // safe fallback
+      }
+    }
+  }, [displayText, phraseIndex]);
 
   // Fetch latest blog posts for compact preview
   useEffect(() => {
@@ -405,22 +421,23 @@ export default function AvantGardeHomepage() {
                 {displayPosts.slice(0, 3).map((post, idx) => {
                   const cover = extractCoverImage(post.content) || (idx === 0 ? "/nature_hero.png" : idx === 1 ? "/leather_banner.png" : "/tea_banner.png");
                   const dateStr = post.published ? new Date(post.published).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Recent";
+                  const cleanTitle = post.title.replace(/^Chapter\s*\d+\s*:\s*/i, "").trim();
                   
                   return (
                     <a
                       key={post.id || idx}
                       href="https://blog.ivanaffriandi.com"
                       className={styles.compactBlogItem}
-                      title={post.title}
+                      title={cleanTitle}
                     >
                       <div className={styles.compactBlogThumbWrap}>
-                        <img src={cover} alt={post.title} className={styles.compactBlogThumbImg} />
+                        <img src={cover} alt={cleanTitle} className={styles.compactBlogThumbImg} />
                       </div>
                       <div className={styles.compactBlogInfo}>
-                        <h4 className={styles.compactBlogTitle}>{post.title}</h4>
-                        <span className={styles.compactBlogMeta}>Chapter 0{3 - idx} · {dateStr}</span>
+                        <h4 className={styles.compactBlogTitle}>{cleanTitle}</h4>
+                        <span className={styles.compactBlogMeta}>{dateStr}</span>
                       </div>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className={styles.compactBlogChevron}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={styles.compactBlogChevron}>
                         <polyline points="9 18 15 12 9 6" />
                       </svg>
                     </a>
