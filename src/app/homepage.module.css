@@ -438,6 +438,21 @@
   object-fit: cover;
 }
 
+.compactStudioIconWrap {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  flex-shrink: 0;
+  background: var(--h-journal-date-bg);
+  border: 1px solid var(--h-journal-pill-border);
+  color: var(--h-text);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
 .compactBlogInfo {
   display: flex;
   align-items: center;

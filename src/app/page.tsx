@@ -47,9 +47,30 @@ const MinimalCloseIcon = () => (
 const FUN_PHRASES = [
   "Hi, I'm Ivan! A UI/UX designer & writer based in Jakarta.",
   "Here are a few recent stories from my journal:",
-  "I also handcraft bespoke leather goods & forage wild mushrooms in the forest.",
+  "I also craft bespoke leather, silver goods, & run creative studios:",
   "Here is my full technical & craft matrix:",
   "Tap my head to loop back :)",
+];
+
+const CREATIVE_STUDIOS = [
+  {
+    name: "SHŪ / EN Studio",
+    tag: "Leather Atelier",
+    url: "https://shuenstudio.com",
+    icon: "🧵",
+  },
+  {
+    name: "KVR Objects",
+    tag: "925 Silver & Metal",
+    url: "https://kvr-objects.com",
+    icon: "✦",
+  },
+  {
+    name: "Equilibrium Academy",
+    tag: "Design & Research",
+    url: "https://equilibriumians.com",
+    icon: "◎",
+  },
 ];
 
 function extractCoverImage(html: string): string | null {
@@ -204,35 +225,7 @@ export default function AvantGardeHomepage() {
 
   const currentFullText = FUN_PHRASES[phraseIndex];
   const isMarqueeActive = phraseIndex === 3; // State for "Here is my full technical & craft matrix:"
-  const [showMushroomParticles, setShowMushroomParticles] = useState<boolean>(false);
-  const mushroomTriggeredRef = React.useRef<boolean>(false);
-
-  // Mushroom animation celebration when typing reaches "mushroom"
-  useEffect(() => {
-    if (phraseIndex === 2) {
-      if (!mushroomTriggeredRef.current && displayText.toLowerCase().includes('mushroom')) {
-        mushroomTriggeredRef.current = true;
-        setShowMushroomParticles(true);
-        setTimeout(() => setShowMushroomParticles(false), 2400);
-
-        try {
-          confetti({
-            particleCount: 65,
-            spread: 75,
-            origin: { y: 0.62 },
-            colors: ['#ff3b30', '#34c759', '#ffcc00', '#5856d6', '#ffffff'],
-            ticks: 180,
-            gravity: 0.85,
-          });
-        } catch {
-          // safe fallback
-        }
-      }
-    } else {
-      mushroomTriggeredRef.current = false;
-      setShowMushroomParticles(false);
-    }
-  }, [displayText, phraseIndex]);
+  const isCompactHero = phraseIndex === 1 || phraseIndex === 2;
 
   // Fetch latest blog posts for compact preview
   useEffect(() => {
@@ -402,8 +395,8 @@ export default function AvantGardeHomepage() {
           <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <motion.div
               animate={{
-                scale: phraseIndex === 1 ? 0.72 : 1,
-                y: phraseIndex === 1 ? -6 : 0,
+                scale: isCompactHero ? 0.72 : 1,
+                y: isCompactHero ? -6 : 0,
               }}
               transition={{
                 type: "spring",
@@ -411,8 +404,8 @@ export default function AvantGardeHomepage() {
                 damping: 26,
                 mass: 0.8,
               }}
-              whileHover={{ scale: (phraseIndex === 1 ? 0.72 : 1) * 1.05 }}
-              whileTap={{ scale: (phraseIndex === 1 ? 0.72 : 1) * 0.92 }}
+              whileHover={{ scale: (isCompactHero ? 0.72 : 1) * 1.05 }}
+              whileTap={{ scale: (isCompactHero ? 0.72 : 1) * 0.92 }}
               onClick={handleHeadTap}
               className={styles.bigHeadTapWrap}
               title="Tap me!"
@@ -423,78 +416,6 @@ export default function AvantGardeHomepage() {
                 className={styles.bigHeadTapImg}
               />
             </motion.div>
-
-            {/* DENSE & LIVELY MUSHROOM + SPARKLE BURST (RAME & CUTE!) */}
-            <AnimatePresence>
-              {showMushroomParticles && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "0px",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    width: "0px",
-                    height: "0px",
-                    pointerEvents: "none",
-                    zIndex: 999,
-                  }}
-                >
-                  {[
-                    // Center high fountain
-                    { id: 1, x: 0, y: -130, rotate: 0, delay: 0, size: "1.45rem", emoji: "🍄" },
-                    { id: 2, x: -22, y: -150, rotate: -10, delay: 0.02, size: "1.2rem", emoji: "🍄" },
-                    { id: 3, x: 22, y: -145, rotate: 10, delay: 0.03, size: "1.25rem", emoji: "🍄" },
-                    // Left arc
-                    { id: 4, x: -48, y: -115, rotate: -18, delay: 0.01, size: "1.35rem", emoji: "🍄" },
-                    { id: 5, x: -78, y: -95, rotate: -26, delay: 0.03, size: "1.15rem", emoji: "🍄" },
-                    { id: 6, x: -108, y: -70, rotate: -36, delay: 0.04, size: "1.3rem", emoji: "🍄" },
-                    { id: 7, x: -135, y: -40, rotate: -45, delay: 0.06, size: "1.05rem", emoji: "🍄" },
-                    { id: 8, x: -62, y: -135, rotate: -15, delay: 0.05, size: "1.1rem", emoji: "🍄" },
-                    // Right arc
-                    { id: 9, x: 48, y: -120, rotate: 18, delay: 0.01, size: "1.35rem", emoji: "🍄" },
-                    { id: 10, x: 78, y: -100, rotate: 26, delay: 0.03, size: "1.15rem", emoji: "🍄" },
-                    { id: 11, x: 108, y: -75, rotate: 36, delay: 0.04, size: "1.3rem", emoji: "🍄" },
-                    { id: 12, x: 135, y: -45, rotate: 45, delay: 0.06, size: "1.05rem", emoji: "🍄" },
-                    { id: 13, x: 62, y: -140, rotate: 15, delay: 0.05, size: "1.1rem", emoji: "🍄" },
-                    // Sparkle accents ✨
-                    { id: 14, x: -32, y: -80, rotate: 12, delay: 0.02, size: "1.0rem", emoji: "✨" },
-                    { id: 15, x: 32, y: -85, rotate: -12, delay: 0.03, size: "1.0rem", emoji: "✨" },
-                    { id: 16, x: -92, y: -110, rotate: 20, delay: 0.05, size: "0.95rem", emoji: "✨" },
-                    { id: 17, x: 92, y: -115, rotate: -20, delay: 0.05, size: "0.95rem", emoji: "✨" },
-                    { id: 18, x: 0, y: -85, rotate: 0, delay: 0.01, size: "1.1rem", emoji: "✨" },
-                  ].map((item) => (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, y: 0, x: 0, scale: 0.1, rotate: 0 }}
-                      animate={{
-                        opacity: [0, 1, 1, 0],
-                        y: [0, item.y * 1.15, item.y],
-                        x: [0, item.x * 1.1, item.x],
-                        scale: [0.1, 1.25, 1, 0.7],
-                        rotate: item.rotate,
-                      }}
-                      exit={{ opacity: 0, scale: 0 }}
-                      transition={{
-                        duration: 1.35,
-                        delay: item.delay,
-                        ease: [0.16, 1, 0.3, 1],
-                      }}
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        fontSize: item.size,
-                        lineHeight: 1,
-                        filter: "drop-shadow(0 6px 16px rgba(0,0,0,0.22))",
-                        transform: "translate(-50%, -50%)",
-                      }}
-                    >
-                      {item.emoji}
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </AnimatePresence>
           </div>
 
           <div className={styles.typewriterTextWrap} onClick={handleHeadTap}>
@@ -539,6 +460,41 @@ export default function AvantGardeHomepage() {
                     </a>
                   );
                 })}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* COMPACT CREATIVE STUDIOS WIDGET (APPEARS ON PHRASE 2) */}
+          <AnimatePresence>
+            {phraseIndex === 2 && (
+              <motion.div
+                initial={{ opacity: 0, y: 14, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 14, scale: 0.97 }}
+                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                className={styles.compactBlogsContainer}
+              >
+                {CREATIVE_STUDIOS.map((studio, idx) => (
+                  <a
+                    key={idx}
+                    href={studio.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.compactBlogItem}
+                    title={studio.name}
+                  >
+                    <div className={styles.compactStudioIconWrap}>
+                      <span>{studio.icon}</span>
+                    </div>
+                    <div className={styles.compactBlogInfo}>
+                      <h4 className={styles.compactBlogTitle}>{studio.name}</h4>
+                      <span className={styles.compactBlogMeta}>{studio.tag}</span>
+                    </div>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={styles.compactBlogChevron}>
+                      <path d="M7 17L17 7M17 7H7M17 7V17" />
+                    </svg>
+                  </a>
+                ))}
               </motion.div>
             )}
           </AnimatePresence>
