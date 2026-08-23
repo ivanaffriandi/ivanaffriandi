@@ -3369,118 +3369,57 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             </div>
           </div>
 
-          {/* SOLID IMAGE LAYER WITH SMOOTH SLIDE TRANSITION */}
-          <div
-            className="pj-photo-layer"
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              zIndex: 1,
-              overflow: "hidden",
-              background: "#0c0d0e",
-              transform: "translate3d(0, 0, 0)",
-              WebkitTransform: "translate3d(0, 0, 0)",
-              backfaceVisibility: "hidden",
-              WebkitBackfaceVisibility: "hidden",
-            }}
-          >
-            {isReadingPrologue || selectedPost ? (
-              <img
-                src={isReadingPrologue ? "/nature_hero.png" : selectedPostImages[postPhotoIndex % selectedPostImages.length]}
-                alt={isReadingPrologue ? "Prologue" : selectedPost ? selectedPost.title : "Hero"}
+          {/* ── UNIFIED PHYSICAL HARDWARE-ACCELERATED CAROUSEL TRACK (ZERO-FLICKER / ZERO-GLITCH) ── */}
+          {isReadingPrologue || selectedPost ? (
+            <>
+              {/* Opened Article Static Photo Layer */}
+              <div
+                className="pj-photo-layer"
                 style={{
+                  position: "absolute",
+                  inset: 0,
                   width: "100%",
                   height: "100%",
-                  objectFit: "cover",
-                  objectPosition: "center",
-                  display: "block",
+                  zIndex: 1,
+                  overflow: "hidden",
+                  background: "#0c0d0e",
                 }}
-              />
-            ) : (
-              <AnimatePresence custom={slideDirection} initial={false}>
-                <motion.img
-                  key={`hero-img-${heroIndex}`}
-                  src={currentFlipCard.img}
-                  alt={currentFlipCard.title}
-                  custom={slideDirection}
-                  variants={{
-                    enter: (dir: number) => ({
-                      x: dir > 0 ? "100%" : "-100%",
-                      opacity: 1,
-                    }),
-                    center: {
-                      x: "0%",
-                      opacity: 1,
-                    },
-                    exit: (dir: number) => ({
-                      x: dir > 0 ? "-100%" : "100%",
-                      opacity: 1,
-                    }),
-                  }}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ duration: 0.38, ease: [0.32, 0.72, 0, 1] }}
+              >
+                <img
+                  src={isReadingPrologue ? "/nature_hero.png" : selectedPostImages[postPhotoIndex % selectedPostImages.length]}
+                  alt={isReadingPrologue ? "Prologue" : selectedPost ? selectedPost.title : "Hero"}
                   style={{
-                    position: "absolute",
-                    inset: 0,
                     width: "100%",
                     height: "100%",
                     objectFit: "cover",
                     objectPosition: "center",
                     display: "block",
-                    willChange: "transform",
-                    transform: "translate3d(0, 0, 0)",
-                    WebkitTransform: "translate3d(0, 0, 0)",
-                    backfaceVisibility: "hidden",
-                    WebkitBackfaceVisibility: "hidden",
                   }}
                 />
-              </AnimatePresence>
-            )}
-          </div>
+              </div>
 
-          <div
-            className="pj-overlay"
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              background: "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.92) 100%)",
-              zIndex: 2,
-              pointerEvents: "none",
-            }}
-          />
+              {/* Cinematic Vignette Gradient Overlay */}
+              <div
+                className="pj-overlay"
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  background: "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.92) 100%)",
+                  zIndex: 2,
+                  pointerEvents: "none",
+                }}
+              />
 
-          <div
-            className="pj-left-content"
-            style={{
-              zIndex: 3,
-              cursor: !selectedPost && !isReadingPrologue ? "pointer" : "default",
-            }}
-            onClick={(e) => {
-              if (!selectedPost && !isReadingPrologue) {
-                e.stopPropagation();
-                if (currentFlipCard.isPrologue) {
-                  setIsReadingPrologue(true);
-                  setSelectedPostIndex(null);
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                } else if (currentFlipCard.post) {
-                  setIsReadingPrologue(false);
-                  const idx = sortedPosts.findIndex((p) => p.id === currentFlipCard.post.id);
-                  if (idx !== -1) {
-                    setSelectedPostIndex(idx);
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }
-                }
-              }
-            }}
-          >
-            {isReadingPrologue || selectedPost ? (
-              <>
+              {/* Opened Article Title & Meta Overlay */}
+              <div
+                className="pj-left-content"
+                style={{
+                  zIndex: 3,
+                  cursor: "default",
+                }}
+              >
                 <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.5rem", flexWrap: "nowrap" }}>
                   <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
                     {isReadingPrologue
@@ -3512,135 +3451,207 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     ? selectedPost.title
                     : currentFlipCard.title}
                 </h1>
-              </>
-            ) : (
-              <div style={{ position: "relative", width: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", minHeight: "160px" }}>
-                <AnimatePresence custom={slideDirection} initial={false}>
-                  <motion.div
-                    key={`hero-text-${heroIndex}`}
-                    custom={slideDirection}
-                    variants={{
-                      enter: (dir: number) => ({
-                        x: dir > 0 ? 30 : -30,
-                        opacity: 0,
-                      }),
-                      center: {
-                        x: 0,
-                        opacity: 1,
-                        position: "relative",
-                      },
-                      exit: (dir: number) => ({
-                        x: dir > 0 ? -30 : 30,
-                        opacity: 0,
-                        position: "absolute",
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                      }),
-                    }}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-                    style={{
-                      width: "100%",
-                      willChange: "transform, opacity",
-                      transform: "translateZ(0)",
-                      backfaceVisibility: "hidden",
-                      WebkitBackfaceVisibility: "hidden",
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.5rem", flexWrap: "nowrap" }}>
-                      <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
-                        {currentFlipCard.isPrologue ? "INTRO NARRATIVE" : currentFlipCard.category}
-                      </span>
-                      {currentFlipCard.date && !currentFlipCard.isPrologue && (
-                        <>
-                          <span style={{ color: "rgba(255, 255, 255, 0.4)", fontSize: "0.65rem" }}>·</span>
-                          <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.65)" }}>
-                            {currentFlipCard.date}
-                          </span>
-                        </>
-                      )}
-                    </div>
 
-                    <h1
-                      className="pj-title"
+                {/* Photo gallery dots when article is open */}
+                {selectedPost && selectedPostImages.length > 1 && (
+                  <div className="pj-dots" style={{ marginTop: "1.4rem" }}>
+                    {selectedPostImages.map((_, i) => (
+                      <div
+                        key={i}
+                        className={`pj-dot${i === (postPhotoIndex % selectedPostImages.length) ? " active" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPostPhotoIndex(i);
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Continuous Track containing all cards in DOM - 100% immune to flickers/glitches */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  overflow: "hidden",
+                  background: "#0c0d0e",
+                  zIndex: 1,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    width: `${flipboardCards.length * 100}%`,
+                    height: "100%",
+                    transform: `translate3d(-${(heroIndex % flipboardCards.length) * (100 / flipboardCards.length)}%, 0, 0)`,
+                    transition: "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                    willChange: "transform",
+                  }}
+                >
+                  {flipboardCards.map((card, idx) => (
+                    <div
+                      key={card.id || idx}
                       style={{
-                        fontSize: currentFlipCard.isPrologue ? "2.3rem" : undefined,
-                        fontWeight: currentFlipCard.isPrologue ? 750 : 600,
-                        letterSpacing: currentFlipCard.isPrologue ? "-0.03em" : "-0.02em",
-                        textTransform: currentFlipCard.isPrologue ? "uppercase" : "none",
+                        position: "relative",
+                        width: `${100 / flipboardCards.length}%`,
+                        height: "100%",
+                        flexShrink: 0,
+                        overflow: "hidden",
+                        cursor: "pointer",
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (card.isPrologue) {
+                          setIsReadingPrologue(true);
+                          setSelectedPostIndex(null);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        } else if (card.post) {
+                          setIsReadingPrologue(false);
+                          const pIdx = sortedPosts.findIndex((p) => p.id === card.post.id);
+                          if (pIdx !== -1) {
+                            setSelectedPostIndex(pIdx);
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                          }
+                        }
                       }}
                     >
-                      {currentFlipCard.title}
-                    </h1>
-
-                    <p className="pj-excerpt">
-                      {currentFlipCard.excerpt}
-                    </p>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            )}
-
-            {/* Dots indicator: for article photo gallery when open, or for flipboard in overview mode (MAX 5 VISIBLE STRIPS WINDOW) */}
-            {selectedPost && selectedPostImages.length > 1 ? (
-              <div className="pj-dots" style={{ marginTop: "1.4rem" }}>
-                {selectedPostImages.map((_, i) => (
-                  <div
-                    key={i}
-                    className={`pj-dot${i === (postPhotoIndex % selectedPostImages.length) ? " active" : ""}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setPostPhotoIndex(i);
-                    }}
-                  />
-                ))}
-              </div>
-            ) : !selectedPost && !isReadingPrologue && flipboardCards.length > 1 ? (
-              <div className="pj-dots" style={{ marginTop: "1.4rem" }}>
-                {(() => {
-                  const total = flipboardCards.length;
-                  if (total <= 5) {
-                    return flipboardCards.map((_, i) => (
-                      <div
-                        key={i}
-                        className={`pj-dot${i === (heroIndex % total) ? " active" : ""}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSlideDirection(i > heroIndex ? 1 : -1);
-                          setHeroIndex(i);
+                      {/* Cover Photo */}
+                      <img
+                        src={card.img}
+                        alt={card.title}
+                        loading={idx < 3 ? "eager" : "lazy"}
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          objectPosition: "center",
+                          display: "block",
                         }}
                       />
-                    ));
-                  }
-                  const current = heroIndex % total;
-                  let start = Math.max(0, current - 2);
-                  let end = start + 5;
-                  if (end > total) {
-                    end = total;
-                    start = Math.max(0, end - 5);
-                  }
-                  const visibleDots = [];
-                  for (let i = start; i < end; i++) {
-                    visibleDots.push(
+
+                      {/* Cinematic Vignette Gradient */}
                       <div
-                        key={i}
-                        className={`pj-dot${i === current ? " active" : ""}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSlideDirection(i > heroIndex ? 1 : -1);
-                          setHeroIndex(i);
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          width: "100%",
+                          height: "100%",
+                          background: "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.92) 100%)",
+                          pointerEvents: "none",
                         }}
                       />
-                    );
-                  }
-                  return visibleDots;
-                })()}
+
+                      {/* Title & Metadata */}
+                      <div
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          width: "100%",
+                          height: "100%",
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "flex-end",
+                          padding: "3.5rem clamp(1.5rem, 5vw, 4rem) calc(env(safe-area-inset-bottom, 24px) + 56px)",
+                          boxSizing: "border-box",
+                          pointerEvents: "none",
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.5rem", flexWrap: "nowrap" }}>
+                          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
+                            {card.isPrologue ? "INTRO NARRATIVE" : card.category}
+                          </span>
+                          {card.date && !card.isPrologue && (
+                            <>
+                              <span style={{ color: "rgba(255, 255, 255, 0.4)", fontSize: "0.65rem" }}>·</span>
+                              <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.65)" }}>
+                                {card.date}
+                              </span>
+                            </>
+                          )}
+                        </div>
+
+                        <h1
+                          className="pj-title"
+                          style={{
+                            fontSize: card.isPrologue ? "2.3rem" : undefined,
+                            fontWeight: card.isPrologue ? 750 : 600,
+                            letterSpacing: card.isPrologue ? "-0.03em" : "-0.02em",
+                            textTransform: card.isPrologue ? "uppercase" : "none",
+                          }}
+                        >
+                          {card.title}
+                        </h1>
+
+                        <p className="pj-excerpt">
+                          {card.excerpt}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ) : null}
-          </div>
+
+              {/* Dots indicator for flipboard overview mode */}
+              {flipboardCards.length > 1 && (
+                <div
+                  className="pj-dots"
+                  style={{
+                    position: "absolute",
+                    bottom: "calc(env(safe-area-inset-bottom, 24px) + 24px)",
+                    left: "clamp(1.5rem, 5vw, 4rem)",
+                    zIndex: 40,
+                    margin: 0,
+                  }}
+                >
+                  {(() => {
+                    const total = flipboardCards.length;
+                    if (total <= 5) {
+                      return flipboardCards.map((_, i) => (
+                        <div
+                          key={i}
+                          className={`pj-dot${i === (heroIndex % total) ? " active" : ""}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSlideDirection(i > heroIndex ? 1 : -1);
+                            setHeroIndex(i);
+                          }}
+                        />
+                      ));
+                    }
+                    const current = heroIndex % total;
+                    let start = Math.max(0, current - 2);
+                    let end = start + 5;
+                    if (end > total) {
+                      end = total;
+                      start = Math.max(0, end - 5);
+                    }
+                    const visibleDots = [];
+                    for (let i = start; i < end; i++) {
+                      visibleDots.push(
+                        <div
+                          key={i}
+                          className={`pj-dot${i === current ? " active" : ""}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSlideDirection(i > heroIndex ? 1 : -1);
+                            setHeroIndex(i);
+                          }}
+                        />
+                      );
+                    }
+                    return visibleDots;
+                  })()}
+                </div>
+              )}
+            </>
+          )}
 
           {/* DESKTOP/MOBILE COMPACT PREV/NEXT OVERVIEW HERO CONTROLS */}
           {!selectedPost && !isReadingPrologue && flipboardCards.length > 1 && (
