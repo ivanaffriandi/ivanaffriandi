@@ -308,8 +308,8 @@
 }
 
 .bigHeadTapWrap {
-  width: clamp(140px, 36vw, 195px);
-  height: clamp(140px, 36vw, 195px);
+  width: clamp(130px, 34vw, 185px);
+  height: clamp(130px, 34vw, 185px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -317,6 +317,12 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   z-index: 2;
+  transition: width 0.32s cubic-bezier(0.16, 1, 0.3, 1), height 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bigHeadTapWrapCompact {
+  width: clamp(72px, 18vw, 92px);
+  height: clamp(72px, 18vw, 92px);
 }
 
 .bigHeadTapImg {
@@ -331,7 +337,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 64px;
+  min-height: 52px;
   text-align: center;
   padding: 0 12px;
   cursor: pointer;
@@ -343,7 +349,7 @@
 
 .handwritingText {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
-  font-size: clamp(1.1rem, 3.8vw, 1.35rem);
+  font-size: clamp(1.05rem, 3.6vw, 1.3rem);
   font-weight: 850;
   letter-spacing: -0.03em;
   color: var(--h-text);
@@ -369,6 +375,94 @@
 @keyframes caretBlinkInfinite {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
+}
+
+/* ── COMPACT RECENT 3 BLOG ENTRIES ── */
+.compactBlogsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 2px;
+  z-index: 2;
+}
+
+.compactBlogItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: var(--h-pill-bg);
+  border: 1px solid var(--h-border);
+  text-decoration: none;
+  color: var(--h-text);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.compactBlogItem:hover {
+  transform: translateY(-1px);
+  background: var(--h-pill-hover);
+  border-color: var(--h-text);
+}
+
+.compactBlogItem:active {
+  transform: scale(0.98);
+}
+
+.compactBlogThumbWrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #18181d;
+}
+
+.compactBlogThumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.compactBlogInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.compactBlogTitle {
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0;
+  color: var(--h-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.compactBlogMeta {
+  font-size: 0.58rem;
+  font-weight: 500;
+  color: var(--h-text-muted);
+  line-height: 1;
+}
+
+.compactBlogChevron {
+  color: var(--h-text-sub);
+  flex-shrink: 0;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.compactBlogItem:hover .compactBlogChevron {
+  transform: translateX(2px);
+  color: var(--h-text);
 }
 
 .tapHintText {

@@ -45,15 +45,22 @@ const MinimalCloseIcon = () => (
 
 // Casual, easy-to-understand English phrases
 const FUN_PHRASES = [
-  "Hi, I'm Ivan!",
-  "UI/UX Designer & Writer.",
-  "I design clean apps and write about stuff.",
-  "Big fan of minimalism and fast websites.",
-  "I also handcraft leather goods in my studio.",
-  "Probably foraging wild mushrooms right now.",
+  "Hi, I'm Ivan! A UI/UX designer & writer based in Jakarta.",
+  "Here are a few recent stories from my journal:",
+  "I also handcraft bespoke leather goods in my studio.",
+  "Probably foraging wild mushrooms in the forest right now.",
   "Here is my full technical & craft matrix:",
-  "Tap my head again :)",
+  "Tap my head to loop back :)",
 ];
+
+function extractCoverImage(html: string): string | null {
+  if (!html) return null;
+  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+  if (!match) return null;
+  let url = match[1];
+  url = url.replace(/\/s\d+(-c)?\//, "/s1600/").replace(/\/w\d+-h\d+(-c)?\//, "/s1600/");
+  return url;
+}
 
 // Ultra-dense matrix dataset for 34 continuous running rows
 const MATRIX_ROWS = [
@@ -193,10 +200,46 @@ export default function AvantGardeHomepage() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [phraseIndex, setPhraseIndex] = useState<number>(0);
   const [displayText, setDisplayText] = useState<string>('');
+  const [latestPosts, setLatestPosts] = useState<any[]>([]);
   const headControls = useAnimation();
 
   const currentFullText = FUN_PHRASES[phraseIndex];
-  const isMarqueeActive = phraseIndex === 6; // State right before "Tap my head again :)"
+  const isMarqueeActive = phraseIndex === 4; // State for "Here is my full technical & craft matrix:"
+
+  // Fetch latest blog posts for compact preview
+  useEffect(() => {
+    fetch('/api/posts')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.posts) && data.posts.length > 0) {
+          setLatestPosts(data.posts.slice(0, 3));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const fallbackPosts = [
+    {
+      id: "nature-hero",
+      title: "A Quiet Corner on the Internet",
+      published: "2026-08-20T00:00:00.000Z",
+      content: '<img src="/nature_hero.png" />',
+    },
+    {
+      id: "minimalism-matters",
+      title: "Why Minimalism Matters in Modern UI",
+      published: "2026-08-15T00:00:00.000Z",
+      content: '<img src="/leather_banner.png" />',
+    },
+    {
+      id: "swiss-design",
+      title: "The Essence of Swiss Design & Craftsmanship",
+      published: "2026-08-10T00:00:00.000Z",
+      content: '<img src="/tea_banner.png" />',
+    },
+  ];
+
+  const displayPosts = latestPosts.length > 0 ? latestPosts : fallbackPosts;
 
   // Lock body & html scrolling completely on iPhone / Mobile browsers
   useEffect(() => {
@@ -332,7 +375,7 @@ export default function AvantGardeHomepage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.92 }}
             onClick={handleHeadTap}
-            className={styles.bigHeadTapWrap}
+            className={`${styles.bigHeadTapWrap}${phraseIndex === 1 ? ` ${styles.bigHeadTapWrapCompact}` : ''}`}
             title="Tap me!"
           >
             <img
@@ -348,6 +391,44 @@ export default function AvantGardeHomepage() {
               <span className={styles.typingCaret} />
             </span>
           </div>
+
+          {/* COMPACT RECENT 3 BLOGS WIDGET (APPEARS ON PHRASE 1) */}
+          <AnimatePresence>
+            {phraseIndex === 1 && (
+              <motion.div
+                initial={{ opacity: 0, y: 12, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 12, scale: 0.97 }}
+                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                className={styles.compactBlogsContainer}
+              >
+                {displayPosts.slice(0, 3).map((post, idx) => {
+                  const cover = extractCoverImage(post.content) || (idx === 0 ? "/nature_hero.png" : idx === 1 ? "/leather_banner.png" : "/tea_banner.png");
+                  const dateStr = post.published ? new Date(post.published).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Recent";
+                  
+                  return (
+                    <a
+                      key={post.id || idx}
+                      href="https://blog.ivanaffriandi.com"
+                      className={styles.compactBlogItem}
+                      title={post.title}
+                    >
+                      <div className={styles.compactBlogThumbWrap}>
+                        <img src={cover} alt={post.title} className={styles.compactBlogThumbImg} />
+                      </div>
+                      <div className={styles.compactBlogInfo}>
+                        <h4 className={styles.compactBlogTitle}>{post.title}</h4>
+                        <span className={styles.compactBlogMeta}>Chapter 0{3 - idx} · {dateStr}</span>
+                      </div>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className={styles.compactBlogChevron}>
+                        <polyline points="9 18 15 12 9 6" />
+                      </svg>
+                    </a>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <span className={styles.tapHintText} onClick={handleHeadTap} style={{ cursor: 'pointer' }}>
             Tap head for more
