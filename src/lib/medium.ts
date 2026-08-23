@@ -5,6 +5,7 @@ export interface BlogPost {
   published: string;
   url: string;
   labels?: string[];
+  source?: "medium" | "blogger";
 }
 
 export interface BlogComment {
@@ -20,15 +21,21 @@ export interface BlogComment {
 const MEDIUM_USERNAME = process.env.MEDIUM_USERNAME || "ivanaffriandi";
 const MEDIUM_FEED_URL = `https://medium.com/feed/@${MEDIUM_USERNAME.replace(/^@/, '')}`;
 
+const BLOGGER_BLOG_ID = process.env.BLOGGER_BLOG_ID;
+const BLOGGER_API_KEY = process.env.BLOGGER_API_KEY;
+const BLOGGER_API_URL = "https://www.googleapis.com/blogger/v3/blogs";
+
+const RTDB_POSTS_URL = "https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app/hybrid_posts.json";
+
 // Persistent Global Cache to survive hot-reloads and rate-limiting
 declare global {
-  var _cachedMediumPosts: BlogPost[] | undefined;
-  var _cachedMediumPostMap: Record<string, BlogPost> | undefined;
+  var _cachedHybridPosts: BlogPost[] | undefined;
+  var _cachedHybridPostMap: Record<string, BlogPost> | undefined;
+  var _cachedCommentsMap: Record<string, BlogComment[]> | undefined;
 }
 
-if (!global._cachedMediumPostMap) global._cachedMediumPostMap = {};
-
-const RTDB_MEDIUM_POSTS_URL = "https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app/medium_posts.json";
+if (!global._cachedHybridPostMap) global._cachedHybridPostMap = {};
+if (!global._cachedCommentsMap) global._cachedCommentsMap = {};
 
 function parseCData(str: string): string {
   if (!str) return "";
@@ -84,21 +91,21 @@ function parseMediumRssXml(xml: string): BlogPost[] {
       published,
       url,
       labels,
+      source: "medium",
     });
   }
 
-  // Sort descending by date
-  return items.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
+  return items;
 }
 
-async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 12000): Promise<Response> {
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 10000): Promise<Response> {
   return Promise.race([
     fetch(url, options),
-    new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Medium fetch timeout")), timeoutMs))
+    new Promise<never>((_, reject) => setTimeout(() => reject(new Error("Fetch timeout")), timeoutMs))
   ]);
 }
 
-export async function getPosts(): Promise<BlogPost[]> {
+async function fetchMediumPosts(): Promise<BlogPost[]> {
   try {
     const res = await fetchWithTimeout(MEDIUM_FEED_URL, {
       headers: {
@@ -108,74 +115,152 @@ export async function getPosts(): Promise<BlogPost[]> {
       next: { revalidate: 60 },
     });
 
-    if (!res.ok) throw new Error(`Medium RSS returned HTTP ${res.status}: ${res.statusText}`);
-
+    if (!res.ok) throw new Error(`Medium RSS HTTP ${res.status}`);
     const xmlText = await res.text();
-    const posts = parseMediumRssXml(xmlText);
+    return parseMediumRssXml(xmlText);
+  } catch (err) {
+    console.warn("Medium fetch failed:", (err as Error)?.message ?? err);
+    return [];
+  }
+}
 
-    if (posts.length > 0) {
-      global._cachedMediumPosts = posts;
-      posts.forEach((p) => {
-        if (global._cachedMediumPostMap) global._cachedMediumPostMap[p.id] = p;
-      });
+async function fetchBloggerPosts(): Promise<BlogPost[]> {
+  if (!BLOGGER_BLOG_ID || !BLOGGER_API_KEY) return [];
 
-      // Asynchronously back up posts to Firebase RTDB in background
-      fetch(RTDB_MEDIUM_POSTS_URL, {
-        method: "PUT",
-        body: JSON.stringify(posts),
-        headers: { "Content-Type": "application/json" }
-      }).catch((err) => console.error("Medium RTDB backup failed:", err));
+  try {
+    const res = await fetchWithTimeout(
+      `${BLOGGER_API_URL}/${BLOGGER_BLOG_ID}/posts?key=${BLOGGER_API_KEY}&fetchImages=true`,
+      { next: { revalidate: 60 } }
+    );
+    if (!res.ok) throw new Error(`Blogger API HTTP ${res.status}`);
 
-      return posts;
+    const data = await res.json();
+    return (data.items || []).map((item: any) => ({
+      id: item.id,
+      title: item.title,
+      content: item.content,
+      published: item.published,
+      url: item.url,
+      labels: item.labels || [],
+      source: "blogger" as const,
+    }));
+  } catch (err) {
+    console.warn("Blogger fetch failed:", (err as Error)?.message ?? err);
+    return [];
+  }
+}
+
+export async function getPosts(): Promise<BlogPost[]> {
+  // Fetch both Medium (newest) and Blogger (historical archive) in parallel
+  const [mediumPosts, bloggerPosts] = await Promise.all([
+    fetchMediumPosts(),
+    fetchBloggerPosts(),
+  ]);
+
+  if (mediumPosts.length > 0 || bloggerPosts.length > 0) {
+    const seenTitles = new Set<string>();
+    const merged: BlogPost[] = [];
+
+    // Prioritize Medium posts
+    for (const post of mediumPosts) {
+      const norm = post.title.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (!seenTitles.has(norm)) {
+        seenTitles.add(norm);
+        merged.push(post);
+      }
     }
-  } catch (error) {
-    console.warn("Medium RSS fetch failed (using cache/fallback):", (error as Error)?.message ?? error);
+
+    // Add historical Blogger posts
+    for (const post of bloggerPosts) {
+      const norm = post.title.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (!seenTitles.has(norm)) {
+        seenTitles.add(norm);
+        merged.push(post);
+      }
+    }
+
+    // Sort chronologically descending: newest Medium posts first, seamlessly followed by Blogger archive
+    merged.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
+
+    global._cachedHybridPosts = merged;
+    merged.forEach((p) => {
+      if (global._cachedHybridPostMap) global._cachedHybridPostMap[p.id] = p;
+    });
+
+    // Background asynchronous backup to Firebase RTDB
+    fetch(RTDB_POSTS_URL, {
+      method: "PUT",
+      body: JSON.stringify(merged),
+      headers: { "Content-Type": "application/json" }
+    }).catch(() => {});
+
+    return merged;
   }
 
   // Serve from memory cache if available
-  if (global._cachedMediumPosts && global._cachedMediumPosts.length > 0) {
-    console.log("Serving cached memory fallback list for Medium posts.");
-    return global._cachedMediumPosts;
+  if (global._cachedHybridPosts && global._cachedHybridPosts.length > 0) {
+    return global._cachedHybridPosts;
   }
 
-  // Fallback to Firebase RTDB persistent backup
+  // Fallback to persistent Firebase RTDB backup
   try {
-    console.log("Fetching persistent RTDB backup for Medium posts...");
-    const backupRes = await fetchWithTimeout(RTDB_MEDIUM_POSTS_URL, { cache: "no-store" });
+    const backupRes = await fetchWithTimeout(RTDB_POSTS_URL, { cache: "no-store" });
     if (backupRes.ok) {
       const backupPosts = await backupRes.json();
       if (backupPosts && Array.isArray(backupPosts) && backupPosts.length > 0) {
-        console.log(`Successfully restored ${backupPosts.length} posts from Medium RTDB backup.`);
-        global._cachedMediumPosts = backupPosts;
+        global._cachedHybridPosts = backupPosts;
         backupPosts.forEach((p: any) => {
-          if (global._cachedMediumPostMap) global._cachedMediumPostMap[p.id] = p;
+          if (global._cachedHybridPostMap) global._cachedHybridPostMap[p.id] = p;
         });
         return backupPosts;
       }
     }
-  } catch (backupErr) {
-    console.error("Failed to fetch Medium posts backup from RTDB:", backupErr);
-  }
+  } catch {}
 
   return [];
 }
 
 export async function getPost(id: string): Promise<BlogPost | null> {
-  if (global._cachedMediumPostMap && global._cachedMediumPostMap[id]) {
-    return global._cachedMediumPostMap[id];
+  if (global._cachedHybridPostMap && global._cachedHybridPostMap[id]) {
+    return global._cachedHybridPostMap[id];
   }
 
   const posts = await getPosts();
   const found = posts.find((p) => p.id === id || p.url.includes(id));
   if (found) {
-    if (global._cachedMediumPostMap) global._cachedMediumPostMap[id] = found;
+    if (global._cachedHybridPostMap) global._cachedHybridPostMap[id] = found;
     return found;
   }
 
   return null;
 }
 
-export async function getPostComments(_postId: string): Promise<BlogComment[]> {
-  // Medium does not expose comments via RSS feed
-  return [];
+export async function getPostComments(postId: string): Promise<BlogComment[]> {
+  if (!BLOGGER_BLOG_ID || !BLOGGER_API_KEY) return [];
+
+  try {
+    const res = await fetchWithTimeout(`${BLOGGER_API_URL}/${BLOGGER_BLOG_ID}/posts/${postId}/comments?key=${BLOGGER_API_KEY}`, {
+      next: { revalidate: 30 },
+    });
+    if (!res.ok) return [];
+
+    const data = await res.json();
+    const comments = (data.items || []).map((item: any) => ({
+      id: item.id,
+      published: item.published,
+      content: item.content,
+      author: {
+        displayName: item.author?.displayName || "Anonymous",
+        image: item.author?.image,
+      },
+    }));
+
+    if (global._cachedCommentsMap) global._cachedCommentsMap[postId] = comments;
+    return comments;
+  } catch {
+    if (global._cachedCommentsMap && global._cachedCommentsMap[postId]) {
+      return global._cachedCommentsMap[postId];
+    }
+    return [];
+  }
 }
