@@ -93,7 +93,7 @@ const MATRIX_ROWS = [
   "FOREST TRAIL NAVIGATION • FUNGI SPORE PRINTS • BOTANICAL SKETCHING • BOTANICAL WATERCOLORS • ",
 ];
 
-// Crisp, realistic mechanical typewriter sound engine via Web Audio API
+// Enhanced authentic vintage mechanical typewriter sound engine via Web Audio API
 let audioCtx: AudioContext | null = null;
 
 const getAudioContext = (): AudioContext | null => {
@@ -116,54 +116,74 @@ const playTypewriterClick = (isSpace = false) => {
     if (!ctx || ctx.state !== 'running') return;
 
     const now = ctx.currentTime;
+    const randomSeed = Math.random();
 
-    // 1. Mechanical Strike Click (Filtered Noise Burst)
-    const bufferSize = Math.floor(ctx.sampleRate * 0.022);
+    // 1. PRIMARY MECHANICAL HAMMER CLACK (Crisp metal-on-platen strike)
+    const bufferSize = Math.floor(ctx.sampleRate * 0.028);
     const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const output = noiseBuffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
-      output[i] = Math.random() * 2 - 1;
+      const decay = Math.exp(-i / (ctx.sampleRate * 0.006));
+      output[i] = (Math.random() * 2 - 1) * decay;
     }
 
     const noiseSource = ctx.createBufferSource();
     noiseSource.buffer = noiseBuffer;
 
-    const noiseFilter = ctx.createBiquadFilter();
-    noiseFilter.type = 'bandpass';
-    const baseFreq = isSpace ? 950 : 2200;
-    const jitter = (Math.random() - 0.5) * 320;
-    noiseFilter.frequency.setValueAtTime(baseFreq + jitter, now);
-    noiseFilter.Q.setValueAtTime(3.2, now);
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    const strikeFreq = isSpace ? 1100 + randomSeed * 200 : 2800 + (randomSeed - 0.5) * 600;
+    filter.frequency.setValueAtTime(strikeFreq, now);
+    filter.Q.setValueAtTime(isSpace ? 2.5 : 4.5, now);
 
     const noiseGain = ctx.createGain();
-    const peakVol = isSpace ? 0.08 : 0.12;
-    noiseGain.gain.setValueAtTime(peakVol, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.022);
+    const strikeVol = isSpace ? 0.14 : 0.18 + (randomSeed - 0.5) * 0.04;
+    noiseGain.gain.setValueAtTime(strikeVol, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.026);
 
-    noiseSource.connect(noiseFilter);
-    noiseFilter.connect(noiseGain);
+    noiseSource.connect(filter);
+    filter.connect(noiseGain);
     noiseGain.connect(ctx.destination);
 
     noiseSource.start(now);
-    noiseSource.stop(now + 0.022);
+    noiseSource.stop(now + 0.028);
 
-    // 2. Resonant Metallic Keystroke Thud
-    const osc = ctx.createOscillator();
-    osc.type = isSpace ? 'sine' : 'triangle';
-    const bodyFreq = isSpace ? 220 : 540 + (Math.random() - 0.5) * 60;
-    osc.frequency.setValueAtTime(bodyFreq, now);
-    osc.frequency.exponentialRampToValueAtTime(bodyFreq * 0.55, now + 0.028);
+    // 2. LEVER LINKAGE SNAP (Mechanical linkage micro-click)
+    if (!isSpace) {
+      const snapOsc = ctx.createOscillator();
+      snapOsc.type = 'square';
+      const snapFreq = 1600 + (randomSeed - 0.5) * 400;
+      snapOsc.frequency.setValueAtTime(snapFreq, now);
+      snapOsc.frequency.exponentialRampToValueAtTime(snapFreq * 0.3, now + 0.012);
 
-    const oscGain = ctx.createGain();
-    const bodyVol = isSpace ? 0.06 : 0.045;
-    oscGain.gain.setValueAtTime(bodyVol, now);
-    oscGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.028);
+      const snapGain = ctx.createGain();
+      snapGain.gain.setValueAtTime(0.06, now);
+      snapGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.012);
 
-    osc.connect(oscGain);
-    oscGain.connect(ctx.destination);
+      snapOsc.connect(snapGain);
+      snapGain.connect(ctx.destination);
 
-    osc.start(now);
-    osc.stop(now + 0.028);
+      snapOsc.start(now);
+      snapOsc.stop(now + 0.012);
+    }
+
+    // 3. TYPEBAR METALLIC RESONANCE / CHASSIS THUD
+    const bodyOsc = ctx.createOscillator();
+    bodyOsc.type = isSpace ? 'sine' : 'triangle';
+    const bodyFreq = isSpace ? 210 + (randomSeed - 0.5) * 30 : 680 + (randomSeed - 0.5) * 120;
+    bodyOsc.frequency.setValueAtTime(bodyFreq, now);
+    bodyOsc.frequency.exponentialRampToValueAtTime(bodyFreq * 0.7, now + 0.035);
+
+    const bodyGain = ctx.createGain();
+    const bodyVol = isSpace ? 0.1 : 0.07;
+    bodyGain.gain.setValueAtTime(bodyVol, now);
+    bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+
+    bodyOsc.connect(bodyGain);
+    bodyGain.connect(ctx.destination);
+
+    bodyOsc.start(now);
+    bodyOsc.stop(now + 0.035);
   } catch {
     // Audio safe fallback
   }
