@@ -73,6 +73,7 @@ function extractCoverImage(html: string): string | null {
   if (!match) return null;
   let url = match[1];
   url = url.replace(/\/s\d+(-c)?\//, "/s1600/").replace(/\/w\d+-h\d+(-c)?\//, "/s1600/");
+  url = url.replace(/\/resize:fit:\d+\//, "/resize:fit:1600/");
   return url;
 }
 

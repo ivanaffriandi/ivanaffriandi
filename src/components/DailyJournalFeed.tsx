@@ -25,6 +25,7 @@ function extractCoverImage(html: string): string | null {
   if (!match) return null;
   let url = match[1];
   url = url.replace(/\/s\d+(-c)?\//, "/s1600/").replace(/\/w\d+-h\d+(-c)?\//, "/s1600/");
+  url = url.replace(/\/resize:fit:\d+\//, "/resize:fit:1600/");
   return url;
 }
 
@@ -33,7 +34,9 @@ function extractAllImages(html: string): string[] {
   const matches = Array.from(html.matchAll(/<img[^>]+src=["']([^"']+)["']/gi));
   const urls = matches.map((m) => {
     let url = m[1];
-    return url.replace(/\/s\d+(-c)?\//, "/s1600/").replace(/\/w\d+-h\d+(-c)?\//, "/s1600/");
+    url = url.replace(/\/s\d+(-c)?\//, "/s1600/").replace(/\/w\d+-h\d+(-c)?\//, "/s1600/");
+    url = url.replace(/\/resize:fit:\d+\//, "/resize:fit:1600/");
+    return url;
   });
   return urls;
 }
