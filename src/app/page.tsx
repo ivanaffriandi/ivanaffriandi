@@ -204,21 +204,33 @@ export default function AvantGardeHomepage() {
 
   const currentFullText = FUN_PHRASES[phraseIndex];
   const isMarqueeActive = phraseIndex === 3; // State for "Here is my full technical & craft matrix:"
+  const [showMushroomParticles, setShowMushroomParticles] = useState<boolean>(false);
+  const mushroomTriggeredRef = React.useRef<boolean>(false);
 
   // Mushroom animation celebration when typing reaches "mushroom"
   useEffect(() => {
-    if (phraseIndex === 2 && displayText.toLowerCase().includes('mushroom')) {
-      try {
-        confetti({
-          particleCount: 45,
-          spread: 65,
-          origin: { y: 0.58 },
-          colors: ['#e63946', '#2a9d8f', '#ffffff', '#e9c46a', '#f4a261'],
-          disableForReducedMotion: true,
-        });
-      } catch {
-        // safe fallback
+    if (phraseIndex === 2) {
+      if (!mushroomTriggeredRef.current && displayText.toLowerCase().includes('mushroom')) {
+        mushroomTriggeredRef.current = true;
+        setShowMushroomParticles(true);
+        setTimeout(() => setShowMushroomParticles(false), 2400);
+
+        try {
+          confetti({
+            particleCount: 65,
+            spread: 75,
+            origin: { y: 0.62 },
+            colors: ['#ff3b30', '#34c759', '#ffcc00', '#5856d6', '#ffffff'],
+            ticks: 180,
+            gravity: 0.85,
+          });
+        } catch {
+          // safe fallback
+        }
       }
+    } else {
+      mushroomTriggeredRef.current = false;
+      setShowMushroomParticles(false);
     }
   }, [displayText, phraseIndex]);
 
@@ -444,6 +456,47 @@ export default function AvantGardeHomepage() {
                   );
                 })}
               </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* FLOATING MUSHROOM BURST ANIMATION ON PHRASE 2 */}
+          <AnimatePresence>
+            {showMushroomParticles && (
+              <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 100 }}>
+                {[
+                  { id: 1, x: -75, y: -70, rotate: -18, delay: 0, size: "1.85rem" },
+                  { id: 2, x: 75, y: -80, rotate: 16, delay: 0.06, size: "1.9rem" },
+                  { id: 3, x: -35, y: -110, rotate: -8, delay: 0.12, size: "2.3rem" },
+                  { id: 4, x: 35, y: -115, rotate: 12, delay: 0.16, size: "2.2rem" },
+                  { id: 5, x: -105, y: -45, rotate: -25, delay: 0.08, size: "1.5rem" },
+                  { id: 6, x: 105, y: -50, rotate: 22, delay: 0.14, size: "1.6rem" },
+                ].map((item) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, y: 15, x: item.x, scale: 0.2, rotate: 0 }}
+                    animate={{
+                      opacity: [0, 1, 1, 0],
+                      y: item.y,
+                      x: item.x,
+                      scale: [0.2, 1.25, 1.1, 0.8],
+                      rotate: item.rotate,
+                    }}
+                    exit={{ opacity: 0, scale: 0 }}
+                    transition={{ duration: 1.6, delay: item.delay, ease: [0.16, 1, 0.3, 1] }}
+                    style={{
+                      position: "absolute",
+                      top: "22%",
+                      left: "50%",
+                      fontSize: item.size,
+                      lineHeight: 1,
+                      filter: "drop-shadow(0 6px 14px rgba(0,0,0,0.18))",
+                      transform: "translateX(-50%)",
+                    }}
+                  >
+                    🍄
+                  </motion.div>
+                ))}
+              </div>
             )}
           </AnimatePresence>
 
