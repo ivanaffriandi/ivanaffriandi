@@ -93,6 +93,82 @@ const MATRIX_ROWS = [
   "FOREST TRAIL NAVIGATION • FUNGI SPORE PRINTS • BOTANICAL SKETCHING • BOTANICAL WATERCOLORS • ",
 ];
 
+// Crisp, realistic mechanical typewriter sound engine via Web Audio API
+let audioCtx: AudioContext | null = null;
+
+const getAudioContext = (): AudioContext | null => {
+  if (typeof window === 'undefined') return null;
+  if (!audioCtx) {
+    const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (AudioContextClass) {
+      audioCtx = new AudioContextClass();
+    }
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume().catch(() => {});
+  }
+  return audioCtx;
+};
+
+const playTypewriterClick = (isSpace = false) => {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx || ctx.state !== 'running') return;
+
+    const now = ctx.currentTime;
+
+    // 1. Mechanical Strike Click (Filtered Noise Burst)
+    const bufferSize = Math.floor(ctx.sampleRate * 0.022);
+    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = Math.random() * 2 - 1;
+    }
+
+    const noiseSource = ctx.createBufferSource();
+    noiseSource.buffer = noiseBuffer;
+
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = 'bandpass';
+    const baseFreq = isSpace ? 950 : 2200;
+    const jitter = (Math.random() - 0.5) * 320;
+    noiseFilter.frequency.setValueAtTime(baseFreq + jitter, now);
+    noiseFilter.Q.setValueAtTime(3.2, now);
+
+    const noiseGain = ctx.createGain();
+    const peakVol = isSpace ? 0.08 : 0.12;
+    noiseGain.gain.setValueAtTime(peakVol, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.022);
+
+    noiseSource.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+
+    noiseSource.start(now);
+    noiseSource.stop(now + 0.022);
+
+    // 2. Resonant Metallic Keystroke Thud
+    const osc = ctx.createOscillator();
+    osc.type = isSpace ? 'sine' : 'triangle';
+    const bodyFreq = isSpace ? 220 : 540 + (Math.random() - 0.5) * 60;
+    osc.frequency.setValueAtTime(bodyFreq, now);
+    osc.frequency.exponentialRampToValueAtTime(bodyFreq * 0.55, now + 0.028);
+
+    const oscGain = ctx.createGain();
+    const bodyVol = isSpace ? 0.06 : 0.045;
+    oscGain.gain.setValueAtTime(bodyVol, now);
+    oscGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.028);
+
+    osc.connect(oscGain);
+    oscGain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.028);
+  } catch {
+    // Audio safe fallback
+  }
+};
+
 export default function AvantGardeHomepage() {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [phraseIndex, setPhraseIndex] = useState<number>(0);
@@ -119,25 +195,28 @@ export default function AvantGardeHomepage() {
     };
   }, []);
 
-  // Letter-by-Letter Typing Effect
+  // Letter-by-Letter Typing Effect with Synced Typewriter Audio
   useEffect(() => {
     let charIndex = 0;
     setDisplayText('');
 
     const interval = setInterval(() => {
       if (charIndex < currentFullText.length) {
+        const nextChar = currentFullText[charIndex];
         setDisplayText(currentFullText.slice(0, charIndex + 1));
+        playTypewriterClick(nextChar === ' ');
         charIndex++;
       } else {
         clearInterval(interval);
       }
-    }, 42);
+    }, 45);
 
     return () => clearInterval(interval);
   }, [currentFullText]);
 
   // Head Tap Reaction
   const handleHeadTap = () => {
+    getAudioContext();
     headControls.start({
       scale: [1, 0.86, 1.16, 0.94, 1.04, 1],
       rotate: [0, -12, 10, -5, 2, 0],
