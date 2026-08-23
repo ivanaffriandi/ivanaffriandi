@@ -97,29 +97,22 @@ function getRelativeTimeString(dateStr: string): string {
 }
 
 function getPostChapterLabel(post: any, allPosts: any[]): string {
-  if (!post) return "ESSAY";
+  if (!post) return "CHAPTER 01";
   
   // 1. If title explicitly has Chapter X: e.g. "Chapter 2: ..."
-  const titleMatch = post.title.match(/^(?:chapter|ch\.?)\s*(\d+)[:\s.-]*/i);
+  const titleMatch = post.title?.match(/^(?:chapter|ch\.?)\s*(\d+)[:\s.-]*/i);
   if (titleMatch) {
     return `CHAPTER ${titleMatch[1].padStart(2, "0")}`;
   }
 
-  // 2. If it's from the original serial chapters (Blogger collection)
-  const bloggerPosts = allPosts.filter(
-    (p) => p.source === "blogger" || (!p.source && !p.url?.includes("medium.com"))
-  );
-  const bloggerIdx = bloggerPosts.findIndex((p) => p.id === post.id);
-  if (bloggerIdx !== -1) {
-    const chNum = bloggerPosts.length - bloggerIdx;
+  // 2. Global continuous chronological chapter numbering (earliest is Chapter 01, continuing up through latest Medium posts)
+  const idx = allPosts.findIndex((p) => p.id === post.id);
+  if (idx !== -1) {
+    const chNum = allPosts.length - idx;
     return `CHAPTER ${String(chNum).padStart(2, "0")}`;
   }
 
-  // 3. For Medium / standalone stories
-  if (post.labels && post.labels.length > 0) {
-    return post.labels[0].toUpperCase();
-  }
-  return "ESSAY";
+  return "CHAPTER 01";
 }
 
 function FlippableQACard({ qa, darkTheme = false }: { qa: any; darkTheme?: boolean }) {
