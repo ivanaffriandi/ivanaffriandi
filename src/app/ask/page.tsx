@@ -132,11 +132,14 @@ function TwoCardStackedQA({
             style={{
               display: "flex",
               flexDirection: "column",
-              gap: "0.15rem",
+              gap: isActive ? "0.15rem" : "0.3rem",
               flex: 1,
-              overflow: "hidden",
-              justifyContent: "center",
-              margin: isActive ? "0.1rem 0" : "0.4rem 0",
+              overflowY: isActive ? "hidden" : "auto",
+              overscrollBehavior: "contain",
+              WebkitOverflowScrolling: "touch",
+              justifyContent: isActive ? "center" : "flex-start",
+              margin: isActive ? "0.1rem 0" : "0.4rem 0 0.3rem",
+              minHeight: 0,
             }}
           >
             <div
@@ -162,11 +165,12 @@ function TwoCardStackedQA({
                 margin: 0,
                 fontWeight: 450,
                 letterSpacing: "-0.015em",
-                display: "-webkit-box",
-                WebkitLineClamp: isActive ? 2 : 5,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
+                display: isActive ? "-webkit-box" : "block",
+                WebkitLineClamp: isActive ? 2 : undefined,
+                WebkitBoxOrient: isActive ? "vertical" : undefined,
+                overflow: isActive ? "hidden" : "visible",
                 wordBreak: "break-word",
+                whiteSpace: "pre-wrap",
               }}
               className={isActive ? "qa-inv-primary" : "qa-text-primary"}
             >
