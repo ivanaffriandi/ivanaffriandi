@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/Sidebar';
+import { CalendarAgendaWidget } from '@/components/CalendarAgendaWidget';
 import { Header } from '@/components/Header';
 import { MessageList } from '@/components/MessageList';
 import { MessageView } from '@/components/MessageView';
@@ -474,8 +475,8 @@ export default function MailApp() {
 
       {/* Desktop Sidebar */}
       <div
-        className="hidden lg:block h-full mail-sidebar-fixed"
-        style={{ width: '256px', minWidth: '256px', maxWidth: '256px', flex: '0 0 256px' }}
+        className="hidden lg:block h-full mail-sidebar-fixed relative z-40"
+        style={{ width: "72px", minWidth: "72px", maxWidth: "72px", flex: "0 0 72px" }}
       >
         <Sidebar
           folders={folders}
@@ -529,7 +530,13 @@ export default function MailApp() {
       {/* Main Workspace */}
       <div className="flex flex-col h-full overflow-hidden min-w-0 flex-1">
         <Header
-          activeFolderName={folders.find((f) => f.id === activeFolderId)?.name ?? 'Inbox'}
+          activeFolderName={
+            activeFolderId === "starred"
+              ? "Starred"
+              : activeFolderId === "snoozed"
+              ? "Snoozed"
+              : folders.find((f) => f.id === activeFolderId)?.name ?? "Inbox"
+          }
           totalMessagesCount={displayMessages.length}
           messages={messages}
           selectedMessage={selectedMessageDetail}
@@ -609,6 +616,13 @@ export default function MailApp() {
                 loadFolders();
               }}
             />
+          </div>
+                  {/* Right Side Calendar & Agenda Pane */}
+          <div
+            className="hidden xl:block h-full mail-calendar-fixed"
+            style={{ width: "270px", minWidth: "270px", maxWidth: "270px", flex: "0 0 270px" }}
+          >
+            <CalendarAgendaWidget />
           </div>
         </main>
       </div>

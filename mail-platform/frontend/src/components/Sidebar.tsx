@@ -1,14 +1,26 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-  Inbox, Send, FileText, Archive, AlertOctagon, Trash2, Camera,
-  Calendar as CalendarIcon, Plus, ChevronLeft, ChevronRight, Check,
-  Clock, X, Feather, ChevronDown, ChevronUp, Repeat, GripVertical, LogOut,
-  Reply, Edit3
+  Mail, Star, Clock, SendHorizontal, FileText, Tag, Archive, AlertOctagon, Trash2,
+  Camera, LogOut, SquarePen, Sparkles, BadgeCheck, Globe,
+  Github, Linkedin, ExternalLink, Copy, Check
 } from 'lucide-react';
-import { Folder, AgendaItem, Message } from '@/types/mail';
-import { fetchAgendas, saveAgenda, toggleAgendaApi, deleteAgendaApi } from '@/lib/api';
+import { Folder, Message } from '@/types/mail';
+
+// Official Medium SVG Icon
+const MediumIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M13.54 12a6.8 6.8 0 0 1-6.77 6.82A6.8 6.8 0 0 1 0 12a6.8 6.8 0 0 1 6.77-6.82A6.8 6.8 0 0 1 13.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z" />
+  </svg>
+);
+
+// Official X (Twitter) SVG Icon
+const XIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
 
 interface SidebarProps {
   folders: Folder[];
@@ -21,21 +33,6 @@ interface SidebarProps {
   onReplyCurrentMessage?: () => void;
 }
 
-export const formatLocalDateKey = (d: Date): string => {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-};
-
-const DEFAULT_AGENDAS: AgendaItem[] = [
-  { id: '1', dateStr: '2026-08-03', title: "Ivan's Birthday Celebration", recurrence: 'monthly', completed: true },
-  { id: '3', dateStr: formatLocalDateKey(new Date()), title: 'Architecture Review with Sarah', time: '15:00', recurrence: 'weekly', completed: false },
-  { id: '4', dateStr: formatLocalDateKey(new Date()), title: 'Verify DKIM 2048-bit signing', time: '17:30', recurrence: 'daily', completed: false },
-];
-
-const DEFAULT_FOLDER_ORDER = ['inbox', 'sent', 'drafts', 'archive', 'spam', 'trash'];
-
 export const Sidebar: React.FC<SidebarProps> = ({
   folders,
   activeFolderId,
@@ -43,43 +40,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenCompose,
   userEmail,
   onSignOut,
-  selectedMessage,
-  onReplyCurrentMessage,
 }) => {
-  const [salutation, setSalutation] = useState('Good morning,');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [showWriteMenu, setShowWriteMenu] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<'tags' | 'profile' | null>(null);
+  const [copiedEmail, setCopiedEmail] = useState(false);
 
-  // Folder ordering
-  const [folderOrder, setFolderOrder] = useState<string[]>(DEFAULT_FOLDER_ORDER);
-  const [draggedFolderIndex, setDraggedFolderIndex] = useState<number | null>(null);
-
-  // Calendar State
-  const [isMonthExpanded, setIsMonthExpanded] = useState(false); // Default: Weekly view
-  const [currentMonth, setCurrentMonth] = useState(() => new Date());
-  const [selectedDate, setSelectedDate] = useState(() => new Date());
-  const [agendas, setAgendas] = useState<AgendaItem[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('mail_calendar_agenda');
-      if (saved !== null) {
-        try {
-          return JSON.parse(saved);
-        } catch { /* ignore */ }
-      }
-    }
-    return [];
-  });
-  const [showAddAgenda, setShowAddAgenda] = useState(false);
-  const [newAgendaTitle, setNewAgendaTitle] = useState('');
-  const [newAgendaTime, setNewAgendaTime] = useState('09:00');
-  const [newAgendaRecurrence, setNewAgendaRecurrence] = useState<'once' | 'daily' | 'weekly' | 'monthly'>('once');
+  const popoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) setSalutation('Good morning,');
-    else if (hour >= 12 && hour < 18) setSalutation('Good afternoon,');
-    else setSalutation('Good evening,');
-
     if (typeof window !== 'undefined') {
       const savedAvatar = localStorage.getItem('custom_avatar_url');
       if (savedAvatar) {
@@ -89,91 +57,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
         setAvatarUrl(defaultAvatar);
         localStorage.setItem('custom_avatar_url', defaultAvatar);
       }
-
-      const savedFolderOrder = localStorage.getItem('mail_folder_order');
-      if (savedFolderOrder) {
-        try {
-          setFolderOrder(JSON.parse(savedFolderOrder));
-        } catch { /* use default */ }
-      }
     }
-
-    // Live Cloud Agenda Fetch & Polling (Syncs real-time across Mac & Mobile without flickering)
-    const loadCloudAgendas = async () => {
-      try {
-        const cloudAgendas = await fetchAgendas();
-        if (Array.isArray(cloudAgendas)) {
-          setAgendas((prev) => {
-            const prevStr = JSON.stringify(prev);
-            const nextStr = JSON.stringify(cloudAgendas);
-            if (prevStr !== nextStr) {
-              if (typeof window !== 'undefined') {
-                localStorage.setItem('mail_calendar_agenda', nextStr);
-              }
-              return cloudAgendas;
-            }
-            return prev;
-          });
-        }
-      } catch (err) {
-        console.error('Failed to sync cloud agendas:', err);
-      }
-    };
-
-    loadCloudAgendas();
-    const interval = setInterval(loadCloudAgendas, 10000); // 10s live sync
-    return () => clearInterval(interval);
   }, []);
 
-  const handleToggleAgenda = (id: string) => {
-    const target = agendas.find(a => a.id === id);
-    if (!target) return;
-    const nextCompleted = !target.completed;
-    setAgendas((prev) => {
-      const updated = prev.map(a => a.id === id ? { ...a, completed: nextCompleted } : a);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('mail_calendar_agenda', JSON.stringify(updated));
+  // Close popovers on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+        setActiveMenu(null);
       }
-      return updated;
-    });
-    toggleAgendaApi(id, nextCompleted).catch(err => console.error('Cloud toggle error:', err));
-  };
-
-  const handleDeleteAgenda = (id: string) => {
-    setAgendas((prev) => {
-      const updated = prev.filter(a => a.id !== id);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('mail_calendar_agenda', JSON.stringify(updated));
-      }
-      return updated;
-    });
-    deleteAgendaApi(id).catch(err => console.error('Cloud delete error:', err));
-  };
-
-  const handleCreateAgenda = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newAgendaTitle.trim()) return;
-
-    const dateKey = formatLocalDateKey(selectedDate);
-    const item: AgendaItem = {
-      id: Date.now().toString(),
-      dateStr: dateKey,
-      title: newAgendaTitle.trim(),
-      time: newAgendaTime,
-      recurrence: newAgendaRecurrence,
-      completed: false,
     };
-    setAgendas((prev) => {
-      const updated = [item, ...prev];
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('mail_calendar_agenda', JSON.stringify(updated));
-      }
-      return updated;
-    });
-    setNewAgendaTitle('');
-    setShowAddAgenda(false);
-    saveAgenda(item).catch(err => console.error('Cloud save error:', err));
-  };
+    if (activeMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [activeMenu]);
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -190,465 +90,436 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
-  const getIcon = (type: string) => {
-    switch (type) {
-      case 'inbox': return <Inbox className="w-4 h-4 stroke-[1.8]" />;
-      case 'sent': return <Send className="w-4 h-4 stroke-[1.8]" />;
-      case 'drafts': return <FileText className="w-4 h-4 stroke-[1.8]" />;
-      case 'archive': return <Archive className="w-4 h-4 stroke-[1.8]" />;
-      case 'spam': return <AlertOctagon className="w-4 h-4 stroke-[1.8]" />;
-      case 'trash': return <Trash2 className="w-4 h-4 stroke-[1.8]" />;
-      default: return <Inbox className="w-4 h-4 stroke-[1.8]" />;
+  const handleCopyEmail = () => {
+    if (typeof window !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(userEmail || 'hello@ivanaffriandi.com');
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 2000);
     }
   };
 
-  // Drag and Drop folder reordering
-  const handleDragStart = (index: number) => {
-    setDraggedFolderIndex(index);
-  };
+  const inboxFolder = folders.find((f) => f.type === 'inbox');
+  const sentFolder = folders.find((f) => f.type === 'sent');
+  const draftsFolder = folders.find((f) => f.type === 'drafts');
+  const archiveFolder = folders.find((f) => f.type === 'archive');
+  const spamFolder = folders.find((f) => f.type === 'spam');
+  const trashFolder = folders.find((f) => f.type === 'trash');
 
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    if (draggedFolderIndex === null || draggedFolderIndex === index) return;
+  const isInboxActive = activeFolderId === (inboxFolder?.id || 'inbox');
+  const isStarredActive = activeFolderId === 'starred';
+  const isSnoozedActive = activeFolderId === 'snoozed';
+  const isSentActive = activeFolderId === (sentFolder?.id || 'sent');
+  const isDraftsActive = activeFolderId === (draftsFolder?.id || 'drafts');
 
-    const reordered = [...orderedFolders];
-    const [dragged] = reordered.splice(draggedFolderIndex, 1);
-    reordered.splice(index, 0, dragged);
-
-    const newOrderKeys = reordered.map(f => f.type.toLowerCase());
-    setFolderOrder(newOrderKeys);
-    setDraggedFolderIndex(index);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('mail_folder_order', JSON.stringify(newOrderKeys));
-    }
-  };
-
-  const orderedFolders = [...folders].sort((a, b) => {
-    const idxA = folderOrder.indexOf(a.type.toLowerCase());
-    const idxB = folderOrder.indexOf(b.type.toLowerCase());
-    return (idxA !== -1 ? idxA : 99) - (idxB !== -1 ? idxB : 99);
-  });
-
-  // Calendar Helpers
-  const year = currentMonth.getFullYear();
-  const month = currentMonth.getMonth();
-  const firstDayIndex = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  const selectedDateKey = formatLocalDateKey(selectedDate);
-
-  const selectedDayAgendas = agendas.filter(a => {
-    if (a.dateStr === selectedDateKey) return true;
-    if (a.recurrence === 'daily') return true;
-    if (a.recurrence === 'weekly') {
-      const aDate = new Date(a.dateStr);
-      return aDate.getDay() === selectedDate.getDay();
-    }
-    if (a.recurrence === 'monthly') {
-      const aDate = new Date(a.dateStr);
-      return aDate.getDate() === selectedDate.getDate();
-    }
-    return false;
-  });
-
-  const prevPeriod = () => {
-    if (isMonthExpanded) {
-      setCurrentMonth(new Date(year, month - 1, 1));
-    } else {
-      const newD = new Date(selectedDate);
-      newD.setDate(newD.getDate() - 7);
-      setSelectedDate(newD);
-      setCurrentMonth(newD);
-    }
-  };
-
-  const nextPeriod = () => {
-    if (isMonthExpanded) {
-      setCurrentMonth(new Date(year, month + 1, 1));
-    } else {
-      const newD = new Date(selectedDate);
-      newD.setDate(newD.getDate() + 7);
-      setSelectedDate(newD);
-      setCurrentMonth(newD);
-    }
-  };
-
-  // Compute current week days (Sunday to Saturday around selectedDate)
-  const currentWeekDays: Date[] = [];
-  const currDayIndex = selectedDate.getDay();
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(selectedDate);
-    d.setDate(selectedDate.getDate() - currDayIndex + i);
-    currentWeekDays.push(d);
-  }
+  const socialLinks = [
+    {
+      name: 'Medium',
+      handle: '@ivanaffriandi',
+      url: 'https://medium.com/@ivanaffriandi',
+      icon: <MediumIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
+      badge: 'Articles & Writings',
+      bgClass: 'hover:bg-emerald-500/10 hover:border-emerald-500/30'
+    },
+    {
+      name: 'GitHub',
+      handle: '@ivanaffriandi',
+      url: 'https://github.com/ivanaffriandi',
+      icon: <Github className="w-4 h-4 text-neutral-800 dark:text-neutral-200" />,
+      badge: 'Open Source',
+      bgClass: 'hover:bg-neutral-500/10 hover:border-neutral-500/30'
+    },
+    {
+      name: 'Website',
+      handle: 'ivanaffriandi.com',
+      url: 'https://ivanaffriandi.com',
+      icon: <Globe className="w-4 h-4 text-blue-600 dark:text-blue-400" />,
+      badge: 'Portfolio',
+      bgClass: 'hover:bg-blue-500/10 hover:border-blue-500/30'
+    },
+    {
+      name: 'X / Twitter',
+      handle: '@ivanaffriandi',
+      url: 'https://x.com/ivanaffriandi',
+      icon: <XIcon className="w-4 h-4 text-neutral-900 dark:text-neutral-100" />,
+      badge: 'Updates',
+      bgClass: 'hover:bg-neutral-500/10 hover:border-neutral-500/30'
+    },
+    {
+      name: 'LinkedIn',
+      handle: 'Ivan Affriandi',
+      url: 'https://linkedin.com/in/ivanaffriandi',
+      icon: <Linkedin className="w-4 h-4 text-sky-600 dark:text-sky-400" />,
+      badge: 'Professional',
+      bgClass: 'hover:bg-sky-500/10 hover:border-sky-500/30'
+    },
+  ];
 
   return (
-    <aside className="mail-sidebar-fixed h-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-3.5 shadow-card flex flex-col gap-2.5 select-none shrink-0 z-20 overflow-hidden font-sans">
-      {/* 1. Personal Greeting Header */}
-      <div className="flex items-center gap-3 pt-1 px-1 shrink-0">
-        <div className="relative group shrink-0">
-          <div className="w-11 h-11 rounded-full overflow-hidden bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-sm ring-2 ring-blue-500/20">
+    <div className="relative h-full select-none font-sans z-40" ref={popoverRef}>
+      {/* ── Slim Vertical Icon Rail (iOS / macOS Sequoia aesthetic) ── */}
+      <aside className="w-[72px] h-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl py-4 px-2 shadow-card flex flex-col items-center justify-between shrink-0 relative z-30">
+        
+        {/* 1. TOP: User Profile Avatar */}
+        <div className="relative shrink-0">
+          <button
+            onClick={() => setActiveMenu(activeMenu === 'profile' ? null : 'profile')}
+            className={`group relative w-11 h-11 rounded-2xl overflow-hidden shadow-xs flex items-center justify-center bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-sm transition-all duration-200 cursor-pointer ${
+              activeMenu === 'profile'
+                ? 'ring-3 ring-blue-500 scale-105 shadow-md'
+                : 'ring-2 ring-black/5 dark:ring-white/10 hover:scale-105 active:scale-95'
+            }`}
+            title="Profile & Social Links"
+          >
             {avatarUrl ? (
-              <img src={avatarUrl} alt="Ivan" className="w-full h-full object-cover" />
+              <img src={avatarUrl} alt="Ivan Affriandi" className="w-full h-full object-cover" />
             ) : (
               'IA'
             )}
-          </div>
-          <label
-            className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 rounded-full flex items-center justify-center cursor-pointer apple-transition text-white"
-            title="Change Avatar"
-          >
-            <Camera className="w-4 h-4" />
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleAvatarUpload}
-            />
-          </label>
+            
+            {/* Online Pulse Dot */}
+            <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-neutral-900 rounded-full shadow-xs"></span>
+
+            {/* iOS Style Tooltip */}
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+              Ivan Affriandi • Profile & Socials
+            </span>
+          </button>
         </div>
 
-        <div className="flex flex-col min-w-0">
-          <span className="text-[11px] text-[var(--text-muted)] font-medium leading-none">
-            {salutation}
-          </span>
-          <span className="text-sm font-extrabold text-[var(--text-primary)] truncate mt-1 leading-tight tracking-tight">
-            Ivan Affriandi
-          </span>
-        </div>
-      </div>
-
-      {/* 2. System Mailboxes / Folders Card (Reorderable with Drag & Drop) */}
-      <div className="bg-[var(--bg-color)] p-2 rounded-3xl border border-[var(--card-border)] shadow-2xs shrink-0">
-        <nav className="flex flex-col gap-0.5">
-          {orderedFolders.map((folder, idx) => {
-            const isActive = activeFolderId === folder.id;
-            return (
-              <div
-                key={folder.id}
-                draggable
-                onDragStart={() => handleDragStart(idx)}
-                onDragOver={(e) => handleDragOver(e, idx)}
-                onDragEnd={() => setDraggedFolderIndex(null)}
-                className="group/folder relative"
-              >
-                <button
-                  onClick={() => onSelectFolder(folder.id)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-2xl text-xs font-semibold transition-colors duration-100 ${
-                    isActive
-                      ? 'bg-blue-600 text-white font-bold shadow-md'
-                      : 'text-[var(--text-secondary)] hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)] border border-transparent'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span className={isActive ? 'text-white' : 'text-[var(--text-muted)]'}>
-                      {getIcon(folder.type)}
-                    </span>
-                    <span className="capitalize">{folder.name}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    {folder.unread_count > 0 && (
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors duration-200 ${
-                        isActive
-                          ? 'bg-white/20 text-white font-extrabold'
-                          : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
-                      }`}>
-                        {folder.unread_count}
-                      </span>
-                    )}
-                    <GripVertical className="w-3 h-3 text-[var(--text-muted)] opacity-0 group-hover/folder:opacity-50 cursor-grab apple-transition" />
-                  </div>
-                </button>
-              </div>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* 3. Interactive Apple Calendar & Agenda Card */}
-      <div className="flex-1 bg-[var(--bg-color)] p-3 rounded-3xl border border-[var(--card-border)] shadow-2xs flex flex-col min-h-0 overflow-hidden font-sans">
-        {/* Calendar Month & Controls Header */}
-        <div className="flex items-center justify-between pb-1.5 shrink-0">
+        {/* 2. CENTER: Folder Navigation Icons Stack (iOS SF Symbols Style) */}
+        <div className="flex flex-col items-center gap-3 my-auto">
+          
+          {/* INBOX (Apple Mail Envelope) */}
           <button
-            onClick={() => setIsMonthExpanded(!isMonthExpanded)}
-            className="flex items-center gap-1 text-xs font-extrabold text-[var(--text-primary)] hover:text-blue-500 apple-transition"
-            title={isMonthExpanded ? 'Switch to Week View' : 'Expand to Month View'}
+            onClick={() => {
+              if (inboxFolder) onSelectFolder(inboxFolder.id);
+              setActiveMenu(null);
+            }}
+            className={`group relative w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer ${
+              isInboxActive
+                ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25 scale-105'
+                : 'bg-white/80 dark:bg-neutral-800/60 text-neutral-600 dark:text-neutral-300 hover:bg-white dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white border border-black/5 dark:border-white/5 shadow-2xs hover:scale-105 active:scale-95'
+            }`}
           >
-            <span>{currentMonth.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}</span>
-            {isMonthExpanded ? <ChevronUp className="w-3 h-3 text-[var(--text-muted)]" /> : <ChevronDown className="w-3 h-3 text-[var(--text-muted)]" />}
+            <Mail className="w-[19px] h-[19px] stroke-[2.1]" />
+            {inboxFolder && inboxFolder.unread_count > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#ff3b30] text-white text-[9px] font-extrabold flex items-center justify-center shadow-xs ring-2 ring-white dark:ring-neutral-900">
+                {inboxFolder.unread_count}
+              </span>
+            )}
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+              Inbox
+            </span>
           </button>
 
-          <div className="flex items-center gap-1">
-            <button
-              onClick={prevPeriod}
-              className="p-1 rounded-lg hover:bg-[var(--card-bg)] text-[var(--text-muted)] hover:text-[var(--text-primary)] apple-transition"
-            >
-              <ChevronLeft className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={nextPeriod}
-              className="p-1 rounded-lg hover:bg-[var(--card-bg)] text-[var(--text-muted)] hover:text-[var(--text-primary)] apple-transition"
-            >
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={() => setShowAddAgenda(!showAddAgenda)}
-              className="p-1 rounded-lg hover:bg-[var(--card-bg)] text-blue-600 apple-transition ml-0.5"
-              title="Add Agenda"
-            >
-              <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-            </button>
-          </div>
+          {/* STARRED (Apple VIP / Star) */}
+          <button
+            onClick={() => {
+              onSelectFolder('starred');
+              setActiveMenu(null);
+            }}
+            className={`group relative w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer ${
+              isStarredActive
+                ? 'bg-amber-500 text-white shadow-md shadow-amber-500/25 scale-105'
+                : 'bg-white/80 dark:bg-neutral-800/60 text-neutral-600 dark:text-neutral-300 hover:bg-white dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white border border-black/5 dark:border-white/5 shadow-2xs hover:scale-105 active:scale-95'
+            }`}
+          >
+            <Star className={`w-[19px] h-[19px] stroke-[2.1] ${isStarredActive ? 'fill-current' : ''}`} />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+              Starred
+            </span>
+          </button>
+
+          {/* SNOOZED / REMIND LATER */}
+          <button
+            onClick={() => {
+              onSelectFolder('snoozed');
+              setActiveMenu(null);
+            }}
+            className={`group relative w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer ${
+              isSnoozedActive
+                ? 'bg-purple-600 text-white shadow-md shadow-purple-500/25 scale-105'
+                : 'bg-white/80 dark:bg-neutral-800/60 text-neutral-600 dark:text-neutral-300 hover:bg-white dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white border border-black/5 dark:border-white/5 shadow-2xs hover:scale-105 active:scale-95'
+            }`}
+          >
+            <Clock className="w-[19px] h-[19px] stroke-[2.1]" />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+              Snoozed
+            </span>
+          </button>
+
+          {/* SENT (Clean Horizontal Outgoing Arrow - No slanted arrow!) */}
+          <button
+            onClick={() => {
+              if (sentFolder) onSelectFolder(sentFolder.id);
+              setActiveMenu(null);
+            }}
+            className={`group relative w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer ${
+              isSentActive
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25 scale-105'
+                : 'bg-white/80 dark:bg-neutral-800/60 text-neutral-600 dark:text-neutral-300 hover:bg-white dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white border border-black/5 dark:border-white/5 shadow-2xs hover:scale-105 active:scale-95'
+            }`}
+          >
+            <SendHorizontal className="w-[19px] h-[19px] stroke-[2.1]" />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+              Sent
+            </span>
+          </button>
+
+          {/* DRAFTS */}
+          <button
+            onClick={() => {
+              if (draftsFolder) onSelectFolder(draftsFolder.id);
+              setActiveMenu(null);
+            }}
+            className={`group relative w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer ${
+              isDraftsActive
+                ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md scale-105'
+                : 'bg-white/80 dark:bg-neutral-800/60 text-neutral-600 dark:text-neutral-300 hover:bg-white dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white border border-black/5 dark:border-white/5 shadow-2xs hover:scale-105 active:scale-95'
+            }`}
+          >
+            <FileText className="w-[19px] h-[19px] stroke-[2.1]" />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+              Drafts
+            </span>
+          </button>
+
+          {/* MORE FOLDERS (Archive, Spam, Trash) */}
+          <button
+            onClick={() => setActiveMenu(activeMenu === 'tags' ? null : 'tags')}
+            className={`group relative w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 cursor-pointer ${
+              activeMenu === 'tags'
+                ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md scale-105'
+                : 'bg-white/80 dark:bg-neutral-800/60 text-neutral-600 dark:text-neutral-300 hover:bg-white dark:hover:bg-neutral-800 hover:text-neutral-900 dark:hover:text-white border border-black/5 dark:border-white/5 shadow-2xs hover:scale-105 active:scale-95'
+            }`}
+          >
+            <Tag className="w-[19px] h-[19px] stroke-[2.1]" />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+              More Folders
+            </span>
+          </button>
         </div>
 
-        {/* Days of Week Header */}
-        <div className="grid grid-cols-7 text-center text-[10px] font-bold text-[var(--text-muted)] pb-1 shrink-0">
-          {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-            <div key={i} className={i === 0 ? 'text-red-500/80 font-bold' : ''}>{d}</div>
-          ))}
+        {/* 3. BOTTOM: Apple Mail Signature Compose Button (Square Pen) */}
+        <div className="shrink-0 flex flex-col items-center">
+          <button
+            onClick={() => onOpenCompose()}
+            className="group relative w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-blue-500/25 hover:scale-105 active:scale-95 apple-transition cursor-pointer"
+            title="Compose New Message"
+          >
+            <SquarePen className="w-[19px] h-[19px] stroke-[2.3]" />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+              Compose Email
+            </span>
+          </button>
         </div>
+      </aside>
 
-        {/* Calendar Grid: Week View OR Full Month View */}
-        {isMonthExpanded ? (
-          <div className="grid grid-cols-7 gap-y-1 text-center shrink-0 animate-fade-in">
-            {Array.from({ length: firstDayIndex }).map((_, i) => (
-              <div key={`empty-${i}`} className="h-6" />
-            ))}
-            {Array.from({ length: daysInMonth }).map((_, i) => {
-              const dayNum = i + 1;
-              const thisDate = new Date(year, month, dayNum);
-              const isSelected = thisDate.toDateString() === selectedDate.toDateString();
-              const isToday = thisDate.toDateString() === new Date().toDateString();
-              const dKey = formatLocalDateKey(thisDate);
-              const isSunday = thisDate.getDay() === 0;
-              const hasAgendas = agendas.some(a => a.dateStr === dKey || a.recurrence === 'daily');
+      {/* ── POP-OVERS ── */}
 
-              return (
-                <button
-                  key={dayNum}
-                  onClick={() => setSelectedDate(thisDate)}
-                  className={`h-7 w-7 mx-auto rounded-full text-[11px] font-bold flex flex-col items-center justify-center relative apple-transition cursor-pointer ${
-                    isSelected
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : isToday
-                      ? 'bg-blue-500/15 text-blue-600 font-extrabold'
-                      : isSunday
-                      ? 'text-red-500/80 font-bold hover:bg-red-500/10'
-                      : 'text-[var(--text-secondary)] hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)]'
-                  }`}
-                >
-                  <span>{dayNum}</span>
-                  {hasAgendas && !isSelected && (
-                    <span className="w-1 h-1 rounded-full bg-blue-500 absolute bottom-0.5" />
-                  )}
-                </button>
-              );
-            })}
+      {/* 1. MORE FOLDERS FLOATING POPOVER */}
+      {activeMenu === 'tags' && (
+        <div className="absolute left-[84px] bottom-16 w-64 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-3 shadow-2xl z-[100] animate-scale-up font-sans flex flex-col gap-1.5 backdrop-blur-xl">
+          <div className="px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[var(--text-muted)]">
+            Other Mail Folders
           </div>
-        ) : (
-          /* Weekly View (1 Row) */
-          <div className="grid grid-cols-7 gap-0.5 text-center shrink-0 py-0.5">
-            {currentWeekDays.map((thisDate, i) => {
-              const isSelected = thisDate.toDateString() === selectedDate.toDateString();
-              const isToday = thisDate.toDateString() === new Date().toDateString();
-              const dKey = formatLocalDateKey(thisDate);
-              const isSunday = thisDate.getDay() === 0;
-              const hasAgendas = agendas.some(a => a.dateStr === dKey || a.recurrence === 'daily');
 
-              return (
-                <button
-                  key={i}
-                  onClick={() => setSelectedDate(thisDate)}
-                  className={`h-7 w-7 mx-auto rounded-full text-[11px] font-bold flex flex-col items-center justify-center relative apple-transition cursor-pointer ${
-                    isSelected
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : isToday
-                      ? 'bg-blue-500/15 text-blue-600 font-extrabold'
-                      : isSunday
-                      ? 'text-red-500/80 font-bold hover:bg-red-500/10'
-                      : 'text-[var(--text-secondary)] hover:bg-[var(--card-bg)] hover:text-[var(--text-primary)]'
-                  }`}
-                >
-                  <span>{thisDate.getDate()}</span>
-                  {hasAgendas && !isSelected && (
-                    <span className="w-1 h-1 rounded-full bg-blue-500 absolute bottom-0.5" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        )}
+          {archiveFolder && (
+            <button
+              onClick={() => {
+                onSelectFolder(archiveFolder.id);
+                setActiveMenu(null);
+              }}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-2xl text-xs font-semibold transition-colors cursor-pointer ${
+                activeFolderId === archiveFolder.id ? 'bg-blue-600 text-white font-bold shadow-xs' : 'hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
+              }`}
+            >
+              <Archive className="w-4 h-4" />
+              <span>Archive</span>
+              {archiveFolder.unread_count > 0 && (
+                <span className="ml-auto text-[10px] bg-black/10 dark:bg-white/10 px-2 py-0.5 rounded-full font-bold">
+                  {archiveFolder.unread_count}
+                </span>
+              )}
+            </button>
+          )}
 
-        {/* Add Agenda Inline Form */}
-        {showAddAgenda && (
-          <form onSubmit={handleCreateAgenda} className="mt-2 p-2.5 bg-[var(--card-bg)] rounded-2xl border border-[var(--card-border)] space-y-2 animate-toast shrink-0">
-            <div className="flex items-center justify-between text-[11px] font-bold text-[var(--text-muted)]">
-              <span>New Agenda</span>
-              <button type="button" onClick={() => setShowAddAgenda(false)}>
-                <X className="w-3 h-3" />
-              </button>
-            </div>
-            <input
-              type="text"
-              placeholder="Event title..."
-              value={newAgendaTitle}
-              onChange={(e) => setNewAgendaTitle(e.target.value)}
-              autoFocus
-              className="w-full bg-[var(--bg-color)] border border-[var(--card-border)] rounded-xl px-2.5 py-1 text-[11px] text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between gap-1">
+          {spamFolder && (
+            <button
+              onClick={() => {
+                onSelectFolder(spamFolder.id);
+                setActiveMenu(null);
+              }}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-2xl text-xs font-semibold transition-colors cursor-pointer ${
+                activeFolderId === spamFolder.id ? 'bg-blue-600 text-white font-bold shadow-xs' : 'hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
+              }`}
+            >
+              <AlertOctagon className="w-4 h-4" />
+              <span>Spam / Junk</span>
+            </button>
+          )}
+
+          {trashFolder && (
+            <button
+              onClick={() => {
+                onSelectFolder(trashFolder.id);
+                setActiveMenu(null);
+              }}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-2xl text-xs font-semibold transition-colors cursor-pointer ${
+                activeFolderId === trashFolder.id ? 'bg-blue-600 text-white font-bold shadow-xs' : 'hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
+              }`}
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>Trash</span>
+              {trashFolder.unread_count > 0 && (
+                <span className="ml-auto text-[10px] bg-black/10 dark:bg-white/10 px-2 py-0.5 rounded-full font-bold">
+                  {trashFolder.unread_count}
+                </span>
+              )}
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* 2. RICH PROFILE & SOCIAL MEDIA CARD POPOVER */}
+      {activeMenu === 'profile' && (
+        <div className="absolute left-[84px] top-2 sm:top-4 w-80 max-w-[calc(100vw-96px)] bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-5 shadow-2xl z-[100] animate-scale-up font-sans flex flex-col gap-4 backdrop-blur-2xl">
+          
+          {/* User Profile Header */}
+          <div className="flex items-start gap-3.5 pb-3 border-b border-[var(--border-subtle)]">
+            <div className="relative group shrink-0">
+              <div className="w-14 h-14 rounded-2xl overflow-hidden bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md ring-2 ring-blue-500/20">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="Ivan Affriandi" className="w-full h-full object-cover" />
+                ) : (
+                  'IA'
+                )}
+              </div>
+              <label
+                className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 rounded-2xl flex flex-col items-center justify-center cursor-pointer apple-transition text-white"
+                title="Change Photo"
+              >
+                <Camera className="w-4 h-4 mb-0.5" />
+                <span className="text-[9px] font-bold">Edit</span>
                 <input
-                  type="time"
-                  value={newAgendaTime}
-                  onChange={(e) => setNewAgendaTime(e.target.value)}
-                  className="bg-[var(--bg-color)] border border-[var(--card-border)] rounded-lg px-2 py-0.5 text-[10px] text-[var(--text-primary)] focus:outline-none"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarUpload}
                 />
+              </label>
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5">
+                <p className="text-sm font-extrabold text-[var(--text-primary)] truncate">
+                  Ivan Affriandi
+                </p>
+                <BadgeCheck className="w-4 h-4 text-blue-500 shrink-0" fill="#007aff" color="#ffffff" />
+              </div>
+              <p className="text-[11px] text-[var(--text-muted)] font-medium mt-0.5 truncate">
+                Software Engineer & Designer
+              </p>
+              
+              {/* Copyable Email Pill */}
+              <div className="flex items-center gap-1 mt-1.5">
+                <span className="text-[11px] text-[var(--text-secondary)] font-mono truncate max-w-[145px]">
+                  {userEmail || 'hello@ivanaffriandi.com'}
+                </span>
                 <button
-                  type="submit"
-                  className="px-3 py-1 rounded-lg bg-blue-600 text-white font-bold text-[10px] shadow-2xs hover:bg-blue-700 apple-transition"
+                  onClick={handleCopyEmail}
+                  className="p-1 rounded-md hover:bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] apple-transition cursor-pointer"
+                  title="Copy email address"
                 >
-                  Add
+                  {copiedEmail ? (
+                    <Check className="w-3 h-3 text-emerald-500" />
+                  ) : (
+                    <Copy className="w-3 h-3" />
+                  )}
                 </button>
               </div>
-              <div className="flex items-center justify-between gap-1 bg-[var(--bg-color)] p-0.5 rounded-lg border border-[var(--card-border)]">
-                {(['once', 'daily', 'weekly', 'monthly'] as const).map((rec) => (
-                  <button
-                    key={rec}
-                    type="button"
-                    onClick={() => setNewAgendaRecurrence(rec)}
-                    className={`flex-1 py-0.5 rounded-md text-[9px] font-bold capitalize apple-transition ${
-                      newAgendaRecurrence === rec
-                        ? 'bg-blue-600 text-white shadow-2xs'
-                        : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-                    }`}
-                  >
-                    {rec}
-                  </button>
-                ))}
-              </div>
             </div>
-          </form>
-        )}
-
-        {/* Agenda Events for Selected Day */}
-        <div className="mt-2 flex-1 flex flex-col min-h-0 overflow-hidden border-t border-[var(--border-subtle)] pt-1.5">
-          <div className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] mb-1 shrink-0 flex items-center justify-between">
-            <span>{selectedDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</span>
-            <span className="text-blue-500">{selectedDayAgendas.length} items</span>
           </div>
 
-          <div className="flex-1 overflow-y-auto space-y-1 pr-0.5">
-            {selectedDayAgendas.length === 0 ? (
-              <p className="text-[11px] text-[var(--text-muted)] py-2 text-center font-medium">
-                No agenda for this date
-              </p>
-            ) : (
-              selectedDayAgendas.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between p-1.5 rounded-xl bg-[var(--card-bg)] hover:bg-[var(--border-subtle)] apple-transition group"
+          {/* Status & Mailbox Health Pill */}
+          <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Mail Server Connected</span>
+            </div>
+            <span className="text-[10px] font-mono opacity-80">mail.ivanaffriandi.com</span>
+          </div>
+
+          {/* Social Profiles & Channels Section */}
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)]">
+                Social Profiles & Writings
+              </span>
+              <Sparkles className="w-3 h-3 text-amber-500" />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-transparent text-xs text-[var(--text-secondary)] font-medium transition-all group cursor-pointer ${social.bgClass}`}
                 >
-                  <button
-                    onClick={() => handleToggleAgenda(item.id)}
-                    className="flex items-center gap-2 min-w-0 text-left flex-1"
-                  >
-                    <div className={`w-4 h-4 rounded-md border flex items-center justify-center shrink-0 transition-colors ${
-                      item.completed
-                        ? 'bg-emerald-500 border-emerald-500 text-white'
-                        : 'border-[var(--card-border)] bg-[var(--bg-color)]'
-                    }`}>
-                      {item.completed && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-6 h-6 rounded-lg bg-[var(--bg-secondary)] flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                      {social.icon}
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <span className={`text-[11px] font-semibold block truncate leading-tight ${
-                        item.completed ? 'line-through text-[var(--text-muted)]' : 'text-[var(--text-primary)]'
-                      }`}>
-                        {item.title}
-                      </span>
-                      <div className="flex items-center gap-2 text-[9px] text-[var(--text-muted)]">
-                        {item.time && (
-                          <span className="flex items-center gap-0.5">
-                            <Clock className="w-2.5 h-2.5" />
-                            {item.time}
-                          </span>
-                        )}
-                        {item.recurrence && item.recurrence !== 'once' && (
-                          <span className="flex items-center gap-0.5 capitalize text-blue-500">
-                            <Repeat className="w-2.5 h-2.5" />
-                            {item.recurrence}
-                          </span>
-                        )}
-                      </div>
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-bold text-[var(--text-primary)] leading-tight">
+                        {social.name}
+                      </p>
+                      <p className="text-[10px] text-[var(--text-muted)] leading-tight truncate">
+                        {social.handle}
+                      </p>
                     </div>
-                  </button>
-                  <button
-                    onClick={() => handleDeleteAgenda(item.id)}
-                    className="p-1 rounded-md opacity-0 group-hover:opacity-100 hover:text-red-500 text-[var(--text-muted)] apple-transition shrink-0"
-                    title="Delete item"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </button>
-                </div>
-              ))
+                  </div>
+                  <div className="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity shrink-0">
+                    <span className="text-[9px] font-semibold text-[var(--text-muted)] hidden sm:inline">
+                      {social.badge}
+                    </span>
+                    <ExternalLink className="w-3 h-3 text-[var(--text-muted)] group-hover:translate-x-0.5 transition-transform" />
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="flex flex-col gap-1.5 pt-2 border-t border-[var(--border-subtle)]">
+            <button
+              onClick={() => {
+                onOpenCompose();
+                setActiveMenu(null);
+              }}
+              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-2xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-500/20 apple-transition cursor-pointer"
+            >
+              <SquarePen className="w-4 h-4" />
+              <span>Compose New Message</span>
+            </button>
+
+            {onSignOut && (
+              <button
+                onClick={() => {
+                  setActiveMenu(null);
+                  onSignOut();
+                }}
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-2xl text-xs font-bold text-red-500 hover:bg-red-500/10 apple-transition cursor-pointer"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Sign Out</span>
+              </button>
             )}
           </div>
         </div>
-      </div>
-
-      {/* 4. Compose / Write Action Pillbar Button with Contextual Reply Popover */}
-      <div className="relative shrink-0 pt-1">
-        {showWriteMenu && selectedMessage && (
-          <>
-            <div className="fixed inset-0 z-30" onClick={() => setShowWriteMenu(false)} />
-            <div className="absolute bottom-full left-0 right-0 mb-2 p-1.5 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl shadow-xl z-40 flex flex-col gap-1 animate-scale-up font-sans">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowWriteMenu(false);
-                  onReplyCurrentMessage?.();
-                }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-[var(--text-primary)] hover:bg-blue-500/10 hover:text-blue-600 apple-transition text-left cursor-pointer"
-              >
-                <Reply className="w-4 h-4 text-blue-500 shrink-0" />
-                <div className="flex flex-col min-w-0 flex-1">
-                  <span className="truncate text-xs font-bold">Reply to {selectedMessage.sender_name || selectedMessage.sender_address.split('@')[0]}</span>
-                  <span className="text-[10px] text-[var(--text-muted)] truncate font-normal">Re: {selectedMessage.subject || '(No Subject)'}</span>
-                </div>
-              </button>
-
-              <div className="h-px bg-[var(--border-subtle)] my-0.5" />
-
-              <button
-                type="button"
-                onClick={() => {
-                  setShowWriteMenu(false);
-                  onOpenCompose();
-                }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)] apple-transition text-left cursor-pointer"
-              >
-                <Edit3 className="w-4 h-4 text-[var(--text-muted)] shrink-0" />
-                <span className="text-xs font-bold">New Message</span>
-              </button>
-            </div>
-          </>
-        )}
-
-        <button
-          type="button"
-          onClick={() => {
-            if (selectedMessage) {
-              setShowWriteMenu((prev) => !prev);
-            } else {
-              onOpenCompose();
-            }
-          }}
-          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-extrabold text-xs shadow-md hover:shadow-lg apple-transition apple-active-scale cursor-pointer"
-        >
-          <Feather className="w-4 h-4 stroke-[2.2]" />
-          <span>Write</span>
-        </button>
-      </div>
-    </aside>
+      )}
+    </div>
   );
 };

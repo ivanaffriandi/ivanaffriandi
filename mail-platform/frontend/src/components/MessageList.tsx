@@ -62,7 +62,6 @@ export const MessageList: React.FC<MessageListProps> = ({
 
   const filteredMessages = messages.filter((m) => {
     if (filter === 'unread') return !m.is_read;
-    if (filter === 'starred') return m.is_starred;
     return true;
   });
 
@@ -223,15 +222,10 @@ export const MessageList: React.FC<MessageListProps> = ({
         <div className="px-3.5 py-2.5 border-b border-[var(--border-subtle)] flex items-center justify-between shrink-0 bg-[var(--bg-secondary)]/50 gap-2">
           {/* iOS Floating Pill Style Filter Control */}
           <div className="flex items-center bg-[var(--card-bg)]/90 backdrop-blur-xl p-1 rounded-full border border-[var(--card-border)] shadow-xs ring-1 ring-black/5 dark:ring-white/10 gap-0.5 relative shrink-0">
-            {(['all', 'unread', 'starred'] as const).map((tabKey) => {
+            {(['all', 'unread'] as const).map((tabKey) => {
               const isActive = filter === tabKey;
               const unreadCount = messages.filter((m) => !m.is_read).length;
-              const label =
-                tabKey === 'all'
-                  ? 'All'
-                  : tabKey === 'unread'
-                  ? `Unread${unreadCount > 0 ? ` (${unreadCount})` : ''}`
-                  : 'Starred';
+              const label = tabKey === 'all' ? 'All' : `Unread${unreadCount > 0 ? ` (${unreadCount})` : ''}`;
               return (
                 <button
                   key={tabKey}
