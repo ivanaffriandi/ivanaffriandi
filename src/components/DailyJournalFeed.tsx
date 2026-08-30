@@ -4524,23 +4524,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                             </div>
                           );
                         })}
-                                <div className="blog-card-date">
-                                  {chapterLabel}
-                                </div>
-                                <h3 className="blog-card-title">{post.title}</h3>
-                                <div style={{ fontSize: "0.52rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginTop: "0.15rem" }}>
-                                  {relativeTime ? relativeTime : formatDate(post.published, locale)}
-                                </div>
-                              </div>
-                              <p className="blog-card-excerpt">{excerpt}</p>
-                            </div>
-                          </div>
-                        );
-                      })}
+                      </div>
                     </div>
-                  </div>
-                </>
-              )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>
