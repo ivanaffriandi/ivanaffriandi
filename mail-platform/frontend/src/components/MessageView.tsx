@@ -222,8 +222,8 @@ export const MessageView: React.FC<MessageViewProps> = ({
         {/* ──────────────────────────────────────────────────────────────────────────
             2. SCROLLABLE EMAIL CONTENT CANVAS
             ────────────────────────────────────────────────────────────────────────── */}
-        <div className="flex-1 overflow-y-auto px-3 md:px-6 py-5 relative space-y-6">
-          <div className="max-w-4xl mx-auto space-y-6 pb-24">
+        <div className="flex-1 overflow-y-auto px-3 md:px-5 py-3 md:py-3.5 relative space-y-4">
+          <div className="max-w-4xl mx-auto space-y-4 pb-20">
             {threadToDisplay.map((item, index) => {
               const itemImages = (item.attachments || []).filter(
                 (att) => att.content_type.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(att.filename)
@@ -235,7 +235,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
               return (
                 <div
                   key={item.id || index}
-                  className="w-full rounded-2xl md:rounded-3xl border border-black/10 dark:border-white/10 bg-white dark:bg-[#181a20] shadow-[0_4px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.35)] p-5 md:p-8 space-y-6 min-w-0 max-w-full overflow-hidden transition-all duration-200"
+                  className="w-full rounded-2xl md:rounded-3xl border border-black/10 dark:border-white/10 bg-white dark:bg-[#181a20] shadow-[0_4px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.35)] p-4 md:p-6 space-y-4 md:space-y-5 min-w-0 max-w-full overflow-hidden transition-all duration-200"
                 >
                 {index > 0 && (
                   <div className="flex items-center justify-between pb-3 border-b border-black/5 dark:border-white/10 text-xs text-[var(--text-muted)] font-sans">
@@ -245,9 +245,9 @@ export const MessageView: React.FC<MessageViewProps> = ({
                 )}
 
                 {index === 0 && message.subject && !isSubjectInBody && (
-                  <div className="space-y-2 border-b border-black/5 dark:border-white/10 pb-4">
+                  <div className="space-y-1.5 border-b border-black/5 dark:border-white/10 pb-3">
                     <div className="flex items-start justify-between gap-4">
-                      <h1 className="text-xl md:text-2xl lg:text-3xl font-black text-[var(--text-primary)] tracking-tight leading-snug font-sans break-words selection:bg-blue-500/20">
+                      <h1 className="text-xl md:text-2xl font-bold text-[var(--text-primary)] tracking-tight leading-snug font-sans break-words selection:bg-blue-500/20">
                         {message.subject}
                       </h1>
                       {threadToDisplay.length > 1 && (

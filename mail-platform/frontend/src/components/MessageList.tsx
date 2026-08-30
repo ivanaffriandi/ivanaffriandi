@@ -384,18 +384,9 @@ export const MessageList: React.FC<MessageListProps> = ({
                   )}
                   <Mail className="w-3 h-3 stroke-[2.2]" />
                   <span>Unread</span>
-                  <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-black transition-colors ${
-                    filter === 'unread' ? 'bg-white/25 text-white' : 'bg-blue-500/15 text-blue-500'
-                  }`}>
-                    {unreadCount}
-                  </span>
                 </button>
               )}
             </div>
-
-            <span className="text-[10px] text-[var(--text-muted)] font-semibold pr-1 font-sans shrink-0 whitespace-nowrap ml-auto">
-              {filteredMessages.length}
-            </span>
           </motion.div>
         ) : null}
       </AnimatePresence>

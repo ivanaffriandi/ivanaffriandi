@@ -195,7 +195,7 @@ export const CalendarAgendaWidget: React.FC = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsMonthExpanded(!isMonthExpanded)}
-            className="flex items-center gap-1 text-sm font-black text-[var(--text-primary)] hover:text-blue-500 apple-transition cursor-pointer group"
+            className="flex items-center gap-1 text-sm font-bold text-[var(--text-primary)] hover:text-blue-500 apple-transition cursor-pointer group"
             title={isMonthExpanded ? 'Collapse to Week View' : 'Expand to Full Month'}
           >
             <span suppressHydrationWarning>{currentMonth.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}</span>
@@ -209,7 +209,7 @@ export const CalendarAgendaWidget: React.FC = () => {
           {!isTodaySelected && (
             <button
               onClick={jumpToToday}
-              className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-500/15 text-blue-600 dark:text-blue-400 hover:bg-blue-500/25 apple-transition cursor-pointer"
+              className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 apple-transition cursor-pointer"
             >
               Today
             </button>
@@ -222,29 +222,29 @@ export const CalendarAgendaWidget: React.FC = () => {
             className="p-1.5 rounded-xl hover:bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] apple-transition cursor-pointer"
             title="Previous"
           >
-            <ChevronLeft className="w-4 h-4 stroke-[2.2]" />
+            <ChevronLeft className="w-4 h-4 stroke-[2]" />
           </button>
           <button
             onClick={nextPeriod}
             className="p-1.5 rounded-xl hover:bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] apple-transition cursor-pointer"
             title="Next"
           >
-            <ChevronRight className="w-4 h-4 stroke-[2.2]" />
+            <ChevronRight className="w-4 h-4 stroke-[2]" />
           </button>
           <button
             onClick={() => setShowAddAgenda(!showAddAgenda)}
-            className="p-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white shadow-xs apple-transition ml-1 cursor-pointer"
+            className="p-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white shadow-xs apple-transition ml-0.5 cursor-pointer"
             title="Add New Reminder / Event"
           >
-            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <Plus className="w-4 h-4 stroke-[2.2]" />
           </button>
         </div>
       </div>
 
       {/* 2. DAYS OF WEEK HEADER */}
-      <div className="grid grid-cols-7 text-center text-[10px] font-extrabold text-[var(--text-muted)] pt-2 pb-1 shrink-0 uppercase tracking-wider">
+      <div className="grid grid-cols-7 text-center text-[10px] font-medium text-[var(--text-muted)] pt-2 pb-1.5 shrink-0 tracking-wider">
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-          <div key={i} className={i === 0 ? 'text-red-500/90 font-black' : ''}>
+          <div key={i} className={i === 0 ? 'text-rose-500/80 font-medium' : ''}>
             {d}
           </div>
         ))}
@@ -270,14 +270,14 @@ export const CalendarAgendaWidget: React.FC = () => {
                 <button
                   key={dayNum}
                   onClick={() => setSelectedDate(thisDate)}
-                  className={`h-7 w-7 mx-auto rounded-full text-xs font-bold flex flex-col items-center justify-center relative apple-transition cursor-pointer ${
+                  className={`h-7 w-7 mx-auto rounded-full text-xs flex flex-col items-center justify-center relative apple-transition cursor-pointer ${
                     isSelected
-                      ? 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/30 scale-105'
+                      ? 'bg-blue-600 text-white font-medium shadow-sm shadow-blue-500/30 scale-105'
                       : isToday
-                      ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400 font-black ring-1 ring-blue-500/30'
+                      ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400 font-medium ring-1 ring-blue-500/30'
                       : isSunday
-                      ? 'text-red-500/80 font-bold hover:bg-red-500/10'
-                      : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'
+                      ? 'text-rose-500/80 font-normal hover:bg-rose-500/10'
+                      : 'text-[var(--text-secondary)] font-normal hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   <span>{dayNum}</span>
@@ -301,14 +301,14 @@ export const CalendarAgendaWidget: React.FC = () => {
                 <button
                   key={i}
                   onClick={() => setSelectedDate(thisDate)}
-                  className={`h-7 w-7 mx-auto rounded-full text-xs font-bold flex flex-col items-center justify-center relative apple-transition cursor-pointer ${
+                  className={`h-7 w-7 mx-auto rounded-full text-xs flex flex-col items-center justify-center relative apple-transition cursor-pointer ${
                     isSelected
-                      ? 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/30 scale-105'
+                      ? 'bg-blue-600 text-white font-medium shadow-sm shadow-blue-500/30 scale-105'
                       : isToday
-                      ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400 font-black ring-1 ring-blue-500/30'
+                      ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400 font-medium ring-1 ring-blue-500/30'
                       : isSunday
-                      ? 'text-red-500/80 font-bold hover:bg-red-500/10'
-                      : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'
+                      ? 'text-rose-500/80 font-normal hover:bg-rose-500/10'
+                      : 'text-[var(--text-secondary)] font-normal hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   <span>{thisDate.getDate()}</span>
@@ -324,8 +324,8 @@ export const CalendarAgendaWidget: React.FC = () => {
 
       {/* 4. ADD AGENDA FORM MODAL/INLINE */}
       {showAddAgenda && (
-        <form onSubmit={handleCreateAgenda} className="my-2.5 p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--card-border)] space-y-2.5 animate-toast shrink-0 shadow-sm">
-          <div className="flex items-center justify-between text-xs font-extrabold text-[var(--text-primary)]">
+        <form onSubmit={handleCreateAgenda} className="my-2.5 p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--card-border)] space-y-2.5 animate-toast shrink-0 shadow-xs">
+          <div className="flex items-center justify-between text-xs font-semibold text-[var(--text-primary)]">
             <span>New Reminder / Event</span>
             <button type="button" onClick={() => setShowAddAgenda(false)} className="p-1 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer">
               <X className="w-3.5 h-3.5" />
@@ -337,18 +337,18 @@ export const CalendarAgendaWidget: React.FC = () => {
             value={newAgendaTitle}
             onChange={(e) => setNewAgendaTitle(e.target.value)}
             autoFocus
-            className="w-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl px-3 py-1.5 text-xs text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+            className="w-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl px-3 py-1.5 text-xs text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-blue-500/40 font-normal"
           />
           <div className="flex items-center justify-between gap-2">
             <input
               type="time"
               value={newAgendaTime}
               onChange={(e) => setNewAgendaTime(e.target.value)}
-              className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl px-2.5 py-1 text-xs text-[var(--text-primary)] font-medium"
+              className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl px-2.5 py-1 text-xs text-[var(--text-primary)] font-normal"
             />
             <button
               type="submit"
-              className="px-3.5 py-1 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-xs apple-transition cursor-pointer"
+              className="px-3.5 py-1 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs shadow-xs apple-transition cursor-pointer"
             >
               Save
             </button>
@@ -359,7 +359,7 @@ export const CalendarAgendaWidget: React.FC = () => {
                 key={rec}
                 type="button"
                 onClick={() => setNewAgendaRecurrence(rec)}
-                className={`flex-1 py-1 rounded-lg text-[10px] font-bold capitalize apple-transition cursor-pointer ${
+                className={`flex-1 py-1 rounded-lg text-[10px] font-medium capitalize apple-transition cursor-pointer ${
                   newAgendaRecurrence === rec
                     ? 'bg-blue-600 text-white shadow-xs'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
@@ -377,11 +377,11 @@ export const CalendarAgendaWidget: React.FC = () => {
         <div className="flex items-center justify-between pb-2 shrink-0">
           <div className="flex items-center gap-1.5">
             <CalendarDays className="w-3.5 h-3.5 text-blue-500" />
-            <span suppressHydrationWarning className="text-xs font-black text-[var(--text-primary)] uppercase tracking-wider">
+            <span suppressHydrationWarning className="text-xs font-semibold text-[var(--text-primary)] tracking-normal">
               {isTodaySelected ? 'Today, ' : ''}{selectedDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
             </span>
           </div>
-          <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
+          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
             {selectedDayAgendas.length} {selectedDayAgendas.length === 1 ? 'item' : 'items'}
           </span>
         </div>
@@ -392,8 +392,8 @@ export const CalendarAgendaWidget: React.FC = () => {
               <div className="w-10 h-10 rounded-2xl bg-[var(--bg-secondary)] text-[var(--text-muted)] flex items-center justify-center mb-2">
                 <CalendarIcon className="w-5 h-5 opacity-60" />
               </div>
-              <p className="text-xs font-bold text-[var(--text-primary)]">No events scheduled</p>
-              <p className="text-[11px] text-[var(--text-muted)] mt-0.5">Tap + to add a reminder</p>
+              <p className="text-xs font-medium text-[var(--text-primary)]">No events scheduled</p>
+              <p className="text-[11px] text-[var(--text-muted)] font-normal mt-0.5">Tap + to add a reminder</p>
             </div>
           ) : (
             selectedDayAgendas.map((item) => (
@@ -415,20 +415,20 @@ export const CalendarAgendaWidget: React.FC = () => {
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <span className={`text-xs font-semibold block truncate leading-tight ${
+                    <span className={`text-xs font-normal block truncate leading-tight ${
                       item.completed ? 'line-through text-[var(--text-muted)]' : 'text-[var(--text-primary)]'
                     }`}>
                       {item.title}
                     </span>
                     <div className="flex items-center gap-2 text-[10px] text-[var(--text-muted)] mt-0.5">
                       {item.time && (
-                        <span className="flex items-center gap-1 font-medium">
+                        <span className="flex items-center gap-1 font-normal">
                           <Clock className="w-3 h-3 text-blue-500/80" />
                           {item.time}
                         </span>
                       )}
                       {item.recurrence && item.recurrence !== 'once' && (
-                        <span className="flex items-center gap-0.5 capitalize text-blue-600 dark:text-blue-400 font-bold">
+                        <span className="flex items-center gap-0.5 capitalize text-blue-600 dark:text-blue-400 font-medium">
                           <Repeat className="w-3 h-3" />
                           {item.recurrence}
                         </span>
