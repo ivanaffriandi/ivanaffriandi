@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Reply, Forward, Star, Trash2, Archive,
@@ -92,6 +92,15 @@ export const MessageView: React.FC<MessageViewProps> = ({
   const [mainCFrom, mainCTo] = getAvatarColors(mainDisplayName);
   const mainInitial = (mainDisplayName || 'U').charAt(0).toUpperCase();
   const mainBrandAvatar = getBrandOrAvatarUrl(message.sender_address, message.sender_name);
+
+  const isSubjectInBody = useMemo(() => {
+    if (!message?.subject) return false;
+    const cleanSub = message.subject.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (!cleanSub || cleanSub.length < 4) return false;
+    const cleanHtml = (message.body_html || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const cleanPlain = (message.body_plain || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    return cleanHtml.includes(cleanSub) || cleanPlain.includes(cleanSub);
+  }, [message?.subject, message?.body_html, message?.body_plain]);
 
   return (
     <div className="h-full flex flex-col min-h-0 relative font-sans">
@@ -209,34 +218,17 @@ export const MessageView: React.FC<MessageViewProps> = ({
             </div>
           </div>
 
-          {/* Right: Date/Time + Status */}
-          <div className="flex items-center gap-3 shrink-0 font-sans">
-            {isMe && (
-              message.is_opened ? (
-                <span
-                  className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"
-                  title={`Read by recipient${message.opened_at ? ` on ${new Date(message.opened_at).toLocaleString()}` : ''}`}
-                >
-                  <CheckCheck className="w-3.5 h-3.5" />
-                  <span>Read {message.open_count && message.open_count > 1 ? `(${message.open_count}x)` : ''}</span>
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[var(--text-muted)]">
-                  <Check className="w-3.5 h-3.5" />
-                  <span>Delivered</span>
-                </span>
-              )
-            )}
-            <span className="text-xs font-semibold text-[var(--text-muted)] whitespace-nowrap">
-              {new Date(message.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-            </span>
+          <div className="text-xs font-semibold text-[var(--text-muted)] shrink-0 font-sans">
+            {new Date(message.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
           </div>
         </div>
+      </div>
 
-        {/* ────────────────────────────────────────────────────────────────────────
-            2. SCROLLABLE CONVERSATION STREAM (Subcard with Subject + Content)
-            ──────────────────────────────────────────────────────────────────────── */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 min-w-0 w-full px-4 md:px-7 py-5 space-y-6 pb-28">
+      {/* ──────────────────────────────────────────────────────────────────────────
+          2. SCROLLABLE EMAIL CONTENT CANVAS
+          ────────────────────────────────────────────────────────────────────────── */}
+      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 relative space-y-6">
+        <div className="max-w-4xl mx-auto space-y-6 pb-24">
           {threadToDisplay.map((item, index) => {
             const itemImages = (item.attachments || []).filter(
               (att) => att.content_type.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(att.filename)
@@ -248,22 +240,20 @@ export const MessageView: React.FC<MessageViewProps> = ({
             return (
               <div
                 key={item.id || index}
-                className="w-full rounded-2xl md:rounded-3xl border border-[var(--card-border)] bg-[var(--card-bg)] dark:bg-[#17191f] shadow-xs md:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)] p-5 md:p-8 space-y-6 min-w-0 max-w-full overflow-hidden transition-all duration-200 ring-1 ring-black/5 dark:ring-white/10"
+                className="w-full rounded-2xl md:rounded-3xl border border-black/10 dark:border-white/10 bg-[var(--card-bg)] dark:bg-[#17191f] shadow-xs md:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)] p-5 md:p-8 space-y-6 min-w-0 max-w-full overflow-hidden transition-all duration-200"
               >
-                {/* Secondary Thread Header (if part of multi-message thread and not the first) */}
                 {index > 0 && (
-                  <div className="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)] text-xs text-[var(--text-muted)] font-sans">
+                  <div className="flex items-center justify-between pb-3 border-b border-black/5 dark:border-white/10 text-xs text-[var(--text-muted)] font-sans">
                     <span className="font-bold text-[var(--text-primary)]">{item.sender_name || item.sender_address}</span>
                     <span>{new Date(item.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</span>
                   </div>
                 )}
 
-                {/* 1. SUBJECT TITLE - Prominently Displayed at Top of First Email Card */}
-                {index === 0 && (
-                  <div className="space-y-2 border-b border-[var(--border-subtle)] pb-5">
+                {index === 0 && message.subject && !isSubjectInBody && (
+                  <div className="space-y-2 border-b border-black/5 dark:border-white/10 pb-4">
                     <div className="flex items-start justify-between gap-4">
                       <h1 className="text-xl md:text-2xl lg:text-3xl font-black text-[var(--text-primary)] tracking-tight leading-snug font-sans break-words selection:bg-blue-500/20">
-                        {message.subject || '(No Subject)'}
+                        {message.subject}
                       </h1>
                       {threadToDisplay.length > 1 && (
                         <span className="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-xs shrink-0 border border-blue-500/20 font-sans">
@@ -274,7 +264,6 @@ export const MessageView: React.FC<MessageViewProps> = ({
                   </div>
                 )}
 
-                {/* 2. IMAGE ATTACHMENTS (with high-res preview & lightbox modal) */}
                 {itemImages.length > 0 && (
                   <div className="space-y-3">
                     <div className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider font-sans">
@@ -286,7 +275,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
                         return (
                           <div
                             key={imgAtt.id}
-                            className="relative rounded-2xl overflow-hidden border border-[var(--card-border)] bg-[var(--bg-secondary)] shadow-xs group cursor-pointer aspect-video"
+                            className="relative rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 bg-[var(--bg-secondary)] shadow-xs group cursor-pointer aspect-video"
                             onClick={() => {
                               setLightboxPhoto(downloadUrl);
                               setLightboxFilename(imgAtt.filename);
@@ -313,7 +302,6 @@ export const MessageView: React.FC<MessageViewProps> = ({
                   </div>
                 )}
 
-                {/* 3. FILE ATTACHMENTS */}
                 {itemFiles.length > 0 && (
                   <div className="flex flex-wrap gap-2.5 pt-1">
                     {itemFiles.map((att) => {
@@ -325,7 +313,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
                           download={att.filename}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[var(--bg-secondary)] border border-[var(--card-border)] hover:border-blue-500/40 text-xs font-semibold text-[var(--text-primary)] apple-transition shadow-2xs group cursor-pointer"
+                          className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[var(--bg-secondary)] border border-black/10 dark:border-white/10 hover:border-blue-500/40 text-xs font-semibold text-[var(--text-primary)] apple-transition shadow-2xs group cursor-pointer"
                         >
                           <Paperclip className="w-4 h-4 text-[var(--text-muted)] group-hover:text-blue-500" />
                           <span className="truncate max-w-[200px]">{att.filename}</span>
@@ -339,7 +327,6 @@ export const MessageView: React.FC<MessageViewProps> = ({
                   </div>
                 )}
 
-                {/* 4. EMAIL BODY CONTENT - Full Width */}
                 <div className="w-full min-w-0 max-w-full overflow-x-auto">
                   {item.body_html ? (
                     <div
@@ -358,22 +345,22 @@ export const MessageView: React.FC<MessageViewProps> = ({
         </div>
 
         {/* ──────────────────────────────────────────────────────────────────────────
-            3. FLOATING ACTION PILLBAR DOCK (Ultra Liquid Glass, Dynamic in Light & Dark Mode)
+            3. FLOATING ACTION PILLBAR DOCK (Ultra Liquid Glass, Uniform Neutral Icons)
             ────────────────────────────────────────────────────────────────────────── */}
         <div className="pointer-events-none absolute bottom-5 inset-x-0 mx-auto flex justify-center z-40 px-3">
           <motion.div
             initial={{ opacity: 0, y: 15, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="pointer-events-auto relative bg-white/40 dark:bg-[#12141a]/50 backdrop-blur-3xl saturate-150 border border-white/60 dark:border-white/20 rounded-full p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.12),inset_0_1px_1px_rgba(255,255,255,0.8)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.15)] flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_24px_50px_rgba(0,0,0,0.18)]"
+            className="pointer-events-auto relative bg-white/45 dark:bg-[#12141a]/55 backdrop-blur-3xl saturate-150 border border-black/10 dark:border-white/10 rounded-full p-1.5 shadow-[0_16px_36px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_45px_rgba(0,0,0,0.18)]"
           >
-            {/* Move to Inbox (strictly only for spam and trash folders) */}
+            {/* Move to Inbox (strictly only for spam and trash folders, uniform neutral color) */}
             {onMoveToInbox && (activeFolderType === 'trash' || activeFolderType === 'spam') && (
               <motion.button
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.92 }}
                 onClick={onMoveToInbox}
-                className="w-8 h-8 flex items-center justify-center rounded-full text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/15 apple-transition cursor-pointer"
+                className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-800 hover:text-black dark:text-neutral-200 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/15 apple-transition cursor-pointer"
                 title="Move to Inbox"
               >
                 <Inbox className="w-4 h-4 stroke-[2.2]" />
@@ -386,7 +373,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
                 onClick={onReply}
-                className="h-8 px-4 flex items-center justify-center gap-1.5 rounded-full bg-blue-600/90 hover:bg-blue-600 active:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/30 border border-white/20 backdrop-blur-xs cursor-pointer"
+                className="h-8 px-4 flex items-center justify-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/30 border border-white/20 backdrop-blur-xs cursor-pointer"
                 title="Reply"
               >
                 <Reply className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -400,7 +387,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
                 onClick={onForward}
-                className="h-8 px-3.5 flex items-center justify-center gap-1.5 rounded-full bg-white/50 hover:bg-white/70 dark:bg-white/10 dark:hover:bg-white/20 text-neutral-900 dark:text-white text-xs font-bold border border-white/50 dark:border-white/10 shadow-2xs backdrop-blur-md apple-transition cursor-pointer"
+                className="h-8 px-3.5 flex items-center justify-center gap-1.5 rounded-full bg-white/50 hover:bg-white/70 dark:bg-white/10 dark:hover:bg-white/20 text-neutral-900 dark:text-white text-xs font-bold border border-black/5 dark:border-white/10 shadow-2xs backdrop-blur-md apple-transition cursor-pointer"
                 title="Forward message"
               >
                 <Forward className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -449,12 +436,12 @@ export const MessageView: React.FC<MessageViewProps> = ({
               <Archive className="w-4 h-4 stroke-[2.2]" />
             </motion.button>
 
-            {/* Delete */}
+            {/* Delete (uniform neutral icon color) */}
             <motion.button
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
               onClick={onDelete}
-              className="w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:text-red-600 hover:bg-red-500/15 apple-transition cursor-pointer"
+              className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-800 hover:text-red-500 dark:text-neutral-200 dark:hover:text-red-400 hover:bg-white/40 dark:hover:bg-white/15 apple-transition cursor-pointer"
               title="Delete message"
             >
               <Trash2 className="w-4 h-4 stroke-[2.2]" />

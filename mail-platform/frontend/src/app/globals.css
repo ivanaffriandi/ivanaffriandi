@@ -335,9 +335,10 @@ html, body {
 }
 
 .dark .mail-content-container,
+.dark .mail-content-container *,
 .dark .mail-content-container p,
 .dark .mail-content-container span,
-.dark .mail-content-container div:not([class*="btn"]):not([class*="button"]),
+.dark .mail-content-container div,
 .dark .mail-content-container td,
 .dark .mail-content-container th,
 .dark .mail-content-container li,
@@ -359,7 +360,8 @@ html, body {
 .dark .mail-content-container article,
 .dark .mail-content-container header,
 .dark .mail-content-container footer,
-.dark .mail-content-container main {
+.dark .mail-content-container main,
+.dark .mail-content-container [style*="color"] {
   color: #f8fafc !important;
 }
 
@@ -377,6 +379,14 @@ html, body {
 .dark .mail-content-container [style*="background"] {
   background-color: transparent !important;
   background: transparent !important;
+}
+
+/* Invert dark/black transparent logo PNGs so they are crisp pure white in dark mode */
+.dark .mail-content-container img[src*="pUIfRlZh07mLXKHFllcZSw"],
+.dark .mail-content-container img[alt*="digest" i],
+.dark .mail-content-container img[alt*="logo" i],
+.dark .mail-content-container img[src*="logo" i] {
+  filter: invert(1) hue-rotate(180deg) brightness(1.5) contrast(1.1);
 }
 
 /* Preserve styled action buttons in emails */
