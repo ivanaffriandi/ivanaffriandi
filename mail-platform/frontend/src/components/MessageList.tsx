@@ -455,51 +455,43 @@ export const MessageList: React.FC<MessageListProps> = ({
                       : 'bg-transparent border-transparent hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
                   }`}
                 >
-                  {/* Select Checkbox (Hover or Checked) */}
-                  <div
-                    onClick={(e) => toggleSelectOne(msg.id, e)}
-                    className={`absolute left-2.5 top-1/2 -translate-y-1/2 z-20 transition-all duration-150 ${
-                      isChecked ? 'opacity-100 scale-100' : 'opacity-0 group-hover:opacity-100 scale-95 hover:scale-105'
-                    }`}
-                  >
-                    <div
-                      className={`w-4 h-4 rounded flex items-center justify-center transition-all ${
-                        isChecked
-                          ? 'bg-blue-600 text-white shadow-xs'
-                          : isSelected
-                          ? 'border border-white/60 bg-white/20'
-                          : 'border border-black/30 dark:border-white/30 bg-[var(--card-bg)] shadow-xs'
-                      }`}
-                    >
-                      {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
-                    </div>
-                  </div>
-
                   {/* Message Item Content */}
-                  <div className={`flex items-center gap-3 w-full min-w-0 transition-transform duration-150 ${
-                    selectedIds.size > 0 ? 'translate-x-4' : 'group-hover:translate-x-4'
-                  }`}>
-                    {/* Brand / Contact Avatar */}
-                    <div className="w-9 h-9 rounded-xl overflow-hidden shrink-0 flex items-center justify-center font-bold text-xs shadow-2xs relative">
-                      {brandUrl ? (
-                        <img
-                          src={brandUrl}
-                          alt={displayName}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            (e.currentTarget as HTMLElement).style.display = 'none';
-                          }}
-                        />
+                  <div className="flex items-center gap-3 w-full min-w-0">
+                    {/* Circular Avatar / Click-to-Select Toggle */}
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleSelectOne(msg.id, e);
+                      }}
+                      className="w-9 h-9 shrink-0 relative cursor-pointer flex items-center justify-center group/avatar"
+                      title={isChecked ? 'Deselect message' : 'Select message'}
+                    >
+                      {isChecked ? (
+                        <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-extrabold text-xs shadow-sm ring-2 ring-blue-500/30">
+                          <Check className="w-4 h-4 text-white stroke-[3]" />
+                        </div>
                       ) : (
                         <div
-                          className="w-full h-full flex items-center justify-center text-white"
+                          className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center font-extrabold text-xs text-white shadow-2xs ring-1 ring-black/5 dark:ring-white/10 relative"
                           style={{ background: `linear-gradient(135deg, ${colorFrom}, ${colorTo})` }}
                         >
-                          {initial}
+                          <span className="select-none">{initial}</span>
+                          {brandUrl && (
+                            <img
+                              src={brandUrl}
+                              alt={displayName}
+                              className="absolute inset-0 w-full h-full object-cover"
+                              onError={(e) => { (e.currentTarget as HTMLElement).style.display = 'none'; }}
+                            />
+                          )}
+                          {/* Hover Checkmark Overlay */}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 flex items-center justify-center transition-opacity rounded-full">
+                            <Check className="w-3.5 h-3.5 text-white stroke-[3]" />
+                          </div>
                         </div>
                       )}
-                      {isUnread && (
-                        <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-blue-500 ring-2 ring-[var(--card-bg)]" />
+                      {isUnread && !isChecked && (
+                        <span className="absolute top-0 right-0 w-2.5 h-2.5 rounded-full bg-blue-500 ring-2 ring-[var(--card-bg)] shadow-xs" />
                       )}
                     </div>
 

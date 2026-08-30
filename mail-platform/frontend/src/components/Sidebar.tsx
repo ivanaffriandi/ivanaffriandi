@@ -154,6 +154,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             )}
           </div>
           <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-neutral-900 rounded-full shadow-xs"></span>
+          <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+            Ivan Affriandi • Profile
+          </span>
         </button>
       </div>
 
@@ -177,6 +180,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {inboxFolder.unread_count}
               </span>
             )}
+            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+              Inbox
+            </span>
           </button>
 
           <button
@@ -191,6 +197,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }`}
           >
             <Star className={`w-[18px] h-[18px] stroke-[2.2] ${isStarredActive ? 'fill-current' : ''}`} />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+              Starred
+            </span>
           </button>
 
           <button
@@ -205,6 +214,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }`}
           >
             <Clock className="w-[18px] h-[18px] stroke-[2.2]" />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+              Snoozed
+            </span>
           </button>
 
           <button
@@ -219,6 +231,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }`}
           >
             <SendHorizontal className="w-[18px] h-[18px] stroke-[2.2]" />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+              Sent
+            </span>
           </button>
 
           <button
@@ -233,6 +248,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }`}
           >
             <FileText className="w-[18px] h-[18px] stroke-[2.2]" />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+              Drafts
+            </span>
           </button>
 
           <button
@@ -244,6 +262,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }`}
           >
             <Tag className="w-[18px] h-[18px] stroke-[2.2]" />
+            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+              Other Folders
+            </span>
           </button>
         </div>
       </aside>
@@ -256,6 +277,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
           title="Compose New Message"
         >
           <Feather className="w-5 h-5 stroke-[2.2]" />
+          <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+            Compose Email
+          </span>
         </button>
       </div>
 
