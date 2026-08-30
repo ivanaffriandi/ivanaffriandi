@@ -284,7 +284,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ─── Email Content Container (Faithful adaptive email rendering inside dedicated rounded canvas) ─── */
+/* ─── Email Content Container (Faithful adaptive email rendering) ─── */
 .mail-content-container {
   width: 100%;
   min-width: 0;
@@ -318,15 +318,26 @@ html, body {
   border-radius: 0 12px 12px 0;
 }
 
+/* Light Mode: Ensure high contrast text */
+.mail-content-container,
+.mail-content-container p,
+.mail-content-container span,
+.mail-content-container div,
+.mail-content-container td,
+.mail-content-container th,
+.mail-content-container li {
+  color: inherit;
+}
+
 /* Dark Mode Email Rendering - Crystal clear contrast for all HTML email content */
 .dark .mail-content-container {
-  color: #f1f5f9 !important;
+  color: #f8fafc !important;
 }
 
 .dark .mail-content-container,
 .dark .mail-content-container p,
 .dark .mail-content-container span,
-.dark .mail-content-container div,
+.dark .mail-content-container div:not([class*="btn"]):not([class*="button"]),
 .dark .mail-content-container td,
 .dark .mail-content-container th,
 .dark .mail-content-container li,
@@ -349,7 +360,35 @@ html, body {
 .dark .mail-content-container header,
 .dark .mail-content-container footer,
 .dark .mail-content-container main {
-  color: #f1f5f9 !important;
+  color: #f8fafc !important;
+}
+
+/* Neutralize hardcoded table & div backgrounds in dark mode so text isn't washed out */
+.dark .mail-content-container table,
+.dark .mail-content-container tbody,
+.dark .mail-content-container tr,
+.dark .mail-content-container td,
+.dark .mail-content-container th,
+.dark .mail-content-container div:not([class*="btn"]):not([class*="button"]),
+.dark .mail-content-container section,
+.dark .mail-content-container article,
+.dark .mail-content-container center,
+.dark .mail-content-container [bgcolor],
+.dark .mail-content-container [style*="background"] {
+  background-color: transparent !important;
+  background: transparent !important;
+}
+
+/* Preserve styled action buttons in emails */
+.dark .mail-content-container a[style*="background"],
+.dark .mail-content-container a[class*="btn"],
+.dark .mail-content-container a[class*="button"],
+.dark .mail-content-container td[style*="background-color: #"][style*="border-radius"],
+.dark .mail-content-container td[style*="background-color:#"][style*="border-radius"] {
+  background-color: #2563eb !important;
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-radius: 9999px !important;
 }
 
 .dark .mail-content-container a,
@@ -379,23 +418,6 @@ html, body {
   color: #93c5fd !important;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* Invert or adapt hardcoded white/light backgrounds in newsletter tables/divs */
-.dark .mail-content-container [bgcolor="#ffffff"],
-.dark .mail-content-container [bgcolor="#fff"],
-.dark .mail-content-container [bgcolor="white"],
-.dark .mail-content-container [bgcolor="#fafafa"],
-.dark .mail-content-container [bgcolor="#f8f9fa"],
-.dark .mail-content-container [bgcolor="#f5f5f5"],
-.dark .mail-content-container [style*="background-color: #ffffff"],
-.dark .mail-content-container [style*="background-color: #fff"],
-.dark .mail-content-container [style*="background-color: rgb(255"],
-.dark .mail-content-container [style*="background: #ffffff"],
-.dark .mail-content-container [style*="background: #fff"],
-.dark .mail-content-container [style*="background: white"] {
-  background-color: transparent !important;
-  background: transparent !important;
 }
 
 @keyframes verticalMarquee {
