@@ -5,19 +5,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Reply, Forward, Star, Trash2, Archive,
   Paperclip, Download, MailOpen, Mail, X, CheckCheck, Check,
-  ArrowLeft
+  ArrowLeft, Inbox
 } from 'lucide-react';
 import { Message, MessageDetail } from '@/types/mail';
 import { getBrandOrAvatarUrl } from '@/lib/avatar';
 
 interface MessageViewProps {
   message: Message | null;
+  activeFolderType?: string;
   onReply?: () => void;
   onForward?: () => void;
   onDelete: () => void;
   onArchive: () => void;
   onToggleStar: () => void;
   onMarkUnread?: () => void;
+  onMoveToInbox?: () => void;
   onReplySuccess?: (info: { to: string; subject: string }) => void;
   onBack?: () => void;
 }
@@ -40,12 +42,14 @@ const getAvatarColors = (name: string) => {
 
 export const MessageView: React.FC<MessageViewProps> = ({
   message,
+  activeFolderType,
   onReply,
   onForward,
   onDelete,
   onArchive,
   onToggleStar,
   onMarkUnread,
+  onMoveToInbox,
   onBack,
 }) => {
   const [lightboxPhoto, setLightboxPhoto] = useState<string | null>(null);
@@ -363,6 +367,19 @@ export const MessageView: React.FC<MessageViewProps> = ({
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
             className="pointer-events-auto bg-[var(--card-bg)]/90 dark:bg-[#1c1c1f]/90 backdrop-blur-2xl border border-[var(--card-border)] rounded-full p-1.5 shadow-[0_16px_36px_rgba(0,0,0,0.25)] dark:shadow-[0_20px_45px_rgba(0,0,0,0.8)] flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_45px_rgba(0,0,0,0.3)] ring-1 ring-black/5 dark:ring-white/10"
           >
+            {/* Move to Inbox (only for spam/trash) */}
+            {onMoveToInbox && (
+              <motion.button
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.92 }}
+                onClick={onMoveToInbox}
+                className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:text-emerald-500 hover:bg-emerald-500/10 apple-transition cursor-pointer"
+                title="Move to Inbox"
+              >
+                <Inbox className="w-4 h-4" />
+              </motion.button>
+            )}
+
             {/* Reply blue pill button */}
             {onReply && (
               <motion.button

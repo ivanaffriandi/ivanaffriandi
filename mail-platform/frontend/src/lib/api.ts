@@ -145,6 +145,22 @@ export async function sendMessage(data: {
 }
 
 // ─── Archive / Delete / Move / Empty Trash ───────────────────────────────────
+export async function moveToInbox(id: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/messages/${id}/inbox`, {
+    method: 'PATCH',
+    cache: 'no-store',
+  });
+  if (!res.ok) throw new Error(`Move to inbox failed: ${res.status}`);
+}
+
+export async function moveToSpam(id: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/messages/${id}/spam`, {
+    method: 'PATCH',
+    cache: 'no-store',
+  });
+  if (!res.ok) throw new Error(`Move to spam failed: ${res.status}`);
+}
+
 export async function archiveMessage(id: string): Promise<void> {
   const res = await fetch(`${API_BASE}/messages/${id}/archive`, {
     method: 'PATCH',

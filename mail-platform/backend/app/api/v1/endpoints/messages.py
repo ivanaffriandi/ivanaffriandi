@@ -376,6 +376,44 @@ async def archive_message(
     await db.commit()
     return {"status": "archived", "mailbox_id": str(archive_box.id)}
 
+@router.patch("/{message_id}/inbox")
+async def move_to_inbox(
+    message_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db)
+):
+    """Moves message back to the Inbox mailbox (from Trash, Spam, Archive)."""
+    user = await get_or_create_primary_user(db)
+    inbox_box = await get_or_create_mailbox(db, user.id, MailboxType.INBOX, "Inbox")
+
+    stmt = select(Message).where(Message.id == message_id, Message.user_id == user.id)
+    res = await db.execute(stmt)
+    msg = res.scalar_one_or_none()
+    if not msg:
+        raise HTTPException(status_code=404, detail="Message not found")
+
+    msg.mailbox_id = inbox_box.id
+    await db.commit()
+    return {"status": "moved_to_inbox", "mailbox_id": str(inbox_box.id)}
+
+@router.patch("/{message_id}/spam")
+async def move_to_spam(
+    message_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db)
+):
+    """Moves message to Spam mailbox."""
+    user = await get_or_create_primary_user(db)
+    spam_box = await get_or_create_mailbox(db, user.id, MailboxType.SPAM, "Spam")
+
+    stmt = select(Message).where(Message.id == message_id, Message.user_id == user.id)
+    res = await db.execute(stmt)
+    msg = res.scalar_one_or_none()
+    if not msg:
+        raise HTTPException(status_code=404, detail="Message not found")
+
+    msg.mailbox_id = spam_box.id
+    await db.commit()
+    return {"status": "moved_to_spam", "mailbox_id": str(spam_box.id)}
+
 @router.delete("/{message_id}")
 async def move_to_trash_or_delete(
     message_id: uuid.UUID,

@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Star, Paperclip, Inbox, Check, CheckCheck, Mail, MailOpen, Archive, Trash2, X,
-  Loader2, ArrowDown
+  Loader2, ArrowDown, Sparkles, User, Layers, RotateCcw
 } from 'lucide-react';
 import { MessageSummary } from '@/types/mail';
 import { getBrandOrAvatarUrl } from '@/lib/avatar';
@@ -12,10 +12,11 @@ import { sound } from '@/lib/sound';
 interface MessageListProps {
   messages: MessageSummary[];
   selectedMessageId: string | null;
+  activeFolderType?: string;
   onSelectMessage: (id: string) => void;
   onToggleStar?: (id: string, e: React.MouseEvent) => void;
   onRefresh?: () => void;
-  onBatchAction?: (action: 'read' | 'unread' | 'star' | 'archive' | 'delete', ids: string[]) => void;
+  onBatchAction?: (action: 'read' | 'unread' | 'star' | 'archive' | 'delete' | 'inbox', ids: string[]) => void;
 }
 
 const AVATAR_COLORS = [
@@ -46,24 +47,43 @@ function formatTime(dateStr: string): string {
   return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
 }
 
+function isPromotionMessage(m: MessageSummary): boolean {
+  const text = `${m.sender_address || ''} ${m.sender_name || ''} ${m.subject || ''} ${m.snippet || ''}`.toLowerCase();
+  return /digest|newsletter|promo|update|marketing|offer|no-reply|noreply|billing|receipt|support|daily|alert|announcement|linear\.app|stripe|github|medium|marginalian|google|resend|producthunt|biteship|the conversation|cloudflare/i.test(text);
+}
+
 export const MessageList: React.FC<MessageListProps> = ({
   messages,
   selectedMessageId,
+  activeFolderType,
   onSelectMessage,
   onToggleStar,
   onRefresh,
   onBatchAction,
 }) => {
-  const [filter, setFilter] = useState<'all' | 'unread' | 'starred'>('all');
+  const [filter, setFilter] = useState<'all' | 'personal' | 'promotions' | 'unread'>('all');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [pullDist, setPullDist] = useState(0);
   const [startY, setStartY] = useState(0);
   const [isPullRefreshing, setIsPullRefreshing] = useState(false);
 
+  const unreadCount = messages.filter((m) => !m.is_read).length;
+
+  // Auto fallback to 'all' if all messages are read and user was on 'unread'
+  useEffect(() => {
+    if (unreadCount === 0 && filter === 'unread') {
+      setFilter('all');
+    }
+  }, [unreadCount, filter]);
+
   const filteredMessages = messages.filter((m) => {
     if (filter === 'unread') return !m.is_read;
+    if (filter === 'personal') return !isPromotionMessage(m);
+    if (filter === 'promotions') return isPromotionMessage(m);
     return true;
   });
+
+  const isTrashOrSpam = activeFolderType === 'trash' || activeFolderType === 'spam';
 
   const toggleSelectOne = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -87,7 +107,7 @@ export const MessageList: React.FC<MessageListProps> = ({
     setSelectedIds(new Set());
   };
 
-  const executeBatch = (action: 'read' | 'unread' | 'star' | 'archive' | 'delete') => {
+  const executeBatch = (action: 'read' | 'unread' | 'star' | 'archive' | 'delete' | 'inbox') => {
     if (selectedIds.size === 0 || !onBatchAction) return;
     onBatchAction(action, Array.from(selectedIds));
     clearSelection();
@@ -181,6 +201,16 @@ export const MessageList: React.FC<MessageListProps> = ({
 
           {/* Batch Actions */}
           <div className="flex items-center gap-1">
+            {isTrashOrSpam && (
+              <button
+                onClick={() => executeBatch('inbox')}
+                className="p-1.5 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/15 apple-transition apple-active-scale cursor-pointer flex items-center gap-1 text-xs font-bold"
+                title="Restore to Inbox"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline text-[11px]">Inbox</span>
+              </button>
+            )}
             <button
               onClick={() => executeBatch('read')}
               className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-500/15 apple-transition apple-active-scale cursor-pointer"
@@ -195,17 +225,19 @@ export const MessageList: React.FC<MessageListProps> = ({
             >
               <Mail className="w-3.5 h-3.5" />
             </button>
-            <button
-              onClick={() => executeBatch('archive')}
-              className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-500/15 apple-transition apple-active-scale cursor-pointer"
-              title="Archive Selected"
-            >
-              <Archive className="w-3.5 h-3.5" />
-            </button>
+            {!isTrashOrSpam && (
+              <button
+                onClick={() => executeBatch('archive')}
+                className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-500/15 apple-transition apple-active-scale cursor-pointer"
+                title="Archive Selected"
+              >
+                <Archive className="w-3.5 h-3.5" />
+              </button>
+            )}
             <button
               onClick={() => executeBatch('delete')}
               className="p-1.5 rounded-lg text-red-500 hover:bg-red-500/15 apple-transition apple-active-scale cursor-pointer"
-              title="Delete Selected"
+              title={isTrashOrSpam ? "Delete Permanently" : "Delete Selected"}
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
@@ -219,30 +251,74 @@ export const MessageList: React.FC<MessageListProps> = ({
           </div>
         </div>
       ) : (
-        <div className="px-3.5 py-2.5 border-b border-[var(--border-subtle)] flex items-center justify-between shrink-0 bg-[var(--bg-secondary)]/50 gap-2">
-          {/* iOS Floating Pill Style Filter Control */}
-          <div className="flex items-center bg-[var(--card-bg)]/90 backdrop-blur-xl p-1 rounded-full border border-[var(--card-border)] shadow-xs ring-1 ring-black/5 dark:ring-white/10 gap-0.5 relative shrink-0">
-            {(['all', 'unread'] as const).map((tabKey) => {
-              const isActive = filter === tabKey;
-              const unreadCount = messages.filter((m) => !m.is_read).length;
-              const label = tabKey === 'all' ? 'All' : `Unread${unreadCount > 0 ? ` (${unreadCount})` : ''}`;
-              return (
-                <button
-                  key={tabKey}
-                  onClick={() => setFilter(tabKey)}
-                  className={`px-3.5 py-1 rounded-full text-xs font-bold apple-transition apple-active-scale cursor-pointer shrink-0 ${
-                    isActive
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
-                  }`}
-                >
-                  {label}
-                </button>
-              );
-            })}
+        <div className="px-2.5 py-2 border-b border-[var(--border-subtle)] flex items-center justify-between shrink-0 bg-[var(--bg-secondary)]/50 gap-1.5 overflow-x-auto no-scrollbar">
+          {/* Category Tabs Bar with Icons */}
+          <div className="flex items-center bg-[var(--card-bg)]/90 backdrop-blur-xl p-0.5 rounded-full border border-[var(--card-border)] shadow-xs ring-1 ring-black/5 dark:ring-white/10 gap-0.5 relative shrink-0">
+            {/* 1. ALL */}
+            <button
+              onClick={() => setFilter('all')}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-bold apple-transition apple-active-scale cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                filter === 'all'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
+              }`}
+              title="All Messages"
+            >
+              <Layers className="w-3 h-3 stroke-[2.2]" />
+              <span>All</span>
+            </button>
+
+            {/* 2. PERSONAL */}
+            <button
+              onClick={() => setFilter('personal')}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-bold apple-transition apple-active-scale cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                filter === 'personal'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
+              }`}
+              title="Personal Messages"
+            >
+              <User className="w-3 h-3 stroke-[2.2]" />
+              <span>Personal</span>
+            </button>
+
+            {/* 3. PROMOTIONS */}
+            <button
+              onClick={() => setFilter('promotions')}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-bold apple-transition apple-active-scale cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                filter === 'promotions'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
+              }`}
+              title="Newsletters & Promotions"
+            >
+              <Sparkles className="w-3 h-3 stroke-[2.2]" />
+              <span>Promotions</span>
+            </button>
+
+            {/* 4. UNREAD (Only rendered if unreadCount > 0) */}
+            {unreadCount > 0 && (
+              <button
+                onClick={() => setFilter('unread')}
+                className={`px-2.5 py-1 rounded-full text-[11px] font-bold apple-transition apple-active-scale cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                  filter === 'unread'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
+                }`}
+                title="Unread Messages"
+              >
+                <Mail className="w-3 h-3 stroke-[2.2]" />
+                <span>Unread</span>
+                <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-black ${
+                  filter === 'unread' ? 'bg-white/20 text-white' : 'bg-blue-500/15 text-blue-500'
+                }`}>
+                  {unreadCount}
+                </span>
+              </button>
+            )}
           </div>
-          <span className="text-[11px] text-[var(--text-muted)] font-semibold pr-1 font-sans shrink-0 whitespace-nowrap">
-            {filteredMessages.length} {filteredMessages.length === 1 ? 'message' : 'messages'}
+          <span className="text-[10px] text-[var(--text-muted)] font-semibold pr-1 font-sans shrink-0 whitespace-nowrap ml-auto">
+            {filteredMessages.length}
           </span>
         </div>
       )}

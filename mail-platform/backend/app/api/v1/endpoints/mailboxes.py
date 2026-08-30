@@ -22,6 +22,31 @@ async def list_folders(db: AsyncSession = Depends(get_db)):
     results = await db.execute(stmt)
     mailboxes = results.scalars().all()
 
+    DEFAULT_BOXES = [
+        (MailboxType.INBOX, "Inbox"),
+        (MailboxType.SENT, "Sent"),
+        (MailboxType.DRAFTS, "Drafts"),
+        (MailboxType.TRASH, "Trash"),
+        (MailboxType.SPAM, "Spam"),
+        (MailboxType.ARCHIVE, "Archive"),
+    ]
+
+    existing_types = {mb.type for mb in mailboxes}
+    created_any = False
+    for b_type, b_name in DEFAULT_BOXES:
+        if b_type not in existing_types:
+            new_box = Mailbox(user_id=user.id, name=b_name, type=b_type)
+            db.add(new_box)
+            mailboxes.append(new_box)
+            created_any = True
+
+    if created_any:
+        await db.commit()
+        # Re-fetch mailboxes
+        stmt = select(Mailbox).where(Mailbox.user_id == user.id).order_by(Mailbox.name.asc())
+        results = await db.execute(stmt)
+        mailboxes = results.scalars().all()
+
     response_list = []
     for mb in mailboxes:
         # Dynamic unread count

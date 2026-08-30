@@ -19,6 +19,7 @@ import {
   fetchMessageDetail,
   markAsRead,
   markAsUnread,
+  moveToInbox,
 } from '@/lib/api';
 import { isAuthenticated, getUserEmail, clearSession } from '@/lib/auth';
 import { initThemeListener } from '@/lib/theme';
@@ -340,19 +341,34 @@ export default function MailApp() {
     fetch(`${API_BASE}/messages/${id}/archive`, { method: 'PATCH' }).catch(() => {});
   }, [selectedMessageId, setSelectedMessageId, addToast]);
 
+  const handleMoveToInbox = useCallback((id: string) => {
+    setMessages((prev) => prev.filter((m) => m.id !== id));
+    if (selectedMessageId === id) setSelectedMessageId(null);
+    addToast('success', 'Message restored to Inbox');
+    moveToInbox(id).catch(() => {});
+    loadFolders();
+  }, [selectedMessageId, setSelectedMessageId, addToast, loadFolders]);
+
   const handleDelete = useCallback((id: string) => {
     const isTrashFolder = folders.find((f) => f.id === activeFolderId)?.type === 'trash';
     setMessages((prev) => prev.filter((m) => m.id !== id));
     if (selectedMessageId === id) setSelectedMessageId(null);
     addToast('info', isTrashFolder ? 'Message permanently deleted' : 'Message moved to Trash');
     fetch(`${API_BASE}/messages/${id}`, { method: 'DELETE' }).catch(() => {});
-  }, [selectedMessageId, setSelectedMessageId, addToast, folders, activeFolderId]);
+    loadFolders();
+  }, [selectedMessageId, setSelectedMessageId, addToast, folders, activeFolderId, loadFolders]);
 
-  const handleBatchAction = useCallback(async (action: 'read' | 'unread' | 'star' | 'archive' | 'delete', ids: string[]) => {
+  const handleBatchAction = useCallback(async (action: 'read' | 'unread' | 'star' | 'archive' | 'delete' | 'inbox', ids: string[]) => {
     const idSet = new Set(ids);
     const isTrashFolder = folders.find((f) => f.id === activeFolderId)?.type === 'trash';
 
-    if (action === 'read') {
+    if (action === 'inbox') {
+      setMessages((prev) => prev.filter((m) => !idSet.has(m.id)));
+      if (selectedMessageId && idSet.has(selectedMessageId)) setSelectedMessageId(null);
+      addToast('success', `Restored ${ids.length} messages to Inbox`);
+      ids.forEach((id) => moveToInbox(id).catch(() => {}));
+      loadFolders();
+    } else if (action === 'read') {
       setMessages((prev) => prev.map((m) => idSet.has(m.id) ? { ...m, is_read: true } : m));
       setFolders((prev) =>
         prev.map((f) => {
@@ -387,13 +403,15 @@ export default function MailApp() {
       if (selectedMessageId && idSet.has(selectedMessageId)) setSelectedMessageId(null);
       addToast('info', `Archived ${ids.length} messages`);
       ids.forEach((id) => fetch(`${API_BASE}/messages/${id}/archive`, { method: 'PATCH' }).catch(() => {}));
+      loadFolders();
     } else if (action === 'delete') {
       setMessages((prev) => prev.filter((m) => !idSet.has(m.id)));
       if (selectedMessageId && idSet.has(selectedMessageId)) setSelectedMessageId(null);
       addToast('info', isTrashFolder ? `Permanently deleted ${ids.length} messages` : `Moved ${ids.length} messages to Trash`);
       ids.forEach((id) => fetch(`${API_BASE}/messages/${id}`, { method: 'DELETE' }).catch(() => {}));
+      loadFolders();
     }
-  }, [selectedMessageId, setSelectedMessageId, addToast, folders, activeFolderId, messages]);
+  }, [selectedMessageId, setSelectedMessageId, addToast, folders, activeFolderId, messages, loadFolders]);
 
   // ── Keyboard shortcuts ────────────────────────────────────────────────────
   useEffect(() => {
@@ -597,6 +615,13 @@ export default function MailApp() {
             <MessageList
               messages={displayMessages}
               selectedMessageId={selectedMessageId}
+              activeFolderType={
+                activeFolderId === 'starred'
+                  ? 'starred'
+                  : activeFolderId === 'snoozed'
+                  ? 'snoozed'
+                  : folders.find((f) => f.id === activeFolderId)?.type || 'inbox'
+              }
               onSelectMessage={setSelectedMessageId}
               onToggleStar={(id) => handleToggleStar(id)}
               onRefresh={handleRefresh}
@@ -616,8 +641,16 @@ export default function MailApp() {
             )}
             <MessageView
               message={selectedMessageDetail}
+              activeFolderType={
+                activeFolderId === 'starred'
+                  ? 'starred'
+                  : activeFolderId === 'snoozed'
+                  ? 'snoozed'
+                  : folders.find((f) => f.id === activeFolderId)?.type || 'inbox'
+              }
               onReply={handleReply}
               onForward={handleForward}
+              onMoveToInbox={() => selectedMessageId && handleMoveToInbox(selectedMessageId)}
               onArchive={() => selectedMessageId && handleArchive(selectedMessageId)}
               onDelete={() => selectedMessageId && handleDelete(selectedMessageId)}
               onToggleStar={() => selectedMessageId && handleToggleStar(selectedMessageId)}
