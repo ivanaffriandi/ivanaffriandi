@@ -404,52 +404,46 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* ──────────────────────────────────────────────────────────────────────────
           3. DESKTOP HEADER (Always shown on Desktop screen >= md)
-             - Left: Clean Folder Name (Inbox) without count badge
-             - Right: Search Input + Results Dropdown (w-80) + Refresh + Settings
+             - Column 2 zone (w-[360px]): Folder Title ("Inbox") + Search Bar that expands to full 360px on tap
+             - Right zone: Refresh + Theme + Settings
           ────────────────────────────────────────────────────────────────────────── */}
-      <header className="hidden md:flex h-13 px-3 items-center justify-between shrink-0 select-none relative z-30 font-sans bg-transparent">
-        {/* Left: Folder Name Only */}
-        <div className="flex items-center gap-3 shrink-0">
-          <h1 className="font-black text-xl text-neutral-900 dark:text-white tracking-tight capitalize font-sans">
-            {activeFolderName || 'Inbox'}
-          </h1>
-        </div>
+      <header className="hidden md:flex h-13 px-0 items-center justify-between shrink-0 select-none relative z-30 font-sans bg-transparent">
+        {/* Column 2 Header Zone (Exact 360px matching Message List) */}
+        <div className="w-[360px] min-w-[360px] max-w-[360px] flex items-center justify-between gap-2 px-1 relative shrink-0">
+          {!isSearchFocused && (
+            <h1 className="font-black text-xl text-neutral-900 dark:text-white tracking-tight capitalize font-sans truncate shrink-0">
+              {activeFolderName || 'Inbox'}
+            </h1>
+          )}
 
-        {/* Right: Search Bar + Refresh + Settings */}
-        <div className="flex items-center gap-2.5">
-          <div ref={desktopSearchRef} className="relative">
-            <div
-              className={`relative transition-all duration-200 ease-out ${
-                isSearchFocused ? 'w-80' : 'w-56'
+          {/* Expandable Search Input (Expands to fill exact 360px width when tapped) */}
+          <div ref={desktopSearchRef} className={`relative transition-all duration-300 ease-out ${isSearchFocused ? 'w-full' : 'w-44'}`}>
+            <input
+              ref={desktopInputRef}
+              type="text"
+              value={searchQuery}
+              onFocus={() => setIsSearchFocused(true)}
+              onChange={handleSearchChange}
+              placeholder={isSearchFocused ? "Search sender, subject, content..." : "Search..."}
+              className={`w-full bg-[var(--card-bg)] dark:bg-[#181a20] border rounded-full pl-9 pr-8 py-1.5 text-xs font-medium focus:outline-none apple-transition placeholder:text-[var(--text-muted)] text-neutral-900 dark:text-white font-sans ring-1 ring-black/5 dark:ring-white/10 ${
+                isSearchFocused
+                  ? 'border-blue-500/50 shadow-[0_8px_25px_rgba(37,99,235,0.15)] ring-2 ring-blue-500/30'
+                  : 'border-[var(--card-border)] shadow-2xs hover:border-[var(--text-muted)]/40'
               }`}
-            >
-              <input
-                ref={desktopInputRef}
-                type="text"
-                value={searchQuery}
-                onFocus={() => setIsSearchFocused(true)}
-                onChange={handleSearchChange}
-                placeholder="Search sender, subject, content..."
-                className={`w-full bg-[var(--card-bg)] dark:bg-[#181a20] border rounded-full pl-9 pr-8 py-1.5 text-xs font-medium focus:outline-none apple-transition placeholder:text-[var(--text-muted)] text-neutral-900 dark:text-white font-sans ring-1 ring-black/5 dark:ring-white/10 ${
-                  isSearchFocused
-                    ? 'border-blue-500/50 shadow-[0_8px_25px_rgba(37,99,235,0.15)] ring-2 ring-blue-500/30'
-                    : 'border-[var(--card-border)] shadow-2xs hover:border-[var(--text-muted)]/40'
-                }`}
-              />
-              <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[var(--text-muted)] pointer-events-none" />
-              {searchQuery && (
-                <button
-                  onClick={handleClearSearch}
-                  className="absolute right-2.5 top-2.5 p-0.5 rounded-full hover:bg-[var(--bg-color)] text-[var(--text-muted)]"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              )}
-            </div>
+            />
+            <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-[var(--text-muted)] pointer-events-none" />
+            {searchQuery && (
+              <button
+                onClick={handleClearSearch}
+                className="absolute right-2.5 top-2.5 p-0.5 rounded-full hover:bg-[var(--bg-color)] text-[var(--text-muted)] cursor-pointer"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
 
-            {/* Desktop Search Results Dropdown - Exactly matches w-80 width */}
+            {/* Desktop Search Results Dropdown - Spans exact 360px matching Column 2 */}
             {isSearchFocused && (
-              <div className="absolute right-0 top-full mt-2 w-80 bg-[var(--card-bg)] dark:bg-[#181a20] border border-[var(--card-border)] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.18)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.7)] z-50 overflow-hidden p-3 animate-toast apple-transition space-y-2.5 ring-1 ring-black/5 dark:ring-white/10">
+              <div className="absolute left-0 top-full mt-2 w-[360px] bg-[var(--card-bg)] dark:bg-[#181a20] border border-[var(--card-border)] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.18)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.7)] z-50 overflow-hidden p-3 animate-toast apple-transition space-y-2.5 ring-1 ring-black/5 dark:ring-white/10">
                 {displayContacts.length > 0 && (
                   <div className="bg-[var(--bg-color)] border border-[var(--card-border)] rounded-xl p-2 shadow-2xs">
                     <div className="px-1 pb-1.5 text-[10px] font-extrabold uppercase text-[var(--text-muted)] tracking-wider flex items-center justify-between">

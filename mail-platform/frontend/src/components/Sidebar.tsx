@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Mail, Star, Clock, SendHorizontal, FileText, Tag, Archive, AlertOctagon, Trash2,
-  Camera, LogOut, Feather, Globe,
-  Github, ExternalLink, Copy, Check
+  Camera, LogOut, Feather, Globe, Instagram,
+  Github, Copy, Check
 } from 'lucide-react';
 import { Folder, Message } from '@/types/mail';
 
@@ -41,50 +41,39 @@ export const Sidebar: React.FC<SidebarProps> = ({
   userEmail,
   onSignOut,
 }) => {
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [activeMenu, setActiveMenu] = useState<'tags' | 'profile' | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [copiedEmail, setCopiedEmail] = useState(false);
-
   const popoverRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedAvatar = localStorage.getItem('custom_avatar_url');
-      if (savedAvatar) {
-        setAvatarUrl(savedAvatar);
-      } else {
-        const defaultAvatar = 'https://github.com/ivanaffriandi.png';
-        setAvatarUrl(defaultAvatar);
-        localStorage.setItem('custom_avatar_url', defaultAvatar);
-      }
-    }
-  }, []);
-
-  // Close popovers on click outside
+  // Close popover on click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
         setActiveMenu(null);
       }
     };
-    if (activeMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Load avatar from localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('user_custom_avatar');
+      if (saved) setAvatarUrl(saved);
+      else setAvatarUrl('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80');
     }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [activeMenu]);
+  }, []);
 
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (event) => {
-        const result = event.target?.result as string;
-        setAvatarUrl(result);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('custom_avatar_url', result);
-        }
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setAvatarUrl(base64);
+        localStorage.setItem('user_custom_avatar', base64);
       };
       reader.readAsDataURL(file);
     }
@@ -113,36 +102,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const socialLinks = [
     {
-      name: 'Medium',
-      handle: '@ivanaffriandi',
-      url: 'https://medium.com/@ivanaffriandi',
-      icon: <MediumIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
-      badge: 'Articles & Writings',
-      bgClass: 'hover:bg-emerald-500/10 hover:border-emerald-500/30'
+      name: 'Instagram',
+      url: 'https://instagram.com/ivanaffriandi',
+      icon: <Instagram className="w-4 h-4 text-pink-500" />,
+      hoverClass: 'hover:bg-pink-500/10 hover:border-pink-500/30 text-pink-500',
     },
     {
       name: 'GitHub',
-      handle: '@ivanaffriandi',
       url: 'https://github.com/ivanaffriandi',
       icon: <Github className="w-4 h-4 text-neutral-800 dark:text-neutral-200" />,
-      badge: 'Open Source',
-      bgClass: 'hover:bg-neutral-500/10 hover:border-neutral-500/30'
+      hoverClass: 'hover:bg-neutral-500/10 hover:border-neutral-500/30 text-neutral-800 dark:text-neutral-200',
+    },
+    {
+      name: 'X (Twitter)',
+      url: 'https://x.com/ivanaffriandi',
+      icon: <XIcon className="w-3.5 h-3.5 text-neutral-900 dark:text-neutral-100" />,
+      hoverClass: 'hover:bg-neutral-500/10 hover:border-neutral-500/30 text-neutral-900 dark:text-neutral-100',
+    },
+    {
+      name: 'Medium',
+      url: 'https://medium.com/@ivanaffriandi',
+      icon: <MediumIcon className="w-4 h-4 text-emerald-500" />,
+      hoverClass: 'hover:bg-emerald-500/10 hover:border-emerald-500/30 text-emerald-500',
     },
     {
       name: 'Website',
-      handle: 'ivanaffriandi.com',
       url: 'https://ivanaffriandi.com',
-      icon: <Globe className="w-4 h-4 text-blue-600 dark:text-blue-400" />,
-      badge: 'Portfolio',
-      bgClass: 'hover:bg-blue-500/10 hover:border-blue-500/30'
-    },
-    {
-      name: 'X / Twitter',
-      handle: '@ivanaffriandi',
-      url: 'https://x.com/ivanaffriandi',
-      icon: <XIcon className="w-4 h-4 text-neutral-900 dark:text-neutral-100" />,
-      badge: 'Updates',
-      bgClass: 'hover:bg-neutral-500/10 hover:border-neutral-500/30'
+      icon: <Globe className="w-4 h-4 text-blue-500" />,
+      hoverClass: 'hover:bg-blue-500/10 hover:border-blue-500/30 text-blue-500',
     },
   ];
 
@@ -166,21 +153,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
               'IA'
             )}
           </div>
-          
-          {/* Online Pulse Dot */}
           <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-neutral-900 rounded-full shadow-xs"></span>
-
-          {/* iOS Style Tooltip */}
-          <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-            Ivan Affriandi • Profile
-          </span>
         </button>
       </div>
 
       {/* 2. TENGAH: Compact Floating Pill Bar Dock (Folder navigation only) */}
       <aside className="w-[58px] bg-white/95 dark:bg-[#14161a]/95 backdrop-blur-2xl border border-black/10 dark:border-white/15 rounded-full py-3 px-1.5 shadow-xl shadow-black/5 dark:shadow-black/40 flex flex-col items-center gap-2 shrink-0 relative z-50 ring-1 ring-black/5 dark:ring-white/5 overflow-visible my-auto">
         <div className="flex flex-col items-center gap-2 overflow-visible">
-          {/* INBOX */}
           <button
             onClick={() => {
               if (inboxFolder) onSelectFolder(inboxFolder.id);
@@ -198,12 +177,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {inboxFolder.unread_count}
               </span>
             )}
-            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-              Inbox
-            </span>
           </button>
 
-          {/* STARRED */}
           <button
             onClick={() => {
               onSelectFolder('starred');
@@ -216,12 +191,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }`}
           >
             <Star className={`w-[18px] h-[18px] stroke-[2.2] ${isStarredActive ? 'fill-current' : ''}`} />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-              Starred
-            </span>
           </button>
 
-          {/* SNOOZED */}
           <button
             onClick={() => {
               onSelectFolder('snoozed');
@@ -234,12 +205,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }`}
           >
             <Clock className="w-[18px] h-[18px] stroke-[2.2]" />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-              Snoozed
-            </span>
           </button>
 
-          {/* SENT */}
           <button
             onClick={() => {
               if (sentFolder) onSelectFolder(sentFolder.id);
@@ -252,12 +219,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }`}
           >
             <SendHorizontal className="w-[18px] h-[18px] stroke-[2.2]" />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-              Sent
-            </span>
           </button>
 
-          {/* DRAFTS */}
           <button
             onClick={() => {
               if (draftsFolder) onSelectFolder(draftsFolder.id);
@@ -270,12 +233,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }`}
           >
             <FileText className="w-[18px] h-[18px] stroke-[2.2]" />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-              Drafts
-            </span>
           </button>
 
-          {/* MORE FOLDERS (Archive, Spam, Trash) */}
           <button
             onClick={() => setActiveMenu(activeMenu === 'tags' ? null : 'tags')}
             className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
@@ -285,14 +244,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }`}
           >
             <Tag className="w-[18px] h-[18px] stroke-[2.2]" />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-              More Folders
-            </span>
           </button>
         </div>
       </aside>
 
-      {/* 3. PALING BAWAH: Standalone Compose New Message Button */}
+      {/* 3. PALING BAWAH: Compose Button */}
       <div className="relative shrink-0 overflow-visible">
         <button
           onClick={() => onOpenCompose()}
@@ -300,73 +256,35 @@ export const Sidebar: React.FC<SidebarProps> = ({
           title="Compose New Message"
         >
           <Feather className="w-5 h-5 stroke-[2.2]" />
-          <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-            Compose Email
-          </span>
         </button>
       </div>
 
-      {/* ── POP-OVERS ── */}
-
-      {/* 1. MORE FOLDERS FLOATING POPOVER */}
+      {/* POP-OVERS */}
       {activeMenu === 'tags' && (
         <div className="absolute left-[70px] top-1/2 -translate-y-1/2 w-64 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-3 shadow-2xl z-[100] animate-scale-up font-sans flex flex-col gap-1.5 backdrop-blur-xl ring-1 ring-black/5 dark:ring-white/10">
-          <div className="px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[var(--text-muted)]">
-            Other Mail Folders
-          </div>
-
+          <div className="px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[var(--text-muted)]">Other Folders</div>
           {archiveFolder && (
             <button
-              onClick={() => {
-                onSelectFolder(archiveFolder.id);
-                setActiveMenu(null);
-              }}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-2xl text-xs font-semibold transition-colors cursor-pointer ${
-                activeFolderId === archiveFolder.id ? 'bg-blue-600 text-white font-bold shadow-xs' : 'hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
-              }`}
+              onClick={() => { onSelectFolder(archiveFolder.id); setActiveMenu(null); }}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-2xl text-xs font-semibold ${activeFolderId === archiveFolder.id ? 'bg-blue-600 text-white' : 'hover:bg-[var(--bg-secondary)]'}`}
             >
-              <Archive className="w-4 h-4" />
-              <span>Archive</span>
-              {archiveFolder.unread_count > 0 && (
-                <span className="ml-auto text-[10px] bg-black/10 dark:bg-white/10 px-2 py-0.5 rounded-full font-bold">
-                  {archiveFolder.unread_count}
-                </span>
-              )}
+              <Archive className="w-4 h-4" /> Archive
             </button>
           )}
-
           {spamFolder && (
             <button
-              onClick={() => {
-                onSelectFolder(spamFolder.id);
-                setActiveMenu(null);
-              }}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-2xl text-xs font-semibold transition-colors cursor-pointer ${
-                activeFolderId === spamFolder.id ? 'bg-blue-600 text-white font-bold shadow-xs' : 'hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
-              }`}
+              onClick={() => { onSelectFolder(spamFolder.id); setActiveMenu(null); }}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-2xl text-xs font-semibold ${activeFolderId === spamFolder.id ? 'bg-blue-600 text-white' : 'hover:bg-[var(--bg-secondary)]'}`}
             >
-              <AlertOctagon className="w-4 h-4" />
-              <span>Spam / Junk</span>
+              <AlertOctagon className="w-4 h-4" /> Spam
             </button>
           )}
-
           {trashFolder && (
             <button
-              onClick={() => {
-                onSelectFolder(trashFolder.id);
-                setActiveMenu(null);
-              }}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-2xl text-xs font-semibold transition-colors cursor-pointer ${
-                activeFolderId === trashFolder.id ? 'bg-blue-600 text-white font-bold shadow-xs' : 'hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
-              }`}
+              onClick={() => { onSelectFolder(trashFolder.id); setActiveMenu(null); }}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-2xl text-xs font-semibold ${activeFolderId === trashFolder.id ? 'bg-blue-600 text-white' : 'hover:bg-[var(--bg-secondary)]'}`}
             >
-              <Trash2 className="w-4 h-4" />
-              <span>Trash</span>
-              {trashFolder.unread_count > 0 && (
-                <span className="ml-auto text-[10px] bg-black/10 dark:bg-white/10 px-2 py-0.5 rounded-full font-bold">
-                  {trashFolder.unread_count}
-                </span>
-              )}
+              <Trash2 className="w-4 h-4" /> Trash
             </button>
           )}
         </div>
@@ -374,12 +292,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* 2. SIMPLE & CLEAN PROFILE & SOCIAL MEDIA CARD POPOVER (ANCHORED AT TOP) */}
       {activeMenu === 'profile' && (
-        <div className="absolute left-[70px] top-0 w-76 max-w-[calc(100vw-96px)] bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-4 shadow-2xl z-[100] animate-scale-up font-sans flex flex-col gap-3 backdrop-blur-2xl ring-1 ring-black/5 dark:ring-white/10">
+        <div className="absolute left-[70px] top-0 w-72 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-4 shadow-2xl z-[100] animate-scale-up font-sans flex flex-col gap-3.5 backdrop-blur-2xl ring-1 ring-black/5 dark:ring-white/10">
           
-          {/* User Profile Header */}
-          <div className="flex items-center gap-3 pb-3 border-b border-[var(--border-subtle)]">
+          {/* User Profile Header (Circle Photo) */}
+          <div className="flex items-center gap-3">
             <div className="relative group shrink-0">
-              <div className="w-11 h-11 rounded-2xl overflow-hidden bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-md ring-2 ring-blue-500/20">
+              <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-md ring-2 ring-blue-500/30">
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="Ivan Affriandi" className="w-full h-full object-cover" />
                 ) : (
@@ -387,11 +305,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 )}
               </div>
               <label
-                className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 rounded-2xl flex flex-col items-center justify-center cursor-pointer apple-transition text-white"
+                className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 rounded-full flex flex-col items-center justify-center cursor-pointer apple-transition text-white"
                 title="Change Photo"
               >
                 <Camera className="w-3.5 h-3.5 mb-0.5" />
-                <span className="text-[8px] font-bold">Edit</span>
+                <span className="text-[7px] font-bold">Edit</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -402,13 +320,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-[var(--text-primary)] tracking-tight truncate">
+              <p className="text-sm font-extrabold text-[var(--text-primary)] tracking-tight truncate">
                 Ivan Affriandi
               </p>
               
-              {/* Copyable Email (Clean Sans Typography) */}
+              {/* Copyable Email */}
               <div className="flex items-center gap-1 mt-0.5">
-                <span className="text-xs text-[var(--text-muted)] font-normal truncate max-w-[160px]">
+                <span className="text-xs text-[var(--text-muted)] font-normal truncate max-w-[155px]">
                   {userEmail || 'hello@ivanaffriandi.com'}
                 </span>
                 <button
@@ -426,55 +344,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           </div>
 
-          {/* Social Profiles & Channels Section */}
-          <div className="flex flex-col gap-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)] px-1">
-              Profiles & Links
+          {/* Social Media Circular Icon Buttons Row */}
+          <div className="pt-2 border-t border-[var(--border-subtle)] flex flex-col gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+              Connect & Social
             </span>
 
-            <div className="flex flex-col gap-0.5">
+            <div className="flex items-center justify-between gap-1">
               {socialLinks.map((social) => (
                 <a
                   key={social.name}
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-transparent text-xs text-[var(--text-secondary)] font-medium transition-all group cursor-pointer ${social.bgClass}`}
+                  className={`w-9 h-9 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--card-border)] flex items-center justify-center transition-all duration-150 group hover:scale-110 active:scale-95 cursor-pointer shadow-2xs ${social.hoverClass}`}
+                  title={social.name}
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-6 h-6 rounded-lg bg-[var(--bg-secondary)] flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                      {social.icon}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-semibold text-[var(--text-primary)] leading-tight">
-                        {social.name}
-                      </p>
-                      <p className="text-[11px] text-[var(--text-muted)] font-normal leading-tight truncate">
-                        {social.handle}
-                      </p>
-                    </div>
-                  </div>
-                  <ExternalLink className="w-3 h-3 text-[var(--text-muted)] group-hover:translate-x-0.5 transition-transform" />
+                  {social.icon}
                 </a>
               ))}
             </div>
           </div>
-
-          {/* Quick Actions (Sign Out Only) */}
-          {onSignOut && (
-            <div className="pt-1 border-t border-[var(--border-subtle)]">
-              <button
-                onClick={() => {
-                  setActiveMenu(null);
-                  onSignOut();
-                }}
-                className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-2xl text-xs font-semibold text-red-500 hover:bg-red-500/10 apple-transition cursor-pointer"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Sign Out</span>
-              </button>
-            </div>
-          )}
         </div>
       )}
     </div>
