@@ -55,12 +55,16 @@ export const Header: React.FC<HeaderProps> = ({
   const [contacts, setContacts] = useState<Contact[]>(DEFAULT_CONTACTS);
   const [selectedContactModal, setSelectedContactModal] = useState<Contact | null>(null);
 
-  const [soundEnabled, setSoundEnabled] = useState(() => {
+  const [soundEnabled, setSoundEnabled] = useState(true);
+
+  useEffect(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('mail_sound_enabled') !== 'false';
+      const saved = localStorage.getItem('mail_sound_enabled');
+      if (saved !== null) {
+        setSoundEnabled(saved !== 'false');
+      }
     }
-    return true;
-  });
+  }, []);
 
   const desktopSearchRef = useRef<HTMLDivElement>(null);
   const mobileSearchRef = useRef<HTMLDivElement>(null);

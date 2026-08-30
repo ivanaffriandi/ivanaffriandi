@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Reply, Forward, Star, Trash2, Archive,
-  Paperclip, Download, MailOpen, Mail, X, CheckCheck, Check,
+  Paperclip, Download, MailOpen, Mail, X,
   ArrowLeft, Inbox
 } from 'lucide-react';
 import { Message, MessageDetail } from '@/types/mail';
@@ -93,14 +93,10 @@ export const MessageView: React.FC<MessageViewProps> = ({
   const mainInitial = (mainDisplayName || 'U').charAt(0).toUpperCase();
   const mainBrandAvatar = getBrandOrAvatarUrl(message.sender_address, message.sender_name);
 
-  const isSubjectInBody = useMemo(() => {
-    if (!message?.subject) return false;
-    const cleanSub = message.subject.toLowerCase().replace(/[^a-z0-9]/g, '');
-    if (!cleanSub || cleanSub.length < 4) return false;
-    const cleanHtml = (message.body_html || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const cleanPlain = (message.body_plain || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    return cleanHtml.includes(cleanSub) || cleanPlain.includes(cleanSub);
-  }, [message?.subject, message?.body_html, message?.body_plain]);
+  const cleanSub = (message.subject || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const cleanHtml = (message.body_html || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const cleanPlain = (message.body_plain || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const isSubjectInBody = cleanSub.length >= 4 && (cleanHtml.includes(cleanSub) || cleanPlain.includes(cleanSub));
 
   return (
     <div className="h-full flex flex-col min-h-0 relative font-sans">
@@ -218,7 +214,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
             </div>
           </div>
 
-          <div className="text-xs font-semibold text-[var(--text-muted)] shrink-0 font-sans">
+          <div suppressHydrationWarning className="text-xs font-semibold text-[var(--text-muted)] shrink-0 font-sans">
             {new Date(message.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
           </div>
         </div>

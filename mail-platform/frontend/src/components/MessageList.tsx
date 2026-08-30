@@ -503,7 +503,7 @@ export const MessageList: React.FC<MessageListProps> = ({
                         }`}>
                           {displayName}
                         </span>
-                        <span className={`text-[10px] shrink-0 font-sans ${
+                        <span suppressHydrationWarning className={`text-[10px] shrink-0 font-sans ${
                           isSelected ? 'text-white/80' : 'text-[var(--text-muted)]'
                         }`}>
                           {formatTime(msg.date)}

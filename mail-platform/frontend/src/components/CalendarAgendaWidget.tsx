@@ -17,24 +17,27 @@ export const formatLocalDateKey = (d: Date): string => {
 };
 
 export const CalendarAgendaWidget: React.FC = () => {
+  const [isMounted, setIsMounted] = useState(false);
   const [isMonthExpanded, setIsMonthExpanded] = useState(true);
   const [currentMonth, setCurrentMonth] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(() => new Date());
-  const [agendas, setAgendas] = useState<AgendaItem[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('mail_calendar_agenda');
-      if (saved !== null) {
-        try {
-          return JSON.parse(saved);
-        } catch { /* ignore */ }
-      }
-    }
-    return [];
-  });
+  const [agendas, setAgendas] = useState<AgendaItem[]>([]);
   const [showAddAgenda, setShowAddAgenda] = useState(false);
   const [newAgendaTitle, setNewAgendaTitle] = useState('');
   const [newAgendaTime, setNewAgendaTime] = useState('09:00');
   const [newAgendaRecurrence, setNewAgendaRecurrence] = useState<'once' | 'daily' | 'weekly' | 'monthly'>('once');
+
+  useEffect(() => {
+    setIsMounted(true);
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('mail_calendar_agenda');
+      if (saved !== null) {
+        try {
+          setAgendas(JSON.parse(saved));
+        } catch { /* ignore */ }
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const loadCloudAgendas = async () => {
@@ -195,7 +198,7 @@ export const CalendarAgendaWidget: React.FC = () => {
             className="flex items-center gap-1 text-sm font-black text-[var(--text-primary)] hover:text-blue-500 apple-transition cursor-pointer group"
             title={isMonthExpanded ? 'Collapse to Week View' : 'Expand to Full Month'}
           >
-            <span>{currentMonth.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}</span>
+            <span suppressHydrationWarning>{currentMonth.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}</span>
             {isMonthExpanded ? (
               <ChevronUp className="w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-blue-500 transition-transform" />
             ) : (
@@ -374,7 +377,7 @@ export const CalendarAgendaWidget: React.FC = () => {
         <div className="flex items-center justify-between pb-2 shrink-0">
           <div className="flex items-center gap-1.5">
             <CalendarDays className="w-3.5 h-3.5 text-blue-500" />
-            <span className="text-xs font-black text-[var(--text-primary)] uppercase tracking-wider">
+            <span suppressHydrationWarning className="text-xs font-black text-[var(--text-primary)] uppercase tracking-wider">
               {isTodaySelected ? 'Today, ' : ''}{selectedDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
             </span>
           </div>
