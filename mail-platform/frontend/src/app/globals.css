@@ -85,7 +85,7 @@ html, body {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  justify-content: center !important;
+  justify-content: space-between !important;
 }
 
 @media (min-width: 768px) {

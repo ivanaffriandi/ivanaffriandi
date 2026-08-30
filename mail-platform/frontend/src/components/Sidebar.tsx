@@ -147,43 +147,38 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <div className="relative h-full select-none font-sans z-50 flex flex-col items-center justify-center overflow-visible" ref={popoverRef}>
-      {/* ── Compact Floating Pill Bar Dock (iOS / macOS Sequoia aesthetic) ── */}
-      <aside className="w-[62px] bg-white/95 dark:bg-[#14161a]/95 backdrop-blur-2xl border border-black/10 dark:border-white/15 rounded-full py-3.5 px-1.5 shadow-xl shadow-black/5 dark:shadow-black/40 flex flex-col items-center gap-2 shrink-0 relative z-50 ring-1 ring-black/5 dark:ring-white/5 overflow-visible">
-        
-        {/* 1. TOP: User Profile Avatar */}
-        <div className="relative shrink-0 overflow-visible">
-          <button
-            onClick={() => setActiveMenu(activeMenu === 'profile' ? null : 'profile')}
-            className={`group relative w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-xs transition-all duration-200 cursor-pointer overflow-visible ${
-              activeMenu === 'profile'
-                ? 'ring-3 ring-blue-500 scale-105 shadow-md'
-                : 'ring-2 ring-black/10 dark:ring-white/20 hover:scale-105 active:scale-95 shadow-2xs'
-            }`}
-            title="Profile & Social Links"
-          >
-            <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center">
-              {avatarUrl ? (
-                <img src={avatarUrl} alt="Ivan Affriandi" className="w-full h-full object-cover" />
-              ) : (
-                'IA'
-              )}
-            </div>
-            
-            {/* Online Pulse Dot */}
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-neutral-900 rounded-full shadow-xs"></span>
+    <div className="relative h-full w-full select-none font-sans z-50 flex flex-col items-center justify-between py-2 overflow-visible" ref={popoverRef}>
+      {/* 1. PALING ATAS: User Profile Avatar */}
+      <div className="relative shrink-0 overflow-visible">
+        <button
+          onClick={() => setActiveMenu(activeMenu === 'profile' ? null : 'profile')}
+          className={`group relative w-11 h-11 rounded-full flex items-center justify-center bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-xs transition-all duration-200 cursor-pointer overflow-visible ${
+            activeMenu === 'profile'
+              ? 'ring-3 ring-blue-500 scale-105 shadow-md'
+              : 'ring-2 ring-black/10 dark:ring-white/20 hover:scale-105 active:scale-95 shadow-2xs'
+          }`}
+          title="Profile & Social Links"
+        >
+          <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center">
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="Ivan Affriandi" className="w-full h-full object-cover" />
+            ) : (
+              'IA'
+            )}
+          </div>
+          
+          {/* Online Pulse Dot */}
+          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-neutral-900 rounded-full shadow-xs"></span>
 
-            {/* iOS Style Tooltip */}
-            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-              Ivan Affriandi • Profile
-            </span>
-          </button>
-        </div>
+          {/* iOS Style Tooltip */}
+          <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+            Ivan Affriandi • Profile
+          </span>
+        </button>
+      </div>
 
-        {/* Divider */}
-        <div className="w-5 h-[1px] bg-neutral-200 dark:bg-neutral-800 shrink-0 my-0.5"></div>
-
-        {/* 2. CENTER: Folder Navigation Icons Stack (iOS SF Symbols Style) */}
+      {/* 2. TENGAH: Compact Floating Pill Bar Dock (Folder navigation only) */}
+      <aside className="w-[58px] bg-white/95 dark:bg-[#14161a]/95 backdrop-blur-2xl border border-black/10 dark:border-white/15 rounded-full py-3 px-1.5 shadow-xl shadow-black/5 dark:shadow-black/40 flex flex-col items-center gap-2 shrink-0 relative z-50 ring-1 ring-black/5 dark:ring-white/5 overflow-visible my-auto">
         <div className="flex flex-col items-center gap-2 overflow-visible">
           {/* INBOX */}
           <button
@@ -295,30 +290,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </span>
           </button>
         </div>
-
-        {/* Divider */}
-        <div className="w-5 h-[1px] bg-neutral-200 dark:bg-neutral-800 shrink-0 my-0.5"></div>
-
-        {/* 3. BOTTOM: Compose New Message Button */}
-        <div className="shrink-0 flex flex-col items-center overflow-visible">
-          <button
-            onClick={() => onOpenCompose()}
-            className="group relative w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 hover:scale-110 active:scale-95 border border-white/20 apple-transition cursor-pointer overflow-visible"
-            title="Compose New Message"
-          >
-            <Feather className="w-[18px] h-[18px] stroke-[2.2]" />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-              Compose Email
-            </span>
-          </button>
-        </div>
       </aside>
+
+      {/* 3. PALING BAWAH: Standalone Compose New Message Button */}
+      <div className="relative shrink-0 overflow-visible">
+        <button
+          onClick={() => onOpenCompose()}
+          className="group relative w-11 h-11 rounded-full bg-gradient-to-tr from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 hover:scale-110 active:scale-95 border border-white/20 apple-transition cursor-pointer overflow-visible"
+          title="Compose New Message"
+        >
+          <Feather className="w-5 h-5 stroke-[2.2]" />
+          <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+            Compose Email
+          </span>
+        </button>
+      </div>
 
       {/* ── POP-OVERS ── */}
 
       {/* 1. MORE FOLDERS FLOATING POPOVER */}
       {activeMenu === 'tags' && (
-        <div className="absolute left-[76px] top-1/2 -translate-y-1/2 w-64 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-3 shadow-2xl z-[100] animate-scale-up font-sans flex flex-col gap-1.5 backdrop-blur-xl ring-1 ring-black/5 dark:ring-white/10">
+        <div className="absolute left-[70px] top-1/2 -translate-y-1/2 w-64 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-3 shadow-2xl z-[100] animate-scale-up font-sans flex flex-col gap-1.5 backdrop-blur-xl ring-1 ring-black/5 dark:ring-white/10">
           <div className="px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[var(--text-muted)]">
             Other Mail Folders
           </div>
@@ -380,9 +372,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       )}
 
-      {/* 2. SIMPLE & CLEAN PROFILE & SOCIAL MEDIA CARD POPOVER */}
+      {/* 2. SIMPLE & CLEAN PROFILE & SOCIAL MEDIA CARD POPOVER (ANCHORED AT TOP) */}
       {activeMenu === 'profile' && (
-        <div className="absolute left-[76px] top-1/2 -translate-y-1/2 w-76 max-w-[calc(100vw-96px)] bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-4 shadow-2xl z-[100] animate-scale-up font-sans flex flex-col gap-3 backdrop-blur-2xl ring-1 ring-black/5 dark:ring-white/10">
+        <div className="absolute left-[70px] top-0 w-76 max-w-[calc(100vw-96px)] bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-4 shadow-2xl z-[100] animate-scale-up font-sans flex flex-col gap-3 backdrop-blur-2xl ring-1 ring-black/5 dark:ring-white/10">
           
           {/* User Profile Header */}
           <div className="flex items-center gap-3 pb-3 border-b border-[var(--border-subtle)]">
