@@ -410,7 +410,7 @@ export const Header: React.FC<HeaderProps> = ({
       <header className="hidden md:flex h-13 px-3 items-center justify-between shrink-0 select-none relative z-30 font-sans bg-transparent">
         {/* Left: Folder Name Only */}
         <div className="flex items-center gap-3 shrink-0">
-          <h1 className="font-extrabold text-xl text-[var(--text-primary)] tracking-tight capitalize font-sans">
+          <h1 className="font-black text-xl text-neutral-900 dark:text-white tracking-tight capitalize font-sans">
             {activeFolderName || 'Inbox'}
           </h1>
         </div>
@@ -430,7 +430,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onFocus={() => setIsSearchFocused(true)}
                 onChange={handleSearchChange}
                 placeholder="Search sender, subject, content..."
-                className={`w-full bg-[var(--card-bg)] dark:bg-[#17191f] border rounded-full pl-9 pr-8 py-1.5 text-xs font-medium focus:outline-none apple-transition placeholder:text-[var(--text-muted)] text-[var(--text-primary)] font-sans ring-1 ring-black/5 dark:ring-white/10 ${
+                className={`w-full bg-[var(--card-bg)] dark:bg-[#181a20] border rounded-full pl-9 pr-8 py-1.5 text-xs font-medium focus:outline-none apple-transition placeholder:text-[var(--text-muted)] text-neutral-900 dark:text-white font-sans ring-1 ring-black/5 dark:ring-white/10 ${
                   isSearchFocused
                     ? 'border-blue-500/50 shadow-[0_8px_25px_rgba(37,99,235,0.15)] ring-2 ring-blue-500/30'
                     : 'border-[var(--card-border)] shadow-2xs hover:border-[var(--text-muted)]/40'

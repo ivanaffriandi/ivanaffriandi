@@ -284,7 +284,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ─── Email Content Container (Faithful email rendering inside dedicated rounded canvas) ─── */
+/* ─── Email Content Container (Faithful adaptive email rendering inside dedicated rounded canvas) ─── */
 .mail-content-container {
   width: 100%;
   min-width: 0;
@@ -292,10 +292,6 @@ html, body {
   overflow-x: auto;
   word-break: break-word;
   color: var(--text-primary);
-}
-
-.dark .mail-content-container {
-  color: #f1f5f9;
 }
 
 .mail-content-container img {
@@ -310,10 +306,6 @@ html, body {
   text-underline-offset: 2px;
 }
 
-.dark .mail-content-container a {
-  color: #60a5fa;
-}
-
 .mail-content-container table {
   max-width: 100% !important;
 }
@@ -326,9 +318,52 @@ html, body {
   border-radius: 0 12px 12px 0;
 }
 
+/* Dark Mode Email Rendering - Crystal clear contrast for all HTML email content */
+.dark .mail-content-container {
+  color: #f1f5f9 !important;
+}
+
+.dark .mail-content-container,
+.dark .mail-content-container p,
+.dark .mail-content-container span,
+.dark .mail-content-container div,
+.dark .mail-content-container td,
+.dark .mail-content-container th,
+.dark .mail-content-container li,
+.dark .mail-content-container ul,
+.dark .mail-content-container ol,
+.dark .mail-content-container h1,
+.dark .mail-content-container h2,
+.dark .mail-content-container h3,
+.dark .mail-content-container h4,
+.dark .mail-content-container h5,
+.dark .mail-content-container h6,
+.dark .mail-content-container font,
+.dark .mail-content-container strong,
+.dark .mail-content-container b,
+.dark .mail-content-container em,
+.dark .mail-content-container i,
+.dark .mail-content-container label,
+.dark .mail-content-container section,
+.dark .mail-content-container article,
+.dark .mail-content-container header,
+.dark .mail-content-container footer,
+.dark .mail-content-container main {
+  color: #f1f5f9 !important;
+}
+
+.dark .mail-content-container a,
+.dark .mail-content-container a *,
+.dark .mail-content-container a span,
+.dark .mail-content-container a font {
+  color: #60a5fa !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .dark .mail-content-container blockquote {
-  background: rgba(59, 130, 246, 0.1);
-  border-left: 3px solid #60a5fa;
+  background: rgba(59, 130, 246, 0.1) !important;
+  border-left: 3px solid #60a5fa !important;
   color: #e2e8f0 !important;
 }
 
@@ -340,10 +375,27 @@ html, body {
 
 .dark .mail-content-container pre,
 .dark .mail-content-container code {
-  background: #1e2026;
-  color: #93c5fd;
+  background: #1e2026 !important;
+  color: #93c5fd !important;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Invert or adapt hardcoded white/light backgrounds in newsletter tables/divs */
+.dark .mail-content-container [bgcolor="#ffffff"],
+.dark .mail-content-container [bgcolor="#fff"],
+.dark .mail-content-container [bgcolor="white"],
+.dark .mail-content-container [bgcolor="#fafafa"],
+.dark .mail-content-container [bgcolor="#f8f9fa"],
+.dark .mail-content-container [bgcolor="#f5f5f5"],
+.dark .mail-content-container [style*="background-color: #ffffff"],
+.dark .mail-content-container [style*="background-color: #fff"],
+.dark .mail-content-container [style*="background-color: rgb(255"],
+.dark .mail-content-container [style*="background: #ffffff"],
+.dark .mail-content-container [style*="background: #fff"],
+.dark .mail-content-container [style*="background: white"] {
+  background-color: transparent !important;
+  background: transparent !important;
 }
 
 @keyframes verticalMarquee {

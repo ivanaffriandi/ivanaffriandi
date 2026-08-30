@@ -53,11 +53,16 @@ const cleanTextSnippet = (raw?: string) => {
 };
 
 export const Toast: React.FC<ToastProps> = ({ toasts, onDismiss }) => {
+  const playedToastIdsRef = React.useRef<Set<string>>(new Set());
+
   useEffect(() => {
-    if (toasts.length > 0) {
+    // Only play chime for brand-new incoming toasts that haven't played chime yet
+    const newToasts = toasts.filter((t) => !playedToastIdsRef.current.has(t.id));
+    if (newToasts.length > 0) {
+      newToasts.forEach((t) => playedToastIdsRef.current.add(t.id));
       playNotificationChime();
     }
-  }, [toasts.length]);
+  }, [toasts]);
 
   if (toasts.length === 0) return null;
 
