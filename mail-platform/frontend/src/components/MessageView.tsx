@@ -348,7 +348,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
           initial={{ opacity: 0, y: 15, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-          className="pointer-events-auto relative bg-neutral-900/85 dark:bg-[#14161e]/90 text-white backdrop-blur-2xl saturate-150 border border-white/20 dark:border-white/15 rounded-full p-1.5 shadow-[0_16px_36px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.7)] flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_45px_rgba(0,0,0,0.4)] ring-1 ring-white/10"
+          className="pointer-events-auto relative bg-white/80 dark:bg-[#14161e]/85 backdrop-blur-3xl saturate-180 border border-black/10 dark:border-white/15 rounded-full p-1.5 shadow-[0_12px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.7)] flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_20px_40px_rgba(0,0,0,0.18)] dark:hover:shadow-[0_22px_45px_rgba(0,0,0,0.5)] ring-1 ring-black/5 dark:ring-white/10"
         >
           {/* Move to Inbox (strictly only for spam and trash folders) */}
           {onMoveToInbox && (activeFolderType === 'trash' || activeFolderType === 'spam') && (
@@ -356,7 +356,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
               onClick={onMoveToInbox}
-              className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-200 hover:text-white hover:bg-white/20 apple-transition cursor-pointer"
+              className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-700 hover:text-black dark:text-neutral-200 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/15 apple-transition cursor-pointer"
               title="Move to Inbox"
             >
               <Inbox className="w-4 h-4 stroke-[2.2]" />
@@ -369,7 +369,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
               onClick={onReply}
-              className="h-8 px-4 flex items-center justify-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/30 border border-white/20 backdrop-blur-xs cursor-pointer"
+              className="h-8 px-4 flex items-center justify-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/25 border border-white/20 backdrop-blur-xs cursor-pointer"
               title="Reply"
             >
               <Reply className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -383,7 +383,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
               onClick={onForward}
-              className="h-8 px-3.5 flex items-center justify-center gap-1.5 rounded-full bg-white/15 hover:bg-white/25 active:bg-white/30 text-white text-xs font-bold border border-white/10 shadow-2xs backdrop-blur-md apple-transition cursor-pointer"
+              className="h-8 px-3.5 flex items-center justify-center gap-1.5 rounded-full bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20 text-neutral-800 dark:text-neutral-100 text-xs font-bold border border-black/5 dark:border-white/10 shadow-2xs backdrop-blur-md apple-transition cursor-pointer"
               title="Forward message"
             >
               <Forward className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -391,7 +391,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
             </motion.button>
           )}
 
-          <div className="w-px h-4 bg-white/20 my-auto" />
+          <div className="w-px h-4 bg-black/10 dark:bg-white/15 my-auto" />
 
           {/* Mark unread */}
           {onMarkUnread && (
@@ -399,7 +399,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.92 }}
               onClick={onMarkUnread}
-              className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-200 hover:text-white hover:bg-white/20 apple-transition cursor-pointer"
+              className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-700 hover:text-black dark:text-neutral-200 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/15 apple-transition cursor-pointer"
               title="Mark as unread"
             >
               <Mail className="w-4 h-4 stroke-[2.2]" />
@@ -413,8 +413,8 @@ export const MessageView: React.FC<MessageViewProps> = ({
             onClick={onToggleStar}
             className={`w-8 h-8 flex items-center justify-center rounded-full apple-transition cursor-pointer ${
               message.is_starred
-                ? 'bg-yellow-500/20 text-yellow-400'
-                : 'text-neutral-200 hover:text-yellow-400 hover:bg-white/20'
+                ? 'bg-yellow-500/15 text-yellow-500'
+                : 'text-neutral-700 hover:text-yellow-500 dark:text-neutral-200 dark:hover:text-yellow-400 hover:bg-black/5 dark:hover:bg-white/15'
             }`}
             title="Star message"
           >
@@ -426,7 +426,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.92 }}
             onClick={onArchive}
-            className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-200 hover:text-white hover:bg-white/20 apple-transition cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-700 hover:text-black dark:text-neutral-200 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/15 apple-transition cursor-pointer"
             title="Archive message"
           >
             <Archive className="w-4 h-4 stroke-[2.2]" />
@@ -437,7 +437,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.92 }}
             onClick={onDelete}
-            className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-200 hover:text-red-400 hover:bg-red-500/20 apple-transition cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-700 hover:text-red-500 dark:text-neutral-200 dark:hover:text-red-400 hover:bg-red-500/10 dark:hover:bg-red-500/20 apple-transition cursor-pointer"
             title="Delete message"
           >
             <Trash2 className="w-4 h-4 stroke-[2.2]" />
