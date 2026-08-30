@@ -314,6 +314,29 @@ async def mark_message_read(
 
     return {"status": "ok", "is_read": True}
 
+@router.patch("/{message_id}/unread")
+async def mark_message_unread(
+    message_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db)
+):
+    """Explicitly marks message as unread."""
+    stmt = select(Message).where(Message.id == message_id)
+    res = await db.execute(stmt)
+    msg = res.scalar_one_or_none()
+    if not msg:
+        raise HTTPException(status_code=404, detail="Message not found")
+
+    if msg.is_read:
+        msg.is_read = False
+        mb_stmt = select(Mailbox).where(Mailbox.id == msg.mailbox_id)
+        mb_res = await db.execute(mb_stmt)
+        mb = mb_res.scalar_one_or_none()
+        if mb:
+            mb.unread_count += 1
+        await db.commit()
+
+    return {"status": "ok", "is_read": False}
+
 @router.patch("/{message_id}/archive")
 async def archive_message(
     message_id: uuid.UUID,

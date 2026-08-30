@@ -225,7 +225,13 @@ export const MessageList: React.FC<MessageListProps> = ({
           <div className="flex items-center bg-[var(--card-bg)]/90 backdrop-blur-xl p-1 rounded-full border border-[var(--card-border)] shadow-xs ring-1 ring-black/5 dark:ring-white/10 gap-0.5 relative shrink-0">
             {(['all', 'unread', 'starred'] as const).map((tabKey) => {
               const isActive = filter === tabKey;
-              const label = tabKey === 'all' ? 'All' : tabKey === 'unread' ? 'Unread' : 'Starred';
+              const unreadCount = messages.filter((m) => !m.is_read).length;
+              const label =
+                tabKey === 'all'
+                  ? 'All'
+                  : tabKey === 'unread'
+                  ? `Unread${unreadCount > 0 ? ` (${unreadCount})` : ''}`
+                  : 'Starred';
               return (
                 <button
                   key={tabKey}
@@ -261,6 +267,7 @@ export const MessageList: React.FC<MessageListProps> = ({
           filteredMessages.map((msg) => {
             const isSelected = msg.id === selectedMessageId;
             const isChecked = selectedIds.has(msg.id);
+            const isUnread = !msg.is_read;
             const displayName = msg.sender_name || msg.sender_address.split('@')[0];
             const initial = displayName.charAt(0).toUpperCase();
             const [colorFrom, colorTo] = getAvatarColors(displayName);
@@ -281,6 +288,8 @@ export const MessageList: React.FC<MessageListProps> = ({
                     ? 'bg-blue-500/10 border-blue-500/40 text-[var(--text-primary)]'
                     : isSelected
                     ? 'bg-blue-600 dark:bg-blue-600 text-white border-blue-600 shadow-md'
+                    : isUnread
+                    ? 'bg-blue-500/[0.04] dark:bg-blue-500/10 border-blue-500/20 hover:bg-blue-500/[0.08] dark:hover:bg-blue-500/15'
                     : 'bg-transparent border-transparent hover:bg-[var(--bg-secondary)]'
                 }`}
               >
@@ -316,11 +325,29 @@ export const MessageList: React.FC<MessageListProps> = ({
                   {/* Message Metadata (Fixed 3-line vertical flow for uniform card height) */}
                   <div className="flex-1 min-w-0 flex flex-col justify-center gap-0.5 overflow-hidden">
                     <div className="flex items-center justify-between gap-1.5 min-w-0">
-                      <span className={`text-xs font-bold truncate leading-tight ${
-                        isSelected ? 'text-white' : !msg.is_read ? 'text-[var(--text-primary)] font-extrabold' : 'text-[var(--text-secondary)]'
-                      }`}>
-                        {displayName}
-                      </span>
+                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                        {isUnread && (
+                          <span
+                            className={`w-2 h-2 rounded-full shrink-0 ${
+                              isSelected
+                                ? 'bg-white shadow-xs'
+                                : 'bg-blue-600 dark:bg-blue-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]'
+                            }`}
+                            title="Unread message"
+                          />
+                        )}
+                        <span
+                          className={`text-xs truncate leading-tight ${
+                            isSelected
+                              ? 'text-white font-bold'
+                              : isUnread
+                              ? 'text-[var(--text-primary)] font-black tracking-tight'
+                              : 'text-[var(--text-secondary)] font-semibold'
+                          }`}
+                        >
+                          {displayName}
+                        </span>
+                      </div>
                       <div className="flex items-center gap-1 shrink-0">
                         {msg.sender_address?.includes('ivanaffriandi.com') && (
                           msg.is_opened ? (
@@ -343,25 +370,43 @@ export const MessageList: React.FC<MessageListProps> = ({
                             </span>
                           )
                         )}
-                        <span className={`text-[10px] shrink-0 font-medium ${
-                          isSelected ? 'text-blue-100' : 'text-[var(--text-muted)]'
-                        }`}>
+                        <span
+                          className={`text-[10px] shrink-0 ${
+                            isSelected
+                              ? 'text-blue-100 font-medium'
+                              : isUnread
+                              ? 'text-blue-600 dark:text-blue-400 font-black'
+                              : 'text-[var(--text-muted)] font-medium'
+                          }`}
+                        >
                           {formatTime(msg.date)}
                         </span>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-1.5 min-w-0">
-                      <span className={`text-xs truncate font-medium leading-tight ${
-                        isSelected ? 'text-white font-bold' : !msg.is_read ? 'text-[var(--text-primary)] font-bold' : 'text-[var(--text-secondary)]'
-                      }`}>
+                      <span
+                        className={`text-xs truncate leading-tight ${
+                          isSelected
+                            ? 'text-white font-bold'
+                            : isUnread
+                            ? 'text-[var(--text-primary)] font-bold'
+                            : 'text-[var(--text-secondary)] font-normal'
+                        }`}
+                      >
                         {msg.subject || '(No Subject)'}
                       </span>
                     </div>
 
-                    <p className={`text-[11px] truncate leading-tight ${
-                      isSelected ? 'text-blue-100' : 'text-[var(--text-muted)]'
-                    }`}>
+                    <p
+                      className={`text-[11px] truncate leading-tight ${
+                        isSelected
+                          ? 'text-blue-100'
+                          : isUnread
+                          ? 'text-[var(--text-secondary)] font-medium'
+                          : 'text-[var(--text-muted)]'
+                      }`}
+                    >
                       {msg.snippet
                         ? msg.snippet
                             .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')

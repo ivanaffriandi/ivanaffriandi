@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Reply, Forward, Star, Trash2, Archive,
-  Paperclip, Download, MailOpen, FileText, X, CheckCheck, Check
+  Paperclip, Download, MailOpen, Mail, FileText, X, CheckCheck, Check
 } from 'lucide-react';
 import { Message, MessageDetail } from '@/types/mail';
 import { getBrandOrAvatarUrl } from '@/lib/avatar';
@@ -44,6 +44,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
   onDelete,
   onArchive,
   onToggleStar,
+  onMarkUnread,
 }) => {
   const [lightboxPhoto, setLightboxPhoto] = useState<string | null>(null);
   const [lightboxFilename, setLightboxFilename] = useState<string>('image.png');
@@ -150,6 +151,16 @@ export const MessageView: React.FC<MessageViewProps> = ({
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
+            {onMarkUnread && (
+              <button
+                type="button"
+                onClick={onMarkUnread}
+                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-blue-500 hover:bg-blue-500/10 apple-transition cursor-pointer"
+                title="Mark as unread"
+              >
+                <Mail className="w-4 h-4" />
+              </button>
+            )}
             <button
               type="button"
               onClick={onToggleStar}
@@ -336,15 +347,15 @@ export const MessageView: React.FC<MessageViewProps> = ({
                   </div>
                 )}
 
-                {/* Email Body Content */}
-                <div className="mail-adaptive-sheet pt-1 min-w-0 max-w-full overflow-x-auto">
+                {/* Dedicated Email Content Sub-Section (Rounded sub-container exclusively for email body) */}
+                <div className="w-full rounded-2xl md:rounded-3xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)]/40 p-4 md:p-6 shadow-2xs overflow-x-auto min-w-0 max-w-full mt-2">
                   {item.body_html ? (
                     <div
-                      className="max-w-full min-w-0 overflow-x-auto font-sans leading-[1.75] mail-content-body text-[14.5px] antialiased tracking-[0.01em]"
+                      className="mail-content-container max-w-full min-w-0 overflow-x-auto font-sans leading-relaxed text-[14.5px] antialiased"
                       dangerouslySetInnerHTML={{ __html: item.body_html }}
                     />
                   ) : (
-                    <div className="text-[14.5px] font-sans whitespace-pre-wrap leading-[1.7] font-normal antialiased tracking-[0.01em] min-w-0 max-w-full overflow-x-auto">
+                    <div className="text-[14.5px] font-sans whitespace-pre-wrap leading-relaxed font-normal antialiased text-[var(--text-primary)] min-w-0 max-w-full overflow-x-auto">
                       {item.body_plain}
                     </div>
                   )}

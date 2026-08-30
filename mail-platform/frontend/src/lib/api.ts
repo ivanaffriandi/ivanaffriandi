@@ -24,6 +24,17 @@ export function markMessageAsReadInStorage(id: string) {
   }
 }
 
+export function markMessageAsUnreadInStorage(id: string) {
+  if (typeof window === 'undefined') return;
+  try {
+    const set = getReadMessageIds();
+    set.delete(id);
+    localStorage.setItem('read_message_ids', JSON.stringify(Array.from(set)));
+  } catch {
+    // ignore
+  }
+}
+
 // ─── Folders ────────────────────────────────────────────────────────────────
 export async function fetchFolders(): Promise<Folder[]> {
   const res = await fetch(`${API_BASE}/folders`, { cache: 'no-store' });
@@ -33,7 +44,6 @@ export async function fetchFolders(): Promise<Folder[]> {
 
 // ─── Messages ────────────────────────────────────────────────────────────────
 export async function fetchMessages(folderId?: string): Promise<MessageSummary[]> {
-  const readSet = getReadMessageIds();
   const url = folderId
     ? `${API_BASE}/messages?folder_id=${folderId}`
     : `${API_BASE}/messages`;
@@ -42,7 +52,7 @@ export async function fetchMessages(folderId?: string): Promise<MessageSummary[]
   const data: MessageSummary[] = await res.json();
   return data.map((msg) => ({
     ...msg,
-    is_read: msg.is_read || readSet.has(msg.id),
+    is_read: Boolean(msg.is_read),
   }));
 }
 
@@ -60,6 +70,16 @@ export async function markAsRead(id: string): Promise<void> {
   markMessageAsReadInStorage(id);
   try {
     await fetch(`${API_BASE}/messages/${id}/read`, { method: 'PATCH', cache: 'no-store' });
+  } catch {
+    // best-effort
+  }
+}
+
+// ─── Mark as unread (server-side) ────────────────────────────────────────────
+export async function markAsUnread(id: string): Promise<void> {
+  markMessageAsUnreadInStorage(id);
+  try {
+    await fetch(`${API_BASE}/messages/${id}/unread`, { method: 'PATCH', cache: 'no-store' });
   } catch {
     // best-effort
   }

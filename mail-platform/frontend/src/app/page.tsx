@@ -16,6 +16,8 @@ import {
   fetchFolders,
   fetchMessages,
   fetchMessageDetail,
+  markAsRead,
+  markAsUnread,
 } from '@/lib/api';
 import { isAuthenticated, getUserEmail, clearSession } from '@/lib/auth';
 import { initThemeListener } from '@/lib/theme';
@@ -298,14 +300,24 @@ export default function MailApp() {
     }
   }, [selectedMessageId, selectedMessageDetail]);
 
-  const handleMarkUnread = useCallback(() => {
-    if (!selectedMessageId) return;
+  const handleMarkUnread = useCallback((id?: string) => {
+    const targetId = id || selectedMessageId;
+    if (!targetId) return;
     setMessages((prev) =>
-      prev.map((m) => (m.id === selectedMessageId ? { ...m, is_read: false } : m))
+      prev.map((m) => (m.id === targetId ? { ...m, is_read: false } : m))
     );
-    setSelectedMessageId(null);
+    setFolders((prev) =>
+      prev.map((f) => {
+        if (f.id === activeFolderId) {
+          return { ...f, unread_count: f.unread_count + 1 };
+        }
+        return f;
+      })
+    );
+    if (selectedMessageId === targetId) setSelectedMessageId(null);
+    markAsUnread(targetId);
     addToast('info', 'Marked as unread');
-  }, [selectedMessageId, setSelectedMessageId, addToast]);
+  }, [selectedMessageId, setSelectedMessageId, addToast, activeFolderId]);
 
   const handleArchive = useCallback((id: string) => {
     setMessages((prev) => prev.filter((m) => m.id !== id));
@@ -328,12 +340,30 @@ export default function MailApp() {
 
     if (action === 'read') {
       setMessages((prev) => prev.map((m) => idSet.has(m.id) ? { ...m, is_read: true } : m));
+      setFolders((prev) =>
+        prev.map((f) => {
+          if (f.id === activeFolderId) {
+            const newlyRead = messages.filter((m) => idSet.has(m.id) && !m.is_read).length;
+            return { ...f, unread_count: Math.max(0, f.unread_count - newlyRead) };
+          }
+          return f;
+        })
+      );
       addToast('success', `Marked ${ids.length} messages as read`);
-      ids.forEach((id) => fetch(`${API_BASE}/messages/${id}/read`, { method: 'PATCH' }).catch(() => {}));
+      ids.forEach((id) => markAsRead(id));
     } else if (action === 'unread') {
       setMessages((prev) => prev.map((m) => idSet.has(m.id) ? { ...m, is_read: false } : m));
+      setFolders((prev) =>
+        prev.map((f) => {
+          if (f.id === activeFolderId) {
+            const newlyUnread = messages.filter((m) => idSet.has(m.id) && m.is_read).length;
+            return { ...f, unread_count: f.unread_count + newlyUnread };
+          }
+          return f;
+        })
+      );
       addToast('info', `Marked ${ids.length} messages as unread`);
-      ids.forEach((id) => fetch(`${API_BASE}/messages/${id}/unread`, { method: 'PATCH' }).catch(() => {}));
+      ids.forEach((id) => markAsUnread(id));
     } else if (action === 'star') {
       setMessages((prev) => prev.map((m) => idSet.has(m.id) ? { ...m, is_starred: !m.is_starred } : m));
       addToast('success', `Updated star status for ${ids.length} messages`);
@@ -349,7 +379,7 @@ export default function MailApp() {
       addToast('info', isTrashFolder ? `Permanently deleted ${ids.length} messages` : `Moved ${ids.length} messages to Trash`);
       ids.forEach((id) => fetch(`${API_BASE}/messages/${id}`, { method: 'DELETE' }).catch(() => {}));
     }
-  }, [selectedMessageId, setSelectedMessageId, addToast, folders, activeFolderId]);
+  }, [selectedMessageId, setSelectedMessageId, addToast, folders, activeFolderId, messages]);
 
   // ── Keyboard shortcuts ────────────────────────────────────────────────────
   useEffect(() => {

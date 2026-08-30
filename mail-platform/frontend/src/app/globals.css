@@ -276,181 +276,37 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-.mail-adaptive-sheet {
-  background: transparent;
-  color: var(--text-primary);
+/* ─── Email Content Container (Faithful email rendering inside dedicated rounded canvas) ─── */
+.mail-content-container {
   width: 100%;
-  padding: 8px 0;
-  transition: color 0.2s ease;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  word-break: break-word;
+  color: inherit;
 }
 
-/* Light Mode: Natural typography */
-.mail-adaptive-sheet {
-  color: #18181b;
-}
-
-.mail-adaptive-sheet a {
-  color: #2563eb !important;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-/* Dark Mode: Crisp high-contrast typography & preserved banners */
-.dark .mail-adaptive-sheet,
-html[data-theme="dark"] .mail-adaptive-sheet {
-  color: #f4f4f5;
-}
-
-/* In dark mode, ensure unstyled body text is bright silver-white */
-.dark .mail-adaptive-sheet p:not([style*="color"]),
-.dark .mail-adaptive-sheet span:not([style*="color"]),
-.dark .mail-adaptive-sheet td:not([style*="color"]),
-.dark .mail-adaptive-sheet div:not([style*="color"]),
-.dark .mail-adaptive-sheet li:not([style*="color"]),
-.dark .mail-adaptive-sheet h1:not([style*="color"]),
-.dark .mail-adaptive-sheet h2:not([style*="color"]),
-.dark .mail-adaptive-sheet h3:not([style*="color"]),
-.dark .mail-adaptive-sheet h4:not([style*="color"]) {
-  color: #f4f4f5;
-}
-
-/* Neutralize blinding white newsletter background tables in dark mode */
-.dark .mail-adaptive-sheet [style*="background-color: #ffffff" i],
-.dark .mail-adaptive-sheet [style*="background-color: #fff" i],
-.dark .mail-adaptive-sheet [style*="background-color: white" i],
-.dark .mail-adaptive-sheet [style*="background: #ffffff" i],
-.dark .mail-adaptive-sheet [style*="background: #fff" i],
-.dark .mail-adaptive-sheet [style*="background: white" i],
-.dark .mail-adaptive-sheet [bgcolor="#ffffff" i],
-.dark .mail-adaptive-sheet [bgcolor="#fff" i],
-.dark .mail-adaptive-sheet [bgcolor="white" i] {
-  background-color: transparent !important;
-  background: transparent !important;
-}
-
-/* Newsletter dark headers/cards stay elevated with white text */
-.dark .mail-adaptive-sheet [style*="background-color: #0" i],
-.dark .mail-adaptive-sheet [style*="background-color: #1" i],
-.dark .mail-adaptive-sheet [style*="background-color: #2" i],
-.dark .mail-adaptive-sheet [style*="background-color: rgb(0" i],
-.dark .mail-adaptive-sheet [style*="background-color: rgb(1" i],
-.dark .mail-adaptive-sheet [style*="background: #0" i],
-.dark .mail-adaptive-sheet [style*="background: #1" i],
-.dark .mail-adaptive-sheet [style*="background: rgb(0" i],
-.dark .mail-adaptive-sheet [bgcolor="#000000" i],
-.dark .mail-adaptive-sheet [bgcolor="#111111" i],
-.dark .mail-adaptive-sheet [bgcolor="black" i] {
-  background-color: #232326 !important;
-  color: #ffffff !important;
-  border-radius: 12px;
-}
-
-/* Dark mode electric blue links */
-.dark .mail-adaptive-sheet a {
-  color: #60a5fa !important;
-}
-
-/* Images & embeds are cleanly responsive */
-.mail-adaptive-sheet img {
+.mail-content-container img {
   max-width: 100% !important;
   height: auto !important;
   border-radius: 8px;
 }
 
-.mail-adaptive-sheet table {
-  max-width: 100% !important;
-}
-
-
-
-
-
-.mail-content-body > *:first-child,
-.mail-content-body > blockquote:first-child,
-.mail-content-body > p:first-child,
-.mail-content-body > div:first-child,
-.mail-content-body > table:first-child {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-.mail-content-body blockquote {
-  margin: 0.25rem 0 0.5rem 0;
-  padding: 0.25rem 0.5rem 0.25rem 0.75rem;
-  border-left: 3px solid #3b82f6 !important;
-  background: transparent !important;
-  border-radius: 0;
-  font-style: normal;
-}
-
-.mail-content-body blockquote p {
-  margin: 0.15rem 0;
-  line-height: 1.55;
-}
-
-.mail-adaptive-sheet {
-  max-width: 100% !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  overflow-x: hidden !important;
-  box-sizing: border-box !important;
-}
-
-.mail-content-body {
-  max-width: 100% !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  overflow-x: auto !important;
-  word-break: break-word !important;
-  overflow-wrap: anywhere !important;
-  box-sizing: border-box !important;
-}
-
-.mail-content-body * {
-  max-width: 100% !important;
-  min-width: 0 !important;
-  box-sizing: border-box !important;
-}
-
-.mail-content-body table {
-  max-width: 100% !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  height: auto !important;
-  table-layout: fixed !important;
-  margin: 0 auto;
-  word-break: break-word !important;
-}
-
-.mail-content-body td,
-.mail-content-body th {
-  max-width: 100% !important;
-  min-width: 0 !important;
-  word-break: break-word !important;
-}
-
-.mail-content-body div,
-.mail-content-body section,
-.mail-content-body article,
-.mail-content-body center {
-  max-width: 100% !important;
-  min-width: 0 !important;
-  box-sizing: border-box !important;
-}
-
-.mail-content-body img {
-  max-width: 100% !important;
-  height: auto !important;
-  border-radius: 0.75rem;
-  margin: 0.4rem 0;
-  display: block;
-}
-
-.mail-content-body a {
-  color: var(--accent-blue) !important;
+.mail-content-container a {
+  color: #2563eb;
   text-decoration: underline;
   text-underline-offset: 2px;
-  word-break: break-all;
+}
+
+.dark .mail-content-container a {
+  color: #60a5fa;
+}
+
+.mail-content-container blockquote {
+  margin: 0.5rem 0;
+  padding: 0.25rem 0.75rem;
+  border-left: 3px solid #3b82f6;
+  background: transparent;
 }
 
 @keyframes verticalMarquee {
