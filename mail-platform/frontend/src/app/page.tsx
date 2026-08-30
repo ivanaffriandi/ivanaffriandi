@@ -650,7 +650,14 @@ export default function MailApp() {
               }
               onReply={handleReply}
               onForward={handleForward}
-              onMoveToInbox={() => selectedMessageId && handleMoveToInbox(selectedMessageId)}
+              onMoveToInbox={
+                (activeFolderId === 'trash' ||
+                 activeFolderId === 'spam' ||
+                 folders.find((f) => f.id === activeFolderId)?.type === 'trash' ||
+                 folders.find((f) => f.id === activeFolderId)?.type === 'spam')
+                  ? () => selectedMessageId && handleMoveToInbox(selectedMessageId)
+                  : undefined
+              }
               onArchive={() => selectedMessageId && handleArchive(selectedMessageId)}
               onDelete={() => selectedMessageId && handleDelete(selectedMessageId)}
               onToggleStar={() => selectedMessageId && handleToggleStar(selectedMessageId)}
