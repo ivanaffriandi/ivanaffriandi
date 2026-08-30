@@ -49,8 +49,26 @@ function formatTime(dateStr: string): string {
 }
 
 function isPromotionMessage(m: MessageSummary): boolean {
-  const text = `${m.sender_address || ''} ${m.sender_name || ''} ${m.subject || ''} ${m.snippet || ''}`.toLowerCase();
-  return /digest|newsletter|promo|update|marketing|offer|no-reply|noreply|billing|receipt|support|daily|alert|announcement|linear\.app|stripe|github|medium|marginalian|google|resend|producthunt|biteship|the conversation|cloudflare/i.test(text);
+  const sender = (m.sender_address || '').toLowerCase();
+  const name = (m.sender_name || '').toLowerCase();
+  const subject = (m.subject || '').toLowerCase();
+  const snippet = (m.snippet || '').toLowerCase();
+  const fullText = `${sender} ${name} ${subject} ${snippet}`;
+
+  // 1. Sender prefix triggers for automated / bulk / transactional
+  const automatedPrefixes = /^(no-?reply|donotreply|notifications?|news(letter)?|marketing|promo(tions)?|updates?|billing|invoices?|support|alerts?|accounts?|security|digest|team|mailer|service|automated|orders?|shipping|system|deals?|offers?|contact|hello|info)@/i;
+  if (automatedPrefixes.test(sender)) return true;
+
+  // 2. Known service domains (tech, dev, media, fintech, commerce, social)
+  const serviceDomains = /@(medium\.com|themarginalian\.org|github\.com|stripe\.com|google\.com|cloudflare\.com|producthunt\.com|biteship\.com|linear\.app|theconversation\.com|resend\.com|substack\.com|linkedin\.com|twitter\.com|x\.com|youtube\.com|facebookmail\.com|instagram\.com|apple\.com|figma\.com|notion\.so|vercel\.com|amazon\.com|netflix\.com|spotify\.com|discord\.com|slack\.com|zoom\.us|openai\.com|anthropic\.com|canva\.com|loom\.com|grammarly\.com|coursera\.org|udemy\.com|duolingo\.com|dribbble\.com|behance\.net|pinterest\.com|reddit\.com|quora\.com|tiktok\.com|tokopedia\.com|shopee\.co\.id|gojek\.com|grab\.com|traveloka\.com|tiket\.com|blibli\.com|bukalapak\.com|bca\.co\.id|mandiri\.co\.id|bankjago\.com|jenius\.com|seabank\.co\.id|midtrans\.com|xendit\.co|mailerlite\.com|mailchimp\.com|sendgrid\.net|intercom-mail\.com|zendesk\.com)/i;
+  if (serviceDomains.test(sender)) return true;
+
+  // 3. Subject and Snippet Keywords for promotions, digests, system alerts, invoices, confirmations
+  const promoKeywords = /\b(digest|newsletter|promo|promotions?|special offer|discount|coupon|voucher|sale|\d+%\s*off|limited time|free trial|webinar|weekly update|monthly update|release notes|receipt|invoice|order confirmation|tracking number|shipped|bank statement|verification code|security alert|reset password|sign-in|signed in|invitation to join|what's new|issue #\d+|edition #\d+|unsubscribe|manage preferences|view in browser|view online)\b/i;
+  if (promoKeywords.test(subject) || promoKeywords.test(snippet)) return true;
+
+  // 4. General match on full text
+  return /digest|newsletter|promo|update|marketing|offer|no-reply|noreply|billing|receipt|support|daily|alert|announcement|linear\.app|stripe|github|medium|marginalian|google|resend|producthunt|biteship|the conversation|cloudflare/i.test(fullText);
 }
 
 export const MessageList: React.FC<MessageListProps> = ({
@@ -78,17 +96,16 @@ export const MessageList: React.FC<MessageListProps> = ({
     if (unreadCount === 0 && filter === 'unread') {
       setFilter('all');
     }
-    if (!isInbox && (filter === 'personal' || filter === 'promotions')) {
+    if (!isInbox && filter !== 'all') {
       setFilter('all');
     }
   }, [unreadCount, filter, isInbox]);
 
   const filteredMessages = messages.filter((m) => {
+    if (!isInbox) return true;
     if (filter === 'unread') return !m.is_read;
-    if (isInbox) {
-      if (filter === 'personal') return !isPromotionMessage(m);
-      if (filter === 'promotions') return isPromotionMessage(m);
-    }
+    if (filter === 'personal') return !isPromotionMessage(m);
+    if (filter === 'promotions') return isPromotionMessage(m);
     return true;
   });
 
@@ -188,7 +205,7 @@ export const MessageList: React.FC<MessageListProps> = ({
         </motion.div>
       )}
 
-      {/* Header: Normal Filter Tabs OR Batch Action Toolbar */}
+      {/* Header: Batch Action Toolbar OR Category Tabs (INBOX ONLY) */}
       <AnimatePresence mode="wait">
         {selectedIds.size > 0 ? (
           <motion.div
@@ -281,7 +298,7 @@ export const MessageList: React.FC<MessageListProps> = ({
               </motion.button>
             </div>
           </motion.div>
-        ) : (
+        ) : isInbox ? (
           <motion.div
             key="category-toolbar"
             initial={{ opacity: 0 }}
@@ -289,7 +306,7 @@ export const MessageList: React.FC<MessageListProps> = ({
             exit={{ opacity: 0 }}
             className="px-2.5 py-2 border-b border-[var(--border-subtle)] flex items-center justify-between shrink-0 bg-[var(--bg-secondary)]/50 gap-1.5 overflow-x-auto no-scrollbar"
           >
-            {/* Context-Aware Floating Segmented Controls */}
+            {/* Category Segmented Controls (Inbox only) */}
             <div className="flex items-center bg-[var(--card-bg)]/90 backdrop-blur-xl p-0.5 rounded-full border border-[var(--card-border)] shadow-xs ring-1 ring-black/5 dark:ring-white/10 gap-0.5 relative shrink-0">
               
               {/* 1. ALL */}
@@ -311,47 +328,43 @@ export const MessageList: React.FC<MessageListProps> = ({
                 <span>All</span>
               </button>
 
-              {/* 2. PERSONAL (Only in Inbox) */}
-              {isInbox && (
-                <button
-                  onClick={() => setFilter('personal')}
-                  className={`relative px-3 py-1 rounded-full text-[11px] font-bold cursor-pointer flex items-center gap-1.5 shrink-0 z-10 transition-colors ${
-                    filter === 'personal' ? 'text-white' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-                  }`}
-                  title="Personal Messages"
-                >
-                  {filter === 'personal' && (
-                    <motion.div
-                      layoutId="activeTabIndicator"
-                      className="absolute inset-0 bg-blue-600 rounded-full shadow-xs -z-10"
-                      transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                    />
-                  )}
-                  <User className="w-3 h-3 stroke-[2.2]" />
-                  <span>Personal</span>
-                </button>
-              )}
+              {/* 2. PERSONAL */}
+              <button
+                onClick={() => setFilter('personal')}
+                className={`relative px-3 py-1 rounded-full text-[11px] font-bold cursor-pointer flex items-center gap-1.5 shrink-0 z-10 transition-colors ${
+                  filter === 'personal' ? 'text-white' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                }`}
+                title="Personal Messages"
+              >
+                {filter === 'personal' && (
+                  <motion.div
+                    layoutId="activeTabIndicator"
+                    className="absolute inset-0 bg-blue-600 rounded-full shadow-xs -z-10"
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                  />
+                )}
+                <User className="w-3 h-3 stroke-[2.2]" />
+                <span>Personal</span>
+              </button>
 
-              {/* 3. PROMOTIONS with Tag icon (Only in Inbox) */}
-              {isInbox && (
-                <button
-                  onClick={() => setFilter('promotions')}
-                  className={`relative px-3 py-1 rounded-full text-[11px] font-bold cursor-pointer flex items-center gap-1.5 shrink-0 z-10 transition-colors ${
-                    filter === 'promotions' ? 'text-white' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-                  }`}
-                  title="Newsletters & Promotions"
-                >
-                  {filter === 'promotions' && (
-                    <motion.div
-                      layoutId="activeTabIndicator"
-                      className="absolute inset-0 bg-blue-600 rounded-full shadow-xs -z-10"
-                      transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                    />
-                  )}
-                  <Tag className="w-3 h-3 stroke-[2.2]" />
-                  <span>Promotions</span>
-                </button>
-              )}
+              {/* 3. PROMOTIONS with Tag icon */}
+              <button
+                onClick={() => setFilter('promotions')}
+                className={`relative px-3 py-1 rounded-full text-[11px] font-bold cursor-pointer flex items-center gap-1.5 shrink-0 z-10 transition-colors ${
+                  filter === 'promotions' ? 'text-white' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                }`}
+                title="Newsletters & Promotions"
+              >
+                {filter === 'promotions' && (
+                  <motion.div
+                    layoutId="activeTabIndicator"
+                    className="absolute inset-0 bg-blue-600 rounded-full shadow-xs -z-10"
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                  />
+                )}
+                <Tag className="w-3 h-3 stroke-[2.2]" />
+                <span>Promotions</span>
+              </button>
 
               {/* 4. UNREAD (Only rendered if unreadCount > 0) */}
               {unreadCount > 0 && (
@@ -384,7 +397,7 @@ export const MessageList: React.FC<MessageListProps> = ({
               {filteredMessages.length}
             </span>
           </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
 
       {/* Messages List Container */}
