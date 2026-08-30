@@ -2596,9 +2596,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           height: 30px !important;
           min-height: 30px !important;
           box-sizing: border-box !important;
-          background: rgba(0, 0, 0, 0.55) !important;
-          backdrop-filter: blur(16px) !important;
-          -webkit-backdrop-filter: blur(16px) !important;
+          background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(0, 0, 0, 0.65) 100%) !important;
+          backdrop-filter: blur(20px) saturate(190%) !important;
+          -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
           border: 1px solid rgba(255, 255, 255, 0.25) !important;
           color: #FFFFFF !important;
           font-size: 0.62rem !important;
@@ -2608,7 +2608,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           padding: 0 0.75rem !important;
           border-radius: 9999px !important;
           text-decoration: none !important;
-          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
+          box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.06) inset !important;
           line-height: 1 !important;
           cursor: pointer !important;
           touch-action: manipulation !important;
@@ -2617,15 +2617,32 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           -webkit-user-select: none !important;
           z-index: 100 !important;
           position: relative !important;
-          transition: transform 0.18s ease, background 0.18s ease !important;
+          transform: translateY(0) scale(1) !important;
+          transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, border-color 0.2s ease, box-shadow 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.15s ease !important;
+        }
+        .mobile-home-btn svg {
+          transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+          transform-origin: center center !important;
         }
         .mobile-home-btn:hover {
-          background: rgba(0, 0, 0, 0.75) !important;
-          transform: scale(1.02) !important;
+          background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(20, 20, 20, 0.8) 100%) !important;
+          border-color: rgba(255, 255, 255, 0.45) !important;
+          transform: translateY(-1px) scale(1.05) !important;
+          box-shadow: 0 8px 20px -2px rgba(0, 0, 0, 0.5), 0 0 16px rgba(255, 255, 255, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.12) inset !important;
+        }
+        .mobile-home-btn:hover svg {
+          transform: scale(1.12) translateY(-0.5px) !important;
         }
         .mobile-home-btn:active {
-          transform: scale(0.96) !important;
-          background: rgba(0, 0, 0, 0.9) !important;
+          transform: translateY(1px) scale(0.93) !important;
+          background: rgba(0, 0, 0, 0.92) !important;
+          border-color: rgba(255, 255, 255, 0.18) !important;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 0, 0, 0.2) inset !important;
+          transition-duration: 0.08s !important;
+        }
+        .mobile-home-btn:active svg {
+          transform: scale(0.9) !important;
+          transition-duration: 0.08s !important;
         }
         .mobile-prologue-btn {
           display: inline-flex !important;
@@ -2635,9 +2652,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           height: 30px !important;
           min-height: 30px !important;
           box-sizing: border-box !important;
-          background: rgba(0, 0, 0, 0.55) !important;
-          backdrop-filter: blur(16px) !important;
-          -webkit-backdrop-filter: blur(16px) !important;
+          background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(0, 0, 0, 0.65) 100%) !important;
+          backdrop-filter: blur(20px) saturate(190%) !important;
+          -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
           border: 1px solid rgba(255, 255, 255, 0.25) !important;
           color: #FFFFFF !important;
           font-size: 0.62rem !important;
@@ -2648,17 +2665,34 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           touch-action: manipulation !important;
           -webkit-tap-highlight-color: transparent !important;
           text-transform: uppercase !important;
-          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
+          box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.06) inset !important;
           cursor: pointer !important;
-          transition: transform 0.18s ease, background 0.18s ease !important;
+          transform: translateY(0) scale(1) !important;
+          transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, border-color 0.2s ease, box-shadow 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.15s ease !important;
+        }
+        .mobile-prologue-btn svg {
+          transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+          transform-origin: center center !important;
         }
         .mobile-prologue-btn:hover {
-          background: rgba(0, 0, 0, 0.75) !important;
-          transform: scale(1.02) !important;
+          background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(20, 20, 20, 0.8) 100%) !important;
+          border-color: rgba(255, 255, 255, 0.45) !important;
+          transform: translateY(-1px) scale(1.05) !important;
+          box-shadow: 0 8px 20px -2px rgba(0, 0, 0, 0.5), 0 0 16px rgba(255, 255, 255, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.12) inset !important;
+        }
+        .mobile-prologue-btn:hover svg {
+          transform: scale(1.15) rotate(-5deg) !important;
         }
         .mobile-prologue-btn:active {
-          transform: scale(0.96) !important;
-          background: rgba(0, 0, 0, 0.9) !important;
+          transform: translateY(1px) scale(0.93) !important;
+          background: rgba(0, 0, 0, 0.92) !important;
+          border-color: rgba(255, 255, 255, 0.18) !important;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 0, 0, 0.2) inset !important;
+          transition-duration: 0.08s !important;
+        }
+        .mobile-prologue-btn:active svg {
+          transform: scale(0.9) !important;
+          transition-duration: 0.08s !important;
         }
         .mobile-search-btn {
           display: inline-flex !important;
@@ -2669,28 +2703,45 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           min-width: 30px !important;
           min-height: 30px !important;
           box-sizing: border-box !important;
-          background: rgba(0, 0, 0, 0.55) !important;
-          backdrop-filter: blur(16px) !important;
-          -webkit-backdrop-filter: blur(16px) !important;
+          background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(0, 0, 0, 0.65) 100%) !important;
+          backdrop-filter: blur(20px) saturate(190%) !important;
+          -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
           border: 1px solid rgba(255, 255, 255, 0.25) !important;
           color: #FFFFFF !important;
           padding: 0 !important;
           border-radius: 50% !important;
           text-decoration: none !important;
-          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
+          box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.06) inset !important;
           cursor: pointer !important;
           line-height: 1 !important;
           touch-action: manipulation !important;
           -webkit-tap-highlight-color: transparent !important;
-          transition: transform 0.18s ease, background 0.18s ease !important;
+          transform: translateY(0) scale(1) !important;
+          transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, border-color 0.2s ease, box-shadow 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.15s ease !important;
+        }
+        .mobile-search-btn svg {
+          transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+          transform-origin: center center !important;
         }
         .mobile-search-btn:hover {
-          background: rgba(0, 0, 0, 0.75) !important;
-          transform: scale(1.04) !important;
+          background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(20, 20, 20, 0.8) 100%) !important;
+          border-color: rgba(255, 255, 255, 0.45) !important;
+          transform: translateY(-1px) scale(1.08) !important;
+          box-shadow: 0 8px 20px -2px rgba(0, 0, 0, 0.5), 0 0 16px rgba(255, 255, 255, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.12) inset !important;
+        }
+        .mobile-search-btn:hover svg {
+          transform: scale(1.15) rotate(8deg) !important;
         }
         .mobile-search-btn:active {
-          transform: scale(0.96) !important;
-          background: rgba(0, 0, 0, 0.9) !important;
+          transform: translateY(1px) scale(0.92) !important;
+          background: rgba(0, 0, 0, 0.92) !important;
+          border-color: rgba(255, 255, 255, 0.18) !important;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 0, 0, 0.2) inset !important;
+          transition-duration: 0.08s !important;
+        }
+        .mobile-search-btn:active svg {
+          transform: scale(0.9) !important;
+          transition-duration: 0.08s !important;
         }
         .reader-back-btn-desktop,
         .article-reader-chapter-title-desktop {
@@ -2761,9 +2812,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             height: 29px !important;
             min-height: 29px !important;
             box-sizing: border-box !important;
-            background: rgba(0, 0, 0, 0.55) !important;
-            backdrop-filter: blur(16px) !important;
-            -webkit-backdrop-filter: blur(16px) !important;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(0, 0, 0, 0.65) 100%) !important;
+            backdrop-filter: blur(20px) saturate(190%) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
             border: 1px solid rgba(255, 255, 255, 0.25) !important;
             color: #FFFFFF !important;
             font-size: 0.60rem !important;
@@ -2773,7 +2824,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             padding: 0 0.7rem !important;
             border-radius: 9999px !important;
             text-decoration: none !important;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.06) inset !important;
             line-height: 1 !important;
             cursor: pointer !important;
             touch-action: manipulation !important;
@@ -2782,11 +2833,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             -webkit-user-select: none !important;
             z-index: 100 !important;
             position: relative !important;
+            transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, border-color 0.2s ease, box-shadow 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
           }
 
           .mobile-home-btn:active {
-            transform: scale(0.94) !important;
-            background: rgba(0, 0, 0, 0.8) !important;
+            transform: translateY(1px) scale(0.92) !important;
+            background: rgba(0, 0, 0, 0.92) !important;
+            border-color: rgba(255, 255, 255, 0.18) !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6) !important;
+            transition-duration: 0.08s !important;
           }
 
           .mobile-prologue-btn {
@@ -2797,9 +2852,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             height: 29px !important;
             min-height: 29px !important;
             box-sizing: border-box !important;
-            background: rgba(0, 0, 0, 0.55) !important;
-            backdrop-filter: blur(16px) !important;
-            -webkit-backdrop-filter: blur(16px) !important;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(0, 0, 0, 0.65) 100%) !important;
+            backdrop-filter: blur(20px) saturate(190%) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
             border: 1px solid rgba(255, 255, 255, 0.25) !important;
             color: #FFFFFF !important;
             font-size: 0.60rem !important;
@@ -2810,13 +2865,17 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             touch-action: manipulation !important;
             -webkit-tap-highlight-color: transparent !important;
             text-transform: uppercase !important;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.06) inset !important;
             cursor: pointer !important;
+            transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, border-color 0.2s ease, box-shadow 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
           }
 
           .mobile-prologue-btn:active {
-            transform: scale(0.94) !important;
-            background: rgba(0, 0, 0, 0.8) !important;
+            transform: translateY(1px) scale(0.92) !important;
+            background: rgba(0, 0, 0, 0.92) !important;
+            border-color: rgba(255, 255, 255, 0.18) !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6) !important;
+            transition-duration: 0.08s !important;
           }
 
           .mobile-search-btn {
@@ -2828,24 +2887,28 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             min-width: 29px !important;
             min-height: 29px !important;
             box-sizing: border-box !important;
-            background: rgba(0, 0, 0, 0.55) !important;
-            backdrop-filter: blur(16px) !important;
-            -webkit-backdrop-filter: blur(16px) !important;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(0, 0, 0, 0.65) 100%) !important;
+            backdrop-filter: blur(20px) saturate(190%) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
             border: 1px solid rgba(255, 255, 255, 0.25) !important;
             color: #FFFFFF !important;
             padding: 0 !important;
             border-radius: 50% !important;
             text-decoration: none !important;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.06) inset !important;
             cursor: pointer !important;
             line-height: 1 !important;
             touch-action: manipulation !important;
             -webkit-tap-highlight-color: transparent !important;
+            transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, border-color 0.2s ease, box-shadow 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
           }
 
           .mobile-search-btn:active {
-            transform: scale(0.94) !important;
-            background: rgba(0, 0, 0, 0.8) !important;
+            transform: translateY(1px) scale(0.92) !important;
+            background: rgba(0, 0, 0, 0.92) !important;
+            border-color: rgba(255, 255, 255, 0.18) !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6) !important;
+            transition-duration: 0.08s !important;
           }
 
           .mobile-search-scroll-container,
