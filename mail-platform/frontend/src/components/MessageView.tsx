@@ -235,7 +235,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
               return (
                 <div
                   key={item.id || index}
-                  className="w-full rounded-2xl md:rounded-3xl border border-black/10 dark:border-white/10 bg-[var(--card-bg)] dark:bg-[#17191f] shadow-xs md:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)] p-5 md:p-8 space-y-6 min-w-0 max-w-full overflow-hidden transition-all duration-200"
+                  className="w-full rounded-2xl md:rounded-3xl border border-black/10 dark:border-white/10 bg-white dark:bg-[#181a20] shadow-[0_4px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.35)] p-6 md:p-10 space-y-6 min-w-0 max-w-full overflow-hidden transition-all duration-200"
                 >
                 {index > 0 && (
                   <div className="flex items-center justify-between pb-3 border-b border-black/5 dark:border-white/10 text-xs text-[var(--text-muted)] font-sans">
@@ -338,111 +338,111 @@ export const MessageView: React.FC<MessageViewProps> = ({
             );
           })}
         </div>
+      </div>
 
-        {/* ──────────────────────────────────────────────────────────────────────────
-            3. FLOATING ACTION PILLBAR DOCK (Ultra Liquid Glass, Uniform Neutral Icons)
-            ────────────────────────────────────────────────────────────────────────── */}
-        <div className="pointer-events-none absolute bottom-5 inset-x-0 mx-auto flex justify-center z-40 px-3">
-          <motion.div
-            initial={{ opacity: 0, y: 15, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="pointer-events-auto relative bg-white/45 dark:bg-[#12141a]/55 backdrop-blur-3xl saturate-150 border border-black/10 dark:border-white/10 rounded-full p-1.5 shadow-[0_16px_36px_rgba(0,0,0,0.12)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_45px_rgba(0,0,0,0.18)]"
+      {/* ──────────────────────────────────────────────────────────────────────────
+          3. FLOATING ACTION PILLBAR DOCK (ALWAYS PINNED / STAYS IN VIEW AT BOTTOM)
+          ────────────────────────────────────────────────────────────────────────── */}
+      <div className="pointer-events-none absolute bottom-5 inset-x-0 mx-auto flex justify-center z-40 px-3">
+        <motion.div
+          initial={{ opacity: 0, y: 15, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+          className="pointer-events-auto relative bg-neutral-900/85 dark:bg-[#14161e]/90 text-white backdrop-blur-2xl saturate-150 border border-white/20 dark:border-white/15 rounded-full p-1.5 shadow-[0_16px_36px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.7)] flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_45px_rgba(0,0,0,0.4)] ring-1 ring-white/10"
+        >
+          {/* Move to Inbox (strictly only for spam and trash folders) */}
+          {onMoveToInbox && (activeFolderType === 'trash' || activeFolderType === 'spam') && (
+            <motion.button
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={onMoveToInbox}
+              className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-200 hover:text-white hover:bg-white/20 apple-transition cursor-pointer"
+              title="Move to Inbox"
+            >
+              <Inbox className="w-4 h-4 stroke-[2.2]" />
+            </motion.button>
+          )}
+
+          {/* Reply blue pill button */}
+          {onReply && (
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={onReply}
+              className="h-8 px-4 flex items-center justify-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/30 border border-white/20 backdrop-blur-xs cursor-pointer"
+              title="Reply"
+            >
+              <Reply className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>Reply</span>
+            </motion.button>
+          )}
+
+          {/* Forward button */}
+          {onForward && (
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={onForward}
+              className="h-8 px-3.5 flex items-center justify-center gap-1.5 rounded-full bg-white/15 hover:bg-white/25 active:bg-white/30 text-white text-xs font-bold border border-white/10 shadow-2xs backdrop-blur-md apple-transition cursor-pointer"
+              title="Forward message"
+            >
+              <Forward className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>Forward</span>
+            </motion.button>
+          )}
+
+          <div className="w-px h-4 bg-white/20 my-auto" />
+
+          {/* Mark unread */}
+          {onMarkUnread && (
+            <motion.button
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={onMarkUnread}
+              className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-200 hover:text-white hover:bg-white/20 apple-transition cursor-pointer"
+              title="Mark as unread"
+            >
+              <Mail className="w-4 h-4 stroke-[2.2]" />
+            </motion.button>
+          )}
+
+          {/* Star */}
+          <motion.button
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
+            onClick={onToggleStar}
+            className={`w-8 h-8 flex items-center justify-center rounded-full apple-transition cursor-pointer ${
+              message.is_starred
+                ? 'bg-yellow-500/20 text-yellow-400'
+                : 'text-neutral-200 hover:text-yellow-400 hover:bg-white/20'
+            }`}
+            title="Star message"
           >
-            {/* Move to Inbox (strictly only for spam and trash folders, uniform neutral color) */}
-            {onMoveToInbox && (activeFolderType === 'trash' || activeFolderType === 'spam') && (
-              <motion.button
-                whileHover={{ scale: 1.08 }}
-                whileTap={{ scale: 0.92 }}
-                onClick={onMoveToInbox}
-                className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-800 hover:text-black dark:text-neutral-200 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/15 apple-transition cursor-pointer"
-                title="Move to Inbox"
-              >
-                <Inbox className="w-4 h-4 stroke-[2.2]" />
-              </motion.button>
-            )}
+            <Star className={`w-4 h-4 stroke-[2.2] ${message.is_starred ? 'fill-current' : ''}`} />
+          </motion.button>
 
-            {/* Reply blue pill button */}
-            {onReply && (
-              <motion.button
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-                onClick={onReply}
-                className="h-8 px-4 flex items-center justify-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-500/30 border border-white/20 backdrop-blur-xs cursor-pointer"
-                title="Reply"
-              >
-                <Reply className="w-3.5 h-3.5 stroke-[2.5]" />
-                <span>Reply</span>
-              </motion.button>
-            )}
+          {/* Archive */}
+          <motion.button
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
+            onClick={onArchive}
+            className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-200 hover:text-white hover:bg-white/20 apple-transition cursor-pointer"
+            title="Archive message"
+          >
+            <Archive className="w-4 h-4 stroke-[2.2]" />
+          </motion.button>
 
-            {/* Forward button */}
-            {onForward && (
-              <motion.button
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-                onClick={onForward}
-                className="h-8 px-3.5 flex items-center justify-center gap-1.5 rounded-full bg-white/50 hover:bg-white/70 dark:bg-white/10 dark:hover:bg-white/20 text-neutral-900 dark:text-white text-xs font-bold border border-black/5 dark:border-white/10 shadow-2xs backdrop-blur-md apple-transition cursor-pointer"
-                title="Forward message"
-              >
-                <Forward className="w-3.5 h-3.5 stroke-[2.5]" />
-                <span>Forward</span>
-              </motion.button>
-            )}
-
-            <div className="w-px h-4 bg-black/10 dark:bg-white/15 my-auto" />
-
-            {/* Mark unread */}
-            {onMarkUnread && (
-              <motion.button
-                whileHover={{ scale: 1.08 }}
-                whileTap={{ scale: 0.92 }}
-                onClick={onMarkUnread}
-                className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-800 hover:text-black dark:text-neutral-200 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/15 apple-transition cursor-pointer"
-                title="Mark as unread"
-              >
-                <Mail className="w-4 h-4 stroke-[2.2]" />
-              </motion.button>
-            )}
-
-            {/* Star */}
-            <motion.button
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.92 }}
-              onClick={onToggleStar}
-              className={`w-8 h-8 flex items-center justify-center rounded-full apple-transition cursor-pointer ${
-                message.is_starred
-                  ? 'bg-yellow-500/15 text-yellow-500'
-                  : 'text-neutral-800 hover:text-yellow-500 dark:text-neutral-200 dark:hover:text-yellow-400 hover:bg-white/40 dark:hover:bg-white/15'
-              }`}
-              title="Star message"
-            >
-              <Star className={`w-4 h-4 stroke-[2.2] ${message.is_starred ? 'fill-current' : ''}`} />
-            </motion.button>
-
-            {/* Archive */}
-            <motion.button
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.92 }}
-              onClick={onArchive}
-              className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-800 hover:text-black dark:text-neutral-200 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/15 apple-transition cursor-pointer"
-              title="Archive message"
-            >
-              <Archive className="w-4 h-4 stroke-[2.2]" />
-            </motion.button>
-
-            {/* Delete (uniform neutral icon color) */}
-            <motion.button
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.92 }}
-              onClick={onDelete}
-              className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-800 hover:text-red-500 dark:text-neutral-200 dark:hover:text-red-400 hover:bg-white/40 dark:hover:bg-white/15 apple-transition cursor-pointer"
-              title="Delete message"
-            >
-              <Trash2 className="w-4 h-4 stroke-[2.2]" />
-            </motion.button>
-          </motion.div>
-        </div>
+          {/* Delete */}
+          <motion.button
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
+            onClick={onDelete}
+            className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-200 hover:text-red-400 hover:bg-red-500/20 apple-transition cursor-pointer"
+            title="Delete message"
+          >
+            <Trash2 className="w-4 h-4 stroke-[2.2]" />
+          </motion.button>
+        </motion.div>
       </div>
     </div>
   </div>

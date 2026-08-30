@@ -318,6 +318,84 @@ html, body {
   border-radius: 0 12px 12px 0;
 }
 
+/* ──────────────────────────────────────────────────────────────────────────
+   EMAIL PAPER READING MODE (Typography & High Readability)
+   ────────────────────────────────────────────────────────────────────────── */
+.mail-content-container {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.8;
+  letter-spacing: -0.01em;
+  color: #1c1917;
+  word-break: break-word;
+}
+
+.mail-content-container p {
+  margin-top: 0;
+  margin-bottom: 1.25em;
+  line-height: 1.8;
+}
+
+.mail-content-container h1,
+.mail-content-container h2,
+.mail-content-container h3,
+.mail-content-container h4 {
+  font-weight: 750;
+  line-height: 1.35;
+  margin-top: 1.5em;
+  margin-bottom: 0.6em;
+  letter-spacing: -0.02em;
+}
+
+.mail-content-container h1 { font-size: 1.65rem; font-weight: 800; }
+.mail-content-container h2 { font-size: 1.35rem; }
+.mail-content-container h3 { font-size: 1.15rem; }
+.mail-content-container h4 { font-size: 1rem; }
+
+.mail-content-container img {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 12px;
+  margin: 1rem auto;
+  display: block;
+}
+
+.mail-content-container table {
+  max-width: 100% !important;
+}
+
+.mail-content-container hr {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin: 2rem 0;
+}
+
+.mail-content-container blockquote {
+  border-left: 3px solid #3b82f6;
+  padding: 0.5rem 1.25rem;
+  margin: 1.25rem 0;
+  background: rgba(59, 130, 246, 0.05);
+  border-radius: 0 12px 12px 0;
+  font-style: italic;
+}
+
+.mail-content-container ul,
+.mail-content-container ol {
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.mail-content-container li {
+  margin-bottom: 0.5rem;
+  line-height: 1.7;
+}
+
+.mail-content-container a {
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 /* Light Mode: Ensure high contrast text */
 .mail-content-container,
 .mail-content-container p,
