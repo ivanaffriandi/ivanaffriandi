@@ -635,12 +635,7 @@ export default function MailApp() {
             className="hidden xl:block h-full mail-calendar-fixed"
             style={{ width: "270px", minWidth: "270px", maxWidth: "270px", flex: "0 0 270px" }}
           >
-            <CalendarAgendaWidget
-              selectedMessage={selectedMessageDetail}
-              messages={messages}
-              onSelectMessage={(id) => setSelectedMessageId(id)}
-              onUseSuggestedReply={handleUseSuggestedReply}
-            />
+            <CalendarAgendaWidget />
           </div>
         </main>
       </div>

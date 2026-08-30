@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Mail, Star, Clock, SendHorizontal, FileText, Tag, Archive, AlertOctagon, Trash2,
-  Camera, LogOut, SquarePen, Sparkles, BadgeCheck, Globe,
+  Camera, LogOut, Feather, Globe,
   Github, Linkedin, ExternalLink, Copy, Check
 } from 'lucide-react';
 import { Folder, Message } from '@/types/mail';
@@ -308,14 +308,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Divider */}
         <div className="w-5 h-[1px] bg-neutral-200 dark:bg-neutral-800 shrink-0 my-0.5"></div>
 
-        {/* 3. BOTTOM: Apple Mail Signature Compose Button (Square Pen) */}
+        {/* 3. BOTTOM: Apple Mail Signature Compose Button (Feather Pen) */}
         <div className="shrink-0 flex flex-col items-center overflow-visible">
           <button
             onClick={() => onOpenCompose()}
             className="group relative w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 hover:scale-110 active:scale-95 border border-white/20 apple-transition cursor-pointer overflow-visible"
             title="Compose New Message"
           >
-            <SquarePen className="w-[18px] h-[18px] stroke-[2.3]" />
+            <Feather className="w-[18px] h-[18px] stroke-[2.2]" />
             <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
               Compose Email
             </span>
@@ -327,7 +327,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* 1. MORE FOLDERS FLOATING POPOVER */}
       {activeMenu === 'tags' && (
-        <div className="absolute left-[76px] top-1/2 -translate-y-1/2 w-64 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-3 shadow-2xl z-[100] animate-scale-up font-sans flex flex-col gap-1.5 backdrop-blur-xl">
+        <div className="absolute left-[76px] top-[140px] w-64 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-3 shadow-2xl z-[100] animate-scale-up font-sans flex flex-col gap-1.5 backdrop-blur-xl ring-1 ring-black/5 dark:ring-white/10">
           <div className="px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[var(--text-muted)]">
             Other Mail Folders
           </div>
@@ -389,14 +389,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       )}
 
-      {/* 2. RICH PROFILE & SOCIAL MEDIA CARD POPOVER */}
+      {/* 2. SIMPLE & CLEAN PROFILE & SOCIAL MEDIA CARD POPOVER (ANCHORED AT TOP) */}
       {activeMenu === 'profile' && (
-        <div className="absolute left-[76px] top-1/2 -translate-y-1/2 w-80 max-w-[calc(100vw-96px)] bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-5 shadow-2xl z-[100] animate-scale-up font-sans flex flex-col gap-4 backdrop-blur-2xl">
+        <div className="absolute left-[76px] top-0 w-80 max-w-[calc(100vw-96px)] bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-4 shadow-2xl z-[100] animate-scale-up font-sans flex flex-col gap-3 backdrop-blur-2xl ring-1 ring-black/5 dark:ring-white/10">
           
           {/* User Profile Header */}
-          <div className="flex items-start gap-3.5 pb-3 border-b border-[var(--border-subtle)]">
+          <div className="flex items-center gap-3 pb-3 border-b border-[var(--border-subtle)]">
             <div className="relative group shrink-0">
-              <div className="w-14 h-14 rounded-2xl overflow-hidden bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md ring-2 ring-blue-500/20">
+              <div className="w-12 h-12 rounded-2xl overflow-hidden bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-md ring-2 ring-blue-500/20">
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="Ivan Affriandi" className="w-full h-full object-cover" />
                 ) : (
@@ -407,8 +407,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 rounded-2xl flex flex-col items-center justify-center cursor-pointer apple-transition text-white"
                 title="Change Photo"
               >
-                <Camera className="w-4 h-4 mb-0.5" />
-                <span className="text-[9px] font-bold">Edit</span>
+                <Camera className="w-3.5 h-3.5 mb-0.5" />
+                <span className="text-[8px] font-bold">Edit</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -419,19 +419,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
 
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-1.5">
-                <p className="text-sm font-extrabold text-[var(--text-primary)] truncate">
-                  Ivan Affriandi
-                </p>
-                <BadgeCheck className="w-4 h-4 text-blue-500 shrink-0" fill="#007aff" color="#ffffff" />
-              </div>
-              <p className="text-[11px] text-[var(--text-muted)] font-medium mt-0.5 truncate">
-                Software Engineer & Designer
+              <p className="text-sm font-extrabold text-[var(--text-primary)] truncate">
+                Ivan Affriandi
               </p>
               
               {/* Copyable Email Pill */}
-              <div className="flex items-center gap-1 mt-1.5">
-                <span className="text-[11px] text-[var(--text-secondary)] font-mono truncate max-w-[145px]">
+              <div className="flex items-center gap-1 mt-0.5">
+                <span className="text-[11px] text-[var(--text-secondary)] font-mono truncate max-w-[155px]">
                   {userEmail || 'hello@ivanaffriandi.com'}
                 </span>
                 <button
@@ -459,15 +453,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           {/* Social Profiles & Channels Section */}
-          <div className="flex flex-col gap-1.5">
-            <div className="flex items-center justify-between px-1">
-              <span className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)]">
-                Social Profiles & Writings
-              </span>
-              <Sparkles className="w-3 h-3 text-amber-500" />
-            </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] px-1">
+              Profiles & Links
+            </span>
 
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-0.5">
               {socialLinks.map((social) => (
                 <a
                   key={social.name}
@@ -489,27 +480,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity shrink-0">
-                    <span className="text-[9px] font-semibold text-[var(--text-muted)] hidden sm:inline">
-                      {social.badge}
-                    </span>
-                    <ExternalLink className="w-3 h-3 text-[var(--text-muted)] group-hover:translate-x-0.5 transition-transform" />
-                  </div>
+                  <ExternalLink className="w-3 h-3 text-[var(--text-muted)] group-hover:translate-x-0.5 transition-transform" />
                 </a>
               ))}
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="flex flex-col gap-1.5 pt-2 border-t border-[var(--border-subtle)]">
+          <div className="flex flex-col gap-1.5 pt-1.5 border-t border-[var(--border-subtle)]">
             <button
               onClick={() => {
                 onOpenCompose();
                 setActiveMenu(null);
               }}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-2xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-500/20 apple-transition cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-2xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-500/20 apple-transition cursor-pointer"
             >
-              <SquarePen className="w-4 h-4" />
+              <Feather className="w-3.5 h-3.5" />
               <span>Compose New Message</span>
             </button>
 
@@ -519,9 +505,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   setActiveMenu(null);
                   onSignOut();
                 }}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-2xl text-xs font-bold text-red-500 hover:bg-red-500/10 apple-transition cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-2xl text-xs font-bold text-red-500 hover:bg-red-500/10 apple-transition cursor-pointer"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="w-3.5 h-3.5" />
                 <span>Sign Out</span>
               </button>
             )}
