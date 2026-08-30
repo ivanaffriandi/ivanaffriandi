@@ -222,26 +222,25 @@ export const MessageView: React.FC<MessageViewProps> = ({
             {new Date(message.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
           </div>
         </div>
-      </div>
 
-      {/* ──────────────────────────────────────────────────────────────────────────
-          2. SCROLLABLE EMAIL CONTENT CANVAS
-          ────────────────────────────────────────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 relative space-y-6">
-        <div className="max-w-4xl mx-auto space-y-6 pb-24">
-          {threadToDisplay.map((item, index) => {
-            const itemImages = (item.attachments || []).filter(
-              (att) => att.content_type.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(att.filename)
-            );
-            const itemFiles = (item.attachments || []).filter(
-              (att) => !att.content_type.startsWith('image/') && !/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(att.filename)
-            );
+        {/* ──────────────────────────────────────────────────────────────────────────
+            2. SCROLLABLE EMAIL CONTENT CANVAS
+            ────────────────────────────────────────────────────────────────────────── */}
+        <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 relative space-y-6">
+          <div className="max-w-4xl mx-auto space-y-6 pb-24">
+            {threadToDisplay.map((item, index) => {
+              const itemImages = (item.attachments || []).filter(
+                (att) => att.content_type.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(att.filename)
+              );
+              const itemFiles = (item.attachments || []).filter(
+                (att) => !att.content_type.startsWith('image/') && !/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(att.filename)
+              );
 
-            return (
-              <div
-                key={item.id || index}
-                className="w-full rounded-2xl md:rounded-3xl border border-black/10 dark:border-white/10 bg-[var(--card-bg)] dark:bg-[#17191f] shadow-xs md:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)] p-5 md:p-8 space-y-6 min-w-0 max-w-full overflow-hidden transition-all duration-200"
-              >
+              return (
+                <div
+                  key={item.id || index}
+                  className="w-full rounded-2xl md:rounded-3xl border border-black/10 dark:border-white/10 bg-[var(--card-bg)] dark:bg-[#17191f] shadow-xs md:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)] p-5 md:p-8 space-y-6 min-w-0 max-w-full overflow-hidden transition-all duration-200"
+                >
                 {index > 0 && (
                   <div className="flex items-center justify-between pb-3 border-b border-black/5 dark:border-white/10 text-xs text-[var(--text-muted)] font-sans">
                     <span className="font-bold text-[var(--text-primary)]">{item.sender_name || item.sender_address}</span>
@@ -450,5 +449,6 @@ export const MessageView: React.FC<MessageViewProps> = ({
         </div>
       </div>
     </div>
+  </div>
   );
 };
