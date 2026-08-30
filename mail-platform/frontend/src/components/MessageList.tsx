@@ -522,19 +522,6 @@ export const MessageList: React.FC<MessageListProps> = ({
                         {msg.snippet || 'No preview text'}
                       </p>
                     </div>
-
-                    {/* Star Button */}
-                    {onToggleStar && (
-                      <button
-                        onClick={(e) => onToggleStar(msg.id, e)}
-                        className={`p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ${
-                          msg.is_starred ? 'opacity-100 text-yellow-400' : isSelected ? 'text-white/60 hover:text-white' : 'text-[var(--text-muted)] hover:text-yellow-400'
-                        }`}
-                        title="Star"
-                      >
-                        <Star className={`w-3.5 h-3.5 ${msg.is_starred ? 'fill-current' : ''}`} />
-                      </button>
-                    )}
                   </div>
                 </motion.button>
               );

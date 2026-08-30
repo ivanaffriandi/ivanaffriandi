@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Calendar as CalendarIcon, Plus, ChevronLeft, ChevronRight, Check,
-  Clock, X, ChevronDown, ChevronUp, Repeat, Trash2
+  Clock, X, ChevronDown, ChevronUp, Repeat, Trash2, CalendarDays,
+  Sparkles
 } from 'lucide-react';
 import { AgendaItem } from '@/types/mail';
 import { fetchAgendas, saveAgenda, toggleAgendaApi, deleteAgendaApi } from '@/lib/api';
@@ -16,7 +17,7 @@ export const formatLocalDateKey = (d: Date): string => {
 };
 
 export const CalendarAgendaWidget: React.FC = () => {
-  const [isMonthExpanded, setIsMonthExpanded] = useState(false);
+  const [isMonthExpanded, setIsMonthExpanded] = useState(true);
   const [currentMonth, setCurrentMonth] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [agendas, setAgendas] = useState<AgendaItem[]>(() => {
@@ -137,6 +138,12 @@ export const CalendarAgendaWidget: React.FC = () => {
     }
   };
 
+  const jumpToToday = () => {
+    const today = new Date();
+    setSelectedDate(today);
+    setCurrentMonth(new Date(today.getFullYear(), today.getMonth(), 1));
+  };
+
   // Days in month
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
@@ -144,7 +151,7 @@ export const CalendarAgendaWidget: React.FC = () => {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   // Current week days
-  const currentWeekDays = React.useMemo(() => {
+  const currentWeekDays = useMemo(() => {
     const curr = new Date(selectedDate);
     const day = curr.getDay();
     const sunday = new Date(curr);
@@ -175,55 +182,77 @@ export const CalendarAgendaWidget: React.FC = () => {
     return false;
   });
 
+  const isTodaySelected = selectedDate.toDateString() === new Date().toDateString();
+
   return (
-    <aside className="w-full h-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-3.5 shadow-card flex flex-col min-h-0 overflow-hidden font-sans select-none shrink-0 ring-1 ring-black/5 dark:ring-white/5">
-      {/* Calendar Header */}
-      <div className="flex items-center justify-between pb-2 border-b border-[var(--border-subtle)] shrink-0">
-        <button
-          onClick={() => setIsMonthExpanded(!isMonthExpanded)}
-          className="flex items-center gap-1.5 text-xs font-black text-[var(--text-primary)] hover:text-blue-500 apple-transition cursor-pointer"
-          title={isMonthExpanded ? 'Switch to Week View' : 'Expand to Month View'}
-        >
-          <span>{currentMonth.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}</span>
-          {isMonthExpanded ? <ChevronUp className="w-3.5 h-3.5 text-[var(--text-muted)]" /> : <ChevronDown className="w-3.5 h-3.5 text-[var(--text-muted)]" />}
-        </button>
+    <aside className="w-full h-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-4 shadow-sm flex flex-col min-h-0 overflow-hidden font-sans select-none shrink-0 ring-1 ring-black/5 dark:ring-white/10">
+      
+      {/* 1. TOP CALENDAR HEADER (Month Title + Quick Today + Prev/Next/Add Controls) */}
+      <div className="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)] shrink-0">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setIsMonthExpanded(!isMonthExpanded)}
+            className="flex items-center gap-1 text-sm font-black text-[var(--text-primary)] hover:text-blue-500 apple-transition cursor-pointer group"
+            title={isMonthExpanded ? 'Collapse to Week View' : 'Expand to Full Month'}
+          >
+            <span>{currentMonth.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}</span>
+            {isMonthExpanded ? (
+              <ChevronUp className="w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-blue-500 transition-transform" />
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-blue-500 transition-transform" />
+            )}
+          </button>
+
+          {!isTodaySelected && (
+            <button
+              onClick={jumpToToday}
+              className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-500/15 text-blue-600 dark:text-blue-400 hover:bg-blue-500/25 apple-transition cursor-pointer"
+            >
+              Today
+            </button>
+          )}
+        </div>
 
         <div className="flex items-center gap-1">
           <button
             onClick={prevPeriod}
-            className="p-1 rounded-lg hover:bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] apple-transition cursor-pointer"
+            className="p-1.5 rounded-xl hover:bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] apple-transition cursor-pointer"
+            title="Previous"
           >
-            <ChevronLeft className="w-3.5 h-3.5" />
+            <ChevronLeft className="w-4 h-4 stroke-[2.2]" />
           </button>
           <button
             onClick={nextPeriod}
-            className="p-1 rounded-lg hover:bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] apple-transition cursor-pointer"
+            className="p-1.5 rounded-xl hover:bg-[var(--bg-secondary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] apple-transition cursor-pointer"
+            title="Next"
           >
-            <ChevronRight className="w-3.5 h-3.5" />
+            <ChevronRight className="w-4 h-4 stroke-[2.2]" />
           </button>
           <button
             onClick={() => setShowAddAgenda(!showAddAgenda)}
-            className="p-1 rounded-lg bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 apple-transition ml-0.5 cursor-pointer"
-            title="Add Agenda"
+            className="p-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white shadow-xs apple-transition ml-1 cursor-pointer"
+            title="Add New Reminder / Event"
           >
-            <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+            <Plus className="w-4 h-4 stroke-[2.5]" />
           </button>
         </div>
       </div>
 
-      {/* Days of Week */}
-      <div className="grid grid-cols-7 text-center text-[10px] font-bold text-[var(--text-muted)] py-1.5 shrink-0">
+      {/* 2. DAYS OF WEEK HEADER */}
+      <div className="grid grid-cols-7 text-center text-[10px] font-extrabold text-[var(--text-muted)] pt-2 pb-1 shrink-0 uppercase tracking-wider">
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-          <div key={i} className={i === 0 ? 'text-red-500/80 font-bold' : ''}>{d}</div>
+          <div key={i} className={i === 0 ? 'text-red-500/90 font-black' : ''}>
+            {d}
+          </div>
         ))}
       </div>
 
-      {/* Calendar Grid (Week or Month) */}
-      <div className="shrink-0 pb-1 border-b border-[var(--border-subtle)]">
+      {/* 3. CALENDAR INTERACTIVE GRID */}
+      <div className="shrink-0 pb-2.5 border-b border-[var(--border-subtle)]">
         {isMonthExpanded ? (
           <div className="grid grid-cols-7 gap-y-1 text-center animate-fade-in">
             {Array.from({ length: firstDayIndex }).map((_, i) => (
-              <div key={`empty-${i}`} className="h-6" />
+              <div key={`empty-${i}`} className="h-7" />
             ))}
             {Array.from({ length: daysInMonth }).map((_, i) => {
               const dayNum = i + 1;
@@ -238,24 +267,26 @@ export const CalendarAgendaWidget: React.FC = () => {
                 <button
                   key={dayNum}
                   onClick={() => setSelectedDate(thisDate)}
-                  className={`h-6 w-6 mx-auto rounded-full text-[10px] font-bold flex flex-col items-center justify-center relative apple-transition cursor-pointer ${
+                  className={`h-7 w-7 mx-auto rounded-full text-xs font-bold flex flex-col items-center justify-center relative apple-transition cursor-pointer ${
                     isSelected
-                      ? 'bg-blue-600 text-white shadow-xs'
+                      ? 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/30 scale-105'
                       : isToday
-                      ? 'bg-blue-500/15 text-blue-600 font-extrabold'
+                      ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400 font-black ring-1 ring-blue-500/30'
                       : isSunday
                       ? 'text-red-500/80 font-bold hover:bg-red-500/10'
                       : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   <span>{dayNum}</span>
-                  {hasAgendas && !isSelected && <span className="w-1 h-1 rounded-full bg-blue-500 absolute bottom-0.5" />}
+                  {hasAgendas && !isSelected && (
+                    <span className="w-1 h-1 rounded-full bg-blue-500 absolute bottom-0.5" />
+                  )}
                 </button>
               );
             })}
           </div>
         ) : (
-          <div className="grid grid-cols-7 gap-0.5 text-center py-0.5">
+          <div className="grid grid-cols-7 gap-0.5 text-center py-1">
             {currentWeekDays.map((thisDate, i) => {
               const isSelected = thisDate.toDateString() === selectedDate.toDateString();
               const isToday = thisDate.toDateString() === new Date().toDateString();
@@ -267,18 +298,20 @@ export const CalendarAgendaWidget: React.FC = () => {
                 <button
                   key={i}
                   onClick={() => setSelectedDate(thisDate)}
-                  className={`h-6 w-6 mx-auto rounded-full text-[10px] font-bold flex flex-col items-center justify-center relative apple-transition cursor-pointer ${
+                  className={`h-7 w-7 mx-auto rounded-full text-xs font-bold flex flex-col items-center justify-center relative apple-transition cursor-pointer ${
                     isSelected
-                      ? 'bg-blue-600 text-white shadow-xs'
+                      ? 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/30 scale-105'
                       : isToday
-                      ? 'bg-blue-500/15 text-blue-600 font-extrabold'
+                      ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400 font-black ring-1 ring-blue-500/30'
                       : isSunday
                       ? 'text-red-500/80 font-bold hover:bg-red-500/10'
                       : 'text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   <span>{thisDate.getDate()}</span>
-                  {hasAgendas && !isSelected && <span className="w-1 h-1 rounded-full bg-blue-500 absolute bottom-0.5" />}
+                  {hasAgendas && !isSelected && (
+                    <span className="w-1 h-1 rounded-full bg-blue-500 absolute bottom-0.5" />
+                  )}
                 </button>
               );
             })}
@@ -286,46 +319,46 @@ export const CalendarAgendaWidget: React.FC = () => {
         )}
       </div>
 
-      {/* Add Agenda Inline Form */}
+      {/* 4. ADD AGENDA FORM MODAL/INLINE */}
       {showAddAgenda && (
-        <form onSubmit={handleCreateAgenda} className="my-2 p-2.5 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--card-border)] space-y-2 animate-toast shrink-0">
-          <div className="flex items-center justify-between text-[11px] font-bold text-[var(--text-muted)]">
-            <span>New Agenda</span>
-            <button type="button" onClick={() => setShowAddAgenda(false)} className="cursor-pointer">
-              <X className="w-3 h-3" />
+        <form onSubmit={handleCreateAgenda} className="my-2.5 p-3 bg-[var(--bg-secondary)] rounded-2xl border border-[var(--card-border)] space-y-2.5 animate-toast shrink-0 shadow-sm">
+          <div className="flex items-center justify-between text-xs font-extrabold text-[var(--text-primary)]">
+            <span>New Reminder / Event</span>
+            <button type="button" onClick={() => setShowAddAgenda(false)} className="p-1 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer">
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
           <input
             type="text"
-            placeholder="Event title..."
+            placeholder="What's happening?"
             value={newAgendaTitle}
             onChange={(e) => setNewAgendaTitle(e.target.value)}
             autoFocus
-            className="w-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl px-2.5 py-1 text-xs text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl px-3 py-1.5 text-xs text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-blue-500/40"
           />
-          <div className="flex items-center justify-between gap-1.5">
+          <div className="flex items-center justify-between gap-2">
             <input
               type="time"
               value={newAgendaTime}
               onChange={(e) => setNewAgendaTime(e.target.value)}
-              className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-lg px-2 py-0.5 text-[10px] text-[var(--text-primary)]"
+              className="bg-[var(--card-bg)] border border-[var(--card-border)] rounded-xl px-2.5 py-1 text-xs text-[var(--text-primary)] font-medium"
             />
             <button
               type="submit"
-              className="px-3 py-1 rounded-lg bg-blue-600 text-white font-bold text-[10px] shadow-2xs hover:bg-blue-700 apple-transition cursor-pointer"
+              className="px-3.5 py-1 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-xs apple-transition cursor-pointer"
             >
-              Add
+              Save
             </button>
           </div>
-          <div className="flex items-center justify-between gap-1 bg-[var(--card-bg)] p-0.5 rounded-lg border border-[var(--card-border)]">
+          <div className="flex items-center justify-between gap-1 bg-[var(--card-bg)] p-1 rounded-xl border border-[var(--card-border)]">
             {(['once', 'daily', 'weekly', 'monthly'] as const).map((rec) => (
               <button
                 key={rec}
                 type="button"
                 onClick={() => setNewAgendaRecurrence(rec)}
-                className={`flex-1 py-0.5 rounded-md text-[9px] font-bold capitalize apple-transition cursor-pointer ${
+                className={`flex-1 py-1 rounded-lg text-[10px] font-bold capitalize apple-transition cursor-pointer ${
                   newAgendaRecurrence === rec
-                    ? 'bg-blue-600 text-white shadow-2xs'
+                    ? 'bg-blue-600 text-white shadow-xs'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                 }`}
               >
@@ -336,63 +369,77 @@ export const CalendarAgendaWidget: React.FC = () => {
         </form>
       )}
 
-      {/* Agendas for Selected Date */}
-      <div className="mt-2 flex-1 flex flex-col min-h-0 overflow-hidden">
-        <div className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] mb-1 shrink-0 flex items-center justify-between">
-          <span>{selectedDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</span>
-          <span className="text-blue-500">{selectedDayAgendas.length} items</span>
+      {/* 5. AGENDA STREAM & TASK LIST */}
+      <div className="mt-3 flex-1 flex flex-col min-h-0 overflow-hidden">
+        <div className="flex items-center justify-between pb-2 shrink-0">
+          <div className="flex items-center gap-1.5">
+            <CalendarDays className="w-3.5 h-3.5 text-blue-500" />
+            <span className="text-xs font-black text-[var(--text-primary)] uppercase tracking-wider">
+              {isTodaySelected ? 'Today, ' : ''}{selectedDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+            </span>
+          </div>
+          <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
+            {selectedDayAgendas.length} {selectedDayAgendas.length === 1 ? 'item' : 'items'}
+          </span>
         </div>
 
-        <div className="flex-1 overflow-y-auto space-y-1.5 pr-0.5">
+        <div className="flex-1 overflow-y-auto space-y-2 pr-0.5 pt-1">
           {selectedDayAgendas.length === 0 ? (
-            <p className="text-[11px] text-[var(--text-muted)] py-6 text-center font-medium">
-              No agenda for this date
-            </p>
+            <div className="h-full flex flex-col items-center justify-center text-center p-4">
+              <div className="w-10 h-10 rounded-2xl bg-[var(--bg-secondary)] text-[var(--text-muted)] flex items-center justify-center mb-2">
+                <CalendarIcon className="w-5 h-5 opacity-60" />
+              </div>
+              <p className="text-xs font-bold text-[var(--text-primary)]">No events scheduled</p>
+              <p className="text-[11px] text-[var(--text-muted)] mt-0.5">Tap + to add a reminder</p>
+            </div>
           ) : (
             selectedDayAgendas.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between p-2 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--card-border)]/40 apple-transition group"
+                className="flex items-center justify-between p-2.5 rounded-2xl bg-[var(--bg-secondary)] hover:bg-[var(--card-border)]/40 border border-[var(--card-border)]/60 apple-transition group shadow-2xs"
               >
                 <button
                   onClick={() => handleToggleAgenda(item.id)}
-                  className="flex items-center gap-2 min-w-0 text-left flex-1 cursor-pointer"
+                  className="flex items-center gap-2.5 min-w-0 text-left flex-1 cursor-pointer"
                 >
-                  <div className={`w-4 h-4 rounded-md border flex items-center justify-center shrink-0 transition-colors ${
+                  {/* Custom Checkbox */}
+                  <div className={`w-4 h-4 rounded-lg border flex items-center justify-center shrink-0 transition-all ${
                     item.completed
-                      ? 'bg-emerald-500 border-emerald-500 text-white'
-                      : 'border-[var(--card-border)] bg-[var(--card-bg)]'
+                      ? 'bg-emerald-500 border-emerald-500 text-white shadow-xs'
+                      : 'border-[var(--card-border)] bg-[var(--card-bg)] group-hover:border-blue-500/50'
                   }`}>
                     {item.completed && <Check className="w-2.5 h-2.5 stroke-[3]" />}
                   </div>
+
                   <div className="min-w-0 flex-1">
-                    <span className={`text-[11px] font-semibold block truncate leading-tight ${
+                    <span className={`text-xs font-semibold block truncate leading-tight ${
                       item.completed ? 'line-through text-[var(--text-muted)]' : 'text-[var(--text-primary)]'
                     }`}>
                       {item.title}
                     </span>
-                    <div className="flex items-center gap-2 text-[9px] text-[var(--text-muted)] mt-0.5">
+                    <div className="flex items-center gap-2 text-[10px] text-[var(--text-muted)] mt-0.5">
                       {item.time && (
-                        <span className="flex items-center gap-0.5">
-                          <Clock className="w-2.5 h-2.5" />
+                        <span className="flex items-center gap-1 font-medium">
+                          <Clock className="w-3 h-3 text-blue-500/80" />
                           {item.time}
                         </span>
                       )}
                       {item.recurrence && item.recurrence !== 'once' && (
-                        <span className="flex items-center gap-0.5 capitalize text-blue-500">
-                          <Repeat className="w-2.5 h-2.5" />
+                        <span className="flex items-center gap-0.5 capitalize text-blue-600 dark:text-blue-400 font-bold">
+                          <Repeat className="w-3 h-3" />
                           {item.recurrence}
                         </span>
                       )}
                     </div>
                   </div>
                 </button>
+
                 <button
                   onClick={() => handleDeleteAgenda(item.id)}
-                  className="p-1 rounded-md opacity-0 group-hover:opacity-100 hover:text-red-500 text-[var(--text-muted)] apple-transition shrink-0 cursor-pointer"
-                  title="Delete item"
+                  className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:text-red-500 hover:bg-red-500/10 text-[var(--text-muted)] apple-transition shrink-0 cursor-pointer"
+                  title="Delete event"
                 >
-                  <Trash2 className="w-3 h-3" />
+                  <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
             ))
@@ -402,3 +449,4 @@ export const CalendarAgendaWidget: React.FC = () => {
     </aside>
   );
 };
+
