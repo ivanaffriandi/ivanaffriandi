@@ -148,26 +148,26 @@ export const MessageView: React.FC<MessageViewProps> = ({
       <div className="flex-1 bg-[var(--card-bg)] border-0 md:border border-[var(--card-border)] rounded-none md:rounded-3xl shadow-none md:shadow-[0_12px_28px_rgba(0,0,0,0.06)] md:dark:shadow-[0_12px_28px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden min-h-0 relative">
         
         {/* ────────────────────────────────────────────────────────────────────────
-            TOP HEADER BAR: Sender Profile, Recipient, Date & Actions
+            TOP HEADER BAR: Single clean 1-line metadata row
             ──────────────────────────────────────────────────────────────────────── */}
-        <div className="px-5 py-3.5 border-b border-[var(--border-subtle)] shrink-0 bg-[var(--card-bg)] flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 z-10">
+        <div className="px-5 py-3 border-b border-[var(--border-subtle)] shrink-0 bg-[var(--card-bg)] flex items-center justify-between gap-4 z-10">
           
-          {/* Left: Sender Profile & Metadata */}
-          <div className="flex items-center gap-3 min-w-0 flex-1">
+          {/* Left: 1 Single Line for Avatar + Sender Name + Sender Email + To Recipient */}
+          <div className="flex items-center gap-2.5 min-w-0 flex-1 overflow-hidden">
             {onBack && (
               <button
                 type="button"
                 onClick={onBack}
-                className="md:hidden p-1.5 -ml-1 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] apple-transition"
+                className="md:hidden p-1.5 -ml-1 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] apple-transition shrink-0"
                 title="Back to inbox"
               >
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4" />
               </button>
             )}
 
             {/* Sender Avatar */}
             <div
-              className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center font-bold text-sm text-white shadow-2xs shrink-0 relative ring-1 ring-black/5 dark:ring-white/10"
+              className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center font-bold text-xs text-white shadow-2xs shrink-0 relative ring-1 ring-black/5 dark:ring-white/10"
               style={{ background: `linear-gradient(135deg, ${mainCFrom}, ${mainCTo})` }}
             >
               <span className="select-none">{mainInitial}</span>
@@ -181,132 +181,58 @@ export const MessageView: React.FC<MessageViewProps> = ({
               )}
             </div>
 
-            {/* Sender & Recipient Stack */}
-            <div className="flex flex-col min-w-0">
-              <div className="flex items-center gap-2 min-w-0 flex-wrap">
-                <span className="font-extrabold text-sm md:text-base text-[var(--text-primary)] tracking-tight truncate font-sans">
-                  {mainDisplayName}
+            {/* Single Line Metadata Stack */}
+            <div className="flex items-center gap-2 min-w-0 truncate font-sans text-xs">
+              <span className="font-extrabold text-sm text-[var(--text-primary)] tracking-tight truncate shrink-0">
+                {mainDisplayName}
+              </span>
+              {isMe && (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide bg-blue-500/15 text-blue-600 dark:text-blue-400 shrink-0">
+                  YOU
                 </span>
-                {isMe && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide bg-blue-500/15 text-blue-600 dark:text-blue-400 font-sans">
-                    YOU
-                  </span>
-                )}
-                <span className="text-xs text-[var(--text-muted)] font-sans truncate hidden sm:inline font-normal">
-                  · {message.sender_address}
+              )}
+              <span className="text-[var(--text-muted)] truncate hidden sm:inline">
+                · {message.sender_address}
+              </span>
+              <span className="text-[var(--text-muted)] truncate hidden md:inline">
+                <span className="font-semibold text-[var(--text-secondary)]">to:</span> {message.recipient_to || 'me'}
+              </span>
+              {message.recipient_cc && (
+                <span className="text-[var(--text-muted)] truncate hidden lg:inline">
+                  · cc: {message.recipient_cc}
                 </span>
-              </div>
-
-              {/* Recipient info */}
-              <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] font-sans truncate mt-0.5">
-                <span className="font-semibold text-[var(--text-secondary)]">to:</span>
-                <span className="truncate">{message.recipient_to || 'me'}</span>
-                {message.recipient_cc && (
-                  <span className="text-[var(--text-muted)] truncate hidden md:inline">· cc: {message.recipient_cc}</span>
-                )}
-              </div>
+              )}
             </div>
           </div>
 
-          {/* Right: Date/Time + Action Toolbar */}
-          <div className="flex items-center gap-2 shrink-0 self-center">
-            {/* Timestamp & Status */}
-            <div className="flex flex-col items-end mr-1 text-right font-sans">
-              <span className="text-xs font-semibold text-[var(--text-muted)] whitespace-nowrap">
-                {new Date(message.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-              </span>
-              {isMe && (
-                message.is_opened ? (
-                  <span
-                    className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"
-                    title={`Read by recipient${message.opened_at ? ` on ${new Date(message.opened_at).toLocaleString()}` : ''}`}
-                  >
-                    <CheckCheck className="w-3.5 h-3.5" />
-                    <span>Read {message.open_count && message.open_count > 1 ? `(${message.open_count}x)` : ''}</span>
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[var(--text-muted)]">
-                    <Check className="w-3.5 h-3.5" />
-                    <span>Delivered</span>
-                  </span>
-                )
-              )}
-            </div>
-
-            {/* Action Buttons Toolbar */}
-            <div className="flex items-center gap-1 bg-[var(--bg-secondary)]/80 border border-[var(--border-subtle)] p-1 rounded-2xl shadow-2xs">
-              {onReply && (
-                <button
-                  type="button"
-                  onClick={onReply}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold text-xs shadow-xs apple-transition cursor-pointer"
-                  title="Reply"
+          {/* Right: Date/Time + Status */}
+          <div className="flex items-center gap-3 shrink-0 font-sans">
+            {isMe && (
+              message.is_opened ? (
+                <span
+                  className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"
+                  title={`Read by recipient${message.opened_at ? ` on ${new Date(message.opened_at).toLocaleString()}` : ''}`}
                 >
-                  <Reply className="w-3.5 h-3.5 stroke-[2.5]" />
-                  <span className="hidden sm:inline">Reply</span>
-                </button>
-              )}
-
-              {onForward && (
-                <button
-                  type="button"
-                  onClick={onForward}
-                  className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--card-bg)] apple-transition cursor-pointer"
-                  title="Forward"
-                >
-                  <Forward className="w-4 h-4" />
-                </button>
-              )}
-
-              {onMarkUnread && (
-                <button
-                  type="button"
-                  onClick={onMarkUnread}
-                  className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-blue-500 hover:bg-[var(--card-bg)] apple-transition cursor-pointer"
-                  title="Mark as unread"
-                >
-                  <Mail className="w-4 h-4" />
-                </button>
-              )}
-
-              <button
-                type="button"
-                onClick={onToggleStar}
-                className={`p-1.5 rounded-xl apple-transition cursor-pointer ${
-                  message.is_starred
-                    ? 'text-yellow-400 bg-yellow-400/15'
-                    : 'text-[var(--text-muted)] hover:text-yellow-400 hover:bg-[var(--card-bg)]'
-                }`}
-                title="Star"
-              >
-                <Star className={`w-4 h-4 ${message.is_starred ? 'fill-current' : ''}`} />
-              </button>
-
-              <button
-                type="button"
-                onClick={onArchive}
-                className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--card-bg)] apple-transition cursor-pointer"
-                title="Archive"
-              >
-                <Archive className="w-4 h-4" />
-              </button>
-
-              <button
-                type="button"
-                onClick={onDelete}
-                className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 apple-transition cursor-pointer"
-                title="Delete"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
+                  <CheckCheck className="w-3.5 h-3.5" />
+                  <span>Read {message.open_count && message.open_count > 1 ? `(${message.open_count}x)` : ''}</span>
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[var(--text-muted)]">
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Delivered</span>
+                </span>
+              )
+            )}
+            <span className="text-xs font-semibold text-[var(--text-muted)] whitespace-nowrap">
+              {new Date(message.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+            </span>
           </div>
         </div>
 
         {/* ────────────────────────────────────────────────────────────────────────
             3. SCROLLABLE CONVERSATION STREAM (Subject + Attachments + Email Body)
             ──────────────────────────────────────────────────────────────────────── */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 min-w-0 w-full px-4 md:px-7 py-5 space-y-6 pb-20">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 min-w-0 w-full px-4 md:px-7 py-5 space-y-6 pb-28">
           {threadToDisplay.map((item, index) => {
             const itemImages = (item.attachments || []).filter(
               (att) => att.content_type.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(att.filename)
@@ -425,6 +351,98 @@ export const MessageView: React.FC<MessageViewProps> = ({
               </div>
             );
           })}
+        </div>
+
+        {/* ──────────────────────────────────────────────────────────────────────────
+            4. FLOATING ACTION PILLBAR DOCK (Sleek Apple Floating Glass Pill)
+            ────────────────────────────────────────────────────────────────────────── */}
+        <div className="pointer-events-none absolute bottom-5 inset-x-0 mx-auto flex justify-center z-40 px-3">
+          <motion.div
+            initial={{ opacity: 0, y: 15, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+            className="pointer-events-auto bg-[var(--card-bg)]/90 dark:bg-[#1c1c1f]/90 backdrop-blur-2xl border border-[var(--card-border)] rounded-full p-1.5 shadow-[0_16px_36px_rgba(0,0,0,0.25)] dark:shadow-[0_20px_45px_rgba(0,0,0,0.8)] flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_45px_rgba(0,0,0,0.3)] ring-1 ring-black/5 dark:ring-white/10"
+          >
+            {/* Reply blue pill button */}
+            {onReply && (
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={onReply}
+                className="h-8 px-4 flex items-center justify-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-semibold shadow-xs cursor-pointer"
+                title="Reply"
+              >
+                <Reply className="w-3.5 h-3.5 stroke-[2.5]" />
+                <span>Reply</span>
+              </motion.button>
+            )}
+
+            {/* Forward button */}
+            {onForward && (
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={onForward}
+                className="h-8 px-3.5 flex items-center justify-center gap-1.5 rounded-full bg-[var(--bg-secondary)] hover:bg-[var(--card-bg)] text-[var(--text-primary)] text-xs font-semibold apple-transition cursor-pointer"
+                title="Forward message"
+              >
+                <Forward className="w-3.5 h-3.5 stroke-[2.5]" />
+                <span>Forward</span>
+              </motion.button>
+            )}
+
+            <div className="w-px h-4 bg-[var(--border-subtle)] my-auto opacity-70" />
+
+            {/* Mark unread */}
+            {onMarkUnread && (
+              <motion.button
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.92 }}
+                onClick={onMarkUnread}
+                className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:text-blue-500 hover:bg-[var(--bg-secondary)] apple-transition cursor-pointer"
+                title="Mark as unread"
+              >
+                <Mail className="w-4 h-4" />
+              </motion.button>
+            )}
+
+            {/* Star */}
+            <motion.button
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={onToggleStar}
+              className={`w-8 h-8 flex items-center justify-center rounded-full apple-transition cursor-pointer ${
+                message.is_starred
+                  ? 'bg-yellow-500/15 text-yellow-400'
+                  : 'text-[var(--text-muted)] hover:text-yellow-400 hover:bg-[var(--bg-secondary)]'
+              }`}
+              title="Star message"
+            >
+              <Star className={`w-4 h-4 ${message.is_starred ? 'fill-current' : ''}`} />
+            </motion.button>
+
+            {/* Archive */}
+            <motion.button
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={onArchive}
+              className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] apple-transition cursor-pointer"
+              title="Archive message"
+            >
+              <Archive className="w-4 h-4" />
+            </motion.button>
+
+            {/* Delete */}
+            <motion.button
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={onDelete}
+              className="w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-500/15 apple-transition cursor-pointer"
+              title="Delete message"
+            >
+              <Trash2 className="w-4 h-4" />
+            </motion.button>
+          </motion.div>
         </div>
       </div>
     </div>
