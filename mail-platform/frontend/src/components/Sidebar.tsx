@@ -155,32 +155,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <div className="relative h-full select-none font-sans z-40 flex flex-col items-center justify-center" ref={popoverRef}>
+    <div className="relative h-full select-none font-sans z-50 flex flex-col items-center justify-center overflow-visible" ref={popoverRef}>
       {/* ── Compact Floating Pill Bar Dock (iOS / macOS Sequoia aesthetic) ── */}
-      <aside className="w-[62px] bg-white/95 dark:bg-neutral-900/95 backdrop-blur-2xl border border-black/10 dark:border-white/10 rounded-full py-3.5 px-1.5 shadow-xl shadow-black/5 flex flex-col items-center gap-2 shrink-0 relative z-30 ring-1 ring-black/5 dark:ring-white/5">
+      <aside className="w-[62px] bg-white/95 dark:bg-[#14161a]/95 backdrop-blur-2xl border border-black/10 dark:border-white/15 rounded-full py-3.5 px-1.5 shadow-xl shadow-black/5 dark:shadow-black/40 flex flex-col items-center gap-2 shrink-0 relative z-50 ring-1 ring-black/5 dark:ring-white/5 overflow-visible">
         
         {/* 1. TOP: User Profile Avatar */}
-        <div className="relative shrink-0">
+        <div className="relative shrink-0 overflow-visible">
           <button
             onClick={() => setActiveMenu(activeMenu === 'profile' ? null : 'profile')}
-            className={`group relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-xs transition-all duration-200 cursor-pointer ${
+            className={`group relative w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-xs transition-all duration-200 cursor-pointer overflow-visible ${
               activeMenu === 'profile'
                 ? 'ring-3 ring-blue-500 scale-105 shadow-md'
                 : 'ring-2 ring-black/10 dark:ring-white/20 hover:scale-105 active:scale-95 shadow-2xs'
             }`}
             title="Profile & Social Links"
           >
-            {avatarUrl ? (
-              <img src={avatarUrl} alt="Ivan Affriandi" className="w-full h-full object-cover" />
-            ) : (
-              'IA'
-            )}
+            <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="Ivan Affriandi" className="w-full h-full object-cover" />
+              ) : (
+                'IA'
+              )}
+            </div>
             
             {/* Online Pulse Dot */}
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-neutral-900 rounded-full shadow-xs"></span>
 
             {/* iOS Style Tooltip */}
-            <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
               Ivan Affriandi • Profile & Socials
             </span>
           </button>
@@ -190,7 +192,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="w-5 h-[1px] bg-neutral-200 dark:bg-neutral-800 shrink-0 my-0.5"></div>
 
         {/* 2. CENTER: Folder Navigation Icons Stack (iOS SF Symbols Style) */}
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2 overflow-visible">
           
           {/* INBOX (Apple Mail Envelope) */}
           <button
@@ -198,10 +200,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
               if (inboxFolder) onSelectFolder(inboxFolder.id);
               setActiveMenu(null);
             }}
-            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer ${
+            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
               isInboxActive
                 ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 border border-blue-500 scale-105'
-                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-neutral-700/80 shadow-2xs hover:bg-neutral-200 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
+                : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
             }`}
           >
             <Mail className="w-[18px] h-[18px] stroke-[2.2]" />
@@ -210,7 +212,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {inboxFolder.unread_count}
               </span>
             )}
-            <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
               Inbox
             </span>
           </button>
@@ -221,14 +223,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onSelectFolder('starred');
               setActiveMenu(null);
             }}
-            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer ${
+            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
               isStarredActive
                 ? 'bg-amber-500 text-white shadow-md shadow-amber-500/30 border border-amber-400 scale-105'
-                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-neutral-700/80 shadow-2xs hover:bg-neutral-200 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
+                : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
             }`}
           >
             <Star className={`w-[18px] h-[18px] stroke-[2.2] ${isStarredActive ? 'fill-current' : ''}`} />
-            <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
               Starred
             </span>
           </button>
@@ -239,32 +241,32 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onSelectFolder('snoozed');
               setActiveMenu(null);
             }}
-            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer ${
+            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
               isSnoozedActive
                 ? 'bg-purple-600 text-white shadow-md shadow-purple-500/30 border border-purple-500 scale-105'
-                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-neutral-700/80 shadow-2xs hover:bg-neutral-200 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
+                : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
             }`}
           >
             <Clock className="w-[18px] h-[18px] stroke-[2.2]" />
-            <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
               Snoozed
             </span>
           </button>
 
-          {/* SENT (Clean Horizontal Outgoing Arrow - No slanted arrow!) */}
+          {/* SENT */}
           <button
             onClick={() => {
               if (sentFolder) onSelectFolder(sentFolder.id);
               setActiveMenu(null);
             }}
-            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer ${
+            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
               isSentActive
                 ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30 border border-indigo-500 scale-105'
-                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-neutral-700/80 shadow-2xs hover:bg-neutral-200 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
+                : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
             }`}
           >
             <SendHorizontal className="w-[18px] h-[18px] stroke-[2.2]" />
-            <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
               Sent
             </span>
           </button>
@@ -275,14 +277,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               if (draftsFolder) onSelectFolder(draftsFolder.id);
               setActiveMenu(null);
             }}
-            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer ${
+            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
               isDraftsActive
                 ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md scale-105'
-                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-neutral-700/80 shadow-2xs hover:bg-neutral-200 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
+                : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
             }`}
           >
             <FileText className="w-[18px] h-[18px] stroke-[2.2]" />
-            <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
               Drafts
             </span>
           </button>
@@ -290,14 +292,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* MORE FOLDERS (Archive, Spam, Trash) */}
           <button
             onClick={() => setActiveMenu(activeMenu === 'tags' ? null : 'tags')}
-            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer ${
+            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
               activeMenu === 'tags'
                 ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md scale-105'
-                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-neutral-700/80 shadow-2xs hover:bg-neutral-200 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
+                : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
             }`}
           >
             <Tag className="w-[18px] h-[18px] stroke-[2.2]" />
-            <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
               More Folders
             </span>
           </button>
@@ -307,14 +309,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="w-5 h-[1px] bg-neutral-200 dark:bg-neutral-800 shrink-0 my-0.5"></div>
 
         {/* 3. BOTTOM: Apple Mail Signature Compose Button (Square Pen) */}
-        <div className="shrink-0 flex flex-col items-center">
+        <div className="shrink-0 flex flex-col items-center overflow-visible">
           <button
             onClick={() => onOpenCompose()}
-            className="group relative w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 hover:scale-110 active:scale-95 border border-white/20 apple-transition cursor-pointer"
+            className="group relative w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 hover:scale-110 active:scale-95 border border-white/20 apple-transition cursor-pointer overflow-visible"
             title="Compose New Message"
           >
             <SquarePen className="w-[18px] h-[18px] stroke-[2.3]" />
-            <span className="pointer-events-none absolute left-full ml-3 px-2.5 py-1 bg-neutral-900/95 dark:bg-neutral-800/95 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-xl whitespace-nowrap z-[100] border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-150 transform translate-x-[-4px] group-hover:translate-x-0">
+            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
               Compose Email
             </span>
           </button>

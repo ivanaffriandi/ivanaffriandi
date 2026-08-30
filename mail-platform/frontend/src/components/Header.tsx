@@ -430,9 +430,9 @@ export const Header: React.FC<HeaderProps> = ({
                 onFocus={() => setIsSearchFocused(true)}
                 onChange={handleSearchChange}
                 placeholder="Search sender, subject, content..."
-                className={`w-full bg-[var(--card-bg)] border rounded-full pl-9 pr-8 py-1.5 text-xs font-medium focus:outline-none apple-transition placeholder:text-[var(--text-muted)] text-[var(--text-primary)] font-sans ${
+                className={`w-full bg-[var(--card-bg)] dark:bg-[#17191f] border rounded-full pl-9 pr-8 py-1.5 text-xs font-medium focus:outline-none apple-transition placeholder:text-[var(--text-muted)] text-[var(--text-primary)] font-sans ring-1 ring-black/5 dark:ring-white/10 ${
                   isSearchFocused
-                    ? 'border-blue-500/50 shadow-[0_8px_25px_rgba(37,99,235,0.15)] ring-2 ring-blue-500/20'
+                    ? 'border-blue-500/50 shadow-[0_8px_25px_rgba(37,99,235,0.15)] ring-2 ring-blue-500/30'
                     : 'border-[var(--card-border)] shadow-2xs hover:border-[var(--text-muted)]/40'
                 }`}
               />
@@ -449,7 +449,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Desktop Search Results Dropdown - Exactly matches w-80 width */}
             {isSearchFocused && (
-              <div className="absolute right-0 top-full mt-2 w-80 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.18)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.7)] z-50 overflow-hidden p-3 animate-toast apple-transition space-y-2.5">
+              <div className="absolute right-0 top-full mt-2 w-80 bg-[var(--card-bg)] dark:bg-[#181a20] border border-[var(--card-border)] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.18)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.7)] z-50 overflow-hidden p-3 animate-toast apple-transition space-y-2.5 ring-1 ring-black/5 dark:ring-white/10">
                 {displayContacts.length > 0 && (
                   <div className="bg-[var(--bg-color)] border border-[var(--card-border)] rounded-xl p-2 shadow-2xs">
                     <div className="px-1 pb-1.5 text-[10px] font-extrabold uppercase text-[var(--text-muted)] tracking-wider flex items-center justify-between">

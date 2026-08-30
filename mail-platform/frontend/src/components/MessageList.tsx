@@ -130,7 +130,7 @@ export const MessageList: React.FC<MessageListProps> = ({
 
   return (
     <div
-      className="w-full h-full bg-[var(--card-bg)] border-0 md:border border-[var(--card-border)] rounded-none md:rounded-3xl flex flex-col overflow-hidden select-none shrink-0 shadow-none md:shadow-card apple-transition font-sans relative"
+      className="w-full h-full bg-[var(--card-bg)] border-0 md:border border-[var(--card-border)] rounded-none md:rounded-3xl flex flex-col overflow-hidden select-none shrink-0 shadow-none md:shadow-card apple-transition font-sans relative ring-1 ring-black/5 dark:ring-white/5"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -277,14 +277,14 @@ export const MessageList: React.FC<MessageListProps> = ({
                     onSelectMessage(msg.id);
                   }
                 }}
-                className={`w-full text-left px-3.5 py-2.5 h-[84px] rounded-2xl transition-colors duration-100 group relative border cursor-pointer box-border flex items-center shrink-0 ${
+                className={`w-full text-left px-3.5 py-2.5 h-[84px] rounded-2xl transition-all duration-100 group relative border cursor-pointer box-border flex items-center shrink-0 ${
                   isChecked
                     ? 'bg-blue-500/10 border-blue-500/40 text-[var(--text-primary)]'
                     : isSelected
-                    ? 'bg-blue-600 dark:bg-blue-600 text-white border-blue-600 shadow-md'
+                    ? 'bg-blue-600 dark:bg-blue-600 text-white border-blue-600 shadow-md ring-1 ring-white/20'
                     : isUnread
-                    ? 'bg-blue-500/[0.04] dark:bg-blue-500/10 border-blue-500/20 hover:bg-blue-500/[0.08] dark:hover:bg-blue-500/15'
-                    : 'bg-transparent border-transparent hover:bg-[var(--bg-secondary)]'
+                    ? 'bg-blue-500/[0.05] dark:bg-[#171b24] border-blue-500/20 dark:border-blue-500/30 hover:bg-blue-500/[0.09] dark:hover:bg-[#1c222e] shadow-2xs'
+                    : 'bg-transparent border-transparent hover:bg-[var(--bg-secondary)] hover:border-[var(--border-subtle)]'
                 }`}
               >
                 <div className="w-full flex items-center gap-3 min-w-0">

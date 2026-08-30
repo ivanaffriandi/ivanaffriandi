@@ -271,6 +271,19 @@ export default function MailApp() {
     setIsComposeOpen(true);
   }, [selectedMessageDetail]);
 
+  const handleUseSuggestedReply = useCallback((draftBody: string) => {
+    if (!selectedMessageDetail) return;
+    const cleanSub = (selectedMessageDetail.subject || "").trim();
+    const subject = /^re:\s*/i.test(cleanSub) ? cleanSub : `Re: ${cleanSub}`;
+    setComposeContext({
+      to: selectedMessageDetail.sender_address,
+      subject: subject,
+      body: draftBody,
+      in_reply_to: selectedMessageDetail.message_id_header || selectedMessageDetail.id,
+    });
+    setIsComposeOpen(true);
+  }, [selectedMessageDetail]);
+
   const handleForward = useCallback(() => {
     if (!selectedMessageDetail) return;
     setComposeContext({
@@ -475,7 +488,7 @@ export default function MailApp() {
 
       {/* Desktop Sidebar */}
       <div
-        className="hidden lg:flex flex-col items-center justify-center h-full mail-sidebar-fixed relative z-40"
+        className="hidden lg:flex flex-col items-center justify-center h-full mail-sidebar-fixed relative z-50 overflow-visible"
         style={{ width: "68px", minWidth: "68px", maxWidth: "68px", flex: "0 0 68px" }}
       >
         <Sidebar
@@ -528,7 +541,7 @@ export default function MailApp() {
       )}
 
       {/* Main Workspace */}
-      <div className="flex flex-col h-full overflow-hidden min-w-0 flex-1">
+      <div className="flex flex-col h-full overflow-hidden min-w-0 flex-1 relative z-10">
         <Header
           activeFolderName={
             activeFolderId === "starred"
@@ -622,7 +635,12 @@ export default function MailApp() {
             className="hidden xl:block h-full mail-calendar-fixed"
             style={{ width: "270px", minWidth: "270px", maxWidth: "270px", flex: "0 0 270px" }}
           >
-            <CalendarAgendaWidget />
+            <CalendarAgendaWidget
+              selectedMessage={selectedMessageDetail}
+              messages={messages}
+              onSelectMessage={(id) => setSelectedMessageId(id)}
+              onUseSuggestedReply={handleUseSuggestedReply}
+            />
           </div>
         </main>
       </div>
@@ -633,6 +651,7 @@ export default function MailApp() {
         onClose={() => setIsComposeOpen(false)}
         initialTo={composeContext.to ?? ''}
         initialSubject={composeContext.subject ?? ''}
+        initialBody={composeContext.body ?? ''}
         onSuccess={handleComposeSent}
       />
 

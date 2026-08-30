@@ -244,7 +244,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
             return (
               <div
                 key={item.id || index}
-                className="w-full rounded-2xl md:rounded-3xl border border-[var(--card-border)] bg-[var(--card-bg)] shadow-xs md:shadow-[0_8px_30px_rgba(0,0,0,0.04)] md:dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] p-5 md:p-8 space-y-6 min-w-0 max-w-full overflow-hidden transition-all duration-200 ring-0 md:ring-1 md:ring-black/5 md:dark:ring-white/5"
+                className="w-full rounded-2xl md:rounded-3xl border border-[var(--card-border)] bg-[var(--card-bg)] dark:bg-[#17191f] shadow-xs md:shadow-[0_8px_30px_rgba(0,0,0,0.06)] md:dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)] p-5 md:p-8 space-y-6 min-w-0 max-w-full overflow-hidden transition-all duration-200 ring-1 ring-black/5 dark:ring-white/10"
               >
                 {/* Secondary Thread Header (if part of multi-message thread and not the first) */}
                 {index > 0 && (

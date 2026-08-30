@@ -14,6 +14,7 @@ interface ComposerModalProps {
   onClose: () => void;
   initialTo?: string;
   initialSubject?: string;
+  initialBody?: string;
   onSuccess?: (info: { to: string; subject: string; body: string }) => void;
 }
 
@@ -307,6 +308,7 @@ export const ComposerModal: React.FC<ComposerModalProps> = ({
   onClose,
   initialTo = '',
   initialSubject = '',
+  initialBody = '',
   onSuccess,
 }) => {
   const [recipients, setRecipients] = useState<RecipientItem[]>([]);
@@ -362,7 +364,7 @@ export const ComposerModal: React.FC<ComposerModalProps> = ({
         if (saved) setHistory(JSON.parse(saved));
 
         const savedDraft = localStorage.getItem('composer_saved_draft');
-        if (savedDraft && !initialSubject && !initialTo) {
+        if (savedDraft && !initialSubject && !initialTo && !initialBody) {
           const draft = JSON.parse(savedDraft);
           if (draft.recipients) setRecipients(draft.recipients);
           if (draft.subject) setSubject(draft.subject);
@@ -370,13 +372,16 @@ export const ComposerModal: React.FC<ComposerModalProps> = ({
         }
       } catch { /* use empty */ }
     }
-  }, [initialSubject, initialTo]);
+  }, [initialSubject, initialTo, initialBody]);
 
   // Sync initial props
   useEffect(() => {
     if (initialTo) setRecipients([{ email: initialTo }]);
     if (initialSubject) setSubject(initialSubject);
-  }, [initialTo, initialSubject]);
+    if (initialBody && editorRef.current) {
+      editorRef.current.innerText = initialBody;
+    }
+  }, [initialTo, initialSubject, initialBody]);
 
   // Check if editor has unsaved text
   const hasUnsavedContent = () => {

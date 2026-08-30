@@ -11,22 +11,24 @@
     --text-secondary: #48484a;
     --text-muted: #8e8e93;
     --bg-secondary: #f2f2f7;
+    --bg-tertiary: #e5e5ea;
     --accent-blue: #007aff;
     --accent-blue-hover: #0062cc;
     --border-subtle: #f2f2f7;
   }
 
   .dark {
-    --bg-color: #000000;
-    --card-bg: #1c1c1e;
-    --card-border: #2c2c2e;
-    --text-primary: #ffffff;
-    --text-secondary: #d1d1d6;
-    --text-muted: #a1a1a6;
-    --bg-secondary: #2c2c2e;
-    --accent-blue: #0a84ff;
-    --accent-blue-hover: #0071e3;
-    --border-subtle: #2c2c2e;
+    --bg-color: #090a0c;
+    --card-bg: #14161a;
+    --card-border: rgba(255, 255, 255, 0.08);
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --bg-secondary: #1d2026;
+    --bg-tertiary: #252830;
+    --accent-blue: #3b82f6;
+    --accent-blue-hover: #2563eb;
+    --border-subtle: rgba(255, 255, 255, 0.05);
   }
 }
 
@@ -79,7 +81,7 @@ html, body {
   height: 100% !important;
   overflow: visible !important;
   position: relative !important;
-  z-index: 40 !important;
+  z-index: 60 !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -292,6 +294,10 @@ html, body {
   color: var(--text-primary);
 }
 
+.dark .mail-content-container {
+  color: #f1f5f9;
+}
+
 .mail-content-container img {
   max-width: 100% !important;
   height: auto !important;
@@ -314,10 +320,30 @@ html, body {
 
 .mail-content-container blockquote {
   margin: 0.75rem 0;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.25rem;
   border-left: 3px solid #3b82f6;
   background: var(--bg-secondary);
-  border-radius: 0 8px 8px 0;
+  border-radius: 0 12px 12px 0;
+}
+
+.dark .mail-content-container blockquote {
+  background: rgba(59, 130, 246, 0.1);
+  border-left: 3px solid #60a5fa;
+  color: #e2e8f0 !important;
+}
+
+.dark .mail-content-container blockquote p,
+.dark .mail-content-container blockquote div,
+.dark .mail-content-container blockquote span {
+  color: #e2e8f0 !important;
+}
+
+.dark .mail-content-container pre,
+.dark .mail-content-container code {
+  background: #1e2026;
+  color: #93c5fd;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 @keyframes verticalMarquee {

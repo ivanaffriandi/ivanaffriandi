@@ -100,20 +100,40 @@ async def list_messages(
     if old_trash_msgs:
         await db.commit()
 
-    target_mailbox_id = None
-    if folder_id:
-        try:
-            target_mailbox_id = uuid.UUID(folder_id)
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid folder_id format")
-
-    if not target_mailbox_id:
-        inbox_box = await get_or_create_mailbox(db, user.id, MailboxType.INBOX, "Inbox")
-        target_mailbox_id = inbox_box.id
-
     stmt = select(Message).where(Message.user_id == user.id)
-    if target_mailbox_id:
-        stmt = stmt.where(Message.mailbox_id == target_mailbox_id)
+
+    if folder_id:
+        folder_lower = folder_id.strip().lower()
+        if folder_lower == "starred":
+            stmt = stmt.where(Message.is_starred == True, Message.mailbox_id != trash_box.id)
+        elif folder_lower == "snoozed":
+            # Safely handle snoozed (currently no snoozed messages)
+            stmt = stmt.where(Message.id == None)
+        elif folder_lower == "unread":
+            stmt = stmt.where(Message.is_read == False, Message.mailbox_id != trash_box.id)
+        elif folder_lower in ["inbox", "sent", "drafts", "trash", "spam", "archive"]:
+            box_type_map = {
+                "inbox": (MailboxType.INBOX, "Inbox"),
+                "sent": (MailboxType.SENT, "Sent"),
+                "drafts": (MailboxType.DRAFTS, "Drafts"),
+                "trash": (MailboxType.TRASH, "Trash"),
+                "spam": (MailboxType.SPAM, "Spam"),
+                "archive": (MailboxType.ARCHIVE, "Archive"),
+            }
+            b_type, b_name = box_type_map[folder_lower]
+            target_box = await get_or_create_mailbox(db, user.id, b_type, b_name)
+            stmt = stmt.where(Message.mailbox_id == target_box.id)
+        else:
+            try:
+                target_mailbox_id = uuid.UUID(folder_id)
+                stmt = stmt.where(Message.mailbox_id == target_mailbox_id)
+            except ValueError:
+                # Graceful fallback to Inbox for unrecognized folder strings
+                inbox_box = await get_or_create_mailbox(db, user.id, MailboxType.INBOX, "Inbox")
+                stmt = stmt.where(Message.mailbox_id == inbox_box.id)
+    else:
+        inbox_box = await get_or_create_mailbox(db, user.id, MailboxType.INBOX, "Inbox")
+        stmt = stmt.where(Message.mailbox_id == inbox_box.id)
 
     offset = (page - 1) * limit
     stmt = stmt.order_by(Message.date.desc()).offset(offset).limit(limit)
