@@ -475,8 +475,8 @@ export default function MailApp() {
 
       {/* Desktop Sidebar */}
       <div
-        className="hidden lg:block h-full mail-sidebar-fixed relative z-40"
-        style={{ width: "72px", minWidth: "72px", maxWidth: "72px", flex: "0 0 72px" }}
+        className="hidden lg:flex flex-col items-center justify-center h-full mail-sidebar-fixed relative z-40"
+        style={{ width: "68px", minWidth: "68px", maxWidth: "68px", flex: "0 0 68px" }}
       >
         <Sidebar
           folders={folders}
