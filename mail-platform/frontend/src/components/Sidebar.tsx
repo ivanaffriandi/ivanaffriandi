@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Mail, Star, Clock, SendHorizontal, FileText, Tag, Archive, AlertOctagon, Trash2,
   Camera, LogOut, Feather, Globe,
-  Github, Linkedin, ExternalLink, Copy, Check
+  Github, ExternalLink, Copy, Check
 } from 'lucide-react';
 import { Folder, Message } from '@/types/mail';
 
@@ -144,172 +144,163 @@ export const Sidebar: React.FC<SidebarProps> = ({
       badge: 'Updates',
       bgClass: 'hover:bg-neutral-500/10 hover:border-neutral-500/30'
     },
-    {
-      name: 'LinkedIn',
-      handle: 'Ivan Affriandi',
-      url: 'https://linkedin.com/in/ivanaffriandi',
-      icon: <Linkedin className="w-4 h-4 text-sky-600 dark:text-sky-400" />,
-      badge: 'Professional',
-      bgClass: 'hover:bg-sky-500/10 hover:border-sky-500/30'
-    },
   ];
 
   return (
-    <div className="relative h-full select-none font-sans z-50 flex flex-col items-center justify-center overflow-visible" ref={popoverRef}>
-      {/* ── Compact Floating Pill Bar Dock (iOS / macOS Sequoia aesthetic) ── */}
-      <aside className="w-[62px] bg-white/95 dark:bg-[#14161a]/95 backdrop-blur-2xl border border-black/10 dark:border-white/15 rounded-full py-3.5 px-1.5 shadow-xl shadow-black/5 dark:shadow-black/40 flex flex-col items-center gap-2 shrink-0 relative z-50 ring-1 ring-black/5 dark:ring-white/5 overflow-visible">
+    <div className="relative h-full select-none font-sans z-50 flex flex-col items-center overflow-visible" ref={popoverRef}>
+      {/* ── Full Height Dock (Profile at Top, Navigation in Middle, Compose at Bottom) ── */}
+      <aside className="w-[62px] h-full bg-white/95 dark:bg-[#14161a]/95 backdrop-blur-2xl border border-black/10 dark:border-white/15 rounded-3xl py-3 px-1.5 shadow-xl shadow-black/5 dark:shadow-black/40 flex flex-col items-center justify-between shrink-0 relative z-50 ring-1 ring-black/5 dark:ring-white/5 overflow-visible">
         
-        {/* 1. TOP: User Profile Avatar */}
-        <div className="relative shrink-0 overflow-visible">
-          <button
-            onClick={() => setActiveMenu(activeMenu === 'profile' ? null : 'profile')}
-            className={`group relative w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-xs transition-all duration-200 cursor-pointer overflow-visible ${
-              activeMenu === 'profile'
-                ? 'ring-3 ring-blue-500 scale-105 shadow-md'
-                : 'ring-2 ring-black/10 dark:ring-white/20 hover:scale-105 active:scale-95 shadow-2xs'
-            }`}
-            title="Profile & Social Links"
-          >
-            <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center">
-              {avatarUrl ? (
-                <img src={avatarUrl} alt="Ivan Affriandi" className="w-full h-full object-cover" />
-              ) : (
-                'IA'
-              )}
-            </div>
-            
-            {/* Online Pulse Dot */}
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-neutral-900 rounded-full shadow-xs"></span>
-
-            {/* iOS Style Tooltip */}
-            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-              Ivan Affriandi • Profile & Socials
-            </span>
-          </button>
-        </div>
-
-        {/* Divider */}
-        <div className="w-5 h-[1px] bg-neutral-200 dark:bg-neutral-800 shrink-0 my-0.5"></div>
-
-        {/* 2. CENTER: Folder Navigation Icons Stack (iOS SF Symbols Style) */}
+        {/* TOP GROUP: Profile & Folder Navigation */}
         <div className="flex flex-col items-center gap-2 overflow-visible">
-          
-          {/* INBOX (Apple Mail Envelope) */}
-          <button
-            onClick={() => {
-              if (inboxFolder) onSelectFolder(inboxFolder.id);
-              setActiveMenu(null);
-            }}
-            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
-              isInboxActive
-                ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 border border-blue-500 scale-105'
-                : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
-            }`}
-          >
-            <Mail className="w-[18px] h-[18px] stroke-[2.2]" />
-            {inboxFolder && inboxFolder.unread_count > 0 && (
-              <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-[#ff3b30] text-white text-[9px] font-extrabold flex items-center justify-center shadow-xs ring-2 ring-white dark:ring-neutral-900">
-                {inboxFolder.unread_count}
+          {/* 1. TOP: User Profile Avatar */}
+          <div className="relative shrink-0 overflow-visible">
+            <button
+              onClick={() => setActiveMenu(activeMenu === 'profile' ? null : 'profile')}
+              className={`group relative w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold text-xs transition-all duration-200 cursor-pointer overflow-visible ${
+                activeMenu === 'profile'
+                  ? 'ring-3 ring-blue-500 scale-105 shadow-md'
+                  : 'ring-2 ring-black/10 dark:ring-white/20 hover:scale-105 active:scale-95 shadow-2xs'
+              }`}
+              title="Profile & Social Links"
+            >
+              <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="Ivan Affriandi" className="w-full h-full object-cover" />
+                ) : (
+                  'IA'
+                )}
+              </div>
+              
+              {/* Online Pulse Dot */}
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-neutral-900 rounded-full shadow-xs"></span>
+
+              {/* iOS Style Tooltip */}
+              <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+                Ivan Affriandi • Profile
               </span>
-            )}
-            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-              Inbox
-            </span>
-          </button>
+            </button>
+          </div>
 
-          {/* STARRED (Apple VIP / Star) */}
-          <button
-            onClick={() => {
-              onSelectFolder('starred');
-              setActiveMenu(null);
-            }}
-            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
-              isStarredActive
-                ? 'bg-amber-500 text-white shadow-md shadow-amber-500/30 border border-amber-400 scale-105'
-                : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
-            }`}
-          >
-            <Star className={`w-[18px] h-[18px] stroke-[2.2] ${isStarredActive ? 'fill-current' : ''}`} />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-              Starred
-            </span>
-          </button>
+          {/* Divider */}
+          <div className="w-5 h-[1px] bg-neutral-200 dark:bg-neutral-800 shrink-0 my-0.5"></div>
 
-          {/* SNOOZED / REMIND LATER */}
-          <button
-            onClick={() => {
-              onSelectFolder('snoozed');
-              setActiveMenu(null);
-            }}
-            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
-              isSnoozedActive
-                ? 'bg-purple-600 text-white shadow-md shadow-purple-500/30 border border-purple-500 scale-105'
-                : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
-            }`}
-          >
-            <Clock className="w-[18px] h-[18px] stroke-[2.2]" />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-              Snoozed
-            </span>
-          </button>
+          {/* 2. Folder Navigation Icons Stack (iOS SF Symbols Style) */}
+          <div className="flex flex-col items-center gap-2 overflow-visible">
+            {/* INBOX */}
+            <button
+              onClick={() => {
+                if (inboxFolder) onSelectFolder(inboxFolder.id);
+                setActiveMenu(null);
+              }}
+              className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
+                isInboxActive
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 border border-blue-500 scale-105'
+                  : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
+              }`}
+            >
+              <Mail className="w-[18px] h-[18px] stroke-[2.2]" />
+              {inboxFolder && inboxFolder.unread_count > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-[#ff3b30] text-white text-[9px] font-extrabold flex items-center justify-center shadow-xs ring-2 ring-white dark:ring-neutral-900">
+                  {inboxFolder.unread_count}
+                </span>
+              )}
+              <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+                Inbox
+              </span>
+            </button>
 
-          {/* SENT */}
-          <button
-            onClick={() => {
-              if (sentFolder) onSelectFolder(sentFolder.id);
-              setActiveMenu(null);
-            }}
-            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
-              isSentActive
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30 border border-indigo-500 scale-105'
-                : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
-            }`}
-          >
-            <SendHorizontal className="w-[18px] h-[18px] stroke-[2.2]" />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-              Sent
-            </span>
-          </button>
+            {/* STARRED */}
+            <button
+              onClick={() => {
+                onSelectFolder('starred');
+                setActiveMenu(null);
+              }}
+              className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
+                isStarredActive
+                  ? 'bg-amber-500 text-white shadow-md shadow-amber-500/30 border border-amber-400 scale-105'
+                  : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
+              }`}
+            >
+              <Star className={`w-[18px] h-[18px] stroke-[2.2] ${isStarredActive ? 'fill-current' : ''}`} />
+              <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+                Starred
+              </span>
+            </button>
 
-          {/* DRAFTS */}
-          <button
-            onClick={() => {
-              if (draftsFolder) onSelectFolder(draftsFolder.id);
-              setActiveMenu(null);
-            }}
-            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
-              isDraftsActive
-                ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md scale-105'
-                : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
-            }`}
-          >
-            <FileText className="w-[18px] h-[18px] stroke-[2.2]" />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-              Drafts
-            </span>
-          </button>
+            {/* SNOOZED */}
+            <button
+              onClick={() => {
+                onSelectFolder('snoozed');
+                setActiveMenu(null);
+              }}
+              className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
+                isSnoozedActive
+                  ? 'bg-purple-600 text-white shadow-md shadow-purple-500/30 border border-purple-500 scale-105'
+                  : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
+              }`}
+            >
+              <Clock className="w-[18px] h-[18px] stroke-[2.2]" />
+              <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+                Snoozed
+              </span>
+            </button>
 
-          {/* MORE FOLDERS (Archive, Spam, Trash) */}
-          <button
-            onClick={() => setActiveMenu(activeMenu === 'tags' ? null : 'tags')}
-            className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
-              activeMenu === 'tags'
-                ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md scale-105'
-                : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
-            }`}
-          >
-            <Tag className="w-[18px] h-[18px] stroke-[2.2]" />
-            <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
-              More Folders
-            </span>
-          </button>
+            {/* SENT */}
+            <button
+              onClick={() => {
+                if (sentFolder) onSelectFolder(sentFolder.id);
+                setActiveMenu(null);
+              }}
+              className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
+                isSentActive
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30 border border-indigo-500 scale-105'
+                  : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
+              }`}
+            >
+              <SendHorizontal className="w-[18px] h-[18px] stroke-[2.2]" />
+              <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+                Sent
+              </span>
+            </button>
+
+            {/* DRAFTS */}
+            <button
+              onClick={() => {
+                if (draftsFolder) onSelectFolder(draftsFolder.id);
+                setActiveMenu(null);
+              }}
+              className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
+                isDraftsActive
+                  ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md scale-105'
+                  : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
+              }`}
+            >
+              <FileText className="w-[18px] h-[18px] stroke-[2.2]" />
+              <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+                Drafts
+              </span>
+            </button>
+
+            {/* MORE FOLDERS (Archive, Spam, Trash) */}
+            <button
+              onClick={() => setActiveMenu(activeMenu === 'tags' ? null : 'tags')}
+              className={`group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer overflow-visible ${
+                activeMenu === 'tags'
+                  ? 'bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-md scale-105'
+                  : 'bg-neutral-100 dark:bg-[#1d2026] text-neutral-700 dark:text-neutral-200 border border-neutral-200/80 dark:border-white/10 shadow-2xs hover:bg-neutral-200 dark:hover:bg-[#252830] hover:text-neutral-900 dark:hover:text-white hover:scale-105 active:scale-95'
+              }`}
+            >
+              <Tag className="w-[18px] h-[18px] stroke-[2.2]" />
+              <span className="pointer-events-none absolute left-full ml-3.5 px-3 py-1.5 bg-neutral-950/95 dark:bg-neutral-900/95 backdrop-blur-xl text-white text-[11px] font-bold rounded-xl shadow-2xl whitespace-nowrap z-[9999] border border-white/15 dark:border-white/20 opacity-0 group-hover:opacity-100 transition-all duration-150 transform -translate-x-1.5 group-hover:translate-x-0">
+                More Folders
+              </span>
+            </button>
+          </div>
         </div>
 
-        {/* Divider */}
-        <div className="w-5 h-[1px] bg-neutral-200 dark:bg-neutral-800 shrink-0 my-0.5"></div>
-
-        {/* 3. BOTTOM: Apple Mail Signature Compose Button (Feather Pen) */}
-        <div className="shrink-0 flex flex-col items-center overflow-visible">
+        {/* BOTTOM GROUP: 3. Compose New Message Button (At the very bottom) */}
+        <div className="shrink-0 flex flex-col items-center gap-1.5 overflow-visible pt-2 border-t border-neutral-200/60 dark:border-neutral-800/60">
           <button
             onClick={() => onOpenCompose()}
             className="group relative w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 hover:scale-110 active:scale-95 border border-white/20 apple-transition cursor-pointer overflow-visible"
@@ -327,7 +318,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* 1. MORE FOLDERS FLOATING POPOVER */}
       {activeMenu === 'tags' && (
-        <div className="absolute left-[76px] top-[140px] w-64 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-3 shadow-2xl z-[100] animate-scale-up font-sans flex flex-col gap-1.5 backdrop-blur-xl ring-1 ring-black/5 dark:ring-white/10">
+        <div className="absolute left-[76px] top-28 w-64 bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-3 shadow-2xl z-[100] animate-scale-up font-sans flex flex-col gap-1.5 backdrop-blur-xl ring-1 ring-black/5 dark:ring-white/10">
           <div className="px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[var(--text-muted)]">
             Other Mail Folders
           </div>
@@ -443,15 +434,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           </div>
 
-          {/* Status & Mailbox Health Pill */}
-          <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Mail Server Connected</span>
-            </div>
-            <span className="text-[10px] font-mono opacity-80">mail.ivanaffriandi.com</span>
-          </div>
-
           {/* Social Profiles & Channels Section */}
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] px-1">
@@ -486,32 +468,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           </div>
 
-          {/* Quick Actions */}
-          <div className="flex flex-col gap-1.5 pt-1.5 border-t border-[var(--border-subtle)]">
-            <button
-              onClick={() => {
-                onOpenCompose();
-                setActiveMenu(null);
-              }}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-2xl text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-500/20 apple-transition cursor-pointer"
-            >
-              <Feather className="w-3.5 h-3.5" />
-              <span>Compose New Message</span>
-            </button>
-
-            {onSignOut && (
+          {/* Quick Actions (Sign Out Only) */}
+          {onSignOut && (
+            <div className="pt-1.5 border-t border-[var(--border-subtle)]">
               <button
                 onClick={() => {
                   setActiveMenu(null);
                   onSignOut();
                 }}
-                className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-2xl text-xs font-bold text-red-500 hover:bg-red-500/10 apple-transition cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-2xl text-xs font-bold text-red-500 hover:bg-red-500/10 apple-transition cursor-pointer"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Sign Out</span>
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
     </div>
