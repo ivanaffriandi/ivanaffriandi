@@ -188,7 +188,7 @@ export const CalendarAgendaWidget: React.FC = () => {
   const isTodaySelected = selectedDate.toDateString() === new Date().toDateString();
 
   return (
-    <aside className="w-full h-full bg-[var(--card-bg)] border border-[var(--card-border)] rounded-3xl p-4 shadow-sm flex flex-col min-h-0 overflow-hidden font-sans select-none shrink-0 ring-1 ring-black/5 dark:ring-white/10">
+    <aside className="w-full h-full bg-[var(--card-bg)] border border-black/10 dark:border-white/10 rounded-3xl p-4 shadow-xs flex flex-col min-h-0 overflow-hidden font-sans select-none shrink-0">
       
       {/* 1. TOP CALENDAR HEADER (Month Title + Quick Today + Prev/Next/Add Controls) */}
       <div className="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)] shrink-0">
@@ -399,7 +399,7 @@ export const CalendarAgendaWidget: React.FC = () => {
             selectedDayAgendas.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between p-2.5 rounded-2xl bg-[var(--bg-secondary)] hover:bg-[var(--card-border)]/40 border border-[var(--card-border)]/60 apple-transition group shadow-2xs"
+                className="flex items-center justify-between p-2.5 rounded-2xl bg-[var(--bg-secondary)] hover:bg-[var(--card-border)]/40 border border-black/5 dark:border-white/5 apple-transition group shadow-2xs"
               >
                 <button
                   onClick={() => handleToggleAgenda(item.id)}

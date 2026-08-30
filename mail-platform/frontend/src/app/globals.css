@@ -90,10 +90,22 @@ html, body {
 
 @media (min-width: 768px) {
   .mail-list-fixed {
-    width: 360px !important;
-    min-width: 360px !important;
-    max-width: 360px !important;
-    flex: 0 0 360px !important;
+    width: 290px !important;
+    min-width: 290px !important;
+    max-width: 290px !important;
+    flex: 0 0 290px !important;
+    flex-shrink: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .mail-calendar-fixed {
+    width: 240px !important;
+    min-width: 240px !important;
+    max-width: 240px !important;
+    flex: 0 0 240px !important;
     flex-shrink: 0 !important;
     height: 100% !important;
     overflow: hidden !important;

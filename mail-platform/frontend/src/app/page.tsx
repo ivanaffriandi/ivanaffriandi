@@ -605,7 +605,7 @@ export default function MailApp() {
                 ? 'hidden md:block'
                 : 'block'
             }`}
-            style={{ width: '360px', minWidth: '360px', maxWidth: '360px', flex: '0 0 360px' }}
+            style={{ width: '290px', minWidth: '290px', maxWidth: '290px', flex: '0 0 290px' }}
           >
             {isLoading && (
               <div className="absolute inset-0 bg-[var(--card-bg)]/60 backdrop-blur-xs z-10 flex items-center justify-center rounded-3xl">
@@ -673,7 +673,7 @@ export default function MailApp() {
                   {/* Right Side Calendar & Agenda Pane */}
           <div
             className="hidden xl:block h-full mail-calendar-fixed"
-            style={{ width: "270px", minWidth: "270px", maxWidth: "270px", flex: "0 0 270px" }}
+            style={{ width: "240px", minWidth: "240px", maxWidth: "240px", flex: "0 0 240px" }}
           >
             <CalendarAgendaWidget />
           </div>

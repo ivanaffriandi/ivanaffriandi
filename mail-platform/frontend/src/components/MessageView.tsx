@@ -222,7 +222,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
         {/* ──────────────────────────────────────────────────────────────────────────
             2. SCROLLABLE EMAIL CONTENT CANVAS
             ────────────────────────────────────────────────────────────────────────── */}
-        <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 relative space-y-6">
+        <div className="flex-1 overflow-y-auto px-3 md:px-6 py-5 relative space-y-6">
           <div className="max-w-4xl mx-auto space-y-6 pb-24">
             {threadToDisplay.map((item, index) => {
               const itemImages = (item.attachments || []).filter(
@@ -235,7 +235,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
               return (
                 <div
                   key={item.id || index}
-                  className="w-full rounded-2xl md:rounded-3xl border border-black/10 dark:border-white/10 bg-white dark:bg-[#181a20] shadow-[0_4px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.35)] p-6 md:p-10 space-y-6 min-w-0 max-w-full overflow-hidden transition-all duration-200"
+                  className="w-full rounded-2xl md:rounded-3xl border border-black/10 dark:border-white/10 bg-white dark:bg-[#181a20] shadow-[0_4px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.35)] p-5 md:p-8 space-y-6 min-w-0 max-w-full overflow-hidden transition-all duration-200"
                 >
                 {index > 0 && (
                   <div className="flex items-center justify-between pb-3 border-b border-black/5 dark:border-white/10 text-xs text-[var(--text-muted)] font-sans">
