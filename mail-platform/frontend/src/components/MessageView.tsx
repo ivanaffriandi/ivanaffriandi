@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Reply, Forward, Star, Trash2, Archive,
-  Paperclip, Download, MailOpen, Mail, FileText, X, CheckCheck, Check
+  Paperclip, Download, MailOpen, Mail, X, CheckCheck, Check,
+  ArrowLeft
 } from 'lucide-react';
 import { Message, MessageDetail } from '@/types/mail';
 import { getBrandOrAvatarUrl } from '@/lib/avatar';
@@ -45,6 +46,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
   onArchive,
   onToggleStar,
   onMarkUnread,
+  onBack,
 }) => {
   const [lightboxPhoto, setLightboxPhoto] = useState<string | null>(null);
   const [lightboxFilename, setLightboxFilename] = useState<string>('image.png');
@@ -79,8 +81,16 @@ export const MessageView: React.FC<MessageViewProps> = ({
       ? [...message.thread_messages].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       : [message];
 
+  const isMe =
+    message.sender_address.toLowerCase().includes('ivanaffriandi') ||
+    message.sender_address.toLowerCase().includes('hello@ivanaffriandi.com');
+  const mainDisplayName = message.sender_name || message.sender_address.split('@')[0];
+  const [mainCFrom, mainCTo] = getAvatarColors(mainDisplayName);
+  const mainInitial = (mainDisplayName || 'U').charAt(0).toUpperCase();
+  const mainBrandAvatar = getBrandOrAvatarUrl(message.sender_address, message.sender_name);
+
   return (
-    <div className="h-full flex flex-col min-h-0 relative">
+    <div className="h-full flex flex-col min-h-0 relative font-sans">
       {/* ──────────────────────────────────────────────────────────────────────────
           1. FULLSCREEN MINIMALIST FLOATING LIGHTBOX MODAL
           ────────────────────────────────────────────────────────────────────────── */}
@@ -91,7 +101,7 @@ export const MessageView: React.FC<MessageViewProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-8 bg-black/85 backdrop-blur-xl"
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-8 bg-black/90 backdrop-blur-2xl"
             onClick={() => setLightboxPhoto(null)}
           >
             {/* Top Floating Controls */}
@@ -99,14 +109,14 @@ export const MessageView: React.FC<MessageViewProps> = ({
               <a
                 href={lightboxPhoto}
                 download={lightboxFilename}
-                className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-all duration-200 shadow-lg cursor-pointer"
+                className="p-2.5 rounded-full bg-white/15 hover:bg-white/25 text-white backdrop-blur-md transition-all duration-200 shadow-lg cursor-pointer"
                 title="Download Photo"
               >
                 <Download className="w-5 h-5" />
               </a>
               <button
                 onClick={() => setLightboxPhoto(null)}
-                className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-all duration-200 shadow-lg cursor-pointer"
+                className="p-2.5 rounded-full bg-white/15 hover:bg-white/25 text-white backdrop-blur-md transition-all duration-200 shadow-lg cursor-pointer"
                 title="Close Preview"
               >
                 <X className="w-5 h-5" />
@@ -135,75 +145,169 @@ export const MessageView: React.FC<MessageViewProps> = ({
       {/* ──────────────────────────────────────────────────────────────────────────
           2. MAIN EMAIL DETAIL CONTAINER
           ────────────────────────────────────────────────────────────────────────── */}
-      <div className="flex-1 bg-[var(--card-bg)] border-0 md:border border-[var(--card-border)] rounded-none md:rounded-3xl shadow-none md:shadow-[0_12px_28px_rgba(0,0,0,0.06)] md:dark:shadow-[0_12px_28px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden min-h-0 ring-0 md:ring-1 md:ring-black/5 md:dark:ring-white/10 relative">
+      <div className="flex-1 bg-[var(--card-bg)] border-0 md:border border-[var(--card-border)] rounded-none md:rounded-3xl shadow-none md:shadow-[0_12px_28px_rgba(0,0,0,0.06)] md:dark:shadow-[0_12px_28px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden min-h-0 relative">
         
-        {/* Email Subject Header Row */}
-        <div className="px-5 py-3.5 border-b border-[var(--border-subtle)] shrink-0 bg-[var(--card-bg)] flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 min-w-0 flex-1">
-            <h1 className="text-base md:text-lg font-black text-[var(--text-primary)] tracking-tight leading-snug truncate font-sans">
-              {message.subject || '(No Subject)'}
-            </h1>
-            {threadToDisplay.length > 1 && (
-              <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-[10px] shrink-0 border border-blue-500/20 font-sans">
-                {threadToDisplay.length} messages
-              </span>
-            )}
-          </div>
-
-          <div className="flex items-center gap-1.5 shrink-0">
-            {onMarkUnread && (
+        {/* ────────────────────────────────────────────────────────────────────────
+            TOP HEADER BAR: Sender Profile, Recipient, Date & Actions
+            ──────────────────────────────────────────────────────────────────────── */}
+        <div className="px-5 py-3.5 border-b border-[var(--border-subtle)] shrink-0 bg-[var(--card-bg)] flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 z-10">
+          
+          {/* Left: Sender Profile & Metadata */}
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            {onBack && (
               <button
                 type="button"
-                onClick={onMarkUnread}
-                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-blue-500 hover:bg-blue-500/10 apple-transition cursor-pointer"
-                title="Mark as unread"
+                onClick={onBack}
+                className="md:hidden p-1.5 -ml-1 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] apple-transition"
+                title="Back to inbox"
               >
-                <Mail className="w-4 h-4" />
+                <ArrowLeft className="w-5 h-5" />
               </button>
             )}
-            <button
-              type="button"
-              onClick={onToggleStar}
-              className={`p-1.5 rounded-lg apple-transition cursor-pointer ${
-                message.is_starred ? 'text-yellow-400 bg-yellow-400/10' : 'text-[var(--text-muted)] hover:text-yellow-400'
-              }`}
-              title="Star"
+
+            {/* Sender Avatar */}
+            <div
+              className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center font-bold text-sm text-white shadow-2xs shrink-0 relative ring-1 ring-black/5 dark:ring-white/10"
+              style={{ background: `linear-gradient(135deg, ${mainCFrom}, ${mainCTo})` }}
             >
-              <Star className={`w-4 h-4 ${message.is_starred ? 'fill-current' : ''}`} />
-            </button>
-            <button
-              type="button"
-              onClick={onArchive}
-              className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] apple-transition cursor-pointer"
-              title="Archive"
-            >
-              <Archive className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={onDelete}
-              className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 apple-transition cursor-pointer"
-              title="Delete"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
+              <span className="select-none">{mainInitial}</span>
+              {mainBrandAvatar && (
+                <img
+                  src={mainBrandAvatar}
+                  alt={mainDisplayName}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                />
+              )}
+            </div>
+
+            {/* Sender & Recipient Stack */}
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-2 min-w-0 flex-wrap">
+                <span className="font-extrabold text-sm md:text-base text-[var(--text-primary)] tracking-tight truncate font-sans">
+                  {mainDisplayName}
+                </span>
+                {isMe && (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide bg-blue-500/15 text-blue-600 dark:text-blue-400 font-sans">
+                    YOU
+                  </span>
+                )}
+                <span className="text-xs text-[var(--text-muted)] font-sans truncate hidden sm:inline font-normal">
+                  · {message.sender_address}
+                </span>
+              </div>
+
+              {/* Recipient info */}
+              <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] font-sans truncate mt-0.5">
+                <span className="font-semibold text-[var(--text-secondary)]">to:</span>
+                <span className="truncate">{message.recipient_to || 'me'}</span>
+                {message.recipient_cc && (
+                  <span className="text-[var(--text-muted)] truncate hidden md:inline">· cc: {message.recipient_cc}</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Date/Time + Action Toolbar */}
+          <div className="flex items-center gap-2 shrink-0 self-center">
+            {/* Timestamp & Status */}
+            <div className="flex flex-col items-end mr-1 text-right font-sans">
+              <span className="text-xs font-semibold text-[var(--text-muted)] whitespace-nowrap">
+                {new Date(message.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+              </span>
+              {isMe && (
+                message.is_opened ? (
+                  <span
+                    className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400"
+                    title={`Read by recipient${message.opened_at ? ` on ${new Date(message.opened_at).toLocaleString()}` : ''}`}
+                  >
+                    <CheckCheck className="w-3.5 h-3.5" />
+                    <span>Read {message.open_count && message.open_count > 1 ? `(${message.open_count}x)` : ''}</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[var(--text-muted)]">
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Delivered</span>
+                  </span>
+                )
+              )}
+            </div>
+
+            {/* Action Buttons Toolbar */}
+            <div className="flex items-center gap-1 bg-[var(--bg-secondary)]/80 border border-[var(--border-subtle)] p-1 rounded-2xl shadow-2xs">
+              {onReply && (
+                <button
+                  type="button"
+                  onClick={onReply}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold text-xs shadow-xs apple-transition cursor-pointer"
+                  title="Reply"
+                >
+                  <Reply className="w-3.5 h-3.5 stroke-[2.5]" />
+                  <span className="hidden sm:inline">Reply</span>
+                </button>
+              )}
+
+              {onForward && (
+                <button
+                  type="button"
+                  onClick={onForward}
+                  className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--card-bg)] apple-transition cursor-pointer"
+                  title="Forward"
+                >
+                  <Forward className="w-4 h-4" />
+                </button>
+              )}
+
+              {onMarkUnread && (
+                <button
+                  type="button"
+                  onClick={onMarkUnread}
+                  className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-blue-500 hover:bg-[var(--card-bg)] apple-transition cursor-pointer"
+                  title="Mark as unread"
+                >
+                  <Mail className="w-4 h-4" />
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={onToggleStar}
+                className={`p-1.5 rounded-xl apple-transition cursor-pointer ${
+                  message.is_starred
+                    ? 'text-yellow-400 bg-yellow-400/15'
+                    : 'text-[var(--text-muted)] hover:text-yellow-400 hover:bg-[var(--card-bg)]'
+                }`}
+                title="Star"
+              >
+                <Star className={`w-4 h-4 ${message.is_starred ? 'fill-current' : ''}`} />
+              </button>
+
+              <button
+                type="button"
+                onClick={onArchive}
+                className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--card-bg)] apple-transition cursor-pointer"
+                title="Archive"
+              >
+                <Archive className="w-4 h-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={onDelete}
+                className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 apple-transition cursor-pointer"
+                title="Delete"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* ──────────────────────────────────────────────────────────────────────────
-            3. SCROLLABLE CONVERSATION THREAD STREAM (Smooth Single Scroll)
-            ────────────────────────────────────────────────────────────────────────── */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 min-w-0 w-full px-4 md:px-7 py-5 space-y-6 pb-28">
-          
+        {/* ────────────────────────────────────────────────────────────────────────
+            3. SCROLLABLE CONVERSATION STREAM (Subject + Attachments + Email Body)
+            ──────────────────────────────────────────────────────────────────────── */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 min-w-0 w-full px-4 md:px-7 py-5 space-y-6 pb-20">
           {threadToDisplay.map((item, index) => {
-            const isMe =
-              item.sender_address.toLowerCase().includes('ivanaffriandi') ||
-              item.sender_address.toLowerCase().includes('hello@ivanaffriandi.com');
-            const itemDisplayName = item.sender_name || item.sender_address.split('@')[0];
-            const [cFrom, cTo] = getAvatarColors(itemDisplayName);
-            const itemInitial = (itemDisplayName || 'U').charAt(0).toUpperCase();
-            const itemBrandAvatar = getBrandOrAvatarUrl(item.sender_address, item.sender_name);
-
             const itemImages = (item.attachments || []).filter(
               (att) => att.content_type.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(att.filename)
             );
@@ -214,116 +318,74 @@ export const MessageView: React.FC<MessageViewProps> = ({
             return (
               <div
                 key={item.id || index}
-                className={`p-4 md:p-6 rounded-2xl md:rounded-3xl border transition-all duration-200 min-w-0 max-w-full overflow-hidden ${
-                  isMe
-                    ? 'bg-blue-500/3 dark:bg-blue-950/15 border-blue-500/15'
-                    : 'bg-[var(--card-bg)] border-[var(--card-border)]'
-                } shadow-xs space-y-3.5`}
+                className="w-full rounded-2xl md:rounded-3xl border border-[var(--card-border)] bg-[var(--card-bg)] shadow-xs md:shadow-[0_8px_30px_rgba(0,0,0,0.04)] md:dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] p-5 md:p-8 space-y-6 min-w-0 max-w-full overflow-hidden transition-all duration-200 ring-0 md:ring-1 md:ring-black/5 md:dark:ring-white/5"
               >
-                {/* Sender Row */}
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div
-                      className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center font-bold text-xs text-white shadow-2xs shrink-0 relative"
-                      style={{ background: `linear-gradient(135deg, ${cFrom}, ${cTo})` }}
-                    >
-                      <span className="select-none">{itemInitial}</span>
-                      {itemBrandAvatar && (
-                        <img
-                          src={itemBrandAvatar}
-                          alt={itemDisplayName}
-                          className="absolute inset-0 w-full h-full object-cover"
-                          onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
-                        />
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-2 min-w-0 flex-wrap">
-                      <span className="font-bold text-sm text-[var(--text-primary)] truncate font-sans">
-                        {itemDisplayName}
-                      </span>
-                      {isMe && (
-                        <span className="px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wide bg-blue-500/10 text-blue-600 dark:text-blue-400 font-sans">
-                          YOU
-                        </span>
-                      )}
-                      <span className="text-xs text-[var(--text-muted)] font-sans truncate hidden sm:inline font-normal">
-                        · {item.sender_address}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0 font-sans">
-                    {isMe && (
-                      item.is_opened ? (
-                        <span
-                          className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 shadow-2xs"
-                          title={`Read by recipient${item.opened_at ? ` on ${new Date(item.opened_at).toLocaleString()}` : ''}`}
-                        >
-                          <CheckCheck className="w-3.5 h-3.5" />
-                          <span>Read {item.open_count && item.open_count > 1 ? `(${item.open_count}x)` : ''}</span>
-                        </span>
-                      ) : (
-                        <span
-                          className="inline-flex items-center gap-1 text-[10px] font-semibold text-[var(--text-muted)] bg-[var(--bg-secondary)] px-2 py-0.5 rounded-full border border-[var(--border-subtle)]"
-                          title="Delivered to recipient mail server"
-                        >
-                          <Check className="w-3.5 h-3.5" />
-                          <span>Delivered</span>
-                        </span>
-                      )
-                    )}
-                    <span className="text-xs text-[var(--text-muted)] font-medium">
-                      {new Date(item.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Recipient info if multiple */}
-                {item.recipient_to && (
-                  <div className="text-[11px] text-[var(--text-muted)] font-sans">
-                    <span className="font-semibold">to:</span> {item.recipient_to}
-                    {item.recipient_cc ? `, cc: ${item.recipient_cc}` : ''}
+                {/* Secondary Thread Header (if part of multi-message thread and not the first) */}
+                {index > 0 && (
+                  <div className="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)] text-xs text-[var(--text-muted)] font-sans">
+                    <span className="font-bold text-[var(--text-primary)]">{item.sender_name || item.sender_address}</span>
+                    <span>{new Date(item.date).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</span>
                   </div>
                 )}
 
-                {/* Image Attachments */}
+                {/* 1. SUBJECT TITLE - Prominently Displayed at Top of First Email Card */}
+                {index === 0 && (
+                  <div className="space-y-2 border-b border-[var(--border-subtle)] pb-5">
+                    <div className="flex items-start justify-between gap-4">
+                      <h1 className="text-xl md:text-2xl lg:text-3xl font-black text-[var(--text-primary)] tracking-tight leading-snug font-sans break-words selection:bg-blue-500/20">
+                        {message.subject || '(No Subject)'}
+                      </h1>
+                      {threadToDisplay.length > 1 && (
+                        <span className="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold text-xs shrink-0 border border-blue-500/20 font-sans">
+                          {threadToDisplay.length} messages
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. IMAGE ATTACHMENTS (with high-res preview & lightbox modal) */}
                 {itemImages.length > 0 && (
-                  <div className="space-y-2 pt-1">
-                    {itemImages.map((imgAtt) => {
-                      const downloadUrl = `/api/v1/messages/attachments/${imgAtt.id}/download`;
-                      return (
-                        <div
-                          key={imgAtt.id}
-                          className="relative rounded-2xl overflow-hidden border border-[var(--card-border)] bg-[var(--bg-secondary)] shadow-sm max-w-xl group cursor-pointer"
-                          onClick={() => {
-                            setLightboxPhoto(downloadUrl);
-                            setLightboxFilename(imgAtt.filename);
-                          }}
-                        >
-                          <a
-                            href={downloadUrl}
-                            download={imgAtt.filename}
-                            onClick={(e) => e.stopPropagation()}
-                            className="absolute top-3 right-3 p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md shadow-md transition-all duration-200 hover:scale-105 z-10"
-                            title="Download Photo"
+                  <div className="space-y-3">
+                    <div className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider font-sans">
+                      Photos & Attachments ({itemImages.length})
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                      {itemImages.map((imgAtt) => {
+                        const downloadUrl = `/api/v1/messages/attachments/${imgAtt.id}/download`;
+                        return (
+                          <div
+                            key={imgAtt.id}
+                            className="relative rounded-2xl overflow-hidden border border-[var(--card-border)] bg-[var(--bg-secondary)] shadow-xs group cursor-pointer aspect-video"
+                            onClick={() => {
+                              setLightboxPhoto(downloadUrl);
+                              setLightboxFilename(imgAtt.filename);
+                            }}
                           >
-                            <Download className="w-3.5 h-3.5" />
-                          </a>
-                          <img
-                            src={downloadUrl}
-                            alt={imgAtt.filename}
-                            className="w-full h-auto max-h-[360px] object-cover object-center select-none"
-                          />
-                        </div>
-                      );
-                    })}
+                            <a
+                              href={downloadUrl}
+                              download={imgAtt.filename}
+                              onClick={(e) => e.stopPropagation()}
+                              className="absolute top-2.5 right-2.5 p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md shadow-md transition-all duration-200 hover:scale-105 z-10"
+                              title="Download Photo"
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                            </a>
+                            <img
+                              src={downloadUrl}
+                              alt={imgAtt.filename}
+                              className="w-full h-full object-cover object-center select-none group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
 
-                {/* File Attachments */}
+                {/* 3. FILE ATTACHMENTS (Downloadable pills) */}
                 {itemFiles.length > 0 && (
-                  <div className="flex flex-wrap gap-2 pt-1">
+                  <div className="flex flex-wrap gap-2.5 pt-1">
                     {itemFiles.map((att) => {
                       const downloadUrl = `/api/v1/messages/attachments/${att.id}/download`;
                       return (
@@ -333,29 +395,29 @@ export const MessageView: React.FC<MessageViewProps> = ({
                           download={att.filename}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--card-border)] hover:border-blue-500/40 text-xs font-semibold text-[var(--text-primary)] apple-transition shadow-2xs group cursor-pointer"
+                          className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[var(--bg-secondary)] border border-[var(--card-border)] hover:border-blue-500/40 text-xs font-semibold text-[var(--text-primary)] apple-transition shadow-2xs group cursor-pointer"
                         >
-                          <Paperclip className="w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-blue-500" />
-                          <span className="truncate max-w-[160px]">{att.filename}</span>
-                          <span className="text-[10px] text-[var(--text-muted)] font-mono">
+                          <Paperclip className="w-4 h-4 text-[var(--text-muted)] group-hover:text-blue-500" />
+                          <span className="truncate max-w-[200px]">{att.filename}</span>
+                          <span className="text-[11px] text-[var(--text-muted)] font-mono">
                             ({(att.size_bytes / 1024).toFixed(0)} KB)
                           </span>
-                          <Download className="w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-blue-500 ml-0.5" />
+                          <Download className="w-3.5 h-3.5 text-[var(--text-muted)] group-hover:text-blue-500 ml-1" />
                         </a>
                       );
                     })}
                   </div>
                 )}
 
-                {/* Dedicated Email Content Sub-Section (Rounded sub-container exclusively for email body) */}
-                <div className="w-full rounded-2xl md:rounded-3xl border border-[var(--border-subtle)] bg-[var(--bg-secondary)]/40 p-4 md:p-6 shadow-2xs overflow-x-auto min-w-0 max-w-full mt-2">
+                {/* 4. EMAIL BODY CONTENT - Full Fidelity without Forced Papermode */}
+                <div className="w-full min-w-0 max-w-full overflow-x-auto">
                   {item.body_html ? (
                     <div
-                      className="mail-content-container max-w-full min-w-0 overflow-x-auto font-sans leading-relaxed text-[14.5px] antialiased"
+                      className="mail-content-container max-w-full min-w-0 overflow-x-auto font-sans leading-relaxed text-[15px] antialiased"
                       dangerouslySetInnerHTML={{ __html: item.body_html }}
                     />
                   ) : (
-                    <div className="text-[14.5px] font-sans whitespace-pre-wrap leading-relaxed font-normal antialiased text-[var(--text-primary)] min-w-0 max-w-full overflow-x-auto">
+                    <div className="text-[15px] font-sans whitespace-pre-wrap leading-relaxed font-normal antialiased text-[var(--text-primary)] min-w-0 max-w-full overflow-x-auto selection:bg-blue-500/20">
                       {item.body_plain}
                     </div>
                   )}
@@ -363,88 +425,6 @@ export const MessageView: React.FC<MessageViewProps> = ({
               </div>
             );
           })}
-        </div>
-
-        {/* ──────────────────────────────────────────────────────────────────────────
-            4. FLOATING ACTION DOCK (Symmetrical, Pixel-Perfect Centered)
-            ────────────────────────────────────────────────────────────────────────── */}
-        <div className="pointer-events-none absolute bottom-4 inset-x-0 mx-auto flex justify-center z-40 px-3">
-          <motion.div
-            initial={{ opacity: 0, y: 15, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="pointer-events-auto bg-[var(--card-bg)]/90 dark:bg-[#1c1c1f]/90 backdrop-blur-2xl border border-[var(--card-border)] rounded-full p-1.5 shadow-[0_16px_36px_rgba(0,0,0,0.18)] dark:shadow-[0_20px_45px_rgba(0,0,0,0.7)] flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_45px_rgba(0,0,0,0.22)] ring-1 ring-black/5 dark:ring-white/10"
-          >
-            {/* Mobile-only Reply blue pill */}
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={onReply}
-              className="md:hidden h-8 px-3.5 flex items-center justify-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-semibold shadow-xs cursor-pointer"
-            >
-              <Reply className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>Reply</span>
-            </motion.button>
-
-            {/* Desktop Forward blue pill */}
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={onForward}
-              className="hidden md:flex h-8 px-3.5 items-center justify-center gap-1.5 rounded-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-semibold shadow-xs cursor-pointer"
-              title="Forward message"
-            >
-              <Forward className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>Forward</span>
-            </motion.button>
-
-            {/* Mobile Forward icon-only */}
-            <motion.button
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.92 }}
-              onClick={onForward}
-              className="md:hidden w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] apple-transition cursor-pointer"
-              title="Forward message"
-            >
-              <Forward className="w-4 h-4" />
-            </motion.button>
-
-            <div className="w-px h-4 bg-[var(--border-subtle)] my-auto opacity-70" />
-
-            <motion.button
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.92 }}
-              onClick={onToggleStar}
-              className={`w-8 h-8 flex items-center justify-center rounded-full apple-transition cursor-pointer ${
-                message.is_starred
-                  ? 'bg-yellow-500/15 text-yellow-400'
-                  : 'text-[var(--text-muted)] hover:text-yellow-400 hover:bg-[var(--bg-secondary)]'
-              }`}
-              title="Star message"
-            >
-              <Star className={`w-4 h-4 ${message.is_starred ? 'fill-current' : ''}`} />
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.92 }}
-              onClick={onArchive}
-              className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] apple-transition cursor-pointer"
-              title="Archive message"
-            >
-              <Archive className="w-4 h-4" />
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.92 }}
-              onClick={onDelete}
-              className="w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-500/15 apple-transition cursor-pointer"
-              title="Delete message"
-            >
-              <Trash2 className="w-4 h-4" />
-            </motion.button>
-          </motion.div>
         </div>
       </div>
     </div>

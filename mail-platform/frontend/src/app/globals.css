@@ -20,9 +20,9 @@
     --bg-color: #000000;
     --card-bg: #1c1c1e;
     --card-border: #2c2c2e;
-    --text-primary: #f2f2f7;
+    --text-primary: #ffffff;
     --text-secondary: #d1d1d6;
-    --text-muted: #8e8e93;
+    --text-muted: #a1a1a6;
     --bg-secondary: #2c2c2e;
     --accent-blue: #0a84ff;
     --accent-blue-hover: #0071e3;
@@ -283,7 +283,7 @@ html, body {
   max-width: 100%;
   overflow-x: auto;
   word-break: break-word;
-  color: inherit;
+  color: var(--text-primary);
 }
 
 .mail-content-container img {
@@ -302,11 +302,16 @@ html, body {
   color: #60a5fa;
 }
 
+.mail-content-container table {
+  max-width: 100% !important;
+}
+
 .mail-content-container blockquote {
-  margin: 0.5rem 0;
-  padding: 0.25rem 0.75rem;
+  margin: 0.75rem 0;
+  padding: 0.5rem 1rem;
   border-left: 3px solid #3b82f6;
-  background: transparent;
+  background: var(--bg-secondary);
+  border-radius: 0 8px 8px 0;
 }
 
 @keyframes verticalMarquee {
