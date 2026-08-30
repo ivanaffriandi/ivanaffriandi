@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Star, Paperclip, Inbox, Check, CheckCheck, Mail, MailOpen, Archive, Trash2, X,
-  Loader2, ArrowDown, Sparkles, User, Layers, RotateCcw
+  Star, Paperclip, Inbox, Check, Mail, MailOpen, Archive, Trash2, X,
+  Loader2, ArrowDown, Tag, User, Layers, RotateCcw
 } from 'lucide-react';
 import { MessageSummary } from '@/types/mail';
 import { getBrandOrAvatarUrl } from '@/lib/avatar';
@@ -55,7 +56,7 @@ function isPromotionMessage(m: MessageSummary): boolean {
 export const MessageList: React.FC<MessageListProps> = ({
   messages,
   selectedMessageId,
-  activeFolderType,
+  activeFolderType = 'inbox',
   onSelectMessage,
   onToggleStar,
   onRefresh,
@@ -67,23 +68,29 @@ export const MessageList: React.FC<MessageListProps> = ({
   const [startY, setStartY] = useState(0);
   const [isPullRefreshing, setIsPullRefreshing] = useState(false);
 
+  const isInbox = activeFolderType === 'inbox' || !activeFolderType;
+  const isTrashOrSpam = activeFolderType === 'trash' || activeFolderType === 'spam';
+
   const unreadCount = messages.filter((m) => !m.is_read).length;
 
-  // Auto fallback to 'all' if all messages are read and user was on 'unread'
+  // Auto fallback to 'all' if all messages are read or if folder changes away from inbox while in personal/promotions
   useEffect(() => {
     if (unreadCount === 0 && filter === 'unread') {
       setFilter('all');
     }
-  }, [unreadCount, filter]);
+    if (!isInbox && (filter === 'personal' || filter === 'promotions')) {
+      setFilter('all');
+    }
+  }, [unreadCount, filter, isInbox]);
 
   const filteredMessages = messages.filter((m) => {
     if (filter === 'unread') return !m.is_read;
-    if (filter === 'personal') return !isPromotionMessage(m);
-    if (filter === 'promotions') return isPromotionMessage(m);
+    if (isInbox) {
+      if (filter === 'personal') return !isPromotionMessage(m);
+      if (filter === 'promotions') return isPromotionMessage(m);
+    }
     return true;
   });
-
-  const isTrashOrSpam = activeFolderType === 'trash' || activeFolderType === 'spam';
 
   const toggleSelectOne = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -157,9 +164,11 @@ export const MessageList: React.FC<MessageListProps> = ({
     >
       {/* iOS Pull-to-Refresh Indicator Banner */}
       {(pullDist > 0 || isPullRefreshing) && (
-        <div
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: Math.max(pullDist, isPullRefreshing ? 42 : 0) }}
+          exit={{ opacity: 0, height: 0 }}
           className="w-full flex items-center justify-center gap-2 overflow-hidden bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-bold transition-all duration-200"
-          style={{ height: `${Math.max(pullDist, isPullRefreshing ? 42 : 0)}px` }}
         >
           {isPullRefreshing ? (
             <>
@@ -176,347 +185,356 @@ export const MessageList: React.FC<MessageListProps> = ({
               <span>{pullDist > 45 ? 'Release to refresh' : 'Pull down to refresh'}</span>
             </>
           )}
-        </div>
+        </motion.div>
       )}
 
       {/* Header: Normal Filter Tabs OR Batch Action Toolbar */}
-      {selectedIds.size > 0 ? (
-        <div className="px-3 py-2 border-b border-[var(--border-subtle)] flex items-center justify-between shrink-0 bg-blue-500/10 apple-transition">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleSelectAll}
-              className="p-1 rounded-lg hover:bg-blue-500/10 apple-transition flex items-center cursor-pointer"
-              title={isAllSelected ? 'Deselect All' : 'Select All'}
-            >
-              <div className={`w-4 h-4 rounded flex items-center justify-center apple-transition ${
-                isAllSelected ? 'bg-blue-600 text-white shadow-2xs' : 'border-2 border-blue-600 bg-transparent'
-              }`}>
-                {isAllSelected && <Check className="w-3 h-3 stroke-[3]" />}
-              </div>
-            </button>
-            <span className="text-xs font-black text-blue-600 dark:text-blue-400">
-              {selectedIds.size} selected
-            </span>
-          </div>
-
-          {/* Batch Actions */}
-          <div className="flex items-center gap-1">
-            {isTrashOrSpam && (
-              <button
-                onClick={() => executeBatch('inbox')}
-                className="p-1.5 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/15 apple-transition apple-active-scale cursor-pointer flex items-center gap-1 text-xs font-bold"
-                title="Restore to Inbox"
+      <AnimatePresence mode="wait">
+        {selectedIds.size > 0 ? (
+          <motion.div
+            key="batch-toolbar"
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.15 }}
+            className="px-3 py-2 border-b border-[var(--border-subtle)] flex items-center justify-between shrink-0 bg-blue-500/10"
+          >
+            <div className="flex items-center gap-2">
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={handleSelectAll}
+                className="p-1 rounded-lg hover:bg-blue-500/10 flex items-center cursor-pointer"
+                title={isAllSelected ? 'Deselect All' : 'Select All'}
               >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline text-[11px]">Inbox</span>
-              </button>
-            )}
-            <button
-              onClick={() => executeBatch('read')}
-              className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-500/15 apple-transition apple-active-scale cursor-pointer"
-              title="Mark as Read"
-            >
-              <MailOpen className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={() => executeBatch('unread')}
-              className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-500/15 apple-transition apple-active-scale cursor-pointer"
-              title="Mark as Unread"
-            >
-              <Mail className="w-3.5 h-3.5" />
-            </button>
-            {!isTrashOrSpam && (
-              <button
-                onClick={() => executeBatch('archive')}
-                className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-500/15 apple-transition apple-active-scale cursor-pointer"
-                title="Archive Selected"
-              >
-                <Archive className="w-3.5 h-3.5" />
-              </button>
-            )}
-            <button
-              onClick={() => executeBatch('delete')}
-              className="p-1.5 rounded-lg text-red-500 hover:bg-red-500/15 apple-transition apple-active-scale cursor-pointer"
-              title={isTrashOrSpam ? "Delete Permanently" : "Delete Selected"}
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={clearSelection}
-              className="p-1.5 rounded-lg text-[var(--text-muted)] hover:bg-[var(--card-bg)] apple-transition apple-active-scale ml-1 cursor-pointer"
-              title="Cancel Selection"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div className="px-2.5 py-2 border-b border-[var(--border-subtle)] flex items-center justify-between shrink-0 bg-[var(--bg-secondary)]/50 gap-1.5 overflow-x-auto no-scrollbar">
-          {/* Category Tabs Bar with Icons */}
-          <div className="flex items-center bg-[var(--card-bg)]/90 backdrop-blur-xl p-0.5 rounded-full border border-[var(--card-border)] shadow-xs ring-1 ring-black/5 dark:ring-white/10 gap-0.5 relative shrink-0">
-            {/* 1. ALL */}
-            <button
-              onClick={() => setFilter('all')}
-              className={`px-2.5 py-1 rounded-full text-[11px] font-bold apple-transition apple-active-scale cursor-pointer flex items-center gap-1.5 shrink-0 ${
-                filter === 'all'
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
-              }`}
-              title="All Messages"
-            >
-              <Layers className="w-3 h-3 stroke-[2.2]" />
-              <span>All</span>
-            </button>
-
-            {/* 2. PERSONAL */}
-            <button
-              onClick={() => setFilter('personal')}
-              className={`px-2.5 py-1 rounded-full text-[11px] font-bold apple-transition apple-active-scale cursor-pointer flex items-center gap-1.5 shrink-0 ${
-                filter === 'personal'
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
-              }`}
-              title="Personal Messages"
-            >
-              <User className="w-3 h-3 stroke-[2.2]" />
-              <span>Personal</span>
-            </button>
-
-            {/* 3. PROMOTIONS */}
-            <button
-              onClick={() => setFilter('promotions')}
-              className={`px-2.5 py-1 rounded-full text-[11px] font-bold apple-transition apple-active-scale cursor-pointer flex items-center gap-1.5 shrink-0 ${
-                filter === 'promotions'
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
-              }`}
-              title="Newsletters & Promotions"
-            >
-              <Sparkles className="w-3 h-3 stroke-[2.2]" />
-              <span>Promotions</span>
-            </button>
-
-            {/* 4. UNREAD (Only rendered if unreadCount > 0) */}
-            {unreadCount > 0 && (
-              <button
-                onClick={() => setFilter('unread')}
-                className={`px-2.5 py-1 rounded-full text-[11px] font-bold apple-transition apple-active-scale cursor-pointer flex items-center gap-1.5 shrink-0 ${
-                  filter === 'unread'
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
-                }`}
-                title="Unread Messages"
-              >
-                <Mail className="w-3 h-3 stroke-[2.2]" />
-                <span>Unread</span>
-                <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-black ${
-                  filter === 'unread' ? 'bg-white/20 text-white' : 'bg-blue-500/15 text-blue-500'
+                <div className={`w-4 h-4 rounded flex items-center justify-center transition-all ${
+                  isAllSelected ? 'bg-blue-600 text-white shadow-2xs' : 'border-2 border-blue-600 bg-transparent'
                 }`}>
-                  {unreadCount}
-                </span>
+                  {isAllSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                </div>
+              </motion.button>
+              <span className="text-xs font-black text-blue-600 dark:text-blue-400">
+                {selectedIds.size} selected
+              </span>
+            </div>
+
+            {/* Batch Actions */}
+            <div className="flex items-center gap-1">
+              {isTrashOrSpam && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => executeBatch('inbox')}
+                  className="p-1.5 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/15 cursor-pointer flex items-center gap-1 text-xs font-bold"
+                  title="Restore to Inbox"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline text-[11px]">Inbox</span>
+                </motion.button>
+              )}
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => executeBatch('read')}
+                className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-500/15 cursor-pointer"
+                title="Mark as Read"
+              >
+                <MailOpen className="w-3.5 h-3.5" />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => executeBatch('unread')}
+                className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-500/15 cursor-pointer"
+                title="Mark as Unread"
+              >
+                <Mail className="w-3.5 h-3.5" />
+              </motion.button>
+              {!isTrashOrSpam && (
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => executeBatch('archive')}
+                  className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-500/15 cursor-pointer"
+                  title="Archive Selected"
+                >
+                  <Archive className="w-3.5 h-3.5" />
+                </motion.button>
+              )}
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => executeBatch('delete')}
+                className="p-1.5 rounded-lg text-red-500 hover:bg-red-500/15 cursor-pointer"
+                title={isTrashOrSpam ? "Delete Permanently" : "Delete Selected"}
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={clearSelection}
+                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:bg-[var(--card-bg)] ml-1 cursor-pointer"
+                title="Cancel Selection"
+              >
+                <X className="w-3.5 h-3.5" />
+              </motion.button>
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="category-toolbar"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="px-2.5 py-2 border-b border-[var(--border-subtle)] flex items-center justify-between shrink-0 bg-[var(--bg-secondary)]/50 gap-1.5 overflow-x-auto no-scrollbar"
+          >
+            {/* Context-Aware Floating Segmented Controls */}
+            <div className="flex items-center bg-[var(--card-bg)]/90 backdrop-blur-xl p-0.5 rounded-full border border-[var(--card-border)] shadow-xs ring-1 ring-black/5 dark:ring-white/10 gap-0.5 relative shrink-0">
+              
+              {/* 1. ALL */}
+              <button
+                onClick={() => setFilter('all')}
+                className={`relative px-3 py-1 rounded-full text-[11px] font-bold cursor-pointer flex items-center gap-1.5 shrink-0 z-10 transition-colors ${
+                  filter === 'all' ? 'text-white' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                }`}
+                title="All Messages"
+              >
+                {filter === 'all' && (
+                  <motion.div
+                    layoutId="activeTabIndicator"
+                    className="absolute inset-0 bg-blue-600 rounded-full shadow-xs -z-10"
+                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                  />
+                )}
+                <Layers className="w-3 h-3 stroke-[2.2]" />
+                <span>All</span>
               </button>
-            )}
-          </div>
-          <span className="text-[10px] text-[var(--text-muted)] font-semibold pr-1 font-sans shrink-0 whitespace-nowrap ml-auto">
-            {filteredMessages.length}
-          </span>
-        </div>
-      )}
+
+              {/* 2. PERSONAL (Only in Inbox) */}
+              {isInbox && (
+                <button
+                  onClick={() => setFilter('personal')}
+                  className={`relative px-3 py-1 rounded-full text-[11px] font-bold cursor-pointer flex items-center gap-1.5 shrink-0 z-10 transition-colors ${
+                    filter === 'personal' ? 'text-white' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                  }`}
+                  title="Personal Messages"
+                >
+                  {filter === 'personal' && (
+                    <motion.div
+                      layoutId="activeTabIndicator"
+                      className="absolute inset-0 bg-blue-600 rounded-full shadow-xs -z-10"
+                      transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                    />
+                  )}
+                  <User className="w-3 h-3 stroke-[2.2]" />
+                  <span>Personal</span>
+                </button>
+              )}
+
+              {/* 3. PROMOTIONS with Tag icon (Only in Inbox) */}
+              {isInbox && (
+                <button
+                  onClick={() => setFilter('promotions')}
+                  className={`relative px-3 py-1 rounded-full text-[11px] font-bold cursor-pointer flex items-center gap-1.5 shrink-0 z-10 transition-colors ${
+                    filter === 'promotions' ? 'text-white' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                  }`}
+                  title="Newsletters & Promotions"
+                >
+                  {filter === 'promotions' && (
+                    <motion.div
+                      layoutId="activeTabIndicator"
+                      className="absolute inset-0 bg-blue-600 rounded-full shadow-xs -z-10"
+                      transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                    />
+                  )}
+                  <Tag className="w-3 h-3 stroke-[2.2]" />
+                  <span>Promotions</span>
+                </button>
+              )}
+
+              {/* 4. UNREAD (Only rendered if unreadCount > 0) */}
+              {unreadCount > 0 && (
+                <button
+                  onClick={() => setFilter('unread')}
+                  className={`relative px-3 py-1 rounded-full text-[11px] font-bold cursor-pointer flex items-center gap-1.5 shrink-0 z-10 transition-colors ${
+                    filter === 'unread' ? 'text-white' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                  }`}
+                  title="Unread Messages"
+                >
+                  {filter === 'unread' && (
+                    <motion.div
+                      layoutId="activeTabIndicator"
+                      className="absolute inset-0 bg-blue-600 rounded-full shadow-xs -z-10"
+                      transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                    />
+                  )}
+                  <Mail className="w-3 h-3 stroke-[2.2]" />
+                  <span>Unread</span>
+                  <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-black transition-colors ${
+                    filter === 'unread' ? 'bg-white/25 text-white' : 'bg-blue-500/15 text-blue-500'
+                  }`}>
+                    {unreadCount}
+                  </span>
+                </button>
+              )}
+            </div>
+
+            <span className="text-[10px] text-[var(--text-muted)] font-semibold pr-1 font-sans shrink-0 whitespace-nowrap ml-auto">
+              {filteredMessages.length}
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Messages List Container */}
       <div className="flex-1 overflow-y-auto p-1.5 space-y-1">
         {filteredMessages.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-8">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.2 }}
+            className="h-full flex flex-col items-center justify-center text-center p-8"
+          >
             <div className="w-12 h-12 rounded-2xl bg-[var(--accent-blue-light)] text-[var(--accent-blue)] flex items-center justify-center mb-3">
               <Inbox className="w-6 h-6" />
             </div>
             <p className="text-xs font-bold text-[var(--text-primary)] font-sans">No messages</p>
-            <p className="text-[11px] text-[var(--text-muted)] mt-0.5 font-sans">Your mailbox is empty</p>
-          </div>
+            <p className="text-[11px] text-[var(--text-muted)] mt-0.5 font-sans">
+              {filter === 'personal' ? 'No personal messages found' : filter === 'promotions' ? 'No promotions found' : 'Your mailbox is empty'}
+            </p>
+          </motion.div>
         ) : (
-          filteredMessages.map((msg) => {
-            const isSelected = msg.id === selectedMessageId;
-            const isChecked = selectedIds.has(msg.id);
-            const isUnread = !msg.is_read;
-            const displayName = msg.sender_name || msg.sender_address.split('@')[0];
-            const initial = displayName.charAt(0).toUpperCase();
-            const [colorFrom, colorTo] = getAvatarColors(displayName);
-            const brandUrl = getBrandOrAvatarUrl(msg.sender_address, msg.sender_name);
+          <AnimatePresence initial={false}>
+            {filteredMessages.map((msg, index) => {
+              const isSelected = msg.id === selectedMessageId;
+              const isChecked = selectedIds.has(msg.id);
+              const isUnread = !msg.is_read;
+              const displayName = msg.sender_name || msg.sender_address.split('@')[0];
+              const initial = displayName.charAt(0).toUpperCase();
+              const [colorFrom, colorTo] = getAvatarColors(displayName);
+              const brandUrl = getBrandOrAvatarUrl(msg.sender_address, msg.sender_name);
 
-            return (
-              <button
-                key={msg.id}
-                onClick={() => {
-                  if (selectedIds.size > 0) {
-                    toggleSelectOne(msg.id, { stopPropagation: () => {} } as any);
-                  } else {
-                    onSelectMessage(msg.id);
-                  }
-                }}
-                className={`w-full text-left px-3.5 py-2.5 h-[84px] rounded-2xl transition-all duration-100 group relative border cursor-pointer box-border flex items-center shrink-0 ${
-                  isChecked
-                    ? 'bg-blue-500/10 border-blue-500/40 text-[var(--text-primary)]'
-                    : isSelected
-                    ? 'bg-blue-600 dark:bg-blue-600 text-white border-blue-600 shadow-md ring-1 ring-white/20'
-                    : isUnread
-                    ? 'bg-blue-500/[0.05] dark:bg-[#171b24] border-blue-500/20 dark:border-blue-500/30 hover:bg-blue-500/[0.09] dark:hover:bg-[#1c222e] shadow-2xs'
-                    : 'bg-transparent border-transparent hover:bg-[var(--bg-secondary)] hover:border-[var(--border-subtle)]'
-                }`}
-              >
-                <div className="w-full flex items-center gap-3 min-w-0">
-                  {/* Circular Avatar / Selection Checkbox Toggle */}
+              return (
+                <motion.button
+                  key={msg.id}
+                  layout
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 0.16, delay: Math.min(index * 0.02, 0.2) }}
+                  whileHover={{ scale: 1.008 }}
+                  whileTap={{ scale: 0.992 }}
+                  onClick={() => {
+                    if (selectedIds.size > 0) {
+                      toggleSelectOne(msg.id, { stopPropagation: () => {} } as any);
+                    } else {
+                      onSelectMessage(msg.id);
+                    }
+                  }}
+                  className={`w-full text-left px-3.5 py-2.5 h-[84px] rounded-2xl transition-colors group relative border cursor-pointer box-border flex items-center shrink-0 ${
+                    isChecked
+                      ? 'bg-blue-500/10 border-blue-500/40 text-[var(--text-primary)]'
+                      : isSelected
+                      ? 'bg-blue-600 dark:bg-blue-600 text-white border-blue-600 shadow-md ring-1 ring-white/20'
+                      : isUnread
+                      ? 'bg-[var(--card-bg)] border-[var(--card-border)] hover:bg-[var(--bg-secondary)] hover:border-black/10 dark:hover:border-white/10 text-[var(--text-primary)] shadow-2xs'
+                      : 'bg-transparent border-transparent hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
+                  }`}
+                >
+                  {/* Select Checkbox (Hover or Checked) */}
                   <div
                     onClick={(e) => toggleSelectOne(msg.id, e)}
-                    className="w-9 h-9 shrink-0 relative cursor-pointer flex items-center justify-center"
-                    title={isChecked ? 'Deselect' : 'Select'}
+                    className={`absolute left-2.5 top-1/2 -translate-y-1/2 z-20 transition-all duration-150 ${
+                      isChecked ? 'opacity-100 scale-100' : 'opacity-0 group-hover:opacity-100 scale-95 hover:scale-105'
+                    }`}
                   >
-                    {isChecked ? (
-                      <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-extrabold text-xs shadow-sm ring-2 ring-blue-500/30">
-                        <Check className="w-4 h-4 text-white stroke-[3]" />
-                      </div>
-                    ) : (
-                      <div
-                        className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center font-extrabold text-xs text-white shadow-2xs ring-1 ring-black/5 dark:ring-white/10 relative"
-                        style={{ background: `linear-gradient(135deg, ${colorFrom}, ${colorTo})` }}
-                      >
-                        <span className="select-none">{initial}</span>
-                        {brandUrl && (
-                          <img
-                            src={brandUrl}
-                            alt={displayName}
-                            className="absolute inset-0 w-full h-full object-cover"
-                            onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
-                          />
-                        )}
-                      </div>
-                    )}
+                    <div
+                      className={`w-4 h-4 rounded flex items-center justify-center transition-all ${
+                        isChecked
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : isSelected
+                          ? 'border border-white/60 bg-white/20'
+                          : 'border border-black/30 dark:border-white/30 bg-[var(--card-bg)] shadow-xs'
+                      }`}
+                    >
+                      {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
+                    </div>
                   </div>
 
-                  {/* Message Metadata (Fixed 3-line vertical flow for uniform card height) */}
-                  <div className="flex-1 min-w-0 flex flex-col justify-center gap-0.5 overflow-hidden">
-                    <div className="flex items-center justify-between gap-1.5 min-w-0">
-                      <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                        {isUnread && (
-                          <span
-                            className={`w-2 h-2 rounded-full shrink-0 ${
-                              isSelected
-                                ? 'bg-white shadow-xs'
-                                : 'bg-blue-600 dark:bg-blue-400 shadow-[0_0_8px_rgba(37,99,235,0.7)]'
-                            }`}
-                            title="Unread message"
-                          />
-                        )}
-                        <span
-                          className={`text-xs truncate leading-tight ${
-                            isSelected
-                              ? 'text-white font-bold'
-                              : isUnread
-                              ? 'text-[var(--text-primary)] font-black tracking-tight'
-                              : 'text-[var(--text-secondary)] font-semibold'
-                          }`}
+                  {/* Message Item Content */}
+                  <div className={`flex items-center gap-3 w-full min-w-0 transition-transform duration-150 ${
+                    selectedIds.size > 0 ? 'translate-x-4' : 'group-hover:translate-x-4'
+                  }`}>
+                    {/* Brand / Contact Avatar */}
+                    <div className="w-9 h-9 rounded-xl overflow-hidden shrink-0 flex items-center justify-center font-bold text-xs shadow-2xs relative">
+                      {brandUrl ? (
+                        <img
+                          src={brandUrl}
+                          alt={displayName}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLElement).style.display = 'none';
+                          }}
+                        />
+                      ) : (
+                        <div
+                          className="w-full h-full flex items-center justify-center text-white"
+                          style={{ background: `linear-gradient(135deg, ${colorFrom}, ${colorTo})` }}
                         >
+                          {initial}
+                        </div>
+                      )}
+                      {isUnread && (
+                        <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-blue-500 ring-2 ring-[var(--card-bg)]" />
+                      )}
+                    </div>
+
+                    {/* Sender, Subject, Snippet */}
+                    <div className="flex-1 min-w-0 pr-1">
+                      <div className="flex items-center justify-between gap-1 mb-0.5">
+                        <span className={`text-xs truncate font-sans ${
+                          isSelected ? 'text-white font-extrabold' : isUnread ? 'text-[var(--text-primary)] font-black' : 'text-[var(--text-primary)] font-semibold'
+                        }`}>
                           {displayName}
                         </span>
-                      </div>
-                      <div className="flex items-center gap-1 shrink-0">
-                        {msg.sender_address?.includes('ivanaffriandi.com') && (
-                          msg.is_opened ? (
-                            <span
-                              className={`inline-flex items-center ${
-                                isSelected ? 'text-emerald-200' : 'text-emerald-500 dark:text-emerald-400'
-                              }`}
-                              title={`Read by recipient (Opened ${msg.open_count || 1}x)`}
-                            >
-                              <CheckCheck className="w-3.5 h-3.5" />
-                            </span>
-                          ) : (
-                            <span
-                              className={`inline-flex items-center ${
-                                isSelected ? 'text-blue-200' : 'text-[var(--text-muted)]'
-                              }`}
-                              title="Delivered"
-                            >
-                              <Check className="w-3 h-3" />
-                            </span>
-                          )
-                        )}
-                        <span
-                          className={`text-[10px] shrink-0 ${
-                            isSelected
-                              ? 'text-blue-100 font-medium'
-                              : isUnread
-                              ? 'text-blue-600 dark:text-blue-400 font-black'
-                              : 'text-[var(--text-muted)] font-medium'
-                          }`}
-                        >
+                        <span className={`text-[10px] shrink-0 font-sans ${
+                          isSelected ? 'text-white/80' : 'text-[var(--text-muted)]'
+                        }`}>
                           {formatTime(msg.date)}
                         </span>
                       </div>
-                    </div>
 
-                    <div className="flex items-center gap-1.5 min-w-0">
-                      <span
-                        className={`text-xs truncate leading-tight ${
-                          isSelected
-                            ? 'text-white font-bold'
-                            : isUnread
-                            ? 'text-[var(--text-primary)] font-bold'
-                            : 'text-[var(--text-secondary)] font-normal'
-                        }`}
-                      >
+                      <p className={`text-xs truncate font-sans leading-tight mb-0.5 ${
+                        isSelected ? 'text-white/95 font-bold' : isUnread ? 'text-[var(--text-primary)] font-bold' : 'text-[var(--text-secondary)] font-normal'
+                      }`}>
                         {msg.subject || '(No Subject)'}
-                      </span>
+                      </p>
+
+                      <p className={`text-[11px] truncate font-sans leading-tight ${
+                        isSelected ? 'text-white/70' : 'text-[var(--text-muted)]'
+                      }`}>
+                        {msg.snippet || 'No preview text'}
+                      </p>
                     </div>
 
-                    <p
-                      className={`text-[11px] truncate leading-tight ${
-                        isSelected
-                          ? 'text-blue-100'
-                          : isUnread
-                          ? 'text-[var(--text-secondary)] font-medium'
-                          : 'text-[var(--text-muted)]'
-                      }`}
-                    >
-                      {msg.snippet
-                        ? msg.snippet
-                            .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
-                            .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-                            .replace(/<[^>]+>/g, ' ')
-                            .replace(/&nbsp;/g, ' ')
-                            .replace(/\s+/g, ' ')
-                            .trim() || '\u00A0'
-                        : '\u00A0'}
-                    </p>
-                  </div>
-
-                  {/* Actions & Icons - Fixed 24px slot so layout never shifts */}
-                  <div className="w-6 flex flex-col items-center justify-center gap-1.5 shrink-0">
-                    {msg.has_attachments && (
-                      <Paperclip className={`w-3.5 h-3.5 ${isSelected ? 'text-white' : 'text-[var(--text-muted)]'}`} />
-                    )}
+                    {/* Star Button */}
                     {onToggleStar && (
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onToggleStar(msg.id, e);
-                        }}
-                        className={`p-1 rounded-full cursor-pointer transition-colors duration-100 ${
-                          msg.is_starred
-                            ? 'text-yellow-400 opacity-100'
-                            : isSelected
-                            ? 'text-blue-200 hover:text-white opacity-100'
-                            : 'text-[var(--text-muted)] opacity-0 group-hover:opacity-100 hover:text-yellow-400'
+                        onClick={(e) => onToggleStar(msg.id, e)}
+                        className={`p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ${
+                          msg.is_starred ? 'opacity-100 text-yellow-400' : isSelected ? 'text-white/60 hover:text-white' : 'text-[var(--text-muted)] hover:text-yellow-400'
                         }`}
-                        title="Star message"
+                        title="Star"
                       >
                         <Star className={`w-3.5 h-3.5 ${msg.is_starred ? 'fill-current' : ''}`} />
                       </button>
                     )}
                   </div>
-                </div>
-              </button>
-            );
-          })
+                </motion.button>
+              );
+            })}
+          </AnimatePresence>
         )}
       </div>
     </div>
