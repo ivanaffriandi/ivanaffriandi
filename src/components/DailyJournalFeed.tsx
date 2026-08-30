@@ -2592,23 +2592,23 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           display: inline-flex !important;
           align-items: center !important;
           justify-content: center !important;
-          gap: 0.4rem !important;
-          height: 38px !important;
-          min-height: 38px !important;
+          gap: 0.35rem !important;
+          height: 30px !important;
+          min-height: 30px !important;
           box-sizing: border-box !important;
           background: rgba(0, 0, 0, 0.55) !important;
           backdrop-filter: blur(16px) !important;
           -webkit-backdrop-filter: blur(16px) !important;
           border: 1px solid rgba(255, 255, 255, 0.25) !important;
           color: #FFFFFF !important;
-          font-size: 0.68rem !important;
-          font-weight: 800 !important;
-          letter-spacing: 0.08em !important;
+          font-size: 0.62rem !important;
+          font-weight: 750 !important;
+          letter-spacing: 0.06em !important;
           text-transform: uppercase !important;
-          padding: 0 1.1rem !important;
+          padding: 0 0.75rem !important;
           border-radius: 9999px !important;
           text-decoration: none !important;
-          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
           line-height: 1 !important;
           cursor: pointer !important;
           touch-action: manipulation !important;
@@ -2631,24 +2631,24 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           display: inline-flex !important;
           align-items: center !important;
           justify-content: center !important;
-          gap: 0.4rem !important;
-          height: 38px !important;
-          min-height: 38px !important;
+          gap: 0.35rem !important;
+          height: 30px !important;
+          min-height: 30px !important;
           box-sizing: border-box !important;
           background: rgba(0, 0, 0, 0.55) !important;
           backdrop-filter: blur(16px) !important;
           -webkit-backdrop-filter: blur(16px) !important;
           border: 1px solid rgba(255, 255, 255, 0.25) !important;
           color: #FFFFFF !important;
-          font-size: 0.68rem !important;
-          font-weight: 800 !important;
-          letter-spacing: 0.08em !important;
-          padding: 0 1.1rem !important;
+          font-size: 0.62rem !important;
+          font-weight: 750 !important;
+          letter-spacing: 0.06em !important;
+          padding: 0 0.75rem !important;
           border-radius: 9999px !important;
           touch-action: manipulation !important;
           -webkit-tap-highlight-color: transparent !important;
           text-transform: uppercase !important;
-          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
           cursor: pointer !important;
           transition: transform 0.18s ease, background 0.18s ease !important;
         }
@@ -2664,10 +2664,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           display: inline-flex !important;
           align-items: center !important;
           justify-content: center !important;
-          width: 38px !important;
-          height: 38px !important;
-          min-width: 38px !important;
-          min-height: 38px !important;
+          width: 30px !important;
+          height: 30px !important;
+          min-width: 30px !important;
+          min-height: 30px !important;
           box-sizing: border-box !important;
           background: rgba(0, 0, 0, 0.55) !important;
           backdrop-filter: blur(16px) !important;
@@ -2677,7 +2677,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           padding: 0 !important;
           border-radius: 50% !important;
           text-decoration: none !important;
-          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+          box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
           cursor: pointer !important;
           line-height: 1 !important;
           touch-action: manipulation !important;
@@ -2733,7 +2733,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             left: 0 !important;
             right: 0 !important;
             z-index: 100 !important;
-            padding: calc(env(safe-area-inset-top, 0px) + 0.85rem) 1.15rem 0.85rem 1.15rem !important;
+            padding: calc(env(safe-area-inset-top, 0px) + 0.65rem) 0.85rem 0.65rem 0.85rem !important;
             align-items: center !important;
             justify-content: space-between !important;
             background: transparent !important;
@@ -2757,23 +2757,23 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 0.35rem !important;
-            height: 36px !important;
-            min-height: 36px !important;
+            gap: 0.3rem !important;
+            height: 29px !important;
+            min-height: 29px !important;
             box-sizing: border-box !important;
             background: rgba(0, 0, 0, 0.55) !important;
             backdrop-filter: blur(16px) !important;
             -webkit-backdrop-filter: blur(16px) !important;
             border: 1px solid rgba(255, 255, 255, 0.25) !important;
             color: #FFFFFF !important;
-            font-size: 0.65rem !important;
-            font-weight: 800 !important;
-            letter-spacing: 0.08em !important;
+            font-size: 0.60rem !important;
+            font-weight: 750 !important;
+            letter-spacing: 0.06em !important;
             text-transform: uppercase !important;
-            padding: 0 0.95rem !important;
+            padding: 0 0.7rem !important;
             border-radius: 9999px !important;
             text-decoration: none !important;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
             line-height: 1 !important;
             cursor: pointer !important;
             touch-action: manipulation !important;
@@ -2793,24 +2793,24 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 0.35rem !important;
-            height: 36px !important;
-            min-height: 36px !important;
+            gap: 0.3rem !important;
+            height: 29px !important;
+            min-height: 29px !important;
             box-sizing: border-box !important;
             background: rgba(0, 0, 0, 0.55) !important;
             backdrop-filter: blur(16px) !important;
             -webkit-backdrop-filter: blur(16px) !important;
             border: 1px solid rgba(255, 255, 255, 0.25) !important;
             color: #FFFFFF !important;
-            font-size: 0.65rem !important;
-            font-weight: 800 !important;
-            letter-spacing: 0.08em !important;
-            padding: 0 0.95rem !important;
+            font-size: 0.60rem !important;
+            font-weight: 750 !important;
+            letter-spacing: 0.06em !important;
+            padding: 0 0.7rem !important;
             border-radius: 9999px !important;
             touch-action: manipulation !important;
             -webkit-tap-highlight-color: transparent !important;
             text-transform: uppercase !important;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
             cursor: pointer !important;
           }
 
@@ -2823,10 +2823,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            width: 36px !important;
-            height: 36px !important;
-            min-width: 36px !important;
-            min-height: 36px !important;
+            width: 29px !important;
+            height: 29px !important;
+            min-width: 29px !important;
+            min-height: 29px !important;
             box-sizing: border-box !important;
             background: rgba(0, 0, 0, 0.55) !important;
             backdrop-filter: blur(16px) !important;
@@ -2836,7 +2836,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             padding: 0 !important;
             border-radius: 50% !important;
             text-decoration: none !important;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25) !important;
             cursor: pointer !important;
             line-height: 1 !important;
             touch-action: manipulation !important;
@@ -3313,7 +3313,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 title="Back to Journal Deck"
                 style={{ cursor: "pointer", touchAction: "manipulation" }}
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="15 18 9 12 15 6" />
                 </svg>
                 <span>JOURNAL</span>
@@ -3324,7 +3324,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 title="Return to Homepage"
                 className="mobile-home-btn"
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                   <polyline points="9 22 9 12 15 12 15 22" />
                 </svg>
@@ -3333,7 +3333,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             )}
 
             {/* Right: Prologue Button (hidden when displaying post/prologue content) + Search Icon Button */}
-            <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
               {!selectedPost && !isReadingPrologue && (
                 <button
                   type="button"
@@ -3345,7 +3345,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   className="mobile-prologue-btn"
                   title="Read Prologue"
                 >
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
                     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
                   </svg>
@@ -3360,7 +3360,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 title="Search Stories & Chapters"
                 aria-label="Search"
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="11" cy="11" r="8"/>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
