@@ -444,7 +444,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
   const [postPhotoIndex, setPostPhotoIndex] = useState<number>(0);
   const [readerTheme, setReaderTheme] = useState<"light" | "dark">("light");
-  const [readerFont, setReaderFont] = useState<"serif" | "sans">("serif");
   const [readerSize, setReaderSize] = useState<"sm" | "md" | "lg">("md");
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [readingProgress, setReadingProgress] = useState<number>(0);
@@ -573,24 +572,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     if (!selectedPost && !isReadingPrologue) {
       document.body.classList.add("pj-overview-mode");
       document.body.classList.remove("pj-reader-mode");
-      document.documentElement.style.overflow = "hidden";
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.height = "100%";
-      document.body.style.height = "100%";
     } else {
       document.body.classList.remove("pj-overview-mode");
       document.body.classList.add("pj-reader-mode");
-      document.documentElement.style.overflow = "auto";
-      document.body.style.overflow = "auto";
-      document.documentElement.style.height = "auto";
-      document.body.style.height = "auto";
     }
     return () => {
       document.body.classList.remove("pj-overview-mode", "pj-reader-mode");
-      document.documentElement.style.overflow = "";
-      document.body.style.overflow = "";
-      document.documentElement.style.height = "";
-      document.body.style.height = "";
     };
   }, [selectedPost, isReadingPrologue]);
 
@@ -1040,6 +1027,18 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   return (
     <>
       <style>{`
+        /* ── UNIVERSAL ZERO-SCROLLBAR SYSTEM ── */
+        *, *::before, *::after {
+          scrollbar-width: none !important;
+          -ms-overflow-style: none !important;
+        }
+        *::-webkit-scrollbar {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+          background: transparent !important;
+        }
+
         /* ─────────────────────────────────────────────────────
            ROOT & LAYOUT SYSTEM (UNIFIED IMMERSIVE CARD DECK & CENTERED READER)
         ───────────────────────────────────────────────────── */
@@ -3368,11 +3367,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
           {/* ── UNIFIED PHYSICAL HARDWARE-ACCELERATED CAROUSEL TRACK (ZERO-FLICKER / ZERO-GLITCH) ── */}
           {isReadingPrologue || selectedPost ? (
-            <motion.div
-              key={isReadingPrologue ? "hero-prologue" : `hero-${selectedPost?.id}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            <div
               style={{
                 position: "absolute",
                 inset: 0,
@@ -3478,7 +3473,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   </div>
                 )}
               </div>
-            </motion.div>
+            </div>
           ) : (
             <>
               {/* Continuous Track containing all cards in DOM - 100% immune to flickers/glitches */}
@@ -3817,718 +3812,667 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             )}
 
             <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem", flex: 1, minHeight: 0 }}>
-              <AnimatePresence mode="wait">
-                {isReadingPrologue ? (
-                  /* ── PROLOGUE ARTICLE CONTENT READER ── */
-                  <motion.div
-                    key="prologue-reader"
-                    initial={{ opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              {isReadingPrologue ? (
+                /* ── PROLOGUE ARTICLE CONTENT READER ── */
+                <div
+                  key="prologue-reader"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "1.4rem",
+                    width: "100%",
+                    maxWidth: "760px",
+                    paddingBottom: "5rem",
+                    paddingTop: "0.25rem",
+                  }}
+                >
+                  {/* ── TOP READING UTILITY BAR (PROLOGUE) ── */}
+                  <div
                     style={{
                       display: "flex",
-                      flexDirection: "column",
-                      gap: "1.4rem",
-                      width: "100%",
-                      maxWidth: "760px",
-                      paddingBottom: "5rem",
-                      paddingTop: "0.25rem",
-                    }}
-                  >
-                    {/* ── TOP READING UTILITY BAR (PROLOGUE) ── */}
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: "0.85rem",
-                        width: "100%",
-                        paddingBottom: "0.85rem",
-                        borderBottom: "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
-                        marginBottom: "1rem",
-                      }}
-                    >
-                      {/* LEFT CORNER: SOLID REAL-TIME LIKE BUTTON */}
-                      <button
-                        onClick={handleToggleLike}
-                        title={likesMap[activePostId || ""]?.hasLiked ? "Unlike" : "Like"}
-                        aria-label="Like"
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "0.36rem",
-                          height: "28px",
-                          padding: "0 0.8rem",
-                          borderRadius: "9999px",
-                          cursor: "pointer",
-                          transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                          border: likesMap[activePostId || ""]?.hasLiked
-                            ? "1px solid #FF2D55"
-                            : (readerTheme === "dark" ? "1px solid rgba(255,255,255,0.25)" : "1px solid #111111"),
-                          background: likesMap[activePostId || ""]?.hasLiked
-                            ? "#FF2D55"
-                            : (readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "#111111"),
-                          color: "#FFFFFF",
-                          transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.04)" : "scale(1)",
-                          flexShrink: 0,
-                        }}
-                      >
-                        <svg
-                          width="13"
-                          height="13"
-                          viewBox="0 0 24 24"
-                          fill={likesMap[activePostId || ""]?.hasLiked ? "#FFFFFF" : "none"}
-                          stroke="#FFFFFF"
-                          strokeWidth="2.4"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          style={{
-                            transition: "transform 0.2s ease",
-                            transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.15)" : "scale(1)",
-                          }}
-                        >
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                        </svg>
-                        <span style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.02em" }}>
-                          {likesMap[activePostId || ""]?.count || 0}
-                        </span>
-                      </button>
-
-                      {/* RIGHT GROUP: THEME TOGGLE + FONT FAMILY TOGGLE */}
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
-                        {/* FONT FAMILY TOGGLE PILL (SERIF vs SANS) */}
-                        <button
-                          onClick={() => setReaderFont((prev) => (prev === "serif" ? "sans" : "serif"))}
-                          className="action-pill-btn"
-                          title="Toggle Typography (Serif / Sans)"
-                          style={{
-                            height: "28px",
-                            padding: "0 0.75rem",
-                            fontSize: "0.65rem",
-                            gap: "0.35rem",
-                          }}
-                        >
-                          <span style={{ fontFamily: readerFont === "serif" ? "var(--font-serif)" : "var(--font-sans)", fontWeight: 700 }}>
-                            {readerFont === "serif" ? "Serif" : "Sans"}
-                          </span>
-                        </button>
-
-                        {/* THEME TOGGLE PILL (DARK vs LIGHT) */}
-                        <button
-                          onClick={() => setReaderTheme((prev) => (prev === "dark" ? "light" : "dark"))}
-                          className="action-pill-btn"
-                          title="Toggle Reading Theme"
-                          style={{
-                            height: "28px",
-                            padding: "0 0.75rem",
-                            fontSize: "0.65rem",
-                            gap: "0.35rem",
-                          }}
-                        >
-                          {readerTheme === "dark" ? (
-                            <>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                              </svg>
-                              <span>Dark</span>
-                            </>
-                          ) : (
-                            <>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                <circle cx="12" cy="12" r="5" />
-                                <line x1="12" y1="1" x2="12" y2="3" />
-                                <line x1="12" y1="21" x2="12" y2="23" />
-                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                                <line x1="1" y1="12" x2="3" y2="12" />
-                                <line x1="21" y1="12" x2="23" y2="12" />
-                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                              </svg>
-                              <span>Light</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* ── CHAPTER HEADER BANNER (DESKTOP ONLY) ── */}
-                    <div className="article-reader-chapter-title-desktop" style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.4rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
-                        <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
-                          PROLOGUE
-                        </span>
-                        <span style={{ color: "var(--border-subtle)", opacity: 0.6 }}>·</span>
-                        <span style={{ fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--text-muted)", textTransform: "uppercase" }}>
-                          INTRO NARRATIVE
-                        </span>
-                      </div>
-
-                      <h1
-                        style={{
-                          fontSize: "clamp(1.75rem, 3.2vw, 2.4rem)",
-                          fontWeight: 800,
-                          lineHeight: 1.25,
-                          letterSpacing: "-0.025em",
-                          color: "var(--text-primary)",
-                          margin: 0,
-                          fontFamily: "var(--font-sans, -apple-system, sans-serif)",
-                        }}
-                      >
-                        A Quiet Corner on the Internet
-                      </h1>
-                    </div>
-
-                    {/* PROLOGUE FULL NARRATIVE BODY */}
-                    <div
-                      className={`blog-modal-content-body novel-article-reader font-${readerFont} size-${readerSize}`}
-                      style={{
-                        paddingTop: "0.6rem",
-                      }}
-                    >
-                      <p className="novel-drop-cap">
-                        There is a reason why the world always feels more spacious past three in the morning. The city&apos;s restless hum has finally run out of steam, leaving behind a thick silence, the chill of early dew settling in, and the tired glow of a single screen lit above a wooden desk.
-                      </p>
-                      <p style={{ fontWeight: 600 }}>
-                        My name is Ivan.
-                      </p>
-                      <p>
-                        Observed closely, everything in this universe gradually drifts toward disorder. Objects decay, memories fade, and time erodes all things without exception. Yet, it is precisely in the awareness of this fragility that I find room to truly feel present. I have a deep fondness for things that are imperfect—for the unseen networks of life quietly holding each other up, and for the belief that at the very bottom of things, goodness is always there and worth holding onto.
-                      </p>
-                      <p>
-                        I didn&apos;t build this space to compete with the world&apos;s noise. This page is simply a conscious effort to gather scattered fragments of thoughts, observations, and subtle details that often slip away, stitching them back together one by one. A quiet corner to nurture clarity, before everything gets swept along by the relentless pace of our days.
-                      </p>
-
-                      <div style={{ margin: "2rem 0", padding: "1.2rem", borderRadius: "12px", background: "var(--border-subtle, rgba(0,0,0,0.03))", borderLeft: "3px solid var(--text-primary)" }}>
-                        <p style={{ margin: 0, fontStyle: "italic", fontSize: "0.92rem", lineHeight: 1.6 }}>
-                          &ldquo;Not to try and stop time, but to remember that we were truly alive within it. To me, reading and observing things slowly is the only anchor keeping us from losing ourselves.&rdquo;
-                        </p>
-                      </div>
-
-                      <p>
-                        Take a deep breath, find your pause, and leave behind whatever weighs you down. Welcome to my journal.
-                      </p>
-                    </div>
-
-                    {/* ── END MARKER ── */}
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "1.25rem",
-                        margin: "0.25rem 0 0 0",
-                        width: "100%",
-                        boxSizing: "border-box",
-                      }}
-                    >
-                      <div style={{ flex: 1, height: "1px", background: "var(--border-subtle, rgba(125,125,125,0.35))" }} />
-                      <span
-                        style={{
-                          fontSize: "0.62rem",
-                          fontWeight: 700,
-                          letterSpacing: "0.25em",
-                          textTransform: "uppercase",
-                          color: "var(--text-muted, #888888)",
-                          opacity: 0.55,
-                        }}
-                      >
-                        END
-                      </span>
-                      <div style={{ flex: 1, height: "1px", background: "var(--border-subtle, rgba(125,125,125,0.35))" }} />
-                    </div>
-
-                    {/* ── MOBILE PROLOGUE READER FOOTER ── */}
-                    <footer className="mobile-reader-footer">
-                      <span>© {new Date().getFullYear()} IVAN AFFRIANDI</span>
-                    </footer>
-                  </motion.div>
-                ) : selectedPost ? (
-                  /* ── PURE ARTICLE CONTENT READER (LEFT ACTS AS COVER HEADER) ── */
-                  <motion.div
-                    key={selectedPost.id}
-                    initial={{ opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "1.4rem",
-                      width: "100%",
-                      maxWidth: "760px",
-                      paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 6rem)",
-                      paddingTop: "0.25rem",
-                    }}
-                  >
-                    {/* ── TOP READING UTILITY BAR (BACK BUTTON + HORIZONTAL LINE + UNIFIED PILLBAR CONTROLS ON RIGHT) ── */}
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "flex-end",
-                        width: "100%",
-                        paddingBottom: "0.25rem",
-                        gap: "0.75rem",
-                      }}
-                    >
-                      {/* BACK BUTTON (DESKTOP ONLY - ON MOBILE TOP BAR HANDLES THIS) */}
-                      <button
-                        className="reader-back-btn-desktop"
-                        onClick={() => setSelectedPostIndex(null)}
-                        style={{
-                          marginRight: "auto",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "0.35rem",
-                          height: "28px",
-                          padding: "0 0.85rem",
-                          borderRadius: "9999px",
-                          border: "1px solid var(--border-subtle, rgba(0,0,0,0.12))",
-                          background: "var(--card-bg-1, #FFFFFF)",
-                          color: "var(--text-primary, #111111)",
-                          fontSize: "0.65rem",
-                          fontWeight: 700,
-                          letterSpacing: "0.08em",
-                          textTransform: "uppercase",
-                          cursor: "pointer",
-                          transition: "all 0.15s ease",
-                        }}
-                      >
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="15 18 9 12 15 6" />
-                        </svg>
-                        <span>JOURNAL</span>
-                      </button>
-
-                      {/* SOLID REAL-TIME LIKE BUTTON */}
-                      <button
-                        onClick={handleToggleLike}
-                        title={likesMap[activePostId || ""]?.hasLiked ? "Unlike" : "Like"}
-                        aria-label="Like"
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "0.36rem",
-                          height: "28px",
-                          padding: "0 0.8rem",
-                          borderRadius: "9999px",
-                          cursor: "pointer",
-                          transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                          border: likesMap[activePostId || ""]?.hasLiked
-                            ? "1px solid #FF2D55"
-                            : (readerTheme === "dark" ? "1px solid rgba(255,255,255,0.25)" : "1px solid #111111"),
-                          background: likesMap[activePostId || ""]?.hasLiked
-                            ? "#FF2D55"
-                            : (readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "#111111"),
-                          color: "#FFFFFF",
-                          transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.04)" : "scale(1)",
-                          flexShrink: 0,
-                        }}
-                      >
-                        <svg
-                          width="13"
-                          height="13"
-                          viewBox="0 0 24 24"
-                          fill={likesMap[activePostId || ""]?.hasLiked ? "#FFFFFF" : "none"}
-                          stroke="#FFFFFF"
-                          strokeWidth="2.4"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          style={{
-                            transition: "transform 0.2s ease",
-                            transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.15)" : "scale(1)",
-                          }}
-                        >
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                        </svg>
-                        <span style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.02em" }}>
-                          {likesMap[activePostId || ""]?.count || 0}
-                        </span>
-                      </button>
-
-                      {/* FONT FAMILY TOGGLE PILL (SERIF vs SANS) */}
-                      <button
-                        onClick={() => setReaderFont((prev) => (prev === "serif" ? "sans" : "serif"))}
-                        className="action-pill-btn"
-                        title="Toggle Typography (Serif / Sans)"
-                        style={{
-                          height: "28px",
-                          padding: "0 0.75rem",
-                          fontSize: "0.65rem",
-                          gap: "0.35rem",
-                        }}
-                      >
-                        <span style={{ fontFamily: readerFont === "serif" ? "var(--font-serif)" : "var(--font-sans)", fontWeight: 700 }}>
-                          {readerFont === "serif" ? "Serif" : "Sans"}
-                        </span>
-                      </button>
-
-                      {/* THEME TOGGLE PILL (DARK vs LIGHT) */}
-                      <button
-                        onClick={() => setReaderTheme((prev) => (prev === "dark" ? "light" : "dark"))}
-                        className="action-pill-btn"
-                        title="Toggle Reading Theme"
-                        style={{
-                          height: "28px",
-                          padding: "0 0.75rem",
-                          fontSize: "0.65rem",
-                          gap: "0.35rem",
-                        }}
-                      >
-                        {readerTheme === "dark" ? (
-                          <>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                            </svg>
-                            <span>Dark</span>
-                          </>
-                        ) : (
-                          <>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                              <circle cx="12" cy="12" r="5" />
-                              <line x1="12" y1="1" x2="12" y2="3" />
-                              <line x1="12" y1="21" x2="12" y2="23" />
-                              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                              <line x1="1" y1="12" x2="3" y2="12" />
-                              <line x1="21" y1="12" x2="23" y2="12" />
-                              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                            </svg>
-                            <span>Light</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-
-                    {/* ── ARTICLE CHAPTER HEADER BANNER (DESKTOP ONLY - ON MOBILE TOP COVER SHOWS THIS) ── */}
-                    <div className="article-reader-chapter-title-desktop" style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.4rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
-                        <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
-                          {selectedPost ? getPostChapterLabel(selectedPost, sortedPosts) : "ESSAY"}
-                        </span>
-                        <span style={{ color: "var(--border-subtle)", opacity: 0.6 }}>·</span>
-                        <span style={{ fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--text-muted)", textTransform: "uppercase" }}>
-                          {formatDate(selectedPost.published, locale)}
-                        </span>
-                      </div>
-
-                      <h1
-                        style={{
-                          fontSize: "clamp(1.75rem, 3.2vw, 2.4rem)",
-                          fontWeight: 800,
-                          lineHeight: 1.25,
-                          letterSpacing: "-0.025em",
-                          color: "var(--text-primary)",
-                          margin: 0,
-                          fontFamily: "var(--font-sans, -apple-system, sans-serif)",
-                        }}
-                      >
-                        {selectedPost.title}
-                      </h1>
-                    </div>
-
-                    {/* Pure Editorial Content Body (No photos in text stream; images are in left gallery) */}
-                    <div
-                      className={`blog-modal-content-body novel-article-reader font-${readerFont} size-${readerSize}`}
-                      style={{
-                        paddingTop: "0.6rem",
-                      }}
-                      dangerouslySetInnerHTML={{ __html: formatBloggerArticleHtml(selectedPost.content) }}
-                    />
-
-                    {/* ── END MARKER ── */}
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "1.25rem",
-                        margin: "0.25rem 0 0 0",
-                        width: "100%",
-                        boxSizing: "border-box",
-                      }}
-                    >
-                      <div style={{ flex: 1, height: "1px", background: "var(--border-subtle, rgba(125,125,125,0.35))" }} />
-                      <span
-                        style={{
-                          fontSize: "0.62rem",
-                          fontWeight: 700,
-                          letterSpacing: "0.25em",
-                          textTransform: "uppercase",
-                          color: "var(--text-muted, #888888)",
-                          opacity: 0.55,
-                        }}
-                      >
-                        END
-                      </span>
-                      <div style={{ flex: 1, height: "1px", background: "var(--border-subtle, rgba(125,125,125,0.35))" }} />
-                    </div>
-
-                    {/* ── OTHER CHAPTERS THUMBNAIL ROW AT BOTTOM (DESKTOP ONLY) ── */}
-                    <div
-                      className="other-chapters-row"
-                      style={{
-                        marginTop: "1.8rem",
-                        paddingTop: "1.5rem",
-                        borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "1.2rem",
-                      }}
-                    >
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <span style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
-                          OTHER CHAPTERS
-                        </span>
-                        <button
-                          onClick={() => setSelectedPostIndex(null)}
-                          style={{
-                            background: "transparent",
-                            border: "none",
-                            fontSize: "0.68rem",
-                            fontWeight: 700,
-                            color: "var(--text-primary)",
-                            cursor: "pointer",
-                            padding: 0,
-                          }}
-                        >
-                          View All →
-                        </button>
-                      </div>
-
-                      <div
-                        style={{
-                          display: "grid",
-                          gridTemplateColumns: "repeat(3, 1fr)",
-                          gap: "0.85rem",
-                        }}
-                      >
-                        {sortedPosts
-                          .filter((p) => p.id !== selectedPost.id)
-                          .slice(0, 3)
-                          .map((p) => {
-                            const pCover = extractCoverImage(p.content) || fallbackHero;
-                            const pChapter = getPostChapterLabel(p, sortedPosts);
-                            const pRelative = getRelativeTimeString(p.published);
-                            const pIdx = sortedPosts.findIndex((item) => item.id === p.id);
-
-                            return (
-                              <div
-                                key={p.id}
-                                onClick={() => {
-                                  setSelectedPostIndex(pIdx);
-                                  window.scrollTo({ top: 0, behavior: "smooth" });
-                                }}
-                                style={{
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  gap: "0.35rem",
-                                  cursor: "pointer",
-                                  padding: "0.45rem",
-                                  borderRadius: "8px",
-                                  border: "1px solid var(--border-subtle, rgba(0,0,0,0.06))",
-                                  background: "var(--card-bg-1, #FFFFFF)",
-                                  transition: "all 0.2s ease",
-                                }}
-                                onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--border-strong, rgba(0,0,0,0.2))")}
-                                onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--border-subtle, rgba(0,0,0,0.06))")}
-                              >
-                                <div style={{ width: "100%", height: "115px", borderRadius: "6px", overflow: "hidden", position: "relative" }}>
-                                  <img
-                                    src={pCover}
-                                    alt={p.title}
-                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                  />
-                                </div>
-                                <div style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--text-muted)", textTransform: "uppercase" }}>
-                                  {pChapter}
-                                </div>
-                                <div
-                                  style={{
-                                    fontSize: "0.85rem",
-                                    fontWeight: 700,
-                                    color: "var(--text-primary)",
-                                    lineHeight: 1.3,
-                                    display: "-webkit-box",
-                                    WebkitLineClamp: 2,
-                                    WebkitBoxOrient: "vertical",
-                                    overflow: "hidden",
-                                  }}
-                                >
-                                  {p.title}
-                                </div>
-                                <div style={{ fontSize: "0.54rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                                  {pRelative || formatDate(p.published, locale)}
-                                </div>
-                              </div>
-                            );
-                          })}
-                      </div>
-                    </div>
-
-                    {/* ── MOBILE ARTICLE READER FOOTER ── */}
-                    <footer className="mobile-reader-footer">
-                      <span>© {new Date().getFullYear()} IVAN AFFRIANDI</span>
-                    </footer>
-                  </motion.div>
-                ) : (
-                  /* ── REGULAR OVERVIEW JOURNAL VIEW (FITS SCREEN WITHOUT VERTICAL OVERFLOW) ── */
-                  <motion.div
-                    key="overview-feed"
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "space-between",
                       gap: "0.85rem",
                       width: "100%",
+                      paddingBottom: "0.85rem",
+                      borderBottom: "1px solid var(--border-subtle, rgba(125,125,125,0.18))",
+                      marginBottom: "1rem",
                     }}
                   >
-                    {/* ── DESKTOP PROLOGUE SECTION (DESKTOP ONLY, HIDDEN ON MOBILE) ── */}
-                    <div className="desktop-prologue-wrap" style={{ margin: "0.15rem 0" }}>
-                      <div className="section-label-header" style={{ marginBottom: "0.4rem" }}>
-                        <span>PROLOGUE</span>
-                      </div>
+                    {/* LEFT CORNER: SOLID REAL-TIME LIKE BUTTON */}
+                    <button
+                      onClick={handleToggleLike}
+                      title={likesMap[activePostId || ""]?.hasLiked ? "Unlike" : "Like"}
+                      aria-label="Like"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "0.36rem",
+                        height: "28px",
+                        padding: "0 0.8rem",
+                        borderRadius: "9999px",
+                        cursor: "pointer",
+                        transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                        border: likesMap[activePostId || ""]?.hasLiked
+                          ? "1px solid #FF2D55"
+                          : (readerTheme === "dark" ? "1px solid rgba(255,255,255,0.25)" : "1px solid #111111"),
+                        background: likesMap[activePostId || ""]?.hasLiked
+                          ? "#FF2D55"
+                          : (readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "#111111"),
+                        color: "#FFFFFF",
+                        transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.04)" : "scale(1)",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill={likesMap[activePostId || ""]?.hasLiked ? "#FFFFFF" : "none"}
+                        stroke="#FFFFFF"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        style={{
+                          transition: "transform 0.2s ease",
+                          transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.15)" : "scale(1)",
+                        }}
+                      >
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
+                      <span style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.02em" }}>
+                        {likesMap[activePostId || ""]?.count || 0}
+                      </span>
+                    </button>
 
-                      <div className="novel-intro-2col" style={{ gap: "1.25rem" }}>
-                        {/* LEFT COLUMN: ATMOSPHERIC NARRATIVE */}
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
-                          <p className="novel-intro-paragraph novel-drop-cap" style={{ fontSize: "0.86rem", lineHeight: 1.62, margin: 0 }}>
-                            There is a reason why the world always feels more spacious past three in the morning. The city&apos;s restless hum has finally run out of steam, leaving behind a thick silence, the chill of early dew settling in, and the tired glow of a single screen lit above a wooden desk.
-                          </p>
-                          <p className="novel-intro-paragraph" style={{ fontSize: "0.84rem", lineHeight: 1.62, margin: 0, fontWeight: 600 }}>
-                            My name is Ivan.
-                          </p>
-                          <p className="novel-intro-paragraph" style={{ fontSize: "0.84rem", lineHeight: 1.62, margin: 0 }}>
-                            Observed closely, everything in this universe gradually drifts toward disorder. Objects decay, memories fade, and time erodes all things without exception. Yet, it is precisely in the awareness of this fragility that I find room to truly feel present. I have a deep fondness for things that are imperfect—for the unseen networks of life quietly holding each other up, and for the belief that at the very bottom of things, goodness is always there and worth holding onto.
-                          </p>
-                          <p className="novel-intro-paragraph" style={{ fontSize: "0.84rem", lineHeight: 1.62, margin: 0 }}>
-                            I didn&apos;t build this space to compete with the world&apos;s noise. This page is simply a conscious effort to gather scattered fragments of thoughts, observations, and subtle details that often slip away, stitching them back together one by one. A quiet corner to nurture clarity, before everything gets swept along by the relentless pace of our days.
-                          </p>
-                        </div>
+                    {/* RIGHT GROUP: THEME TOGGLE (DARK vs LIGHT) */}
+                    <button
+                      onClick={() => setReaderTheme((prev) => (prev === "dark" ? "light" : "dark"))}
+                      className="action-pill-btn"
+                      title="Toggle Reading Theme"
+                      style={{
+                        height: "28px",
+                        padding: "0 0.75rem",
+                        fontSize: "0.65rem",
+                        gap: "0.35rem",
+                      }}
+                    >
+                      {readerTheme === "dark" ? (
+                        <>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                          </svg>
+                          <span>Dark</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="5" />
+                            <line x1="12" y1="1" x2="12" y2="3" />
+                            <line x1="12" y1="21" x2="12" y2="23" />
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                            <line x1="1" y1="12" x2="3" y2="12" />
+                            <line x1="21" y1="12" x2="23" y2="12" />
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                          </svg>
+                          <span>Light</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
 
-                        {/* RIGHT COLUMN: CHAT BUBBLE & SIGN OFF */}
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                          <div className="imessage-chat-wrap" style={{ margin: 0, gap: "0.45rem" }}>
-                            {/* Incoming Friend Message */}
-                            <div className="imessage-row-incoming">
-                              <span className="imessage-sender-tag" style={{ marginLeft: "0.5rem", fontSize: "0.52rem" }}>
-                                FRIEND
-                              </span>
-                              <div className="imessage-bubble-incoming" style={{ padding: "0.55rem 0.95rem", fontSize: "0.82rem", lineHeight: 1.45, borderRadius: "16px 16px 16px 4px" }}>
-                                If naturally everything eventually fades and wears out, why go through the trouble of weaving these memories into a space?
-                              </div>
-                            </div>
-
-                            {/* Outgoing Ivan Message */}
-                            <div className="imessage-row-outgoing">
-                              <span className="imessage-sender-tag" style={{ marginRight: "0.5rem", fontSize: "0.52rem" }}>
-                                IVAN
-                              </span>
-                              <div
-                                className="imessage-bubble-outgoing"
-                                style={{
-                                  padding: "0.55rem 0.95rem",
-                                  fontSize: "0.82rem",
-                                  lineHeight: 1.45,
-                                  color: "#FFFFFF",
-                                  backgroundColor: "#111113",
-                                  borderRadius: "16px 16px 4px 16px",
-                                }}
-                              >
-                                Not to try and stop time, but to remember that we were truly alive within it. To me, reading and observing things slowly is the only anchor keeping us from losing ourselves.
-                              </div>
-                            </div>
-                          </div>
-
-                          <p className="novel-intro-paragraph" style={{ opacity: 0.72, fontSize: "0.76rem", fontStyle: "italic", borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))", paddingTop: "0.4rem", margin: 0 }}>
-                            Take a deep breath, find your pause, and leave behind whatever weighs you down.
-                          </p>
-                        </div>
-                      </div>
+                  {/* ── CHAPTER HEADER BANNER (DESKTOP ONLY) ── */}
+                  <div className="article-reader-chapter-title-desktop" style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.4rem" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
+                      <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
+                        PROLOGUE
+                      </span>
+                      <span style={{ color: "var(--border-subtle)", opacity: 0.6 }}>·</span>
+                      <span style={{ fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--text-muted)", textTransform: "uppercase" }}>
+                        INTRO NARRATIVE
+                      </span>
                     </div>
 
-                    {/* ── HORIZONTAL CAROUSEL LAYOUT FOR CHAPTERS WITH YEAR TABS & ARROWS ── */}
-                    <div className="blog-section-wrap" style={{ marginTop: "0.25rem" }}>
-                      <div className="blog-tabs-header">
-                        <div className="section-label-header" style={{ marginBottom: 0 }}>
-                          <span>CHAPTERS {searchQuery ? `(${filteredPosts.length})` : ""}</span>
-                        </div>
+                    <h1
+                      style={{
+                        fontSize: "clamp(1.75rem, 3.2vw, 2.4rem)",
+                        fontWeight: 800,
+                        lineHeight: 1.25,
+                        letterSpacing: "-0.025em",
+                        color: "var(--text-primary)",
+                        margin: 0,
+                        fontFamily: "var(--font-sans, -apple-system, sans-serif)",
+                      }}
+                    >
+                      A Quiet Corner on the Internet
+                    </h1>
+                  </div>
 
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
-                          {/* YEAR FILTER TABS (YYYY) */}
-                          <div className="blog-tabs-list">
-                            {yearFilters.map((y) => (
-                              <button
-                                key={y}
-                                className={`blog-tab-item${y === activeFilter ? " active" : ""}`}
-                                onClick={() => {
-                                  setActiveFilter(y);
-                                }}
-                              >
-                                {y}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
+                  {/* PROLOGUE FULL NARRATIVE BODY */}
+                  <div
+                    className={`blog-modal-content-body novel-article-reader size-${readerSize}`}
+                    style={{
+                      paddingTop: "0.6rem",
+                    }}
+                  >
+                    <p className="novel-drop-cap">
+                      There is a reason why the world always feels more spacious past three in the morning. The city&apos;s restless hum has finally run out of steam, leaving behind a thick silence, the chill of early dew settling in, and the tired glow of a single screen lit above a wooden desk.
+                    </p>
+                    <p style={{ fontWeight: 600 }}>
+                      My name is Ivan.
+                    </p>
+                    <p>
+                      Observed closely, everything in this universe gradually drifts toward disorder. Objects decay, memories fade, and time erodes all things without exception. Yet, it is precisely in the awareness of this fragility that I find room to truly feel present. I have a deep fondness for things that are imperfect—for the unseen networks of life quietly holding each other up, and for the belief that at the very bottom of things, goodness is always there and worth holding onto.
+                    </p>
+                    <p>
+                      I didn&apos;t build this space to compete with the world&apos;s noise. This page is simply a conscious effort to gather scattered fragments of thoughts, observations, and subtle details that often slip away, stitching them back together one by one. A quiet corner to nurture clarity, before everything gets swept along by the relentless pace of our days.
+                    </p>
 
-                      {/* DESKTOP 2-COLUMN CHAPTERS GRID */}
-                      <div className="blog-grid-layout" ref={blogRowRef}>
-                        {filteredPosts.map((post) => {
-                          const img = extractCoverImage(post.content);
-                          const excerpt = stripHtml(post.content).slice(0, 110) + "…";
-                          const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
-                          const relativeTime = getRelativeTimeString(post.published);
-                          const chapterLabel = getPostChapterLabel(post, sortedPosts);
+                    <div style={{ margin: "2rem 0", padding: "1.2rem", borderRadius: "12px", background: "var(--border-subtle, rgba(0,0,0,0.03))", borderLeft: "3px solid var(--text-primary)" }}>
+                      <p style={{ margin: 0, fontStyle: "italic", fontSize: "0.92rem", lineHeight: 1.6 }}>
+                        &ldquo;Not to try and stop time, but to remember that we were truly alive within it. To me, reading and observing things slowly is the only anchor keeping us from losing ourselves.&rdquo;
+                      </p>
+                    </div>
+
+                    <p>
+                      Take a deep breath, find your pause, and leave behind whatever weighs you down. Welcome to my journal.
+                    </p>
+                  </div>
+
+                  {/* ── END MARKER ── */}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "1.25rem",
+                      margin: "0.25rem 0 0 0",
+                      width: "100%",
+                      boxSizing: "border-box",
+                    }}
+                  >
+                    <div style={{ flex: 1, height: "1px", background: "var(--border-subtle, rgba(125,125,125,0.35))" }} />
+                    <span
+                      style={{
+                        fontSize: "0.62rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.25em",
+                        textTransform: "uppercase",
+                        color: "var(--text-muted, #888888)",
+                        opacity: 0.55,
+                      }}
+                    >
+                      END
+                    </span>
+                    <div style={{ flex: 1, height: "1px", background: "var(--border-subtle, rgba(125,125,125,0.35))" }} />
+                  </div>
+
+                  {/* ── MOBILE PROLOGUE READER FOOTER ── */}
+                  <footer className="mobile-reader-footer">
+                    <span>© {new Date().getFullYear()} IVAN AFFRIANDI</span>
+                  </footer>
+                </div>
+              ) : selectedPost ? (
+                /* ── PURE ARTICLE CONTENT READER (LEFT ACTS AS COVER HEADER) ── */
+                <div
+                  key={selectedPost.id}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "1.4rem",
+                    width: "100%",
+                    maxWidth: "760px",
+                    paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 6rem)",
+                    paddingTop: "0.25rem",
+                  }}
+                >
+                  {/* ── TOP READING UTILITY BAR (BACK BUTTON + HORIZONTAL LINE + UNIFIED PILLBAR CONTROLS ON RIGHT) ── */}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      width: "100%",
+                      paddingBottom: "0.25rem",
+                      gap: "0.75rem",
+                    }}
+                  >
+                    {/* BACK BUTTON (DESKTOP ONLY - ON MOBILE TOP BAR HANDLES THIS) */}
+                    <button
+                      className="reader-back-btn-desktop"
+                      onClick={() => setSelectedPostIndex(null)}
+                      style={{
+                        marginRight: "auto",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.35rem",
+                        height: "28px",
+                        padding: "0 0.85rem",
+                        borderRadius: "9999px",
+                        border: "1px solid var(--border-subtle, rgba(0,0,0,0.12))",
+                        background: "var(--card-bg-1, #FFFFFF)",
+                        color: "var(--text-primary, #111111)",
+                        fontSize: "0.65rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        cursor: "pointer",
+                        transition: "all 0.15s ease",
+                      }}
+                    >
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="15 18 9 12 15 6" />
+                      </svg>
+                      <span>JOURNAL</span>
+                    </button>
+
+                    {/* SOLID REAL-TIME LIKE BUTTON */}
+                    <button
+                      onClick={handleToggleLike}
+                      title={likesMap[activePostId || ""]?.hasLiked ? "Unlike" : "Like"}
+                      aria-label="Like"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "0.36rem",
+                        height: "28px",
+                        padding: "0 0.8rem",
+                        borderRadius: "9999px",
+                        cursor: "pointer",
+                        transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                        border: likesMap[activePostId || ""]?.hasLiked
+                          ? "1px solid #FF2D55"
+                          : (readerTheme === "dark" ? "1px solid rgba(255,255,255,0.25)" : "1px solid #111111"),
+                        background: likesMap[activePostId || ""]?.hasLiked
+                          ? "#FF2D55"
+                          : (readerTheme === "dark" ? "rgba(255,255,255,0.15)" : "#111111"),
+                        color: "#FFFFFF",
+                        transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.04)" : "scale(1)",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill={likesMap[activePostId || ""]?.hasLiked ? "#FFFFFF" : "none"}
+                        stroke="#FFFFFF"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        style={{
+                          transition: "transform 0.2s ease",
+                          transform: likesMap[activePostId || ""]?.hasLiked ? "scale(1.15)" : "scale(1)",
+                        }}
+                      >
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
+                      <span style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.02em" }}>
+                        {likesMap[activePostId || ""]?.count || 0}
+                      </span>
+                    </button>
+
+                    {/* THEME TOGGLE PILL (DARK vs LIGHT) */}
+                    <button
+                      onClick={() => setReaderTheme((prev) => (prev === "dark" ? "light" : "dark"))}
+                      className="action-pill-btn"
+                      title="Toggle Reading Theme"
+                      style={{
+                        height: "28px",
+                        padding: "0 0.75rem",
+                        fontSize: "0.65rem",
+                        gap: "0.35rem",
+                      }}
+                    >
+                      {readerTheme === "dark" ? (
+                        <>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                          </svg>
+                          <span>Dark</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="5" />
+                            <line x1="12" y1="1" x2="12" y2="3" />
+                            <line x1="12" y1="21" x2="12" y2="23" />
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                            <line x1="1" y1="12" x2="3" y2="12" />
+                            <line x1="21" y1="12" x2="23" y2="12" />
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                          </svg>
+                          <span>Light</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* ── ARTICLE CHAPTER HEADER BANNER (DESKTOP ONLY - ON MOBILE TOP COVER SHOWS THIS) ── */}
+                  <div className="article-reader-chapter-title-desktop" style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.4rem" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
+                      <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
+                        {selectedPost ? getPostChapterLabel(selectedPost, sortedPosts) : "ESSAY"}
+                      </span>
+                      <span style={{ color: "var(--border-subtle)", opacity: 0.6 }}>·</span>
+                      <span style={{ fontSize: "0.62rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--text-muted)", textTransform: "uppercase" }}>
+                        {formatDate(selectedPost.published, locale)}
+                      </span>
+                    </div>
+
+                    <h1
+                      style={{
+                        fontSize: "clamp(1.75rem, 3.2vw, 2.4rem)",
+                        fontWeight: 800,
+                        lineHeight: 1.25,
+                        letterSpacing: "-0.025em",
+                        color: "var(--text-primary)",
+                        margin: 0,
+                        fontFamily: "var(--font-sans, -apple-system, sans-serif)",
+                      }}
+                    >
+                      {selectedPost.title}
+                    </h1>
+                  </div>
+
+                  {/* Pure Editorial Content Body (No photos in text stream; images are in left gallery) */}
+                  <div
+                    className={`blog-modal-content-body novel-article-reader size-${readerSize}`}
+                    style={{
+                      paddingTop: "0.6rem",
+                    }}
+                    dangerouslySetInnerHTML={{ __html: formatBloggerArticleHtml(selectedPost.content) }}
+                  />
+
+                  {/* ── END MARKER ── */}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "1.25rem",
+                      margin: "0.25rem 0 0 0",
+                      width: "100%",
+                      boxSizing: "border-box",
+                    }}
+                  >
+                    <div style={{ flex: 1, height: "1px", background: "var(--border-subtle, rgba(125,125,125,0.35))" }} />
+                    <span
+                      style={{
+                        fontSize: "0.62rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.25em",
+                        textTransform: "uppercase",
+                        color: "var(--text-muted, #888888)",
+                        opacity: 0.55,
+                      }}
+                    >
+                      END
+                    </span>
+                    <div style={{ flex: 1, height: "1px", background: "var(--border-subtle, rgba(125,125,125,0.35))" }} />
+                  </div>
+
+                  {/* ── OTHER CHAPTERS THUMBNAIL ROW AT BOTTOM (DESKTOP ONLY) ── */}
+                  <div
+                    className="other-chapters-row"
+                    style={{
+                      marginTop: "1.8rem",
+                      paddingTop: "1.5rem",
+                      borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "1.2rem",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--text-muted)" }}>
+                        OTHER CHAPTERS
+                      </span>
+                      <button
+                        onClick={() => setSelectedPostIndex(null)}
+                        style={{
+                          background: "transparent",
+                          border: "none",
+                          fontSize: "0.68rem",
+                          fontWeight: 700,
+                          color: "var(--text-primary)",
+                          cursor: "pointer",
+                          padding: 0,
+                        }}
+                      >
+                        View All →
+                      </button>
+                    </div>
+
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(3, 1fr)",
+                        gap: "0.85rem",
+                      }}
+                    >
+                      {sortedPosts
+                        .filter((p) => p.id !== selectedPost.id)
+                        .slice(0, 3)
+                        .map((p) => {
+                          const pCover = extractCoverImage(p.content) || fallbackHero;
+                          const pChapter = getPostChapterLabel(p, sortedPosts);
+                          const pRelative = getRelativeTimeString(p.published);
+                          const pIdx = sortedPosts.findIndex((item) => item.id === p.id);
 
                           return (
                             <div
-                              key={post.id}
-                              className="blog-grid-card"
+                              key={p.id}
                               onClick={() => {
-                                setSelectedPostIndex(postIdx);
+                                setSelectedPostIndex(pIdx);
                                 window.scrollTo({ top: 0, behavior: "smooth" });
                               }}
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "0.35rem",
+                                cursor: "pointer",
+                                padding: "0.45rem",
+                                borderRadius: "8px",
+                                border: "1px solid var(--border-subtle, rgba(0,0,0,0.06))",
+                                background: "var(--card-bg-1, #FFFFFF)",
+                                transition: "all 0.2s ease",
+                              }}
+                              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--border-strong, rgba(0,0,0,0.2))")}
+                              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--border-subtle, rgba(0,0,0,0.06))")}
                             >
-                              {/* TOP: thumbnail */}
-                              <div className="blog-card-thumb-wrap">
-                                <div className="ig-b-w-container" style={{ width: "100%", height: "100%" }}>
-                                  <img
-                                    src={img || fallbackHero}
-                                    alt={post.title}
-                                    className="blog-b-w-img"
-                                  />
-                                </div>
+                              <div style={{ width: "100%", height: "115px", borderRadius: "6px", overflow: "hidden", position: "relative" }}>
+                                <img
+                                  src={pCover}
+                                  alt={p.title}
+                                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                />
                               </div>
-                              {/* BOTTOM: text info */}
-                              <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", minWidth: 0, flex: 1, justifyContent: "space-between" }}>
-                                <div>
-                                  <div className="blog-card-date">
-                                    {chapterLabel}
-                                  </div>
-                                  <h3 className="blog-card-title">{post.title}</h3>
-                                  <div style={{ fontSize: "0.52rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginTop: "0.15rem" }}>
-                                    {relativeTime ? relativeTime : formatDate(post.published, locale)}
-                                  </div>
-                                </div>
-                                <p className="blog-card-excerpt">{excerpt}</p>
+                              <div style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.08em", color: "var(--text-muted)", textTransform: "uppercase" }}>
+                                {pChapter}
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "0.85rem",
+                                  fontWeight: 700,
+                                  color: "var(--text-primary)",
+                                  lineHeight: 1.3,
+                                  display: "-webkit-box",
+                                  WebkitLineClamp: 2,
+                                  WebkitBoxOrient: "vertical",
+                                  overflow: "hidden",
+                                }}
+                              >
+                                {p.title}
+                              </div>
+                              <div style={{ fontSize: "0.54rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                                {pRelative || formatDate(p.published, locale)}
                               </div>
                             </div>
                           );
                         })}
+                    </div>
+                  </div>
+
+                  {/* ── MOBILE ARTICLE READER FOOTER ── */}
+                  <footer className="mobile-reader-footer">
+                    <span>© {new Date().getFullYear()} IVAN AFFRIANDI</span>
+                  </footer>
+                </div>
+              ) : (
+                /* ── REGULAR OVERVIEW JOURNAL VIEW (FITS SCREEN WITHOUT VERTICAL OVERFLOW) ── */
+                <div
+                  key="overview-feed"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.85rem",
+                    width: "100%",
+                  }}
+                >
+                  {/* ── DESKTOP PROLOGUE SECTION (DESKTOP ONLY, HIDDEN ON MOBILE) ── */}
+                  <div className="desktop-prologue-wrap" style={{ margin: "0.15rem 0" }}>
+                    <div className="section-label-header" style={{ marginBottom: "0.4rem" }}>
+                      <span>PROLOGUE</span>
+                    </div>
+
+                    <div className="novel-intro-2col" style={{ gap: "1.25rem" }}>
+                      {/* LEFT COLUMN: ATMOSPHERIC NARRATIVE */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
+                        <p className="novel-intro-paragraph novel-drop-cap" style={{ fontSize: "0.86rem", lineHeight: 1.62, margin: 0 }}>
+                          There is a reason why the world always feels more spacious past three in the morning. The city&apos;s restless hum has finally run out of steam, leaving behind a thick silence, the chill of early dew settling in, and the tired glow of a single screen lit above a wooden desk.
+                        </p>
+                        <p className="novel-intro-paragraph" style={{ fontSize: "0.84rem", lineHeight: 1.62, margin: 0, fontWeight: 600 }}>
+                          My name is Ivan.
+                        </p>
+                        <p className="novel-intro-paragraph" style={{ fontSize: "0.84rem", lineHeight: 1.62, margin: 0 }}>
+                          Observed closely, everything in this universe gradually drifts toward disorder. Objects decay, memories fade, and time erodes all things without exception. Yet, it is precisely in the awareness of this fragility that I find room to truly feel present. I have a deep fondness for things that are imperfect—for the unseen networks of life quietly holding each other up, and for the belief that at the very bottom of things, goodness is always there and worth holding onto.
+                        </p>
+                        <p className="novel-intro-paragraph" style={{ fontSize: "0.84rem", lineHeight: 1.62, margin: 0 }}>
+                          I didn&apos;t build this space to compete with the world&apos;s noise. This page is simply a conscious effort to gather scattered fragments of thoughts, observations, and subtle details that often slip away, stitching them back together one by one. A quiet corner to nurture clarity, before everything gets swept along by the relentless pace of our days.
+                        </p>
+                      </div>
+
+                      {/* RIGHT COLUMN: CHAT BUBBLE & SIGN OFF */}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                        <div className="imessage-chat-wrap" style={{ margin: 0, gap: "0.45rem" }}>
+                          {/* Incoming Friend Message */}
+                          <div className="imessage-row-incoming">
+                            <span className="imessage-sender-tag" style={{ marginLeft: "0.5rem", fontSize: "0.52rem" }}>
+                              FRIEND
+                            </span>
+                            <div className="imessage-bubble-incoming" style={{ padding: "0.55rem 0.95rem", fontSize: "0.82rem", lineHeight: 1.45, borderRadius: "16px 16px 16px 4px" }}>
+                              If naturally everything eventually fades and wears out, why go through the trouble of weaving these memories into a space?
+                            </div>
+                          </div>
+
+                          {/* Outgoing Ivan Message */}
+                          <div className="imessage-row-outgoing">
+                            <span className="imessage-sender-tag" style={{ marginRight: "0.5rem", fontSize: "0.52rem" }}>
+                              IVAN
+                            </span>
+                            <div
+                              className="imessage-bubble-outgoing"
+                              style={{
+                                padding: "0.55rem 0.95rem",
+                                fontSize: "0.82rem",
+                                lineHeight: 1.45,
+                                color: "#FFFFFF",
+                                backgroundColor: "#111113",
+                                borderRadius: "16px 16px 4px 16px",
+                              }}
+                            >
+                              Not to try and stop time, but to remember that we were truly alive within it. To me, reading and observing things slowly is the only anchor keeping us from losing ourselves.
+                            </div>
+                          </div>
+                        </div>
+
+                        <p className="novel-intro-paragraph" style={{ opacity: 0.72, fontSize: "0.76rem", fontStyle: "italic", borderTop: "1px solid var(--border-subtle, rgba(0,0,0,0.08))", paddingTop: "0.4rem", margin: 0 }}>
+                          Take a deep breath, find your pause, and leave behind whatever weighs you down.
+                        </p>
                       </div>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                  </div>
+
+                  {/* ── HORIZONTAL CAROUSEL LAYOUT FOR CHAPTERS WITH YEAR TABS & ARROWS ── */}
+                  <div className="blog-section-wrap" style={{ marginTop: "0.25rem" }}>
+                    <div className="blog-tabs-header">
+                      <div className="section-label-header" style={{ marginBottom: 0 }}>
+                        <span>CHAPTERS {searchQuery ? `(${filteredPosts.length})` : ""}</span>
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+                        {/* YEAR FILTER TABS (YYYY) */}
+                        <div className="blog-tabs-list">
+                          {yearFilters.map((y) => (
+                            <button
+                              key={y}
+                              className={`blog-tab-item${y === activeFilter ? " active" : ""}`}
+                              onClick={() => {
+                                setActiveFilter(y);
+                              }}
+                            >
+                              {y}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* DESKTOP 2-COLUMN CHAPTERS GRID */}
+                    <div className="blog-grid-layout" ref={blogRowRef}>
+                      {filteredPosts.map((post) => {
+                        const img = extractCoverImage(post.content);
+                        const excerpt = stripHtml(post.content).slice(0, 110) + "…";
+                        const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
+                        const relativeTime = getRelativeTimeString(post.published);
+                        const chapterLabel = getPostChapterLabel(post, sortedPosts);
+
+                        return (
+                          <div
+                            key={post.id}
+                            className="blog-grid-card"
+                            onClick={() => {
+                              setSelectedPostIndex(postIdx);
+                              window.scrollTo({ top: 0, behavior: "smooth" });
+                            }}
+                          >
+                            {/* TOP: thumbnail */}
+                            <div className="blog-card-thumb-wrap">
+                              <div className="ig-b-w-container" style={{ width: "100%", height: "100%" }}>
+                                <img
+                                  src={img || fallbackHero}
+                                  alt={post.title}
+                                  className="blog-b-w-img"
+                                />
+                              </div>
+                            </div>
+                            {/* BOTTOM: text info */}
+                            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", minWidth: 0, flex: 1, justifyContent: "space-between" }}>
+                              <div>
+                                <div className="blog-card-date">
+                                  {chapterLabel}
+                                </div>
+                                <h3 className="blog-card-title">{post.title}</h3>
+                                <div style={{ fontSize: "0.52rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginTop: "0.15rem" }}>
+                                  {relativeTime ? relativeTime : formatDate(post.published, locale)}
+                                </div>
+                              </div>
+                              <p className="blog-card-excerpt">{excerpt}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
