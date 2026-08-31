@@ -296,11 +296,9 @@ function DynamicTimeGreeting() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", width: "100%", padding: "0.3rem 0 0.6rem 0" }}>
-      {/* ANIMATED GREETING TAG WITH ATOMIC PULSE */}
+      {/* GREETING TAG WITH PULSE */}
       <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-        <motion.div
-          animate={{ scale: [1, 1.45, 1], opacity: [0.6, 1, 0.6] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+        <div
           style={{
             width: "8px",
             height: "8px",
@@ -309,10 +307,7 @@ function DynamicTimeGreeting() {
             flexShrink: 0,
           }}
         />
-        <motion.span
-          initial={{ opacity: 0, x: -8 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
+        <span
           style={{
             fontSize: "0.95rem",
             fontWeight: 800,
@@ -323,7 +318,7 @@ function DynamicTimeGreeting() {
           }}
         >
           {greetingState.tag}
-        </motion.span>
+        </span>
         {greetingState.timeStr && (
           <span style={{ fontSize: "0.68rem", fontWeight: 600, color: "#888888", letterSpacing: "0.06em", fontFamily: "var(--font-sans)" }}>
             · {greetingState.timeStr} LOCAL TIME
@@ -331,11 +326,8 @@ function DynamicTimeGreeting() {
         )}
       </div>
 
-      {/* LARGE ANIMATED FULL EDITORIAL STATEMENT */}
-      <motion.h2
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.1 }}
+      {/* FULL EDITORIAL STATEMENT */}
+      <h2
         style={{
           fontSize: "clamp(1.25rem, 1.95vw, 1.7rem)",
           fontWeight: 400,
@@ -348,7 +340,7 @@ function DynamicTimeGreeting() {
         }}
       >
         I&apos;m Ivan Affriandi—a <span style={{ fontFamily: "var(--font-serif, Georgia, serif)", fontStyle: "italic", color: "#333333", fontWeight: 500 }}>Full-Stack Web Engineer</span> &amp; <span style={{ fontFamily: "var(--font-serif, Georgia, serif)", fontStyle: "italic", color: "#333333", fontWeight: 500 }}>UI/UX Designer</span> based in Jakarta. I craft high-performance web applications, minimal design systems, 3D architectural renders, and tactile physical desk objects.
-      </motion.h2>
+      </h2>
     </div>
   );
 }
@@ -2485,6 +2477,55 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           padding: 0;
           margin: 0;
           box-sizing: border-box;
+        }
+
+        /* ── ZERO-FLICKER SPOTLIGHT OVERLAY ── */
+        .spotlight-search-overlay {
+          position: fixed;
+          inset: 0;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 99999;
+          background: rgba(0, 0, 0, 0.78);
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          padding-top: calc(env(safe-area-inset-top, 0px) + 14px);
+          box-sizing: border-box;
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+          transition: opacity 0.15s ease, visibility 0.15s ease;
+        }
+
+        .spotlight-search-overlay.is-open {
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
+        }
+
+        .spotlight-search-card {
+          width: calc(100% - 1.5rem);
+          max-width: 460px;
+          max-height: min(80vh, 520px);
+          display: flex;
+          flex-direction: column;
+          background: #18181b;
+          color: #FFFFFF;
+          padding: 0.65rem 0.75rem 0.45rem;
+          border-radius: 18px;
+          border: 1px solid rgba(255, 255, 255, 0.16);
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0,0,0,0.5);
+          box-sizing: border-box;
+          overflow: hidden;
+          transform: translateY(-6px);
+          transition: transform 0.15s ease;
+        }
+
+        .spotlight-search-overlay.is-open .spotlight-search-card {
+          transform: translateY(0);
         }
 
         .modal-inner {
@@ -5230,298 +5271,255 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           document.body
         )}
 
-      {/* ── UNIFIED ZERO-GLITCH SPOTLIGHT SEARCH PORTAL ── */}
-      {mounted &&
-        createPortal(
-          <AnimatePresence>
-            {mobileSearchOpen && (
-              <motion.div
-                key="spotlight-search-backdrop"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.15, ease: "easeOut" }}
+      {/* ── PERMANENT ZERO-FLICKER SPOTLIGHT SEARCH OVERLAY (100% GLITCH-FREE) ── */}
+      <div
+        className={`spotlight-search-overlay${mobileSearchOpen ? " is-open" : ""}`}
+        onClick={() => {
+          setMobileSearchOpen(false);
+          setSearchQuery("");
+        }}
+      >
+        {/* Sliding iOS Spotlight Card */}
+        <div
+          className="spotlight-search-card"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Top Search Input Row */}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
+            <div
+              style={{
+                flex: 1,
+                height: "36px",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.55rem",
+                background: "rgba(255, 255, 255, 0.1)",
+                border: "0.5px solid rgba(255, 255, 255, 0.14)",
+                borderRadius: "10px",
+                padding: "0 0.75rem",
+                boxSizing: "border-box",
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" style={{ color: "rgba(255,255,255,0.6)", flexShrink: 0 }}>
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search chapters..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
-                  position: "fixed",
-                  inset: 0,
-                  zIndex: 99999,
-                  background: "rgba(0, 0, 0, 0.72)",
-                  display: "flex",
-                  alignItems: "flex-start",
-                  justifyContent: "center",
-                  paddingTop: "calc(env(safe-area-inset-top, 0px) + 14px)",
-                  boxSizing: "border-box",
-                  WebkitTapHighlightColor: "transparent",
+                  background: "transparent",
+                  border: "none",
+                  outline: "none",
+                  color: "#FFFFFF",
+                  fontSize: "0.84rem",
+                  fontWeight: 400,
+                  width: "100%",
                 }}
-                onClick={() => {
-                  setMobileSearchOpen(false);
-                  setSearchQuery("");
-                }}
-              >
-                {/* Sliding iOS Spotlight Card */}
-                <motion.div
-                  key="spotlight-search-panel"
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.15, ease: "easeOut" }}
-                  onClick={(e) => e.stopPropagation()}
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  aria-label="Clear query"
                   style={{
-                    width: "calc(100% - 1.5rem)",
-                    maxWidth: "460px",
-                    maxHeight: "min(80vh, 520px)",
+                    background: "rgba(255,255,255,0.22)",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "16px",
+                    height: "16px",
                     display: "flex",
-                    flexDirection: "column",
-                    background: "#18181b",
+                    alignItems: "center",
+                    justifyContent: "center",
                     color: "#FFFFFF",
-                    padding: "0.65rem 0.75rem 0.45rem",
-                    borderRadius: "18px",
-                    border: "1px solid rgba(255, 255, 255, 0.16)",
-                    boxShadow: "0 24px 60px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0,0,0,0.5)",
-                    boxSizing: "border-box",
-                    overflow: "hidden",
+                    cursor: "pointer",
+                    fontSize: "0.6rem",
+                    flexShrink: 0,
+                    padding: 0,
                   }}
                 >
-                  {/* Top Search Input Row */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
-                    <div
-                      style={{
-                        flex: 1,
-                        height: "36px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.55rem",
-                        background: "rgba(255, 255, 255, 0.1)",
-                        border: "0.5px solid rgba(255, 255, 255, 0.14)",
-                        borderRadius: "10px",
-                        padding: "0 0.75rem",
-                        boxSizing: "border-box",
-                      }}
-                    >
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" style={{ color: "rgba(255,255,255,0.6)", flexShrink: 0 }}>
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                      </svg>
-                      <input
-                        ref={searchInputRef}
-                        type="text"
-                        placeholder="Search chapters..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        style={{
-                          background: "transparent",
-                          border: "none",
-                          outline: "none",
-                          color: "#FFFFFF",
-                          fontSize: "0.84rem",
-                          fontWeight: 400,
-                          width: "100%",
-                        }}
-                      />
-                      {searchQuery && (
-                        <button
-                          type="button"
-                          onClick={() => setSearchQuery("")}
-                          aria-label="Clear query"
-                          style={{
-                            background: "rgba(255,255,255,0.22)",
-                            border: "none",
-                            borderRadius: "50%",
-                            width: "16px",
-                            height: "16px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            color: "#FFFFFF",
-                            cursor: "pointer",
-                            fontSize: "0.6rem",
-                            flexShrink: 0,
-                            padding: 0,
-                          }}
-                        >
-                          ✕
-                        </button>
-                      )}
-                    </div>
+                  ✕
+                </button>
+              )}
+            </div>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setMobileSearchOpen(false);
-                        setSearchQuery("");
-                      }}
-                      style={{
-                        height: "36px",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        background: "transparent",
-                        border: "none",
-                        color: "rgba(255, 255, 255, 0.85)",
-                        fontSize: "0.82rem",
-                        fontWeight: 400,
-                        padding: "0 0.35rem",
-                        cursor: "pointer",
-                        whiteSpace: "nowrap",
-                        boxSizing: "border-box",
-                      }}
-                    >
-                      Cancel
-                    </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileSearchOpen(false);
+                setSearchQuery("");
+              }}
+              style={{
+                height: "36px",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "transparent",
+                border: "none",
+                color: "rgba(255, 255, 255, 0.85)",
+                fontSize: "0.82rem",
+                fontWeight: 400,
+                padding: "0 0.35rem",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                boxSizing: "border-box",
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+
+          {/* Hairline Divider */}
+          <div style={{ height: "1px", background: "rgba(255, 255, 255, 0.08)", margin: "0.55rem 0 0.35rem" }} />
+
+          {/* Section Label */}
+          <div style={{ padding: "0.15rem 0.4rem 0.35rem" }}>
+            <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)" }}>
+              {searchQuery.trim()
+                ? `MATCHING (${filteredPosts.length + ("prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim()) ? 1 : 0)})`
+                : `ALL STORIES (${sortedPosts.length + 1})`}
+            </span>
+          </div>
+
+          {/* Results List */}
+          <div
+            className="mobile-search-scroll-container"
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              display: "flex",
+              flexDirection: "column",
+              padding: "0 0.1rem",
+              maxHeight: "360px",
+            }}
+          >
+            {/* Matching Chapters */}
+            {filteredPosts.map((post) => {
+              const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
+              const chapterLabel = getPostChapterLabel(post, sortedPosts);
+              const postCover = extractCoverImage(post.content) || fallbackCovers[(postIdx + 1) % fallbackCovers.length];
+              const readTime = getReadingTime(post.content || "");
+
+              return (
+                <div
+                  key={post.id}
+                  onClick={() => {
+                    setIsReadingPrologue(false);
+                    setSelectedPostIndex(postIdx);
+                    setMobileSearchOpen(false);
+                    setSearchQuery("");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.65rem",
+                    padding: "0.45rem 0.5rem",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    transition: "background 0.12s ease",
+                    borderBottom: "0.5px solid rgba(255,255,255,0.06)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "transparent";
+                  }}
+                >
+                  <div style={{ width: "34px", height: "34px", borderRadius: "6px", overflow: "hidden", flexShrink: 0, background: "#16171a" }}>
+                    <img
+                      src={postCover}
+                      alt={post.title}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
                   </div>
-
-                  {/* Hairline Divider */}
-                  <div style={{ height: "1px", background: "rgba(255, 255, 255, 0.08)", margin: "0.55rem 0 0.35rem" }} />
-
-                  {/* Section Label */}
-                  <div style={{ padding: "0.15rem 0.4rem 0.35rem" }}>
-                    <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)" }}>
-                      {searchQuery.trim()
-                        ? `MATCHING (${filteredPosts.length + ("prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim()) ? 1 : 0)})`
-                        : `ALL STORIES (${sortedPosts.length + 1})`}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.1rem", flex: 1, minWidth: 0 }}>
+                    <h4 style={{ fontSize: "0.78rem", fontWeight: 500, lineHeight: 1.25, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                      {post.title}
+                    </h4>
+                    <span style={{ fontSize: "0.62rem", color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap" }}>
+                      {chapterLabel} · {formatDate(post.published, locale)} · {readTime}m
                     </span>
                   </div>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </div>
+              );
+            })}
 
-                  {/* Results List */}
-                  <div
-                    className="mobile-search-scroll-container"
-                    style={{
-                      flex: 1,
-                      overflowY: "auto",
-                      display: "flex",
-                      flexDirection: "column",
-                      padding: "0 0.1rem",
-                      maxHeight: "360px",
-                    }}
-                  >
-                    {/* Matching Chapters */}
-                    {filteredPosts.map((post) => {
-                      const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
-                      const chapterLabel = getPostChapterLabel(post, sortedPosts);
-                      const postCover = extractCoverImage(post.content) || fallbackCovers[(postIdx + 1) % fallbackCovers.length];
-                      const readTime = getReadingTime(post.content || "");
-
-                      return (
-                        <div
-                          key={post.id}
-                          onClick={() => {
-                            setIsReadingPrologue(false);
-                            setSelectedPostIndex(postIdx);
-                            setMobileSearchOpen(false);
-                            setSearchQuery("");
-                            window.scrollTo({ top: 0, behavior: "smooth" });
-                          }}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "0.65rem",
-                            padding: "0.45rem 0.5rem",
-                            borderRadius: "8px",
-                            cursor: "pointer",
-                            transition: "background 0.12s ease",
-                            borderBottom: "0.5px solid rgba(255,255,255,0.06)",
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = "rgba(255,255,255,0.08)";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = "transparent";
-                          }}
-                        >
-                          <div style={{ width: "34px", height: "34px", borderRadius: "6px", overflow: "hidden", flexShrink: 0, background: "#16171a" }}>
-                            <img
-                              src={postCover}
-                              alt={post.title}
-                              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                            />
-                          </div>
-                          <div style={{ display: "flex", flexDirection: "column", gap: "0.1rem", flex: 1, minWidth: 0 }}>
-                            <h4 style={{ fontSize: "0.78rem", fontWeight: 500, lineHeight: 1.25, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                              {post.title}
-                            </h4>
-                            <span style={{ fontSize: "0.62rem", color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap" }}>
-                              {chapterLabel} · {formatDate(post.published, locale)} · {readTime}m
-                            </span>
-                          </div>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>
-                            <polyline points="9 18 15 12 9 6" />
-                          </svg>
-                        </div>
-                      );
-                    })}
-
-                    {/* PROLOGUE ENTRY */}
-                    {(!searchQuery.trim() || "prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim())) && (
-                      <div
-                        onClick={() => {
-                          setIsReadingPrologue(true);
-                          setSelectedPostIndex(null);
-                          setMobileSearchOpen(false);
-                          setSearchQuery("");
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        }}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "0.65rem",
-                          padding: "0.45rem 0.5rem",
-                          borderRadius: "8px",
-                          cursor: "pointer",
-                          transition: "background 0.12s ease",
-                          borderBottom: "0.5px solid rgba(255,255,255,0.06)",
-                          background: isReadingPrologue ? "rgba(255,255,255,0.08)" : "transparent",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = "rgba(255,255,255,0.08)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = isReadingPrologue ? "rgba(255,255,255,0.08)" : "transparent";
-                        }}
-                      >
-                        <div style={{ width: "34px", height: "34px", borderRadius: "6px", overflow: "hidden", flexShrink: 0, background: "#16171a" }}>
-                          <img
-                            src="/nature_hero.png"
-                            alt="Prologue"
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                          />
-                        </div>
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.1rem", flex: 1, minWidth: 0 }}>
-                          <h4 style={{ fontSize: "0.78rem", fontWeight: 500, lineHeight: 1.25, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                            A Quiet Corner on the Internet
-                          </h4>
-                          <span style={{ fontSize: "0.62rem", color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap" }}>
-                            Prologue · Intro Narrative · 2m
-                          </span>
-                        </div>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>
-                          <polyline points="9 18 15 12 9 6" />
-                        </svg>
-                      </div>
-                    )}
-
-                    {/* EMPTY STATE */}
-                    {filteredPosts.length === 0 && !("prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim())) && (
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          padding: "1.5rem 1rem",
-                          textAlign: "center",
-                        }}
-                      >
-                        <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.45)", margin: 0 }}>
-                          No results for “{searchQuery}”
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              </motion.div>
+            {/* PROLOGUE ENTRY */}
+            {(!searchQuery.trim() || "prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim())) && (
+              <div
+                onClick={() => {
+                  setIsReadingPrologue(true);
+                  setSelectedPostIndex(null);
+                  setMobileSearchOpen(false);
+                  setSearchQuery("");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.65rem",
+                  padding: "0.45rem 0.5rem",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  transition: "background 0.12s ease",
+                  borderBottom: "0.5px solid rgba(255,255,255,0.06)",
+                  background: isReadingPrologue ? "rgba(255,255,255,0.08)" : "transparent",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = isReadingPrologue ? "rgba(255,255,255,0.08)" : "transparent";
+                }}
+              >
+                <div style={{ width: "34px", height: "34px", borderRadius: "6px", overflow: "hidden", flexShrink: 0, background: "#16171a" }}>
+                  <img
+                    src="/nature_hero.png"
+                    alt="Prologue"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.1rem", flex: 1, minWidth: 0 }}>
+                  <h4 style={{ fontSize: "0.78rem", fontWeight: 500, lineHeight: 1.25, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                    A Quiet Corner on the Internet
+                  </h4>
+                  <span style={{ fontSize: "0.62rem", color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap" }}>
+                    Prologue · Intro Narrative · 2m
+                  </span>
+                </div>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </div>
             )}
-          </AnimatePresence>,
-          document.body
-        )}
+
+            {/* EMPTY STATE */}
+            {filteredPosts.length === 0 && !("prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim())) && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "1.5rem 1rem",
+                  textAlign: "center",
+                }}
+              >
+                <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.45)", margin: 0 }}>
+                  No results for “{searchQuery}”
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       {/* TOAST FOR Q&A SUBMISSION */}
       <AnimatePresence>

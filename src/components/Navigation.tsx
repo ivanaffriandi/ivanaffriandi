@@ -141,11 +141,13 @@ export default function Navigation() {
     }
   }, []);
 
-  // Hide navigation on homepage, /work, /ask, and admin pages (/x, /admin, /hq-panel)
+  // Hide navigation on homepage, /work, /ask, /blog, blog.ivanaffriandi.com, and admin pages
   if (
     pathname === "/" ||
     pathname?.startsWith("/work") ||
     pathname?.startsWith("/ask") ||
+    pathname?.startsWith("/blog") ||
+    isBlogDomain ||
     pathname?.startsWith("/x") ||
     pathname?.startsWith("/admin") ||
     pathname?.startsWith("/hq-panel") ||
