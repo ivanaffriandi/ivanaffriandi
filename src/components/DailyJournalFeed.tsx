@@ -456,13 +456,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    if (mobileSearchOpen) {
-      const timer = setTimeout(() => {
-        if (searchInputRef.current) {
-          searchInputRef.current.focus({ preventScroll: true });
-        }
-      }, 50);
-      return () => clearTimeout(timer);
+    if (mobileSearchOpen && searchInputRef.current) {
+      searchInputRef.current.focus({ preventScroll: true });
     }
   }, [mobileSearchOpen]);
 
@@ -2483,8 +2478,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           right: 0;
           bottom: 0;
           z-index: 10000;
-          background: rgba(0, 0, 0, 0.65);
-          backdrop-filter: blur(14px);
+          background: rgba(0, 0, 0, 0.82);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -4546,14 +4540,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.18 }}
                     onClick={() => setIsQAModalOpen(false)}
                     style={{
                       position: "fixed",
                       inset: 0,
-                      backgroundColor: "rgba(0, 0, 0, 0.82)",
-                      backdropFilter: "blur(18px)",
-                      WebkitBackdropFilter: "blur(18px)",
+                      backgroundColor: "rgba(0, 0, 0, 0.85)",
                       zIndex: 99998,
                     }}
                   />
@@ -5239,7 +5231,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         )}
 
       {/* ── UNIFIED ZERO-GLITCH SPOTLIGHT SEARCH PORTAL ── */}
-      {typeof document !== "undefined" &&
+      {mounted &&
         createPortal(
           <AnimatePresence>
             {mobileSearchOpen && (
@@ -5248,21 +5240,18 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.18, ease: "easeOut" }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
                 style={{
                   position: "fixed",
                   inset: 0,
                   zIndex: 99999,
-                  background: "rgba(0, 0, 0, 0.55)",
-                  backdropFilter: "blur(16px)",
-                  WebkitBackdropFilter: "blur(16px)",
+                  background: "rgba(0, 0, 0, 0.72)",
                   display: "flex",
                   alignItems: "flex-start",
                   justifyContent: "center",
                   paddingTop: "calc(env(safe-area-inset-top, 0px) + 14px)",
                   boxSizing: "border-box",
                   WebkitTapHighlightColor: "transparent",
-                  transform: "translateZ(0)",
                 }}
                 onClick={() => {
                   setMobileSearchOpen(false);
@@ -5272,15 +5261,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 {/* Sliding iOS Spotlight Card */}
                 <motion.div
                   key="spotlight-search-panel"
-                  initial={{ opacity: 0, y: -16, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -14, scale: 0.98 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 440,
-                    damping: 34,
-                    mass: 0.7,
-                  }}
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.15, ease: "easeOut" }}
                   onClick={(e) => e.stopPropagation()}
                   style={{
                     width: "calc(100% - 1.5rem)",
@@ -5296,8 +5280,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     boxShadow: "0 24px 60px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0,0,0,0.5)",
                     boxSizing: "border-box",
                     overflow: "hidden",
-                    willChange: "transform, opacity",
-                    transform: "translateZ(0)",
                   }}
                 >
                   {/* Top Search Input Row */}
