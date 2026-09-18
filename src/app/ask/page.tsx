@@ -892,13 +892,19 @@ export default function AskPage() {
       <AnimatePresence>
         {isDrawerOpen && (
           <React.Fragment key="ask-drawer-wrapper">
-            {/* 1. Transparent Outside Tap Catcher */}
-            <div
-              key="ask-backdrop-invisible"
+            {/* 1. Dimmed Shadow Backdrop */}
+            <motion.div
+              key="ask-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
               style={{
                 position: "fixed",
                 inset: 0,
-                backgroundColor: "transparent",
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                backdropFilter: "blur(6px)",
+                WebkitBackdropFilter: "blur(6px)",
                 zIndex: 9998,
                 touchAction: "none",
               }}
@@ -958,7 +964,7 @@ export default function AskPage() {
                     type="text"
                     value={senderName}
                     onChange={(e) => setSenderName(e.target.value)}
-                    placeholder="Name or @handle (optional)"
+                    placeholder="Name"
                     className="ask-drawer-input"
                   />
 
@@ -967,7 +973,7 @@ export default function AskPage() {
                     <textarea
                       value={qaContent}
                       onChange={(e) => setQaContent(e.target.value)}
-                      placeholder="Write your question..."
+                      placeholder="Message"
                       maxLength={300}
                       rows={3}
                       disabled={isSubmitting}
