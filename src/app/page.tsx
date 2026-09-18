@@ -67,15 +67,28 @@ const CREATIVE_STUDIOS = [
   },
 ];
 
+const FALLBACK_JOURNAL_COVERS = [
+  "/nature_hero.png",
+  "/images/moments/539303572_18073420046098563_1129254407547625674_n..webp",
+  "/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg",
+  "/images/moments/598943412_18085107533098563_2022381096122126117_n..webp",
+  "/images/moments/489831318_18060819218098563_9042912996466521959_n..jpg",
+  "/images/moments/515043142_18068610035098563_4316722369364790783_n..jpg",
+  "/images/moments/608079301_18086400239098563_3466106499873906770_n..webp",
+];
+
 function extractCoverImage(html: string): string | null {
   if (!html) return null;
-  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+  const cleanHtml = html.replace(/<img[^>]*medium\.com\/_\/stat[^>]*>/gi, "");
+  const match = cleanHtml.match(/<img[^>]+src=["']([^"']+)["']/i);
   if (!match) return null;
   let url = match[1];
+  if (url.includes("medium.com/_/stat") || url.includes("tracking")) return null;
   url = url.replace(/\/s\d+(-c)?\//, "/s1600/").replace(/\/w\d+-h\d+(-c)?\//, "/s1600/");
   url = url.replace(/\/resize:fit:\d+\//, "/resize:fit:1600/");
   return url;
 }
+
 
 // Ultra-dense matrix dataset for 34 continuous running rows
 const MATRIX_ROWS = [
@@ -437,11 +450,12 @@ export default function AvantGardeHomepage() {
                 initial={{ opacity: 0, y: 14, scale: 0.97 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 14, scale: 0.97 }}
-                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
                 className={styles.compactBlogsContainer}
               >
                 {displayPosts.slice(0, 3).map((post, idx) => {
-                  const cover = extractCoverImage(post.content) || (idx === 0 ? "/nature_hero.png" : idx === 1 ? "/leather_banner.png" : "/tea_banner.png");
+                  const extracted = extractCoverImage(post.content);
+                  const cover = extracted || FALLBACK_JOURNAL_COVERS[idx % FALLBACK_JOURNAL_COVERS.length];
                   const dateStr = post.published ? new Date(post.published).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Recent";
                   const cleanTitle = post.title.replace(/^Chapter\s*\d+\s*:\s*/i, "").trim();
                   
@@ -453,7 +467,14 @@ export default function AvantGardeHomepage() {
                       title={cleanTitle}
                     >
                       <div className={styles.compactBlogThumbWrap}>
-                        <img src={cover} alt={cleanTitle} className={styles.compactBlogThumbImg} />
+                        <img
+                          src={cover}
+                          alt={cleanTitle}
+                          className={styles.compactBlogThumbImg}
+                          onError={(e) => {
+                            (e.currentTarget as HTMLImageElement).src = FALLBACK_JOURNAL_COVERS[(idx + 1) % FALLBACK_JOURNAL_COVERS.length];
+                          }}
+                        />
                       </div>
                       <div className={styles.compactBlogInfo}>
                         <h4 className={styles.compactBlogTitle}>{cleanTitle}</h4>
@@ -476,7 +497,7 @@ export default function AvantGardeHomepage() {
                 initial={{ opacity: 0, y: 10, scale: 0.97 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.97 }}
-                transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                 className={styles.horizontalStudiosContainer}
               >
                 {CREATIVE_STUDIOS.map((studio, idx) => (
@@ -560,7 +581,7 @@ export default function AvantGardeHomepage() {
             initial={{ y: '-100%' }}
             animate={{ y: '0%' }}
             exit={{ y: '-100%' }}
-            transition={{ duration: 0.36, ease: [0.32, 0.72, 0, 1] }}
+            transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
             className={styles.fullScreenMenuOverlay}
           >
             {/* Header: Close Button on Top-Right (No brand name) */}

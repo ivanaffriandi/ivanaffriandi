@@ -140,7 +140,7 @@
   margin: 0;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .circularMenuIslandBtn:hover {
@@ -408,7 +408,7 @@
   box-shadow: var(--h-journal-pill-shadow);
   text-decoration: none;
   color: var(--h-text);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
 }
 
@@ -528,7 +528,7 @@
   font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
 }
 
@@ -598,7 +598,7 @@
   background: var(--h-pill-bg);
   border: 1.5px solid var(--h-border);
   text-decoration: none;
-  transition: all 0.15s ease;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .socialCircleBtn:hover {
@@ -622,7 +622,7 @@
   text-decoration: none;
   font-size: 0.76rem;
   font-weight: 800;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .sendEmailCtaBtn:hover {

@@ -66,7 +66,7 @@ function TwoCardStackedQA({
           }}
           transition={{
             type: "spring",
-            stiffness: 280,
+            stiffness: 240,
             damping: 26,
             mass: 0.8,
           }}
@@ -520,7 +520,7 @@ export default function AskPage() {
           text-decoration: none !important;
           line-height: 1 !important;
           cursor: pointer !important;
-          transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
+          transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
 
         .ask-home-btn:active {
@@ -544,14 +544,14 @@ export default function AskPage() {
           padding: 0 0.95rem !important;
           border-radius: 9999px !important;
           cursor: pointer !important;
-          transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1) !important;
+          transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
 
         .ask-top-action-btn:active {
           transform: scale(0.95) !important;
         }
 
-        /* ── CENTER SOCIAL ICONS (INSTAGRAM & X) ── */
+        /* ── CENTER SOCIAL ICONS (INSTAGRAM, MEDIUM & X) ── */
         .ask-center-social-wrap {
           width: 100%;
           display: flex;
@@ -573,12 +573,12 @@ export default function AskPage() {
           border: 1px solid var(--ask-border);
           color: var(--ask-text);
           text-decoration: none;
-          transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
+          transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .ask-social-link:hover {
           background: var(--ask-border);
-          transform: translateY(-2px);
+          transform: translateY(-2px) scale(1.05);
         }
 
         .ask-social-link:active {
@@ -813,7 +813,7 @@ export default function AskPage() {
         </button>
       </div>
 
-      {/* ── CENTER SOCIAL ICONS: INSTAGRAM & X ── */}
+      {/* ── CENTER SOCIAL ICONS: INSTAGRAM, MEDIUM & X ── */}
       <div className="ask-center-social-wrap" onClick={(e) => e.stopPropagation()}>
         {/* INSTAGRAM */}
         <a
@@ -828,6 +828,20 @@ export default function AskPage() {
             <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+          </svg>
+        </a>
+
+        {/* MEDIUM */}
+        <a
+          href="https://medium.com/@ivanaffriandi"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ask-social-link"
+          title="Medium @ivanaffriandi"
+          aria-label="Medium"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M13.54 12a6.8 6.8 0 0 1-6.77 6.82A6.8 6.8 0 0 1 0 12a6.8 6.8 0 0 1 6.77-6.82A6.8 6.8 0 0 1 13.54 12zm7.42 0c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z" />
           </svg>
         </a>
 
@@ -913,9 +927,9 @@ export default function AskPage() {
                 exit={{ y: "115%" }}
                 transition={{
                   type: "spring",
-                  stiffness: 340,
-                  damping: 32,
-                  mass: 0.75,
+                  stiffness: 280,
+                  damping: 28,
+                  mass: 0.8,
                 }}
                 style={{
                   pointerEvents: "auto",
