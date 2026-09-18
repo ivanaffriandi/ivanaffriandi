@@ -1925,6 +1925,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           padding: 0 !important;
         }
 
+        .novel-article-reader p:last-child {
+          margin-bottom: 0.35rem !important;
+        }
+
         .novel-article-reader span,
         .novel-article-reader b,
         .novel-article-reader strong,
@@ -2606,8 +2610,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           letter-spacing: 0.12em;
           text-transform: uppercase;
           color: var(--text-muted, #888888);
-          padding: 1.5rem 1rem calc(env(safe-area-inset-bottom, 20px) + 1.2rem) 1rem;
-          margin-top: 1rem;
+          padding: 0.35rem 1rem 0.5rem 1rem;
+          margin-top: -0.5rem;
           box-sizing: border-box;
         }
         .mobile-blog-header {
@@ -2759,8 +2763,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             letter-spacing: 0.12em;
             text-transform: uppercase;
             color: var(--text-muted, #888888);
-            padding: 0.45rem 1rem calc(env(safe-area-inset-bottom, 20px) + 1.2rem) 1rem !important;
-            margin-top: 0.25rem !important;
+            padding: 0.25rem 1rem 0.5rem 1rem !important;
+            margin-top: -0.5rem !important;
             box-sizing: border-box !important;
           }
           /* ── MOBILE TRANSPARENT TOP HEADER (STICKY FLOATING NAVBAR) ── */
@@ -3857,7 +3861,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     gap: "1.4rem",
                     width: "100%",
                     maxWidth: "760px",
-                    paddingBottom: "5rem",
+                    paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.25rem)",
                     paddingTop: "0.25rem",
                   }}
                 >
@@ -4060,7 +4064,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     gap: "1.4rem",
                     width: "100%",
                     maxWidth: "760px",
-                    paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 6rem)",
+                    paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1.25rem)",
                     paddingTop: "0.25rem",
                   }}
                 >
