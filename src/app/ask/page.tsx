@@ -36,11 +36,44 @@ function TwoCardStackedQA({
     ? "Some of my favorite foundational reads include 'The Design of Everyday Things' by Don Norman, 'Meditations' by Marcus Aurelius, and works on architecture & minimalism."
     : "Thank you for asking! I approach every project with focus on clean aesthetics, tactile interaction details, high performance, and intuitive design.";
 
+  const isDraggingRef = React.useRef(false);
+  const touchStartRef = React.useRef({ x: 0, y: 0 });
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    isDraggingRef.current = false;
+    touchStartRef.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+    };
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const dx = Math.abs(e.touches[0].clientX - touchStartRef.current.x);
+    const dy = Math.abs(e.touches[0].clientY - touchStartRef.current.y);
+    if (dx > 7 || dy > 7) {
+      isDraggingRef.current = true;
+    }
+  };
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isDraggingRef.current) return;
+    if (!isActive) {
+      onOpen();
+    } else {
+      // Tap when opened returns back to closed state
+      onClose();
+    }
+  };
+
   return (
     <div
       className="qa-card-wrapper"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
       onClick={(e) => {
         e.stopPropagation();
+        if (isDraggingRef.current) return;
         if (!isActive) {
           onOpen();
         }
@@ -71,15 +104,7 @@ function TwoCardStackedQA({
             mass: 0.8,
           }}
           className={`qa-question-card ${isActive ? "qa-card-inverted" : "qa-card-normal"}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (!isActive) {
-              onOpen();
-            } else {
-              // Tap when opened returns back to closed state
-              onClose();
-            }
-          }}
+          onClick={handleCardClick}
           style={{
             position: "absolute",
             top: 0,
@@ -99,7 +124,7 @@ function TwoCardStackedQA({
           }}
         >
           {/* TOP ROW: SENDER & DATE */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexShrink: 0 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexShrink: 0, pointerEvents: "none" }}>
             <span
               style={{
                 fontSize: isActive ? "0.82rem" : "0.88rem",
@@ -134,9 +159,9 @@ function TwoCardStackedQA({
               flexDirection: "column",
               gap: isActive ? "0.15rem" : "0.3rem",
               flex: 1,
-              overflowY: isActive ? "hidden" : "auto",
-              overscrollBehavior: "contain",
-              WebkitOverflowScrolling: "touch",
+              overflow: "hidden",
+              touchAction: "pan-x",
+              pointerEvents: "none",
               justifyContent: isActive ? "center" : "flex-start",
               margin: isActive ? "0.1rem 0" : "0.4rem 0 0.3rem",
               minHeight: 0,
@@ -593,6 +618,7 @@ export default function AskPage() {
           align-items: center;
           box-sizing: border-box;
           z-index: 10;
+          touch-action: pan-x;
         }
 
         .qa-carousel-track {
@@ -601,11 +627,14 @@ export default function AskPage() {
           align-items: flex-end;
           gap: 1.15rem;
           overflow-x: auto;
+          overflow-y: hidden;
           scroll-snap-type: x mandatory;
-          scroll-behavior: smooth;
           padding: 0.4rem calc((100vw - min(88vw, 360px)) / 2);
           box-sizing: border-box;
           -webkit-overflow-scrolling: touch;
+          touch-action: pan-x;
+          overscroll-behavior-x: contain;
+          overscroll-behavior-y: auto;
         }
 
         .qa-card-wrapper {
@@ -614,6 +643,9 @@ export default function AskPage() {
           position: relative;
           flex-shrink: 0;
           scroll-snap-align: center;
+          touch-action: pan-x;
+          -webkit-user-select: none;
+          user-select: none;
         }
 
         /* ── CARD STATES ── */
