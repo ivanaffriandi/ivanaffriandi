@@ -888,50 +888,56 @@ export default function AskPage() {
         )}
       </div>
 
-      {/* ── SOLID HARDWARE-ACCELERATED ZERO-FLICKER DRAWER MODAL ── */}
-      <AnimatePresence>
-        {isDrawerOpen && (
-          <motion.div
-            key="ask-drawer-modal-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              position: "fixed",
-              inset: 0,
-              zIndex: 9999,
-              backgroundColor: "rgba(0, 0, 0, 0.55)",
-              display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "center",
-              padding: "0 1rem calc(env(safe-area-inset-bottom, 0px) + 1.25rem)",
-              boxSizing: "border-box",
-              touchAction: "none",
-              transform: "translateZ(0)",
-              WebkitBackfaceVisibility: "hidden",
-              backfaceVisibility: "hidden",
-            }}
-            onClick={() => setIsDrawerOpen(false)}
-          >
+      {/* ── PERMANENT ZERO-FLICKER SHADOW BACKDROP (ALWAYS IN DOM, PURE GPU CSS OPACITY) ── */}
+      <div
+        className="ask-backdrop-scrim"
+        style={{
+          position: "fixed",
+          inset: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.55)",
+          zIndex: 9998,
+          pointerEvents: isDrawerOpen ? "auto" : "none",
+          opacity: isDrawerOpen ? 1 : 0,
+          transition: "opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1)",
+          willChange: "opacity",
+          touchAction: "none",
+        }}
+        onClick={() => setIsDrawerOpen(false)}
+      />
+
+      {/* ── HARDWARE-ACCELERATED SLIDING DRAWER CONTAINER ── */}
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 9999,
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "center",
+          pointerEvents: "none",
+          padding: "0 1rem calc(env(safe-area-inset-bottom, 0px) + 1.25rem)",
+          boxSizing: "border-box",
+        }}
+      >
+        <AnimatePresence>
+          {isDrawerOpen && (
             <motion.div
+              key="ask-drawer-card-panel"
               className="ask-drawer-card"
               initial={{ y: "115%" }}
               animate={{ y: "0%" }}
               exit={{ y: "115%" }}
               transition={{
                 type: "spring",
-                stiffness: 280,
-                damping: 28,
+                stiffness: 300,
+                damping: 30,
                 mass: 0.8,
               }}
               style={{
+                pointerEvents: "auto",
                 width: "100%",
                 maxWidth: 440,
                 willChange: "transform",
-                transform: "translateZ(0)",
-                WebkitBackfaceVisibility: "hidden",
-                backfaceVisibility: "hidden",
               }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -982,9 +988,9 @@ export default function AskPage() {
                 </button>
               </form>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* ── SIMPLE TOP-CENTER TOAST NOTIFICATION: SENT ✦ ── */}
       <AnimatePresence>
