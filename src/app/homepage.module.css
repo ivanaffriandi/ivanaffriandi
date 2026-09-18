@@ -87,6 +87,10 @@
   left: 0 !important;
   right: 0 !important;
   padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
   pointer-events: auto;
 }
 
@@ -289,30 +293,28 @@
   transform: scale(1);
 }
 
-/* ── ZONE 2: CENTER HERO STAGE (TRUE DEAD-CENTER: 50%, 50%) ── */
+/* ── ZONE 2: CENTER HERO STAGE (TRUE DEAD-CENTER VIA FLEX CONTAINER) ── */
 .centerHeroStage {
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
+  position: relative !important;
   width: 100% !important;
   max-width: 360px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 12px !important;
+  gap: 14px !important;
   margin: 0 !important;
   padding: 0 16px !important;
   box-sizing: border-box !important;
   text-align: center !important;
   z-index: 20 !important;
+  will-change: transform;
 }
 
 .heroContrastScrim {
   position: absolute;
-  width: 300px;
-  height: 300px;
+  width: 320px;
+  height: 320px;
   background: var(--h-hero-scrim);
   border-radius: 50%;
   pointer-events: none;
@@ -329,6 +331,7 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   z-index: 2;
+  user-select: none;
 }
 
 .bigHeadTapImg {
@@ -336,14 +339,15 @@
   height: 100%;
   object-fit: contain;
   filter: var(--h-head-filter);
-  transition: filter 0.3s ease, transform 0.3s ease;
+  transition: filter 0.3s ease;
+  will-change: transform;
 }
 
 .typewriterTextWrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 52px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 58px;
   text-align: center;
   padding: 0 12px;
   cursor: pointer;
@@ -353,7 +357,26 @@
   z-index: 2;
 }
 
+.handwritingTextGhost {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
+  font-size: clamp(1.05rem, 3.6vw, 1.3rem);
+  font-weight: 850;
+  letter-spacing: -0.03em;
+  line-height: 1.3;
+  text-align: center;
+  word-break: normal;
+  overflow-wrap: break-word;
+  white-space: pre-line;
+  user-select: none;
+}
+
 .handwritingText {
+  grid-area: 1 / 1;
+  width: 100%;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", sans-serif;
   font-size: clamp(1.05rem, 3.6vw, 1.3rem);
   font-weight: 850;
@@ -408,12 +431,11 @@
   box-shadow: var(--h-journal-pill-shadow);
   text-decoration: none;
   color: var(--h-text);
-  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.24s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.24s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
 }
 
 .compactBlogItem:hover {
-  transform: translateY(-1.5px);
   background: var(--h-journal-pill-hover);
   border-color: var(--h-text);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
@@ -528,19 +550,14 @@
   font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.24s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.24s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
 }
 
 .horizontalStudioItem:hover {
-  transform: translateY(-1.5px);
   background: var(--h-journal-pill-hover);
   border-color: var(--h-text);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-}
-
-.horizontalStudioItem:active {
-  transform: scale(0.96);
 }
 
 .horizontalStudioChevron {
@@ -554,6 +571,26 @@
   color: var(--h-text);
 }
 
+/* Progress Dots Indicator */
+.progressDotsRow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 2px 8px;
+  z-index: 2;
+  user-select: none;
+}
+
+.progressDot {
+  height: 4px;
+  border-radius: 9999px;
+  background-color: var(--h-text);
+  display: inline-block;
+  will-change: width, opacity;
+}
+
 .tapHintText {
   font-size: 0.65rem;
   font-weight: 750;
@@ -562,6 +599,7 @@
   color: var(--h-text-muted);
   opacity: 0.6;
   z-index: 2;
+  user-select: none;
 }
 
 /* ── ZONE 3: BOTTOM ACTION BAR (BOTTOM: 14PX) ── */
@@ -634,7 +672,17 @@
   transform: scale(0.96);
 }
 
-/* ── WALL-TO-WALL RUNNING SKILLS MATRIX ── */
+/* ── WALL-TO-WALL RUNNING SKILLS MATRIX (100% GPU OFF-THREAD) ── */
+@keyframes marqueeScrollLeft {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes marqueeScrollRight {
+  0% { transform: translate3d(-50%, 0, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
 .marqueeWallBackground {
   position: absolute;
   inset: 0;
@@ -659,7 +707,7 @@
   line-height: 0.88;
 }
 
-.marqueeRowContent {
+.marqueeRowContentLeft {
   display: flex;
   white-space: nowrap;
   font-size: clamp(0.48rem, 1.15vw, 0.62rem);
@@ -669,4 +717,22 @@
   color: var(--h-marquee-color);
   user-select: none;
   line-height: 0.88;
+  width: max-content;
+  will-change: transform;
+  animation: marqueeScrollLeft var(--marquee-duration, 24s) linear infinite;
+}
+
+.marqueeRowContentRight {
+  display: flex;
+  white-space: nowrap;
+  font-size: clamp(0.48rem, 1.15vw, 0.62rem);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--h-marquee-color);
+  user-select: none;
+  line-height: 0.88;
+  width: max-content;
+  will-change: transform;
+  animation: marqueeScrollRight var(--marquee-duration, 24s) linear infinite;
 }

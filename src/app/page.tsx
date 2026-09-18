@@ -306,13 +306,13 @@ export default function AvantGardeHomepage() {
         playTypewriterClick(nextChar);
         charIndex++;
 
-        // Natural cadence: slightly pause on newline or punctuation
-        const delay = nextChar === '\n' ? 190 : (nextChar === '.' || nextChar === '!' || nextChar === ':') ? 95 : 44;
+        // Natural snappy cadence: slightly pause on newline or punctuation
+        const delay = nextChar === '\n' ? 140 : (nextChar === '.' || nextChar === '!' || nextChar === ':') ? 80 : 34;
         timer = setTimeout(typeNextChar, delay);
       }
     };
 
-    timer = setTimeout(typeNextChar, 100);
+    timer = setTimeout(typeNextChar, 60);
 
     return () => clearTimeout(timer);
   }, [currentFullText]);
@@ -322,14 +322,15 @@ export default function AvantGardeHomepage() {
     getAudioContext();
     headControls.start({
       rotate: [0, -10, 8, -4, 2, 0],
-      transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] },
+      scale: [1, 0.90, 1.06, 0.98, 1],
+      transition: { duration: 0.48, ease: [0.16, 1, 0.3, 1] },
     });
 
     try {
       confetti({
-        particleCount: 26,
-        spread: 55,
-        origin: { y: 0.5 },
+        particleCount: 20,
+        spread: 50,
+        origin: { y: 0.48 },
         colors: ['#111113', '#55555e', '#888894', '#e8e8e4', '#ff4500'],
         disableForReducedMotion: true,
       });
@@ -352,30 +353,23 @@ export default function AvantGardeHomepage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.35 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className={styles.marqueeWallBackground}
           >
             {MATRIX_ROWS.map((text, idx) => {
               const isEven = idx % 2 === 0;
-              const duration = 18 + (idx % 5) * 2.5;
+              const duration = 20 + (idx % 6) * 3;
               const repeatText = `${text} ${text} ${text} `;
 
               return (
                 <div key={idx} className={styles.marqueeRowWrap}>
-                  <motion.div
-                    className={styles.marqueeRowContent}
-                    animate={{
-                      x: isEven ? [0, -900] : [-900, 0],
-                    }}
-                    transition={{
-                      repeat: Infinity,
-                      ease: 'linear',
-                      duration,
-                    }}
+                  <div
+                    className={isEven ? styles.marqueeRowContentLeft : styles.marqueeRowContentRight}
+                    style={{ '--marquee-duration': `${duration}s` } as React.CSSProperties}
                   >
                     <span>{repeatText}</span>
                     <span>{repeatText}</span>
-                  </motion.div>
+                  </div>
                 </div>
               );
             })}
@@ -405,24 +399,35 @@ export default function AvantGardeHomepage() {
         </header>
 
         {/* ── ZONE 2: CENTER HERO STAGE (DEAD-CENTER: 50%, 50%) ── */}
-        <main className={styles.centerHeroStage}>
+        <motion.main
+          layout
+          transition={{
+            layout: {
+              type: "spring",
+              stiffness: 280,
+              damping: 28,
+              mass: 0.8,
+            },
+          }}
+          className={styles.centerHeroStage}
+        >
           {/* Radial Contrast Scrim only when running text is active */}
           {isMarqueeActive && <div className={styles.heroContrastScrim} />}
 
           {/* HEAD WRAPPER WITH SILKY SMOOTH PHYSICAL SPRING SCALING */}
           <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <motion.div
+              layout
               animate={{
-                scale: isCompactHero ? 0.72 : 1,
-                y: isCompactHero ? -6 : 0,
+                scale: isCompactHero ? 0.74 : 1,
+                y: isCompactHero ? -4 : 0,
               }}
               transition={{
-                type: "spring",
-                stiffness: 260,
-                damping: 22,
-                mass: 0.7,
+                layout: { type: "spring", stiffness: 280, damping: 28 },
+                scale: { type: "spring", stiffness: 300, damping: 24, mass: 0.7 },
+                y: { type: "spring", stiffness: 300, damping: 24, mass: 0.7 },
               }}
-              whileTap={{ scale: (isCompactHero ? 0.72 : 1) * 0.94 }}
+              whileTap={{ scale: (isCompactHero ? 0.74 : 1) * 0.92 }}
               onClick={handleHeadTap}
               className={styles.bigHeadTapWrap}
               title="Tap me!"
@@ -436,21 +441,40 @@ export default function AvantGardeHomepage() {
             </motion.div>
           </div>
 
-          <div className={styles.typewriterTextWrap} onClick={handleHeadTap}>
+          <motion.div layout className={styles.typewriterTextWrap} onClick={handleHeadTap}>
+            {/* Ghost invisible span to reserve the exact layout bounds and eliminate all typing jitter */}
+            <span className={styles.handwritingTextGhost} aria-hidden="true">
+              {currentFullText}
+            </span>
             <span className={styles.handwritingText}>
               {displayText}
               <span className={styles.typingCaret} />
             </span>
-          </div>
+          </motion.div>
 
           {/* COMPACT RECENT 3 BLOGS WIDGET (APPEARS ON PHRASE 1) */}
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {phraseIndex === 1 && (
               <motion.div
-                initial={{ opacity: 0, y: 14, scale: 0.97 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 14, scale: 0.97 }}
-                transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
+                key="blogs-container"
+                layout
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.06,
+                    },
+                  },
+                  exit: {
+                    opacity: 0,
+                    y: 8,
+                    transition: { duration: 0.18 },
+                  },
+                }}
                 className={styles.compactBlogsContainer}
               >
                 {displayPosts.slice(0, 3).map((post, idx) => {
@@ -460,8 +484,24 @@ export default function AvantGardeHomepage() {
                   const cleanTitle = post.title.replace(/^Chapter\s*\d+\s*:\s*/i, "").trim();
                   
                   return (
-                    <a
+                    <motion.a
                       key={post.id || idx}
+                      variants={{
+                        hidden: { opacity: 0, y: 12, scale: 0.95 },
+                        visible: {
+                          opacity: 1,
+                          y: 0,
+                          scale: 1,
+                          transition: {
+                            type: 'spring',
+                            stiffness: 350,
+                            damping: 26,
+                          },
+                        },
+                        exit: { opacity: 0, y: 6, scale: 0.98 },
+                      }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.97 }}
                       href="https://blog.ivanaffriandi.com"
                       className={styles.compactBlogItem}
                       title={cleanTitle}
@@ -483,7 +523,7 @@ export default function AvantGardeHomepage() {
                       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={styles.compactBlogChevron}>
                         <polyline points="9 18 15 12 9 6" />
                       </svg>
-                    </a>
+                    </motion.a>
                   );
                 })}
               </motion.div>
@@ -491,18 +531,49 @@ export default function AvantGardeHomepage() {
           </AnimatePresence>
 
           {/* HORIZONTAL SIMPLE CREATIVE STUDIOS & ACADEMY LINKS */}
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {phraseIndex === 2 && (
               <motion.div
-                initial={{ opacity: 0, y: 10, scale: 0.97 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 10, scale: 0.97 }}
-                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                key="studios-container"
+                layout
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.05,
+                    },
+                  },
+                  exit: {
+                    opacity: 0,
+                    y: 8,
+                    transition: { duration: 0.18 },
+                  },
+                }}
                 className={styles.horizontalStudiosContainer}
               >
                 {CREATIVE_STUDIOS.map((studio, idx) => (
-                  <a
+                  <motion.a
                     key={idx}
+                    variants={{
+                      hidden: { opacity: 0, y: 10, scale: 0.94 },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        transition: {
+                          type: 'spring',
+                          stiffness: 350,
+                          damping: 26,
+                        },
+                      },
+                      exit: { opacity: 0, y: 6, scale: 0.97 },
+                    }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.96 }}
                     href={studio.url}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -513,16 +584,31 @@ export default function AvantGardeHomepage() {
                     <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" className={styles.horizontalStudioChevron}>
                       <path d="M7 17L17 7M17 7H7M17 7V17" />
                     </svg>
-                  </a>
+                  </motion.a>
                 ))}
               </motion.div>
             )}
           </AnimatePresence>
 
+          {/* Progress Dots Indicator */}
+          <div className={styles.progressDotsRow} onClick={handleHeadTap}>
+            {FUN_PHRASES.map((_, i) => (
+              <motion.span
+                key={i}
+                className={styles.progressDot}
+                animate={{
+                  width: i === phraseIndex ? 16 : 4,
+                  opacity: i === phraseIndex ? 0.9 : 0.22,
+                }}
+                transition={{ type: "spring", stiffness: 450, damping: 30 }}
+              />
+            ))}
+          </div>
+
           <span className={styles.tapHintText} onClick={handleHeadTap} style={{ cursor: 'pointer' }}>
             Tap head for more
           </span>
-        </main>
+        </motion.main>
 
         {/* ── ZONE 3: BOTTOM ACTION BAR (BOTTOM: 14PX) ── */}
         <footer className={styles.bottomActionBar}>
