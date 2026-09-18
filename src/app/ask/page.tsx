@@ -888,112 +888,101 @@ export default function AskPage() {
         )}
       </div>
 
-      {/* ── ZERO-FLICKER DRAWER SHEET ── */}
+      {/* ── SOLID HARDWARE-ACCELERATED ZERO-FLICKER DRAWER MODAL ── */}
       <AnimatePresence>
         {isDrawerOpen && (
-          <React.Fragment key="ask-drawer-wrapper">
-            {/* 1. Dimmed Shadow Backdrop */}
+          <motion.div
+            key="ask-drawer-modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 9999,
+              backgroundColor: "rgba(0, 0, 0, 0.55)",
+              display: "flex",
+              alignItems: "flex-end",
+              justifyContent: "center",
+              padding: "0 1rem calc(env(safe-area-inset-bottom, 0px) + 1.25rem)",
+              boxSizing: "border-box",
+              touchAction: "none",
+              transform: "translateZ(0)",
+              WebkitBackfaceVisibility: "hidden",
+              backfaceVisibility: "hidden",
+            }}
+            onClick={() => setIsDrawerOpen(false)}
+          >
             <motion.div
-              key="ask-backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-              style={{
-                position: "fixed",
-                inset: 0,
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
-                backdropFilter: "blur(6px)",
-                WebkitBackdropFilter: "blur(6px)",
-                zIndex: 9998,
-                touchAction: "none",
+              className="ask-drawer-card"
+              initial={{ y: "115%" }}
+              animate={{ y: "0%" }}
+              exit={{ y: "115%" }}
+              transition={{
+                type: "spring",
+                stiffness: 280,
+                damping: 28,
+                mass: 0.8,
               }}
-              onClick={() => setIsDrawerOpen(false)}
-            />
-
-            {/* 2. Pure Hardware-Accelerated Sliding Sheet */}
-            <div
-              key="ask-sheet-container"
               style={{
-                position: "fixed",
-                inset: 0,
-                zIndex: 9999,
-                display: "flex",
-                alignItems: "flex-end",
-                justifyContent: "center",
-                pointerEvents: "none",
-                padding: "0 1rem calc(env(safe-area-inset-bottom, 0px) + 1.25rem)",
-                boxSizing: "border-box",
+                width: "100%",
+                maxWidth: 440,
+                willChange: "transform",
+                transform: "translateZ(0)",
+                WebkitBackfaceVisibility: "hidden",
+                backfaceVisibility: "hidden",
               }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <motion.div
-                className="ask-drawer-card"
-                initial={{ y: "115%" }}
-                animate={{ y: "0%" }}
-                exit={{ y: "115%" }}
-                transition={{
-                  type: "spring",
-                  stiffness: 280,
-                  damping: 28,
-                  mass: 0.8,
-                }}
-                style={{
-                  pointerEvents: "auto",
-                  width: "100%",
-                  maxWidth: 440,
-                  willChange: "transform",
-                }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* HEADER (NO 'X' BUTTON) */}
-                <div className="ask-drawer-header">
-                  <h2 className="ask-drawer-title">
-                    Ask a Question
-                  </h2>
+              {/* HEADER (NO 'X' BUTTON) */}
+              <div className="ask-drawer-header">
+                <h2 className="ask-drawer-title">
+                  Ask a Question
+                </h2>
+              </div>
+
+              {errorMsg && (
+                <div style={{ border: "1px solid rgba(255,100,100,0.3)", borderRadius: "10px", padding: "7px 10px", color: "#ff6b6b", fontSize: "0.74rem", background: "rgba(255,50,50,0.1)", marginBottom: "0.85rem" }}>
+                  {errorMsg}
+                </div>
+              )}
+
+              <form onSubmit={handleQASubmit} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                {/* SENDER NAME */}
+                <input
+                  type="text"
+                  value={senderName}
+                  onChange={(e) => setSenderName(e.target.value)}
+                  placeholder="Name"
+                  className="ask-drawer-input"
+                />
+
+                {/* QUESTION TEXTAREA */}
+                <div className="ask-drawer-textarea-box">
+                  <textarea
+                    value={qaContent}
+                    onChange={(e) => setQaContent(e.target.value)}
+                    placeholder="Message"
+                    maxLength={300}
+                    rows={3}
+                    disabled={isSubmitting}
+                    className="ask-drawer-textarea"
+                  />
                 </div>
 
-                {errorMsg && (
-                  <div style={{ border: "1px solid rgba(255,100,100,0.3)", borderRadius: "10px", padding: "7px 10px", color: "#ff6b6b", fontSize: "0.74rem", background: "rgba(255,50,50,0.1)", marginBottom: "0.85rem" }}>
-                    {errorMsg}
-                  </div>
-                )}
-
-                <form onSubmit={handleQASubmit} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                  {/* SENDER NAME */}
-                  <input
-                    type="text"
-                    value={senderName}
-                    onChange={(e) => setSenderName(e.target.value)}
-                    placeholder="Name"
-                    className="ask-drawer-input"
-                  />
-
-                  {/* QUESTION TEXTAREA */}
-                  <div className="ask-drawer-textarea-box">
-                    <textarea
-                      value={qaContent}
-                      onChange={(e) => setQaContent(e.target.value)}
-                      placeholder="Message"
-                      maxLength={300}
-                      rows={3}
-                      disabled={isSubmitting}
-                      className="ask-drawer-textarea"
-                    />
-                  </div>
-
-                  {/* SUBMIT BUTTON */}
-                  <button
-                    type="submit"
-                    disabled={isSubmitting || !qaContent.trim()}
-                    className="ask-drawer-submit-btn"
-                  >
-                    <span>Send</span>
-                    <span>✦</span>
-                  </button>
-                </form>
-              </motion.div>
-            </div>
-          </React.Fragment>
+                {/* SUBMIT BUTTON */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !qaContent.trim()}
+                  className="ask-drawer-submit-btn"
+                >
+                  <span>Send</span>
+                  <span>✦</span>
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
 
