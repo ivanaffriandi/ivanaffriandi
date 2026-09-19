@@ -58,11 +58,13 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
 
       const result = await shareOrDownloadStory(dataUrl, post.title, slug || 'story');
 
-      // 3. Fallback toast notification
-      if (result.downloaded) {
-        showToast(result.message || 'Image saved! You can now upload it to your IG Story.');
+      // 3. Feedback notification for sticker
+      if (result.copied && !result.shared) {
+        showToast('Sticker disalin! Buka IG Story lalu paste & geser sesuka kamu.');
+      } else if (result.downloaded) {
+        showToast(result.message || 'Sticker tersimpan! Kamu bisa paste & geser di IG Story.');
       } else if (result.shared) {
-        showToast('Story ready to share on Instagram!');
+        showToast(result.message || 'Sticker siap! Bisa kamu geser & atur di IG Story.');
       }
 
       onShareComplete?.(result);

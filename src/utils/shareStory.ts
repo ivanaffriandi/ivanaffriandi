@@ -10,6 +10,32 @@ export async function dataUrlToFile(dataUrl: string, fileName: string): Promise<
 }
 
 /**
+ * Copies a PNG data URL directly to the user's clipboard as an image blob.
+ * On iOS, this enables Instagram to immediately show "Add Sticker from clipboard" in Stories.
+ */
+export async function copyImageToClipboard(dataUrl: string): Promise<boolean> {
+  if (
+    typeof navigator === 'undefined' ||
+    !navigator.clipboard ||
+    typeof window === 'undefined' ||
+    !('ClipboardItem' in window)
+  ) {
+    return false;
+  }
+  try {
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    await navigator.clipboard.write([
+      new ClipboardItem({ 'image/png': blob }),
+    ]);
+    return true;
+  } catch (err) {
+    console.warn('Clipboard image write skipped or failed:', err);
+    return false;
+  }
+}
+
+/**
  * Automatically triggers a browser download for an image data URL.
  */
 export function downloadImage(dataUrl: string, fileName: string): void {
@@ -23,12 +49,13 @@ export function downloadImage(dataUrl: string, fileName: string): void {
 
 export interface ShareResult {
   shared: boolean;
+  copied: boolean;
   downloaded: boolean;
   message: string;
 }
 
 /**
- * Captures an HTML element and converts it to a high-resolution PNG Data URL.
+ * Captures an HTML element and converts it to a high-resolution transparent PNG Data URL.
  * Awaits web fonts and ensures all images are completely loaded.
  */
 export async function captureElementToPng(element: HTMLElement): Promise<string> {
@@ -41,7 +68,7 @@ export async function captureElementToPng(element: HTMLElement): Promise<string>
     }
   }
 
-  // 2. Wait for any internal images to complete loading
+  // 2. Wait for internal images to complete loading
   const imgs = Array.from(element.querySelectorAll('img'));
   if (imgs.length > 0) {
     await Promise.all(
@@ -62,29 +89,31 @@ export async function captureElementToPng(element: HTMLElement): Promise<string>
     );
   }
 
-  // 3. Generate crisp 1080x1920 snapshot natively sized
+  // 3. Generate transparent sticker PNG
   return await htmlToImage.toPng(element, {
     quality: 0.98,
-    pixelRatio: 1, // Element is already 1080x1920
+    pixelRatio: 2, // 2x retina crispness for sticker
     cacheBust: true,
     skipAutoScale: true,
   });
 }
 
 /**
- * Shares a generated story image via Web Share API, or triggers an automatic fallback download.
+ * Shares a generated sticker via Web Share API & clipboard, or triggers fallback download.
  */
 export async function shareOrDownloadStory(
   dataUrl: string,
   title: string,
-  slug = 'story'
+  slug = 'sticker'
 ): Promise<ShareResult> {
-  const fileName = `${slug.replace(/[^a-zA-Z0-9_-]/g, '_')}-story.png`;
+  const fileName = `${slug.replace(/[^a-zA-Z0-9_-]/g, '_')}-sticker.png`;
 
-  // 1. Convert to File object for navigator.share
+  // 1. Attempt copying image to clipboard for instant iOS "Add Sticker" in Instagram
+  const copied = await copyImageToClipboard(dataUrl);
+
+  // 2. Convert to File object for native share sheet
   const file = await dataUrlToFile(dataUrl, fileName);
 
-  // 2. Check if mobile Web Share API is available with file sharing support
   const isWebShareAvailable =
     typeof navigator !== 'undefined' &&
     typeof navigator.share === 'function' &&
@@ -96,12 +125,22 @@ export async function shareOrDownloadStory(
       await navigator.share({
         files: [file],
         title,
-        text: `Read "${title}" on my journal.`,
+        text: `Read "${title}" on my journal: ivanaffriandi.com`,
       });
-      return { shared: true, downloaded: false, message: 'Shared successfully!' };
+      return {
+        shared: true,
+        copied,
+        downloaded: false,
+        message: 'Sticker siap! Bisa kamu tempel & pindah-pindahkan di IG Story.',
+      };
     } catch (err: unknown) {
       if (err instanceof Error && err.name === 'AbortError') {
-        return { shared: false, downloaded: false, message: 'Share sheet dismissed.' };
+        return {
+          shared: false,
+          copied,
+          downloaded: false,
+          message: copied ? 'Sticker disalin! Buka IG Story lalu paste.' : 'Share dibatalkan.',
+        };
       }
       console.warn('Web Share failed, falling back to download:', err);
     }
@@ -111,7 +150,8 @@ export async function shareOrDownloadStory(
   downloadImage(dataUrl, fileName);
   return {
     shared: false,
+    copied,
     downloaded: true,
-    message: 'Image saved! You can now upload it to your IG Story.',
+    message: 'Sticker tersimpan! Bisa kamu upload & geser-geser di IG Story.',
   };
 }
