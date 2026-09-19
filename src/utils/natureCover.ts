@@ -1,21 +1,21 @@
 /**
- * Curated collection of high-resolution, editorial minimalist nature photographs in vivid natural color.
+ * Curated collection of high-resolution, authentic real photography (100% non-AI) from world-class landscape photographers.
  * Used as beautiful dynamic fallbacks for blog posts that don't have images.
  */
 export const MINIMALIST_NATURE_COVERS = [
-  '/images/nature/emerald_forest.jpg',   // Lush vibrant green moss & golden sunbeams
-  '/images/nature/turquoise_lake.jpg',   // Crystal turquoise alpine lake & azure sky
-  '/images/nature/golden_hills.jpg',     // Warm amber golden hour rolling hills
-  '/images/nature/autumn_foliage.jpg',   // Vivid scarlet red & golden maple foliage
-  '/images/nature/ocean_coast.jpg',      // Azure ocean waves & golden sand beach
-  '/images/nature/lavender_field.jpg',   // Rich purple lavender & warm sunset glow
-  '/images/nature/bamboo_forest.jpg',    // Fresh vibrant lime & emerald bamboo grove
-  '/images/nature/alpenglow_peak.jpg',   // Majestic Alpine peak in pink-orange alpenglow
+  '/images/nature/real_forest_sunbeams.jpg', // Forest sunbeams by Luca Bravo
+  '/images/nature/real_turquoise_lake.jpg',   // Lake Braies Dolomites by Pietro De Grandi
+  '/images/nature/real_golden_hills.jpg',     // Golden rolling hills by Sébastien Gabriel
+  '/images/nature/real_yosemite_valley.jpg',  // Yosemite Valley reflection by Bailey Zindel
+  '/images/nature/real_ocean_coast.jpg',      // Azure ocean coast by Sean Oulashin
+  '/images/nature/real_misty_mountain.jpg',   // Alpine wilderness by Roberto Sysa Moiola
+  '/images/nature/real_alpine_river.jpg',     // Rocky Mountain river by Kalen Emsley
+  '/images/nature/real_snow_peak.jpg',        // Mountain ridge sunset by Jerry Zhang
 ];
 
 /**
  * Returns a deterministic, distinct minimalist nature cover based on a post seed (title/id) or index.
- * Guarantees that different posts without images receive diverse, colorful, high-definition nature covers.
+ * Guarantees that different posts without images receive diverse, authentic real photography covers.
  */
 export function getMinimalistNatureCover(seed?: string, fallbackIndex?: number): string {
   if (typeof fallbackIndex === 'number' && fallbackIndex >= 0) {
