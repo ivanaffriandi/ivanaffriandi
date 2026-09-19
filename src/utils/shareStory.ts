@@ -29,21 +29,43 @@ export interface ShareResult {
 
 /**
  * Captures an HTML element and converts it to a high-resolution PNG Data URL.
+ * Awaits web fonts and ensures all images are completely loaded.
  */
 export async function captureElementToPng(element: HTMLElement): Promise<string> {
-  // Ensure custom web fonts are fully loaded before capturing
+  // 1. Wait for custom web fonts
   if (typeof document !== 'undefined' && 'fonts' in document) {
     try {
       await document.fonts.ready;
     } catch {
-      // Safe fallback if document.fonts is not supported
+      // safe fallback
     }
   }
 
-  // Generate crisp 1080x1920 snapshot with pixel ratio 2 for retina fidelity
+  // 2. Wait for any internal images to complete loading
+  const imgs = Array.from(element.querySelectorAll('img'));
+  if (imgs.length > 0) {
+    await Promise.all(
+      imgs.map((img) => {
+        if (img.complete && img.naturalHeight !== 0) return Promise.resolve();
+        return new Promise((resolve) => {
+          const timer = setTimeout(() => resolve(false), 2500);
+          img.onload = () => {
+            clearTimeout(timer);
+            resolve(true);
+          };
+          img.onerror = () => {
+            clearTimeout(timer);
+            resolve(false);
+          };
+        });
+      })
+    );
+  }
+
+  // 3. Generate crisp 1080x1920 snapshot natively sized
   return await htmlToImage.toPng(element, {
     quality: 0.98,
-    pixelRatio: 1, // Element is already natively sized to 1080x1920
+    pixelRatio: 1, // Element is already 1080x1920
     cacheBust: true,
     skipAutoScale: true,
   });
@@ -78,11 +100,9 @@ export async function shareOrDownloadStory(
       });
       return { shared: true, downloaded: false, message: 'Shared successfully!' };
     } catch (err: unknown) {
-      // If user aborted or canceled share sheet, do not force download
       if (err instanceof Error && err.name === 'AbortError') {
         return { shared: false, downloaded: false, message: 'Share sheet dismissed.' };
       }
-      // For other share errors, proceed to fallback download
       console.warn('Web Share failed, falling back to download:', err);
     }
   }

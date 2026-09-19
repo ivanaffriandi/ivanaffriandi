@@ -8,7 +8,7 @@ import { captureElementToPng, shareOrDownloadStory, ShareResult } from '@/utils/
 export interface InstagramShareButtonProps {
   post: StoryPostData;
   className?: string;
-  variant?: 'mobile-circle' | 'dock-icon' | 'default' | 'pill' | 'minimal' | 'icon-only';
+  variant?: 'mobile-circle' | 'dock-icon' | 'default';
   label?: string;
   themeOverride?: 'stone' | 'ink';
   onShareComplete?: (result: ShareResult) => void;
@@ -16,10 +16,8 @@ export interface InstagramShareButtonProps {
 }
 
 /**
- * Native-feeling Share Button (Custom-tailored for Mobile)
- *
- * Captures the 1080x1920 editorial canvas (with hero photo and magazine typography)
- * and invokes navigator.share to open the Instagram Stories share sheet.
+ * Minimalist iOS-style Share Button for Mobile
+ * Matches the existing header/dock circular buttons 1:1 using explicit inline styles.
  */
 export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
   post,
@@ -36,7 +34,7 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 4000);
+    setTimeout(() => setToastMessage(null), 3500);
   }, []);
 
   const handleShare = async (e: React.MouseEvent) => {
@@ -79,63 +77,76 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
 
   const activePostData: StoryPostData = {
     ...post,
-    theme: themeOverride || post.theme || 'stone',
+    theme: themeOverride || post.theme || 'ink',
   };
 
-  // Styles matching the app's existing mobile top navigation buttons & dock buttons
-  const getButtonStyles = () => {
-    switch (variant) {
-      case 'mobile-circle':
-        return 'inline-flex items-center justify-center w-[30px] h-[30px] min-w-[30px] min-h-[30px] rounded-full bg-[#1c1c1e] border border-white/15 text-white active:bg-[#111112] hover:border-white/30 transition-colors duration-150 cursor-pointer touch-manipulation select-none p-0';
-      case 'dock-icon':
-        return 'inline-flex items-center justify-center w-[28px] h-[28px] min-w-[28px] min-h-[28px] rounded-full bg-white dark:bg-white/10 text-neutral-900 dark:text-white border border-black/10 dark:border-white/10 shadow-sm active:scale-95 transition-all duration-150 cursor-pointer touch-manipulation select-none p-0';
-      case 'pill':
-        return 'inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full font-mono text-xs uppercase tracking-wider bg-[#181817] text-[#FAFAFA] dark:bg-[#F3F2EE] dark:text-[#181817] active:scale-98 transition-all cursor-pointer select-none';
-      case 'minimal':
-        return 'inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-sm font-mono text-xs uppercase tracking-wider border border-black/15 dark:border-white/15 text-neutral-800 dark:text-neutral-200 hover:border-black/40 cursor-pointer select-none';
-      case 'icon-only':
-      default:
-        return 'inline-flex items-center justify-center w-[30px] h-[30px] rounded-full bg-[#1c1c1e] text-white border border-white/15 hover:border-white/30 cursor-pointer select-none p-0';
-    }
-  };
+  // Explicit inline styles matching mobile-search-btn or dock-icon-btn perfectly
+  const isDock = variant === 'dock-icon';
+  const size = isDock ? '28px' : '30px';
 
   return (
     <>
       {/* ── Hidden Off-Screen Story Template (Pre-rendered for Snapshot) ── */}
       <InstagramStoryTemplate ref={storyRef} post={activePostData} />
 
-      {/* ── Simple Share Icon Button ── */}
+      {/* ── Seamless Circular Share Button (Matching Search / Dock Button 1:1) ── */}
       <button
         type="button"
         onClick={handleShare}
         disabled={isGenerating}
         title="Share to Instagram Story"
         aria-label="Share to Instagram Story"
-        className={`${getButtonStyles()} ${className}`}
-        style={{ WebkitTapHighlightColor: 'transparent' }}
+        className={`${isDock ? 'dock-icon-btn' : 'mobile-search-btn'} ${className}`}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: size,
+          height: size,
+          minWidth: size,
+          minHeight: size,
+          boxSizing: 'border-box',
+          backgroundColor: '#1c1c1e',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          color: '#FFFFFF',
+          borderRadius: '50%',
+          padding: 0,
+          cursor: isGenerating ? 'wait' : 'pointer',
+          lineHeight: 1,
+          touchAction: 'manipulation',
+          WebkitTapHighlightColor: 'transparent',
+          boxShadow: 'none',
+          opacity: isGenerating ? 0.6 : 1,
+          transition: 'background 0.15s ease, border-color 0.15s ease, transform 0.15s ease',
+          flexShrink: 0,
+        }}
       >
         {isGenerating ? (
           <svg
-            className="animate-spin h-3.5 w-3.5 text-current"
+            style={{
+              animation: 'spin 1s linear infinite',
+              width: '12px',
+              height: '12px',
+            }}
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
           >
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+            <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
             <path
-              className="opacity-75"
+              style={{ opacity: 0.75 }}
               fill="currentColor"
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             />
           </svg>
         ) : (
-          /* Clean, standard iOS share icon matching the interface */
+          /* Simple, clean iOS share icon with stroke identical to search icon */
           <svg
             width="12"
             height="12"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
+            stroke="#FFFFFF"
             strokeWidth="2.4"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -145,37 +156,80 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
             <line x1="12" y1="2" x2="12" y2="15" />
           </svg>
         )}
-        {label && <span className="ml-1.5">{label}</span>}
       </button>
 
-      {/* ── Editorial Toast Notification ── */}
+      {/* ── Native iOS-like Toast Notification ── */}
       <AnimatePresence>
         {toastMessage && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.98 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-6 inset-x-4 mx-auto max-w-sm z-[99999] pointer-events-auto"
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              position: 'fixed',
+              bottom: '24px',
+              left: '16px',
+              right: '16px',
+              maxWidth: '380px',
+              margin: '0 auto',
+              zIndex: 99999,
+              pointerEvents: 'auto',
+            }}
           >
-            <div className="flex items-center gap-3 px-4 py-3 bg-[#181817] text-[#FAF8F5] dark:bg-[#FAF8F5] dark:text-[#181817] rounded-xl shadow-2xl border border-white/10 dark:border-black/10 backdrop-blur-md">
-              <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 dark:bg-emerald-600/20 dark:text-emerald-700 flex items-center justify-center shrink-0">
-                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '12px 16px',
+                backgroundColor: 'rgba(28, 28, 30, 0.95)',
+                color: '#FAF8F5',
+                borderRadius: '16px',
+                boxShadow: '0 12px 36px rgba(0, 0, 0, 0.5)',
+                border: '1px solid rgba(255, 255, 255, 0.14)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+              }}
+            >
+              <div
+                style={{
+                  width: '22px',
+                  height: '22px',
+                  borderRadius: '9999px',
+                  backgroundColor: 'rgba(48, 209, 88, 0.2)',
+                  color: '#30D158',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
 
-              <p className="text-[12px] font-sans leading-tight font-medium pr-1 flex-1">
+              <p style={{ fontSize: '13px', margin: 0, lineHeight: 1.35, fontWeight: 500, flex: 1 }}>
                 {toastMessage}
               </p>
 
               <button
                 type="button"
                 onClick={() => setToastMessage(null)}
-                className="opacity-50 hover:opacity-100 p-1 text-current shrink-0"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '4px',
+                  color: 'rgba(255, 255, 255, 0.6)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
                 aria-label="Close"
               >
-                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>

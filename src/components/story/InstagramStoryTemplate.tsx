@@ -11,7 +11,7 @@ export interface StoryPostData {
   readingTime?: string;
   url?: string;
   author?: string;
-  theme?: 'stone' | 'ink'; // 'stone' = wabi-sabi warm off-white, 'ink' = dark sumi charcoal
+  theme?: 'stone' | 'ink';
 }
 
 interface InstagramStoryTemplateProps {
@@ -20,27 +20,13 @@ interface InstagramStoryTemplateProps {
 
 /**
  * 1080 x 1920 Instagram Story Template
- * High-fashion editorial aesthetic with wabi-sabi minimalism, generous whitespace,
- * high-res photograph hero framing, elegant serif typography, and tactile pill badge.
- * Rendered off-screen for crisp DOM-to-PNG capture.
+ * Authentic Apple / iOS Minimalist Aesthetic (Dark Obsidian, Ambient Blur Glow, Floating iOS Card,
+ * SF Pro typography, and iconic iOS Link Pill).
+ * Uses 100% inline CSS so it is completely immune to missing stylesheets or Tailwind classes.
  */
 export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryTemplateProps>(
   ({ post }, ref) => {
-    const isInk = post.theme === 'ink';
-
-    // Color tokens
-    const bg = isInk ? '#141413' : '#F7F5F0';
-    const textPrimary = isInk ? '#F4F3EE' : '#1A1918';
-    const textSecondary = isInk ? '#A8A69E' : '#5C5955';
-    const textMuted = isInk ? '#6E6B65' : '#8E8B84';
-    const borderSubtle = isInk ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)';
-    const pillBg = isInk ? '#201F1E' : '#FFFFFF';
-    const pillBorder = isInk ? 'rgba(255, 255, 255, 0.16)' : 'rgba(0, 0, 0, 0.12)';
-    const pillShadow = isInk
-      ? '0 12px 30px rgba(0, 0, 0, 0.5)'
-      : '0 12px 30px rgba(0, 0, 0, 0.06)';
-
-    // Safely route external image through CORS proxy so html-to-image never taints canvas
+    // Resolve cover image and route external images through our CORS proxy
     const rawCover = post.coverImage || '/nature_hero.png';
     const proxiedCover =
       rawCover.startsWith('http://') || rawCover.startsWith('https://')
@@ -61,212 +47,321 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
         <div
           ref={ref}
           id="instagram-story-canvas"
-          className="relative flex flex-col justify-between w-[1080px] h-[1920px] box-border select-none overflow-hidden"
           style={{
+            position: 'relative',
             width: '1080px',
             height: '1920px',
-            backgroundColor: bg,
-            color: textPrimary,
-            padding: '90px 90px 80px 90px',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Playfair Display", "Lora", Georgia, serif',
             boxSizing: 'border-box',
+            backgroundColor: '#090A0C',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '110px 80px 100px 80px',
+            overflow: 'hidden',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, sans-serif',
+            userSelect: 'none',
+            color: '#FFFFFF',
           }}
         >
-          {/* Subtle Inset Frame (Wabi-Sabi Craftsmanship) */}
+          {/* ── BACKGROUND: AMBIENT COVER PHOTO BLUR GLOW (APPLE MUSIC STYLE) ── */}
           <div
-            className="absolute inset-[30px] pointer-events-none"
             style={{
-              border: `1px solid ${borderSubtle}`,
+              position: 'absolute',
+              inset: '-80px',
+              backgroundImage: `url(${proxiedCover})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'blur(100px) saturate(1.8) brightness(0.35)',
+              opacity: 0.65,
+              transform: 'scale(1.2)',
+              pointerEvents: 'none',
+              zIndex: 1,
             }}
           />
 
-          {/* ── ZONE 1: TOP EDITORIAL MASTHEAD ── */}
+          {/* Subtle Dark Vignette Overlay */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'radial-gradient(circle at 50% 40%, rgba(9,10,12,0.4) 0%, rgba(9,10,12,0.85) 100%)',
+              pointerEvents: 'none',
+              zIndex: 2,
+            }}
+          />
+
+          {/* ── ZONE 1: TOP DYNAMIC CAPSULE (iOS HEADER) ── */}
           <header
-            className="relative z-10 flex items-center justify-between w-full border-b pb-7 shrink-0"
-            style={{ borderColor: borderSubtle }}
+            style={{
+              position: 'relative',
+              zIndex: 10,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+              maxWidth: '920px',
+            }}
           >
-            {/* Author / Brand Seal */}
-            <div className="flex items-center gap-4">
+            {/* Dynamic Island Capsule */}
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '12px',
+                padding: '14px 26px',
+                borderRadius: '9999px',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
+                border: '1px solid rgba(255, 255, 255, 0.16)',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+              }}
+            >
               <div
-                className="w-11 h-11 rounded-full flex items-center justify-center border font-mono text-[16px] font-bold tracking-wider"
                 style={{
-                  borderColor: textPrimary,
-                  color: textPrimary,
+                  width: '9px',
+                  height: '9px',
+                  borderRadius: '9999px',
+                  backgroundColor: '#30D158', // iOS Green dot
+                  boxShadow: '0 0 10px #30D158',
+                }}
+              />
+              <span
+                style={{
+                  fontSize: '15px',
+                  fontWeight: 700,
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  color: '#FFFFFF',
                 }}
               >
-                IA
-              </div>
-              <div className="flex flex-col">
-                <span
-                  className="font-mono text-[15px] font-bold tracking-[0.25em] uppercase leading-tight"
-                  style={{ color: textPrimary }}
-                >
-                  {post.author || 'IVAN AFFRIANDI'}
-                </span>
-                <span
-                  className="font-mono text-[12px] tracking-[0.2em] uppercase leading-tight mt-1"
-                  style={{ color: textMuted }}
-                >
-                  ATELIER &bull; JOURNAL
-                </span>
-              </div>
+                {post.author || 'IVAN AFFRIANDI'}
+              </span>
+              <span style={{ color: 'rgba(255, 255, 255, 0.3)', fontSize: '13px' }}>&bull;</span>
+              <span
+                style={{
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                }}
+              >
+                JOURNAL
+              </span>
             </div>
 
-            {/* Issue / Date / Reading Meta */}
-            <div className="flex flex-col items-end">
-              <span
-                className="font-mono text-[13px] font-bold tracking-[0.2em] uppercase"
-                style={{ color: textPrimary }}
-              >
-                {post.category || 'ESSAY'}
-              </span>
-              <span
-                className="font-mono text-[12px] tracking-[0.14em] uppercase mt-1"
-                style={{ color: textMuted }}
-              >
-                {post.publishedDate || 'AUTUMN 2026'} &bull; {post.readingTime || '4 MIN READ'}
-              </span>
+            {/* Reading Time Badge */}
+            <div
+              style={{
+                padding: '12px 22px',
+                borderRadius: '9999px',
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                fontSize: '14px',
+                fontWeight: 600,
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'rgba(255, 255, 255, 0.65)',
+              }}
+            >
+              {post.readingTime || '4 MIN READ'}
             </div>
           </header>
 
-          {/* ── ZONE 2: EDITORIAL PHOTOGRAPH + HEADLINE (CENTER HERO) ── */}
-          <main className="relative z-10 flex flex-col justify-center my-auto w-full">
-            {/* High-Fashion Hero Photograph Frame */}
+          {/* ── ZONE 2: FLOATING iOS EDITORIAL CARD ── */}
+          <main
+            style={{
+              position: 'relative',
+              zIndex: 10,
+              width: '100%',
+              maxWidth: '920px',
+              backgroundColor: 'rgba(26, 27, 31, 0.88)',
+              backdropFilter: 'blur(30px)',
+              WebkitBackdropFilter: 'blur(30px)',
+              borderRadius: '44px',
+              border: '1px solid rgba(255, 255, 255, 0.16)',
+              boxShadow: '0 40px 100px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+              padding: '40px',
+              boxSizing: 'border-box',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {/* Featured Photo Frame */}
             <div
-              className="relative w-full h-[760px] rounded-2xl overflow-hidden mb-10 shrink-0"
               style={{
-                border: `1px solid ${borderSubtle}`,
-                backgroundColor: isInk ? '#1C1C1B' : '#ECE8E1',
+                position: 'relative',
+                width: '100%',
+                height: '700px',
+                borderRadius: '32px',
+                overflow: 'hidden',
+                backgroundColor: '#151619',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
               }}
             >
               <img
                 src={proxiedCover}
                 alt={post.title}
                 crossOrigin="anonymous"
-                className="w-full h-full object-cover"
-                style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-
-              {/* Editorial Frame Watermark */}
-              <div
-                className="absolute bottom-5 left-6 px-3.5 py-1.5 rounded-full font-mono text-[11px] font-bold tracking-[0.2em] uppercase backdrop-blur-md"
                 style={{
-                  backgroundColor: isInk ? 'rgba(20,20,19,0.75)' : 'rgba(255,255,255,0.85)',
-                  color: textPrimary,
-                  border: `1px solid ${borderSubtle}`,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
+              />
+              {/* Subtle gradient scrim on bottom of photo */}
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 45%)',
+                  pointerEvents: 'none',
+                }}
+              />
+            </div>
+
+            {/* Content Below Photo */}
+            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '32px' }}>
+              {/* Category & Date Row */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  fontSize: '16px',
+                  fontWeight: 700,
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(255, 255, 255, 0.55)',
                 }}
               >
-                FIGURE 01 &bull; {post.category || 'JOURNAL'}
+                <span>{post.category || 'ESSAY'}</span>
+                <span style={{ opacity: 0.4 }}>&bull;</span>
+                <span>{post.publishedDate || 'AUTUMN 2026'}</span>
               </div>
-            </div>
 
-            {/* Minimalist Chop Mark / Ornament */}
-            <div className="flex items-center gap-3 mb-6">
-              <span className="w-8 h-[2px]" style={{ backgroundColor: textPrimary }} />
-              <span
-                className="font-mono text-[13px] font-bold tracking-[0.25em] uppercase"
-                style={{ color: textMuted }}
-              >
-                ESSAY
-              </span>
-            </div>
-
-            {/* High-Fashion Literary Serif Title */}
-            <h1
-              className="text-[54px] font-normal leading-[1.16] tracking-tight mb-5"
-              style={{
-                color: textPrimary,
-                fontFamily: '"Playfair Display", "Lora", Georgia, serif',
-                wordBreak: 'break-word',
-                maxHeight: '190px',
-                overflow: 'hidden',
-                display: '-webkit-box',
-                WebkitLineClamp: 3,
-                WebkitBoxOrient: 'vertical',
-              }}
-            >
-              {post.title}
-            </h1>
-
-            {/* Subtle Divider Rule */}
-            <div className="w-16 h-[2px] mb-5" style={{ backgroundColor: borderSubtle }} />
-
-            {/* Poetic Excerpt */}
-            {post.excerpt && (
-              <p
-                className="text-[25px] font-light leading-[1.6] tracking-normal mb-0"
+              {/* iOS Bold Headline */}
+              <h1
                 style={{
-                  color: textSecondary,
-                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif',
+                  fontSize: '46px',
+                  fontWeight: 800,
+                  lineHeight: '1.2',
+                  letterSpacing: '-0.025em',
+                  color: '#FFFFFF',
+                  margin: '14px 0 0 0',
                   display: '-webkit-box',
                   WebkitLineClamp: 3,
                   WebkitBoxOrient: 'vertical',
                   overflow: 'hidden',
+                  wordBreak: 'break-word',
                 }}
               >
-                &ldquo;{post.excerpt}&rdquo;
-              </p>
-            )}
+                {post.title}
+              </h1>
+
+              {/* Excerpt */}
+              {post.excerpt && (
+                <p
+                  style={{
+                    fontSize: '22px',
+                    fontWeight: 400,
+                    lineHeight: '1.5',
+                    color: 'rgba(255, 255, 255, 0.72)',
+                    margin: '16px 0 0 0',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {post.excerpt}
+                </p>
+              )}
+            </div>
           </main>
 
-          {/* ── ZONE 3: STYLIZED 'READ ON WEB' PILL & FOOTER ── */}
+          {/* ── ZONE 3: AUTHENTIC iOS PILL BADGE & FOOTER ── */}
           <footer
-            className="relative z-10 flex flex-col items-center gap-7 w-full pt-7 border-t shrink-0"
-            style={{ borderColor: borderSubtle }}
+            style={{
+              position: 'relative',
+              zIndex: 10,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '16px',
+              width: '100%',
+              maxWidth: '920px',
+            }}
           >
-            {/* Stylized Interactive Pill Badge */}
+            {/* White iOS Action Capsule */}
             <div
-              className="flex items-center justify-between w-full max-w-[620px] px-8 py-5 rounded-full"
               style={{
-                backgroundColor: pillBg,
-                border: `1.5px solid ${pillBorder}`,
-                boxShadow: pillShadow,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
+                maxWidth: '640px',
+                height: '84px',
+                padding: '0 28px 0 34px',
+                borderRadius: '9999px',
+                backgroundColor: '#FFFFFF',
+                color: '#000000',
+                boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(255, 255, 255, 0.2)',
+                boxSizing: 'border-box',
               }}
             >
-              <div className="flex items-center gap-4">
-                <div
-                  className="w-3.5 h-3.5 rounded-full animate-pulse"
-                  style={{ backgroundColor: isInk ? '#50E3C2' : '#10B981' }}
-                />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                {/* Safari / Compass Icon */}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+                </svg>
                 <span
-                  className="font-mono text-[15px] font-bold tracking-[0.2em] uppercase"
-                  style={{ color: textPrimary }}
+                  style={{
+                    fontSize: '17px',
+                    fontWeight: 800,
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                  }}
                 >
-                  READ COMPLETE ESSAY
+                  READ ON WEB
                 </span>
               </div>
 
-              {/* Minimal Slanted Arrow Icon */}
+              {/* Slanted Arrow Inset Circle */}
               <div
-                className="w-10 h-10 rounded-full flex items-center justify-center"
                 style={{
-                  backgroundColor: textPrimary,
-                  color: bg,
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '9999px',
+                  backgroundColor: '#000000',
+                  color: '#FFFFFF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M7 17L17 7M17 7H7M17 7V17" />
                 </svg>
               </div>
             </div>
 
-            {/* Bottom Meta & URL Label */}
-            <div
-              className="flex items-center justify-between w-full font-mono text-[13px] tracking-[0.2em] uppercase"
-              style={{ color: textMuted }}
+            {/* Sub-pill URL link text */}
+            <span
+              style={{
+                fontSize: '14px',
+                fontWeight: 600,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                color: 'rgba(255, 255, 255, 0.45)',
+              }}
             >
-              <span>LINK IN BIO / STORIES</span>
-              <span>{post.url ? post.url.replace(/^https?:\/\//, '') : 'ivanaffriandi.com/blog'}</span>
-            </div>
+              {post.url ? post.url.replace(/^https?:\/\//, '') : 'ivanaffriandi.com/blog'} &bull; TAP LINK IN BIO
+            </span>
           </footer>
         </div>
       </div>
