@@ -153,23 +153,22 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '11px 26px',
+                padding: '9px 22px',
                 borderRadius: '9999px',
                 background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.07) 50%, rgba(255, 255, 255, 0.16) 100%)',
                 border: '1px solid rgba(255, 255, 255, 0.36)',
-                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.22), inset 0 1px 1.5px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(0, 0, 0, 0.1)',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2), inset 0 1px 1.5px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(0, 0, 0, 0.1)',
                 backdropFilter: 'blur(24px)',
                 WebkitBackdropFilter: 'blur(24px)',
               }}
             >
               <span
                 style={{
-                  fontSize: '16px',
-                  fontWeight: 700,
-                  letterSpacing: '0.18em',
-                  textTransform: 'uppercase',
+                  fontSize: '15px',
+                  fontWeight: 600,
+                  letterSpacing: '0',
                   color: '#FFFFFF',
-                  textShadow: '0 1px 3px rgba(0, 0, 0, 0.35)',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, sans-serif',
                 }}
               >
                 {chapterText}

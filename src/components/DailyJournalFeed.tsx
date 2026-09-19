@@ -2523,22 +2523,22 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
         .spotlight-search-card {
           width: calc(100% - 1.5rem);
-          max-width: 460px;
-          max-height: min(80vh, 520px);
+          max-width: 480px;
+          max-height: min(78vh, 460px);
           display: flex;
           flex-direction: column;
-          background: rgba(24, 24, 27, 0.96);
+          background: rgba(14, 14, 16, 0.96);
           color: #FFFFFF;
-          padding: 0.75rem 0.85rem 0.55rem;
-          border-radius: 20px;
-          border: 1px solid rgba(255, 255, 255, 0.18);
-          box-shadow: 0 32px 80px rgba(0, 0, 0, 0.85), 0 4px 16px rgba(0,0,0,0.5);
+          padding: 0;
+          border-radius: 14px;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
           box-sizing: border-box;
           overflow: hidden;
-          transform: translateY(-24px) scale(0.96);
+          transform: translateY(-20px) scale(0.97);
           opacity: 0;
-          transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-                      opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+                      opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .spotlight-search-overlay.is-open .spotlight-search-card {
@@ -5241,67 +5241,66 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           className="spotlight-search-card"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Top Search Input Row */}
-          <div style={{ display: "flex", alignItems: "center", gap: "0.55rem" }}>
-            <div
+          {/* Minimalist Integrated Search Bar */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              padding: "0 14px",
+              height: "48px",
+              borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+              boxSizing: "border-box",
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.45)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Search chapters..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               style={{
                 flex: 1,
-                height: "36px",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.55rem",
-                background: "rgba(255, 255, 255, 0.1)",
-                border: "0.5px solid rgba(255, 255, 255, 0.14)",
-                borderRadius: "10px",
-                padding: "0 0.75rem",
-                boxSizing: "border-box",
+                background: "transparent",
+                border: "none",
+                outline: "none",
+                color: "#FFFFFF",
+                fontSize: "0.86rem",
+                fontWeight: 400,
+                letterSpacing: "-0.01em",
+                fontFamily: "var(--font-sans)",
               }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" style={{ color: "rgba(255,255,255,0.6)", flexShrink: 0 }}>
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-              <input
-                ref={searchInputRef}
-                type="text"
-                placeholder="Search chapters..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+            />
+
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                aria-label="Clear query"
                 style={{
-                  background: "transparent",
+                  background: "rgba(255, 255, 255, 0.12)",
                   border: "none",
-                  outline: "none",
-                  color: "#FFFFFF",
-                  fontSize: "0.84rem",
-                  fontWeight: 400,
-                  width: "100%",
+                  borderRadius: "50%",
+                  width: "16px",
+                  height: "16px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "rgba(255, 255, 255, 0.8)",
+                  cursor: "pointer",
+                  fontSize: "0.58rem",
+                  padding: 0,
+                  flexShrink: 0,
                 }}
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery("")}
-                  aria-label="Clear query"
-                  style={{
-                    background: "rgba(255,255,255,0.22)",
-                    border: "none",
-                    borderRadius: "50%",
-                    width: "16px",
-                    height: "16px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#FFFFFF",
-                    cursor: "pointer",
-                    fontSize: "0.6rem",
-                    flexShrink: 0,
-                    padding: 0,
-                  }}
-                >
-                  ✕
-                </button>
-              )}
-            </div>
+              >
+                ✕
+              </button>
+            )}
 
             <button
               type="button"
@@ -5309,39 +5308,25 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 setMobileSearchOpen(false);
                 setSearchQuery("");
               }}
+              title="Close search"
               style={{
-                height: "36px",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "transparent",
-                border: "none",
-                color: "rgba(255, 255, 255, 0.85)",
-                fontSize: "0.82rem",
-                fontWeight: 400,
-                padding: "0 0.35rem",
+                background: "rgba(255, 255, 255, 0.08)",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                borderRadius: "5px",
+                padding: "2px 7px",
+                color: "rgba(255, 255, 255, 0.55)",
+                fontSize: "0.62rem",
+                fontWeight: 500,
+                letterSpacing: "0.04em",
                 cursor: "pointer",
-                whiteSpace: "nowrap",
-                boxSizing: "border-box",
+                lineHeight: 1.4,
               }}
             >
-              Cancel
+              esc
             </button>
           </div>
 
-          {/* Hairline Divider */}
-          <div style={{ height: "1px", background: "rgba(255, 255, 255, 0.08)", margin: "0.55rem 0 0.35rem" }} />
-
-          {/* Section Label */}
-          <div style={{ padding: "0.15rem 0.4rem 0.35rem" }}>
-            <span style={{ fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)" }}>
-              {searchQuery.trim()
-                ? `MATCHING (${filteredPosts.length + ("prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim()) ? 1 : 0)})`
-                : `ALL STORIES (${sortedPosts.length + 1})`}
-            </span>
-          </div>
-
-          {/* Results List */}
+          {/* Precision Search Results */}
           <div
             className="mobile-search-scroll-container"
             style={{
@@ -5349,15 +5334,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               overflowY: "auto",
               display: "flex",
               flexDirection: "column",
-              padding: "0 0.1rem",
-              maxHeight: "360px",
+              padding: "6px",
+              maxHeight: "340px",
+              boxSizing: "border-box",
             }}
           >
             {/* Matching Chapters */}
             {filteredPosts.map((post) => {
               const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
               const chapterLabel = getPostChapterLabel(post, sortedPosts);
-              const postCover = extractCoverImage(post.content) || getMinimalistNatureCover(post.title || String(post.id));
               const readTime = getReadingTime(post.content || "");
 
               return (
@@ -5373,43 +5358,69 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: "0.65rem",
-                    padding: "0.45rem 0.5rem",
+                    gap: "10px",
+                    padding: "8px 10px",
                     borderRadius: "8px",
                     cursor: "pointer",
                     transition: "background 0.12s ease",
-                    borderBottom: "0.5px solid rgba(255,255,255,0.06)",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.07)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = "transparent";
                   }}
                 >
-                  <div style={{ width: "34px", height: "34px", borderRadius: "6px", overflow: "hidden", flexShrink: 0, background: "#16171a" }}>
-                    <img
-                      src={postCover}
-                      alt={post.title}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0.1rem", flex: 1, minWidth: 0 }}>
-                    <h4 style={{ fontSize: "0.78rem", fontWeight: 500, lineHeight: 1.25, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                      {post.title}
-                    </h4>
-                    <span style={{ fontSize: "0.62rem", color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap" }}>
-                      {chapterLabel} · {formatDate(post.published, locale)} · {readTime}m
-                    </span>
-                  </div>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
+                  {/* Subtle Monochrome Chapter Pill */}
+                  <span
+                    style={{
+                      padding: "2px 6px",
+                      borderRadius: "4px",
+                      background: "rgba(255, 255, 255, 0.08)",
+                      color: "rgba(255, 255, 255, 0.7)",
+                      fontSize: "0.58rem",
+                      fontWeight: 600,
+                      letterSpacing: "0.04em",
+                      whiteSpace: "nowrap",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {chapterLabel}
+                  </span>
+
+                  {/* Clean Title */}
+                  <h4
+                    style={{
+                      fontSize: "0.82rem",
+                      fontWeight: 450,
+                      lineHeight: 1.3,
+                      margin: 0,
+                      color: "#F4F4F5",
+                      flex: 1,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {post.title}
+                  </h4>
+
+                  {/* Reading Time */}
+                  <span
+                    style={{
+                      fontSize: "0.62rem",
+                      color: "rgba(255, 255, 255, 0.35)",
+                      whiteSpace: "nowrap",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {readTime}m
+                  </span>
                 </div>
               );
             })}
 
-            {/* PROLOGUE ENTRY */}
+            {/* Prologue Entry */}
             {(!searchQuery.trim() || "prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim())) && (
               <div
                 onClick={() => {
@@ -5422,58 +5433,99 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "0.65rem",
-                  padding: "0.45rem 0.5rem",
+                  gap: "10px",
+                  padding: "8px 10px",
                   borderRadius: "8px",
                   cursor: "pointer",
                   transition: "background 0.12s ease",
-                  borderBottom: "0.5px solid rgba(255,255,255,0.06)",
-                  background: isReadingPrologue ? "rgba(255,255,255,0.08)" : "transparent",
+                  background: isReadingPrologue ? "rgba(255, 255, 255, 0.08)" : "transparent",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.07)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = isReadingPrologue ? "rgba(255,255,255,0.08)" : "transparent";
+                  e.currentTarget.style.background = isReadingPrologue ? "rgba(255, 255, 255, 0.08)" : "transparent";
                 }}
               >
-                <div style={{ width: "34px", height: "34px", borderRadius: "6px", overflow: "hidden", flexShrink: 0, background: "#16171a" }}>
-                  <img
-                    src="/nature_hero.png"
-                    alt="Prologue"
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  />
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.1rem", flex: 1, minWidth: 0 }}>
-                  <h4 style={{ fontSize: "0.78rem", fontWeight: 500, lineHeight: 1.25, margin: 0, color: "#FFFFFF", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                    A Quiet Corner on the Internet
-                  </h4>
-                  <span style={{ fontSize: "0.62rem", color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap" }}>
-                    Prologue · Intro Narrative · 2m
-                  </span>
-                </div>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
+                <span
+                  style={{
+                    padding: "2px 6px",
+                    borderRadius: "4px",
+                    background: "rgba(255, 255, 255, 0.08)",
+                    color: "rgba(255, 255, 255, 0.7)",
+                    fontSize: "0.58rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.04em",
+                    whiteSpace: "nowrap",
+                    flexShrink: 0,
+                  }}
+                >
+                  PROLOGUE
+                </span>
+
+                <h4
+                  style={{
+                    fontSize: "0.82rem",
+                    fontWeight: 450,
+                    lineHeight: 1.3,
+                    margin: 0,
+                    color: "#F4F4F5",
+                    flex: 1,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  A Quiet Corner on the Internet
+                </h4>
+
+                <span
+                  style={{
+                    fontSize: "0.62rem",
+                    color: "rgba(255, 255, 255, 0.35)",
+                    whiteSpace: "nowrap",
+                    flexShrink: 0,
+                  }}
+                >
+                  2m
+                </span>
               </div>
             )}
 
-            {/* EMPTY STATE */}
+            {/* Empty State */}
             {filteredPosts.length === 0 && !("prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim())) && (
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  padding: "1.5rem 1rem",
+                  padding: "2rem 1rem",
                   textAlign: "center",
                 }}
               >
-                <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.45)", margin: 0 }}>
-                  No results for “{searchQuery}”
+                <p style={{ fontSize: "0.78rem", color: "rgba(255, 255, 255, 0.4)", margin: 0 }}>
+                  No chapters found for &ldquo;{searchQuery}&rdquo;
                 </p>
               </div>
             )}
+          </div>
+
+          {/* Minimalist Precision Footer */}
+          <div
+            style={{
+              padding: "7px 12px",
+              borderTop: "1px solid rgba(255, 255, 255, 0.06)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              fontSize: "0.58rem",
+              color: "rgba(255, 255, 255, 0.35)",
+              letterSpacing: "0.02em",
+              boxSizing: "border-box",
+            }}
+          >
+            <span>{searchQuery.trim() ? `${filteredPosts.length} results` : `${sortedPosts.length + 1} stories`}</span>
+            <span>press esc to close</span>
           </div>
         </div>
       </div>
