@@ -123,7 +123,7 @@ export async function shareOrDownloadStory(
             shared: true,
             copied: linkCopied,
             downloaded: false,
-            message: 'Link copied! In Instagram Story, paste it using the Link Sticker.',
+            message: 'Link copied! In IG Story, tap Sticker ➔ Link, then paste it over the card.',
           };
         } catch (shareWithUrlErr: unknown) {
           // If browser rejected sharing files+url together, retry with file only
@@ -141,7 +141,7 @@ export async function shareOrDownloadStory(
               shared: true,
               copied: linkCopied,
               downloaded: false,
-              message: 'Link copied! In Instagram Story, paste it using the Link Sticker.',
+              message: 'Link copied! In IG Story, tap Sticker ➔ Link, then paste it over the card.',
             };
           }
           throw shareWithUrlErr;
@@ -152,7 +152,7 @@ export async function shareOrDownloadStory(
           shared: true,
           copied: linkCopied,
           downloaded: false,
-          message: 'Link copied! In Instagram Story, paste it using the Link Sticker.',
+          message: 'Link copied! In IG Story, tap Sticker ➔ Link, then paste it over the card.',
         };
       }
     } catch (err: unknown) {
@@ -175,7 +175,7 @@ export async function shareOrDownloadStory(
     copied: linkCopied,
     downloaded: false,
     message: linkCopied
-      ? 'Story link copied to clipboard! Paste it with the Link Sticker in Stories.'
+      ? 'Link copied! In IG Story, tap Sticker ➔ Link, then paste it over the card.'
       : 'Use the share button to post.',
   };
 }

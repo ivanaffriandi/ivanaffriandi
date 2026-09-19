@@ -354,7 +354,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                       color: '#FFFFFF',
                     }}
                   >
-                    READ ESSAY
+                    READ BLOG
                   </span>
                   <svg
                     width="11"
