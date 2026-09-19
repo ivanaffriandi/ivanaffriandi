@@ -34,7 +34,7 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3500);
+    setTimeout(() => setToastMessage(null), 4500);
   }, []);
 
   const handleShare = async (e: React.MouseEvent) => {
@@ -56,15 +56,15 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
 
-      const result = await shareOrDownloadStory(dataUrl, post.title, slug || 'story');
+      const articleUrl = post.url
+        ? (post.url.startsWith('http') ? post.url : `https://${post.url}`)
+        : 'https://blog.ivanaffriandi.com';
 
-      // 3. Feedback notification for sticker
-      if (result.copied && !result.shared) {
-        showToast('Sticker disalin! Buka IG Story lalu paste & geser sesuka kamu.');
-      } else if (result.downloaded) {
-        showToast(result.message || 'Sticker tersimpan! Kamu bisa paste & geser di IG Story.');
-      } else if (result.shared) {
-        showToast(result.message || 'Sticker siap! Bisa kamu geser & atur di IG Story.');
+      const result = await shareOrDownloadStory(dataUrl, post.title, slug || 'story', articleUrl);
+
+      // 3. Feedback notification
+      if (result.message) {
+        showToast(result.message);
       }
 
       onShareComplete?.(result);

@@ -171,7 +171,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
               style={{
                 position: 'relative',
                 width: '720px',
-                height: '420px',
+                height: '380px',
                 borderRadius: '22px',
                 overflow: 'hidden',
                 backgroundColor: '#101113',
@@ -247,17 +247,17 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                 {post.title}
               </h2>
 
-              {/* OPTIONAL SHORT EXCERPT */}
+              {/* BLOG CONTENT EXCERPT (3 LINES OF CONTENT) */}
               {post.excerpt && (
                 <p
                   style={{
-                    fontSize: '16px',
+                    fontSize: '17px',
                     fontWeight: 400,
-                    lineHeight: '1.45',
-                    color: 'rgba(255, 255, 255, 0.68)',
-                    margin: '8px 0 0 0',
+                    lineHeight: '1.5',
+                    color: 'rgba(255, 255, 255, 0.78)',
+                    margin: '10px 0 0 0',
                     display: '-webkit-box',
-                    WebkitLineClamp: 1,
+                    WebkitLineClamp: 3,
                     WebkitBoxOrient: 'vertical',
                     overflow: 'hidden',
                   }}

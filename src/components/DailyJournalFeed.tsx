@@ -3377,12 +3377,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   post={{
                     title: selectedPost.title,
                     coverImage: extractCoverImage(selectedPost.content) || "/nature_hero.png",
-                    excerpt: stripHtml(selectedPost.content || "").slice(0, 150) + "…",
+                    excerpt: stripHtml(selectedPost.content || "").slice(0, 320),
                     chapter: getPostChapterLabel(selectedPost, sortedPosts),
                     category: getPostChapterLabel(selectedPost, sortedPosts),
                     publishedDate: formatDate(selectedPost.published, locale),
                     readingTime: `${getReadingTime(selectedPost.content || "")} MIN READ`,
-                    url: "blog.ivanaffriandi.com",
+                    url: `https://blog.ivanaffriandi.com/${selectedPost.id}`,
                     author: "Ivan Affriandi",
                     theme: "ink",
                   }}

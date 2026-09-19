@@ -2169,12 +2169,12 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                               const match = (post.content || "").match(/<img[^>]+src=["']([^"']+)["']/i);
                               return match ? match[1] : "/nature_hero.png";
                             })(),
-                            excerpt: (post.content || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 150) + "…",
+                            excerpt: (post.content || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 320),
                             chapter: post.labels?.[0] || "ESSAY",
                             category: post.labels?.[0] || "ESSAY",
                             publishedDate: post.published ? new Date(post.published).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "AUTUMN 2026",
                             readingTime: "4 MIN READ",
-                            url: "blog.ivanaffriandi.com",
+                            url: `https://blog.ivanaffriandi.com/${post.id}`,
                             author: "Ivan Affriandi",
                             theme: isCurrentThemeDark ? "ink" : "stone",
                           }}

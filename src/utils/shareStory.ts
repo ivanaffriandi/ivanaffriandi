@@ -1,44 +1,30 @@
 import * as htmlToImage from 'html-to-image';
 
 /**
- * Converts a base64 Data URL into a browser File object.
+ * Converts a base64 Data URL into a browser File object synchronously.
+ * 0ms delay ensures iOS Safari user gesture activation remains valid for navigator.share().
  */
-export async function dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
-  const res = await fetch(dataUrl);
-  const blob = await res.blob();
-  return new File([blob], fileName, { type: 'image/png' });
+export function dataUrlToFileSync(dataUrl: string, fileName: string): File {
+  const arr = dataUrl.split(',');
+  const mimeMatch = arr[0].match(/:(.*?);/);
+  const mime = mimeMatch ? mimeMatch[1] : 'image/png';
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], fileName, { type: mime });
 }
 
-/**
- * Copies a PNG data URL directly to the user's clipboard as an image blob.
- * On iOS, this enables Instagram to immediately show "Add Sticker from clipboard" in Stories.
- */
-export async function copyImageToClipboard(dataUrl: string): Promise<boolean> {
-  if (
-    typeof navigator === 'undefined' ||
-    !navigator.clipboard ||
-    typeof window === 'undefined' ||
-    !('ClipboardItem' in window)
-  ) {
-    return false;
-  }
-  try {
-    const res = await fetch(dataUrl);
-    const blob = await res.blob();
-    await navigator.clipboard.write([
-      new ClipboardItem({ 'image/png': blob }),
-    ]);
-    return true;
-  } catch (err) {
-    console.warn('Clipboard image write skipped or failed:', err);
-    return false;
-  }
-}
+export const dataUrlToFile = dataUrlToFileSync;
 
 /**
- * Automatically triggers a browser download for an image data URL.
+ * Optional manual helper to download an image (exported for backwards compatibility).
+ * NOTE: Never automatically called during mobile share flow.
  */
 export function downloadImage(dataUrl: string, fileName: string): void {
+  if (typeof document === 'undefined') return;
   const link = document.createElement('a');
   link.download = fileName;
   link.href = dataUrl;
@@ -50,108 +36,145 @@ export function downloadImage(dataUrl: string, fileName: string): void {
 export interface ShareResult {
   shared: boolean;
   copied: boolean;
-  downloaded: boolean;
+  downloaded?: boolean;
   message: string;
 }
 
 /**
- * Captures an HTML element and converts it to a high-resolution transparent PNG Data URL.
- * Awaits web fonts and ensures all images are completely loaded.
+ * Captures an HTML element to PNG Data URL.
  */
 export async function captureElementToPng(element: HTMLElement): Promise<string> {
-  // 1. Wait for custom web fonts
-  if (typeof document !== 'undefined' && 'fonts' in document) {
-    try {
-      await document.fonts.ready;
-    } catch {
-      // safe fallback
-    }
-  }
-
-  // 2. Wait for internal images to complete loading
-  const imgs = Array.from(element.querySelectorAll('img'));
-  if (imgs.length > 0) {
-    await Promise.all(
-      imgs.map((img) => {
-        if (img.complete && img.naturalHeight !== 0) return Promise.resolve();
-        return new Promise((resolve) => {
-          const timer = setTimeout(() => resolve(false), 2500);
-          img.onload = () => {
-            clearTimeout(timer);
-            resolve(true);
-          };
-          img.onerror = () => {
-            clearTimeout(timer);
-            resolve(false);
-          };
-        });
-      })
-    );
-  }
-
-  // 3. Generate transparent sticker PNG
   return await htmlToImage.toPng(element, {
-    quality: 0.98,
-    pixelRatio: 2, // 2x retina crispness for sticker
-    cacheBust: true,
+    quality: 0.95,
+    pixelRatio: 1, // Element is already 1080x1920
+    cacheBust: false,
     skipAutoScale: true,
   });
 }
 
 /**
- * Shares a generated sticker via Web Share API & clipboard, or triggers fallback download.
+ * Shares the story directly via Web Share API without forcing an automatic download.
+ * Automatically copies the article URL to clipboard so the user can easily paste it
+ * into Instagram's native Link Sticker.
  */
 export async function shareOrDownloadStory(
   dataUrl: string,
   title: string,
-  slug = 'sticker'
+  slug = 'story',
+  articleUrl = 'https://blog.ivanaffriandi.com'
 ): Promise<ShareResult> {
-  const fileName = `${slug.replace(/[^a-zA-Z0-9_-]/g, '_')}-sticker.png`;
+  const fileName = `${slug.replace(/[^a-zA-Z0-9_-]/g, '_')}-story.png`;
 
-  // 1. Attempt copying image to clipboard for instant iOS "Add Sticker" in Instagram
-  const copied = await copyImageToClipboard(dataUrl);
-
-  // 2. Convert to File object for native share sheet
-  const file = await dataUrlToFile(dataUrl, fileName);
-
-  const isWebShareAvailable =
-    typeof navigator !== 'undefined' &&
-    typeof navigator.share === 'function' &&
-    typeof navigator.canShare === 'function' &&
-    navigator.canShare({ files: [file] });
-
-  if (isWebShareAvailable) {
+  // 1. Copy article link to clipboard so user can paste directly into Instagram's Link Sticker
+  let linkCopied = false;
+  if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
     try {
-      await navigator.share({
-        files: [file],
-        title,
-        text: `Read "${title}" on my journal: ivanaffriandi.com`,
-      });
-      return {
-        shared: true,
-        copied,
-        downloaded: false,
-        message: 'Sticker siap! Bisa kamu tempel & pindah-pindahkan di IG Story.',
-      };
+      await navigator.clipboard.writeText(articleUrl);
+      linkCopied = true;
+    } catch {
+      // safe fallback
+    }
+  }
+
+  // 2. Synchronous File creation (0ms, keeps user activation alive)
+  const file = dataUrlToFileSync(dataUrl, fileName);
+
+  const sharePayloadWithUrl = {
+    files: [file],
+    title,
+    text: `Read "${title}": ${articleUrl}`,
+    url: articleUrl,
+  };
+
+  const sharePayloadFileOnly = {
+    files: [file],
+    title,
+  };
+
+  let canShareWithUrl = false;
+  let canShareFileOnly = false;
+
+  if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+    if (typeof navigator.canShare === 'function') {
+      try {
+        canShareWithUrl = navigator.canShare(sharePayloadWithUrl);
+      } catch {
+        canShareWithUrl = false;
+      }
+      try {
+        canShareFileOnly = navigator.canShare(sharePayloadFileOnly);
+      } catch {
+        canShareFileOnly = false;
+      }
+    } else {
+      canShareFileOnly = true;
+    }
+  }
+
+  if (canShareWithUrl || canShareFileOnly) {
+    try {
+      // Try sharing with URL first if supported, otherwise file only
+      if (canShareWithUrl) {
+        try {
+          await navigator.share(sharePayloadWithUrl);
+          return {
+            shared: true,
+            copied: linkCopied,
+            downloaded: false,
+            message: 'Link tersalin! Di IG Story tinggal pasang stiker Tautan (Link) agar viewers bisa klik.',
+          };
+        } catch (shareWithUrlErr: unknown) {
+          // If browser rejected sharing files+url together, retry with file only
+          if (shareWithUrlErr instanceof Error && shareWithUrlErr.name === 'AbortError') {
+            return {
+              shared: false,
+              copied: linkCopied,
+              downloaded: false,
+              message: 'Share dibatalkan.',
+            };
+          }
+          if (canShareFileOnly) {
+            await navigator.share(sharePayloadFileOnly);
+            return {
+              shared: true,
+              copied: linkCopied,
+              downloaded: false,
+              message: 'Link tersalin! Di IG Story tinggal pasang stiker Tautan (Link).',
+            };
+          }
+          throw shareWithUrlErr;
+        }
+      } else {
+        await navigator.share(sharePayloadFileOnly);
+        return {
+          shared: true,
+          copied: linkCopied,
+          downloaded: false,
+          message: 'Link tersalin! Di IG Story tinggal pasang stiker Tautan (Link).',
+        };
+      }
     } catch (err: unknown) {
       if (err instanceof Error && err.name === 'AbortError') {
         return {
           shared: false,
-          copied,
+          copied: linkCopied,
           downloaded: false,
-          message: copied ? 'Sticker disalin! Buka IG Story lalu paste.' : 'Share dibatalkan.',
+          message: 'Share dibatalkan.',
         };
       }
-      console.warn('Web Share failed, falling back to download:', err);
+      console.warn('Share error:', err);
     }
   }
 
-  // 3. Fallback: Automatic download for desktop or unsupported mobile browsers
-  downloadImage(dataUrl, fileName);
+  // 3. DO NOT force automatic browser download.
+  // Notify user that the link was copied.
   return {
     shared: false,
-    copied,
-    downloaded: true,
-    message: 'Sticker tersimpan! Bisa kamu upload & geser-geser di IG Story.',
+    copied: linkCopied,
+    downloaded: false,
+    message: linkCopied
+      ? 'Link artikel disalin! Di IG Story pasang stiker Tautan (Link) ya.'
+      : 'Gunakan tombol share untuk bagikan.',
   };
 }
+
