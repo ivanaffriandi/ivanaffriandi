@@ -3699,56 +3699,49 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 </motion.div>
               </div>
 
-              {/* Dots indicator for flipboard overview mode */}
+              {/* Dashed progress indicators for overview mode: fixed total length, dynamic segment width matching all posts */}
               {flipboardCards.length > 1 && (
                 <div
-                  className="pj-dots"
+                  className="pj-deck-dashes"
                   style={{
                     position: "absolute",
                     bottom: "calc(env(safe-area-inset-bottom, 24px) + 24px)",
                     left: "clamp(1.5rem, 5vw, 4rem)",
                     zIndex: 40,
                     margin: 0,
+                    width: "128px",
+                    maxWidth: "128px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: flipboardCards.length > 10 ? "3px" : "4px",
+                    boxSizing: "border-box",
                   }}
                 >
-                  {(() => {
-                    const total = flipboardCards.length;
-                    if (total <= 5) {
-                      return flipboardCards.map((_, i) => (
-                        <div
-                          key={i}
-                          className={`pj-dot${i === (heroIndex % total) ? " active" : ""}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSlideDirection(i > heroIndex ? 1 : -1);
-                            setHeroIndex(i);
-                          }}
-                        />
-                      ));
-                    }
-                    const current = heroIndex % total;
-                    let start = Math.max(0, current - 2);
-                    let end = start + 5;
-                    if (end > total) {
-                      end = total;
-                      start = Math.max(0, end - 5);
-                    }
-                    const visibleDots = [];
-                    for (let i = start; i < end; i++) {
-                      visibleDots.push(
-                        <div
-                          key={i}
-                          className={`pj-dot${i === current ? " active" : ""}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSlideDirection(i > heroIndex ? 1 : -1);
-                            setHeroIndex(i);
-                          }}
-                        />
-                      );
-                    }
-                    return visibleDots;
-                  })()}
+                  {flipboardCards.map((_, i) => {
+                    const isActive = i === (heroIndex % flipboardCards.length);
+                    return (
+                      <div
+                        key={i}
+                        className={`pj-deck-dash${isActive ? " active" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSlideDirection(i > heroIndex ? 1 : -1);
+                          setHeroIndex(i);
+                        }}
+                        style={{
+                          flex: 1,
+                          height: "2px",
+                          borderRadius: "2px",
+                          backgroundColor: isActive ? "#FFFFFF" : "rgba(255, 255, 255, 0.3)",
+                          cursor: "pointer",
+                          transition: "background-color 0.25s ease",
+                          padding: "6px 0",
+                          backgroundClip: "content-box",
+                          boxSizing: "content-box",
+                        }}
+                      />
+                    );
+                  })}
                 </div>
               )}
             </>
