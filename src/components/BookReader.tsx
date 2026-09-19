@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { addComment, getApprovedComments, CommentItem } from "@/lib/comments";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { InstagramShareButton } from "@/components/story/InstagramShareButton";
+import { getMinimalistNatureCover } from "@/utils/natureCover";
 
 interface PostType {
   id: string;
@@ -2177,7 +2178,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                             title: post.title,
                             coverImage: (function() {
                               const match = (post.content || "").match(/<img[^>]+src=["']([^"']+)["']/i);
-                              return match ? match[1] : "/nature_hero.png";
+                              return match ? match[1] : getMinimalistNatureCover(post.title || post.id);
                             })(),
                             excerpt: (post.content || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 320),
                             chapter: post.labels?.[0] || "ESSAY",

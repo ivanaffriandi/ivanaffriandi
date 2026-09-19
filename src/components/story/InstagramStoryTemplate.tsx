@@ -1,6 +1,7 @@
 'use client';
 
 import React, { forwardRef, useState, useEffect } from 'react';
+import { getMinimalistNatureCover } from '@/utils/natureCover';
 
 export interface StoryPostData {
   title: string;
@@ -32,7 +33,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
     const [coverDataUrl, setCoverDataUrl] = useState<string | null>(null);
 
     // Resolve cover image and route external images through our CORS proxy
-    const rawCover = post.coverImage || '/nature_hero.png';
+    const rawCover = post.coverImage || getMinimalistNatureCover(post.title);
     const proxiedCover =
       rawCover.startsWith('http://') || rawCover.startsWith('https://')
         ? `/api/proxy-image?url=${encodeURIComponent(rawCover)}`

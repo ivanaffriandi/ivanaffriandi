@@ -6,6 +6,7 @@ import React, { useState, useMemo, useEffect, useCallback, useRef } from "react"
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { InstagramShareButton } from "./story/InstagramShareButton";
+import { getMinimalistNatureCover, MINIMALIST_NATURE_COVERS } from "@/utils/natureCover";
 
 function formatDate(iso: string, locale: string) {
   if (!iso) return "";
@@ -432,7 +433,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const router = useRouter();
   const selectedPost = selectedPostIndex !== null ? sortedPosts[selectedPostIndex] : null;
 
-  const fallbackHero = "/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg";
+  const fallbackHero = "/images/nature/misty_forest.jpg";
   const fallbackBrand = "/images/defining_brand_mono.png";
 
   const [postPhotoIndex, setPostPhotoIndex] = useState<number>(0);
@@ -459,8 +460,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     if (isReadingPrologue) return ["/nature_hero.png"];
     if (!selectedPost || !selectedPost.content) return [];
     const extracted = extractAllImages(selectedPost.content);
-    return extracted.length > 0 ? extracted : [fallbackHero];
-  }, [isReadingPrologue, selectedPost, fallbackHero]);
+    return extracted.length > 0 ? extracted : [getMinimalistNatureCover(selectedPost.title || String(selectedPost.id))];
+  }, [isReadingPrologue, selectedPost]);
 
   // Real-time Like state per post
   const [likesMap, setLikesMap] = useState<Record<string, { count: number; hasLiked: boolean }>>({});
@@ -660,14 +661,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     return () => clearInterval(timer);
   }, [selectedPost, selectedPostImages]);
 
-  const fallbackCovers = useMemo(() => [
-    "/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg",
-    "/images/moments/539303572_18073420046098563_1129254407547625674_n..webp",
-    "/images/moments/598943412_18085107533098563_2022381096122126117_n..webp",
-    "/images/moments/489831318_18060819218098563_9042912996466521959_n..jpg",
-    "/images/moments/515043142_18068610035098563_4316722369364790783_n..jpg",
-    "/images/moments/608079301_18086400239098563_3466106499873906770_n..webp",
-  ], []);
+  const fallbackCovers = useMemo(() => MINIMALIST_NATURE_COVERS, []);
 
   // Preload covers in browser memory to eliminate image flashing/flickering
   useEffect(() => {
@@ -691,7 +685,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     const chapterCards = sortedPosts.map((p, idx) => {
       const extracted = extractCoverImage(p.content);
       const isBadImg = !extracted || extracted.includes("ocean_hero_mono.png");
-      const cover = isBadImg ? fallbackCovers[(idx + 1) % fallbackCovers.length] : extracted;
+      const cover = isBadImg ? getMinimalistNatureCover(p.title || String(p.id)) : extracted;
       const chapterLabel = getPostChapterLabel(p, sortedPosts);
       return {
         id: p.id,
@@ -808,7 +802,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     }
     return sortedPosts.map((p, idx) => ({
       id: p.id,
-      img: extractCoverImage(p.content) || (idx % 2 === 0 ? fallbackHero : fallbackBrand),
+      img: extractCoverImage(p.content) || getMinimalistNatureCover(p.title || String(p.id)),
       title: p.title,
       caption: stripHtml(p.content).slice(0, 150),
       date: p.published,
@@ -3377,7 +3371,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   variant="mobile-circle"
                   post={{
                     title: selectedPost.title,
-                    coverImage: extractCoverImage(selectedPost.content) || "/nature_hero.png",
+                    coverImage: extractCoverImage(selectedPost.content) || getMinimalistNatureCover(selectedPost.title || String(selectedPost.id)),
                     excerpt: stripHtml(selectedPost.content || "").slice(0, 320),
                     chapter: getPostChapterLabel(selectedPost, sortedPosts),
                     category: getPostChapterLabel(selectedPost, sortedPosts),
@@ -4320,7 +4314,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         .filter((p) => p.id !== selectedPost.id)
                         .slice(0, 3)
                         .map((p) => {
-                          const pCover = extractCoverImage(p.content) || fallbackHero;
+                          const pCover = extractCoverImage(p.content) || getMinimalistNatureCover(p.title || String(p.id));
                           const pChapter = getPostChapterLabel(p, sortedPosts);
                           const pRelative = getRelativeTimeString(p.published);
                           const pIdx = sortedPosts.findIndex((item) => item.id === p.id);
@@ -4506,7 +4500,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                             <div className="blog-card-thumb-wrap">
                               <div className="ig-b-w-container" style={{ width: "100%", height: "100%" }}>
                                 <img
-                                  src={img || fallbackHero}
+                                  src={img || getMinimalistNatureCover(post.title || String(post.id))}
                                   alt={post.title}
                                   className="blog-b-w-img"
                                 />
@@ -5424,7 +5418,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             {filteredPosts.map((post) => {
               const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
               const chapterLabel = getPostChapterLabel(post, sortedPosts);
-              const postCover = extractCoverImage(post.content) || fallbackCovers[(postIdx + 1) % fallbackCovers.length];
+              const postCover = extractCoverImage(post.content) || getMinimalistNatureCover(post.title || String(post.id));
               const readTime = getReadingTime(post.content || "");
 
               return (

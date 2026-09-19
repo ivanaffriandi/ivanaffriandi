@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import Link from 'next/link';
 import confetti from 'canvas-confetti';
 import styles from './homepage.module.css';
+import { MINIMALIST_NATURE_COVERS, getMinimalistNatureCover } from '@/utils/natureCover';
 
 const InstagramIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -66,15 +67,7 @@ const CREATIVE_STUDIOS = [
   },
 ];
 
-const FALLBACK_JOURNAL_COVERS = [
-  "/nature_hero.png",
-  "/images/moments/539303572_18073420046098563_1129254407547625674_n..webp",
-  "/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg",
-  "/images/moments/598943412_18085107533098563_2022381096122126117_n..webp",
-  "/images/moments/489831318_18060819218098563_9042912996466521959_n..jpg",
-  "/images/moments/515043142_18068610035098563_4316722369364790783_n..jpg",
-  "/images/moments/608079301_18086400239098563_3466106499873906770_n..webp",
-];
+const FALLBACK_JOURNAL_COVERS = MINIMALIST_NATURE_COVERS;
 
 function extractCoverImage(html: string): string | null {
   if (!html) return null;
@@ -276,7 +269,7 @@ export default function AvantGardeHomepage() {
   const processedPosts = useMemo(() => {
     return displayPosts.slice(0, 3).map((post, idx) => {
       const extracted = extractCoverImage(post.content);
-      const cover = extracted || FALLBACK_JOURNAL_COVERS[idx % FALLBACK_JOURNAL_COVERS.length];
+      const cover = extracted || getMinimalistNatureCover(post.title || String(post.id || idx));
       const dateStr = post.published ? new Date(post.published).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Recent";
       const cleanTitle = (post.title || "").replace(/^Chapter\s*\d+\s*:\s*/i, "").trim();
       return {
