@@ -20,8 +20,8 @@
   --h-badge-bg: rgba(0, 0, 0, 0.06);
   --h-badge-text: #8e8e98;
   --h-hero-scrim: radial-gradient(circle at center, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.85) 45%, rgba(255, 255, 255, 0) 75%);
-  --h-journal-pill-bg: rgba(255, 255, 255, 0.92);
-  --h-journal-pill-hover: #ffffff;
+  --h-journal-pill-bg: #ffffff;
+  --h-journal-pill-hover: #f7f7f5;
   --h-journal-pill-border: rgba(0, 0, 0, 0.09);
   --h-journal-pill-shadow: 0 4px 16px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
   --h-journal-date-bg: rgba(0, 0, 0, 0.05);
@@ -47,8 +47,8 @@
     --h-badge-bg: rgba(255, 255, 255, 0.1);
     --h-badge-text: #71717a;
     --h-hero-scrim: radial-gradient(circle at center, rgba(9, 9, 11, 0.96) 0%, rgba(9, 9, 11, 0.85) 45%, rgba(9, 9, 11, 0) 75%);
-    --h-journal-pill-bg: rgba(24, 25, 30, 0.9);
-    --h-journal-pill-hover: rgba(34, 35, 42, 0.95);
+    --h-journal-pill-bg: #18191e;
+    --h-journal-pill-hover: #22232a;
     --h-journal-pill-border: rgba(255, 255, 255, 0.14);
     --h-journal-pill-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
     --h-journal-date-bg: rgba(255, 255, 255, 0.08);
@@ -425,14 +425,17 @@
   padding: 5px 12px 5px 5px;
   border-radius: 9999px;
   background: var(--h-journal-pill-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--h-journal-pill-border);
   box-shadow: var(--h-journal-pill-shadow);
   text-decoration: none;
   color: var(--h-text);
-  transition: background-color 0.24s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.24s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform, opacity;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .compactBlogItem:hover {
@@ -541,8 +544,6 @@
   padding: 6px 13px;
   border-radius: 9999px;
   background: var(--h-journal-pill-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--h-journal-pill-border);
   box-shadow: var(--h-journal-pill-shadow);
   text-decoration: none;
@@ -550,8 +551,13 @@
   font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  transition: background-color 0.24s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.24s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform, opacity;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .horizontalStudioItem:hover {

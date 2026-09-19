@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import Link from 'next/link';
 import confetti from 'canvas-confetti';
@@ -273,6 +273,21 @@ export default function AvantGardeHomepage() {
 
   const displayPosts = latestPosts.length > 0 ? latestPosts : fallbackPosts;
 
+  const processedPosts = useMemo(() => {
+    return displayPosts.slice(0, 3).map((post, idx) => {
+      const extracted = extractCoverImage(post.content);
+      const cover = extracted || FALLBACK_JOURNAL_COVERS[idx % FALLBACK_JOURNAL_COVERS.length];
+      const dateStr = post.published ? new Date(post.published).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Recent";
+      const cleanTitle = (post.title || "").replace(/^Chapter\s*\d+\s*:\s*/i, "").trim();
+      return {
+        id: post.id || `post-${idx}`,
+        title: cleanTitle,
+        cover,
+        dateStr,
+      };
+    });
+  }, [displayPosts]);
+
   // Lock body & html scrolling completely on iPhone / Mobile browsers
   useEffect(() => {
     const originalBodyOverflow = document.body.style.overflow;
@@ -440,7 +455,7 @@ export default function AvantGardeHomepage() {
             </motion.div>
           </div>
 
-          <motion.div layout className={styles.typewriterTextWrap} onClick={handleHeadTap}>
+          <div className={styles.typewriterTextWrap} onClick={handleHeadTap}>
             {/* Ghost invisible span to reserve the exact layout bounds and eliminate all typing jitter */}
             <span className={styles.handwritingTextGhost} aria-hidden="true">
               {currentFullText}
@@ -449,130 +464,83 @@ export default function AvantGardeHomepage() {
               {displayText}
               <span className={styles.typingCaret} />
             </span>
-          </motion.div>
+          </div>
 
           {/* COMPACT RECENT 3 BLOGS WIDGET (APPEARS ON PHRASE 1) */}
-          <AnimatePresence mode="wait">
+          <AnimatePresence initial={false}>
             {phraseIndex === 1 && (
               <motion.div
                 key="blogs-container"
-                layout
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: {
-                    opacity: 1,
-                    transition: {
-                      staggerChildren: 0.06,
-                    },
-                  },
-                  exit: {
-                    opacity: 0,
-                    y: 8,
-                    transition: { duration: 0.18 },
-                  },
-                }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                 className={styles.compactBlogsContainer}
               >
-                {displayPosts.slice(0, 3).map((post, idx) => {
-                  const extracted = extractCoverImage(post.content);
-                  const cover = extracted || FALLBACK_JOURNAL_COVERS[idx % FALLBACK_JOURNAL_COVERS.length];
-                  const dateStr = post.published ? new Date(post.published).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Recent";
-                  const cleanTitle = post.title.replace(/^Chapter\s*\d+\s*:\s*/i, "").trim();
-                  
-                  return (
-                    <motion.a
-                      key={post.id || idx}
-                      variants={{
-                        hidden: { opacity: 0, y: 12, scale: 0.95 },
-                        visible: {
-                          opacity: 1,
-                          y: 0,
-                          scale: 1,
-                          transition: {
-                            type: 'spring',
-                            stiffness: 350,
-                            damping: 26,
-                          },
-                        },
-                        exit: { opacity: 0, y: 6, scale: 0.98 },
-                      }}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.97 }}
-                      href="https://blog.ivanaffriandi.com"
-                      className={styles.compactBlogItem}
-                      title={cleanTitle}
-                    >
-                      <div className={styles.compactBlogThumbWrap}>
-                        <img
-                          src={cover}
-                          alt={cleanTitle}
-                          className={styles.compactBlogThumbImg}
-                          onError={(e) => {
-                            (e.currentTarget as HTMLImageElement).src = FALLBACK_JOURNAL_COVERS[(idx + 1) % FALLBACK_JOURNAL_COVERS.length];
-                          }}
-                        />
-                      </div>
-                      <div className={styles.compactBlogInfo}>
-                        <h4 className={styles.compactBlogTitle}>{cleanTitle}</h4>
-                        <span className={styles.compactBlogMeta}>{dateStr}</span>
-                      </div>
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={styles.compactBlogChevron}>
-                        <polyline points="9 18 15 12 9 6" />
-                      </svg>
-                    </motion.a>
-                  );
-                })}
+                {processedPosts.map((post, idx) => (
+                  <motion.a
+                    key={post.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.22,
+                      delay: idx * 0.04,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    whileHover={{ y: -1.5 }}
+                    whileTap={{ scale: 0.98 }}
+                    href="https://blog.ivanaffriandi.com"
+                    className={styles.compactBlogItem}
+                    title={post.title}
+                  >
+                    <div className={styles.compactBlogThumbWrap}>
+                      <img
+                        src={post.cover}
+                        alt={post.title}
+                        loading="eager"
+                        decoding="async"
+                        className={styles.compactBlogThumbImg}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src = FALLBACK_JOURNAL_COVERS[(idx + 1) % FALLBACK_JOURNAL_COVERS.length];
+                        }}
+                      />
+                    </div>
+                    <div className={styles.compactBlogInfo}>
+                      <h4 className={styles.compactBlogTitle}>{post.title}</h4>
+                      <span className={styles.compactBlogMeta}>{post.dateStr}</span>
+                    </div>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={styles.compactBlogChevron}>
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </motion.a>
+                ))}
               </motion.div>
             )}
           </AnimatePresence>
 
           {/* HORIZONTAL SIMPLE CREATIVE STUDIOS & ACADEMY LINKS */}
-          <AnimatePresence mode="wait">
+          <AnimatePresence initial={false}>
             {phraseIndex === 2 && (
               <motion.div
                 key="studios-container"
-                layout
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: {
-                    opacity: 1,
-                    transition: {
-                      staggerChildren: 0.05,
-                    },
-                  },
-                  exit: {
-                    opacity: 0,
-                    y: 8,
-                    transition: { duration: 0.18 },
-                  },
-                }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                 className={styles.horizontalStudiosContainer}
               >
                 {CREATIVE_STUDIOS.map((studio, idx) => (
                   <motion.a
                     key={idx}
-                    variants={{
-                      hidden: { opacity: 0, y: 10, scale: 0.94 },
-                      visible: {
-                        opacity: 1,
-                        y: 0,
-                        scale: 1,
-                        transition: {
-                          type: 'spring',
-                          stiffness: 350,
-                          damping: 26,
-                        },
-                      },
-                      exit: { opacity: 0, y: 6, scale: 0.97 },
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.22,
+                      delay: idx * 0.04,
+                      ease: [0.16, 1, 0.3, 1],
                     }}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.96 }}
+                    whileHover={{ y: -1.5 }}
+                    whileTap={{ scale: 0.97 }}
                     href={studio.url}
                     target="_blank"
                     rel="noopener noreferrer"
