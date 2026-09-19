@@ -136,7 +136,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             }}
           />
 
-          {/* ── ZONE 1: BACKGROUND TOP CENTER (CHAPTER CAPSULE - NO DOT) ── */}
+          {/* ── ZONE 1: BACKGROUND TOP CENTER (CRISP WHITE CHAPTER CAPSULE) ── */}
           <div
             style={{
               position: 'relative',
@@ -153,22 +153,20 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '10px 24px',
+                padding: '12px 28px',
                 borderRadius: '9999px',
-                backgroundColor: 'rgba(0, 0, 0, 0.45)',
-                backdropFilter: 'blur(30px)',
-                WebkitBackdropFilter: 'blur(30px)',
-                border: '1px solid rgba(255, 255, 255, 0.22)',
-                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.45)',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid rgba(255, 255, 255, 0.95)',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
               }}
             >
               <span
                 style={{
-                  fontSize: '14px',
+                  fontSize: '15px',
                   fontWeight: 800,
                   letterSpacing: '0.22em',
                   textTransform: 'uppercase',
-                  color: '#FFFFFF',
+                  color: '#09090B',
                 }}
               >
                 {chapterText}
@@ -346,31 +344,31 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     >
-                      <path d="M7 17L17 7M17 7H7M17 7V17" />
+                      <path d="M7 17L17 7H7M17 7V17" />
                     </svg>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* MINIMALIST COPYRIGHT AT BOTTOM-LEFT OF CARD */}
+            {/* MINIMALIST COPYRIGHT AT BOTTOM-LEFT OF CARD (CLEAR & PROMINENT) */}
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'flex-start',
-                marginTop: '12px',
-                paddingLeft: '8px',
+                marginTop: '16px',
+                paddingLeft: '10px',
               }}
             >
               <span
                 style={{
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  letterSpacing: '0.05em',
-                  color: 'rgba(255, 255, 255, 0.85)',
-                  textShadow: '0 2px 8px rgba(0, 0, 0, 0.45)',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Inter, sans-serif',
+                  fontSize: '22px',
+                  fontWeight: 700,
+                  letterSpacing: '0.06em',
+                  color: '#FFFFFF',
+                  textShadow: '0 2px 12px rgba(0, 0, 0, 0.65)',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, sans-serif',
                 }}
               >
                 © {post.author || 'Ivan Affriandi'}
@@ -378,7 +376,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             </div>
           </div>
 
-          {/* ── ZONE 3: BACKGROUND BOTTOM CENTER (LINK: blog.ivanaffriandi.com) ── */}
+          {/* ── ZONE 3: BACKGROUND BOTTOM CENTER (CRISP WHITE LINK CAPSULE) ── */}
           <div
             style={{
               position: 'relative',
@@ -394,22 +392,20 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
-                padding: '11px 24px',
+                gap: '10px',
+                padding: '12px 28px',
                 borderRadius: '9999px',
-                backgroundColor: 'rgba(0, 0, 0, 0.45)',
-                backdropFilter: 'blur(30px)',
-                WebkitBackdropFilter: 'blur(30px)',
-                border: '1px solid rgba(255, 255, 255, 0.22)',
-                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.45)',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid rgba(255, 255, 255, 0.95)',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
               }}
             >
               <svg
-                width="13"
-                height="13"
+                width="14"
+                height="14"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="rgba(255, 255, 255, 0.8)"
+                stroke="#09090B"
                 strokeWidth="2.4"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -421,9 +417,9 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
               <span
                 style={{
                   fontSize: '15px',
-                  fontWeight: 700,
+                  fontWeight: 800,
                   letterSpacing: '0.08em',
-                  color: '#FFFFFF',
+                  color: '#09090B',
                 }}
               >
                 blog.ivanaffriandi.com

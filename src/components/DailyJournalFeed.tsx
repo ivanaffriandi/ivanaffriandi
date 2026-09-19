@@ -746,12 +746,20 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     });
   };
 
+  const lastHeroNavTimeRef = useRef<number>(0);
+
   const handleNextHero = useCallback(() => {
+    const now = Date.now();
+    if (now - lastHeroNavTimeRef.current < 280) return;
+    lastHeroNavTimeRef.current = now;
     setSlideDirection(1);
     setHeroIndex((prev) => (prev < flipboardCards.length - 1 ? prev + 1 : 0));
   }, [flipboardCards.length]);
 
   const handlePrevHero = useCallback(() => {
+    const now = Date.now();
+    if (now - lastHeroNavTimeRef.current < 280) return;
+    lastHeroNavTimeRef.current = now;
     setSlideDirection(-1);
     setHeroIndex((prev) => (prev > 0 ? prev - 1 : flipboardCards.length - 1));
   }, [flipboardCards.length]);
@@ -3741,15 +3749,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             >
               {/* PREVIOUS STORY DECK BUTTON */}
               <button
+                type="button"
                 onClick={(e) => {
+                  e.preventDefault();
                   e.stopPropagation();
                   handlePrevHero();
                 }}
                 onTouchStart={(e) => e.stopPropagation()}
-                onTouchEnd={(e) => {
-                  e.stopPropagation();
-                  handlePrevHero();
-                }}
                 title="Previous Story"
                 aria-label="Previous Story"
                 style={{
@@ -3780,15 +3786,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
               {/* NEXT STORY DECK BUTTON */}
               <button
+                type="button"
                 onClick={(e) => {
+                  e.preventDefault();
                   e.stopPropagation();
                   handleNextHero();
                 }}
                 onTouchStart={(e) => e.stopPropagation()}
-                onTouchEnd={(e) => {
-                  e.stopPropagation();
-                  handleNextHero();
-                }}
                 title="Next Story"
                 aria-label="Next Story"
                 style={{
