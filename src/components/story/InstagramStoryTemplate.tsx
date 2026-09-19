@@ -351,42 +351,35 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
               </div>
             </div>
 
-            {/* WRITTEN BY AUTHOR AT BOTTOM-LEFT OF CARD (CLEAR, PROMINENT & HIGH-CONTRAST) */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'baseline',
-                justifyContent: 'flex-start',
-                gap: '10px',
-                marginTop: '18px',
-                paddingLeft: '6px',
-              }}
-            >
-              <span
-                style={{
-                  fontSize: '23px',
-                  fontWeight: 600,
-                  letterSpacing: '0.01em',
-                  color: 'rgba(255, 255, 255, 0.94)',
-                  textShadow: '0 2px 14px rgba(0, 0, 0, 0.85), 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 2px rgba(0, 0, 0, 0.9)',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, sans-serif',
-                }}
-              >
-                Written by
-              </span>
-              <span
-                style={{
-                  fontSize: '25px',
-                  fontWeight: 800,
-                  letterSpacing: '0.01em',
-                  color: '#FFFFFF',
-                  textShadow: '0 2px 14px rgba(0, 0, 0, 0.85), 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 2px rgba(0, 0, 0, 0.9)',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, sans-serif',
-                }}
-              >
-                {post.author || 'Ivan Affriandi'}
-              </span>
-            </div>
+            {/* WRITTEN BY AUTHOR AT BOTTOM-LEFT OF CARD */}
+            {(() => {
+              const fullAuthor = post.author || 'Ivan Affriandi';
+              const parts = fullAuthor.split(' ');
+              const firstName = parts[0] || 'Ivan';
+              const restName = parts.slice(1).join(' ');
+
+              return (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'baseline',
+                    justifyContent: 'flex-start',
+                    gap: '5px',
+                    marginTop: '16px',
+                    paddingLeft: '6px',
+                    fontSize: '19px',
+                    lineHeight: '1.2',
+                    letterSpacing: '0.01em',
+                    color: '#FFFFFF',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, sans-serif',
+                  }}
+                >
+                  <span style={{ fontWeight: 400 }}>Written by</span>
+                  <span style={{ fontWeight: 700 }}>{firstName}</span>
+                  {restName && <span style={{ fontWeight: 400 }}>{restName}</span>}
+                </div>
+              );
+            })()}
           </div>
 
           {/* ── ZONE 3: BACKGROUND BOTTOM CENTER (CRISP WHITE LINK CAPSULE) ── */}
