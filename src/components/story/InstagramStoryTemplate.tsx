@@ -136,7 +136,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             }}
           />
 
-          {/* ── ZONE 1: BACKGROUND TOP CENTER (CRISP WHITE CHAPTER CAPSULE) ── */}
+          {/* ── ZONE 1: BACKGROUND TOP CENTER (COMPACT LIQUID GLASS CAPSULE) ── */}
           <div
             style={{
               position: 'relative',
@@ -153,20 +153,23 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '18px 44px',
+                padding: '11px 26px',
                 borderRadius: '9999px',
-                backgroundColor: '#FFFFFF',
-                border: '1px solid rgba(255, 255, 255, 0.95)',
-                boxShadow: '0 14px 40px rgba(0, 0, 0, 0.22), 0 2px 10px rgba(0, 0, 0, 0.12)',
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.07) 50%, rgba(255, 255, 255, 0.16) 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.36)',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.22), inset 0 1px 1.5px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(0, 0, 0, 0.1)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
               }}
             >
               <span
                 style={{
-                  fontSize: '24px',
-                  fontWeight: 900,
-                  letterSpacing: '0.2em',
+                  fontSize: '16px',
+                  fontWeight: 700,
+                  letterSpacing: '0.18em',
                   textTransform: 'uppercase',
-                  color: '#09090B',
+                  color: '#FFFFFF',
+                  textShadow: '0 1px 3px rgba(0, 0, 0, 0.35)',
                 }}
               >
                 {chapterText}
@@ -382,7 +385,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             })()}
           </div>
 
-          {/* ── ZONE 3: BACKGROUND BOTTOM CENTER (CRISP WHITE LINK CAPSULE) ── */}
+          {/* ── ZONE 3: BACKGROUND BOTTOM CENTER (COMPACT LIQUID GLASS LINK CAPSULE) ── */}
           <div
             style={{
               position: 'relative',
@@ -398,23 +401,26 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '14px',
-                padding: '18px 44px',
+                gap: '8px',
+                padding: '11px 26px',
                 borderRadius: '9999px',
-                backgroundColor: '#FFFFFF',
-                border: '1px solid rgba(255, 255, 255, 0.95)',
-                boxShadow: '0 14px 40px rgba(0, 0, 0, 0.22), 0 2px 10px rgba(0, 0, 0, 0.12)',
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.07) 50%, rgba(255, 255, 255, 0.16) 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.36)',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.22), inset 0 1px 1.5px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(0, 0, 0, 0.1)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
               }}
             >
               <svg
-                width="22"
-                height="22"
+                width="15"
+                height="15"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#09090B"
-                strokeWidth="2.8"
+                stroke="#FFFFFF"
+                strokeWidth="2.4"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))' }}
               >
                 <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                 <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
@@ -422,10 +428,11 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
 
               <span
                 style={{
-                  fontSize: '24px',
-                  fontWeight: 900,
+                  fontSize: '16px',
+                  fontWeight: 700,
                   letterSpacing: '0.04em',
-                  color: '#09090B',
+                  color: '#FFFFFF',
+                  textShadow: '0 1px 3px rgba(0, 0, 0, 0.35)',
                 }}
               >
                 blog.ivanaffriandi.com
