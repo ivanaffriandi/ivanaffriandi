@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState, useEffect } from 'react';
 
 export interface StoryPostData {
   title: string;
@@ -23,12 +23,14 @@ interface InstagramStoryTemplateProps {
  * 1080 x 1920 Instagram Story Template
  * - Proportional, compact floating sticker card in dead-center
  * - No empty void or stretched dead space
- * - Background Top Center: Subtle Chapter capsule
- * - Center: Compact 760px rounded sticker card (Photo + Date + Title + Author)
+ * - Background Top Center: Subtle Chapter capsule (No dot)
+ * - Center: Crisp White 760px rounded sticker card (Photo + Date + Title + Excerpt + Author)
  * - Background Bottom Center: blog.ivanaffriandi.com link capsule
  */
 export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryTemplateProps>(
   ({ post }, ref) => {
+    const [coverDataUrl, setCoverDataUrl] = useState<string | null>(null);
+
     // Resolve cover image and route external images through our CORS proxy
     const rawCover = post.coverImage || '/nature_hero.png';
     const proxiedCover =
@@ -36,6 +38,39 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
         ? `/api/proxy-image?url=${encodeURIComponent(rawCover)}`
         : rawCover;
 
+    // Convert cover image into an inline base64 Data URL for 100% reliable canvas capture
+    useEffect(() => {
+      let isMounted = true;
+      const loadCover = async () => {
+        if (rawCover.startsWith('data:')) {
+          if (isMounted) setCoverDataUrl(rawCover);
+          return;
+        }
+
+        try {
+          const res = await fetch(proxiedCover);
+          if (!res.ok) throw new Error(`Image proxy status: ${res.status}`);
+          const blob = await res.blob();
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            if (isMounted && typeof reader.result === 'string') {
+              setCoverDataUrl(reader.result);
+            }
+          };
+          reader.readAsDataURL(blob);
+        } catch (err) {
+          console.warn('Fallback to proxied cover:', err);
+          if (isMounted) setCoverDataUrl(proxiedCover);
+        }
+      };
+
+      loadCover();
+      return () => {
+        isMounted = false;
+      };
+    }, [rawCover, proxiedCover]);
+
+    const displayCover = coverDataUrl || proxiedCover;
     const chapterText = post.chapter || post.category || 'CHAPTER 07';
 
     return (
@@ -43,10 +78,14 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
         aria-hidden="true"
         style={{
           position: 'fixed',
-          left: '-9999px',
           top: 0,
+          left: 0,
+          width: '1080px',
+          height: '1920px',
+          opacity: 0,
           pointerEvents: 'none',
-          zIndex: -9999,
+          zIndex: -99999,
+          overflow: 'hidden',
         }}
       >
         <div
@@ -74,7 +113,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             style={{
               position: 'absolute',
               inset: '-20px',
-              backgroundImage: `url(${proxiedCover})`,
+              backgroundImage: `url(${displayCover})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               filter: 'blur(16px) brightness(0.24) saturate(1.35)',
@@ -172,7 +211,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
               }}
             >
               <img
-                src={proxiedCover}
+                src={displayCover}
                 alt={post.title}
                 crossOrigin="anonymous"
                 style={{

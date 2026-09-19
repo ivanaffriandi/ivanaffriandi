@@ -38,21 +38,50 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
     setTimeout(() => setToastMessage(null), 4500);
   }, []);
 
-  // Pre-generate story snapshot during idle time so sharing on iOS is instantaneous (0ms)
+  const waitForImagesToLoad = async (el: HTMLElement): Promise<void> => {
+    const imgs = Array.from(el.querySelectorAll('img'));
+    await Promise.all(
+      imgs.map(async (img) => {
+        if (!img.complete || img.naturalWidth === 0) {
+          await new Promise((resolve) => {
+            img.onload = () => resolve(true);
+            img.onerror = () => resolve(false);
+            setTimeout(() => resolve(false), 2500);
+          });
+        }
+        if ('decode' in img && typeof img.decode === 'function') {
+          try {
+            await img.decode();
+          } catch {
+            // safe fallback
+          }
+        }
+      })
+    );
+  };
+
+  // Pre-generate story snapshot during idle time once image is loaded & decoded
   useEffect(() => {
     cachedDataUrlRef.current = null;
+    let isCancelled = false;
+
     const timer = setTimeout(async () => {
-      if (storyRef.current) {
-        try {
+      if (isCancelled || !storyRef.current) return;
+      try {
+        await waitForImagesToLoad(storyRef.current);
+        if (!isCancelled && storyRef.current) {
           const url = await captureElementToPng(storyRef.current);
           cachedDataUrlRef.current = url;
-        } catch {
-          // Will capture on-demand if pre-warm fails
         }
+      } catch {
+        // Will capture on-demand if pre-warm fails
       }
-    }, 500);
+    }, 600);
 
-    return () => clearTimeout(timer);
+    return () => {
+      isCancelled = true;
+      clearTimeout(timer);
+    };
   }, [post.title, post.coverImage, post.excerpt]);
 
   const handleShare = async (e: React.MouseEvent) => {
@@ -64,6 +93,9 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
 
       const targetEl = storyRef.current;
       if (!targetEl) throw new Error('Story canvas not mounted');
+
+      // Guarantee that all images are fully loaded and decoded before capture
+      await waitForImagesToLoad(targetEl);
 
       // 1. Retrieve pre-cached image if ready for instant 0ms latency on iOS
       const dataUrl = cachedDataUrlRef.current || (await captureElementToPng(targetEl));
