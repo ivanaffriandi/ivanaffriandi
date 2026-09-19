@@ -136,7 +136,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             }}
           />
 
-          {/* ── ZONE 1: BACKGROUND TOP CENTER (COMPACT LIQUID GLASS CAPSULE) ── */}
+          {/* ── ZONE 1: BACKGROUND TOP CENTER (FLAT TRANSLUCENT FROSTED CAPSULE) ── */}
           <div
             style={{
               position: 'relative',
@@ -153,13 +153,13 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '9px 22px',
+                padding: '9px 20px',
                 borderRadius: '9999px',
-                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.07) 50%, rgba(255, 255, 255, 0.16) 100%)',
-                border: '1px solid rgba(255, 255, 255, 0.36)',
-                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2), inset 0 1px 1.5px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(0, 0, 0, 0.1)',
-                backdropFilter: 'blur(24px)',
-                WebkitBackdropFilter: 'blur(24px)',
+                backgroundColor: 'rgba(255, 255, 255, 0.14)',
+                border: '1px solid rgba(255, 255, 255, 0.24)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+                boxShadow: 'none',
               }}
             >
               <span
@@ -384,7 +384,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             })()}
           </div>
 
-          {/* ── ZONE 3: BACKGROUND BOTTOM CENTER (COMPACT LIQUID GLASS LINK CAPSULE) ── */}
+          {/* ── ZONE 3: BACKGROUND BOTTOM CENTER (FLAT TRANSLUCENT FROSTED LINK CAPSULE) ── */}
           <div
             style={{
               position: 'relative',
@@ -401,25 +401,24 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '11px 26px',
+                padding: '9px 20px',
                 borderRadius: '9999px',
-                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.07) 50%, rgba(255, 255, 255, 0.16) 100%)',
-                border: '1px solid rgba(255, 255, 255, 0.36)',
-                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.22), inset 0 1px 1.5px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(0, 0, 0, 0.1)',
-                backdropFilter: 'blur(24px)',
-                WebkitBackdropFilter: 'blur(24px)',
+                backgroundColor: 'rgba(255, 255, 255, 0.14)',
+                border: '1px solid rgba(255, 255, 255, 0.24)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
+                boxShadow: 'none',
               }}
             >
               <svg
-                width="15"
-                height="15"
+                width="14"
+                height="14"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="#FFFFFF"
-                strokeWidth="2.4"
+                strokeWidth="2.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))' }}
               >
                 <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                 <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
@@ -427,11 +426,11 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
 
               <span
                 style={{
-                  fontSize: '16px',
-                  fontWeight: 700,
-                  letterSpacing: '0.04em',
+                  fontSize: '15px',
+                  fontWeight: 600,
+                  letterSpacing: '0',
                   color: '#FFFFFF',
-                  textShadow: '0 1px 3px rgba(0, 0, 0, 0.35)',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, sans-serif',
                 }}
               >
                 blog.ivanaffriandi.com

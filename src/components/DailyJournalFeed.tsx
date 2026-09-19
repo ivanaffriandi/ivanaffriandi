@@ -736,10 +736,47 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const currentFlipCard = flipboardCards[heroIndex % flipboardCards.length];
   const currentHero = heroPosts[heroIndex % heroPosts.length];
 
+  const openPost = useCallback(
+    (postIdx: number, cardIdx?: number) => {
+      setIsReadingPrologue(false);
+      const targetPost = sortedPosts[postIdx];
+      const targetCardIdx =
+        cardIdx !== undefined
+          ? cardIdx
+          : flipboardCards.findIndex((c) => c.post?.id === targetPost?.id);
+      if (targetCardIdx !== -1) {
+        setHeroIndex(targetCardIdx);
+      }
+      setSelectedPostIndex(postIdx);
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    },
+    [flipboardCards, sortedPosts]
+  );
+
+  const closePost = useCallback(() => {
+    lastCloseTimeRef.current = Date.now();
+    if (selectedPost) {
+      const cardIdx = flipboardCards.findIndex((c) => c.post?.id === selectedPost.id);
+      if (cardIdx !== -1) {
+        setHeroIndex(cardIdx);
+      }
+    }
+    setIsReadingPrologue(false);
+    setSelectedPostIndex(null);
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [selectedPost, flipboardCards]);
+
+  const openPrologue = useCallback(() => {
+    setSelectedPostIndex(null);
+    setIsReadingPrologue(true);
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, []);
+
   const [touchStartPos, setTouchStartPos] = useState<{ x: number; y: number } | null>(null);
   const mobileScrollRef = React.useRef<HTMLDivElement>(null);
 
   const handleHeroTouchStart = (e: React.TouchEvent) => {
+    if (selectedPost || isReadingPrologue) return;
     setTouchStartPos({
       x: e.touches[0].clientX,
       y: e.touches[0].clientY,
@@ -766,6 +803,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   }, [flipboardCards.length]);
 
   const handleHeroTouchEnd = (e: React.TouchEvent) => {
+    if (selectedPost || isReadingPrologue) return;
     if (!touchStartPos) return;
     const diffX = touchStartPos.x - e.changedTouches[0].clientX;
     const diffY = touchStartPos.y - e.changedTouches[0].clientY;
@@ -985,16 +1023,14 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         }
       } else if (selectedPost || isReadingPrologue) {
         if (e.key === "Escape") {
-          setIsReadingPrologue(false);
-          setSelectedPostIndex(null);
-          window.scrollTo({ top: 0, behavior: "instant" });
+          closePost();
         }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedPost, isReadingPrologue, flipboardCards, isQAModalOpen, mobileSearchOpen, selectedIgItem]);
+  }, [selectedPost, isReadingPrologue, flipboardCards, isQAModalOpen, mobileSearchOpen, selectedIgItem, closePost]);
 
   // Works items list
   const worksList = [
@@ -1154,6 +1190,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           padding: 3.5rem clamp(1.5rem, 5vw, 4rem) calc(env(safe-area-inset-bottom, 24px) + 26px);
           box-sizing: border-box;
           z-index: 10;
+          transition: padding 0.45s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .pj-root.has-selected-post .pj-left-content {
@@ -1170,6 +1207,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           text-shadow: 0 2px 16px rgba(0,0,0,0.8);
           max-width: 800px;
           word-break: break-word;
+          transition: font-size 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin 0.45s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .pj-root.has-selected-post .pj-title {
@@ -1276,6 +1314,18 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           box-shadow: none !important;
           background: var(--bg-color, #FFFFFF);
           color: var(--text-primary, #111111);
+          animation: pjReaderFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+        }
+
+        @keyframes pjReaderFadeIn {
+          0% {
+            opacity: 0;
+            transform: translateY(14px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
 
         /* EDITORIAL THEME OVERRIDES FOR HOMEPAGE RIGHT FEED (EXPLICIT HIGH CONTRAST INK) */
@@ -3071,6 +3121,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             z-index: 1 !important;
             padding: 1.8rem 1.25rem calc(env(safe-area-inset-bottom, 24px) + 80px) !important;
             box-shadow: none !important;
+            animation: pjReaderFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
           }
 
           .pj-about-ig-grid { left: 0; height: 100%; }
@@ -3087,6 +3138,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             padding: 3.5rem 1.35rem calc(env(safe-area-inset-bottom, 24px) + 26px) 1.35rem !important;
             box-sizing: border-box !important;
             z-index: 10 !important;
+            transition: padding 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
           }
 
 
@@ -3111,6 +3163,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             text-shadow: 0 2px 14px rgba(0,0,0,0.6) !important;
             max-width: 84% !important;
             word-break: break-word !important;
+            transition: font-size 0.45s cubic-bezier(0.16, 1, 0.3, 1), margin 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
           }
 
           .pj-root.has-selected-post .pj-title {
@@ -3353,10 +3406,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  lastCloseTimeRef.current = Date.now();
-                  window.scrollTo({ top: 0, behavior: "instant" });
-                  setIsReadingPrologue(false);
-                  setSelectedPostIndex(null);
+                  closePost();
                 }}
                 className="mobile-home-btn"
                 title="Back to Journal Deck"
@@ -3411,19 +3461,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               {!selectedPost && !isReadingPrologue && (
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsReadingPrologue(true);
-                    setSelectedPostIndex(null);
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }}
-                  className="mobile-prologue-btn"
+                  onClick={() => openPrologue()}
+                  className="mobile-search-btn"
                   title="Read Prologue"
+                  aria-label="Read Prologue"
                 >
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
                     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
                   </svg>
-                  <span>PROLOGUE</span>
                 </button>
               )}
 
@@ -3442,309 +3488,287 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             </div>
           </div>
 
-          {/* ── UNIFIED PHYSICAL HARDWARE-ACCELERATED CAROUSEL TRACK (ZERO-FLICKER / ZERO-GLITCH) ── */}
-          {isReadingPrologue || selectedPost ? (
+          {/* ── UNIFIED HARDWARE-ACCELERATED CAROUSEL TRACK (ALWAYS MOUNTED / ZERO-FLICKER / ZERO-GLITCH) ── */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              overflow: "hidden",
+              background: "#0c0d0e",
+              zIndex: 1,
+            }}
+          >
+            <motion.div
+              animate={{ x: `-${(heroIndex % flipboardCards.length) * 100}%` }}
+              transition={{
+                type: "spring",
+                stiffness: 280,
+                damping: 28,
+                mass: 0.8,
+              }}
+              onPanEnd={(_, info) => {
+                if (selectedPost || isReadingPrologue) return;
+                const { offset, velocity } = info;
+                if (Math.abs(offset.x) > 28 || Math.abs(velocity.x) > 180) {
+                  lastSwipeTimeRef.current = Date.now();
+                  if (offset.x < 0 || velocity.x < -180) {
+                    handleNextHero();
+                  } else {
+                    handlePrevHero();
+                  }
+                }
+              }}
+              style={{
+                display: "flex",
+                width: "100%",
+                height: "100%",
+                touchAction: selectedPost || isReadingPrologue ? "auto" : "pan-y",
+              }}
+            >
+              {flipboardCards.map((card, idx) => {
+                const isThisCardSelected = Boolean(selectedPost && card.post && card.post.id === selectedPost.id);
+                const displayImg = isThisCardSelected && postPhotoIndex > 0 && selectedPostImages[postPhotoIndex % selectedPostImages.length]
+                  ? selectedPostImages[postPhotoIndex % selectedPostImages.length]
+                  : card.img;
+
+                return (
+                  <div
+                    key={card.id || idx}
+                    style={{
+                      position: "relative",
+                      width: "100%",
+                      height: "100%",
+                      flexShrink: 0,
+                      overflow: "hidden",
+                      cursor: selectedPost || isReadingPrologue ? "default" : "pointer",
+                    }}
+                    onClick={(e) => {
+                      if (selectedPost || isReadingPrologue) return;
+                      if (Date.now() - lastSwipeTimeRef.current < 450) {
+                        return;
+                      }
+                      e.stopPropagation();
+                      if (card.isPrologue) {
+                        openPrologue();
+                      } else if (card.post) {
+                        const pIdx = sortedPosts.findIndex((p) => p.id === card.post.id);
+                        if (pIdx !== -1) {
+                          openPost(pIdx, idx);
+                        }
+                      }
+                    }}
+                  >
+                    {/* Cover Photo */}
+                    <img
+                      src={displayImg}
+                      alt={card.title}
+                      loading={idx < 3 ? "eager" : "lazy"}
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        objectPosition: "center",
+                        display: "block",
+                      }}
+                    />
+
+                    {/* Cinematic Vignette Gradient */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        width: "100%",
+                        height: "100%",
+                        background: "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.92) 100%)",
+                        pointerEvents: "none",
+                      }}
+                    />
+
+                    {/* Title & Metadata */}
+                    <div
+                      className="pj-left-content"
+                      style={{
+                        pointerEvents: "none",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.5rem", flexWrap: "nowrap" }}>
+                        <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
+                          {card.isPrologue ? "INTRO NARRATIVE" : card.category}
+                        </span>
+                        {card.date && !card.isPrologue && (
+                          <>
+                            <span style={{ color: "rgba(255, 255, 255, 0.4)", fontSize: "0.65rem" }}>·</span>
+                            <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.65)" }}>
+                              {card.date}
+                            </span>
+                          </>
+                        )}
+                      </div>
+
+                      <h1
+                        className="pj-title"
+                        style={{
+                          fontSize: card.isPrologue ? "2.3rem" : undefined,
+                          fontWeight: card.isPrologue ? 750 : 600,
+                          letterSpacing: card.isPrologue ? "-0.03em" : "-0.02em",
+                          textTransform: card.isPrologue ? "uppercase" : "none",
+                        }}
+                      >
+                        {card.title}
+                      </h1>
+
+                      {/* Excerpt with smooth fade/collapse */}
+                      <p
+                        className="pj-excerpt"
+                        style={{
+                          opacity: selectedPost || isReadingPrologue ? 0 : 1,
+                          maxHeight: selectedPost || isReadingPrologue ? 0 : "120px",
+                          margin: selectedPost || isReadingPrologue ? 0 : "0 0 0.85rem 0",
+                          overflow: "hidden",
+                          transition: "opacity 0.25s ease, max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), margin 0.35s ease",
+                        }}
+                      >
+                        {card.excerpt}
+                      </p>
+
+                      {/* Photo gallery dots when article is open and has multiple photos */}
+                      {isThisCardSelected && selectedPostImages.length > 1 && (
+                        <div className="pj-dots" style={{ marginTop: "1rem", pointerEvents: "auto" }}>
+                          {selectedPostImages.map((_, i) => (
+                            <div
+                              key={i}
+                              className={`pj-dot${i === (postPhotoIndex % selectedPostImages.length) ? " active" : ""}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setPostPhotoIndex(i);
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </motion.div>
+          </div>
+
+          {/* Prologue Cover Overlay - smoothly fades in when reading Prologue */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              zIndex: 5,
+              pointerEvents: isReadingPrologue ? "auto" : "none",
+              opacity: isReadingPrologue ? 1 : 0,
+              transition: "opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
+              background: "#0c0d0e",
+              overflow: "hidden",
+            }}
+          >
+            <img
+              src="/nature_hero.png"
+              alt="Prologue"
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center",
+                display: "block",
+              }}
+            />
             <div
               style={{
                 position: "absolute",
                 inset: 0,
                 width: "100%",
                 height: "100%",
-                overflow: "hidden",
-                zIndex: 1,
+                background: "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.92) 100%)",
+                pointerEvents: "none",
+              }}
+            />
+            <div
+              className="pj-left-content"
+              style={{
+                zIndex: 6,
+                cursor: "default",
+                pointerEvents: "none",
               }}
             >
-              {/* Opened Article Static Photo Layer */}
-              <div
-                className="pj-photo-layer"
+              <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.5rem" }}>
+                <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
+                  INTRO NARRATIVE
+                </span>
+              </div>
+              <h1
+                className="pj-title"
                 style={{
-                  position: "absolute",
-                  inset: 0,
-                  width: "100%",
-                  height: "100%",
-                  zIndex: 1,
-                  overflow: "hidden",
-                  background: "#0c0d0e",
+                  fontSize: "2.3rem",
+                  fontWeight: 750,
+                  letterSpacing: "-0.03em",
+                  textTransform: "uppercase",
                 }}
               >
-                <img
-                  src={isReadingPrologue ? "/nature_hero.png" : selectedPostImages[postPhotoIndex % selectedPostImages.length]}
-                  alt={isReadingPrologue ? "Prologue" : selectedPost ? selectedPost.title : "Hero"}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center",
-                    display: "block",
-                  }}
-                />
-              </div>
-
-              {/* Cinematic Vignette Gradient Overlay */}
-              <div
-                className="pj-overlay"
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  width: "100%",
-                  height: "100%",
-                  background: "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.92) 100%)",
-                  zIndex: 2,
-                  pointerEvents: "none",
-                }}
-              />
-
-              {/* Opened Article Title & Meta Overlay */}
-              <div
-                className="pj-left-content"
-                style={{
-                  zIndex: 3,
-                  cursor: "default",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.5rem", flexWrap: "nowrap" }}>
-                  <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
-                    {isReadingPrologue
-                      ? "INTRO NARRATIVE"
-                      : (selectedPost ? getPostChapterLabel(selectedPost, sortedPosts) : "ESSAY")}
-                  </span>
-                  {selectedPost && selectedPost.published && (
-                    <>
-                      <span style={{ color: "rgba(255, 255, 255, 0.4)", fontSize: "0.65rem" }}>·</span>
-                      <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.65)" }}>
-                        {formatDate(selectedPost.published, locale)}
-                      </span>
-                    </>
-                  )}
-                </div>
-
-                <h1
-                  className="pj-title"
-                  style={{
-                    fontSize: isReadingPrologue ? "2.3rem" : undefined,
-                    fontWeight: isReadingPrologue ? 750 : 600,
-                    letterSpacing: isReadingPrologue ? "-0.03em" : "-0.02em",
-                    textTransform: isReadingPrologue ? "uppercase" : "none",
-                  }}
-                >
-                  {isReadingPrologue
-                    ? "PROLOGUE"
-                    : selectedPost
-                    ? selectedPost.title
-                    : currentFlipCard.title}
-                </h1>
-
-                {/* Photo gallery dots when article is open */}
-                {selectedPost && selectedPostImages.length > 1 && (
-                  <div className="pj-dots" style={{ marginTop: "1.4rem" }}>
-                    {selectedPostImages.map((_, i) => (
-                      <div
-                        key={i}
-                        className={`pj-dot${i === (postPhotoIndex % selectedPostImages.length) ? " active" : ""}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setPostPhotoIndex(i);
-                        }}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
+                PROLOGUE
+              </h1>
             </div>
-          ) : (
-            <>
-              {/* Continuous Track containing all cards in DOM - 100% immune to flickers/glitches */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  width: "100%",
-                  height: "100%",
-                  overflow: "hidden",
-                  background: "#0c0d0e",
-                  zIndex: 1,
-                }}
-              >
-                <motion.div
-                  animate={{ x: `-${(heroIndex % flipboardCards.length) * 100}%` }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 280,
-                    damping: 28,
-                    mass: 0.8,
-                  }}
-                  onPanEnd={(_, info) => {
-                    const { offset, velocity } = info;
-                    if (Math.abs(offset.x) > 28 || Math.abs(velocity.x) > 180) {
-                      lastSwipeTimeRef.current = Date.now();
-                      if (offset.x < 0 || velocity.x < -180) {
-                        handleNextHero();
-                      } else {
-                        handlePrevHero();
-                      }
-                    }
-                  }}
-                  style={{
-                    display: "flex",
-                    width: "100%",
-                    height: "100%",
-                    touchAction: "pan-y",
-                  }}
-                >
-                  {flipboardCards.map((card, idx) => (
-                    <div
-                      key={card.id || idx}
-                      style={{
-                        position: "relative",
-                        width: "100%",
-                        height: "100%",
-                        flexShrink: 0,
-                        overflow: "hidden",
-                        cursor: "pointer",
-                      }}
-                      onClick={(e) => {
-                        if (Date.now() - lastSwipeTimeRef.current < 450) {
-                          return;
-                        }
-                        e.stopPropagation();
-                        if (card.isPrologue) {
-                          setIsReadingPrologue(true);
-                          setSelectedPostIndex(null);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        } else if (card.post) {
-                          setIsReadingPrologue(false);
-                          const pIdx = sortedPosts.findIndex((p) => p.id === card.post.id);
-                          if (pIdx !== -1) {
-                            setSelectedPostIndex(pIdx);
-                            window.scrollTo({ top: 0, behavior: "smooth" });
-                          }
-                        }
-                      }}
-                    >
-                      {/* Cover Photo */}
-                      <img
-                        src={card.img}
-                        alt={card.title}
-                        loading={idx < 3 ? "eager" : "lazy"}
-                        style={{
-                          position: "absolute",
-                          inset: 0,
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          objectPosition: "center",
-                          display: "block",
-                        }}
-                      />
+          </div>
 
-                      {/* Cinematic Vignette Gradient */}
-                      <div
-                        style={{
-                          position: "absolute",
-                          inset: 0,
-                          width: "100%",
-                          height: "100%",
-                          background: "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.92) 100%)",
-                          pointerEvents: "none",
-                        }}
-                      />
-
-                      {/* Title & Metadata */}
-                      <div
-                        style={{
-                          position: "absolute",
-                          inset: 0,
-                          width: "100%",
-                          height: "100%",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-end",
-                          padding: "3.5rem clamp(1.5rem, 5vw, 4rem) calc(env(safe-area-inset-bottom, 24px) + 56px)",
-                          boxSizing: "border-box",
-                          pointerEvents: "none",
-                        }}
-                      >
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.55rem", marginBottom: "0.5rem", flexWrap: "nowrap" }}>
-                          <span style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.8)", fontFamily: "var(--font-sans)" }}>
-                            {card.isPrologue ? "INTRO NARRATIVE" : card.category}
-                          </span>
-                          {card.date && !card.isPrologue && (
-                            <>
-                              <span style={{ color: "rgba(255, 255, 255, 0.4)", fontSize: "0.65rem" }}>·</span>
-                              <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.65)" }}>
-                                {card.date}
-                              </span>
-                            </>
-                          )}
-                        </div>
-
-                        <h1
-                          className="pj-title"
-                          style={{
-                            fontSize: card.isPrologue ? "2.3rem" : undefined,
-                            fontWeight: card.isPrologue ? 750 : 600,
-                            letterSpacing: card.isPrologue ? "-0.03em" : "-0.02em",
-                            textTransform: card.isPrologue ? "uppercase" : "none",
-                          }}
-                        >
-                          {card.title}
-                        </h1>
-
-                        <p className="pj-excerpt">
-                          {card.excerpt}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </motion.div>
-              </div>
-
-              {/* Dashed progress indicators for overview mode: fixed total length, dynamic segment width matching all posts */}
-              {flipboardCards.length > 1 && (
-                <div
-                  className="pj-deck-dashes"
-                  style={{
-                    position: "absolute",
-                    bottom: "calc(env(safe-area-inset-bottom, 24px) + 24px)",
-                    left: "clamp(1.5rem, 5vw, 4rem)",
-                    zIndex: 40,
-                    margin: 0,
-                    width: "128px",
-                    maxWidth: "128px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: flipboardCards.length > 10 ? "3px" : "4px",
-                    boxSizing: "border-box",
-                  }}
-                >
-                  {flipboardCards.map((_, i) => {
-                    const isActive = i === (heroIndex % flipboardCards.length);
-                    return (
-                      <div
-                        key={i}
-                        className={`pj-deck-dash${isActive ? " active" : ""}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSlideDirection(i > heroIndex ? 1 : -1);
-                          setHeroIndex(i);
-                        }}
-                        style={{
-                          flex: 1,
-                          height: "2px",
-                          borderRadius: "2px",
-                          backgroundColor: isActive ? "#FFFFFF" : "rgba(255, 255, 255, 0.3)",
-                          cursor: "pointer",
-                          transition: "background-color 0.25s ease",
-                          padding: "6px 0",
-                          backgroundClip: "content-box",
-                          boxSizing: "content-box",
-                        }}
-                      />
-                    );
-                  })}
-                </div>
-              )}
-            </>
+          {/* Dashed progress indicators for overview mode: fixed total length, dynamic segment width matching all posts */}
+          {flipboardCards.length > 1 && (
+            <div
+              className="pj-deck-dashes"
+              style={{
+                position: "absolute",
+                bottom: "calc(env(safe-area-inset-bottom, 24px) + 24px)",
+                left: "clamp(1.5rem, 5vw, 4rem)",
+                zIndex: 40,
+                margin: 0,
+                width: "128px",
+                maxWidth: "128px",
+                display: "flex",
+                alignItems: "center",
+                gap: flipboardCards.length > 10 ? "3px" : "4px",
+                boxSizing: "border-box",
+                opacity: selectedPost || isReadingPrologue ? 0 : 1,
+                pointerEvents: selectedPost || isReadingPrologue ? "none" : "auto",
+                transition: "opacity 0.25s ease",
+              }}
+            >
+              {flipboardCards.map((_, i) => {
+                const isActive = i === (heroIndex % flipboardCards.length);
+                return (
+                  <div
+                    key={i}
+                    className={`pj-deck-dash${isActive ? " active" : ""}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSlideDirection(i > heroIndex ? 1 : -1);
+                      setHeroIndex(i);
+                    }}
+                    style={{
+                      flex: 1,
+                      height: "2px",
+                      borderRadius: "2px",
+                      backgroundColor: isActive ? "#FFFFFF" : "rgba(255, 255, 255, 0.3)",
+                      cursor: "pointer",
+                      transition: "background-color 0.25s ease",
+                      padding: "6px 0",
+                      backgroundClip: "content-box",
+                      boxSizing: "content-box",
+                    }}
+                  />
+                );
+              })}
+            </div>
           )}
 
         </div>
@@ -4035,7 +4059,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     {/* BACK BUTTON (DESKTOP ONLY - ON MOBILE TOP BAR HANDLES THIS) */}
                     <button
                       className="reader-back-btn-desktop"
-                      onClick={() => setSelectedPostIndex(null)}
+                      onClick={() => closePost()}
                       style={{
                         marginRight: "auto",
                         display: "inline-flex",
@@ -4227,7 +4251,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         OTHER CHAPTERS
                       </span>
                       <button
-                        onClick={() => setSelectedPostIndex(null)}
+                        onClick={() => closePost()}
                         style={{
                           background: "transparent",
                           border: "none",
@@ -4262,8 +4286,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                             <div
                               key={p.id}
                               onClick={() => {
-                                setSelectedPostIndex(pIdx);
-                                window.scrollTo({ top: 0, behavior: "smooth" });
+                                openPost(pIdx);
                               }}
                               style={{
                                 display: "flex",
@@ -4431,8 +4454,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                             key={post.id}
                             className="blog-grid-card"
                             onClick={() => {
-                              setSelectedPostIndex(postIdx);
-                              window.scrollTo({ top: 0, behavior: "smooth" });
+                              openPost(postIdx);
                             }}
                           >
                             {/* TOP: thumbnail */}
@@ -5349,11 +5371,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 <div
                   key={post.id}
                   onClick={() => {
-                    setIsReadingPrologue(false);
-                    setSelectedPostIndex(postIdx);
+                    openPost(postIdx);
                     setMobileSearchOpen(false);
                     setSearchQuery("");
-                    window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                   style={{
                     display: "flex",
@@ -5424,11 +5444,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             {(!searchQuery.trim() || "prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim())) && (
               <div
                 onClick={() => {
-                  setIsReadingPrologue(true);
-                  setSelectedPostIndex(null);
+                  openPrologue();
                   setMobileSearchOpen(false);
                   setSearchQuery("");
-                  window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
                 style={{
                   display: "flex",
