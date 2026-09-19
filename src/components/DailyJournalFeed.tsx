@@ -447,14 +447,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const [mobileSearchOpen, setMobileSearchOpen] = useState<boolean>(false);
   const [headerHidden, setHeaderHidden] = useState<boolean>(false);
 
-  const searchInputRef = useRef<HTMLInputElement | null>(null);
   const lastCloseTimeRef = useRef<number>(0);
-
-  useEffect(() => {
-    if (mobileSearchOpen && searchInputRef.current) {
-      searchInputRef.current.focus({ preventScroll: true });
-    }
-  }, [mobileSearchOpen]);
 
   const selectedPostImages = useMemo(() => {
     if (isReadingPrologue) return ["/images/nature/emerald_forest.jpg"];
@@ -1014,6 +1007,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (["INPUT", "TEXTAREA"].includes((e.target as HTMLElement)?.tagName)) return;
+      if (e.key === "Escape" && mobileSearchOpen) {
+        setMobileSearchOpen(false);
+        return;
+      }
       if (isQAModalOpen || mobileSearchOpen || selectedIgItem) return;
 
       if (!selectedPost && !isReadingPrologue) {
@@ -5204,17 +5201,17 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           document.body
         )}
 
-      {/* ── ARCHIVE SIDEBAR DRAWER (PORTALED + FRAMER MOTION SLIDE DRAWER) ── */}
+      {/* ── ARCHIVE SIDEBAR DRAWER (PORTALED SIBLINGS FOR ZERO-FLICKER ANIMATION) ── */}
       {mounted &&
         createPortal(
           <AnimatePresence>
             {mobileSearchOpen && (
               <motion.div
-                key="archive-sidebar-overlay"
+                key="archive-sidebar-backdrop"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
+                transition={{ duration: 0.28, ease: "easeOut" }}
                 onClick={() => setMobileSearchOpen(false)}
                 style={{
                   position: "fixed",
@@ -5223,250 +5220,252 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   left: 0,
                   right: 0,
                   bottom: 0,
+                  zIndex: 999998,
+                  backgroundColor: "rgba(0, 0, 0, 0.65)",
+                  cursor: "pointer",
+                }}
+              />
+            )}
+            {mobileSearchOpen && (
+              <motion.div
+                key="archive-sidebar-card"
+                initial={{ x: "100%" }}
+                animate={{ x: "0%" }}
+                exit={{ x: "100%" }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  right: 0,
+                  bottom: 0,
                   zIndex: 999999,
-                  background: "rgba(0, 0, 0, 0.65)",
-                  backdropFilter: "blur(12px)",
-                  WebkitBackdropFilter: "blur(12px)",
+                  width: "300px",
+                  maxWidth: "85vw",
+                  height: "100%",
                   display: "flex",
-                  alignItems: "stretch",
-                  justifyContent: "flex-end",
+                  flexDirection: "column",
+                  backgroundColor: "#111113",
+                  color: "#FFFFFF",
+                  borderLeft: "1px solid rgba(255, 255, 255, 0.08)",
+                  boxShadow: "-16px 0 50px rgba(0, 0, 0, 0.8)",
                   boxSizing: "border-box",
+                  overflow: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
+                  backfaceVisibility: "hidden",
                 }}
               >
-                <motion.div
-                  key="archive-sidebar-card"
-                  initial={{ x: "100%" }}
-                  animate={{ x: 0 }}
-                  exit={{ x: "100%" }}
-                  transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.85 }}
-                  onClick={(e) => e.stopPropagation()}
+                {/* ── HEADER ── */}
+                <div
                   style={{
-                    width: "300px",
-                    maxWidth: "85vw",
-                    height: "100%",
                     display: "flex",
-                    flexDirection: "column",
-                    background: "#111113",
-                    color: "#FFFFFF",
-                    borderLeft: "1px solid rgba(255, 255, 255, 0.08)",
-                    boxShadow: "-16px 0 50px rgba(0, 0, 0, 0.8)",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "calc(env(safe-area-inset-top, 0px) + 20px) 22px 18px",
+                    borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
                     boxSizing: "border-box",
-                    overflow: "hidden",
-                    willChange: "transform",
+                    flexShrink: 0,
                   }}
                 >
-                  {/* ── HEADER ── */}
-                  <div
+                  <span
                     style={{
+                      fontSize: "0.68rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                      color: "rgba(255, 255, 255, 0.55)",
+                      fontFamily: "var(--font-sans)",
+                    }}
+                  >
+                    Stories
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => setMobileSearchOpen(false)}
+                    aria-label="Close"
+                    style={{
+                      background: "rgba(255, 255, 255, 0.06)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      color: "rgba(255, 255, 255, 0.5)",
+                      cursor: "pointer",
+                      width: "28px",
+                      height: "28px",
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "calc(env(safe-area-inset-top, 0px) + 20px) 22px 18px",
-                      borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
-                      boxSizing: "border-box",
+                      justifyContent: "center",
+                      borderRadius: "50%",
                       flexShrink: 0,
+                      transition: "background 0.15s ease, color 0.15s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "rgba(255, 255, 255, 0.12)";
+                      e.currentTarget.style.color = "#FFFFFF";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "rgba(255, 255, 255, 0.06)";
+                      e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)";
                     }}
                   >
-                    <span
-                      style={{
-                        fontSize: "0.68rem",
-                        fontWeight: 700,
-                        letterSpacing: "0.14em",
-                        textTransform: "uppercase",
-                        color: "rgba(255, 255, 255, 0.55)",
-                        fontFamily: "var(--font-sans)",
-                      }}
-                    >
-                      Stories
-                    </span>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                </div>
 
-                    <button
-                      type="button"
-                      onClick={() => setMobileSearchOpen(false)}
-                      aria-label="Close"
-                      style={{
-                        background: "rgba(255, 255, 255, 0.06)",
-                        border: "1px solid rgba(255, 255, 255, 0.1)",
-                        color: "rgba(255, 255, 255, 0.5)",
-                        cursor: "pointer",
-                        width: "28px",
-                        height: "28px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: "50%",
-                        flexShrink: 0,
-                        transition: "background 0.15s ease, color 0.15s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.12)";
-                        e.currentTarget.style.color = "#FFFFFF";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.06)";
-                        e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)";
-                      }}
-                    >
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                      </svg>
-                    </button>
-                  </div>
-
-                  {/* ── LIST ── */}
+                {/* ── LIST ── */}
+                <div
+                  className="mobile-search-scroll-container"
+                  style={{
+                    flex: 1,
+                    overflowY: "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    WebkitOverflowScrolling: "touch",
+                  }}
+                >
+                  {/* Prologue */}
                   <div
-                    className="mobile-search-scroll-container"
+                    onClick={() => {
+                      openPrologue();
+                      setMobileSearchOpen(false);
+                    }}
                     style={{
-                      flex: 1,
-                      overflowY: "auto",
                       display: "flex",
                       flexDirection: "column",
-                      WebkitOverflowScrolling: "touch",
+                      gap: "5px",
+                      padding: "16px 22px",
+                      cursor: "pointer",
+                      borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                      background: isReadingPrologue ? "rgba(255, 255, 255, 0.06)" : "transparent",
+                      transition: "background 0.15s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "rgba(255, 255, 255, 0.06)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = isReadingPrologue ? "rgba(255, 255, 255, 0.06)" : "transparent";
                     }}
                   >
-                    {/* Prologue */}
-                    <div
-                      onClick={() => {
-                        openPrologue();
-                        setMobileSearchOpen(false);
-                      }}
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "5px",
-                        padding: "16px 22px",
-                        cursor: "pointer",
-                        borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
-                        background: isReadingPrologue ? "rgba(255, 255, 255, 0.06)" : "transparent",
-                        transition: "background 0.15s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.06)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = isReadingPrologue ? "rgba(255, 255, 255, 0.06)" : "transparent";
-                      }}
-                    >
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
-                        <span
-                          style={{
-                            fontSize: "0.52rem",
-                            fontWeight: 700,
-                            letterSpacing: "0.14em",
-                            textTransform: "uppercase",
-                            color: isReadingPrologue ? "rgba(255, 255, 255, 0.6)" : "rgba(255, 255, 255, 0.3)",
-                            fontFamily: "var(--font-sans)",
-                          }}
-                        >
-                          INTRO
-                        </span>
-                        <span
-                          style={{
-                            fontSize: "0.55rem",
-                            color: "rgba(255, 255, 255, 0.22)",
-                            letterSpacing: "0.04em",
-                          }}
-                        >
-                          2m read
-                        </span>
-                      </div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
                       <span
                         style={{
-                          fontSize: "0.84rem",
-                          fontWeight: 450,
-                          lineHeight: 1.35,
-                          color: isReadingPrologue ? "#FFFFFF" : "rgba(255, 255, 255, 0.72)",
+                          fontSize: "0.52rem",
+                          fontWeight: 700,
+                          letterSpacing: "0.14em",
+                          textTransform: "uppercase",
+                          color: isReadingPrologue ? "rgba(255, 255, 255, 0.6)" : "rgba(255, 255, 255, 0.3)",
+                          fontFamily: "var(--font-sans)",
                         }}
                       >
-                        A Quiet Corner on the Internet
+                        INTRO
+                      </span>
+                      <span
+                        style={{
+                          fontSize: "0.55rem",
+                          color: "rgba(255, 255, 255, 0.22)",
+                          letterSpacing: "0.04em",
+                        }}
+                      >
+                        2m read
                       </span>
                     </div>
+                    <span
+                      style={{
+                        fontSize: "0.84rem",
+                        fontWeight: 450,
+                        lineHeight: 1.35,
+                        color: isReadingPrologue ? "#FFFFFF" : "rgba(255, 255, 255, 0.72)",
+                      }}
+                    >
+                      A Quiet Corner on the Internet
+                    </span>
+                  </div>
 
-                    {/* Chapter rows */}
-                    {sortedPosts.map((post) => {
-                      const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
-                      const chapterLabel = getPostChapterLabel(post, sortedPosts);
-                      const readTime = getReadingTime(post.content || "");
-                      const isActive = selectedPost?.id === post.id;
-                      return (
-                        <div
-                          key={post.id}
-                          onClick={() => {
-                            openPost(postIdx);
-                            setMobileSearchOpen(false);
-                          }}
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "5px",
-                            padding: "16px 22px",
-                            cursor: "pointer",
-                            borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
-                            background: isActive ? "rgba(255, 255, 255, 0.06)" : "transparent",
-                            transition: "background 0.15s ease",
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = "rgba(255, 255, 255, 0.06)";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = isActive ? "rgba(255, 255, 255, 0.06)" : "transparent";
-                          }}
-                        >
-                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
-                            <span
-                              style={{
-                                fontSize: "0.52rem",
-                                fontWeight: 700,
-                                letterSpacing: "0.14em",
-                                textTransform: "uppercase",
-                                color: isActive ? "rgba(255, 255, 255, 0.6)" : "rgba(255, 255, 255, 0.3)",
-                                fontFamily: "var(--font-sans)",
-                              }}
-                            >
-                              {chapterLabel}
-                            </span>
-                            <span
-                              style={{
-                                fontSize: "0.55rem",
-                                color: "rgba(255, 255, 255, 0.22)",
-                                letterSpacing: "0.04em",
-                              }}
-                            >
-                              {readTime}m read
-                            </span>
-                          </div>
+                  {/* Chapter rows */}
+                  {sortedPosts.map((post) => {
+                    const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
+                    const chapterLabel = getPostChapterLabel(post, sortedPosts);
+                    const readTime = getReadingTime(post.content || "");
+                    const isActive = selectedPost?.id === post.id;
+                    return (
+                      <div
+                        key={post.id}
+                        onClick={() => {
+                          openPost(postIdx);
+                          setMobileSearchOpen(false);
+                        }}
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "5px",
+                          padding: "16px 22px",
+                          cursor: "pointer",
+                          borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                          background: isActive ? "rgba(255, 255, 255, 0.06)" : "transparent",
+                          transition: "background 0.15s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "rgba(255, 255, 255, 0.06)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = isActive ? "rgba(255, 255, 255, 0.06)" : "transparent";
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
                           <span
                             style={{
-                              fontSize: "0.84rem",
-                              fontWeight: 450,
-                              lineHeight: 1.35,
-                              color: isActive ? "#FFFFFF" : "rgba(255, 255, 255, 0.72)",
+                              fontSize: "0.52rem",
+                              fontWeight: 700,
+                              letterSpacing: "0.14em",
+                              textTransform: "uppercase",
+                              color: isActive ? "rgba(255, 255, 255, 0.6)" : "rgba(255, 255, 255, 0.3)",
+                              fontFamily: "var(--font-sans)",
                             }}
                           >
-                            {post.title}
+                            {chapterLabel}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: "0.55rem",
+                              color: "rgba(255, 255, 255, 0.22)",
+                              letterSpacing: "0.04em",
+                            }}
+                          >
+                            {readTime}m read
                           </span>
                         </div>
-                      );
-                    })}
-                  </div>
+                        <span
+                          style={{
+                            fontSize: "0.84rem",
+                            fontWeight: 450,
+                            lineHeight: 1.35,
+                            color: isActive ? "#FFFFFF" : "rgba(255, 255, 255, 0.72)",
+                          }}
+                        >
+                          {post.title}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
 
-                  {/* ── FOOTER ── */}
-                  <div
-                    style={{
-                      padding: "14px 22px calc(env(safe-area-inset-bottom, 0px) + 14px)",
-                      borderTop: "1px solid rgba(255, 255, 255, 0.06)",
-                      fontSize: "0.52rem",
-                      color: "rgba(255, 255, 255, 0.22)",
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                      boxSizing: "border-box",
-                      flexShrink: 0,
-                    }}
-                  >
-                    {sortedPosts.length + 1} stories
-                  </div>
-                </motion.div>
+                {/* ── FOOTER ── */}
+                <div
+                  style={{
+                    padding: "14px 22px calc(env(safe-area-inset-bottom, 0px) + 14px)",
+                    borderTop: "1px solid rgba(255, 255, 255, 0.06)",
+                    fontSize: "0.52rem",
+                    color: "rgba(255, 255, 255, 0.22)",
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    boxSizing: "border-box",
+                    flexShrink: 0,
+                  }}
+                >
+                  {sortedPosts.length + 1} stories
+                </div>
               </motion.div>
             )}
           </AnimatePresence>,
