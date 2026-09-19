@@ -437,7 +437,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const fallbackBrand = "/images/defining_brand_mono.png";
 
   const [postPhotoIndex, setPostPhotoIndex] = useState<number>(0);
-  const [readerTheme, setReaderTheme] = useState<"light" | "dark">("light");
+  const [readerTheme, setReaderTheme] = useState<"light" | "dark">("dark");
   const [readerSize, setReaderSize] = useState<"sm" | "md" | "lg">("md");
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [readingProgress, setReadingProgress] = useState<number>(0);
@@ -1100,7 +1100,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           height: auto;
           min-height: 100vh;
           overflow: visible;
-          background: var(--bg-color, #FFFFFF);
+          background: #0c0d0e;
         }
 
         /* ─────────────────────────────────────────────────────
@@ -1187,7 +1187,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
-          padding: 3.5rem clamp(1.5rem, 5vw, 4rem) calc(env(safe-area-inset-bottom, 24px) + 26px);
+          padding: 3.5rem clamp(1.5rem, 5vw, 4rem) calc(env(safe-area-inset-bottom, 24px) + 46px);
           box-sizing: border-box;
           z-index: 10;
           transition: padding 0.45s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1312,8 +1312,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           z-index: 1 !important;
           padding: 2.2rem 1.5rem calc(env(safe-area-inset-bottom, 24px) + 80px) !important;
           box-shadow: none !important;
-          background: var(--bg-color, #FFFFFF);
-          color: var(--text-primary, #111111);
+          background: #0c0d0e;
+          color: #EDEDF0;
           animation: pjReaderFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
         }
 
@@ -2537,64 +2537,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           box-sizing: border-box;
         }
 
-        /* ── SMOOTH ANIMATED SPOTLIGHT OVERLAY ── */
-        .spotlight-search-overlay {
-          position: fixed;
-          inset: 0;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          z-index: 99999;
-          background: rgba(0, 0, 0, 0.72);
-          backdrop-filter: blur(0px);
-          -webkit-backdrop-filter: blur(0px);
-          display: flex;
-          align-items: flex-start;
-          justify-content: center;
-          padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
-          box-sizing: border-box;
-          opacity: 0;
-          visibility: hidden;
-          pointer-events: none;
-          transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1),
-                      backdrop-filter 0.32s cubic-bezier(0.16, 1, 0.3, 1),
-                      -webkit-backdrop-filter 0.32s cubic-bezier(0.16, 1, 0.3, 1),
-                      visibility 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .spotlight-search-overlay.is-open {
-          opacity: 1;
-          visibility: visible;
-          pointer-events: auto;
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-        }
-
-        .spotlight-search-card {
-          width: calc(100% - 1.5rem);
-          max-width: 480px;
-          max-height: min(78vh, 460px);
-          display: flex;
-          flex-direction: column;
-          background: rgba(14, 14, 16, 0.96);
-          color: #FFFFFF;
-          padding: 0;
-          border-radius: 14px;
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
-          box-sizing: border-box;
-          overflow: hidden;
-          transform: translateY(-20px) scale(0.97);
-          opacity: 0;
-          transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
-                      opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .spotlight-search-overlay.is-open .spotlight-search-card {
-          transform: translateY(0) scale(1);
-          opacity: 1;
-        }
+        /* ── ARCHIVE SIDEBAR DRAWER ── */
 
         .modal-inner {
           width: 100%;
@@ -3058,7 +3001,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             height: auto !important;
             min-height: auto !important;
             overflow: visible !important;
-            background: var(--bg-color, #FFFFFF) !important;
+            background: #0c0d0e !important;
           }
 
           /* ── HERO PHOTO FEATURED CARD (BLEEDS FULL SCREEN BEHIND BROWSER TOOLBAR) ── */
@@ -3135,7 +3078,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: flex !important;
             flex-direction: column !important;
             justify-content: flex-end !important;
-            padding: 3.5rem 1.35rem calc(env(safe-area-inset-bottom, 24px) + 26px) 1.35rem !important;
+            padding: 3.5rem 1.35rem calc(env(safe-area-inset-bottom, 24px) + 46px) 1.35rem !important;
             box-sizing: border-box !important;
             z-index: 10 !important;
             transition: padding 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
@@ -3379,7 +3322,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
           .modal-body {
             padding: 1.5rem 1.25rem 3rem !important;
-            background: var(--bg-color, #FFFFFF);
+            background: #0c0d0e;
           }
         }
 
@@ -3477,12 +3420,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 type="button"
                 onClick={() => setMobileSearchOpen(true)}
                 className="mobile-search-btn"
-                title="Search Stories & Chapters"
-                aria-label="Search"
+                title="Stories Menu"
+                aria-label="Stories Menu"
               >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="11" cy="11" r="8"/>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                  <line x1="4" y1="8" x2="20" y2="8" />
+                  <line x1="4" y1="16" x2="20" y2="16" />
                 </svg>
               </button>
             </div>
@@ -3722,54 +3665,60 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             </div>
           </div>
 
-          {/* Dashed progress indicators for overview mode: fixed total length, dynamic segment width matching all posts */}
-          {flipboardCards.length > 1 && (
-            <div
-              className="pj-deck-dashes"
-              style={{
-                position: "absolute",
-                bottom: "calc(env(safe-area-inset-bottom, 24px) + 24px)",
-                left: "clamp(1.5rem, 5vw, 4rem)",
-                zIndex: 40,
-                margin: 0,
-                width: "128px",
-                maxWidth: "128px",
-                display: "flex",
-                alignItems: "center",
-                gap: flipboardCards.length > 10 ? "3px" : "4px",
-                boxSizing: "border-box",
-                opacity: selectedPost || isReadingPrologue ? 0 : 1,
-                pointerEvents: selectedPost || isReadingPrologue ? "none" : "auto",
-                transition: "opacity 0.25s ease",
-              }}
-            >
-              {flipboardCards.map((_, i) => {
-                const isActive = i === (heroIndex % flipboardCards.length);
-                return (
-                  <div
-                    key={i}
-                    className={`pj-deck-dash${isActive ? " active" : ""}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSlideDirection(i > heroIndex ? 1 : -1);
-                      setHeroIndex(i);
-                    }}
-                    style={{
-                      flex: 1,
-                      height: "2px",
-                      borderRadius: "2px",
-                      backgroundColor: isActive ? "#FFFFFF" : "rgba(255, 255, 255, 0.3)",
-                      cursor: "pointer",
-                      transition: "background-color 0.25s ease",
-                      padding: "6px 0",
-                      backgroundClip: "content-box",
-                      boxSizing: "content-box",
-                    }}
-                  />
-                );
-              })}
-            </div>
-          )}
+          {/* Dashed progress indicators: max 6 most recent posts, fixed total width, each dash = equal share */}
+          {flipboardCards.length > 1 && (() => {
+            const MAX_DASHES = 6;
+            const dashCards = flipboardCards.slice(0, MAX_DASHES);
+            // heroIndex within the displayed dash range
+            const activeDashIdx = heroIndex < MAX_DASHES ? heroIndex : -1;
+            return (
+              <div
+                className="pj-deck-dashes"
+                style={{
+                  position: "absolute",
+                  bottom: "calc(env(safe-area-inset-bottom, 24px) + 24px)",
+                  left: "clamp(1.5rem, 5vw, 4rem)",
+                  zIndex: 40,
+                  margin: 0,
+                  width: "128px",
+                  maxWidth: "128px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  boxSizing: "border-box",
+                  opacity: selectedPost || isReadingPrologue ? 0 : 1,
+                  pointerEvents: selectedPost || isReadingPrologue ? "none" : "auto",
+                  transition: "opacity 0.25s ease",
+                }}
+              >
+                {dashCards.map((_, i) => {
+                  const isActive = i === activeDashIdx;
+                  return (
+                    <div
+                      key={i}
+                      className={`pj-deck-dash${isActive ? " active" : ""}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSlideDirection(i > heroIndex ? 1 : -1);
+                        setHeroIndex(i);
+                      }}
+                      style={{
+                        flex: 1,
+                        height: "2px",
+                        borderRadius: "2px",
+                        backgroundColor: isActive ? "#FFFFFF" : "rgba(255, 255, 255, 0.3)",
+                        cursor: "pointer",
+                        transition: "background-color 0.25s ease",
+                        padding: "6px 0",
+                        backgroundClip: "content-box",
+                        boxSizing: "content-box",
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            );
+          })()}
 
         </div>
 
@@ -5250,303 +5199,274 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           document.body
         )}
 
-      {/* ── PERMANENT ZERO-FLICKER SPOTLIGHT SEARCH OVERLAY (100% GLITCH-FREE) ── */}
-      <div
-        className={`spotlight-search-overlay${mobileSearchOpen ? " is-open" : ""}`}
-        onClick={() => {
-          setMobileSearchOpen(false);
-          setSearchQuery("");
-        }}
-      >
-        {/* Sliding iOS Spotlight Card */}
-        <div
-          className="spotlight-search-card"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Minimalist Integrated Search Bar */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              padding: "0 14px",
-              height: "48px",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-              boxSizing: "border-box",
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.45)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-
-            <input
-              ref={searchInputRef}
-              type="text"
-              placeholder="Search chapters..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                flex: 1,
-                background: "transparent",
-                border: "none",
-                outline: "none",
-                color: "#FFFFFF",
-                fontSize: "0.86rem",
-                fontWeight: 400,
-                letterSpacing: "-0.01em",
-                fontFamily: "var(--font-sans)",
-              }}
-            />
-
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery("")}
-                aria-label="Clear query"
+      {/* ── ARCHIVE SIDEBAR DRAWER (PORTALED + FRAMER MOTION SLIDE DRAWER) ── */}
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {mobileSearchOpen && (
+              <motion.div
+                key="archive-sidebar-overlay"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                onClick={() => setMobileSearchOpen(false)}
                 style={{
-                  background: "rgba(255, 255, 255, 0.12)",
-                  border: "none",
-                  borderRadius: "50%",
-                  width: "16px",
-                  height: "16px",
+                  position: "fixed",
+                  inset: 0,
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  zIndex: 999999,
+                  background: "rgba(0, 0, 0, 0.65)",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
                   display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "rgba(255, 255, 255, 0.8)",
-                  cursor: "pointer",
-                  fontSize: "0.58rem",
-                  padding: 0,
-                  flexShrink: 0,
+                  alignItems: "stretch",
+                  justifyContent: "flex-end",
+                  boxSizing: "border-box",
                 }}
               >
-                ✕
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={() => {
-                setMobileSearchOpen(false);
-                setSearchQuery("");
-              }}
-              title="Close search"
-              style={{
-                background: "rgba(255, 255, 255, 0.08)",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
-                borderRadius: "5px",
-                padding: "2px 7px",
-                color: "rgba(255, 255, 255, 0.55)",
-                fontSize: "0.62rem",
-                fontWeight: 500,
-                letterSpacing: "0.04em",
-                cursor: "pointer",
-                lineHeight: 1.4,
-              }}
-            >
-              esc
-            </button>
-          </div>
-
-          {/* Precision Search Results */}
-          <div
-            className="mobile-search-scroll-container"
-            style={{
-              flex: 1,
-              overflowY: "auto",
-              display: "flex",
-              flexDirection: "column",
-              padding: "6px",
-              maxHeight: "340px",
-              boxSizing: "border-box",
-            }}
-          >
-            {/* Matching Chapters */}
-            {filteredPosts.map((post) => {
-              const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
-              const chapterLabel = getPostChapterLabel(post, sortedPosts);
-              const readTime = getReadingTime(post.content || "");
-
-              return (
-                <div
-                  key={post.id}
-                  onClick={() => {
-                    openPost(postIdx);
-                    setMobileSearchOpen(false);
-                    setSearchQuery("");
-                  }}
+                <motion.div
+                  key="archive-sidebar-card"
+                  initial={{ x: "100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "100%" }}
+                  transition={{ type: "spring", damping: 30, stiffness: 300, mass: 0.85 }}
+                  onClick={(e) => e.stopPropagation()}
                   style={{
+                    width: "300px",
+                    maxWidth: "85vw",
+                    height: "100%",
                     display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    padding: "8px 10px",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    transition: "background 0.12s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.07)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "transparent";
-                  }}
-                >
-                  {/* Subtle Monochrome Chapter Pill */}
-                  <span
-                    style={{
-                      padding: "2px 6px",
-                      borderRadius: "4px",
-                      background: "rgba(255, 255, 255, 0.08)",
-                      color: "rgba(255, 255, 255, 0.7)",
-                      fontSize: "0.58rem",
-                      fontWeight: 600,
-                      letterSpacing: "0.04em",
-                      whiteSpace: "nowrap",
-                      flexShrink: 0,
-                    }}
-                  >
-                    {chapterLabel}
-                  </span>
-
-                  {/* Clean Title */}
-                  <h4
-                    style={{
-                      fontSize: "0.82rem",
-                      fontWeight: 450,
-                      lineHeight: 1.3,
-                      margin: 0,
-                      color: "#F4F4F5",
-                      flex: 1,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {post.title}
-                  </h4>
-
-                  {/* Reading Time */}
-                  <span
-                    style={{
-                      fontSize: "0.62rem",
-                      color: "rgba(255, 255, 255, 0.35)",
-                      whiteSpace: "nowrap",
-                      flexShrink: 0,
-                    }}
-                  >
-                    {readTime}m
-                  </span>
-                </div>
-              );
-            })}
-
-            {/* Prologue Entry */}
-            {(!searchQuery.trim() || "prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim())) && (
-              <div
-                onClick={() => {
-                  openPrologue();
-                  setMobileSearchOpen(false);
-                  setSearchQuery("");
-                }}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  padding: "8px 10px",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  transition: "background 0.12s ease",
-                  background: isReadingPrologue ? "rgba(255, 255, 255, 0.08)" : "transparent",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.07)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = isReadingPrologue ? "rgba(255, 255, 255, 0.08)" : "transparent";
-                }}
-              >
-                <span
-                  style={{
-                    padding: "2px 6px",
-                    borderRadius: "4px",
-                    background: "rgba(255, 255, 255, 0.08)",
-                    color: "rgba(255, 255, 255, 0.7)",
-                    fontSize: "0.58rem",
-                    fontWeight: 600,
-                    letterSpacing: "0.04em",
-                    whiteSpace: "nowrap",
-                    flexShrink: 0,
-                  }}
-                >
-                  PROLOGUE
-                </span>
-
-                <h4
-                  style={{
-                    fontSize: "0.82rem",
-                    fontWeight: 450,
-                    lineHeight: 1.3,
-                    margin: 0,
-                    color: "#F4F4F5",
-                    flex: 1,
+                    flexDirection: "column",
+                    background: "#111113",
+                    color: "#FFFFFF",
+                    borderLeft: "1px solid rgba(255, 255, 255, 0.08)",
+                    boxShadow: "-16px 0 50px rgba(0, 0, 0, 0.8)",
+                    boxSizing: "border-box",
                     overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
+                    willChange: "transform",
                   }}
                 >
-                  A Quiet Corner on the Internet
-                </h4>
+                  {/* ── HEADER ── */}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "calc(env(safe-area-inset-top, 0px) + 20px) 22px 18px",
+                      borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+                      boxSizing: "border-box",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "0.68rem",
+                        fontWeight: 700,
+                        letterSpacing: "0.14em",
+                        textTransform: "uppercase",
+                        color: "rgba(255, 255, 255, 0.55)",
+                        fontFamily: "var(--font-sans)",
+                      }}
+                    >
+                      Stories
+                    </span>
 
-                <span
-                  style={{
-                    fontSize: "0.62rem",
-                    color: "rgba(255, 255, 255, 0.35)",
-                    whiteSpace: "nowrap",
-                    flexShrink: 0,
-                  }}
-                >
-                  2m
-                </span>
-              </div>
+                    <button
+                      type="button"
+                      onClick={() => setMobileSearchOpen(false)}
+                      aria-label="Close"
+                      style={{
+                        background: "rgba(255, 255, 255, 0.06)",
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        color: "rgba(255, 255, 255, 0.5)",
+                        cursor: "pointer",
+                        width: "28px",
+                        height: "28px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "50%",
+                        flexShrink: 0,
+                        transition: "background 0.15s ease, color 0.15s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.12)";
+                        e.currentTarget.style.color = "#FFFFFF";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.06)";
+                        e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)";
+                      }}
+                    >
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* ── LIST ── */}
+                  <div
+                    className="mobile-search-scroll-container"
+                    style={{
+                      flex: 1,
+                      overflowY: "auto",
+                      display: "flex",
+                      flexDirection: "column",
+                      WebkitOverflowScrolling: "touch",
+                    }}
+                  >
+                    {/* Prologue */}
+                    <div
+                      onClick={() => {
+                        openPrologue();
+                        setMobileSearchOpen(false);
+                      }}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "5px",
+                        padding: "16px 22px",
+                        cursor: "pointer",
+                        borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                        background: isReadingPrologue ? "rgba(255, 255, 255, 0.06)" : "transparent",
+                        transition: "background 0.15s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.06)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = isReadingPrologue ? "rgba(255, 255, 255, 0.06)" : "transparent";
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
+                        <span
+                          style={{
+                            fontSize: "0.52rem",
+                            fontWeight: 700,
+                            letterSpacing: "0.14em",
+                            textTransform: "uppercase",
+                            color: isReadingPrologue ? "rgba(255, 255, 255, 0.6)" : "rgba(255, 255, 255, 0.3)",
+                            fontFamily: "var(--font-sans)",
+                          }}
+                        >
+                          INTRO
+                        </span>
+                        <span
+                          style={{
+                            fontSize: "0.55rem",
+                            color: "rgba(255, 255, 255, 0.22)",
+                            letterSpacing: "0.04em",
+                          }}
+                        >
+                          2m read
+                        </span>
+                      </div>
+                      <span
+                        style={{
+                          fontSize: "0.84rem",
+                          fontWeight: 450,
+                          lineHeight: 1.35,
+                          color: isReadingPrologue ? "#FFFFFF" : "rgba(255, 255, 255, 0.72)",
+                        }}
+                      >
+                        A Quiet Corner on the Internet
+                      </span>
+                    </div>
+
+                    {/* Chapter rows */}
+                    {sortedPosts.map((post) => {
+                      const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
+                      const chapterLabel = getPostChapterLabel(post, sortedPosts);
+                      const readTime = getReadingTime(post.content || "");
+                      const isActive = selectedPost?.id === post.id;
+                      return (
+                        <div
+                          key={post.id}
+                          onClick={() => {
+                            openPost(postIdx);
+                            setMobileSearchOpen(false);
+                          }}
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "5px",
+                            padding: "16px 22px",
+                            cursor: "pointer",
+                            borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                            background: isActive ? "rgba(255, 255, 255, 0.06)" : "transparent",
+                            transition: "background 0.15s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = "rgba(255, 255, 255, 0.06)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = isActive ? "rgba(255, 255, 255, 0.06)" : "transparent";
+                          }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
+                            <span
+                              style={{
+                                fontSize: "0.52rem",
+                                fontWeight: 700,
+                                letterSpacing: "0.14em",
+                                textTransform: "uppercase",
+                                color: isActive ? "rgba(255, 255, 255, 0.6)" : "rgba(255, 255, 255, 0.3)",
+                                fontFamily: "var(--font-sans)",
+                              }}
+                            >
+                              {chapterLabel}
+                            </span>
+                            <span
+                              style={{
+                                fontSize: "0.55rem",
+                                color: "rgba(255, 255, 255, 0.22)",
+                                letterSpacing: "0.04em",
+                              }}
+                            >
+                              {readTime}m read
+                            </span>
+                          </div>
+                          <span
+                            style={{
+                              fontSize: "0.84rem",
+                              fontWeight: 450,
+                              lineHeight: 1.35,
+                              color: isActive ? "#FFFFFF" : "rgba(255, 255, 255, 0.72)",
+                            }}
+                          >
+                            {post.title}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* ── FOOTER ── */}
+                  <div
+                    style={{
+                      padding: "14px 22px calc(env(safe-area-inset-bottom, 0px) + 14px)",
+                      borderTop: "1px solid rgba(255, 255, 255, 0.06)",
+                      fontSize: "0.52rem",
+                      color: "rgba(255, 255, 255, 0.22)",
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase",
+                      boxSizing: "border-box",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {sortedPosts.length + 1} stories
+                  </div>
+                </motion.div>
+              </motion.div>
             )}
-
-            {/* Empty State */}
-            {filteredPosts.length === 0 && !("prologue intro narrative quiet internet".includes(searchQuery.toLowerCase().trim())) && (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "2rem 1rem",
-                  textAlign: "center",
-                }}
-              >
-                <p style={{ fontSize: "0.78rem", color: "rgba(255, 255, 255, 0.4)", margin: 0 }}>
-                  No chapters found for &ldquo;{searchQuery}&rdquo;
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Minimalist Precision Footer */}
-          <div
-            style={{
-              padding: "7px 12px",
-              borderTop: "1px solid rgba(255, 255, 255, 0.06)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              fontSize: "0.58rem",
-              color: "rgba(255, 255, 255, 0.35)",
-              letterSpacing: "0.02em",
-              boxSizing: "border-box",
-            }}
-          >
-            <span>{searchQuery.trim() ? `${filteredPosts.length} results` : `${sortedPosts.length + 1} stories`}</span>
-            <span>press esc to close</span>
-          </div>
-        </div>
-      </div>
+          </AnimatePresence>,
+          document.body
+        )}
 
       {/* TOAST FOR Q&A SUBMISSION */}
       <AnimatePresence>
