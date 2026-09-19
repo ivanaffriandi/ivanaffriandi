@@ -3378,12 +3378,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     title: selectedPost.title,
                     coverImage: extractCoverImage(selectedPost.content) || "/nature_hero.png",
                     excerpt: stripHtml(selectedPost.content || "").slice(0, 150) + "…",
+                    chapter: getPostChapterLabel(selectedPost, sortedPosts),
                     category: getPostChapterLabel(selectedPost, sortedPosts),
                     publishedDate: formatDate(selectedPost.published, locale),
                     readingTime: `${getReadingTime(selectedPost.content || "")} MIN READ`,
-                    url: typeof window !== "undefined" ? window.location.href : `https://ivanaffriandi.com/blog/${selectedPost.id}`,
-                    author: "IVAN AFFRIANDI",
-                    theme: readerTheme === "dark" ? "ink" : "stone",
+                    url: "blog.ivanaffriandi.com",
+                    author: "Ivan Affriandi",
+                    theme: "ink",
                   }}
                 />
               )}
