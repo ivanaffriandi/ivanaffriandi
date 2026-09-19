@@ -747,6 +747,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   };
 
   const lastHeroNavTimeRef = useRef<number>(0);
+  const lastSwipeTimeRef = useRef<number>(0);
 
   const handleNextHero = useCallback(() => {
     const now = Date.now();
@@ -768,17 +769,16 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     if (!touchStartPos) return;
     const diffX = touchStartPos.x - e.changedTouches[0].clientX;
     const diffY = touchStartPos.y - e.changedTouches[0].clientY;
+    setTouchStartPos(null);
 
-    if (Math.abs(diffX) > 40 || Math.abs(diffY) > 40) {
-      if (Math.abs(diffX) > Math.abs(diffY)) {
-        if (diffX > 0) {
-          handleNextHero();
-        } else {
-          handlePrevHero();
-        }
+    if (Math.abs(diffX) > 28 && Math.abs(diffX) > Math.abs(diffY)) {
+      lastSwipeTimeRef.current = Date.now();
+      if (diffX > 0) {
+        handleNextHero();
+      } else {
+        handlePrevHero();
       }
     }
-    setTouchStartPos(null);
   };
 
   // Instagram gallery state
@@ -2487,7 +2487,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           box-sizing: border-box;
         }
 
-        /* ── ZERO-FLICKER SPOTLIGHT OVERLAY ── */
+        /* ── SMOOTH ANIMATED SPOTLIGHT OVERLAY ── */
         .spotlight-search-overlay {
           position: fixed;
           inset: 0;
@@ -2496,22 +2496,29 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           right: 0;
           bottom: 0;
           z-index: 99999;
-          background: rgba(0, 0, 0, 0.78);
+          background: rgba(0, 0, 0, 0.72);
+          backdrop-filter: blur(0px);
+          -webkit-backdrop-filter: blur(0px);
           display: flex;
           align-items: flex-start;
           justify-content: center;
-          padding-top: calc(env(safe-area-inset-top, 0px) + 14px);
+          padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
           box-sizing: border-box;
           opacity: 0;
           visibility: hidden;
           pointer-events: none;
-          transition: opacity 0.15s ease, visibility 0.15s ease;
+          transition: opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+                      backdrop-filter 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+                      -webkit-backdrop-filter 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+                      visibility 0.32s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .spotlight-search-overlay.is-open {
           opacity: 1;
           visibility: visible;
           pointer-events: auto;
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
         }
 
         .spotlight-search-card {
@@ -2520,20 +2527,23 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           max-height: min(80vh, 520px);
           display: flex;
           flex-direction: column;
-          background: #18181b;
+          background: rgba(24, 24, 27, 0.96);
           color: #FFFFFF;
-          padding: 0.65rem 0.75rem 0.45rem;
-          border-radius: 18px;
-          border: 1px solid rgba(255, 255, 255, 0.16);
-          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0,0,0,0.5);
+          padding: 0.75rem 0.85rem 0.55rem;
+          border-radius: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.18);
+          box-shadow: 0 32px 80px rgba(0, 0, 0, 0.85), 0 4px 16px rgba(0,0,0,0.5);
           box-sizing: border-box;
           overflow: hidden;
-          transform: translateY(-6px);
-          transition: transform 0.15s ease;
+          transform: translateY(-24px) scale(0.96);
+          opacity: 0;
+          transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                      opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .spotlight-search-overlay.is-open .spotlight-search-card {
-          transform: translateY(0);
+          transform: translateY(0) scale(1);
+          opacity: 1;
         }
 
         .modal-inner {
@@ -3079,10 +3089,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             z-index: 10 !important;
           }
 
-          .pj-hero-arrows {
-            bottom: calc(env(safe-area-inset-bottom, 24px) + 26px) !important;
-            right: 1.25rem !important;
-          }
 
           .pj-root.has-selected-post .pj-left-content {
             padding: 1.5rem 6.2rem 1.25rem 1.25rem !important;
@@ -3567,10 +3573,22 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     damping: 28,
                     mass: 0.8,
                   }}
+                  onPanEnd={(_, info) => {
+                    const { offset, velocity } = info;
+                    if (Math.abs(offset.x) > 28 || Math.abs(velocity.x) > 180) {
+                      lastSwipeTimeRef.current = Date.now();
+                      if (offset.x < 0 || velocity.x < -180) {
+                        handleNextHero();
+                      } else {
+                        handlePrevHero();
+                      }
+                    }
+                  }}
                   style={{
                     display: "flex",
                     width: "100%",
                     height: "100%",
+                    touchAction: "pan-y",
                   }}
                 >
                   {flipboardCards.map((card, idx) => (
@@ -3585,6 +3603,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         cursor: "pointer",
                       }}
                       onClick={(e) => {
+                        if (Date.now() - lastSwipeTimeRef.current < 450) {
+                          return;
+                        }
                         e.stopPropagation();
                         if (card.isPrologue) {
                           setIsReadingPrologue(true);
@@ -3733,95 +3754,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             </>
           )}
 
-          {/* DESKTOP/MOBILE COMPACT PREV/NEXT OVERVIEW HERO CONTROLS */}
-          {!selectedPost && !isReadingPrologue && flipboardCards.length > 1 && (
-            <div
-              className="pj-hero-arrows"
-              style={{
-                position: "absolute",
-                bottom: "1.25rem",
-                right: "1.25rem",
-                zIndex: 50,
-                display: "flex",
-                alignItems: "center",
-                gap: "0.35rem",
-              }}
-            >
-              {/* PREVIOUS STORY DECK BUTTON */}
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handlePrevHero();
-                }}
-                onTouchStart={(e) => e.stopPropagation()}
-                title="Previous Story"
-                aria-label="Previous Story"
-                style={{
-                  width: "30px",
-                  height: "30px",
-                  borderRadius: "50%",
-                  background: "rgba(0, 0, 0, 0.5)",
-                  backdropFilter: "blur(12px)",
-                  WebkitBackdropFilter: "blur(12px)",
-                  border: "1px solid rgba(255, 255, 255, 0.22)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#ffffff",
-                  cursor: "pointer",
-                  transition: "all 0.15s ease",
-                  touchAction: "manipulation",
-                  WebkitTapHighlightColor: "transparent",
-                  userSelect: "none",
-                  WebkitUserSelect: "none",
-                  padding: 0,
-                }}
-              >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
-
-              {/* NEXT STORY DECK BUTTON */}
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleNextHero();
-                }}
-                onTouchStart={(e) => e.stopPropagation()}
-                title="Next Story"
-                aria-label="Next Story"
-                style={{
-                  width: "30px",
-                  height: "30px",
-                  borderRadius: "50%",
-                  background: "rgba(0, 0, 0, 0.5)",
-                  backdropFilter: "blur(12px)",
-                  WebkitBackdropFilter: "blur(12px)",
-                  border: "1px solid rgba(255, 255, 255, 0.22)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#ffffff",
-                  cursor: "pointer",
-                  transition: "all 0.15s ease",
-                  touchAction: "manipulation",
-                  WebkitTapHighlightColor: "transparent",
-                  userSelect: "none",
-                  WebkitUserSelect: "none",
-                  padding: 0,
-                }}
-              >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </button>
-            </div>
-          )}
         </div>
 
         {/* RIGHT COLUMN: SINGLE-SCREEN COMPACT EDITORIAL LAYOUT */}

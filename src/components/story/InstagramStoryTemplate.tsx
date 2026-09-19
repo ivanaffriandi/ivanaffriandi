@@ -153,18 +153,18 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '12px 28px',
+                padding: '18px 44px',
                 borderRadius: '9999px',
                 backgroundColor: '#FFFFFF',
                 border: '1px solid rgba(255, 255, 255, 0.95)',
-                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
+                boxShadow: '0 14px 40px rgba(0, 0, 0, 0.22), 0 2px 10px rgba(0, 0, 0, 0.12)',
               }}
             >
               <span
                 style={{
-                  fontSize: '15px',
-                  fontWeight: 800,
-                  letterSpacing: '0.22em',
+                  fontSize: '24px',
+                  fontWeight: 900,
+                  letterSpacing: '0.2em',
                   textTransform: 'uppercase',
                   color: '#09090B',
                 }}
@@ -405,21 +405,21 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '10px',
-                padding: '12px 28px',
+                gap: '14px',
+                padding: '18px 44px',
                 borderRadius: '9999px',
                 backgroundColor: '#FFFFFF',
                 border: '1px solid rgba(255, 255, 255, 0.95)',
-                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
+                boxShadow: '0 14px 40px rgba(0, 0, 0, 0.22), 0 2px 10px rgba(0, 0, 0, 0.12)',
               }}
             >
               <svg
-                width="14"
-                height="14"
+                width="22"
+                height="22"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="#09090B"
-                strokeWidth="2.4"
+                strokeWidth="2.8"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
@@ -429,9 +429,9 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
 
               <span
                 style={{
-                  fontSize: '15px',
-                  fontWeight: 800,
-                  letterSpacing: '0.08em',
+                  fontSize: '24px',
+                  fontWeight: 900,
+                  letterSpacing: '0.04em',
                   color: '#09090B',
                 }}
               >
