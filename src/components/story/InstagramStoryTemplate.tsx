@@ -351,27 +351,40 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
               </div>
             </div>
 
-            {/* MINIMALIST COPYRIGHT AT BOTTOM-LEFT OF CARD (CLEAR & PROMINENT) */}
+            {/* WRITTEN BY AUTHOR AT BOTTOM-LEFT OF CARD (CLEAR, PROMINENT & HIGH-CONTRAST) */}
             <div
               style={{
                 display: 'flex',
-                alignItems: 'center',
+                alignItems: 'baseline',
                 justifyContent: 'flex-start',
-                marginTop: '16px',
-                paddingLeft: '10px',
+                gap: '10px',
+                marginTop: '18px',
+                paddingLeft: '6px',
               }}
             >
               <span
                 style={{
-                  fontSize: '22px',
-                  fontWeight: 700,
-                  letterSpacing: '0.06em',
-                  color: '#FFFFFF',
-                  textShadow: '0 2px 12px rgba(0, 0, 0, 0.65)',
+                  fontSize: '23px',
+                  fontWeight: 600,
+                  letterSpacing: '0.01em',
+                  color: 'rgba(255, 255, 255, 0.94)',
+                  textShadow: '0 2px 14px rgba(0, 0, 0, 0.85), 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 2px rgba(0, 0, 0, 0.9)',
                   fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, sans-serif',
                 }}
               >
-                © {post.author || 'Ivan Affriandi'}
+                Written by
+              </span>
+              <span
+                style={{
+                  fontSize: '25px',
+                  fontWeight: 800,
+                  letterSpacing: '0.01em',
+                  color: '#FFFFFF',
+                  textShadow: '0 2px 14px rgba(0, 0, 0, 0.85), 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 2px rgba(0, 0, 0, 0.9)',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Inter, sans-serif',
+                }}
+              >
+                {post.author || 'Ivan Affriandi'}
               </span>
             </div>
           </div>
