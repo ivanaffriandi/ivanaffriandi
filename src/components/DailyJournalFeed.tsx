@@ -3369,8 +3369,25 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               </a>
             )}
 
-            {/* Right: Prologue Button (hidden when displaying post/prologue content) + Search Icon Button */}
+            {/* Right: Prologue Button (hidden when displaying post/prologue content) + Share Button + Search Icon Button */}
             <div style={{ display: "flex", alignItems: "center", gap: "0.35rem" }}>
+              {selectedPost && (
+                <InstagramShareButton
+                  variant="mobile-circle"
+                  post={{
+                    title: selectedPost.title,
+                    coverImage: extractCoverImage(selectedPost.content) || "/nature_hero.png",
+                    excerpt: stripHtml(selectedPost.content || "").slice(0, 150) + "…",
+                    category: getPostChapterLabel(selectedPost, sortedPosts),
+                    publishedDate: formatDate(selectedPost.published, locale),
+                    readingTime: `${getReadingTime(selectedPost.content || "")} MIN READ`,
+                    url: typeof window !== "undefined" ? window.location.href : `https://ivanaffriandi.com/blog/${selectedPost.id}`,
+                    author: "IVAN AFFRIANDI",
+                    theme: readerTheme === "dark" ? "ink" : "stone",
+                  }}
+                />
+              )}
+
               {!selectedPost && !isReadingPrologue && (
                 <button
                   type="button"
@@ -4192,22 +4209,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         </>
                       )}
                     </button>
-
-                    {/* SHARE TO INSTAGRAM STORIES */}
-                    <InstagramShareButton
-                      variant="minimal"
-                      label="Story"
-                      post={{
-                        title: selectedPost.title,
-                        excerpt: stripHtml(selectedPost.content || "").slice(0, 150) + "…",
-                        category: getPostChapterLabel(selectedPost, sortedPosts),
-                        publishedDate: formatDate(selectedPost.published, locale),
-                        readingTime: `${getReadingTime(selectedPost.content || "")} MIN READ`,
-                        url: typeof window !== "undefined" ? window.location.href : `https://ivanaffriandi.com/blog/${selectedPost.id}`,
-                        author: "IVAN AFFRIANDI",
-                        theme: readerTheme === "dark" ? "ink" : "stone",
-                      }}
-                    />
                   </div>
 
                   {/* ── ARTICLE CHAPTER HEADER BANNER (DESKTOP ONLY - ON MOBILE TOP COVER SHOWS THIS) ── */}

@@ -4,6 +4,7 @@ import React, { forwardRef } from 'react';
 
 export interface StoryPostData {
   title: string;
+  coverImage?: string;
   excerpt?: string;
   category?: string;
   publishedDate?: string;
@@ -20,7 +21,7 @@ interface InstagramStoryTemplateProps {
 /**
  * 1080 x 1920 Instagram Story Template
  * High-fashion editorial aesthetic with wabi-sabi minimalism, generous whitespace,
- * elegant serif typography, and tactile pill badge.
+ * high-res photograph hero framing, elegant serif typography, and tactile pill badge.
  * Rendered off-screen for crisp DOM-to-PNG capture.
  */
 export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryTemplateProps>(
@@ -38,6 +39,13 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
     const pillShadow = isInk
       ? '0 12px 30px rgba(0, 0, 0, 0.5)'
       : '0 12px 30px rgba(0, 0, 0, 0.06)';
+
+    // Safely route external image through CORS proxy so html-to-image never taints canvas
+    const rawCover = post.coverImage || '/nature_hero.png';
+    const proxiedCover =
+      rawCover.startsWith('http://') || rawCover.startsWith('https://')
+        ? `/api/proxy-image?url=${encodeURIComponent(rawCover)}`
+        : rawCover;
 
     return (
       <div
@@ -59,25 +67,28 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             height: '1920px',
             backgroundColor: bg,
             color: textPrimary,
-            padding: '120px 100px 110px 100px',
+            padding: '90px 90px 80px 90px',
             fontFamily: '-apple-system, BlinkMacSystemFont, "Playfair Display", "Lora", Georgia, serif',
             boxSizing: 'border-box',
           }}
         >
           {/* Subtle Inset Frame (Wabi-Sabi Craftsmanship) */}
           <div
-            className="absolute inset-[36px] pointer-events-none"
+            className="absolute inset-[30px] pointer-events-none"
             style={{
               border: `1px solid ${borderSubtle}`,
             }}
           />
 
           {/* ── ZONE 1: TOP EDITORIAL MASTHEAD ── */}
-          <header className="relative z-10 flex items-center justify-between w-full border-b pb-8" style={{ borderColor: borderSubtle }}>
+          <header
+            className="relative z-10 flex items-center justify-between w-full border-b pb-7 shrink-0"
+            style={{ borderColor: borderSubtle }}
+          >
             {/* Author / Brand Seal */}
             <div className="flex items-center gap-4">
               <div
-                className="w-10 h-10 rounded-full flex items-center justify-center border font-mono text-[15px] font-bold tracking-wider"
+                className="w-11 h-11 rounded-full flex items-center justify-center border font-mono text-[16px] font-bold tracking-wider"
                 style={{
                   borderColor: textPrimary,
                   color: textPrimary,
@@ -87,13 +98,13 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
               </div>
               <div className="flex flex-col">
                 <span
-                  className="font-mono text-[14px] font-bold tracking-[0.25em] uppercase leading-tight"
+                  className="font-mono text-[15px] font-bold tracking-[0.25em] uppercase leading-tight"
                   style={{ color: textPrimary }}
                 >
                   {post.author || 'IVAN AFFRIANDI'}
                 </span>
                 <span
-                  className="font-mono text-[12px] tracking-[0.18em] uppercase leading-tight mt-1"
+                  className="font-mono text-[12px] tracking-[0.2em] uppercase leading-tight mt-1"
                   style={{ color: textMuted }}
                 >
                   ATELIER &bull; JOURNAL
@@ -105,12 +116,12 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             <div className="flex flex-col items-end">
               <span
                 className="font-mono text-[13px] font-bold tracking-[0.2em] uppercase"
-                style={{ color: textMuted }}
+                style={{ color: textPrimary }}
               >
                 {post.category || 'ESSAY'}
               </span>
               <span
-                className="font-mono text-[12px] tracking-[0.12em] uppercase mt-1"
+                className="font-mono text-[12px] tracking-[0.14em] uppercase mt-1"
                 style={{ color: textMuted }}
               >
                 {post.publishedDate || 'AUTUMN 2026'} &bull; {post.readingTime || '4 MIN READ'}
@@ -118,40 +129,77 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             </div>
           </header>
 
-          {/* ── ZONE 2: MAIN EDITORIAL CONTENT (CENTER HERO) ── */}
-          <main className="relative z-10 flex flex-col justify-center my-auto py-12 max-w-[880px]">
-            {/* Minimalist Ornamental Chop Mark */}
-            <div className="flex items-center gap-3 mb-10">
-              <span className="w-8 h-[1.5px]" style={{ backgroundColor: textPrimary }} />
-              <span className="font-mono text-[12px] font-bold tracking-[0.3em] uppercase" style={{ color: textMuted }}>
-                DISPATCH NO. 08
+          {/* ── ZONE 2: EDITORIAL PHOTOGRAPH + HEADLINE (CENTER HERO) ── */}
+          <main className="relative z-10 flex flex-col justify-center my-auto w-full">
+            {/* High-Fashion Hero Photograph Frame */}
+            <div
+              className="relative w-full h-[760px] rounded-2xl overflow-hidden mb-10 shrink-0"
+              style={{
+                border: `1px solid ${borderSubtle}`,
+                backgroundColor: isInk ? '#1C1C1B' : '#ECE8E1',
+              }}
+            >
+              <img
+                src={proxiedCover}
+                alt={post.title}
+                crossOrigin="anonymous"
+                className="w-full h-full object-cover"
+                style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+
+              {/* Editorial Frame Watermark */}
+              <div
+                className="absolute bottom-5 left-6 px-3.5 py-1.5 rounded-full font-mono text-[11px] font-bold tracking-[0.2em] uppercase backdrop-blur-md"
+                style={{
+                  backgroundColor: isInk ? 'rgba(20,20,19,0.75)' : 'rgba(255,255,255,0.85)',
+                  color: textPrimary,
+                  border: `1px solid ${borderSubtle}`,
+                }}
+              >
+                FIGURE 01 &bull; {post.category || 'JOURNAL'}
+              </div>
+            </div>
+
+            {/* Minimalist Chop Mark / Ornament */}
+            <div className="flex items-center gap-3 mb-6">
+              <span className="w-8 h-[2px]" style={{ backgroundColor: textPrimary }} />
+              <span
+                className="font-mono text-[13px] font-bold tracking-[0.25em] uppercase"
+                style={{ color: textMuted }}
+              >
+                ESSAY
               </span>
             </div>
 
             {/* High-Fashion Literary Serif Title */}
             <h1
-              className="text-[64px] font-normal leading-[1.12] tracking-tight mb-8"
+              className="text-[54px] font-normal leading-[1.16] tracking-tight mb-5"
               style={{
                 color: textPrimary,
                 fontFamily: '"Playfair Display", "Lora", Georgia, serif',
                 wordBreak: 'break-word',
+                maxHeight: '190px',
+                overflow: 'hidden',
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
               }}
             >
               {post.title}
             </h1>
 
             {/* Subtle Divider Rule */}
-            <div className="w-16 h-[2px] mb-8" style={{ backgroundColor: borderSubtle }} />
+            <div className="w-16 h-[2px] mb-5" style={{ backgroundColor: borderSubtle }} />
 
-            {/* Poetic & Spacious Excerpt */}
+            {/* Poetic Excerpt */}
             {post.excerpt && (
               <p
-                className="text-[28px] font-light leading-[1.65] tracking-normal mb-0"
+                className="text-[25px] font-light leading-[1.6] tracking-normal mb-0"
                 style={{
                   color: textSecondary,
                   fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif',
                   display: '-webkit-box',
-                  WebkitLineClamp: 4,
+                  WebkitLineClamp: 3,
                   WebkitBoxOrient: 'vertical',
                   overflow: 'hidden',
                 }}
@@ -162,8 +210,11 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
           </main>
 
           {/* ── ZONE 3: STYLIZED 'READ ON WEB' PILL & FOOTER ── */}
-          <footer className="relative z-10 flex flex-col items-center gap-8 w-full pt-8 border-t" style={{ borderColor: borderSubtle }}>
-            {/* Spotify / NGL Vibe Stylized Interactive Pill Badge */}
+          <footer
+            className="relative z-10 flex flex-col items-center gap-7 w-full pt-7 border-t shrink-0"
+            style={{ borderColor: borderSubtle }}
+          >
+            {/* Stylized Interactive Pill Badge */}
             <div
               className="flex items-center justify-between w-full max-w-[620px] px-8 py-5 rounded-full"
               style={{
@@ -174,7 +225,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             >
               <div className="flex items-center gap-4">
                 <div
-                  className="w-3 h-3 rounded-full animate-pulse"
+                  className="w-3.5 h-3.5 rounded-full animate-pulse"
                   style={{ backgroundColor: isInk ? '#50E3C2' : '#10B981' }}
                 />
                 <span
@@ -193,14 +244,26 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                   color: bg,
                 }}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <path d="M7 17L17 7M17 7H7M17 7V17" />
                 </svg>
               </div>
             </div>
 
             {/* Bottom Meta & URL Label */}
-            <div className="flex items-center justify-between w-full font-mono text-[13px] tracking-[0.2em] uppercase" style={{ color: textMuted }}>
+            <div
+              className="flex items-center justify-between w-full font-mono text-[13px] tracking-[0.2em] uppercase"
+              style={{ color: textMuted }}
+            >
               <span>LINK IN BIO / STORIES</span>
               <span>{post.url ? post.url.replace(/^https?:\/\//, '') : 'ivanaffriandi.com/blog'}</span>
             </div>

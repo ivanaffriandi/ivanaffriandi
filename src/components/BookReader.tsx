@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { addComment, getApprovedComments, CommentItem } from "@/lib/comments";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { InstagramShareButton } from "@/components/story/InstagramShareButton";
 
 interface PostType {
   id: string;
@@ -2156,6 +2157,27 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                             {lang === "ar" ? "الصور" : lang === "zh" ? "照片" : lang === "nl" ? "Foto's" : "Photos"}
                           </span>
                         </button>
+                      </div>
+
+                      {/* 3. Mobile-Only Share to Instagram Story Button */}
+                      <div className="block md:hidden">
+                        <InstagramShareButton
+                          variant="dock-icon"
+                          post={{
+                            title: post.title,
+                            coverImage: (function() {
+                              const match = (post.content || "").match(/<img[^>]+src=["']([^"']+)["']/i);
+                              return match ? match[1] : "/nature_hero.png";
+                            })(),
+                            excerpt: (post.content || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 150) + "…",
+                            category: post.labels?.[0] || "ESSAY",
+                            publishedDate: post.published ? new Date(post.published).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "AUTUMN 2026",
+                            readingTime: "4 MIN READ",
+                            url: typeof window !== "undefined" ? window.location.href : `https://ivanaffriandi.com/blog/${post.id}`,
+                            author: "IVAN AFFRIANDI",
+                            theme: isCurrentThemeDark ? "ink" : "stone",
+                          }}
+                        />
                       </div>
                     </motion.div>
                   )}
