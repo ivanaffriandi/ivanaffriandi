@@ -176,201 +176,205 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             </div>
           </div>
 
-          {/* ── ZONE 2: CENTER STAGE - CRISP WHITE MINIMALIST EDITORIAL CARD ── */}
+          {/* ── ZONE 2: CENTER STAGE WRAPPER (CARD + BOTTOM-LEFT COPYRIGHT) ── */}
           <div
-            id="sticker-card"
             style={{
               position: 'relative',
               zIndex: 10,
               width: '760px',
               maxWidth: '760px',
-              height: 'auto',
-              flexShrink: 0,
-              flexGrow: 0,
-              backgroundColor: '#FFFFFF',
-              borderRadius: '34px',
-              border: '1px solid rgba(255, 255, 255, 0.95)',
-              boxShadow: '0 28px 80px rgba(0, 0, 0, 0.22), 0 8px 24px rgba(0, 0, 0, 0.1)',
-              padding: '22px',
-              boxSizing: 'border-box',
               display: 'flex',
               flexDirection: 'column',
-              overflow: 'hidden',
+              alignItems: 'stretch',
+              flexShrink: 0,
+              flexGrow: 0,
             }}
           >
-            {/* 1. COVER PHOTO FRAME */}
+            {/* CRISP WHITE MINIMALIST EDITORIAL CARD */}
             <div
+              id="sticker-card"
               style={{
                 position: 'relative',
-                width: '716px',
-                height: '380px',
-                borderRadius: '22px',
-                overflow: 'hidden',
-                backgroundColor: '#F4F4F5',
-                border: '1px solid rgba(0, 0, 0, 0.08)',
-                flexShrink: 0,
-              }}
-            >
-              <img
-                src={displayCover}
-                alt={post.title}
-                crossOrigin="anonymous"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                }}
-              />
-            </div>
-
-            {/* 2. CARD CONTENT AREA (HIGH CONTRAST & CRYSTAL CLEAR) */}
-            <div
-              style={{
+                width: '100%',
+                height: 'auto',
+                backgroundColor: '#FFFFFF',
+                borderRadius: '34px',
+                border: '1px solid rgba(255, 255, 255, 0.95)',
+                boxShadow: '0 28px 80px rgba(0, 0, 0, 0.22), 0 8px 24px rgba(0, 0, 0, 0.1)',
+                padding: '22px',
+                boxSizing: 'border-box',
                 display: 'flex',
                 flexDirection: 'column',
-                padding: '18px 8px 6px 8px',
-                boxSizing: 'border-box',
+                overflow: 'hidden',
               }}
             >
-              {/* DATE & READING TIME */}
+              {/* 1. COVER PHOTO FRAME */}
+              <div
+                style={{
+                  position: 'relative',
+                  width: '716px',
+                  height: '380px',
+                  borderRadius: '22px',
+                  overflow: 'hidden',
+                  backgroundColor: '#F4F4F5',
+                  border: '1px solid rgba(0, 0, 0, 0.08)',
+                  flexShrink: 0,
+                }}
+              >
+                <img
+                  src={displayCover}
+                  alt={post.title}
+                  crossOrigin="anonymous"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
+                />
+              </div>
+
+              {/* 2. CARD CONTENT AREA (HIGH CONTRAST & CRYSTAL CLEAR) */}
               <div
                 style={{
                   display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  color: '#71717A',
+                  flexDirection: 'column',
+                  padding: '18px 8px 6px 8px',
+                  boxSizing: 'border-box',
                 }}
               >
-                <span>{post.publishedDate || 'RECENT'}</span>
-                <span style={{ opacity: 0.45 }}>&bull;</span>
-                <span>{post.readingTime || '4 MIN READ'}</span>
-              </div>
-
-              {/* POST TITLE (CLEAN 2 LINES CLAMP, SOLID CRISP BLACK) */}
-              <h2
-                style={{
-                  fontSize: '28px',
-                  fontWeight: 800,
-                  lineHeight: '1.25',
-                  letterSpacing: '-0.025em',
-                  color: '#09090B',
-                  margin: '10px 0 0 0',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                  wordBreak: 'break-word',
-                }}
-              >
-                {post.title}
-              </h2>
-
-              {/* BLOG CONTENT EXCERPT (3 LINES OF CONTENT, RICH CHARCOAL) */}
-              {post.excerpt && (
-                <p
+                {/* DATE & READING TIME */}
+                <div
                   style={{
-                    fontSize: '17px',
-                    fontWeight: 400,
-                    lineHeight: '1.55',
-                    letterSpacing: '-0.01em',
-                    color: '#3F3F46',
-                    margin: '12px 0 0 0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    letterSpacing: '0.12em',
+                    textTransform: 'uppercase',
+                    color: '#71717A',
+                  }}
+                >
+                  <span>{post.publishedDate || 'RECENT'}</span>
+                  <span style={{ opacity: 0.45 }}>&bull;</span>
+                  <span>{post.readingTime || '4 MIN READ'}</span>
+                </div>
+
+                {/* POST TITLE (CLEAN 2 LINES CLAMP, SOLID CRISP BLACK) */}
+                <h2
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: 800,
+                    lineHeight: '1.25',
+                    letterSpacing: '-0.025em',
+                    color: '#09090B',
+                    margin: '10px 0 0 0',
                     display: '-webkit-box',
-                    WebkitLineClamp: 3,
+                    WebkitLineClamp: 2,
                     WebkitBoxOrient: 'vertical',
                     overflow: 'hidden',
                     wordBreak: 'break-word',
                   }}
                 >
-                  {post.excerpt}
-                </p>
-              )}
+                  {post.title}
+                </h2>
 
-              {/* 3. CARD FOOTER ROW: AUTHOR & READ ESSAY PILL */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginTop: '18px',
-                  paddingTop: '16px',
-                  borderTop: '1px solid rgba(0, 0, 0, 0.08)',
-                }}
-              >
-                {/* Author Monogram & Name */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {/* BLOG CONTENT EXCERPT (3 LINES OF CONTENT, RICH CHARCOAL) */}
+                {post.excerpt && (
+                  <p
+                    style={{
+                      fontSize: '17px',
+                      fontWeight: 400,
+                      lineHeight: '1.55',
+                      letterSpacing: '-0.01em',
+                      color: '#3F3F46',
+                      margin: '12px 0 0 0',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      wordBreak: 'break-word',
+                    }}
+                  >
+                    {post.excerpt}
+                  </p>
+                )}
+
+                {/* 3. CARD FOOTER ROW: READ BLOG PILL (AUTHOR REMOVED FROM CARD) */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                    marginTop: '18px',
+                    paddingTop: '16px',
+                    borderTop: '1px solid rgba(0, 0, 0, 0.08)',
+                  }}
+                >
+                  {/* Tactile Black Pill */}
                   <div
                     style={{
-                      width: '28px',
-                      height: '28px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '7px 16px',
                       borderRadius: '9999px',
                       backgroundColor: '#09090B',
                       color: '#FFFFFF',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '11px',
-                      fontWeight: 800,
-                      letterSpacing: '0.04em',
+                      boxShadow: '0 3px 10px rgba(0, 0, 0, 0.2)',
                     }}
                   >
-                    IA
+                    <span
+                      style={{
+                        fontSize: '11px',
+                        fontWeight: 800,
+                        letterSpacing: '0.08em',
+                        textTransform: 'uppercase',
+                        color: '#FFFFFF',
+                      }}
+                    >
+                      READ BLOG
+                    </span>
+                    <svg
+                      width="11"
+                      height="11"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#FFFFFF"
+                      strokeWidth="2.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M7 17L17 7M17 7H7M17 7V17" />
+                    </svg>
                   </div>
-                  <span
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: 700,
-                      letterSpacing: '0.02em',
-                      color: '#09090B',
-                    }}
-                  >
-                    {post.author || 'Ivan Affriandi'}
-                  </span>
-                </div>
-
-                {/* Tactile Black Pill */}
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '7px 16px',
-                    borderRadius: '9999px',
-                    backgroundColor: '#09090B',
-                    color: '#FFFFFF',
-                    boxShadow: '0 3px 10px rgba(0, 0, 0, 0.2)',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: '11px',
-                      fontWeight: 800,
-                      letterSpacing: '0.08em',
-                      textTransform: 'uppercase',
-                      color: '#FFFFFF',
-                    }}
-                  >
-                    READ BLOG
-                  </span>
-                  <svg
-                    width="11"
-                    height="11"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#FFFFFF"
-                    strokeWidth="2.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M7 17L17 7M17 7H7M17 7V17" />
-                  </svg>
                 </div>
               </div>
+            </div>
+
+            {/* MINIMALIST COPYRIGHT AT BOTTOM-LEFT OF CARD */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+                marginTop: '12px',
+                paddingLeft: '8px',
+              }}
+            >
+              <span
+                style={{
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  letterSpacing: '0.05em',
+                  color: 'rgba(255, 255, 255, 0.85)',
+                  textShadow: '0 2px 8px rgba(0, 0, 0, 0.45)',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Inter, sans-serif',
+                }}
+              >
+                © {post.author || 'Ivan Affriandi'}
+              </span>
             </div>
           </div>
 
