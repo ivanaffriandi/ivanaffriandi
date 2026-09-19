@@ -178,8 +178,8 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
           <svg
             style={{
               animation: 'spin 1s linear infinite',
-              width: '12px',
-              height: '12px',
+              width: '11px',
+              height: '11px',
             }}
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -195,8 +195,8 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
         ) : (
           /* Simple, clean iOS share icon with stroke identical to search icon */
           <svg
-            width="12"
-            height="12"
+            width="11"
+            height="11"
             viewBox="0 0 24 24"
             fill="none"
             stroke="#FFFFFF"

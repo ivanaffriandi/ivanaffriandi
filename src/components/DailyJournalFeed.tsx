@@ -2642,6 +2642,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           gap: 0.35rem !important;
           height: 30px !important;
           min-height: 30px !important;
+          max-height: 30px !important;
           box-sizing: border-box !important;
           background: #1c1c1e !important;
           border: 1px solid rgba(255, 255, 255, 0.15) !important;
@@ -2678,6 +2679,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           gap: 0.35rem !important;
           height: 30px !important;
           min-height: 30px !important;
+          max-height: 30px !important;
           box-sizing: border-box !important;
           background: #1c1c1e !important;
           border: 1px solid rgba(255, 255, 255, 0.15) !important;
@@ -2709,6 +2711,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           height: 30px !important;
           min-width: 30px !important;
           min-height: 30px !important;
+          max-width: 30px !important;
+          max-height: 30px !important;
           box-sizing: border-box !important;
           background: #1c1c1e !important;
           border: 1px solid rgba(255, 255, 255, 0.15) !important;
@@ -2722,6 +2726,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           touch-action: manipulation !important;
           -webkit-tap-highlight-color: transparent !important;
           transition: background 0.15s ease, border-color 0.15s ease !important;
+          flex-shrink: 0 !important;
         }
         .mobile-search-btn:hover {
           background: #2c2c2e !important;
@@ -2795,18 +2800,19 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 0.3rem !important;
-            height: 29px !important;
-            min-height: 29px !important;
+            gap: 0.35rem !important;
+            height: 30px !important;
+            min-height: 30px !important;
+            max-height: 30px !important;
             box-sizing: border-box !important;
             background: #1c1c1e !important;
             border: 1px solid rgba(255, 255, 255, 0.15) !important;
             color: #FFFFFF !important;
-            font-size: 0.60rem !important;
+            font-size: 0.62rem !important;
             font-weight: 700 !important;
             letter-spacing: 0.06em !important;
             text-transform: uppercase !important;
-            padding: 0 0.7rem !important;
+            padding: 0 0.75rem !important;
             border-radius: 9999px !important;
             text-decoration: none !important;
             box-shadow: none !important;
@@ -2829,17 +2835,18 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 0.3rem !important;
-            height: 29px !important;
-            min-height: 29px !important;
+            gap: 0.35rem !important;
+            height: 30px !important;
+            min-height: 30px !important;
+            max-height: 30px !important;
             box-sizing: border-box !important;
             background: #1c1c1e !important;
             border: 1px solid rgba(255, 255, 255, 0.15) !important;
             color: #FFFFFF !important;
-            font-size: 0.60rem !important;
+            font-size: 0.62rem !important;
             font-weight: 700 !important;
             letter-spacing: 0.06em !important;
-            padding: 0 0.7rem !important;
+            padding: 0 0.75rem !important;
             border-radius: 9999px !important;
             touch-action: manipulation !important;
             -webkit-tap-highlight-color: transparent !important;
@@ -2857,10 +2864,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            width: 29px !important;
-            height: 29px !important;
-            min-width: 29px !important;
-            min-height: 29px !important;
+            width: 30px !important;
+            height: 30px !important;
+            min-width: 30px !important;
+            min-height: 30px !important;
+            max-width: 30px !important;
+            max-height: 30px !important;
             box-sizing: border-box !important;
             background: #1c1c1e !important;
             border: 1px solid rgba(255, 255, 255, 0.15) !important;
@@ -2874,6 +2883,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             touch-action: manipulation !important;
             -webkit-tap-highlight-color: transparent !important;
             transition: background 0.15s ease !important;
+            flex-shrink: 0 !important;
           }
 
           .mobile-search-btn:active {
@@ -3338,7 +3348,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 title="Back to Journal Deck"
                 style={{ cursor: "pointer", touchAction: "manipulation" }}
               >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="15 18 9 12 15 6" />
                 </svg>
                 <span>JOURNAL</span>
@@ -3395,7 +3405,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   className="mobile-prologue-btn"
                   title="Read Prologue"
                 >
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
                     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
                   </svg>

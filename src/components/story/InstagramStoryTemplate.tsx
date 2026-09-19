@@ -97,7 +97,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             width: '1080px',
             height: '1920px',
             boxSizing: 'border-box',
-            backgroundColor: '#08090B',
+            backgroundColor: '#1C1E22',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
@@ -109,28 +109,28 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             color: '#FFFFFF',
           }}
         >
-          {/* ── BACKGROUND LAYER: FAST SMOOTH AMBIENT PHOTO GLOW ── */}
+          {/* ── BACKGROUND LAYER: VIBRANT LUMINOUS AMBIENT NATURE PHOTO GLOW ── */}
           <div
             style={{
               position: 'absolute',
-              inset: '-20px',
+              inset: '-40px',
               backgroundImage: `url(${displayCover})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'blur(16px) brightness(0.24) saturate(1.35)',
-              opacity: 0.65,
-              transform: 'scale(1.05)',
+              filter: 'blur(36px) saturate(1.25) brightness(0.92)',
+              opacity: 1,
+              transform: 'scale(1.08)',
               pointerEvents: 'none',
               zIndex: 1,
             }}
           />
 
-          {/* Dark Radial Contrast Scrim */}
+          {/* Soft Natural Ambient Light Overlay (Vibrant, Fresh, Never Muddy or Dark) */}
           <div
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'radial-gradient(circle at 50% 45%, rgba(8,9,11,0.2) 0%, rgba(8,9,11,0.9) 100%)',
+              background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0.04) 25%, rgba(0, 0, 0, 0.04) 75%, rgba(0, 0, 0, 0.26) 100%)',
               pointerEvents: 'none',
               zIndex: 2,
             }}
@@ -189,8 +189,8 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
               flexGrow: 0,
               backgroundColor: '#FFFFFF',
               borderRadius: '34px',
-              border: '1px solid rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 32px 90px rgba(0, 0, 0, 0.65), 0 8px 24px rgba(0, 0, 0, 0.35)',
+              border: '1px solid rgba(255, 255, 255, 0.95)',
+              boxShadow: '0 28px 80px rgba(0, 0, 0, 0.22), 0 8px 24px rgba(0, 0, 0, 0.1)',
               padding: '22px',
               boxSizing: 'border-box',
               display: 'flex',
