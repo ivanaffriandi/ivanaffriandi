@@ -248,7 +248,7 @@ export default function AvantGardeHomepage() {
       id: "nature-hero",
       title: "A Quiet Corner on the Internet",
       published: "2026-08-20T00:00:00.000Z",
-      content: '<img src="/nature_hero.png" />',
+      content: '<img src="/images/nature/emerald_forest.jpg" />',
     },
     {
       id: "minimalism-matters",
@@ -269,7 +269,8 @@ export default function AvantGardeHomepage() {
   const processedPosts = useMemo(() => {
     return displayPosts.slice(0, 3).map((post, idx) => {
       const extracted = extractCoverImage(post.content);
-      const cover = extracted || getMinimalistNatureCover(post.title || String(post.id || idx));
+      const isBad = !extracted || extracted.includes("ocean_hero_mono.png") || extracted.includes("nature_hero.png");
+      const cover = isBad ? getMinimalistNatureCover(post.title || String(post.id || idx), idx) : extracted;
       const dateStr = post.published ? new Date(post.published).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "Recent";
       const cleanTitle = (post.title || "").replace(/^Chapter\s*\d+\s*:\s*/i, "").trim();
       return {

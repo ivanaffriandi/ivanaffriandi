@@ -457,11 +457,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   }, [mobileSearchOpen]);
 
   const selectedPostImages = useMemo(() => {
-    if (isReadingPrologue) return ["/nature_hero.png"];
+    if (isReadingPrologue) return ["/images/nature/emerald_forest.jpg"];
     if (!selectedPost || !selectedPost.content) return [];
     const extracted = extractAllImages(selectedPost.content);
-    return extracted.length > 0 ? extracted : [getMinimalistNatureCover(selectedPost.title || String(selectedPost.id))];
-  }, [isReadingPrologue, selectedPost]);
+    const isBad = extracted.length === 0 || extracted.some((img) => img.includes("ocean_hero_mono.png") || img.includes("nature_hero.png"));
+    return !isBad ? extracted : [getMinimalistNatureCover(selectedPost.title || String(selectedPost.id), selectedPostIndex ?? 0)];
+  }, [isReadingPrologue, selectedPost, selectedPostIndex]);
 
   // Real-time Like state per post
   const [likesMap, setLikesMap] = useState<Record<string, { count: number; hasLiked: boolean }>>({});
@@ -684,8 +685,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const flipboardCards = useMemo(() => {
     const chapterCards = sortedPosts.map((p, idx) => {
       const extracted = extractCoverImage(p.content);
-      const isBadImg = !extracted || extracted.includes("ocean_hero_mono.png");
-      const cover = isBadImg ? getMinimalistNatureCover(p.title || String(p.id)) : extracted;
+      const isBadImg = !extracted || extracted.includes("ocean_hero_mono.png") || extracted.includes("nature_hero.png");
+      const cover = isBadImg ? getMinimalistNatureCover(p.title || String(p.id), idx) : extracted;
       const chapterLabel = getPostChapterLabel(p, sortedPosts);
       return {
         id: p.id,
@@ -706,7 +707,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
       date: "READING",
       title: "PROLOGUE",
       excerpt: "There is a reason why the world always feels more spacious past three in the morning. The city's restless hum has finally run out of steam, leaving behind a thick silence, the chill of early dew settling in...",
-      img: "/nature_hero.png",
+      img: "/images/nature/emerald_forest.jpg",
       post: null,
       isPrologue: true,
       postIndex: -1,
@@ -848,7 +849,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
     }
     return sortedPosts.map((p, idx) => ({
       id: p.id,
-      img: extractCoverImage(p.content) || getMinimalistNatureCover(p.title || String(p.id)),
+      img: extractCoverImage(p.content) || getMinimalistNatureCover(p.title || String(p.id), idx),
       title: p.title,
       caption: stripHtml(p.content).slice(0, 150),
       date: p.published,
@@ -2211,16 +2212,16 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           position: relative;
         }
 
-        /* 100% PURE MONOCHROME BLACK & WHITE THUMBNAIL */
+        /* COLORFUL CLEAN THUMBNAIL (ZERO GRAYSCALE) */
         .blog-b-w-img {
           width: 100%;
           height: 100%;
           object-fit: cover;
           object-position: center;
           display: block;
-          filter: grayscale(100%) contrast(1.12) brightness(0.96) !important;
-          -webkit-filter: grayscale(100%) contrast(1.12) brightness(0.96) !important;
-          transition: filter 0.45s ease, transform 0.45s ease;
+          filter: none !important;
+          -webkit-filter: none !important;
+          transition: transform 0.45s ease;
         }
 
         .blog-grid-card:hover .blog-b-w-img {
@@ -4226,10 +4227,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         .filter((p) => p.id !== selectedPost.id)
                         .slice(0, 3)
                         .map((p) => {
-                          const pCover = extractCoverImage(p.content) || getMinimalistNatureCover(p.title || String(p.id));
+                          const pIdx = sortedPosts.findIndex((item) => item.id === p.id);
+                          const pCoverRaw = extractCoverImage(p.content);
+                          const isBad = !pCoverRaw || pCoverRaw.includes("ocean_hero_mono.png") || pCoverRaw.includes("nature_hero.png");
+                          const pCover = isBad ? getMinimalistNatureCover(p.title || String(p.id), pIdx) : pCoverRaw;
                           const pChapter = getPostChapterLabel(p, sortedPosts);
                           const pRelative = getRelativeTimeString(p.published);
-                          const pIdx = sortedPosts.findIndex((item) => item.id === p.id);
 
                           return (
                             <div
@@ -4392,9 +4395,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     {/* DESKTOP 2-COLUMN CHAPTERS GRID */}
                     <div className="blog-grid-layout" ref={blogRowRef}>
                       {filteredPosts.map((post) => {
-                        const img = extractCoverImage(post.content);
-                        const excerpt = stripHtml(post.content).slice(0, 110) + "…";
+                        const rawImg = extractCoverImage(post.content);
+                        const isBad = !rawImg || rawImg.includes("ocean_hero_mono.png") || rawImg.includes("nature_hero.png");
                         const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
+                        const img = isBad ? getMinimalistNatureCover(post.title || String(post.id), postIdx) : rawImg;
+                        const excerpt = stripHtml(post.content).slice(0, 110) + "…";
                         const relativeTime = getRelativeTimeString(post.published);
                         const chapterLabel = getPostChapterLabel(post, sortedPosts);
 
@@ -4410,7 +4415,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                             <div className="blog-card-thumb-wrap">
                               <div className="ig-b-w-container" style={{ width: "100%", height: "100%" }}>
                                 <img
-                                  src={img || getMinimalistNatureCover(post.title || String(post.id))}
+                                  src={img}
                                   alt={post.title}
                                   className="blog-b-w-img"
                                 />
