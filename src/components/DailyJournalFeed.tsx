@@ -433,7 +433,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const router = useRouter();
   const selectedPost = selectedPostIndex !== null ? sortedPosts[selectedPostIndex] : null;
 
-  const fallbackHero = "/images/nature/misty_forest.jpg";
+  const fallbackHero = "/images/nature/ocean_deep_blue.jpg";
   const fallbackBrand = "/images/defining_brand_mono.png";
 
   const [postPhotoIndex, setPostPhotoIndex] = useState<number>(0);
@@ -450,7 +450,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const lastCloseTimeRef = useRef<number>(0);
 
   const selectedPostImages = useMemo(() => {
-    if (isReadingPrologue) return ["/images/nature/real_forest_sunbeams.jpg"];
+    if (isReadingPrologue) return ["/images/nature/ocean_deep_blue.jpg"];
     if (!selectedPost || !selectedPost.content) return [];
     const extracted = extractAllImages(selectedPost.content);
     const isBad = extracted.length === 0 || extracted.some((img) => img.includes("ocean_hero_mono.png") || img.includes("nature_hero.png"));
@@ -700,7 +700,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
       date: "READING",
       title: "PROLOGUE",
       excerpt: "There is a reason why the world always feels more spacious past three in the morning. The city's restless hum has finally run out of steam, leaving behind a thick silence, the chill of early dew settling in...",
-      img: "/images/nature/real_forest_sunbeams.jpg",
+      img: "/images/nature/ocean_deep_blue.jpg",
       post: null,
       isPrologue: true,
       postIndex: -1,

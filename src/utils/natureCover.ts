@@ -1,16 +1,16 @@
 /**
- * Curated collection of high-resolution, authentic real photography (100% non-AI) from world-class landscape photographers.
+ * Curated collection of high-resolution, authentic real photography (100% non-AI) of oceans and seascapes.
  * Used as beautiful dynamic fallbacks for blog posts that don't have images.
  */
 export const MINIMALIST_NATURE_COVERS = [
-  '/images/nature/real_forest_sunbeams.jpg', // Forest sunbeams by Luca Bravo
-  '/images/nature/real_turquoise_lake.jpg',   // Lake Braies Dolomites by Pietro De Grandi
-  '/images/nature/real_golden_hills.jpg',     // Golden rolling hills by Sébastien Gabriel
-  '/images/nature/real_yosemite_valley.jpg',  // Yosemite Valley reflection by Bailey Zindel
-  '/images/nature/real_ocean_coast.jpg',      // Azure ocean coast by Sean Oulashin
-  '/images/nature/real_misty_mountain.jpg',   // Alpine wilderness by Roberto Sysa Moiola
-  '/images/nature/real_alpine_river.jpg',     // Rocky Mountain river by Kalen Emsley
-  '/images/nature/real_snow_peak.jpg',        // Mountain ridge sunset by Jerry Zhang
+  '/images/nature/ocean_azure_beach.jpg',    // Crystal azure breaking wave & beach by Sean Oulashin
+  '/images/nature/ocean_deep_blue.jpg',      // Deep sapphire ocean swell by Matt Hardy
+  '/images/nature/ocean_turquoise_reef.jpg', // Aerial turquoise tropical lagoon by Shifaaz shamoon
+  '/images/nature/ocean_aqua_wave.jpg',      // Vibrant barrel wave breaking in sunlight by Jeremy Bishop
+  '/images/nature/ocean_calm_horizon.jpg',   // Serene calm vast ocean horizon by Joseph Barrientos
+  '/images/nature/ocean_sunset_shore.jpg',   // Sunset golden hour wave wash by Jeremy Bishop
+  '/images/nature/ocean_emerald_coast.jpg',  // Emerald coast surf & seafoam by Austin Neill
+  '/images/nature/ocean_tropical_shore.jpg', // Soft tropical ocean tide by Mohamed Nohassi
 ];
 
 /**
