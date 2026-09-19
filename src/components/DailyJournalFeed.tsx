@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { InstagramShareButton } from "./story/InstagramShareButton";
 
 function formatDate(iso: string, locale: string) {
   if (!iso) return "";
@@ -4191,6 +4192,22 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                         </>
                       )}
                     </button>
+
+                    {/* SHARE TO INSTAGRAM STORIES */}
+                    <InstagramShareButton
+                      variant="minimal"
+                      label="Story"
+                      post={{
+                        title: selectedPost.title,
+                        excerpt: stripHtml(selectedPost.content || "").slice(0, 150) + "…",
+                        category: getPostChapterLabel(selectedPost, sortedPosts),
+                        publishedDate: formatDate(selectedPost.published, locale),
+                        readingTime: `${getReadingTime(selectedPost.content || "")} MIN READ`,
+                        url: typeof window !== "undefined" ? window.location.href : `https://ivanaffriandi.com/blog/${selectedPost.id}`,
+                        author: "IVAN AFFRIANDI",
+                        theme: readerTheme === "dark" ? "ink" : "stone",
+                      }}
+                    />
                   </div>
 
                   {/* ── ARTICLE CHAPTER HEADER BANNER (DESKTOP ONLY - ON MOBILE TOP COVER SHOWS THIS) ── */}
