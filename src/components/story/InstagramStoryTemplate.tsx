@@ -69,17 +69,17 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             color: '#FFFFFF',
           }}
         >
-          {/* ── BACKGROUND LAYER: SMOOTH AMBIENT BLUR PHOTO GLOW ── */}
+          {/* ── BACKGROUND LAYER: FAST SMOOTH AMBIENT PHOTO GLOW ── */}
           <div
             style={{
               position: 'absolute',
-              inset: '-60px',
+              inset: '-20px',
               backgroundImage: `url(${proxiedCover})`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              filter: 'blur(80px) saturate(1.6) brightness(0.28)',
-              opacity: 0.72,
-              transform: 'scale(1.15)',
+              filter: 'blur(16px) brightness(0.24) saturate(1.35)',
+              opacity: 0.65,
+              transform: 'scale(1.05)',
               pointerEvents: 'none',
               zIndex: 1,
             }}
@@ -90,7 +90,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'radial-gradient(circle at 50% 50%, rgba(8,9,11,0.25) 0%, rgba(8,9,11,0.85) 100%)',
+              background: 'radial-gradient(circle at 50% 45%, rgba(8,9,11,0.2) 0%, rgba(8,9,11,0.9) 100%)',
               pointerEvents: 'none',
               zIndex: 2,
             }}

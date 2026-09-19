@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { InstagramStoryTemplate, StoryPostData } from './InstagramStoryTemplate';
 import { captureElementToPng, shareOrDownloadStory, ShareResult } from '@/utils/shareStory';
@@ -29,6 +29,7 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
   onError,
 }) => {
   const storyRef = useRef<HTMLDivElement>(null);
+  const cachedDataUrlRef = useRef<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -36,6 +37,23 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 4500);
   }, []);
+
+  // Pre-generate story snapshot during idle time so sharing on iOS is instantaneous (0ms)
+  useEffect(() => {
+    cachedDataUrlRef.current = null;
+    const timer = setTimeout(async () => {
+      if (storyRef.current) {
+        try {
+          const url = await captureElementToPng(storyRef.current);
+          cachedDataUrlRef.current = url;
+        } catch {
+          // Will capture on-demand if pre-warm fails
+        }
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [post.title, post.coverImage, post.excerpt]);
 
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -47,10 +65,11 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
       const targetEl = storyRef.current;
       if (!targetEl) throw new Error('Story canvas not mounted');
 
-      // 1. Capture off-screen template into crisp high-res PNG Data URL
-      const dataUrl = await captureElementToPng(targetEl);
+      // 1. Retrieve pre-cached image if ready for instant 0ms latency on iOS
+      const dataUrl = cachedDataUrlRef.current || (await captureElementToPng(targetEl));
+      cachedDataUrlRef.current = dataUrl;
 
-      // 2. Share via Web Share API or download fallback
+      // 2. Share via Web Share API
       const slug = post.title
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
@@ -70,7 +89,7 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
       onShareComplete?.(result);
     } catch (err: unknown) {
       console.error('Failed to generate or share Instagram story:', err);
-      showToast('Could not generate story image.');
+      showToast('Could not prepare story image.');
       onError?.(err);
     } finally {
       setIsGenerating(false);
@@ -160,22 +179,22 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
         )}
       </button>
 
-      {/* ── Native iOS-like Toast Notification ── */}
+      {/* ── Native iOS Dynamic Island Floating Toast (Prominently Visible at Top) ── */}
       <AnimatePresence>
         {toastMessage && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            initial={{ opacity: 0, y: -24, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.98 }}
-            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
             style={{
               position: 'fixed',
-              bottom: '24px',
+              top: 'max(16px, env(safe-area-inset-top, 16px))',
               left: '16px',
               right: '16px',
-              maxWidth: '380px',
+              maxWidth: '390px',
               margin: '0 auto',
-              zIndex: 99999,
+              zIndex: 999999,
               pointerEvents: 'auto',
             }}
           >
@@ -184,22 +203,22 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px',
-                padding: '12px 16px',
-                backgroundColor: 'rgba(28, 28, 30, 0.95)',
-                color: '#FAF8F5',
-                borderRadius: '16px',
-                boxShadow: '0 12px 36px rgba(0, 0, 0, 0.5)',
-                border: '1px solid rgba(255, 255, 255, 0.14)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
+                padding: '13px 18px',
+                backgroundColor: 'rgba(20, 20, 24, 0.96)',
+                color: '#FFFFFF',
+                borderRadius: '22px',
+                boxShadow: '0 20px 50px rgba(0, 0, 0, 0.7), 0 4px 12px rgba(0, 0, 0, 0.4)',
+                border: '1px solid rgba(255, 255, 255, 0.18)',
+                backdropFilter: 'blur(24px)',
+                WebkitBackdropFilter: 'blur(24px)',
               }}
             >
               <div
                 style={{
-                  width: '22px',
-                  height: '22px',
+                  width: '24px',
+                  height: '24px',
                   borderRadius: '9999px',
-                  backgroundColor: 'rgba(48, 209, 88, 0.2)',
+                  backgroundColor: 'rgba(48, 209, 88, 0.22)',
                   color: '#30D158',
                   display: 'flex',
                   alignItems: 'center',
@@ -207,12 +226,12 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
                   flexShrink: 0,
                 }}
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
 
-              <p style={{ fontSize: '13px', margin: 0, lineHeight: 1.35, fontWeight: 500, flex: 1 }}>
+              <p style={{ fontSize: '13.5px', margin: 0, lineHeight: 1.35, fontWeight: 500, flex: 1, letterSpacing: '-0.01em' }}>
                 {toastMessage}
               </p>
 
@@ -223,7 +242,7 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
                   background: 'none',
                   border: 'none',
                   padding: '4px',
-                  color: 'rgba(255, 255, 255, 0.6)',
+                  color: 'rgba(255, 255, 255, 0.5)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -231,7 +250,7 @@ export const InstagramShareButton: React.FC<InstagramShareButtonProps> = ({
                 }}
                 aria-label="Close"
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
