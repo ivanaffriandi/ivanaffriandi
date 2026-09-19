@@ -447,6 +447,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const [headerHidden, setHeaderHidden] = useState<boolean>(false);
 
   const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const lastCloseTimeRef = useRef<number>(0);
 
   useEffect(() => {
     if (mobileSearchOpen && searchInputRef.current) {
@@ -3332,16 +3333,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               <button
                 type="button"
                 onClick={(e) => {
+                  e.preventDefault();
                   e.stopPropagation();
-                  window.scrollTo({ top: 0, behavior: "instant" });
-                  setIsReadingPrologue(false);
-                  setSelectedPostIndex(null);
-                }}
-                onTouchStart={(e) => {
-                  e.stopPropagation();
-                }}
-                onTouchEnd={(e) => {
-                  e.stopPropagation();
+                  lastCloseTimeRef.current = Date.now();
                   window.scrollTo({ top: 0, behavior: "instant" });
                   setIsReadingPrologue(false);
                   setSelectedPostIndex(null);
@@ -3358,6 +3352,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
             ) : (
               <a
                 href="https://ivanaffriandi.com"
+                onClick={(e) => {
+                  if (Date.now() - lastCloseTimeRef.current < 650) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                  }
+                }}
                 title="Return to Homepage"
                 className="mobile-home-btn"
               >

@@ -2040,8 +2040,17 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                       style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
                     >
                       {/* 1. Symmetrical Circular Back Button */}
-                      <Link
-                        href="/"
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (typeof window !== 'undefined') {
+                            if (window.history.length > 1) {
+                              window.history.back();
+                            } else {
+                              window.location.href = window.location.hostname.includes('blog.') ? '/' : '/blog';
+                            }
+                          }
+                        }}
                         style={{
                           display: "flex",
                           alignItems: "center",
@@ -2055,7 +2064,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                           border: isCurrentThemeDark ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
                           boxShadow: isCurrentThemeDark ? "0 2px 8px rgba(0, 0, 0, 0.3)" : "0 2px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 #ffffff",
                           transition: "all 0.2s ease",
-                          textDecoration: "none",
+                          cursor: "pointer",
+                          padding: 0,
                           flexShrink: 0
                         }}
                         className="dock-icon-btn"
@@ -2064,7 +2074,7 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <path d="m15 18-6-6 6-6" />
                         </svg>
-                      </Link>
+                      </button>
 
                       {/* 2. Story / Photos Switcher Capsule */}
                       <div

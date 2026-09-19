@@ -96,7 +96,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             }}
           />
 
-          {/* ── ZONE 1: BACKGROUND TOP CENTER (CHAPTER CAPSULE) ── */}
+          {/* ── ZONE 1: BACKGROUND TOP CENTER (CHAPTER CAPSULE - NO DOT) ── */}
           <div
             style={{
               position: 'relative',
@@ -112,31 +112,23 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
-                padding: '10px 22px',
+                justifyContent: 'center',
+                padding: '10px 24px',
                 borderRadius: '9999px',
-                backgroundColor: 'rgba(255, 255, 255, 0.09)',
-                backdropFilter: 'blur(24px)',
-                WebkitBackdropFilter: 'blur(24px)',
-                border: '1px solid rgba(255, 255, 255, 0.14)',
-                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.35)',
+                backgroundColor: 'rgba(0, 0, 0, 0.45)',
+                backdropFilter: 'blur(30px)',
+                WebkitBackdropFilter: 'blur(30px)',
+                border: '1px solid rgba(255, 255, 255, 0.22)',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.45)',
               }}
             >
-              <div
-                style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '9999px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                }}
-              />
               <span
                 style={{
                   fontSize: '14px',
                   fontWeight: 800,
                   letterSpacing: '0.22em',
                   textTransform: 'uppercase',
-                  color: 'rgba(255, 255, 255, 0.92)',
+                  color: '#FFFFFF',
                 }}
               >
                 {chapterText}
@@ -144,7 +136,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             </div>
           </div>
 
-          {/* ── ZONE 2: CENTER STAGE - COMPACT PROPORTIONAL STICKER CARD ── */}
+          {/* ── ZONE 2: CENTER STAGE - CRISP WHITE MINIMALIST EDITORIAL CARD ── */}
           <div
             id="sticker-card"
             style={{
@@ -155,11 +147,11 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
               height: 'auto',
               flexShrink: 0,
               flexGrow: 0,
-              backgroundColor: '#16171B',
+              backgroundColor: '#FFFFFF',
               borderRadius: '34px',
-              border: '1.5px solid rgba(255, 255, 255, 0.16)',
-              boxShadow: '0 30px 80px rgba(0, 0, 0, 0.65), 0 4px 16px rgba(0, 0, 0, 0.4)',
-              padding: '20px',
+              border: '1px solid rgba(255, 255, 255, 0.9)',
+              boxShadow: '0 32px 90px rgba(0, 0, 0, 0.65), 0 8px 24px rgba(0, 0, 0, 0.35)',
+              padding: '22px',
               boxSizing: 'border-box',
               display: 'flex',
               flexDirection: 'column',
@@ -170,12 +162,12 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
             <div
               style={{
                 position: 'relative',
-                width: '720px',
+                width: '716px',
                 height: '380px',
                 borderRadius: '22px',
                 overflow: 'hidden',
-                backgroundColor: '#101113',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                backgroundColor: '#F4F4F5',
+                border: '1px solid rgba(0, 0, 0, 0.08)',
                 flexShrink: 0,
               }}
             >
@@ -190,27 +182,18 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                   display: 'block',
                 }}
               />
-              {/* Subtle film gradient overlay on photo */}
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 40%)',
-                  pointerEvents: 'none',
-                }}
-              />
             </div>
 
-            {/* 2. CARD CONTENT AREA (COMPACT & PROPORTIONAL) */}
+            {/* 2. CARD CONTENT AREA (HIGH CONTRAST & CRYSTAL CLEAR) */}
             <div
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                padding: '16px 8px 4px 8px',
+                padding: '18px 8px 6px 8px',
                 boxSizing: 'border-box',
               }}
             >
-              {/* DATE & READING TIME (NO CHAPTER INSIDE CARD) */}
+              {/* DATE & READING TIME */}
               <div
                 style={{
                   display: 'flex',
@@ -220,23 +203,23 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                   fontWeight: 700,
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
-                  color: 'rgba(255, 255, 255, 0.55)',
+                  color: '#71717A',
                 }}
               >
                 <span>{post.publishedDate || 'RECENT'}</span>
-                <span style={{ opacity: 0.35 }}>&bull;</span>
+                <span style={{ opacity: 0.45 }}>&bull;</span>
                 <span>{post.readingTime || '4 MIN READ'}</span>
               </div>
 
-              {/* POST TITLE (CLEAN 2 LINES CLAMP) */}
+              {/* POST TITLE (CLEAN 2 LINES CLAMP, SOLID CRISP BLACK) */}
               <h2
                 style={{
                   fontSize: '28px',
                   fontWeight: 800,
-                  lineHeight: '1.24',
-                  letterSpacing: '-0.02em',
-                  color: '#FFFFFF',
-                  margin: '8px 0 0 0',
+                  lineHeight: '1.25',
+                  letterSpacing: '-0.025em',
+                  color: '#09090B',
+                  margin: '10px 0 0 0',
                   display: '-webkit-box',
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: 'vertical',
@@ -247,45 +230,47 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                 {post.title}
               </h2>
 
-              {/* BLOG CONTENT EXCERPT (3 LINES OF CONTENT) */}
+              {/* BLOG CONTENT EXCERPT (3 LINES OF CONTENT, RICH CHARCOAL) */}
               {post.excerpt && (
                 <p
                   style={{
                     fontSize: '17px',
                     fontWeight: 400,
-                    lineHeight: '1.5',
-                    color: 'rgba(255, 255, 255, 0.78)',
-                    margin: '10px 0 0 0',
+                    lineHeight: '1.55',
+                    letterSpacing: '-0.01em',
+                    color: '#3F3F46',
+                    margin: '12px 0 0 0',
                     display: '-webkit-box',
                     WebkitLineClamp: 3,
                     WebkitBoxOrient: 'vertical',
                     overflow: 'hidden',
+                    wordBreak: 'break-word',
                   }}
                 >
                   {post.excerpt}
                 </p>
               )}
 
-              {/* 3. CARD FOOTER ROW: AUTHOR & READ ESSAY */}
+              {/* 3. CARD FOOTER ROW: AUTHOR & READ ESSAY PILL */}
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  marginTop: '16px',
-                  paddingTop: '14px',
-                  borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                  marginTop: '18px',
+                  paddingTop: '16px',
+                  borderTop: '1px solid rgba(0, 0, 0, 0.08)',
                 }}
               >
                 {/* Author Monogram & Name */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <div
                     style={{
-                      width: '26px',
-                      height: '26px',
+                      width: '28px',
+                      height: '28px',
                       borderRadius: '9999px',
-                      backgroundColor: '#FFFFFF',
-                      color: '#000000',
+                      backgroundColor: '#09090B',
+                      color: '#FFFFFF',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -300,25 +285,25 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                     style={{
                       fontSize: '14px',
                       fontWeight: 700,
-                      letterSpacing: '0.03em',
-                      color: '#FFFFFF',
+                      letterSpacing: '0.02em',
+                      color: '#09090B',
                     }}
                   >
                     {post.author || 'Ivan Affriandi'}
                   </span>
                 </div>
 
-                {/* Tactile White Pill */}
+                {/* Tactile Black Pill */}
                 <div
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '5px',
-                    padding: '6px 14px',
+                    gap: '6px',
+                    padding: '7px 16px',
                     borderRadius: '9999px',
-                    backgroundColor: '#FFFFFF',
-                    color: '#000000',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.25)',
+                    backgroundColor: '#09090B',
+                    color: '#FFFFFF',
+                    boxShadow: '0 3px 10px rgba(0, 0, 0, 0.2)',
                   }}
                 >
                   <span
@@ -327,6 +312,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                       fontWeight: 800,
                       letterSpacing: '0.08em',
                       textTransform: 'uppercase',
+                      color: '#FFFFFF',
                     }}
                   >
                     READ ESSAY
@@ -336,7 +322,7 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                     height="11"
                     viewBox="0 0 24 24"
                     fill="none"
-                    stroke="#000000"
+                    stroke="#FFFFFF"
                     strokeWidth="2.8"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -367,11 +353,11 @@ export const InstagramStoryTemplate = forwardRef<HTMLDivElement, InstagramStoryT
                 gap: '8px',
                 padding: '11px 24px',
                 borderRadius: '9999px',
-                backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255, 255, 255, 0.14)',
-                boxShadow: '0 6px 20px rgba(0, 0, 0, 0.35)',
+                backgroundColor: 'rgba(0, 0, 0, 0.45)',
+                backdropFilter: 'blur(30px)',
+                WebkitBackdropFilter: 'blur(30px)',
+                border: '1px solid rgba(255, 255, 255, 0.22)',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.45)',
               }}
             >
               <svg
