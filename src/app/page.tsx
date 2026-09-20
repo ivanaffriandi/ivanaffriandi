@@ -248,7 +248,7 @@ export default function AvantGardeHomepage() {
       id: "nature-hero",
       title: "A Quiet Corner on the Internet",
       published: "2026-08-20T00:00:00.000Z",
-      content: '<img src="/images/nature/ocean_azure_beach.jpg" />',
+      content: '<img src="/images/nature/ocean_sunset_amber_ripple.jpg" />',
     },
     {
       id: "minimalism-matters",

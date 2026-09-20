@@ -3,14 +3,14 @@
  * Used as beautiful dynamic fallbacks for blog posts that don't have images.
  */
 export const MINIMALIST_NATURE_COVERS = [
-  '/images/nature/ocean_azure_beach.jpg',    // Crystal azure breaking wave & beach by Sean Oulashin
-  '/images/nature/ocean_deep_blue.jpg',      // Deep sapphire ocean swell by Matt Hardy
-  '/images/nature/ocean_turquoise_reef.jpg', // Aerial turquoise tropical lagoon by Shifaaz shamoon
-  '/images/nature/ocean_aqua_wave.jpg',      // Vibrant barrel wave breaking in sunlight by Jeremy Bishop
-  '/images/nature/ocean_calm_horizon.jpg',   // Serene calm vast ocean horizon by Joseph Barrientos
-  '/images/nature/ocean_sunset_shore.jpg',   // Sunset golden hour wave wash by Jeremy Bishop
-  '/images/nature/ocean_emerald_coast.jpg',  // Emerald coast surf & seafoam by Austin Neill
-  '/images/nature/ocean_tropical_shore.jpg', // Soft tropical ocean tide by Mohamed Nohassi
+  '/images/nature/ocean_sunset_amber_ripple.jpg', // Warm golden hour sunset ripples with natural amber bokeh
+  '/images/nature/ocean_pastel_beach_mist.jpg',    // Soft pale cyan surf & wet sand under misty pastel sky
+  '/images/nature/ocean_peach_horizon_sun.jpg',   // Serene terracotta-peach sunset horizon over calm slate sea
+  '/images/nature/ocean_minimal_sand_dune.jpg',   // Clean minimalist cream sand beach meeting azure horizon
+  '/images/nature/ocean_dusk_water_gradient.jpg', // Silky calm water gradient from deep oceanic blue to soft peach
+  '/images/nature/ocean_zen_blue_gradient.jpg',   // Ethereal pure blue sky to deep sapphire ocean gradient
+  '/images/nature/ocean_sage_mist_waves.jpg',     // Moody rolling waves in soft sage-slate green and coastal mist
+  '/images/nature/ocean_turquoise_horizon.jpg',   // Crisp clean turquoise sea meeting white sky horizon
 ];
 
 /**
