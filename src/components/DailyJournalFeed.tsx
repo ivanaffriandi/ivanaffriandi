@@ -3436,25 +3436,13 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               zIndex: 1,
             }}
           >
-            <motion.div
-              animate={{ x: `-${(heroIndex % flipboardCards.length) * 100}%` }}
-              transition={CAROUSEL_TRANSITION}
-              onPanEnd={(_, info) => {
-                if (selectedPost || isReadingPrologue) return;
-                const { offset, velocity } = info;
-                if (Math.abs(offset.x) > 28 || Math.abs(velocity.x) > 180) {
-                  lastSwipeTimeRef.current = Date.now();
-                  if (offset.x < 0 || velocity.x < -180) {
-                    handleNextHero();
-                  } else {
-                    handlePrevHero();
-                  }
-                }
-              }}
+            <div
               style={{
                 display: "flex",
                 width: "100%",
                 height: "100%",
+                transform: `translate3d(-${(heroIndex % flipboardCards.length) * 100}%, 0, 0)`,
+                transition: "transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
                 touchAction: selectedPost || isReadingPrologue ? "auto" : "pan-y",
               }}
             >
@@ -3585,7 +3573,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   </div>
                 );
               })}
-            </motion.div>
+            </div>
           </div>
 
           {/* Prologue Cover Overlay - smoothly fades in when reading Prologue */}
@@ -5191,65 +5179,54 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           document.body
         )}
 
-      {/* ── ARCHIVE SIDEBAR DRAWER (PORTALED SIBLINGS FOR ZERO-FLICKER ANIMATION) ── */}
-      {mounted &&
-        createPortal(
-          <AnimatePresence>
-            {mobileSearchOpen && (
-              <motion.div
-                key="archive-sidebar-wrapper"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={SIDEBAR_ANIMATION_TRANSITION}
-                style={{
-                  position: "fixed",
-                  inset: 0,
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  zIndex: 999999,
-                  pointerEvents: "auto",
-                }}
-              >
-                {/* Backdrop: Fades synchronously with parent wrapper */}
-                <div
-                  onClick={() => setMobileSearchOpen(false)}
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    backgroundColor: "rgba(0, 0, 0, 0.65)",
-                    cursor: "pointer",
-                  }}
-                />
+      {/* ── ARCHIVE SIDEBAR DRAWER (ZERO-PORTAL, ZERO-FLICKER SIBLING ANIMATIONS) ── */}
+      <AnimatePresence>
+        {mobileSearchOpen && (
+          <>
+            {/* Backdrop: Independent smooth fade without GPU buffer overhead */}
+            <motion.div
+              key="archive-sidebar-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              onClick={() => setMobileSearchOpen(false)}
+              style={{
+                position: "fixed",
+                inset: 0,
+                backgroundColor: "rgba(0, 0, 0, 0.62)",
+                zIndex: 99998,
+                cursor: "pointer",
+              }}
+            />
 
-                {/* Sliding Drawer */}
-                <motion.div
-                  key="archive-sidebar-card"
-                  initial={{ x: "100%" }}
-                  animate={{ x: "0%" }}
-                  exit={{ x: "100%" }}
-                  transition={SIDEBAR_ANIMATION_TRANSITION}
-                  onClick={(e) => e.stopPropagation()}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    bottom: 0,
-                    width: "300px",
-                    maxWidth: "85vw",
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    backgroundColor: "#111113",
-                    color: "#FFFFFF",
-                    borderLeft: "1px solid rgba(255, 255, 255, 0.08)",
-                    boxShadow: "-16px 0 50px rgba(0, 0, 0, 0.8)",
-                    boxSizing: "border-box",
-                    overflow: "hidden",
-                  }}
-                >
+            {/* Sliding Drawer: Independent smooth slide */}
+            <motion.div
+              key="archive-sidebar-card"
+              initial={{ x: "100%" }}
+              animate={{ x: "0%" }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                position: "fixed",
+                top: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 99999,
+                width: "300px",
+                maxWidth: "85vw",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                backgroundColor: "#111113",
+                color: "#FFFFFF",
+                borderLeft: "1px solid rgba(255, 255, 255, 0.08)",
+                boxShadow: "-8px 0 24px rgba(0, 0, 0, 0.5)",
+                boxSizing: "border-box",
+                overflow: "hidden",
+              }}
+            >
                   {/* ── HEADER ── */}
                   <div
                     style={{
@@ -5508,11 +5485,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   {sortedPosts.length} chapters
                 </div>
               </motion.div>
-            </motion.div>
+            </>
           )}
-          </AnimatePresence>,
-          document.body
-        )}
+        </AnimatePresence>
 
       {/* TOAST FOR Q&A SUBMISSION */}
       <AnimatePresence>
