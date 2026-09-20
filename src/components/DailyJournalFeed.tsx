@@ -347,11 +347,9 @@ function DynamicTimeGreeting() {
   );
 }
 
-const CAROUSEL_SPRING_TRANSITION = {
-  type: "spring",
-  stiffness: 280,
-  damping: 28,
-  mass: 0.8,
+const CAROUSEL_TRANSITION = {
+  duration: 0.36,
+  ease: [0.16, 1, 0.3, 1],
 } as const;
 
 const SIDEBAR_ANIMATION_TRANSITION = {
@@ -3436,15 +3434,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               overflow: "hidden",
               background: "#0c0d0e",
               zIndex: 1,
-              transform: "translate3d(0, 0, 0)",
-              WebkitTransform: "translate3d(0, 0, 0)",
-              WebkitBackfaceVisibility: "hidden",
-              backfaceVisibility: "hidden",
             }}
           >
             <motion.div
               animate={{ x: `-${(heroIndex % flipboardCards.length) * 100}%` }}
-              transition={CAROUSEL_SPRING_TRANSITION}
+              transition={CAROUSEL_TRANSITION}
               onPanEnd={(_, info) => {
                 if (selectedPost || isReadingPrologue) return;
                 const { offset, velocity } = info;
@@ -3462,11 +3456,6 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 width: "100%",
                 height: "100%",
                 touchAction: selectedPost || isReadingPrologue ? "auto" : "pan-y",
-                willChange: "transform",
-                transform: "translate3d(0, 0, 0)",
-                WebkitTransform: "translate3d(0, 0, 0)",
-                WebkitBackfaceVisibility: "hidden",
-                backfaceVisibility: "hidden",
               }}
             >
               {flipboardCards.map((card, idx) => {
@@ -5208,12 +5197,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           <AnimatePresence>
             {mobileSearchOpen && (
               <motion.div
-                key="archive-sidebar-backdrop"
+                key="archive-sidebar-wrapper"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={SIDEBAR_ANIMATION_TRANSITION}
-                onClick={() => setMobileSearchOpen(false)}
                 style={{
                   position: "fixed",
                   inset: 0,
@@ -5221,72 +5209,70 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  zIndex: 999998,
-                  backgroundColor: "rgba(0, 0, 0, 0.65)",
-                  cursor: "pointer",
-                  transform: "translate3d(0, 0, 0)",
-                  WebkitTransform: "translate3d(0, 0, 0)",
-                  WebkitBackfaceVisibility: "hidden",
-                  backfaceVisibility: "hidden",
-                }}
-              />
-            )}
-            {mobileSearchOpen && (
-              <motion.div
-                key="archive-sidebar-card"
-                initial={{ x: "100%" }}
-                animate={{ x: "0%" }}
-                exit={{ x: "100%" }}
-                transition={SIDEBAR_ANIMATION_TRANSITION}
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                  position: "fixed",
-                  top: 0,
-                  right: 0,
-                  bottom: 0,
                   zIndex: 999999,
-                  width: "300px",
-                  maxWidth: "85vw",
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  backgroundColor: "#111113",
-                  color: "#FFFFFF",
-                  borderLeft: "1px solid rgba(255, 255, 255, 0.08)",
-                  boxShadow: "-16px 0 50px rgba(0, 0, 0, 0.8)",
-                  boxSizing: "border-box",
-                  overflow: "hidden",
-                  willChange: "transform",
-                  transform: "translate3d(0, 0, 0)",
-                  WebkitTransform: "translate3d(0, 0, 0)",
-                  WebkitBackfaceVisibility: "hidden",
-                  backfaceVisibility: "hidden",
+                  pointerEvents: "auto",
                 }}
               >
-                {/* ── HEADER ── */}
+                {/* Backdrop: Fades synchronously with parent wrapper */}
                 <div
+                  onClick={() => setMobileSearchOpen(false)}
                   style={{
+                    position: "absolute",
+                    inset: 0,
+                    backgroundColor: "rgba(0, 0, 0, 0.65)",
+                    cursor: "pointer",
+                  }}
+                />
+
+                {/* Sliding Drawer */}
+                <motion.div
+                  key="archive-sidebar-card"
+                  initial={{ x: "100%" }}
+                  animate={{ x: "0%" }}
+                  exit={{ x: "100%" }}
+                  transition={SIDEBAR_ANIMATION_TRANSITION}
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    width: "300px",
+                    maxWidth: "85vw",
+                    height: "100%",
                     display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "calc(env(safe-area-inset-top, 0px) + 20px) 22px 18px",
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+                    flexDirection: "column",
+                    backgroundColor: "#111113",
+                    color: "#FFFFFF",
+                    borderLeft: "1px solid rgba(255, 255, 255, 0.08)",
+                    boxShadow: "-16px 0 50px rgba(0, 0, 0, 0.8)",
                     boxSizing: "border-box",
-                    flexShrink: 0,
+                    overflow: "hidden",
                   }}
                 >
-                  <span
+                  {/* ── HEADER ── */}
+                  <div
                     style={{
-                      fontSize: "0.68rem",
-                      fontWeight: 700,
-                      letterSpacing: "0.14em",
-                      textTransform: "uppercase",
-                      color: "rgba(255, 255, 255, 0.55)",
-                      fontFamily: "var(--font-sans)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "calc(env(safe-area-inset-top, 0px) + 20px) 22px 18px",
+                      borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+                      boxSizing: "border-box",
+                      flexShrink: 0,
                     }}
                   >
-                    Table of Contents
-                  </span>
+                    <span
+                      style={{
+                        fontSize: "0.86rem",
+                        fontWeight: 600,
+                        letterSpacing: "-0.01em",
+                        color: "#FFFFFF",
+                        fontFamily: "var(--font-sans)",
+                      }}
+                    >
+                      Table of Contents
+                    </span>
 
                   <button
                     type="button"
@@ -5522,7 +5508,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   {sortedPosts.length} chapters
                 </div>
               </motion.div>
-            )}
+            </motion.div>
+          )}
           </AnimatePresence>,
           document.body
         )}
