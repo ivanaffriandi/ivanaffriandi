@@ -2765,17 +2765,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           display: block;
         }
         .toc-drawer-panel {
-          width: 360px;
-          max-width: 85vw;
+          width: 320px;
+          max-width: 82vw;
           border-left: 1px solid rgba(255, 255, 255, 0.08);
         }
         @media (max-width: 640px) {
           .toc-drawer-panel {
-            width: 100vw !important;
-            max-width: 100vw !important;
-            left: 0 !important;
-            right: 0 !important;
-            border-left: none !important;
+            width: 295px !important;
+            max-width: 80vw !important;
+            border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
           }
         }
 
@@ -5242,263 +5240,224 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   overflow: "hidden",
                 }}
               >
-                  {/* ── HEADER ── */}
+                  {/* ── MINIMALIST EDITORIAL HEADER ── */}
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
-                      padding: "calc(env(safe-area-inset-top, 0px) + 20px) 22px 18px",
+                      padding: "calc(env(safe-area-inset-top, 0px) + 18px) 20px 14px",
                       borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
                       boxSizing: "border-box",
                       flexShrink: 0,
                     }}
                   >
-                    <span
-                      style={{
-                        fontSize: "0.86rem",
-                        fontWeight: 600,
-                        letterSpacing: "-0.01em",
-                        color: "#FFFFFF",
-                        fontFamily: "var(--font-sans)",
-                      }}
-                    >
-                      Table of Contents
-                    </span>
-
-                  <button
-                    type="button"
-                    onClick={() => setMobileSearchOpen(false)}
-                    aria-label="Close"
-                    style={{
-                      background: "rgba(255, 255, 255, 0.06)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
-                      color: "rgba(255, 255, 255, 0.5)",
-                      cursor: "pointer",
-                      width: "28px",
-                      height: "28px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: "50%",
-                      flexShrink: 0,
-                      transition: "background 0.15s ease, color 0.15s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = "rgba(255, 255, 255, 0.12)";
-                      e.currentTarget.style.color = "#FFFFFF";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = "rgba(255, 255, 255, 0.06)";
-                      e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)";
-                    }}
-                  >
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                  </button>
-                </div>
-
-                {/* ── DEDICATED INTRO BUTTON ── */}
-                <div
-                  style={{
-                    padding: "14px 18px",
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
-                    boxSizing: "border-box",
-                    flexShrink: 0,
-                  }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      openPrologue();
-                      setMobileSearchOpen(false);
-                    }}
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: "10px",
-                      padding: "11px 14px",
-                      borderRadius: "10px",
-                      background: isReadingPrologue ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.04)",
-                      border: isReadingPrologue ? "1px solid rgba(255, 255, 255, 0.22)" : "1px solid rgba(255, 255, 255, 0.08)",
-                      color: "#FFFFFF",
-                      cursor: "pointer",
-                      transition: "all 0.18s ease",
-                      textAlign: "left",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = "rgba(255, 255, 255, 0.09)";
-                      e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.18)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = isReadingPrologue ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.04)";
-                      e.currentTarget.style.borderColor = isReadingPrologue ? "1px solid rgba(255, 255, 255, 0.22)" : "1px solid rgba(255, 255, 255, 0.08)";
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
-                      <div
+                    <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
+                      <span
                         style={{
-                          width: "28px",
-                          height: "28px",
-                          borderRadius: "7px",
-                          background: isReadingPrologue ? "rgba(255, 255, 255, 0.16)" : "rgba(255, 255, 255, 0.07)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: isReadingPrologue ? "#FFFFFF" : "rgba(255, 255, 255, 0.8)",
-                          flexShrink: 0,
+                          fontSize: "0.68rem",
+                          fontWeight: 700,
+                          letterSpacing: "0.14em",
+                          textTransform: "uppercase",
+                          color: "rgba(255, 255, 255, 0.5)",
+                          fontFamily: "var(--font-sans)",
                         }}
                       >
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                        </svg>
-                      </div>
-                      <div style={{ display: "flex", flexDirection: "column", gap: "2px", minWidth: 0 }}>
-                        <span
-                          style={{
-                            fontSize: "0.82rem",
-                            fontWeight: 600,
-                            letterSpacing: "0.01em",
-                            color: isReadingPrologue ? "#FFFFFF" : "rgba(255, 255, 255, 0.95)",
-                            fontFamily: "var(--font-sans)",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          Introduction
-                        </span>
-                        <span
-                          style={{
-                            fontSize: "0.62rem",
-                            color: "rgba(255, 255, 255, 0.42)",
-                            letterSpacing: "0.02em",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          A Quiet Corner on the Internet
-                        </span>
-                      </div>
+                        INDEX
+                      </span>
+                      <span style={{ fontSize: "0.58rem", color: "rgba(255, 255, 255, 0.22)" }}>·</span>
+                      <span style={{ fontSize: "0.56rem", color: "rgba(255, 255, 255, 0.35)", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                        {sortedPosts.length + 1} stories
+                      </span>
                     </div>
-                    <span
+
+                    <button
+                      type="button"
+                      onClick={() => setMobileSearchOpen(false)}
+                      aria-label="Close"
                       style={{
-                        fontSize: "0.54rem",
-                        fontWeight: 600,
-                        letterSpacing: "0.04em",
-                        textTransform: "uppercase",
-                        color: "rgba(255, 255, 255, 0.45)",
-                        background: "rgba(255, 255, 255, 0.06)",
-                        padding: "3px 7px",
-                        borderRadius: "8px",
-                        border: "1px solid rgba(255, 255, 255, 0.06)",
+                        background: "rgba(255, 255, 255, 0.04)",
+                        border: "1px solid rgba(255, 255, 255, 0.08)",
+                        color: "rgba(255, 255, 255, 0.5)",
+                        cursor: "pointer",
+                        width: "26px",
+                        height: "26px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "50%",
                         flexShrink: 0,
+                        transition: "all 0.15s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
+                        e.currentTarget.style.color = "#FFFFFF";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.04)";
+                        e.currentTarget.style.color = "rgba(255, 255, 255, 0.5)";
                       }}
                     >
-                      2m read
-                    </span>
-                  </button>
-                </div>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    </button>
+                  </div>
 
-                {/* ── LIST ── */}
-                <div
-                  className="mobile-search-scroll-container"
-                  style={{
-                    flex: 1,
-                    overflowY: "auto",
-                    display: "flex",
-                    flexDirection: "column",
-                    WebkitOverflowScrolling: "touch",
-                  }}
-                >
-                  {/* Chapter rows */}
-                  {sortedPosts.map((post, postIdx) => {
-                    const chapterLabel = getPostChapterLabel(post, sortedPosts);
-                    const readTime = getReadingTime(post.content || "");
-                    const isActive = selectedPost?.id === post.id;
-                    return (
-                      <div
-                        key={post.id}
-                        onClick={() => {
-                          openPost(postIdx);
-                          setMobileSearchOpen(false);
-                        }}
+                  {/* ── CHAPTER LIST (SEAMLESS INDEX INCLUDING PROLOGUE) ── */}
+                  <div
+                    className="mobile-search-scroll-container"
+                    style={{
+                      flex: 1,
+                      overflowY: "auto",
+                      display: "flex",
+                      flexDirection: "column",
+                      WebkitOverflowScrolling: "touch",
+                    }}
+                  >
+                    {/* Chapter 00: Prologue */}
+                    <div
+                      onClick={() => {
+                        openPrologue();
+                        setMobileSearchOpen(false);
+                      }}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "4px",
+                        padding: "13px 20px",
+                        cursor: "pointer",
+                        borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                        background: isReadingPrologue ? "rgba(255, 255, 255, 0.06)" : "transparent",
+                        borderLeft: isReadingPrologue ? "2px solid #FFFFFF" : "2px solid transparent",
+                        transition: "all 0.15s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = isReadingPrologue ? "rgba(255, 255, 255, 0.06)" : "transparent";
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
+                        <span
+                          style={{
+                            fontSize: "0.52rem",
+                            fontWeight: 700,
+                            letterSpacing: "0.14em",
+                            textTransform: "uppercase",
+                            color: isReadingPrologue ? "#FFFFFF" : "rgba(255, 255, 255, 0.35)",
+                            fontFamily: "var(--font-sans)",
+                          }}
+                        >
+                          PROLOGUE
+                        </span>
+                        <span
+                          style={{
+                            fontSize: "0.52rem",
+                            color: "rgba(255, 255, 255, 0.22)",
+                            letterSpacing: "0.04em",
+                          }}
+                        >
+                          2m read
+                        </span>
+                      </div>
+                      <span
                         style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "5px",
-                          padding: "16px 22px",
-                          cursor: "pointer",
-                          borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
-                          background: isActive ? "rgba(255, 255, 255, 0.06)" : "transparent",
-                          transition: "background 0.15s ease",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = "rgba(255, 255, 255, 0.06)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = isActive ? "rgba(255, 255, 255, 0.06)" : "transparent";
+                          fontSize: "0.82rem",
+                          fontWeight: isReadingPrologue ? 600 : 450,
+                          lineHeight: 1.35,
+                          color: isReadingPrologue ? "#FFFFFF" : "rgba(255, 255, 255, 0.8)",
                         }}
                       >
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
+                        A Quiet Corner on the Internet
+                      </span>
+                    </div>
+
+                    {/* Chapter rows */}
+                    {sortedPosts.map((post, postIdx) => {
+                      const chapterLabel = getPostChapterLabel(post, sortedPosts);
+                      const readTime = getReadingTime(post.content || "");
+                      const isActive = !isReadingPrologue && selectedPost?.id === post.id;
+                      return (
+                        <div
+                          key={post.id}
+                          onClick={() => {
+                            openPost(postIdx);
+                            setMobileSearchOpen(false);
+                          }}
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "4px",
+                            padding: "13px 20px",
+                            cursor: "pointer",
+                            borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                            background: isActive ? "rgba(255, 255, 255, 0.06)" : "transparent",
+                            borderLeft: isActive ? "2px solid #FFFFFF" : "2px solid transparent",
+                            transition: "all 0.15s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = isActive ? "rgba(255, 255, 255, 0.06)" : "transparent";
+                          }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
+                            <span
+                              style={{
+                                fontSize: "0.52rem",
+                                fontWeight: 700,
+                                letterSpacing: "0.14em",
+                                textTransform: "uppercase",
+                                color: isActive ? "#FFFFFF" : "rgba(255, 255, 255, 0.35)",
+                                fontFamily: "var(--font-sans)",
+                              }}
+                            >
+                              {chapterLabel}
+                            </span>
+                            <span
+                              style={{
+                                fontSize: "0.52rem",
+                                color: "rgba(255, 255, 255, 0.22)",
+                                letterSpacing: "0.04em",
+                              }}
+                            >
+                              {readTime}m read
+                            </span>
+                          </div>
                           <span
                             style={{
-                              fontSize: "0.52rem",
-                              fontWeight: 700,
-                              letterSpacing: "0.14em",
-                              textTransform: "uppercase",
-                              color: isActive ? "rgba(255, 255, 255, 0.6)" : "rgba(255, 255, 255, 0.3)",
-                              fontFamily: "var(--font-sans)",
+                              fontSize: "0.82rem",
+                              fontWeight: isActive ? 600 : 450,
+                              lineHeight: 1.35,
+                              color: isActive ? "#FFFFFF" : "rgba(255, 255, 255, 0.78)",
                             }}
                           >
-                            {chapterLabel}
-                          </span>
-                          <span
-                            style={{
-                              fontSize: "0.55rem",
-                              color: "rgba(255, 255, 255, 0.22)",
-                              letterSpacing: "0.04em",
-                            }}
-                          >
-                            {readTime}m read
+                            {post.title}
                           </span>
                         </div>
-                        <span
-                          style={{
-                            fontSize: "0.84rem",
-                            fontWeight: 450,
-                            lineHeight: 1.35,
-                            color: isActive ? "#FFFFFF" : "rgba(255, 255, 255, 0.72)",
-                          }}
-                        >
-                          {post.title}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
 
-                {/* ── FOOTER ── */}
-                <div
-                  style={{
-                    padding: "14px 22px calc(env(safe-area-inset-bottom, 0px) + 14px)",
-                    borderTop: "1px solid rgba(255, 255, 255, 0.06)",
-                    fontSize: "0.52rem",
-                    color: "rgba(255, 255, 255, 0.22)",
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    boxSizing: "border-box",
-                    flexShrink: 0,
-                  }}
-                >
-                  {sortedPosts.length} chapters
-                </div>
+                  {/* ── MINIMALIST FOOTER ── */}
+                  <div
+                    style={{
+                      padding: "12px 20px calc(env(safe-area-inset-bottom, 0px) + 12px)",
+                      borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+                      fontSize: "0.52rem",
+                      color: "rgba(255, 255, 255, 0.22)",
+                      letterSpacing: "0.12em",
+                      textTransform: "uppercase",
+                      boxSizing: "border-box",
+                      flexShrink: 0,
+                    }}
+                  >
+                    IVAN&apos;S JOURNAL
+                  </div>
               </motion.div>
             )}
           </AnimatePresence>,
