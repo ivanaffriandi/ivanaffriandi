@@ -2764,6 +2764,20 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
         .prologue-mobile-body {
           display: block;
         }
+        .toc-drawer-panel {
+          width: 360px;
+          max-width: 85vw;
+          border-left: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        @media (max-width: 640px) {
+          .toc-drawer-panel {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            left: 0 !important;
+            right: 0 !important;
+            border-left: none !important;
+          }
+        }
 
         /* ─────────────────────────────────────────────────
            ELITE HIGH-TECH MOBILE LAYOUT — below 860px
@@ -3349,7 +3363,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           style={{ position: "relative", overflow: "hidden", background: "#0c0d0e" }}
         >
           {/* MOBILE TRANSPARENT TOP HEADER BAR (STICKY FLOATING NAVBAR) */}
-          <div className={`mobile-blog-header${headerHidden ? " header-hidden" : ""}`}>
+          <div className={`mobile-blog-header${headerHidden || mobileSearchOpen ? " header-hidden" : ""}`}>
             {/* Left: HOME Button (Overview) or iOS-style JOURNAL Back Button (Reader mode) */}
             {selectedPost || isReadingPrologue ? (
               <button
@@ -5179,54 +5193,55 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           document.body
         )}
 
-      {/* ── ARCHIVE SIDEBAR DRAWER (ZERO-PORTAL, ZERO-FLICKER SIBLING ANIMATIONS) ── */}
-      <AnimatePresence>
-        {mobileSearchOpen && (
-          <>
-            {/* Backdrop: Independent smooth fade without GPU buffer overhead */}
-            <motion.div
-              key="archive-sidebar-backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.22, ease: "easeOut" }}
-              onClick={() => setMobileSearchOpen(false)}
-              style={{
-                position: "fixed",
-                inset: 0,
-                backgroundColor: "rgba(0, 0, 0, 0.62)",
-                zIndex: 99998,
-                cursor: "pointer",
-              }}
-            />
+      {/* ── ARCHIVE SIDEBAR DRAWER (PORTALED SIBLINGS FOR ZERO-FLICKER ANIMATION) ── */}
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {mobileSearchOpen && (
+              <motion.div
+                key="archive-sidebar-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
+                onClick={() => setMobileSearchOpen(false)}
+                style={{
+                  position: "fixed",
+                  inset: 0,
+                  backgroundColor: "rgba(0, 0, 0, 0.75)",
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
+                  zIndex: 999998,
+                  cursor: "pointer",
+                }}
+              />
+            )}
 
-            {/* Sliding Drawer: Independent smooth slide */}
-            <motion.div
-              key="archive-sidebar-card"
-              initial={{ x: "100%" }}
-              animate={{ x: "0%" }}
-              exit={{ x: "100%" }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                position: "fixed",
-                top: 0,
-                right: 0,
-                bottom: 0,
-                zIndex: 99999,
-                width: "300px",
-                maxWidth: "85vw",
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: "#111113",
-                color: "#FFFFFF",
-                borderLeft: "1px solid rgba(255, 255, 255, 0.08)",
-                boxShadow: "-8px 0 24px rgba(0, 0, 0, 0.5)",
-                boxSizing: "border-box",
-                overflow: "hidden",
-              }}
-            >
+            {mobileSearchOpen && (
+              <motion.div
+                key="archive-sidebar-card"
+                initial={{ x: "100%" }}
+                animate={{ x: "0%" }}
+                exit={{ x: "100%" }}
+                transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
+                onClick={(e) => e.stopPropagation()}
+                className="toc-drawer-panel"
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  right: 0,
+                  bottom: 0,
+                  zIndex: 999999,
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  backgroundColor: "#111113",
+                  color: "#FFFFFF",
+                  boxShadow: "-12px 0 40px rgba(0, 0, 0, 0.65)",
+                  boxSizing: "border-box",
+                  overflow: "hidden",
+                }}
+              >
                   {/* ── HEADER ── */}
                   <div
                     style={{
@@ -5485,9 +5500,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   {sortedPosts.length} chapters
                 </div>
               </motion.div>
-            </>
-          )}
-        </AnimatePresence>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
 
       {/* TOAST FOR Q&A SUBMISSION */}
       <AnimatePresence>
