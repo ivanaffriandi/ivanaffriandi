@@ -347,6 +347,18 @@ function DynamicTimeGreeting() {
   );
 }
 
+const CAROUSEL_SPRING_TRANSITION = {
+  type: "spring",
+  stiffness: 280,
+  damping: 28,
+  mass: 0.8,
+} as const;
+
+const SIDEBAR_ANIMATION_TRANSITION = {
+  duration: 0.26,
+  ease: [0.16, 1, 0.3, 1],
+} as const;
+
 export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
   const locale = "en-US";
 
@@ -3399,27 +3411,12 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 />
               )}
 
-              {!selectedPost && !isReadingPrologue && (
-                <button
-                  type="button"
-                  onClick={() => openPrologue()}
-                  className="mobile-search-btn"
-                  title="Read Prologue"
-                  aria-label="Read Prologue"
-                >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                  </svg>
-                </button>
-              )}
-
               <button
                 type="button"
                 onClick={() => setMobileSearchOpen(true)}
                 className="mobile-search-btn"
-                title="Stories Menu"
-                aria-label="Stories Menu"
+                title="Table of Contents"
+                aria-label="Table of Contents"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
                   <line x1="4" y1="8" x2="20" y2="8" />
@@ -3439,16 +3436,15 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
               overflow: "hidden",
               background: "#0c0d0e",
               zIndex: 1,
+              transform: "translate3d(0, 0, 0)",
+              WebkitTransform: "translate3d(0, 0, 0)",
+              WebkitBackfaceVisibility: "hidden",
+              backfaceVisibility: "hidden",
             }}
           >
             <motion.div
               animate={{ x: `-${(heroIndex % flipboardCards.length) * 100}%` }}
-              transition={{
-                type: "spring",
-                stiffness: 280,
-                damping: 28,
-                mass: 0.8,
-              }}
+              transition={CAROUSEL_SPRING_TRANSITION}
               onPanEnd={(_, info) => {
                 if (selectedPost || isReadingPrologue) return;
                 const { offset, velocity } = info;
@@ -3466,6 +3462,11 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 width: "100%",
                 height: "100%",
                 touchAction: selectedPost || isReadingPrologue ? "auto" : "pan-y",
+                willChange: "transform",
+                transform: "translate3d(0, 0, 0)",
+                WebkitTransform: "translate3d(0, 0, 0)",
+                WebkitBackfaceVisibility: "hidden",
+                backfaceVisibility: "hidden",
               }}
             >
               {flipboardCards.map((card, idx) => {
@@ -5211,7 +5212,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.28, ease: "easeOut" }}
+                transition={SIDEBAR_ANIMATION_TRANSITION}
                 onClick={() => setMobileSearchOpen(false)}
                 style={{
                   position: "fixed",
@@ -5223,6 +5224,10 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   zIndex: 999998,
                   backgroundColor: "rgba(0, 0, 0, 0.65)",
                   cursor: "pointer",
+                  transform: "translate3d(0, 0, 0)",
+                  WebkitTransform: "translate3d(0, 0, 0)",
+                  WebkitBackfaceVisibility: "hidden",
+                  backfaceVisibility: "hidden",
                 }}
               />
             )}
@@ -5232,7 +5237,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                 initial={{ x: "100%" }}
                 animate={{ x: "0%" }}
                 exit={{ x: "100%" }}
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                transition={SIDEBAR_ANIMATION_TRANSITION}
                 onClick={(e) => e.stopPropagation()}
                 style={{
                   position: "fixed",
@@ -5251,6 +5256,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   boxShadow: "-16px 0 50px rgba(0, 0, 0, 0.8)",
                   boxSizing: "border-box",
                   overflow: "hidden",
+                  willChange: "transform",
+                  transform: "translate3d(0, 0, 0)",
+                  WebkitTransform: "translate3d(0, 0, 0)",
                   WebkitBackfaceVisibility: "hidden",
                   backfaceVisibility: "hidden",
                 }}
@@ -5277,7 +5285,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                       fontFamily: "var(--font-sans)",
                     }}
                   >
-                    Stories
+                    Table of Contents
                   </span>
 
                   <button
@@ -5314,6 +5322,112 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   </button>
                 </div>
 
+                {/* ── DEDICATED INTRO BUTTON ── */}
+                <div
+                  style={{
+                    padding: "14px 18px",
+                    borderBottom: "1px solid rgba(255, 255, 255, 0.06)",
+                    boxSizing: "border-box",
+                    flexShrink: 0,
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      openPrologue();
+                      setMobileSearchOpen(false);
+                    }}
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: "10px",
+                      padding: "11px 14px",
+                      borderRadius: "10px",
+                      background: isReadingPrologue ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.04)",
+                      border: isReadingPrologue ? "1px solid rgba(255, 255, 255, 0.22)" : "1px solid rgba(255, 255, 255, 0.08)",
+                      color: "#FFFFFF",
+                      cursor: "pointer",
+                      transition: "all 0.18s ease",
+                      textAlign: "left",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "rgba(255, 255, 255, 0.09)";
+                      e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.18)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = isReadingPrologue ? "rgba(255, 255, 255, 0.1)" : "rgba(255, 255, 255, 0.04)";
+                      e.currentTarget.style.borderColor = isReadingPrologue ? "1px solid rgba(255, 255, 255, 0.22)" : "1px solid rgba(255, 255, 255, 0.08)";
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0 }}>
+                      <div
+                        style={{
+                          width: "28px",
+                          height: "28px",
+                          borderRadius: "7px",
+                          background: isReadingPrologue ? "rgba(255, 255, 255, 0.16)" : "rgba(255, 255, 255, 0.07)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: isReadingPrologue ? "#FFFFFF" : "rgba(255, 255, 255, 0.8)",
+                          flexShrink: 0,
+                        }}
+                      >
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                        </svg>
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "2px", minWidth: 0 }}>
+                        <span
+                          style={{
+                            fontSize: "0.82rem",
+                            fontWeight: 600,
+                            letterSpacing: "0.01em",
+                            color: isReadingPrologue ? "#FFFFFF" : "rgba(255, 255, 255, 0.95)",
+                            fontFamily: "var(--font-sans)",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          Introduction
+                        </span>
+                        <span
+                          style={{
+                            fontSize: "0.62rem",
+                            color: "rgba(255, 255, 255, 0.42)",
+                            letterSpacing: "0.02em",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          A Quiet Corner on the Internet
+                        </span>
+                      </div>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: "0.54rem",
+                        fontWeight: 600,
+                        letterSpacing: "0.04em",
+                        textTransform: "uppercase",
+                        color: "rgba(255, 255, 255, 0.45)",
+                        background: "rgba(255, 255, 255, 0.06)",
+                        padding: "3px 7px",
+                        borderRadius: "8px",
+                        border: "1px solid rgba(255, 255, 255, 0.06)",
+                        flexShrink: 0,
+                      }}
+                    >
+                      2m read
+                    </span>
+                  </button>
+                </div>
+
                 {/* ── LIST ── */}
                 <div
                   className="mobile-search-scroll-container"
@@ -5325,67 +5439,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     WebkitOverflowScrolling: "touch",
                   }}
                 >
-                  {/* Prologue */}
-                  <div
-                    onClick={() => {
-                      openPrologue();
-                      setMobileSearchOpen(false);
-                    }}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                      padding: "16px 22px",
-                      cursor: "pointer",
-                      borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
-                      background: isReadingPrologue ? "rgba(255, 255, 255, 0.06)" : "transparent",
-                      transition: "background 0.15s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = "rgba(255, 255, 255, 0.06)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = isReadingPrologue ? "rgba(255, 255, 255, 0.06)" : "transparent";
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
-                      <span
-                        style={{
-                          fontSize: "0.52rem",
-                          fontWeight: 700,
-                          letterSpacing: "0.14em",
-                          textTransform: "uppercase",
-                          color: isReadingPrologue ? "rgba(255, 255, 255, 0.6)" : "rgba(255, 255, 255, 0.3)",
-                          fontFamily: "var(--font-sans)",
-                        }}
-                      >
-                        INTRO
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "0.55rem",
-                          color: "rgba(255, 255, 255, 0.22)",
-                          letterSpacing: "0.04em",
-                        }}
-                      >
-                        2m read
-                      </span>
-                    </div>
-                    <span
-                      style={{
-                        fontSize: "0.84rem",
-                        fontWeight: 450,
-                        lineHeight: 1.35,
-                        color: isReadingPrologue ? "#FFFFFF" : "rgba(255, 255, 255, 0.72)",
-                      }}
-                    >
-                      A Quiet Corner on the Internet
-                    </span>
-                  </div>
-
                   {/* Chapter rows */}
-                  {sortedPosts.map((post) => {
-                    const postIdx = sortedPosts.findIndex((p) => p.id === post.id);
+                  {sortedPosts.map((post, postIdx) => {
                     const chapterLabel = getPostChapterLabel(post, sortedPosts);
                     const readTime = getReadingTime(post.content || "");
                     const isActive = selectedPost?.id === post.id;
@@ -5464,7 +5519,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                     flexShrink: 0,
                   }}
                 >
-                  {sortedPosts.length + 1} stories
+                  {sortedPosts.length} chapters
                 </div>
               </motion.div>
             )}
