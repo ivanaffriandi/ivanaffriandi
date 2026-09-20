@@ -106,26 +106,37 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutM
 }
 
 async function fetchMediumPosts(): Promise<BlogPost[]> {
-  try {
-    // 30-second sliding cache buster to ensure edits & updates on Medium are fetched fresh
-    const cacheBustUrl = `${MEDIUM_FEED_URL}?_t=${Math.floor(Date.now() / 30000)}`;
-    const res = await fetchWithTimeout(cacheBustUrl, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "application/rss+xml, application/xml, text/xml, */*",
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        "Pragma": "no-cache",
-      },
-      cache: "no-store",
-    });
+  const cleanUsername = MEDIUM_USERNAME.replace(/^@/, '');
+  const feedUrls = [
+    `${MEDIUM_FEED_URL}?_t=${Date.now()}`,
+    `https://${cleanUsername}.medium.com/feed?_t=${Date.now()}`,
+  ];
 
-    if (!res.ok) throw new Error(`Medium RSS HTTP ${res.status}`);
-    const xmlText = await res.text();
-    return parseMediumRssXml(xmlText);
-  } catch (err) {
-    console.warn("Medium fetch failed:", (err as Error)?.message ?? err);
-    return [];
+  for (const url of feedUrls) {
+    try {
+      const res = await fetchWithTimeout(url, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Accept": "application/rss+xml, application/xml, text/xml, */*",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache",
+        },
+        cache: "no-store",
+      }, 7000);
+
+      if (res.ok) {
+        const xmlText = await res.text();
+        const parsed = parseMediumRssXml(xmlText);
+        if (parsed && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (err) {
+      console.warn(`Medium fetch attempt failed for ${url}:`, (err as Error)?.message ?? err);
+    }
   }
+
+  return [];
 }
 
 async function fetchBloggerPosts(): Promise<BlogPost[]> {
@@ -187,9 +198,11 @@ export async function getPosts(): Promise<BlogPost[]> {
     merged.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
 
     global._cachedHybridPosts = merged;
+    const newMap: Record<string, BlogPost> = {};
     merged.forEach((p) => {
-      if (global._cachedHybridPostMap) global._cachedHybridPostMap[p.id] = p;
+      newMap[p.id] = p;
     });
+    global._cachedHybridPostMap = newMap;
 
     // Background asynchronous backup to Firebase RTDB
     fetch(RTDB_POSTS_URL, {
@@ -213,9 +226,11 @@ export async function getPosts(): Promise<BlogPost[]> {
       const backupPosts = await backupRes.json();
       if (backupPosts && Array.isArray(backupPosts) && backupPosts.length > 0) {
         global._cachedHybridPosts = backupPosts;
+        const newMap: Record<string, BlogPost> = {};
         backupPosts.forEach((p: any) => {
-          if (global._cachedHybridPostMap) global._cachedHybridPostMap[p.id] = p;
+          newMap[p.id] = p;
         });
+        global._cachedHybridPostMap = newMap;
         return backupPosts;
       }
     }

@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { InstagramShareButton } from "./story/InstagramShareButton";
 import { getMinimalistNatureCover, MINIMALIST_NATURE_COVERS } from "@/utils/natureCover";
+import DesktopBlogNotice from "./DesktopBlogNotice";
 
 function formatDate(iso: string, locale: string) {
   if (!iso) return "";
@@ -1061,7 +1062,9 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
 
   return (
     <>
-      <style>{`
+      <DesktopBlogNotice />
+      <div className="blog-mobile-only-content" style={{ width: "100%", minHeight: "100vh" }}>
+        <style>{`
         /* ── UNIVERSAL ZERO-SCROLLBAR SYSTEM ── */
         *, *::before, *::after {
           scrollbar-width: none !important;
@@ -3361,7 +3364,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           style={{ position: "relative", overflow: "hidden", background: "#0c0d0e" }}
         >
           {/* MOBILE TRANSPARENT TOP HEADER BAR (STICKY FLOATING NAVBAR) */}
-          <div className={`mobile-blog-header${headerHidden || mobileSearchOpen ? " header-hidden" : ""}`}>
+          <div className={`mobile-blog-header${headerHidden ? " header-hidden" : ""}`}>
             {/* Left: HOME Button (Overview) or iOS-style JOURNAL Back Button (Reader mode) */}
             {selectedPost || isReadingPrologue ? (
               <button
@@ -5191,55 +5194,65 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           document.body
         )}
 
-      {/* ── ARCHIVE SIDEBAR DRAWER (PORTALED SIBLINGS FOR ZERO-FLICKER ANIMATION) ── */}
+      {/* ── ARCHIVE SIDEBAR DRAWER (UNIFIED OVERLAY FOR ZERO-FLICKER ANIMATION) ── */}
       {mounted &&
         createPortal(
           <AnimatePresence>
             {mobileSearchOpen && (
-              <motion.div
-                key="archive-sidebar-backdrop"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.22, ease: "easeOut" }}
-                onClick={() => setMobileSearchOpen(false)}
+              <div
+                key="archive-sidebar-overlay-container"
                 style={{
                   position: "fixed",
                   inset: 0,
-                  backgroundColor: "rgba(0, 0, 0, 0.75)",
-                  backdropFilter: "blur(8px)",
-                  WebkitBackdropFilter: "blur(8px)",
-                  zIndex: 999998,
-                  cursor: "pointer",
-                }}
-              />
-            )}
-
-            {mobileSearchOpen && (
-              <motion.div
-                key="archive-sidebar-card"
-                initial={{ x: "100%" }}
-                animate={{ x: "0%" }}
-                exit={{ x: "100%" }}
-                transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
-                onClick={(e) => e.stopPropagation()}
-                className="toc-drawer-panel"
-                style={{
-                  position: "fixed",
-                  top: 0,
-                  right: 0,
-                  bottom: 0,
                   zIndex: 999999,
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  backgroundColor: "#111113",
-                  color: "#FFFFFF",
-                  boxShadow: "-12px 0 40px rgba(0, 0, 0, 0.65)",
-                  boxSizing: "border-box",
-                  overflow: "hidden",
+                  pointerEvents: "auto",
                 }}
               >
+                <motion.div
+                  key="archive-sidebar-backdrop"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                  onClick={() => setMobileSearchOpen(false)}
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    backgroundColor: "rgba(0, 0, 0, 0.72)",
+                    WebkitBackdropFilter: "blur(4px)",
+                    backdropFilter: "blur(4px)",
+                    cursor: "pointer",
+                    willChange: "opacity",
+                    transform: "translateZ(0)",
+                  }}
+                />
+
+                <motion.div
+                  key="archive-sidebar-card"
+                  initial={{ x: "100%" }}
+                  animate={{ x: "0%" }}
+                  exit={{ x: "100%" }}
+                  transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="toc-drawer-panel"
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    zIndex: 1,
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    backgroundColor: "#111113",
+                    color: "#FFFFFF",
+                    boxShadow: "-12px 0 40px rgba(0, 0, 0, 0.65)",
+                    boxSizing: "border-box",
+                    overflow: "hidden",
+                    willChange: "transform",
+                    transform: "translateZ(0)",
+                  }}
+                >
                   {/* ── MINIMALIST EDITORIAL HEADER ── */}
                   <div
                     style={{
@@ -5458,7 +5471,8 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
                   >
                     IVAN&apos;S JOURNAL
                   </div>
-              </motion.div>
+                </motion.div>
+              </div>
             )}
           </AnimatePresence>,
           document.body
@@ -5489,6 +5503,7 @@ export default function DailyJournalFeed({ posts = [] }: { posts?: any[] }) {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
     </>
   );
 }

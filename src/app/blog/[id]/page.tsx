@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import BookReader from "@/components/BookReader";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function BlogPostPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;

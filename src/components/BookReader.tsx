@@ -8,6 +8,7 @@ import { addComment, getApprovedComments, CommentItem } from "@/lib/comments";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { InstagramShareButton } from "@/components/story/InstagramShareButton";
 import { getMinimalistNatureCover } from "@/utils/natureCover";
+import DesktopBlogNotice from "@/components/DesktopBlogNotice";
 
 interface PostType {
   id: string;
@@ -680,7 +681,10 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
   }, [theme]);
 
   return (
-    <div
+    <>
+      <DesktopBlogNotice postTitle={post.title} postUrl={post.url} />
+      <div className="blog-mobile-only-content">
+        <div
       style={{
         backgroundColor: colors.bg,
         color: colors.text,
@@ -2297,6 +2301,8 @@ export default function BookReader({ post, initialComments = [] }: { post: PostT
       )}
 
       {/* Identity Modal removed per clean design rules */}
-    </div>
+        </div>
+      </div>
+    </>
   );
 }
