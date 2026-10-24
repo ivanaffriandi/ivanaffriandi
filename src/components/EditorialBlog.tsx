@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 
 export interface BlogPostItem {
   id: string;
@@ -43,11 +42,16 @@ function cleanHtml(html: string): string {
     .replace(/(<br\s*\/?>[\s]*){3,}/gi, "<br><br>");
 }
 
+function cleanChapterTitle(title: string): string {
+  if (!title) return "";
+  return title.replace(/^Chapter\s+\d+:\s*/i, "").trim();
+}
+
 export default function EditorialBlog({
   posts = [],
   initialPost,
 }: EditorialBlogProps) {
-  // Sort posts (newest first)
+  // Sort posts (newest first, reverse-chronological order)
   const sortedPosts = useMemo(() => {
     return [...posts].sort((a, b) => {
       const timeA = new Date(a.published).getTime() || 0;
@@ -56,38 +60,47 @@ export default function EditorialBlog({
     });
   }, [posts]);
 
-  // Active post
+  // Active post: if initialPost is provided (e.g. /blog/[id]), open that post.
+  // On homepage (/), defaults to "" so visitor is immediately greeted with the Daftar Isi (Table of Contents).
   const [activePostId, setActivePostId] = useState<string>(() => {
     if (initialPost?.id) return initialPost.id;
-    if (sortedPosts.length > 0) return sortedPosts[0].id;
     return "";
   });
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // Sync if initialPost changes
+  // Sync if initialPost changes or URL has post ID
   useEffect(() => {
     if (initialPost?.id) {
       setActivePostId(initialPost.id);
-    } else if (sortedPosts.length > 0 && !activePostId) {
-      setActivePostId(sortedPosts[0].id);
+    } else if (typeof window !== "undefined") {
+      const match = window.location.pathname.match(/\/blog\/([^/]+)/);
+      if (match && match[1]) {
+        setActivePostId(match[1]);
+      } else {
+        setActivePostId("");
+      }
     }
-  }, [initialPost, sortedPosts, activePostId]);
+  }, [initialPost]);
 
-  // Lock body scroll when menu overlay is open
+  // Listen to browser Back/Forward navigation
   useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
+    const handlePopState = () => {
+      if (typeof window !== "undefined") {
+        const path = window.location.pathname;
+        const match = path.match(/\/blog\/([^/]+)/);
+        if (match && match[1]) {
+          setActivePostId(match[1]);
+        } else {
+          setActivePostId("");
+        }
+      }
     };
-  }, [isMenuOpen]);
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   const currentPost = useMemo(() => {
-    return sortedPosts.find((p) => p.id === activePostId) || sortedPosts[0] || null;
+    if (!activePostId) return null;
+    return sortedPosts.find((p) => p.id === activePostId) || null;
   }, [sortedPosts, activePostId]);
 
   // Extract photo ONLY if this post actually contains an image
@@ -96,7 +109,7 @@ export default function EditorialBlog({
     return extractFirstImage(currentPost.content);
   }, [currentPost]);
 
-  // Find next post for simple pagination
+  // Find next post for pagination in reader
   const nextPost = useMemo(() => {
     if (!currentPost) return null;
     const currentIndex = sortedPosts.findIndex((p) => p.id === currentPost.id);
@@ -111,10 +124,18 @@ export default function EditorialBlog({
 
   const handleSelectPost = (postId: string) => {
     setActivePostId(postId);
-    setIsMenuOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
     if (typeof window !== "undefined") {
       window.history.pushState(null, "", `/blog/${postId}`);
+    }
+  };
+
+  const handleGoHome = (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    setActivePostId("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (typeof window !== "undefined") {
+      window.history.pushState(null, "", "/");
     }
   };
 
@@ -187,9 +208,7 @@ export default function EditorialBlog({
 
         /* ── SEMUA HURUF KECIL DI SELURUH BLOG WEB SESUAI PERMINTAAN USER ── */
         .editorial-canvas,
-        .editorial-canvas *,
-        .editorial-menu-overlay,
-        .editorial-menu-overlay * {
+        .editorial-canvas * {
           text-transform: lowercase !important;
           font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
@@ -202,7 +221,6 @@ export default function EditorialBlog({
           padding: 0;
           width: 100%;
           max-width: 100vw;
-          overflow-x: clip;
           font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
           -webkit-font-smoothing: antialiased;
         }
@@ -214,7 +232,6 @@ export default function EditorialBlog({
           margin: 0 !important;
           max-width: 100% !important;
           width: 100% !important;
-          overflow-x: clip !important;
         }
 
         .desktop-nav-bar,
@@ -234,225 +251,6 @@ export default function EditorialBlog({
           font: inherit;
           color: inherit;
         }
-
-        /* ── MINIMALIST FULLSCREEN MENU OVERLAY (GLOBAL STYLES) ── */
-        .editorial-menu-overlay {
-          position: fixed !important;
-          inset: 0 !important;
-          z-index: 99999 !important;
-          background-color: var(--blog-bg) !important;
-          color: var(--blog-fg) !important;
-          display: flex !important;
-          flex-direction: column !important;
-          box-sizing: border-box !important;
-          overflow-y: auto !important;
-          -webkit-overflow-scrolling: touch !important;
-          will-change: transform;
-          -webkit-backface-visibility: hidden;
-          backface-visibility: hidden;
-          padding: calc(2.25rem + env(safe-area-inset-top, 0px)) 3.5rem calc(2.25rem + env(safe-area-inset-bottom, 0px)) 3.5rem !important;
-        }
-
-        @media (max-width: 860px) {
-          .editorial-menu-overlay {
-            padding: calc(1.5rem + env(safe-area-inset-top, 0px)) 1.75rem calc(1.75rem + env(safe-area-inset-bottom, 0px)) 1.75rem !important;
-          }
-        }
-
-        .menu-inner-container {
-          width: 100%;
-          max-width: 840px;
-          min-height: 100%;
-          margin: 0 auto;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          box-sizing: border-box;
-        }
-
-        /* Menu Top Bar: Selected Works & Ask Q&A on Left, Close on Right */
-        .menu-top-bar {
-          width: 100%;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0.25rem 0;
-          box-sizing: border-box;
-        }
-
-        .menu-top-links {
-          display: flex;
-          align-items: center;
-          gap: 1.8rem;
-        }
-
-        .menu-top-link {
-          font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-          font-size: 0.95rem;
-          font-weight: 500;
-          letter-spacing: -0.01em;
-          color: var(--blog-fg);
-          text-decoration: none;
-          opacity: 0.8;
-          transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-
-        .menu-top-link:hover {
-          opacity: 1;
-          transform: translateY(-1px);
-        }
-
-        @media (max-width: 600px) {
-          .menu-top-links {
-            gap: 1.25rem;
-          }
-          .menu-top-link {
-            font-size: 0.88rem;
-          }
-        }
-
-        .menu-close-btn {
-          cursor: pointer;
-          color: var(--blog-fg);
-          font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-          font-size: 0.88rem;
-          font-weight: 500;
-          letter-spacing: -0.01em;
-          display: flex;
-          align-items: center;
-          gap: 0.4rem;
-          padding: 6px 0;
-          opacity: 0.8;
-          transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-
-        .menu-close-btn:hover {
-          opacity: 1;
-          transform: scale(1.04);
-        }
-
-        .menu-close-btn:active {
-          transform: scale(0.92);
-        }
-
-        /* Menu Centerpiece: Minimalist, Simple, Spacious */
-        .menu-content-center {
-          display: flex;
-          flex-direction: column;
-          gap: 2.2rem;
-          margin: auto 0;
-          width: 100%;
-          box-sizing: border-box;
-          padding: 2rem 0;
-        }
-
-        @media (max-width: 860px) {
-          .menu-content-center {
-            gap: 1.8rem;
-            padding: 1rem 0;
-          }
-        }
-
-        /* Articles List */
-        .menu-articles-list {
-          display: flex;
-          flex-direction: column;
-          gap: 1.8rem;
-          width: 100%;
-        }
-
-        .menu-article-item {
-          cursor: pointer;
-          display: flex;
-          align-items: baseline;
-          gap: 1rem;
-          text-align: left;
-          width: 100%;
-          padding: 0.25rem 0;
-          color: var(--blog-fg-secondary);
-          transition: color 0.2s ease, transform 0.2s ease;
-        }
-
-        .menu-article-item:hover {
-          color: var(--blog-fg);
-          transform: translateX(4px);
-        }
-
-        .menu-article-item.active-item {
-          color: var(--blog-fg);
-          font-weight: 500;
-        }
-
-        .menu-article-num {
-          font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-          font-size: 0.88rem;
-          font-weight: 400;
-          color: var(--blog-fg-muted);
-          letter-spacing: -0.01em;
-          font-variant-numeric: proportional-nums;
-          width: 24px;
-          flex-shrink: 0;
-        }
-
-        .menu-article-title {
-          font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-          font-size: clamp(1.35rem, 5.5vw, 1.85rem);
-          line-height: 1.32;
-          letter-spacing: -0.025em;
-          flex: 1;
-        }
-
-        /* ── MENU BOTTOM BAR: SINGLE ROW (ICONS ON LEFT, COPYRIGHT ON RIGHT) ── */
-        .menu-bottom-bar {
-          width: 100%;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding-top: 1.5rem;
-          box-sizing: border-box;
-        }
-
-        .menu-social-icons {
-          display: flex;
-          gap: 1.25rem;
-          align-items: center;
-        }
-
-        .menu-icon-btn {
-          color: var(--blog-fg);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 6px;
-          opacity: 0.65;
-          transition: opacity 0.2s ease, transform 0.2s ease;
-          border-radius: 4px;
-        }
-
-        .menu-icon-btn:hover {
-          opacity: 1;
-          transform: translateY(-1.5px);
-        }
-
-        .menu-copyright {
-          font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-          font-size: 0.78rem;
-          font-weight: 400;
-          color: var(--blog-fg-muted);
-          letter-spacing: -0.01em;
-          user-select: none;
-          white-space: nowrap;
-        }
-
-        @media (max-width: 600px) {
-          .menu-social-icons {
-            gap: 1rem;
-          }
-          .menu-copyright {
-            font-size: 0.72rem;
-          }
-        }
-
       `}</style>
 
       <style jsx>{`
@@ -466,22 +264,24 @@ export default function EditorialBlog({
           flex-direction: column;
           box-sizing: border-box;
           position: relative;
-          overflow-x: clip;
         }
 
-        /* ── TOP NAVBAR: STICKY AT TOP SO IT NEVER DISAPPEARS ── */
+        /* ── TOP NAVBAR: FIXED AT TOP SO IT NEVER DISAPPEARS ── */
         .editorial-navbar {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 2.2rem 4rem 1.6rem 4rem;
+          padding: 1.8rem 4rem 1.4rem 4rem;
           box-sizing: border-box;
           width: 100%;
-          max-width: 100vw;
-          position: sticky;
+          position: fixed;
           top: 0;
-          z-index: 100;
+          left: 0;
+          right: 0;
+          z-index: 1000;
           background-color: var(--blog-bg);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
           transition: background-color 0.3s ease;
         }
 
@@ -491,49 +291,37 @@ export default function EditorialBlog({
           }
         }
 
-        /* Minimalist 2-Bar Toggle (Tight 3.5px spacing, NO text) */
-        .nav-toggle-btn {
-          cursor: pointer;
-          width: 32px;
-          height: 32px;
+        /* Left: works & ask (No 'ask q&a', purely 'ask') */
+        .nav-left-links {
           display: flex;
           align-items: center;
-          justify-content: flex-start;
+          gap: 1.6rem;
+        }
+
+        @media (max-width: 860px) {
+          .nav-left-links {
+            gap: 1rem;
+          }
+        }
+
+        .nav-text-link {
           color: var(--blog-fg);
+          font-size: 0.95rem;
+          font-weight: 500;
+          letter-spacing: -0.01em;
+          text-decoration: none;
+          opacity: 0.85;
           transition: opacity 0.2s ease, transform 0.2s ease;
         }
 
-        .nav-toggle-btn:hover {
-          opacity: 0.5;
+        .nav-text-link:hover {
+          opacity: 1;
         }
 
-        .nav-toggle-btn:active {
-          transform: scale(0.92);
-        }
-
-        .toggle-icon-wrap {
-          width: 18px;
-          display: flex;
-          flex-direction: column;
-          gap: 3.5px;
-          justify-content: center;
-        }
-
-        .toggle-line {
-          display: block;
-          width: 100%;
-          height: 1.5px;
-          background-color: var(--blog-fg);
-          border-radius: 1px;
-          transition: transform 0.2s ease;
-        }
-
-        .nav-toggle-btn:hover .toggle-line:first-child {
-          transform: translateX(2px);
-        }
-
-        .nav-toggle-btn:hover .toggle-line:last-child {
-          transform: translateX(-2px);
+        @media (max-width: 600px) {
+          .nav-text-link {
+            font-size: 0.86rem;
+          }
         }
 
         /* Center Brand: ivan ─── affriandi */
@@ -547,6 +335,14 @@ export default function EditorialBlog({
           font-weight: 500;
           letter-spacing: 0.04em;
           user-select: none;
+          transition: opacity 0.2s ease;
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+
+        .nav-brand:hover {
+          opacity: 0.65;
         }
 
         .nav-brand-rule {
@@ -558,16 +354,22 @@ export default function EditorialBlog({
 
         @media (max-width: 600px) {
           .nav-brand {
-            gap: 0.5rem;
-            font-size: 0.88rem;
+            gap: 0.45rem;
+            font-size: 0.86rem;
           }
 
           .nav-brand-rule {
-            width: 20px;
+            width: 18px;
           }
         }
 
         /* Right: Minimalist @ Icon Link to Instagram */
+        .nav-right-actions {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+        }
+
         .nav-at-link {
           display: flex;
           align-items: center;
@@ -588,34 +390,164 @@ export default function EditorialBlog({
           transform: scale(0.92);
         }
 
-        /* ── EDITORIAL MAIN LAYOUT (DESKTOP: 2 COLUMNS, MOBILE: 1 COLUMN CLEAN STACK) ── */
+        /* ── PAGE BODY WITH TOP OFFSET FOR FIXED NAVBAR ── */
+        .editorial-page-body {
+          width: 100%;
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          padding-top: calc(5.2rem + env(safe-area-inset-top, 0px));
+          box-sizing: border-box;
+        }
+
+        @media (max-width: 860px) {
+          .editorial-page-body {
+            padding-top: calc(4.2rem + env(safe-area-inset-top, 0px));
+          }
+        }
+
+        /* ── HOMEPAGE DAFTAR ISI (TABLE OF CONTENTS) ── */
+        .editorial-toc-wrap {
+          max-width: 820px;
+          width: 100%;
+          margin: 0 auto;
+          padding: 3rem 2rem 5rem 2rem;
+          box-sizing: border-box;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+        }
+
+        @media (max-width: 860px) {
+          .editorial-toc-wrap {
+            padding: 2rem 1.25rem 4rem 1.25rem;
+          }
+        }
+
+        .editorial-toc-list {
+          display: flex;
+          flex-direction: column;
+          gap: 2.2rem;
+          width: 100%;
+          margin-bottom: auto;
+        }
+
+        @media (max-width: 860px) {
+          .editorial-toc-list {
+            gap: 1.85rem;
+          }
+        }
+
+        .editorial-toc-item {
+          display: flex;
+          align-items: baseline;
+          text-align: left;
+          background: transparent;
+          border: none;
+          padding: 0.2rem 0;
+          cursor: pointer;
+          width: 100%;
+          color: var(--blog-fg);
+          transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+        }
+
+        .editorial-toc-item:hover {
+          opacity: 0.6;
+          transform: translateX(4px);
+        }
+
+        .editorial-toc-item:active {
+          transform: scale(0.99);
+        }
+
+        .editorial-toc-num {
+          font-size: 0.92rem;
+          color: var(--blog-fg-muted);
+          width: 2.8rem;
+          flex-shrink: 0;
+          letter-spacing: 0.02em;
+          font-variant-numeric: tabular-nums;
+        }
+
+        @media (max-width: 600px) {
+          .editorial-toc-num {
+            font-size: 0.86rem;
+            width: 2.2rem;
+          }
+        }
+
+        .editorial-toc-title {
+          font-size: clamp(1.18rem, 2.4vw, 1.48rem);
+          font-weight: 500;
+          line-height: 1.32;
+          letter-spacing: -0.02em;
+          color: var(--blog-fg);
+        }
+
+        @media (max-width: 600px) {
+          .editorial-toc-title {
+            font-size: clamp(1.1rem, 4.8vw, 1.25rem);
+            line-height: 1.34;
+          }
+        }
+
+        /* ── ARTICLE READER LAYOUT ── */
         .editorial-content-wrap {
           max-width: 1200px;
           width: 100%;
-          margin: 2.5rem auto 6rem auto;
-          padding: 0 4rem;
+          margin: 0 auto;
+          padding: 1.5rem 4rem 6rem 4rem;
           box-sizing: border-box;
-          display: grid;
-          grid-template-columns: minmax(280px, 38%) minmax(320px, 62%);
-          gap: 4.5rem;
-          align-items: start;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
         }
 
         @media (max-width: 860px) {
           .editorial-content-wrap {
-            display: flex !important;
-            flex-direction: column !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            padding: 0 1.25rem !important;
-            margin: 1rem auto 4.5rem auto !important;
-            gap: 1.25rem !important;
-            box-sizing: border-box !important;
-            overflow-x: hidden !important;
+            padding: 1rem 1.25rem 4.5rem 1.25rem;
           }
         }
 
-        /* ── LEFT COLUMN: TITLE + (PHOTO UNDER TITLE IF POST HAS ONE) ── */
+        .editorial-reader-top-bar {
+          margin-bottom: 2rem;
+          display: flex;
+          align-items: center;
+        }
+
+        .editorial-back-btn {
+          cursor: pointer;
+          color: var(--blog-fg-muted);
+          font-size: 0.88rem;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.45rem;
+          transition: color 0.2s ease, transform 0.2s ease;
+          padding: 0.3rem 0;
+        }
+
+        .editorial-back-btn:hover {
+          color: var(--blog-fg);
+          transform: translateX(-3px);
+        }
+
+        .editorial-main-grid {
+          display: grid;
+          grid-template-columns: minmax(280px, 38%) minmax(320px, 62%);
+          gap: 4.5rem;
+          align-items: start;
+          width: 100%;
+        }
+
+        @media (max-width: 860px) {
+          .editorial-main-grid {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 1.25rem !important;
+          }
+        }
+
+        /* Left Column: Title + Cover Photo */
         .editorial-left-col {
           display: flex;
           flex-direction: column;
@@ -649,7 +581,6 @@ export default function EditorialBlog({
           }
         }
 
-        /* Photo under Title in Left Column (Black & White Minimalist) */
         .editorial-left-photo-wrap {
           margin-top: 2rem;
           width: 100%;
@@ -680,7 +611,7 @@ export default function EditorialBlog({
           filter: grayscale(0%);
         }
 
-        /* ── RIGHT COLUMN: VERTICAL LINE + BODY PROSE ── */
+        /* Right Column: Vertical Line + Body Prose */
         .editorial-right-col {
           display: flex;
           flex-direction: column;
@@ -691,7 +622,6 @@ export default function EditorialBlog({
           box-sizing: border-box;
         }
 
-        /* Prominent Vertical Line */
         .editorial-vertical-line {
           width: 1.5px;
           height: 100px;
@@ -762,24 +692,25 @@ export default function EditorialBlog({
           overflow-wrap: break-word;
         }
 
-        /* Suppress raw unformatted body images since cover photo is placed under title */
         .editorial-body-prose :global(img) {
           display: none !important;
         }
 
-        /* ── CLEAN NEXT POST LINK ── */
-        .editorial-next-wrap {
+        /* Bottom Nav inside Reader */
+        .editorial-bottom-nav {
           margin-top: 3.5rem;
           padding-top: 1.8rem;
           border-top: 1px solid var(--blog-border);
           display: flex;
-          justify-content: flex-end;
+          align-items: center;
+          justify-content: space-between;
           width: 100%;
           box-sizing: border-box;
+          gap: 1.5rem;
         }
 
         @media (max-width: 860px) {
-          .editorial-next-wrap {
+          .editorial-bottom-nav {
             margin-top: 2.5rem;
             padding-top: 1.4rem;
           }
@@ -796,6 +727,7 @@ export default function EditorialBlog({
           transition: opacity 0.2s ease, transform 0.2s ease;
           padding: 0.4rem 0;
           text-align: right;
+          margin-left: auto;
         }
 
         .next-post-btn:hover {
@@ -805,258 +737,333 @@ export default function EditorialBlog({
 
         @media (max-width: 600px) {
           .next-post-btn {
-            font-size: 0.9rem;
-            text-align: left;
-            width: 100%;
-            justify-content: space-between;
+            font-size: 0.88rem;
+          }
+        }
+
+        /* ── MINIMALIST FOOTER ── */
+        .editorial-footer {
+          margin-top: 5rem;
+          padding-top: 2rem;
+          border-top: 1px solid var(--blog-border);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        @media (max-width: 600px) {
+          .editorial-footer {
+            margin-top: 3.5rem;
+            padding-top: 1.5rem;
+          }
+        }
+
+        .footer-social-icons {
+          display: flex;
+          align-items: center;
+          gap: 1.2rem;
+        }
+
+        .footer-icon-btn {
+          color: var(--blog-fg);
+          opacity: 0.7;
+          display: flex;
+          align-items: center;
+          transition: opacity 0.2s ease, transform 0.2s ease;
+          text-decoration: none;
+        }
+
+        .footer-icon-btn:hover {
+          opacity: 1;
+          transform: translateY(-1px);
+        }
+
+        .footer-copyright {
+          font-size: 0.82rem;
+          color: var(--blog-fg-muted);
+          letter-spacing: 0.02em;
+        }
+
+        @media (max-width: 600px) {
+          .footer-copyright {
+            font-size: 0.76rem;
           }
         }
       `}</style>
 
-      {/* ── TOP NAVBAR ── */}
+      {/* ── TOP NAVBAR: ALWAYS VISIBLE EVERYWHERE (FIXED AT TOP) ── */}
       <header className="editorial-navbar">
-        {/* Left: Minimal 2-Bar Toggle (Tight 3.5px spacing, NO text) */}
-        <button
-          type="button"
-          className="nav-toggle-btn"
-          onClick={() => setIsMenuOpen(true)}
-          aria-label="open menu"
-          title="menu"
-        >
-          <span className="toggle-icon-wrap">
-            <span className="toggle-line" />
-            <span className="toggle-line" />
-          </span>
-        </button>
+        {/* Left: works and ask */}
+        <div className="nav-left-links">
+          <Link href="/work" className="nav-text-link">
+            works
+          </Link>
+          <Link href="/ask" className="nav-text-link">
+            ask
+          </Link>
+        </div>
 
-        {/* Center: Brand ivan ─── affriandi */}
-        <div className="nav-brand">
+        {/* Center: brand ivan ─── affriandi (Clicking takes user back to Daftar Isi) */}
+        <Link
+          href="/"
+          onClick={handleGoHome}
+          className="nav-brand"
+          aria-label="ivan affriandi home"
+        >
           <span>ivan</span>
           <span className="nav-brand-rule" />
           <span>affriandi</span>
-        </div>
+        </Link>
 
-        {/* Right: Minimalist @ Icon linking directly to Instagram */}
-        <a
-          href="https://instagram.com/ivanaffriandi"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="nav-at-link"
-          aria-label="instagram @ivanaffriandi"
-          title="instagram @ivanaffriandi"
-        >
-          <svg
-            width="19"
-            height="19"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.65"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        {/* Right: Instagram @ */}
+        <div className="nav-right-actions">
+          <a
+            href="https://instagram.com/ivanaffriandi"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="nav-at-link"
+            aria-label="instagram @ivanaffriandi"
+            title="instagram @ivanaffriandi"
           >
-            <circle cx="12" cy="12" r="4" />
-            <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8" />
-          </svg>
-        </a>
+            <svg
+              width="19"
+              height="19"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.65"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="4" />
+              <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8" />
+            </svg>
+          </a>
+        </div>
       </header>
 
-      {/* ── MINIMALIST FULLSCREEN MENU WITH FLAWLESS BUTTER-SMOOTH CURTAIN SLIDE ── */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            key="editorial-menu-overlay"
-            initial={{ y: "-100%" }}
-            animate={{ y: "0%" }}
-            exit={{ y: "-100%" }}
-            transition={{
-              duration: 0.45,
-              ease: [0.16, 1, 0.3, 1], // Apple fluid iOS spring curve
-            }}
-            className="editorial-menu-overlay"
-          >
-            <div className="menu-inner-container">
-              {/* Top Bar: Selected Works & Ask Q&A on Left, Close Button on Right */}
-              <div className="menu-top-bar">
-                <div className="menu-top-links">
-                  <Link
-                    href="/work"
-                    className="menu-top-link"
-                    onClick={() => setIsMenuOpen(false)}
+      {/* ── PAGE BODY ── */}
+      <div className="editorial-page-body">
+        {/* ── VIEW 1: HOMEPAGE DAFTAR ISI (TABLE OF CONTENTS) ── */}
+        {!activePostId && (
+          <div className="editorial-toc-wrap">
+            <div className="editorial-toc-list">
+              {sortedPosts.map((post, idx) => {
+                const formattedNum = String(idx + 1).padStart(2, "0");
+                const cleanPostTitle = cleanChapterTitle(post.title);
+                return (
+                  <button
+                    key={post.id}
+                    type="button"
+                    className="editorial-toc-item"
+                    onClick={() => handleSelectPost(post.id)}
                   >
-                    works
-                  </Link>
-                  <Link
-                    href="/ask"
-                    className="menu-top-link"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    ask q&amp;a
-                  </Link>
-                </div>
+                    <span className="editorial-toc-num">{formattedNum}</span>
+                    <span className="editorial-toc-title">{cleanPostTitle}</span>
+                  </button>
+                );
+              })}
+            </div>
 
-                <button
-                  type="button"
-                  className="menu-close-btn"
-                  onClick={() => setIsMenuOpen(false)}
-                  aria-label="close menu"
+            {/* Minimalist Footer */}
+            <footer className="editorial-footer">
+              <div className="footer-social-icons">
+                <a
+                  href="https://instagram.com/ivanaffriandi"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="footer-icon-btn"
+                  aria-label="instagram"
+                  title="instagram"
                 >
-                  <span>close</span>
                   <svg
-                    width="14"
-                    height="14"
+                    width="17"
+                    height="17"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="2.2"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
                   </svg>
-                </button>
+                </a>
+                <a
+                  href="https://x.com/ivanaffriandi"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="footer-icon-btn"
+                  aria-label="x (twitter)"
+                  title="x (twitter)"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </a>
+                <a
+                  href="mailto:ivan@ivanaffriandi.com"
+                  className="footer-icon-btn"
+                  aria-label="email"
+                  title="email"
+                >
+                  <svg
+                    width="17"
+                    height="17"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                </a>
+              </div>
+              <span className="footer-copyright">© 2026 ivan affriandi</span>
+            </footer>
+          </div>
+        )}
+
+        {/* ── VIEW 2: ARTICLE READER VIEW ── */}
+        {activePostId && currentPost && (
+          <article className="editorial-content-wrap">
+            {/* Top Bar inside reader: back to daftar isi */}
+            <div className="editorial-reader-top-bar">
+              <button
+                type="button"
+                className="editorial-back-btn"
+                onClick={handleGoHome}
+              >
+                <span>←</span>
+                <span>daftar isi</span>
+              </button>
+            </div>
+
+            <div className="editorial-main-grid">
+              {/* LEFT COLUMN: TITLE + (PHOTO UNDER TITLE IF POST HAS ONE, B&W MINIMALIST) */}
+              <div className="editorial-left-col">
+                <h1 className="editorial-title">{cleanChapterTitle(currentPost.title)}</h1>
+
+                {/* Photo placed under Title, Black & White Minimalist */}
+                {postImage && (
+                  <div className="editorial-left-photo-wrap">
+                    <img
+                      src={postImage}
+                      alt={currentPost.title}
+                      className="editorial-bw-img"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
               </div>
 
-              {/* Center: Minimalist, Simple, Spacious Essays List */}
-              <div className="menu-content-center">
-                <div className="menu-articles-list">
-                  {sortedPosts.map((p, idx) => {
-                    const isActive = p.id === currentPost?.id;
-                    const formattedNum = String(idx + 1).padStart(2, "0");
-                    return (
-                      <button
-                        key={p.id}
-                        type="button"
-                        className={`menu-article-item ${isActive ? "active-item" : ""}`}
-                        onClick={() => handleSelectPost(p.id)}
-                      >
-                        <span className="menu-article-num">{formattedNum}</span>
-                        <span className="menu-article-title">{p.title}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              {/* RIGHT COLUMN: VERTICAL LINE + BODY PROSE */}
+              <div className="editorial-right-col">
+                {/* The signature vertical line */}
+                <div className="editorial-vertical-line" />
 
-              {/* Bottom Bar: Single row, icons on bottom-left, copyright on bottom-right */}
-              <div className="menu-bottom-bar">
-                {/* Left corner: Minimalist Icons for IG, TWT (X), and Email */}
-                <div className="menu-social-icons">
-                  <a
-                    href="https://instagram.com/ivanaffriandi"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="menu-icon-btn"
-                    aria-label="instagram"
-                    title="instagram"
+                {/* Post Content */}
+                <div
+                  className="editorial-body-prose"
+                  dangerouslySetInnerHTML={{ __html: cleanHtml(currentPost.content) }}
+                />
+
+                {/* Bottom Navigation */}
+                <div className="editorial-bottom-nav">
+                  <button
+                    type="button"
+                    className="editorial-back-btn"
+                    onClick={handleGoHome}
                   >
-                    <svg
-                      width="17"
-                      height="17"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                    <span>←</span>
+                    <span>daftar isi</span>
+                  </button>
+
+                  {nextPost && (
+                    <button
+                      type="button"
+                      className="next-post-btn"
+                      onClick={() => handleSelectPost(nextPost.id)}
                     >
-                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                    </svg>
-                  </a>
-
-                  <a
-                    href="https://x.com/ivanaffriandi"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="menu-icon-btn"
-                    aria-label="x (twitter)"
-                    title="x (twitter)"
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                    </svg>
-                  </a>
-
-                  <a
-                    href="mailto:ivan@ivanaffriandi.com"
-                    className="menu-icon-btn"
-                    aria-label="email"
-                    title="email"
-                  >
-                    <svg
-                      width="17"
-                      height="17"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <rect x="2" y="4" width="20" height="16" rx="2" />
-                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                    </svg>
-                  </a>
+                      <span>next: {cleanChapterTitle(nextPost.title)}</span>
+                      <span>→</span>
+                    </button>
+                  )}
                 </div>
-
-                {/* Right corner: Minimalist Footer Copyright in the same row */}
-                <span className="menu-copyright">
-                  © 2026 ivan affriandi
-                </span>
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
-      {/* ── MAIN CONTENT (2 COLUMNS ON DESKTOP, CLEAN RESPONSIVE STACK ON MOBILE) ── */}
-      {currentPost && (
-        <article className="editorial-content-wrap">
-          {/* LEFT COLUMN: TITLE + (PHOTO UNDER TITLE IF POST HAS ONE, B&W MINIMALIST) */}
-          <div className="editorial-left-col">
-            <h1 className="editorial-title">{currentPost.title}</h1>
-
-            {/* Photo placed under Title, Black & White Minimalist */}
-            {postImage && (
-              <div className="editorial-left-photo-wrap">
-                <img
-                  src={postImage}
-                  alt={currentPost.title}
-                  className="editorial-bw-img"
-                  loading="lazy"
-                />
-              </div>
-            )}
-          </div>
-
-          {/* RIGHT COLUMN: VERTICAL LINE + BODY PROSE */}
-          <div className="editorial-right-col">
-            {/* The signature vertical line */}
-            <div className="editorial-vertical-line" />
-
-            {/* Post Content */}
-            <div
-              className="editorial-body-prose"
-              dangerouslySetInnerHTML={{ __html: cleanHtml(currentPost.content) }}
-            />
-
-            {/* Minimal Next Post Link */}
-            {nextPost && (
-              <div className="editorial-next-wrap">
-                <button
-                  type="button"
-                  className="next-post-btn"
-                  onClick={() => handleSelectPost(nextPost.id)}
+            {/* Footer */}
+            <footer className="editorial-footer">
+              <div className="footer-social-icons">
+                <a
+                  href="https://instagram.com/ivanaffriandi"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="footer-icon-btn"
+                  aria-label="instagram"
+                  title="instagram"
                 >
-                  <span>next: {nextPost.title}</span>
-                  <span>→</span>
-                </button>
+                  <svg
+                    width="17"
+                    height="17"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                  </svg>
+                </a>
+                <a
+                  href="https://x.com/ivanaffriandi"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="footer-icon-btn"
+                  aria-label="x (twitter)"
+                  title="x (twitter)"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </a>
+                <a
+                  href="mailto:ivan@ivanaffriandi.com"
+                  className="footer-icon-btn"
+                  aria-label="email"
+                  title="email"
+                >
+                  <svg
+                    width="17"
+                    height="17"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                </a>
               </div>
-            )}
-          </div>
-        </article>
-      )}
+              <span className="footer-copyright">© 2026 ivan affriandi</span>
+            </footer>
+          </article>
+        )}
+      </div>
     </div>
   );
 }
