@@ -126,7 +126,7 @@ export default function EditorialBlog({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [instagramPhotos, setInstagramPhotos] = useState<InstagramPhoto[]>(ALL_MOMENTS_PHOTOS);
 
-  // Re-sync with API if fresh photos are available
+  // Sync fresh photos from API if available
   useEffect(() => {
     let isMounted = true;
     fetch("/api/instagram")
@@ -563,7 +563,7 @@ export default function EditorialBlog({
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 0.85rem 4rem;
+          padding: 0.75rem 4rem;
           box-sizing: border-box;
           width: 100%;
           position: fixed;
@@ -629,16 +629,15 @@ export default function EditorialBlog({
           transform: translateX(-2px);
         }
 
-        /* Center Brand: ivan ─── affriandi */
+        /* Center Brand: ivan affriandi (pure, clean, minimal typography) */
         .nav-brand {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 0.75rem;
           text-decoration: none;
           color: var(--blog-fg);
-          font-size: 0.92rem;
+          font-size: 0.95rem;
           font-weight: 500;
-          letter-spacing: 0.04em;
+          letter-spacing: -0.01em;
           user-select: none;
           transition: opacity 0.2s ease;
           position: absolute;
@@ -650,21 +649,9 @@ export default function EditorialBlog({
           opacity: 0.65;
         }
 
-        .nav-brand-rule {
-          display: inline-block;
-          width: 26px;
-          height: 1.5px;
-          background-color: var(--blog-fg);
-        }
-
         @media (max-width: 600px) {
           .nav-brand {
-            gap: 0.4rem;
-            font-size: 0.85rem;
-          }
-
-          .nav-brand-rule {
-            width: 16px;
+            font-size: 0.9rem;
           }
         }
 
@@ -695,18 +682,19 @@ export default function EditorialBlog({
           transform: scale(0.92);
         }
 
-        /* ── SLIM PAGE BODY TOP OFFSET ── */
+        /* ── PROPER PAGE BODY TOP OFFSET (SAFE FROM NAVBAR OVERLAP) ── */
         .editorial-page-body {
           width: 100%;
           display: flex;
           flex-direction: column;
+          flex: 1;
           padding-top: calc(3.6rem + env(safe-area-inset-top, 0px));
           box-sizing: border-box;
         }
 
         @media (max-width: 860px) {
           .editorial-page-body {
-            padding-top: calc(3rem + env(safe-area-inset-top, 0px));
+            padding-top: calc(3.4rem + env(safe-area-inset-top, 0px));
           }
         }
 
@@ -715,28 +703,31 @@ export default function EditorialBlog({
           max-width: 820px;
           width: 100%;
           margin: 0 auto;
-          padding: 1.4rem 2rem 1.4rem 2rem;
+          padding: 1.5rem 2rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) 2rem;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
+          flex: 1;
+          min-height: calc(100vh - 3.6rem - env(safe-area-inset-top, 0px));
         }
 
         @media (max-width: 860px) {
           .editorial-toc-wrap {
-            padding: 1rem 1.25rem 0.8rem 1.25rem;
+            padding: 1.25rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom, 0px)) 1.25rem;
+            min-height: calc(100vh - 3.4rem - env(safe-area-inset-top, 0px));
           }
         }
 
-        /* ── HORIZONTAL INSTAGRAM PHOTO STRIP (ALL 45 PHOTOS, HITAM PUTIH, SCROLLABLE) ── */
+        /* ── COMPACT, SLEEK INSTAGRAM FILMSTRIP (ALL 45 PHOTOS, HITAM PUTIH, SCROLLABLE) ── */
         .editorial-ig-strip-wrap {
           width: 100%;
-          margin-bottom: 2.2rem;
+          margin-bottom: 2rem;
           position: relative;
         }
 
         @media (max-width: 860px) {
           .editorial-ig-strip-wrap {
-            margin-bottom: 1.6rem;
+            margin-bottom: 1.5rem;
             margin-left: -1.25rem;
             margin-right: -1.25rem;
             width: calc(100% + 2.5rem);
@@ -746,30 +737,36 @@ export default function EditorialBlog({
         .editorial-ig-strip {
           display: flex;
           align-items: center;
-          gap: 0.8rem;
+          gap: 0.65rem;
           overflow-x: auto;
           overflow-y: hidden;
           -webkit-overflow-scrolling: touch;
           scroll-snap-type: x mandatory;
-          padding: 0.15rem 0 0.45rem 0;
+          padding: 0.2rem 0 0.4rem 0;
           scrollbar-width: none;
+          -ms-overflow-style: none;
         }
 
         @media (max-width: 860px) {
           .editorial-ig-strip {
             padding-left: 1.25rem;
             padding-right: 1.25rem;
-            gap: 0.65rem;
+            gap: 0.55rem;
           }
         }
 
         .editorial-ig-strip::-webkit-scrollbar {
-          display: none;
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
         }
 
+        /* Sleek compact square thumbnail: 80px on mobile, 90px on desktop */
         .editorial-ig-card {
-          flex: 0 0 130px;
-          aspect-ratio: 4 / 5;
+          flex: 0 0 90px;
+          width: 90px;
+          height: 90px;
+          aspect-ratio: 1 / 1;
           overflow: hidden;
           background-color: var(--blog-img-bg);
           scroll-snap-align: start;
@@ -777,14 +774,16 @@ export default function EditorialBlog({
           text-decoration: none;
           position: relative;
           box-sizing: border-box;
-          border-radius: 2px;
+          border-radius: 4px;
           transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
         }
 
         @media (max-width: 600px) {
           .editorial-ig-card {
-            flex: 0 0 108px;
-            aspect-ratio: 4 / 5;
+            flex: 0 0 80px;
+            width: 80px;
+            height: 80px;
+            aspect-ratio: 1 / 1;
           }
         }
 
@@ -877,20 +876,23 @@ export default function EditorialBlog({
           }
         }
 
-        /* ── ARTICLE READER LAYOUT ── */
+        /* ── ARTICLE READER LAYOUT (COMFORTABLE BREATHING ROOM UNDER NAVBAR) ── */
         .editorial-content-wrap {
           max-width: 1200px;
           width: 100%;
           margin: 0 auto;
-          padding: 1rem 4rem 1.4rem 4rem;
+          padding: 2.8rem 4rem calc(2.5rem + env(safe-area-inset-bottom, 0px)) 4rem;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
+          flex: 1;
+          min-height: calc(100vh - 3.6rem - env(safe-area-inset-top, 0px));
         }
 
         @media (max-width: 860px) {
           .editorial-content-wrap {
-            padding: 0.75rem 1.25rem 1rem 1.25rem;
+            padding: 2.2rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) 1.25rem;
+            min-height: calc(100vh - 3.4rem - env(safe-area-inset-top, 0px));
           }
         }
 
@@ -927,7 +929,7 @@ export default function EditorialBlog({
           font-weight: 500;
           line-height: 1.15;
           letter-spacing: -0.03em;
-          margin: 0;
+          margin: 0 0 0.5rem 0;
           color: var(--blog-fg);
           width: 100%;
           max-width: 100%;
@@ -941,6 +943,7 @@ export default function EditorialBlog({
             font-size: clamp(1.5rem, 5.8vw, 1.85rem);
             line-height: 1.22;
             letter-spacing: -0.025em;
+            margin: 0 0 1rem 0;
           }
         }
 
@@ -985,19 +988,20 @@ export default function EditorialBlog({
           box-sizing: border-box;
         }
 
+        /* Vertical line: subtle drop accent on desktop, hidden on mobile so it doesn't look like a stray bar */
         .editorial-vertical-line {
           width: 1.5px;
-          height: 100px;
+          height: 32px;
           background-color: var(--blog-line);
-          margin-bottom: 2.2rem;
+          margin-bottom: 1.6rem;
           display: block;
           flex-shrink: 0;
+          opacity: 0.6;
         }
 
         @media (max-width: 860px) {
           .editorial-vertical-line {
-            height: 38px;
-            margin: 0.35rem 0 1.25rem 0;
+            display: none !important;
           }
         }
 
@@ -1161,7 +1165,7 @@ export default function EditorialBlog({
         .editorial-footer {
           margin-top: 1.8rem;
           padding-top: 1rem;
-          padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+          padding-bottom: calc(0.6rem + env(safe-area-inset-bottom, 0px));
           border-top: 1px solid var(--blog-border);
           display: flex;
           align-items: center;
@@ -1174,8 +1178,16 @@ export default function EditorialBlog({
           .editorial-footer {
             margin-top: 1.4rem;
             padding-top: 0.85rem;
-            padding-bottom: calc(0.35rem + env(safe-area-inset-bottom, 0px));
+            padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
           }
+        }
+
+        .editorial-toc-wrap .editorial-footer {
+          margin-top: auto !important;
+        }
+
+        .editorial-content-wrap .editorial-footer {
+          margin-top: 2.8rem;
         }
 
         .footer-social-icons {
@@ -1227,16 +1239,14 @@ export default function EditorialBlog({
           </span>
         </button>
 
-        {/* Center: brand ivan ─── affriandi (Clicking takes user back to Daftar Isi) */}
+        {/* Center: brand ivan affriandi (Clicking takes user back to Daftar Isi) */}
         <Link
           href="/"
           onClick={handleGoHome}
           className="nav-brand"
           aria-label="ivan affriandi home"
         >
-          <span>ivan</span>
-          <span className="nav-brand-rule" />
-          <span>affriandi</span>
+          ivan affriandi
         </Link>
 
         {/* Right: Instagram @ */}
@@ -1428,13 +1438,13 @@ export default function EditorialBlog({
           {!activePostId ? (
             <motion.div
               key="editorial-toc-view"
-              initial={{ opacity: 0, y: 14 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
               className="editorial-toc-wrap"
             >
-              {/* ── HORIZONTAL INSTAGRAM PHOTO STRIP (ALL 45 PHOTOS, HITAM PUTIH, BISA DISCROLL) ── */}
+              {/* ── COMPACT INSTAGRAM FILMSTRIP (ALL 45 PHOTOS, HITAM PUTIH, SCROLLABLE) ── */}
               {instagramPhotos.length > 0 && (
                 <div className="editorial-ig-strip-wrap">
                   <div className="editorial-ig-strip">
@@ -1542,14 +1552,14 @@ export default function EditorialBlog({
               </footer>
             </motion.div>
           ) : (
-            /* ── VIEW 2: ARTICLE READER VIEW (FLUID ENTRANCE ANIMATION, SNUG FOOTNOTE) ── */
+            /* ── VIEW 2: ARTICLE READER VIEW (FLUID ENTRANCE ANIMATION, COMFORTABLE TITLE SPACING) ── */
             currentPost && (
               <motion.article
                 key={`post-${currentPost.id}`}
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
                 className="editorial-content-wrap"
               >
                 <div className="editorial-main-grid">
