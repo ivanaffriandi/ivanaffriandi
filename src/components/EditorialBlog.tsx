@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
 export interface BlogPostItem {
   id: string;
@@ -67,6 +68,8 @@ export default function EditorialBlog({
     return "";
   });
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   // Sync if initialPost changes or URL has post ID
   useEffect(() => {
     if (initialPost?.id) {
@@ -80,6 +83,18 @@ export default function EditorialBlog({
       }
     }
   }, [initialPost]);
+
+  // Lock body scroll when menu overlay is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
 
   // Listen to browser Back/Forward navigation
   useEffect(() => {
@@ -109,22 +124,27 @@ export default function EditorialBlog({
     return extractFirstImage(currentPost.content);
   }, [currentPost]);
 
-  // Find next post for pagination in reader
-  const nextPost = useMemo(() => {
-    if (!currentPost) return null;
+  // Find previous and next post for pagination in reader
+  const { prevPost, nextPost } = useMemo(() => {
+    if (!currentPost) return { prevPost: null, nextPost: null };
     const currentIndex = sortedPosts.findIndex((p) => p.id === currentPost.id);
-    if (currentIndex >= 0 && currentIndex < sortedPosts.length - 1) {
-      return sortedPosts[currentIndex + 1];
-    }
-    if (sortedPosts.length > 1 && currentIndex === sortedPosts.length - 1) {
-      return sortedPosts[0];
-    }
-    return null;
+    if (currentIndex === -1) return { prevPost: null, nextPost: null };
+
+    // Previous = newer post (index - 1)
+    const prev = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
+    // Next = older post (index + 1)
+    const next = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
+
+    return { prevPost: prev, nextPost: next };
   }, [sortedPosts, currentPost]);
 
   const handleSelectPost = (postId: string) => {
     setActivePostId(postId);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setIsMenuOpen(false);
+    // Instant snap to top of the selected article
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
     if (typeof window !== "undefined") {
       window.history.pushState(null, "", `/blog/${postId}`);
     }
@@ -133,7 +153,10 @@ export default function EditorialBlog({
   const handleGoHome = (e?: React.MouseEvent) => {
     if (e) e.preventDefault();
     setActivePostId("");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setIsMenuOpen(false);
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
     if (typeof window !== "undefined") {
       window.history.pushState(null, "", "/");
     }
@@ -208,7 +231,9 @@ export default function EditorialBlog({
 
         /* ── SEMUA HURUF KECIL DI SELURUH BLOG WEB SESUAI PERMINTAAN USER ── */
         .editorial-canvas,
-        .editorial-canvas * {
+        .editorial-canvas *,
+        .editorial-menu-overlay,
+        .editorial-menu-overlay * {
           text-transform: lowercase !important;
           font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
@@ -251,6 +276,208 @@ export default function EditorialBlog({
           font: inherit;
           color: inherit;
         }
+
+        /* ── MINIMALIST FULLSCREEN MENU OVERLAY ── */
+        .editorial-menu-overlay {
+          position: fixed !important;
+          inset: 0 !important;
+          z-index: 99999 !important;
+          background-color: var(--blog-bg) !important;
+          color: var(--blog-fg) !important;
+          display: flex !important;
+          flex-direction: column !important;
+          box-sizing: border-box !important;
+          overflow-y: auto !important;
+          -webkit-overflow-scrolling: touch !important;
+        }
+
+        .menu-inner-container {
+          min-height: 100%;
+          display: flex;
+          flex-direction: column;
+          padding: 2.2rem 4rem;
+          box-sizing: border-box;
+          max-width: 1200px;
+          margin: 0 auto;
+          width: 100%;
+        }
+
+        @media (max-width: 860px) {
+          .menu-inner-container {
+            padding: calc(1.1rem + env(safe-area-inset-top, 0px)) 1.25rem 2rem 1.25rem;
+          }
+        }
+
+        .menu-top-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+        }
+
+        .menu-top-links {
+          display: flex;
+          align-items: center;
+          gap: 1.6rem;
+        }
+
+        @media (max-width: 860px) {
+          .menu-top-links {
+            gap: 1.1rem;
+          }
+        }
+
+        .menu-top-link {
+          color: var(--blog-fg);
+          font-size: 0.95rem;
+          font-weight: 500;
+          text-decoration: none;
+          opacity: 0.85;
+          transition: opacity 0.2s ease;
+        }
+
+        .menu-top-link:hover {
+          opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+          .menu-top-link {
+            font-size: 0.86rem;
+          }
+        }
+
+        .menu-close-btn {
+          cursor: pointer;
+          color: var(--blog-fg);
+          font-size: 0.92rem;
+          font-weight: 500;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          opacity: 0.85;
+          transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .menu-close-btn:hover {
+          opacity: 1;
+          transform: scale(1.05);
+        }
+
+        .menu-content-center {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          padding: 3.5rem 0;
+          width: 100%;
+        }
+
+        @media (max-width: 860px) {
+          .menu-content-center {
+            padding: 2.5rem 0;
+          }
+        }
+
+        .menu-articles-list {
+          display: flex;
+          flex-direction: column;
+          gap: 1.8rem;
+          width: 100%;
+          max-width: 760px;
+        }
+
+        @media (max-width: 860px) {
+          .menu-articles-list {
+            gap: 1.45rem;
+          }
+        }
+
+        .menu-article-item {
+          display: flex;
+          align-items: baseline;
+          text-align: left;
+          background: transparent;
+          border: none;
+          padding: 0.2rem 0;
+          cursor: pointer;
+          width: 100%;
+          color: var(--blog-fg);
+          transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .menu-article-item:hover {
+          opacity: 0.6;
+          transform: translateX(4px);
+        }
+
+        .menu-article-item.active-item {
+          font-weight: 600;
+        }
+
+        .menu-article-num {
+          font-size: 0.88rem;
+          color: var(--blog-fg-muted);
+          width: 2.5rem;
+          flex-shrink: 0;
+          letter-spacing: 0.02em;
+          font-variant-numeric: tabular-nums;
+        }
+
+        @media (max-width: 600px) {
+          .menu-article-num {
+            font-size: 0.82rem;
+            width: 2.1rem;
+          }
+        }
+
+        .menu-article-title {
+          font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+          font-weight: 500;
+          line-height: 1.32;
+          letter-spacing: -0.02em;
+          color: var(--blog-fg);
+        }
+
+        @media (max-width: 600px) {
+          .menu-article-title {
+            font-size: clamp(1.05rem, 4.6vw, 1.2rem);
+            line-height: 1.34;
+          }
+        }
+
+        .menu-bottom-bar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          padding-top: 1.5rem;
+          border-top: 1px solid var(--blog-border);
+        }
+
+        .menu-social-icons {
+          display: flex;
+          align-items: center;
+          gap: 1.2rem;
+        }
+
+        .menu-icon-btn {
+          color: var(--blog-fg);
+          opacity: 0.7;
+          display: flex;
+          align-items: center;
+          transition: opacity 0.2s ease, transform 0.2s ease;
+          text-decoration: none;
+        }
+
+        .menu-icon-btn:hover {
+          opacity: 1;
+          transform: translateY(-1px);
+        }
+
+        .menu-copyright {
+          font-size: 0.82rem;
+          color: var(--blog-fg-muted);
+        }
       `}</style>
 
       <style jsx>{`
@@ -291,37 +518,49 @@ export default function EditorialBlog({
           }
         }
 
-        /* Left: works & ask (No 'ask q&a', purely 'ask') */
-        .nav-left-links {
+        /* Left: Minimal 2-Bar Toggle (Opens Sidebar Menu) */
+        .nav-toggle-btn {
+          cursor: pointer;
+          width: 32px;
+          height: 32px;
           display: flex;
           align-items: center;
-          gap: 1.6rem;
-        }
-
-        @media (max-width: 860px) {
-          .nav-left-links {
-            gap: 1rem;
-          }
-        }
-
-        .nav-text-link {
+          justify-content: flex-start;
           color: var(--blog-fg);
-          font-size: 0.95rem;
-          font-weight: 500;
-          letter-spacing: -0.01em;
-          text-decoration: none;
-          opacity: 0.85;
           transition: opacity 0.2s ease, transform 0.2s ease;
         }
 
-        .nav-text-link:hover {
-          opacity: 1;
+        .nav-toggle-btn:hover {
+          opacity: 0.5;
         }
 
-        @media (max-width: 600px) {
-          .nav-text-link {
-            font-size: 0.86rem;
-          }
+        .nav-toggle-btn:active {
+          transform: scale(0.92);
+        }
+
+        .toggle-icon-wrap {
+          width: 18px;
+          display: flex;
+          flex-direction: column;
+          gap: 3.5px;
+          justify-content: center;
+        }
+
+        .toggle-line {
+          display: block;
+          width: 100%;
+          height: 1.5px;
+          background-color: var(--blog-fg);
+          border-radius: 1px;
+          transition: transform 0.2s ease;
+        }
+
+        .nav-toggle-btn:hover .toggle-line:first-child {
+          transform: translateX(2px);
+        }
+
+        .nav-toggle-btn:hover .toggle-line:last-child {
+          transform: translateX(-2px);
         }
 
         /* Center Brand: ivan ─── affriandi */
@@ -411,7 +650,7 @@ export default function EditorialBlog({
           max-width: 820px;
           width: 100%;
           margin: 0 auto;
-          padding: 3rem 2rem 5rem 2rem;
+          padding: 2.5rem 2rem 4rem 2rem;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
@@ -420,7 +659,7 @@ export default function EditorialBlog({
 
         @media (max-width: 860px) {
           .editorial-toc-wrap {
-            padding: 2rem 1.25rem 4rem 1.25rem;
+            padding: 1.8rem 1.25rem 3rem 1.25rem;
           }
         }
 
@@ -496,7 +735,7 @@ export default function EditorialBlog({
           max-width: 1200px;
           width: 100%;
           margin: 0 auto;
-          padding: 1.5rem 4rem 6rem 4rem;
+          padding: 1.5rem 4rem 4rem 4rem;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
@@ -505,30 +744,8 @@ export default function EditorialBlog({
 
         @media (max-width: 860px) {
           .editorial-content-wrap {
-            padding: 1rem 1.25rem 4.5rem 1.25rem;
+            padding: 1rem 1.25rem 3rem 1.25rem;
           }
-        }
-
-        .editorial-reader-top-bar {
-          margin-bottom: 2rem;
-          display: flex;
-          align-items: center;
-        }
-
-        .editorial-back-btn {
-          cursor: pointer;
-          color: var(--blog-fg-muted);
-          font-size: 0.88rem;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.45rem;
-          transition: color 0.2s ease, transform 0.2s ease;
-          padding: 0.3rem 0;
-        }
-
-        .editorial-back-btn:hover {
-          color: var(--blog-fg);
-          transform: translateX(-3px);
         }
 
         .editorial-main-grid {
@@ -696,55 +913,108 @@ export default function EditorialBlog({
           display: none !important;
         }
 
-        /* Bottom Nav inside Reader */
+        /* ── PREVIOUS & NEXT BLOG NAVIGATION (TIGHT, CLEAN, PROPORTIONATE) ── */
         .editorial-bottom-nav {
-          margin-top: 3.5rem;
-          padding-top: 1.8rem;
+          margin-top: 2.2rem;
+          padding-top: 1.4rem;
           border-top: 1px solid var(--blog-border);
           display: flex;
           align-items: center;
           justify-content: space-between;
           width: 100%;
           box-sizing: border-box;
-          gap: 1.5rem;
-        }
-
-        @media (max-width: 860px) {
-          .editorial-bottom-nav {
-            margin-top: 2.5rem;
-            padding-top: 1.4rem;
-          }
-        }
-
-        .next-post-btn {
-          cursor: pointer;
-          color: var(--blog-fg);
-          font-size: 0.95rem;
-          font-weight: 400;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.6rem;
-          transition: opacity 0.2s ease, transform 0.2s ease;
-          padding: 0.4rem 0;
-          text-align: right;
-          margin-left: auto;
-        }
-
-        .next-post-btn:hover {
-          opacity: 0.5;
-          transform: translateX(4px);
+          gap: 1.25rem;
         }
 
         @media (max-width: 600px) {
-          .next-post-btn {
-            font-size: 0.88rem;
+          .editorial-bottom-nav {
+            margin-top: 1.8rem;
+            padding-top: 1.1rem;
+            gap: 0.85rem;
           }
         }
 
-        /* ── MINIMALIST FOOTER ── */
+        .editorial-nav-placeholder {
+          flex: 1;
+        }
+
+        .editorial-nav-btn {
+          cursor: pointer;
+          color: var(--blog-fg);
+          display: inline-flex;
+          align-items: center;
+          gap: 0.65rem;
+          padding: 0.4rem 0;
+          transition: opacity 0.2s ease, transform 0.2s ease;
+          max-width: 48%;
+          text-align: left;
+        }
+
+        .editorial-nav-btn.next-btn {
+          text-align: right;
+          margin-left: auto;
+          justify-content: flex-end;
+        }
+
+        .editorial-nav-btn:hover {
+          opacity: 0.6;
+        }
+
+        .editorial-nav-btn.prev-btn:hover {
+          transform: translateX(-3px);
+        }
+
+        .editorial-nav-btn.next-btn:hover {
+          transform: translateX(3px);
+        }
+
+        .nav-arrow {
+          font-size: 1.1rem;
+          line-height: 1;
+          opacity: 0.6;
+          flex-shrink: 0;
+        }
+
+        .nav-label {
+          display: flex;
+          flex-direction: column;
+          gap: 0.15rem;
+          overflow: hidden;
+        }
+
+        .nav-label.text-right {
+          align-items: flex-end;
+        }
+
+        .nav-dir {
+          font-size: 0.72rem;
+          color: var(--blog-fg-muted);
+          letter-spacing: 0.05em;
+          text-transform: lowercase;
+        }
+
+        .nav-title {
+          font-size: 0.88rem;
+          font-weight: 500;
+          color: var(--blog-fg);
+          line-height: 1.25;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 100%;
+        }
+
+        @media (max-width: 600px) {
+          .nav-title {
+            font-size: 0.82rem;
+            max-width: 140px;
+          }
+        }
+
+        /* ── MINIMALIST FOOTER: TIGHTLY ATTACHED UNDER NAVIGATION (NO BIG GAP) ── */
         .editorial-footer {
-          margin-top: 5rem;
-          padding-top: 2rem;
+          margin-top: 1.8rem;
+          padding-top: 1.2rem;
           border-top: 1px solid var(--blog-border);
           display: flex;
           align-items: center;
@@ -755,8 +1025,8 @@ export default function EditorialBlog({
 
         @media (max-width: 600px) {
           .editorial-footer {
-            margin-top: 3.5rem;
-            padding-top: 1.5rem;
+            margin-top: 1.35rem;
+            padding-top: 1rem;
           }
         }
 
@@ -795,15 +1065,19 @@ export default function EditorialBlog({
 
       {/* ── TOP NAVBAR: ALWAYS VISIBLE EVERYWHERE (FIXED AT TOP) ── */}
       <header className="editorial-navbar">
-        {/* Left: works and ask */}
-        <div className="nav-left-links">
-          <Link href="/work" className="nav-text-link">
-            works
-          </Link>
-          <Link href="/ask" className="nav-text-link">
-            ask
-          </Link>
-        </div>
+        {/* Left: Minimal 2-Bar Toggle Button (Opens Sidebar Menu) */}
+        <button
+          type="button"
+          className="nav-toggle-btn"
+          onClick={() => setIsMenuOpen(true)}
+          aria-label="open menu"
+          title="menu"
+        >
+          <span className="toggle-icon-wrap">
+            <span className="toggle-line" />
+            <span className="toggle-line" />
+          </span>
+        </button>
 
         {/* Center: brand ivan ─── affriandi (Clicking takes user back to Daftar Isi) */}
         <Link
@@ -844,6 +1118,146 @@ export default function EditorialBlog({
         </div>
       </header>
 
+      {/* ── MINIMALIST FULLSCREEN SIDEBAR MENU ── */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            key="editorial-menu-overlay"
+            initial={{ y: "-100%" }}
+            animate={{ y: "0%" }}
+            exit={{ y: "-100%" }}
+            transition={{
+              duration: 0.42,
+              ease: [0.16, 1, 0.3, 1], // iOS fluid spring curve
+            }}
+            className="editorial-menu-overlay"
+          >
+            <div className="menu-inner-container">
+              {/* Top Bar: works & ask on Left, Close Button on Right */}
+              <div className="menu-top-bar">
+                <div className="menu-top-links">
+                  <Link
+                    href="/work"
+                    className="menu-top-link"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    works
+                  </Link>
+                  <Link
+                    href="/ask"
+                    className="menu-top-link"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    ask
+                  </Link>
+                </div>
+
+                <button
+                  type="button"
+                  className="menu-close-btn"
+                  onClick={() => setIsMenuOpen(false)}
+                  aria-label="close menu"
+                >
+                  <span>close</span>
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Center: List of Writings / Daftar Isi */}
+              <div className="menu-content-center">
+                <div className="menu-articles-list">
+                  {sortedPosts.map((p, idx) => {
+                    const isActive = p.id === activePostId;
+                    const formattedNum = String(idx + 1).padStart(2, "0");
+                    const cleanTitle = cleanChapterTitle(p.title);
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        className={`menu-article-item ${isActive ? "active-item" : ""}`}
+                        onClick={() => handleSelectPost(p.id)}
+                      >
+                        <span className="menu-article-num">{formattedNum}</span>
+                        <span className="menu-article-title">{cleanTitle}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Bottom Bar: Social Icons on Left, Copyright on Right */}
+              <div className="menu-bottom-bar">
+                <div className="menu-social-icons">
+                  <a
+                    href="https://instagram.com/ivanaffriandi"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="menu-icon-btn"
+                    aria-label="instagram"
+                  >
+                    <svg
+                      width="17"
+                      height="17"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                    </svg>
+                  </a>
+                  <a
+                    href="https://x.com/ivanaffriandi"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="menu-icon-btn"
+                    aria-label="x"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                  </a>
+                  <a
+                    href="mailto:ivan@ivanaffriandi.com"
+                    className="menu-icon-btn"
+                    aria-label="email"
+                  >
+                    <svg
+                      width="17"
+                      height="17"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect x="2" y="4" width="20" height="16" rx="2" />
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                    </svg>
+                  </a>
+                </div>
+                <span className="menu-copyright">© 2026 ivan affriandi</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* ── PAGE BODY ── */}
       <div className="editorial-page-body">
         {/* ── VIEW 1: HOMEPAGE DAFTAR ISI (TABLE OF CONTENTS) ── */}
@@ -867,7 +1281,7 @@ export default function EditorialBlog({
               })}
             </div>
 
-            {/* Minimalist Footer */}
+            {/* Footnote / Footer: Snug and balanced */}
             <footer className="editorial-footer">
               <div className="footer-social-icons">
                 <a
@@ -931,21 +1345,9 @@ export default function EditorialBlog({
           </div>
         )}
 
-        {/* ── VIEW 2: ARTICLE READER VIEW ── */}
+        {/* ── VIEW 2: ARTICLE READER VIEW (NO TOP BACK BUTTON, CLEAN PREV/NEXT, SNUG FOOTNOTE) ── */}
         {activePostId && currentPost && (
           <article className="editorial-content-wrap">
-            {/* Top Bar inside reader: back to daftar isi */}
-            <div className="editorial-reader-top-bar">
-              <button
-                type="button"
-                className="editorial-back-btn"
-                onClick={handleGoHome}
-              >
-                <span>←</span>
-                <span>daftar isi</span>
-              </button>
-            </div>
-
             <div className="editorial-main-grid">
               {/* LEFT COLUMN: TITLE + (PHOTO UNDER TITLE IF POST HAS ONE, B&W MINIMALIST) */}
               <div className="editorial-left-col">
@@ -975,92 +1377,104 @@ export default function EditorialBlog({
                   dangerouslySetInnerHTML={{ __html: cleanHtml(currentPost.content) }}
                 />
 
-                {/* Bottom Navigation */}
+                {/* Bottom Navigation: Previous & Next Blog */}
                 <div className="editorial-bottom-nav">
-                  <button
-                    type="button"
-                    className="editorial-back-btn"
-                    onClick={handleGoHome}
-                  >
-                    <span>←</span>
-                    <span>daftar isi</span>
-                  </button>
-
-                  {nextPost && (
+                  {prevPost ? (
                     <button
                       type="button"
-                      className="next-post-btn"
+                      className="editorial-nav-btn prev-btn"
+                      onClick={() => handleSelectPost(prevPost.id)}
+                    >
+                      <span className="nav-arrow">←</span>
+                      <span className="nav-label">
+                        <span className="nav-dir">previous</span>
+                        <span className="nav-title">{cleanChapterTitle(prevPost.title)}</span>
+                      </span>
+                    </button>
+                  ) : (
+                    <div className="editorial-nav-placeholder" />
+                  )}
+
+                  {nextPost ? (
+                    <button
+                      type="button"
+                      className="editorial-nav-btn next-btn"
                       onClick={() => handleSelectPost(nextPost.id)}
                     >
-                      <span>next: {cleanChapterTitle(nextPost.title)}</span>
-                      <span>→</span>
+                      <span className="nav-label text-right">
+                        <span className="nav-dir">next</span>
+                        <span className="nav-title">{cleanChapterTitle(nextPost.title)}</span>
+                      </span>
+                      <span className="nav-arrow">→</span>
                     </button>
+                  ) : (
+                    <div className="editorial-nav-placeholder" />
                   )}
                 </div>
+
+                {/* Footnote / Footer: Placed tightly right below nav without big gap */}
+                <footer className="editorial-footer">
+                  <div className="footer-social-icons">
+                    <a
+                      href="https://instagram.com/ivanaffriandi"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-icon-btn"
+                      aria-label="instagram"
+                      title="instagram"
+                    >
+                      <svg
+                        width="17"
+                        height="17"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                      </svg>
+                    </a>
+                    <a
+                      href="https://x.com/ivanaffriandi"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-icon-btn"
+                      aria-label="x (twitter)"
+                      title="x (twitter)"
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                      </svg>
+                    </a>
+                    <a
+                      href="mailto:ivan@ivanaffriandi.com"
+                      className="footer-icon-btn"
+                      aria-label="email"
+                      title="email"
+                    >
+                      <svg
+                        width="17"
+                        height="17"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect x="2" y="4" width="20" height="16" rx="2" />
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                      </svg>
+                    </a>
+                  </div>
+                  <span className="footer-copyright">© 2026 ivan affriandi</span>
+                </footer>
               </div>
             </div>
-
-            {/* Footer */}
-            <footer className="editorial-footer">
-              <div className="footer-social-icons">
-                <a
-                  href="https://instagram.com/ivanaffriandi"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="footer-icon-btn"
-                  aria-label="instagram"
-                  title="instagram"
-                >
-                  <svg
-                    width="17"
-                    height="17"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                  </svg>
-                </a>
-                <a
-                  href="https://x.com/ivanaffriandi"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="footer-icon-btn"
-                  aria-label="x (twitter)"
-                  title="x (twitter)"
-                >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                  </svg>
-                </a>
-                <a
-                  href="mailto:ivan@ivanaffriandi.com"
-                  className="footer-icon-btn"
-                  aria-label="email"
-                  title="email"
-                >
-                  <svg
-                    width="17"
-                    height="17"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="2" y="4" width="20" height="16" rx="2" />
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                  </svg>
-                </a>
-              </div>
-              <span className="footer-copyright">© 2026 ivan affriandi</span>
-            </footer>
           </article>
         )}
       </div>
