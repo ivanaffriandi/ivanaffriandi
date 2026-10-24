@@ -139,30 +139,56 @@ async function fetchMediumPosts(): Promise<BlogPost[]> {
   return [];
 }
 
+const RTDB_BLOGGER_URL = "https://ivan-affriandi-default-rtdb.asia-southeast1.firebasedatabase.app/blogger_posts.json";
+
 async function fetchBloggerPosts(): Promise<BlogPost[]> {
-  if (!BLOGGER_BLOG_ID || !BLOGGER_API_KEY) return [];
-
-  try {
-    const res = await fetchWithTimeout(
-      `${BLOGGER_API_URL}/${BLOGGER_BLOG_ID}/posts?key=${BLOGGER_API_KEY}&fetchImages=true`,
-      { next: { revalidate: 60 } }
-    );
-    if (!res.ok) throw new Error(`Blogger API HTTP ${res.status}`);
-
-    const data = await res.json();
-    return (data.items || []).map((item: any) => ({
-      id: item.id,
-      title: item.title,
-      content: item.content,
-      published: item.published,
-      url: item.url,
-      labels: item.labels || [],
-      source: "blogger" as const,
-    }));
-  } catch (err) {
-    console.warn("Blogger fetch failed:", (err as Error)?.message ?? err);
-    return [];
+  if (BLOGGER_BLOG_ID && BLOGGER_API_KEY) {
+    try {
+      const res = await fetchWithTimeout(
+        `${BLOGGER_API_URL}/${BLOGGER_BLOG_ID}/posts?key=${BLOGGER_API_KEY}&fetchImages=true`,
+        { next: { revalidate: 60 } }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        const items = (data.items || []).map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          content: item.content,
+          published: item.published,
+          url: item.url,
+          labels: item.labels || [],
+          source: "blogger" as const,
+        }));
+        if (items.length > 0) return items;
+      }
+    } catch (err) {
+      console.warn("Blogger fetch failed:", (err as Error)?.message ?? err);
+    }
   }
+
+  // Fallback to persistent Firebase RTDB blogger_posts backup
+  try {
+    const res = await fetchWithTimeout(RTDB_BLOGGER_URL, { cache: "no-store" }, 7000);
+    if (res.ok) {
+      const data = await res.json();
+      if (data) {
+        const list = Array.isArray(data) ? data : Object.values(data);
+        return list.map((item: any) => ({
+          id: String(item.id),
+          title: item.title,
+          content: item.content || "",
+          published: item.published || new Date().toISOString(),
+          url: item.url || "#",
+          labels: item.labels || [],
+          source: "blogger" as const,
+        }));
+      }
+    }
+  } catch (err) {
+    console.warn("RTDB blogger_posts fetch failed:", (err as Error)?.message ?? err);
+  }
+
+  return [];
 }
 
 export async function getPosts(): Promise<BlogPost[]> {

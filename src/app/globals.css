@@ -125,7 +125,19 @@ html, body {
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
+
+*::-webkit-scrollbar,
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+}
+
 *:focus {
   outline: none !important;
 }
@@ -237,7 +249,13 @@ body:has([class*="fullDesktopViewport"]) main,
 html:has([class*="admin-root-view"]),
 body:has([class*="admin-root-view"]),
 body:has([class*="admin-root-view"]) .layout-wrapper,
-body:has([class*="admin-root-view"]) .content-wrapper {
+body:has([class*="admin-root-view"]) .content-wrapper,
+html:has(.editorial-canvas),
+body:has(.editorial-canvas),
+body:has(.editorial-canvas) .layout-wrapper,
+body:has(.editorial-canvas) .content-wrapper,
+body:has(.editorial-canvas) main,
+body:has(.editorial-canvas) main > div {
   padding: 0 !important;
   margin: 0 !important;
   max-width: 100% !important;
@@ -245,6 +263,7 @@ body:has([class*="admin-root-view"]) .content-wrapper {
   min-height: 100vh !important;
   background: transparent !important;
   background-color: transparent !important;
+  overflow-x: hidden !important;
 }
 
 html:has(.about-root),
