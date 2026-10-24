@@ -622,6 +622,8 @@ export default function EditorialBlog({
           width: 100%;
           max-width: 100%;
           min-width: 0;
+          min-height: auto !important;
+          height: auto !important;
           box-sizing: border-box;
         }
 
@@ -685,6 +687,7 @@ export default function EditorialBlog({
           width: 100%;
           max-width: 100%;
           min-width: 0;
+          min-height: auto !important;
           box-sizing: border-box;
         }
 
@@ -1009,7 +1012,7 @@ export default function EditorialBlog({
 
       {/* ── MAIN CONTENT (2 COLUMNS ON DESKTOP, CLEAN RESPONSIVE STACK ON MOBILE) ── */}
       {currentPost && (
-        <main className="editorial-content-wrap">
+        <article className="editorial-content-wrap">
           {/* LEFT COLUMN: TITLE + (PHOTO UNDER TITLE IF POST HAS ONE, B&W MINIMALIST) */}
           <div className="editorial-left-col">
             <h1 className="editorial-title">{currentPost.title}</h1>
@@ -1052,7 +1055,7 @@ export default function EditorialBlog({
               </div>
             )}
           </div>
-        </main>
+        </article>
       )}
     </div>
   );

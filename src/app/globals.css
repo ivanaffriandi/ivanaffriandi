@@ -254,8 +254,7 @@ html:has(.editorial-canvas),
 body:has(.editorial-canvas),
 body:has(.editorial-canvas) .layout-wrapper,
 body:has(.editorial-canvas) .content-wrapper,
-body:has(.editorial-canvas) main,
-body:has(.editorial-canvas) main > div {
+body:has(.editorial-canvas) .content-wrapper > .editorial-canvas {
   padding: 0 !important;
   margin: 0 !important;
   max-width: 100% !important;
