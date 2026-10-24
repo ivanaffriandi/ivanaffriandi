@@ -16,6 +16,7 @@ import { AudioProvider } from "@/contexts/AudioContext";
 
 import "./globals.css";
 import "./footer.css";
+import "./editorial.css";
 import fs from "fs";
 import path from "path";
 

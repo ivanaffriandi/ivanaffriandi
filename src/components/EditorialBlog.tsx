@@ -545,7 +545,7 @@ export default function EditorialBlog({
         }
       `}</style>
 
-      <style jsx>{`
+      <style jsx global>{`
         .editorial-canvas {
           min-height: 100vh;
           width: 100%;
@@ -713,26 +713,26 @@ export default function EditorialBlog({
 
         @media (max-width: 860px) {
           .editorial-toc-wrap {
-            padding: 0.6rem 1.75rem calc(2rem + env(safe-area-inset-bottom, 0px)) 1.75rem;
-            min-height: calc(100vh - 5rem - env(safe-area-inset-top, 0px));
+            padding: 1.25rem 1.85rem calc(3rem + env(safe-area-inset-bottom, 0px)) 1.85rem;
+            min-height: calc(100vh - 5.2rem - env(safe-area-inset-top, 0px));
           }
         }
 
         /* ── COMPACT, SLEEK INSTAGRAM FILMSTRIP (ALL 45 PHOTOS, HITAM PUTIH, SCROLLABLE) ── */
         .editorial-ig-strip-wrap {
           width: 100%;
-          margin-top: 0.4rem;
-          margin-bottom: 3.2rem;
+          margin-top: 0.8rem;
+          margin-bottom: 2.8rem;
           position: relative;
         }
 
         @media (max-width: 860px) {
           .editorial-ig-strip-wrap {
-            margin-top: 0.4rem;
-            margin-bottom: 2.8rem;
-            margin-left: -1.75rem;
-            margin-right: -1.75rem;
-            width: calc(100% + 3.5rem);
+            margin-top: 0.8rem;
+            margin-bottom: 2.4rem;
+            margin-left: 0;
+            margin-right: 0;
+            width: 100%;
           }
         }
 
@@ -751,9 +751,9 @@ export default function EditorialBlog({
 
         @media (max-width: 860px) {
           .editorial-ig-strip {
-            padding-left: 1.75rem;
-            padding-right: 1.75rem;
-            gap: 0.7rem;
+            padding-left: 0;
+            padding-right: 0;
+            gap: 0.75rem;
           }
         }
 
@@ -893,8 +893,8 @@ export default function EditorialBlog({
 
         @media (max-width: 860px) {
           .editorial-content-wrap {
-            padding: 1.2rem 1.75rem calc(3.5rem + env(safe-area-inset-bottom, 0px)) 1.75rem;
-            min-height: calc(100vh - 4.8rem - env(safe-area-inset-top, 0px));
+            padding: 1.25rem 1.85rem calc(3.5rem + env(safe-area-inset-bottom, 0px)) 1.85rem;
+            min-height: calc(100vh - 5.2rem - env(safe-area-inset-top, 0px));
           }
         }
 
