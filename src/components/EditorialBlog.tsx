@@ -20,6 +20,28 @@ interface EditorialBlogProps {
   initialComments?: any[];
 }
 
+interface InstagramPhoto {
+  id: string;
+  url: string;
+  permalink?: string;
+}
+
+// Initial curated Instagram moments from public/images/moments for instant zero-lag rendering
+const INITIAL_IG_PHOTOS: InstagramPhoto[] = [
+  { id: "ig_1", url: "/images/moments/489831318_18060819218098563_9042912996466521959_n..jpg", permalink: "https://instagram.com/ivanaffriandi" },
+  { id: "ig_2", url: "/images/moments/489981712_18060820535098563_7970226616275307425_n..jpg", permalink: "https://instagram.com/ivanaffriandi" },
+  { id: "ig_3", url: "/images/moments/490264363_18060820598098563_7427301390244621778_n..jpg", permalink: "https://instagram.com/ivanaffriandi" },
+  { id: "ig_4", url: "/images/moments/490289674_18060831101098563_7940423172567879925_n..jpg", permalink: "https://instagram.com/ivanaffriandi" },
+  { id: "ig_5", url: "/images/moments/490362933_18060828515098563_4365648610343813957_n..jpg", permalink: "https://instagram.com/ivanaffriandi" },
+  { id: "ig_6", url: "/images/moments/491109336_18060820190098563_779269879364280171_n..jpg", permalink: "https://instagram.com/ivanaffriandi" },
+  { id: "ig_7", url: "/images/moments/490307779_18060821810098563_6672692916374320684_n..jpg", permalink: "https://instagram.com/ivanaffriandi" },
+  { id: "ig_8", url: "/images/moments/490494934_18060829358098563_6690275826446676296_n..jpg", permalink: "https://instagram.com/ivanaffriandi" },
+  { id: "ig_9", url: "/images/moments/504450417_18066122246098563_6518676063245732615_n..jpg", permalink: "https://instagram.com/ivanaffriandi" },
+  { id: "ig_10", url: "/images/moments/504834828_18066125465098563_815024945322165390_n..jpg", permalink: "https://instagram.com/ivanaffriandi" },
+  { id: "ig_11", url: "/images/moments/509414434_18067394924098563_6080711151400069719_n..jpg", permalink: "https://instagram.com/ivanaffriandi" },
+  { id: "ig_12", url: "/images/moments/515043142_18068610035098563_4316722369364790783_n..jpg", permalink: "https://instagram.com/ivanaffriandi" },
+];
+
 function extractFirstImage(html: string): string | null {
   if (!html) return null;
   const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
@@ -69,6 +91,35 @@ export default function EditorialBlog({
   });
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [instagramPhotos, setInstagramPhotos] = useState<InstagramPhoto[]>(INITIAL_IG_PHOTOS);
+
+  // Fetch live Instagram media from /api/instagram
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/instagram")
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted && data?.media && Array.isArray(data.media) && data.media.length > 0) {
+          const liveMedia: InstagramPhoto[] = data.media
+            .map((m: any) => ({
+              id: String(m.id),
+              url: m.media_url || m.thumbnail_url,
+              permalink: m.permalink || "https://instagram.com/ivanaffriandi",
+            }))
+            .filter((m: any) => Boolean(m.url));
+          if (liveMedia.length > 0) {
+            setInstagramPhotos(liveMedia);
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn("[Instagram] Using initial fallback photos:", err);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Sync if initialPost changes or URL has post ID
   useEffect(() => {
@@ -130,9 +181,9 @@ export default function EditorialBlog({
     const currentIndex = sortedPosts.findIndex((p) => p.id === currentPost.id);
     if (currentIndex === -1) return { prevPost: null, nextPost: null };
 
-    // Previous = newer post (index - 1)
+    // Previous = newer post in list (index - 1)
     const prev = currentIndex > 0 ? sortedPosts[currentIndex - 1] : null;
-    // Next = older post (index + 1)
+    // Next = older post in list (index + 1)
     const next = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
 
     return { prevPost: prev, nextPost: next };
@@ -212,7 +263,7 @@ export default function EditorialBlog({
           --blog-hover: rgba(0, 0, 0, 0.04);
         }
 
-        /* ── COMPLETE SCROLLER SUPPRESSION: JANGAN ADA INDIKATOR SCROLLER SAMA SEKALI ── */
+        /* ── COMPLETE SCROLLER SUPPRESSION ── */
         * {
           scrollbar-width: none !important;
           -ms-overflow-style: none !important;
@@ -229,7 +280,7 @@ export default function EditorialBlog({
           background: transparent !important;
         }
 
-        /* ── SEMUA HURUF KECIL DI SELURUH BLOG WEB SESUAI PERMINTAAN USER ── */
+        /* ── ALL LOWERCASE ACROSS BLOG WEB ── */
         .editorial-canvas,
         .editorial-canvas *,
         .editorial-menu-overlay,
@@ -277,7 +328,7 @@ export default function EditorialBlog({
           color: inherit;
         }
 
-        /* ── MINIMALIST FULLSCREEN MENU OVERLAY ── */
+        /* ── MINIMALIST FULLSCREEN SIDEBAR MENU ── */
         .editorial-menu-overlay {
           position: fixed !important;
           inset: 0 !important;
@@ -632,7 +683,6 @@ export default function EditorialBlog({
         /* ── PAGE BODY WITH TOP OFFSET FOR FIXED NAVBAR ── */
         .editorial-page-body {
           width: 100%;
-          min-height: 100vh;
           display: flex;
           flex-direction: column;
           padding-top: calc(5.2rem + env(safe-area-inset-top, 0px));
@@ -650,30 +700,112 @@ export default function EditorialBlog({
           max-width: 820px;
           width: 100%;
           margin: 0 auto;
-          padding: 2.5rem 2rem 4rem 2rem;
+          padding: 2rem 2rem 3rem 2rem;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
-          flex: 1;
         }
 
         @media (max-width: 860px) {
           .editorial-toc-wrap {
-            padding: 1.8rem 1.25rem 3rem 1.25rem;
+            padding: 1.4rem 1.25rem 2.5rem 1.25rem;
           }
         }
 
+        /* ── HORIZONTAL INSTAGRAM PHOTO STRIP (HITAM PUTIH, SCROLLABLE) ── */
+        .editorial-ig-strip-wrap {
+          width: 100%;
+          margin-bottom: 2.6rem;
+          position: relative;
+        }
+
+        @media (max-width: 860px) {
+          .editorial-ig-strip-wrap {
+            margin-bottom: 2rem;
+            margin-left: -1.25rem;
+            margin-right: -1.25rem;
+            width: calc(100% + 2.5rem);
+          }
+        }
+
+        .editorial-ig-strip {
+          display: flex;
+          align-items: center;
+          gap: 0.9rem;
+          overflow-x: auto;
+          overflow-y: hidden;
+          -webkit-overflow-scrolling: touch;
+          scroll-snap-type: x mandatory;
+          padding: 0.2rem 0 0.5rem 0;
+          scrollbar-width: none;
+        }
+
+        @media (max-width: 860px) {
+          .editorial-ig-strip {
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
+            gap: 0.75rem;
+          }
+        }
+
+        .editorial-ig-strip::-webkit-scrollbar {
+          display: none;
+        }
+
+        .editorial-ig-card {
+          flex: 0 0 135px;
+          aspect-ratio: 4 / 5;
+          overflow: hidden;
+          background-color: var(--blog-img-bg);
+          scroll-snap-align: start;
+          display: block;
+          text-decoration: none;
+          position: relative;
+          box-sizing: border-box;
+          border-radius: 2px;
+          transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+        }
+
+        @media (max-width: 600px) {
+          .editorial-ig-card {
+            flex: 0 0 110px;
+            aspect-ratio: 4 / 5;
+          }
+        }
+
+        .editorial-ig-card:hover {
+          transform: translateY(-2px);
+        }
+
+        .editorial-ig-card:active {
+          transform: scale(0.97);
+        }
+
+        .editorial-ig-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+          filter: grayscale(100%) contrast(106%);
+          transition: filter 0.35s ease, transform 0.35s ease;
+        }
+
+        .editorial-ig-card:hover .editorial-ig-img {
+          filter: grayscale(0%);
+          transform: scale(1.05);
+        }
+
+        /* ── DAFTAR ISI LIST ── */
         .editorial-toc-list {
           display: flex;
           flex-direction: column;
-          gap: 2.2rem;
+          gap: 2rem;
           width: 100%;
-          margin-bottom: auto;
         }
 
         @media (max-width: 860px) {
           .editorial-toc-list {
-            gap: 1.85rem;
+            gap: 1.65rem;
           }
         }
 
@@ -735,16 +867,15 @@ export default function EditorialBlog({
           max-width: 1200px;
           width: 100%;
           margin: 0 auto;
-          padding: 1.5rem 4rem 4rem 4rem;
+          padding: 1.5rem 4rem 3.5rem 4rem;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
-          flex: 1;
         }
 
         @media (max-width: 860px) {
           .editorial-content-wrap {
-            padding: 1rem 1.25rem 3rem 1.25rem;
+            padding: 1rem 1.25rem 2.5rem 1.25rem;
           }
         }
 
@@ -913,7 +1044,7 @@ export default function EditorialBlog({
           display: none !important;
         }
 
-        /* ── PREVIOUS & NEXT BLOG NAVIGATION (TIGHT, CLEAN, PROPORTIONATE) ── */
+        /* ── PREVIOUS & NEXT BLOG NAVIGATION ── */
         .editorial-bottom-nav {
           margin-top: 2.2rem;
           padding-top: 1.4rem;
@@ -1011,9 +1142,9 @@ export default function EditorialBlog({
           }
         }
 
-        /* ── MINIMALIST FOOTER: TIGHTLY ATTACHED UNDER NAVIGATION (NO BIG GAP) ── */
+        /* ── MINIMALIST FOOTNOTE / FOOTER: TIGHT & NGEPAS (NO ARTIFICIAL GAP) ── */
         .editorial-footer {
-          margin-top: 1.8rem;
+          margin-top: 2.4rem;
           padding-top: 1.2rem;
           border-top: 1px solid var(--blog-border);
           display: flex;
@@ -1025,7 +1156,7 @@ export default function EditorialBlog({
 
         @media (max-width: 600px) {
           .editorial-footer {
-            margin-top: 1.35rem;
+            margin-top: 2rem;
             padding-top: 1rem;
           }
         }
@@ -1263,6 +1394,33 @@ export default function EditorialBlog({
         {/* ── VIEW 1: HOMEPAGE DAFTAR ISI (TABLE OF CONTENTS) ── */}
         {!activePostId && (
           <div className="editorial-toc-wrap">
+            {/* ── INSTAGRAM HORIZONTAL PHOTO STRIP (HITAM PUTIH, BISA DISCROLL) ── */}
+            {instagramPhotos.length > 0 && (
+              <div className="editorial-ig-strip-wrap">
+                <div className="editorial-ig-strip">
+                  {instagramPhotos.map((photo, i) => (
+                    <a
+                      key={photo.id || i}
+                      href={photo.permalink || "https://instagram.com/ivanaffriandi"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="editorial-ig-card"
+                      aria-label="instagram photo"
+                      title="instagram @ivanaffriandi"
+                    >
+                      <img
+                        src={photo.url}
+                        alt="instagram moment"
+                        className="editorial-ig-img"
+                        loading="lazy"
+                      />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ── DAFTAR ISI LIST ── */}
             <div className="editorial-toc-list">
               {sortedPosts.map((post, idx) => {
                 const formattedNum = String(idx + 1).padStart(2, "0");
@@ -1281,7 +1439,7 @@ export default function EditorialBlog({
               })}
             </div>
 
-            {/* Footnote / Footer: Snug and balanced */}
+            {/* Footnote / Footer: Snug and "ngepas" directly below content */}
             <footer className="editorial-footer">
               <div className="footer-social-icons">
                 <a
