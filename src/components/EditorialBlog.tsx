@@ -580,7 +580,7 @@ export default function EditorialBlog({
 
         @media (max-width: 860px) {
           .editorial-navbar {
-            padding: calc(0.55rem + env(safe-area-inset-top, 0px)) 1.25rem 0.55rem 1.25rem;
+            padding: calc(0.75rem + env(safe-area-inset-top, 0px)) 1.75rem 0.75rem 1.75rem;
           }
         }
 
@@ -682,76 +682,78 @@ export default function EditorialBlog({
           transform: scale(0.92);
         }
 
-        /* ── PROPER PAGE BODY TOP OFFSET (SAFE FROM NAVBAR OVERLAP) ── */
+        /* ── PROPER PAGE BODY TOP OFFSET (GENEROUS SAFE CLEARANCE UNDER NAVBAR) ── */
         .editorial-page-body {
           width: 100%;
           display: flex;
           flex-direction: column;
           flex: 1;
-          padding-top: calc(3.6rem + env(safe-area-inset-top, 0px));
+          padding-top: calc(5.2rem + env(safe-area-inset-top, 0px));
           box-sizing: border-box;
         }
 
         @media (max-width: 860px) {
           .editorial-page-body {
-            padding-top: calc(3.4rem + env(safe-area-inset-top, 0px));
+            padding-top: calc(5rem + env(safe-area-inset-top, 0px));
           }
         }
 
         /* ── HOMEPAGE DAFTAR ISI (TABLE OF CONTENTS) ── */
         .editorial-toc-wrap {
-          max-width: 820px;
+          max-width: 780px;
           width: 100%;
           margin: 0 auto;
-          padding: 1.5rem 2rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) 2rem;
+          padding: 1rem 3rem calc(2.5rem + env(safe-area-inset-bottom, 0px)) 3rem;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
           flex: 1;
-          min-height: calc(100vh - 3.6rem - env(safe-area-inset-top, 0px));
+          min-height: calc(100vh - 5.2rem - env(safe-area-inset-top, 0px));
         }
 
         @media (max-width: 860px) {
           .editorial-toc-wrap {
-            padding: 1.25rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom, 0px)) 1.25rem;
-            min-height: calc(100vh - 3.4rem - env(safe-area-inset-top, 0px));
+            padding: 0.6rem 1.75rem calc(2rem + env(safe-area-inset-bottom, 0px)) 1.75rem;
+            min-height: calc(100vh - 5rem - env(safe-area-inset-top, 0px));
           }
         }
 
         /* ── COMPACT, SLEEK INSTAGRAM FILMSTRIP (ALL 45 PHOTOS, HITAM PUTIH, SCROLLABLE) ── */
         .editorial-ig-strip-wrap {
           width: 100%;
-          margin-bottom: 2rem;
+          margin-top: 0.4rem;
+          margin-bottom: 3.2rem;
           position: relative;
         }
 
         @media (max-width: 860px) {
           .editorial-ig-strip-wrap {
-            margin-bottom: 1.5rem;
-            margin-left: -1.25rem;
-            margin-right: -1.25rem;
-            width: calc(100% + 2.5rem);
+            margin-top: 0.4rem;
+            margin-bottom: 2.8rem;
+            margin-left: -1.75rem;
+            margin-right: -1.75rem;
+            width: calc(100% + 3.5rem);
           }
         }
 
         .editorial-ig-strip {
           display: flex;
           align-items: center;
-          gap: 0.65rem;
+          gap: 0.8rem;
           overflow-x: auto;
           overflow-y: hidden;
           -webkit-overflow-scrolling: touch;
           scroll-snap-type: x mandatory;
-          padding: 0.2rem 0 0.4rem 0;
+          padding: 0.25rem 0 0.5rem 0;
           scrollbar-width: none;
           -ms-overflow-style: none;
         }
 
         @media (max-width: 860px) {
           .editorial-ig-strip {
-            padding-left: 1.25rem;
-            padding-right: 1.25rem;
-            gap: 0.55rem;
+            padding-left: 1.75rem;
+            padding-right: 1.75rem;
+            gap: 0.7rem;
           }
         }
 
@@ -878,21 +880,21 @@ export default function EditorialBlog({
 
         /* ── ARTICLE READER LAYOUT (COMFORTABLE BREATHING ROOM UNDER NAVBAR) ── */
         .editorial-content-wrap {
-          max-width: 1200px;
+          max-width: 980px;
           width: 100%;
           margin: 0 auto;
-          padding: 2.8rem 4rem calc(2.5rem + env(safe-area-inset-bottom, 0px)) 4rem;
+          padding: 1.8rem 3.5rem calc(4rem + env(safe-area-inset-bottom, 0px)) 3.5rem;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
           flex: 1;
-          min-height: calc(100vh - 3.6rem - env(safe-area-inset-top, 0px));
+          min-height: calc(100vh - 5.2rem - env(safe-area-inset-top, 0px));
         }
 
         @media (max-width: 860px) {
           .editorial-content-wrap {
-            padding: 2.2rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) 1.25rem;
-            min-height: calc(100vh - 3.4rem - env(safe-area-inset-top, 0px));
+            padding: 1.2rem 1.75rem calc(3.5rem + env(safe-area-inset-bottom, 0px)) 1.75rem;
+            min-height: calc(100vh - 4.8rem - env(safe-area-inset-top, 0px));
           }
         }
 
@@ -908,7 +910,7 @@ export default function EditorialBlog({
           .editorial-main-grid {
             display: flex !important;
             flex-direction: column !important;
-            gap: 1.25rem !important;
+            gap: 1.5rem !important;
           }
         }
 
@@ -927,9 +929,9 @@ export default function EditorialBlog({
         .editorial-title {
           font-size: clamp(1.85rem, 2.7vw, 2.65rem);
           font-weight: 500;
-          line-height: 1.15;
+          line-height: 1.18;
           letter-spacing: -0.03em;
-          margin: 0 0 0.5rem 0;
+          margin: 0.6rem 0 1.8rem 0;
           color: var(--blog-fg);
           width: 100%;
           max-width: 100%;
@@ -940,10 +942,10 @@ export default function EditorialBlog({
 
         @media (max-width: 860px) {
           .editorial-title {
-            font-size: clamp(1.5rem, 5.8vw, 1.85rem);
-            line-height: 1.22;
+            font-size: clamp(1.55rem, 6vw, 1.95rem);
+            line-height: 1.24;
             letter-spacing: -0.025em;
-            margin: 0 0 1rem 0;
+            margin: 0.6rem 0 1.6rem 0;
           }
         }
 
@@ -1063,24 +1065,24 @@ export default function EditorialBlog({
           display: none !important;
         }
 
-        /* ── PREVIOUS & NEXT BLOG NAVIGATION ── */
+        /* ── PREVIOUS & NEXT BLOG NAVIGATION (SPACIOUS SEPARATION) ── */
         .editorial-bottom-nav {
-          margin-top: 2rem;
-          padding-top: 1.2rem;
+          margin-top: 4.5rem;
+          padding-top: 2rem;
           border-top: 1px solid var(--blog-border);
           display: flex;
           align-items: center;
           justify-content: space-between;
           width: 100%;
           box-sizing: border-box;
-          gap: 1.25rem;
+          gap: 1.5rem;
         }
 
         @media (max-width: 600px) {
           .editorial-bottom-nav {
-            margin-top: 1.6rem;
-            padding-top: 1rem;
-            gap: 0.85rem;
+            margin-top: 3.8rem;
+            padding-top: 1.6rem;
+            gap: 1.2rem;
           }
         }
 
@@ -1161,11 +1163,11 @@ export default function EditorialBlog({
           }
         }
 
-        /* ── MINIMALIST FOOTNOTE / FOOTER: TIGHT & NGEPAS (NO ARTIFICIAL BOTTOM GAP) ── */
+        /* ── MINIMALIST FOOTNOTE / FOOTER: SPACIOUS & SNUG ── */
         .editorial-footer {
-          margin-top: 1.8rem;
-          padding-top: 1rem;
-          padding-bottom: calc(0.6rem + env(safe-area-inset-bottom, 0px));
+          margin-top: 2.2rem;
+          padding-top: 1.2rem;
+          padding-bottom: calc(0.8rem + env(safe-area-inset-bottom, 0px));
           border-top: 1px solid var(--blog-border);
           display: flex;
           align-items: center;
@@ -1174,20 +1176,33 @@ export default function EditorialBlog({
           box-sizing: border-box;
         }
 
-        @media (max-width: 600px) {
-          .editorial-footer {
-            margin-top: 1.4rem;
-            padding-top: 0.85rem;
-            padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
-          }
-        }
-
         .editorial-toc-wrap .editorial-footer {
           margin-top: auto !important;
+          padding-top: 2.5rem;
+          padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
         }
 
         .editorial-content-wrap .editorial-footer {
-          margin-top: 2.8rem;
+          margin-top: 3.5rem;
+          padding-top: 1.5rem;
+        }
+
+        @media (max-width: 600px) {
+          .editorial-footer {
+            margin-top: 1.8rem;
+            padding-top: 1rem;
+            padding-bottom: calc(0.8rem + env(safe-area-inset-bottom, 0px));
+          }
+
+          .editorial-toc-wrap .editorial-footer {
+            margin-top: auto !important;
+            padding-top: 2.8rem;
+          }
+
+          .editorial-content-wrap .editorial-footer {
+            margin-top: 3.2rem;
+            padding-top: 1.4rem;
+          }
         }
 
         .footer-social-icons {
