@@ -1968,13 +1968,13 @@ export default function EditorialBlog({
                   </Link>
                 </div>
 
-                {/* Personal Poetic Ethos (Puitis, Metaforik, Easy to Understand) */}
+                {/* Personal Poetic Ethos (In English, Puitis & Metaforik) */}
                 <div className="menu-ethos-section">
                   <p className="menu-ethos-text">
-                    seperti air meniti batu karang,<br />
-                    tak pernah bergegas, namun selalu menemukan jalan.<br />
-                    kita merawat hening di tengah riuh dunia,<br />
-                    sebab yang bermakna tumbuh perlahan.
+                    like water tracing across stone,<br />
+                    never rushed, yet always finding a way.<br />
+                    we tend to stillness in a restless world,<br />
+                    for what holds meaning grows with time.
                   </p>
                   <span className="menu-ethos-meta">
                     <span>ams</span>
@@ -2310,18 +2310,12 @@ export default function EditorialBlog({
               <div className="editorial-left-col">
                 <h1 className="editorial-title">{cleanChapterTitle(activePost.title)}</h1>
 
-                {/* Published & Edited Dates */}
+                {/* Published Date (Clean, without edited text) */}
                 {activePost.published && (
                   <div className="editorial-article-meta">
                     <span className="editorial-article-date">
                       {formatPostDate(activePost.published)}
                     </span>
-                    {activePost.updated &&
-                      formatPostDate(activePost.updated) !== formatPostDate(activePost.published) && (
-                        <span className="editorial-article-updated">
-                          {" "}· edited {formatPostDate(activePost.updated)}
-                        </span>
-                      )}
                   </div>
                 )}
 
