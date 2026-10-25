@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -145,9 +145,13 @@ export default function EditorialBlog({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showIndex, setShowIndex] = useState(false);
   const [typedCount, setTypedCount] = useState(0);
-  const [scrollPercent, setScrollPercent] = useState(0);
   const [instagramPhotos, setInstagramPhotos] = useState<InstagramPhoto[]>(ALL_MOMENTS_PHOTOS);
   const fullMessage = "hi, i'm ivan.";
+
+  const scrollFillRef = useRef<HTMLSpanElement>(null);
+  const targetProgressRef = useRef(0);
+  const currentProgressRef = useRef(0);
+  const rafIdRef = useRef<number | null>(null);
 
   // Animated typing text for homepage hero: "hi, i'm ivan." (smooth, no blinking cursor)
   useEffect(() => {
@@ -164,22 +168,77 @@ export default function EditorialBlog({
     return () => clearInterval(timer);
   }, []);
 
-  // Track scroll percentage for the navbar interactive loading line
+  // Track scroll percentage for the navbar interactive loading line with GPU-accelerated RAF lerp (buttery smooth)
   useEffect(() => {
-    const handleScroll = () => {
+    // If on homepage: immediately lock to 100% full
+    if (!activePost) {
+      targetProgressRef.current = 1;
+      currentProgressRef.current = 1;
+      if (scrollFillRef.current) {
+        scrollFillRef.current.style.transform = "scaleX(1)";
+        scrollFillRef.current.style.width = "100%";
+      }
+      return;
+    }
+
+    // On article page: compute initial progress
+    const calculateProgress = () => {
       const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
       if (scrollHeight > 0) {
-        const current = window.scrollY || document.documentElement.scrollTop || 0;
-        const pct = Math.min(100, Math.max(0, (current / scrollHeight) * 100));
-        setScrollPercent(pct);
+        const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+        return Math.min(1, Math.max(0, scrollTop / scrollHeight));
+      }
+      return 0;
+    };
+
+    const initial = calculateProgress();
+    targetProgressRef.current = initial;
+    currentProgressRef.current = initial;
+    if (scrollFillRef.current) {
+      scrollFillRef.current.style.transform = `scaleX(${initial})`;
+    }
+
+    const tick = () => {
+      const target = targetProgressRef.current;
+      const current = currentProgressRef.current;
+      const diff = target - current;
+
+      if (Math.abs(diff) < 0.0006) {
+        currentProgressRef.current = target;
       } else {
-        setScrollPercent(0);
+        // 0.16 fluid interpolation factor for liquid smooth motion
+        currentProgressRef.current += diff * 0.16;
+      }
+
+      if (scrollFillRef.current) {
+        scrollFillRef.current.style.transform = `scaleX(${currentProgressRef.current})`;
+      }
+
+      if (currentProgressRef.current !== targetProgressRef.current) {
+        rafIdRef.current = requestAnimationFrame(tick);
+      } else {
+        rafIdRef.current = null;
+      }
+    };
+
+    const handleScroll = () => {
+      targetProgressRef.current = calculateProgress();
+      if (rafIdRef.current === null) {
+        rafIdRef.current = requestAnimationFrame(tick);
       }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+    };
   }, [activePost]);
 
   // Sync fresh photos from API if available
@@ -806,11 +865,20 @@ export default function EditorialBlog({
           top: 0;
           left: 0;
           bottom: 0;
+          width: 100%;
           background-color: var(--blog-fg);
           border-radius: 999px;
+          transform-origin: left center;
+          will-change: transform;
           transform: translateZ(0);
-          will-change: width, transform;
-          transition: width 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .brand-scroll-fill.is-homepage {
+          width: 100% !important;
+          transform: scaleX(1) !important;
+          opacity: 1 !important;
+          animation: none !important;
+          transition: none !important;
         }
 
         .nav-brand:hover {
@@ -1866,8 +1934,14 @@ export default function EditorialBlog({
           <span className="brand-word">ivan</span>
           <span className="brand-scroll-track" aria-hidden="true">
             <span
-              className={`brand-scroll-fill ${!activePost ? "brand-fill-active" : ""}`}
-              style={{ width: !activePost ? "100%" : `${scrollPercent}%` }}
+              ref={scrollFillRef}
+              className={`brand-scroll-fill ${!activePost ? "is-homepage" : ""}`}
+              style={{
+                width: "100%",
+                transformOrigin: "left center",
+                transform: !activePost ? "scaleX(1)" : "scaleX(0)",
+                opacity: 1,
+              }}
             />
           </span>
           <span className="brand-word">affriandi</span>
