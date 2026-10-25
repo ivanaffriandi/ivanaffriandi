@@ -181,9 +181,11 @@ export default function EditorialBlog({
       return;
     }
 
-    // On article page: compute initial progress
+    // On article page: compute scroll progress (0 at top, 1 at bottom)
     const calculateProgress = () => {
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollHeight =
+        (document.documentElement.scrollHeight || document.body.scrollHeight || 0) -
+        window.innerHeight;
       if (scrollHeight > 0) {
         const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
         return Math.min(1, Math.max(0, scrollTop / scrollHeight));
@@ -203,11 +205,11 @@ export default function EditorialBlog({
       const current = currentProgressRef.current;
       const diff = target - current;
 
-      if (Math.abs(diff) < 0.0006) {
+      if (Math.abs(diff) < 0.0005) {
         currentProgressRef.current = target;
       } else {
-        // 0.16 fluid interpolation factor for liquid smooth motion
-        currentProgressRef.current += diff * 0.16;
+        // 0.18 fluid interpolation factor for liquid smooth motion
+        currentProgressRef.current += diff * 0.18;
       }
 
       if (scrollFillRef.current) {
@@ -231,9 +233,15 @@ export default function EditorialBlog({
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleScroll, { passive: true });
 
+    // Recalculate in case images or webfonts load shortly after mount
+    const t1 = setTimeout(handleScroll, 150);
+    const t2 = setTimeout(handleScroll, 600);
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
+      clearTimeout(t1);
+      clearTimeout(t2);
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
         rafIdRef.current = null;
@@ -870,7 +878,7 @@ export default function EditorialBlog({
           border-radius: 999px;
           transform-origin: left center;
           will-change: transform;
-          transform: translateZ(0);
+          transform: scaleX(0);
         }
 
         .brand-scroll-fill.is-homepage {

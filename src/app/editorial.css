@@ -216,46 +216,6 @@ html[data-theme="light"] body {
   border-radius: 999px !important;
   overflow: hidden !important;
   vertical-align: middle !important;
-  transform: translateZ(0) !important;
-}
-
-.brand-scroll-track::after {
-  content: "" !important;
-  position: absolute !important;
-  top: 0 !important;
-  bottom: 0 !important;
-  left: -60% !important;
-  width: 50% !important;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.35) 50%,
-    transparent 100%
-  ) !important;
-  animation: brandTrackShimmer 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
-  pointer-events: none !important;
-}
-
-[data-theme="light"] .brand-scroll-track::after,
-html[data-theme="light"] .brand-scroll-track::after {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(0, 0, 0, 0.2) 50%,
-    transparent 100%
-  ) !important;
-}
-
-@keyframes brandTrackShimmer {
-  0% {
-    left: -60%;
-  }
-  35% {
-    left: 120%;
-  }
-  100% {
-    left: 120%;
-  }
 }
 
 .brand-scroll-fill {
@@ -268,7 +228,7 @@ html[data-theme="light"] .brand-scroll-track::after {
   border-radius: 999px !important;
   transform-origin: left center !important;
   will-change: transform !important;
-  transform: translateZ(0) !important;
+  transform: scaleX(0);
 }
 
 .brand-scroll-fill.is-homepage {
