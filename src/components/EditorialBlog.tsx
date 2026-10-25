@@ -642,7 +642,10 @@ export default function EditorialBlog({
           margin-top: auto;
           padding-top: 0.9rem;
           padding-bottom: 1rem;
-          border-top: none;
+          border: none !important;
+          border-top: none !important;
+          box-shadow: none !important;
+          outline: none !important;
         }
 
         @media (max-width: 860px) {
@@ -934,12 +937,10 @@ export default function EditorialBlog({
           color: var(--blog-fg);
         }
 
-        /* ── HOMEPAGE: STAGE VIEWPORT (100% CLEAN, ZERO DUPLICATE FOOTER) ── */
+        /* ── HOMEPAGE: STAGE VIEWPORT (100% CLEAN, ZERO SCROLL VOID, ZERO DUPLICATE FOOTER) ── */
         .editorial-stage-viewport {
           position: relative !important;
           width: 100% !important;
-          display: flex !important;
-          flex-direction: column !important;
           min-height: calc(100vh - 5.4rem - env(safe-area-inset-top, 0px)) !important;
         }
 
@@ -950,12 +951,14 @@ export default function EditorialBlog({
           box-sizing: border-box !important;
           display: flex !important;
           flex-direction: column !important;
+          justify-content: space-between !important;
+          min-height: calc(100vh - 5.4rem - env(safe-area-inset-top, 0px)) !important;
         }
 
         .editorial-hero-view {
           max-width: 960px !important;
           margin: 0 auto !important;
-          padding: 1.5rem 2rem 0 2rem !important;
+          padding: 1.25rem 2rem 0 2rem !important;
         }
 
         .editorial-index-view {
@@ -1719,50 +1722,65 @@ export default function EditorialBlog({
 
         /* ── MINIMALIST FOOTNOTE / FOOTER: BALANCED WITH COMFORTABLE BOTTOM MARGIN ── */
         .editorial-footer {
-          margin-top: 2rem;
-          padding-top: 0.9rem;
-          padding-bottom: 1rem;
-          border-top: none;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          width: 100%;
-          box-sizing: border-box;
+          margin-top: auto !important;
+          padding-top: 0.9rem !important;
+          padding-bottom: 1rem !important;
+          border: none !important;
+          border-top: none !important;
+          box-shadow: none !important;
+          outline: none !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
         }
 
+        .editorial-hero-view .editorial-footer,
+        .editorial-index-view .editorial-footer,
         .editorial-toc-wrap .editorial-footer,
         .editorial-home-wrap .editorial-footer,
         .editorial-index-page-wrap .editorial-footer {
-          margin-top: auto;
-          padding-top: 0.9rem;
-          padding-bottom: 1rem;
+          margin-top: auto !important;
+          padding-top: 0.9rem !important;
+          padding-bottom: 1rem !important;
+          border: none !important;
+          border-top: none !important;
+          box-shadow: none !important;
+          outline: none !important;
         }
 
         .editorial-content-wrap .editorial-footer {
-          margin-top: 2.2rem;
-          padding-top: 0.9rem;
-          padding-bottom: 1.25rem;
+          margin-top: 2.2rem !important;
+          padding-top: 0.9rem !important;
+          padding-bottom: 1.25rem !important;
+          border: none !important;
+          border-top: none !important;
+          box-shadow: none !important;
+          outline: none !important;
         }
 
         @media (max-width: 860px) {
           .editorial-footer {
-            margin-top: 1.6rem;
-            padding-top: 0.85rem;
-            padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+            margin-top: auto !important;
+            padding-top: 0.85rem !important;
+            padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
           }
 
+          .editorial-hero-view .editorial-footer,
+          .editorial-index-view .editorial-footer,
           .editorial-toc-wrap .editorial-footer,
           .editorial-home-wrap .editorial-footer,
           .editorial-index-page-wrap .editorial-footer {
-            margin-top: auto;
-            padding-top: 0.85rem;
-            padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+            margin-top: auto !important;
+            padding-top: 0.85rem !important;
+            padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
           }
 
           .editorial-content-wrap .editorial-footer {
-            margin-top: 2rem;
-            padding-top: 0.85rem;
-            padding-bottom: calc(1.15rem + env(safe-area-inset-bottom, 0px));
+            margin-top: 2rem !important;
+            padding-top: 0.85rem !important;
+            padding-bottom: calc(1.15rem + env(safe-area-inset-bottom, 0px)) !important;
           }
         }
 
@@ -1978,7 +1996,14 @@ export default function EditorialBlog({
               </div>
 
               {/* Bottom Bar: Social Icons on Left, Copyright on Right */}
-              <div className="menu-bottom-bar">
+              <div
+                className="menu-bottom-bar"
+                style={{
+                  border: "none",
+                  borderTop: "none",
+                  boxShadow: "none",
+                }}
+              >
                 <div className="menu-social-icons">
                   <a
                     href="https://instagram.com/ivanaffriandi"
@@ -2051,187 +2076,259 @@ export default function EditorialBlog({
         {!activePost ? (
           /* ── HOMEPAGE: STAGE VIEWPORT (HERO & INDEX BOTH MOUNTED, ZERO BLANK FRAMES, 100% FLICKER-FREE) ── */
           <div className="editorial-stage-viewport">
-            {/* ── STAGE 1: HERO VIEW (HORIZONTAL SCROLLABLE INSTAGRAM MOMENTS) ── */}
-            <div
-              className={`editorial-hero-view ${!showIndex ? "stage-active" : "stage-hidden"}`}
-              style={{ display: showIndex ? "none" : undefined }}
-              aria-hidden={showIndex}
-            >
-              <div className="hero-center-stage">
-                <div className="hero-ig-stage">
-                  {/* Top-left of photos: Typing animation "hi, i'm ivan." with bold ivan */}
-                  <div className="hero-typing-wrap">
-                    <span className="hero-typing-text">
-                      {typedCount <= 8 ? (
-                        fullMessage.slice(0, typedCount)
-                      ) : (
-                        <>
-                          hi, i'm{" "}
-                          <strong className="hero-name-bold">
-                            {fullMessage.slice(8, Math.min(12, typedCount))}
-                          </strong>
-                          {typedCount >= 13 ? "." : ""}
-                        </>
-                      )}
-                    </span>
-                  </div>
-
-                  {/* Center: Horizontal Scrollable Instagram Photos (100% monochrome, protected from save/zoom/hold) */}
-                  <div
-                    className="hero-ig-carousel"
-                    tabIndex={0}
-                    role="region"
-                    aria-label="instagram photos"
-                    style={{
-                      scrollbarWidth: "none",
-                      msOverflowStyle: "none",
-                    }}
-                  >
-                    {instagramPhotos.map((photo, idx) => (
-                      <div
-                        key={photo.id || idx}
-                        className="hero-ig-item"
-                        onContextMenu={(e) => e.preventDefault()}
-                      >
-                        <img
-                          src={photo.url}
-                          alt="ivan affriandi moment"
-                          className="hero-ig-img"
-                          loading={idx < 4 ? "eager" : "lazy"}
-                          draggable={false}
-                          onContextMenu={(e) => e.preventDefault()}
-                          style={{
-                            filter: "grayscale(100%) contrast(108%)",
-                            WebkitFilter: "grayscale(100%) contrast(108%)",
-                            pointerEvents: "none",
-                            userSelect: "none",
-                            WebkitUserSelect: "none",
-                            WebkitTouchCallout: "none",
-                          }}
-                        />
-                        {/* Transparent overlay shield completely blocking zoom, hold/callout, and save while allowing horizontal pan */}
-                        <div
-                          className="hero-photo-shield"
-                          aria-hidden="true"
-                          onContextMenu={(e) => e.preventDefault()}
-                        />
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Bottom-right of photos: Single English word for table of contents */}
-                  <div className="hero-index-wrap">
-                    <button
-                      type="button"
-                      className="hero-index-btn"
-                      onClick={() => {
-                        setShowIndex(true);
-                        if (typeof window !== "undefined" && window.scrollY > 40) {
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        }
-                      }}
-                      aria-label="open index of writings"
-                    >
-                      <span className="hero-index-label">index</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* ── STAGE 2: IN-PAGE EMBEDDED INDEX VIEW ("NEMPEK DI PAGE", NO POPUP) ── */}
-            <div
-              className={`editorial-index-view ${showIndex ? "stage-active" : "stage-hidden"}`}
-              style={{ display: !showIndex ? "none" : undefined }}
-              aria-hidden={!showIndex}
-            >
-              <div className="index-center-stage">
-                <div className="editorial-index-list">
-                  {sortedPosts.map((post, idx) => {
-                    const formattedNum = String(idx + 1).padStart(2, "0");
-                    const cleanPostTitle = cleanChapterTitle(post.title);
-                    const postDate = formatPostDate(post.published);
-                    return (
-                      <Link
-                        key={post.id}
-                        href={`/blog/${post.id}`}
-                        className="editorial-index-item"
-                      >
-                        <div className="index-item-left">
-                          <span className="editorial-index-num">{formattedNum}</span>
-                          <span className="editorial-index-title">{cleanPostTitle}</span>
-                        </div>
-                        {postDate && (
-                          <span className="editorial-index-date">{postDate}</span>
+            {!showIndex ? (
+              /* ── STAGE 1: HERO VIEW (HORIZONTAL SCROLLABLE INSTAGRAM MOMENTS) ── */
+              <div className="editorial-hero-view stage-active">
+                <div className="hero-center-stage">
+                  <div className="hero-ig-stage">
+                    {/* Top-left of photos: Typing animation "hi, i'm ivan." with bold ivan */}
+                    <div className="hero-typing-wrap">
+                      <span className="hero-typing-text">
+                        {typedCount <= 8 ? (
+                          fullMessage.slice(0, typedCount)
+                        ) : (
+                          <>
+                            hi, i'm{" "}
+                            <strong className="hero-name-bold">
+                              {fullMessage.slice(8, Math.min(12, typedCount))}
+                            </strong>
+                            {typedCount >= 13 ? "." : ""}
+                          </>
                         )}
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+                      </span>
+                    </div>
 
-            {/* ── SINGLE SHARED FOOTER FOR HOMEPAGE (CAN NEVER BE DUPLICATED) ── */}
-            <footer className="editorial-footer">
-              <div className="footer-social-icons">
-                <a
-                  href="https://instagram.com/ivanaffriandi"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="footer-icon-btn"
-                  aria-label="instagram"
-                  title="instagram"
+                    {/* Center: Horizontal Scrollable Instagram Photos (100% monochrome, protected from save/zoom/hold) */}
+                    <div
+                      className="hero-ig-carousel"
+                      tabIndex={0}
+                      role="region"
+                      aria-label="instagram photos"
+                      style={{
+                        scrollbarWidth: "none",
+                        msOverflowStyle: "none",
+                      }}
+                    >
+                      {instagramPhotos.map((photo, idx) => (
+                        <div
+                          key={photo.id || idx}
+                          className="hero-ig-item"
+                          onContextMenu={(e) => e.preventDefault()}
+                        >
+                          <img
+                            src={photo.url}
+                            alt="ivan affriandi moment"
+                            className="hero-ig-img"
+                            loading={idx < 4 ? "eager" : "lazy"}
+                            draggable={false}
+                            onContextMenu={(e) => e.preventDefault()}
+                            style={{
+                              filter: "grayscale(100%) contrast(108%)",
+                              WebkitFilter: "grayscale(100%) contrast(108%)",
+                              pointerEvents: "none",
+                              userSelect: "none",
+                              WebkitUserSelect: "none",
+                              WebkitTouchCallout: "none",
+                            }}
+                          />
+                          {/* Transparent overlay shield completely blocking zoom, hold/callout, and save while allowing horizontal pan */}
+                          <div
+                            className="hero-photo-shield"
+                            aria-hidden="true"
+                            onContextMenu={(e) => e.preventDefault()}
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Bottom-right of photos: Single English word for table of contents */}
+                    <div className="hero-index-wrap">
+                      <button
+                        type="button"
+                        className="hero-index-btn"
+                        onClick={() => {
+                          setShowIndex(true);
+                          if (typeof window !== "undefined" && window.scrollY > 40) {
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                          }
+                        }}
+                        aria-label="open index of writings"
+                      >
+                        <span className="hero-index-label">index</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footnote / Footer: Snug at bottom of screen without duplicate */}
+                <footer
+                  className="editorial-footer"
+                  style={{
+                    border: "none",
+                    borderTop: "none",
+                    boxShadow: "none",
+                    marginTop: "auto",
+                  }}
                 >
-                  <svg
-                    width="17"
-                    height="17"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                  </svg>
-                </a>
-                <a
-                  href="https://x.com/ivanaffriandi"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="footer-icon-btn"
-                  aria-label="x (twitter)"
-                  title="x (twitter)"
-                >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                  </svg>
-                </a>
-                <a
-                  href="mailto:ivan@ivanaffriandi.com"
-                  className="footer-icon-btn"
-                  aria-label="email"
-                  title="email"
-                >
-                  <svg
-                    width="17"
-                    height="17"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="2" y="4" width="20" height="16" rx="2" />
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                  </svg>
-                </a>
+                  <div className="footer-social-icons">
+                    <a
+                      href="https://instagram.com/ivanaffriandi"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-icon-btn"
+                      aria-label="instagram"
+                      title="instagram"
+                    >
+                      <svg
+                        width="17"
+                        height="17"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                      </svg>
+                    </a>
+                    <a
+                      href="https://x.com/ivanaffriandi"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-icon-btn"
+                      aria-label="x (twitter)"
+                      title="x (twitter)"
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                      </svg>
+                    </a>
+                    <a
+                      href="mailto:ivan@ivanaffriandi.com"
+                      className="footer-icon-btn"
+                      aria-label="email"
+                      title="email"
+                    >
+                      <svg
+                        width="17"
+                        height="17"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect x="2" y="4" width="20" height="16" rx="2" />
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                      </svg>
+                    </a>
+                  </div>
+                  <span className="footer-copyright">© 2026 ivan affriandi</span>
+                </footer>
               </div>
-              <span className="footer-copyright">© 2026 ivan affriandi</span>
-            </footer>
+            ) : (
+              /* ── STAGE 2: IN-PAGE EMBEDDED INDEX VIEW ("NEMPEK DI PAGE", NO POPUP) ── */
+              <div className="editorial-index-view stage-active">
+                <div className="index-center-stage">
+                  <div className="editorial-index-list">
+                    {sortedPosts.map((post, idx) => {
+                      const formattedNum = String(idx + 1).padStart(2, "0");
+                      const cleanPostTitle = cleanChapterTitle(post.title);
+                      const postDate = formatPostDate(post.published);
+                      return (
+                        <Link
+                          key={post.id}
+                          href={`/blog/${post.id}`}
+                          className="editorial-index-item"
+                        >
+                          <div className="index-item-left">
+                            <span className="editorial-index-num">{formattedNum}</span>
+                            <span className="editorial-index-title">{cleanPostTitle}</span>
+                          </div>
+                          {postDate && (
+                            <span className="editorial-index-date">{postDate}</span>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Footnote / Footer: Snug right below index without big gap */}
+                <footer
+                  className="editorial-footer"
+                  style={{
+                    border: "none",
+                    borderTop: "none",
+                    boxShadow: "none",
+                    marginTop: "auto",
+                  }}
+                >
+                  <div className="footer-social-icons">
+                    <a
+                      href="https://instagram.com/ivanaffriandi"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-icon-btn"
+                      aria-label="instagram"
+                      title="instagram"
+                    >
+                      <svg
+                        width="17"
+                        height="17"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                      </svg>
+                    </a>
+                    <a
+                      href="https://x.com/ivanaffriandi"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-icon-btn"
+                      aria-label="x (twitter)"
+                      title="x (twitter)"
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                      </svg>
+                    </a>
+                    <a
+                      href="mailto:ivan@ivanaffriandi.com"
+                      className="footer-icon-btn"
+                      aria-label="email"
+                      title="email"
+                    >
+                      <svg
+                        width="17"
+                        height="17"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect x="2" y="4" width="20" height="16" rx="2" />
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                      </svg>
+                    </a>
+                  </div>
+                  <span className="footer-copyright">© 2026 ivan affriandi</span>
+                </footer>
+              </div>
+            )}
           </div>
         ) : (
           /* ── VIEW 2: ARTICLE READER VIEW (DEDICATED INDIVIDUAL PAGE) ── */
@@ -2308,7 +2405,14 @@ export default function EditorialBlog({
                 </div>
 
                 {/* Footnote / Footer: Snug right below nav without big gap */}
-                <footer className="editorial-footer">
+                <footer
+                  className="editorial-footer"
+                  style={{
+                    border: "none",
+                    borderTop: "none",
+                    boxShadow: "none",
+                  }}
+                >
                   <div className="footer-social-icons">
                     <a
                       href="https://instagram.com/ivanaffriandi"
