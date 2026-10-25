@@ -9,6 +9,7 @@ export interface BlogPostItem {
   title: string;
   content: string;
   published: string;
+  updated?: string;
   url?: string;
   labels?: string[];
   source?: "medium" | "blogger";
@@ -771,9 +772,10 @@ export default function EditorialBlog({
           width: clamp(50px, 9vw, 130px);
           height: 1.5px;
           background-color: var(--blog-border);
-          border-radius: 1px;
+          border-radius: 999px;
           overflow: hidden;
           vertical-align: middle;
+          transform: translateZ(0);
         }
 
         .brand-scroll-fill {
@@ -782,8 +784,10 @@ export default function EditorialBlog({
           left: 0;
           bottom: 0;
           background-color: var(--blog-fg);
-          border-radius: 1px;
-          transition: width 0.06s ease-out;
+          border-radius: 999px;
+          transform: translateZ(0);
+          will-change: width, transform;
+          transition: width 0.32s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .nav-brand:hover {
@@ -808,18 +812,20 @@ export default function EditorialBlog({
         }
 
         .nav-at-link {
+          width: 28px;
+          height: 28px;
           display: flex;
           align-items: center;
-          justify-content: flex-end;
+          justify-content: center;
           color: var(--blog-fg);
-          opacity: 0.85;
-          padding: 4px;
+          opacity: 1;
+          padding: 0;
           transition: opacity 0.2s ease, transform 0.2s ease;
           text-decoration: none;
         }
 
         .nav-at-link:hover {
-          opacity: 1;
+          opacity: 0.65;
           transform: scale(1.08);
         }
 
@@ -1145,55 +1151,24 @@ export default function EditorialBlog({
           color: var(--blog-fg) !important;
           font-weight: 500 !important;
         }
-          }
-        }
 
-        .index-page-header {
+        /* ── CENTERED INDEX STAGE ── */
+        .index-center-stage {
+          flex: 1 !important;
           display: flex !important;
+          flex-direction: column !important;
+          justify-content: center !important;
           align-items: center !important;
-          justify-content: space-between !important;
           width: 100% !important;
-          padding-bottom: 1.4rem !important;
-          border-bottom: 1px solid var(--blog-border) !important;
-          margin-bottom: 0.5rem !important;
-        }
-
-        .index-back-btn {
-          cursor: pointer !important;
-          display: inline-flex !important;
-          align-items: center !important;
-          gap: 0.45rem !important;
-          color: var(--blog-fg) !important;
-          font-size: 0.88rem !important;
-          opacity: 0.7 !important;
-          padding: 0.3rem 0 !important;
-          transition: opacity 0.2s ease, transform 0.2s ease !important;
-          background: transparent !important;
-          border: none !important;
-        }
-
-        .index-back-btn:hover {
-          opacity: 1 !important;
-          transform: translateX(-3px) !important;
-        }
-
-        .index-back-arrow {
-          font-size: 1rem !important;
-          line-height: 1 !important;
-        }
-
-        .index-page-title {
-          font-size: 0.92rem !important;
-          font-weight: 500 !important;
-          color: var(--blog-fg-muted) !important;
-          letter-spacing: 0.04em !important;
+          padding: 1.5rem 0 !important;
+          box-sizing: border-box !important;
         }
 
         .editorial-index-list {
           display: flex !important;
           flex-direction: column !important;
           width: 100% !important;
-          flex: 1 !important;
+          margin: 0 !important;
         }
 
         .editorial-index-item {
@@ -1206,6 +1181,10 @@ export default function EditorialBlog({
           text-decoration: none !important;
           color: var(--blog-fg) !important;
           transition: opacity 0.2s ease, transform 0.2s ease !important;
+        }
+
+        .editorial-index-item:first-child {
+          border-top: 1px solid var(--blog-border) !important;
         }
 
         .editorial-index-item:hover {
@@ -1733,20 +1712,21 @@ export default function EditorialBlog({
         }
 
         .nav-title {
-          font-size: 0.88rem;
+          font-size: 0.9rem;
           font-weight: 500;
           color: var(--blog-fg);
-          line-height: 1.25;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          max-width: 100%;
+          line-height: 1.35;
+          white-space: normal;
+          word-break: normal;
+          overflow-wrap: break-word;
+          max-width: 320px;
         }
 
         @media (max-width: 600px) {
           .nav-title {
-            font-size: 0.82rem;
-            max-width: 140px;
+            font-size: 0.84rem;
+            max-width: 220px;
+            white-space: normal;
           }
         }
 
@@ -1834,18 +1814,41 @@ export default function EditorialBlog({
 
       {/* ── SLIM TOP NAVBAR (FIXED AT TOP, NOT LEBAR/BULKY) ── */}
       <header className="editorial-navbar">
-        {/* Left: Minimal 2-Bar Toggle Button (Opens Sidebar Menu Hub) */}
+        {/* Left: Minimal 2-Bar Toggle Button (Transforms to iOS Back Chevron when Index is open) */}
         <button
           type="button"
-          className="nav-toggle-btn"
-          onClick={() => setIsMenuOpen(true)}
-          aria-label="open menu"
-          title="menu"
+          className={`nav-toggle-btn ${showIndex ? "nav-back-mode" : ""}`}
+          onClick={() => {
+            if (showIndex) {
+              setShowIndex(false);
+            } else {
+              setIsMenuOpen(true);
+            }
+          }}
+          aria-label={showIndex ? "back to home" : "open menu"}
+          title={showIndex ? "back" : "menu"}
         >
-          <span className="toggle-icon-wrap">
-            <span className="toggle-line" />
-            <span className="toggle-line" />
-          </span>
+          {showIndex ? (
+            <svg
+              width="21"
+              height="21"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="ios-back-chevron"
+              aria-hidden="true"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          ) : (
+            <span className="toggle-icon-wrap">
+              <span className="toggle-line" />
+              <span className="toggle-line" />
+            </span>
+          )}
         </button>
 
         {/* Center: brand ivan ─── affriandi with interactive scroll loading line */}
@@ -1858,7 +1861,7 @@ export default function EditorialBlog({
           <span className="brand-word">ivan</span>
           <span className="brand-scroll-track" aria-hidden="true">
             <span
-              className="brand-scroll-fill"
+              className={`brand-scroll-fill ${!activePost ? "brand-fill-active" : ""}`}
               style={{ width: !activePost ? "100%" : `${scrollPercent}%` }}
             />
           </span>
@@ -1876,12 +1879,12 @@ export default function EditorialBlog({
             title="instagram @ivanaffriandi"
           >
             <svg
-              width="18"
-              height="18"
+              width="21"
+              height="21"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="1.65"
+              strokeWidth="2.1"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
@@ -1974,11 +1977,11 @@ export default function EditorialBlog({
                     sebab yang bermakna tumbuh perlahan.
                   </p>
                   <span className="menu-ethos-meta">
-                    <span>baku</span>
+                    <span>ams</span>
                     <span className="ethos-dash-line" aria-hidden="true" />
-                    <span>jakarta</span>
+                    <span>jkt</span>
                     <span className="ethos-dot" aria-hidden="true">·</span>
-                    <span>2020</span>
+                    <span>2023</span>
                   </span>
                 </div>
               </div>
@@ -2211,45 +2214,29 @@ export default function EditorialBlog({
               className={`editorial-index-view ${showIndex ? "stage-active" : "stage-hidden"}`}
               aria-hidden={!showIndex}
             >
-              <div className="index-page-header">
-                <button
-                  type="button"
-                  className="index-back-btn"
-                  onClick={() => {
-                    setShowIndex(false);
-                    if (typeof window !== "undefined" && window.scrollY > 40) {
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                    }
-                  }}
-                  aria-label="back to home"
-                >
-                  <span className="index-back-arrow">←</span>
-                  <span>back</span>
-                </button>
-                <span className="index-page-title">index</span>
-              </div>
-
-              <div className="editorial-index-list">
-                {sortedPosts.map((post, idx) => {
-                  const formattedNum = String(idx + 1).padStart(2, "0");
-                  const cleanPostTitle = cleanChapterTitle(post.title);
-                  const postDate = formatPostDate(post.published);
-                  return (
-                    <Link
-                      key={post.id}
-                      href={`/blog/${post.id}`}
-                      className="editorial-index-item"
-                    >
-                      <div className="index-item-left">
-                        <span className="editorial-index-num">{formattedNum}</span>
-                        <span className="editorial-index-title">{cleanPostTitle}</span>
-                      </div>
-                      {postDate && (
-                        <span className="editorial-index-date">{postDate}</span>
-                      )}
-                    </Link>
-                  );
-                })}
+              <div className="index-center-stage">
+                <div className="editorial-index-list">
+                  {sortedPosts.map((post, idx) => {
+                    const formattedNum = String(idx + 1).padStart(2, "0");
+                    const cleanPostTitle = cleanChapterTitle(post.title);
+                    const postDate = formatPostDate(post.published);
+                    return (
+                      <Link
+                        key={post.id}
+                        href={`/blog/${post.id}`}
+                        className="editorial-index-item"
+                      >
+                        <div className="index-item-left">
+                          <span className="editorial-index-num">{formattedNum}</span>
+                          <span className="editorial-index-title">{cleanPostTitle}</span>
+                        </div>
+                        {postDate && (
+                          <span className="editorial-index-date">{postDate}</span>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Footnote / Footer: Snug right below without big gap */}
@@ -2319,9 +2306,24 @@ export default function EditorialBlog({
           /* ── VIEW 2: ARTICLE READER VIEW (DEDICATED INDIVIDUAL PAGE) ── */
           <article className="editorial-content-wrap">
             <div className="editorial-main-grid">
-              {/* LEFT COLUMN: TITLE + (PHOTO UNDER TITLE IF POST HAS ONE, B&W MINIMALIST) */}
+              {/* LEFT COLUMN: TITLE + DATE + (PHOTO UNDER TITLE IF POST HAS ONE, B&W MINIMALIST) */}
               <div className="editorial-left-col">
                 <h1 className="editorial-title">{cleanChapterTitle(activePost.title)}</h1>
+
+                {/* Published & Edited Dates */}
+                {activePost.published && (
+                  <div className="editorial-article-meta">
+                    <span className="editorial-article-date">
+                      {formatPostDate(activePost.published)}
+                    </span>
+                    {activePost.updated &&
+                      formatPostDate(activePost.updated) !== formatPostDate(activePost.published) && (
+                        <span className="editorial-article-updated">
+                          {" "}· edited {formatPostDate(activePost.updated)}
+                        </span>
+                      )}
+                  </div>
+                )}
 
                 {/* Photo placed under Title, Black & White Minimalist */}
                 {postImage && (

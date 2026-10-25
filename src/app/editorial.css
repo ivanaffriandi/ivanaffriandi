@@ -127,6 +127,36 @@ html[data-theme="light"] body {
   transform: scale(0.92);
 }
 
+/* iOS Back Chevron Mode when Index is Open */
+.nav-toggle-btn.nav-back-mode {
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  color: var(--blog-fg, #ffffff) !important;
+  cursor: pointer !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease !important;
+}
+
+.nav-toggle-btn.nav-back-mode:hover {
+  transform: translateX(-3px) !important;
+  opacity: 0.65 !important;
+}
+
+.nav-toggle-btn.nav-back-mode:active {
+  transform: translateX(-4px) scale(0.94) !important;
+}
+
+.ios-back-chevron {
+  display: block !important;
+  color: currentColor !important;
+  stroke-width: 2.3 !important;
+}
+
 .toggle-icon-wrap {
   width: 16px;
   display: flex;
@@ -175,6 +205,7 @@ html[data-theme="light"] body {
   font-weight: 500 !important;
 }
 
+/* ── FLAWLESS SILKY-SMOOTH BRAND HORIZONTAL LOADING LINE ── */
 .brand-scroll-track {
   display: inline-flex !important;
   align-items: center !important;
@@ -182,9 +213,49 @@ html[data-theme="light"] body {
   width: clamp(50px, 9vw, 130px) !important;
   height: 1.5px !important;
   background-color: var(--blog-border, rgba(255, 255, 255, 0.15)) !important;
-  border-radius: 1px !important;
+  border-radius: 999px !important;
   overflow: hidden !important;
   vertical-align: middle !important;
+  transform: translateZ(0) !important;
+}
+
+.brand-scroll-track::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: -60% !important;
+  width: 50% !important;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 100%
+  ) !important;
+  animation: brandTrackShimmer 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
+  pointer-events: none !important;
+}
+
+[data-theme="light"] .brand-scroll-track::after,
+html[data-theme="light"] .brand-scroll-track::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.2) 50%,
+    transparent 100%
+  ) !important;
+}
+
+@keyframes brandTrackShimmer {
+  0% {
+    left: -60%;
+  }
+  35% {
+    left: 120%;
+  }
+  100% {
+    left: 120%;
+  }
 }
 
 .brand-scroll-fill {
@@ -193,8 +264,29 @@ html[data-theme="light"] body {
   left: 0 !important;
   bottom: 0 !important;
   background-color: var(--blog-fg, #ffffff) !important;
-  border-radius: 1px !important;
-  transition: width 0.06s ease-out !important;
+  border-radius: 999px !important;
+  transform: translateZ(0) !important;
+  will-change: width, transform !important;
+  transition: width 0.32s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.brand-scroll-fill.brand-fill-active {
+  animation: brandFillSmoothGlide 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+@keyframes brandFillSmoothGlide {
+  0% {
+    width: 0%;
+    opacity: 0.3;
+  }
+  60% {
+    width: 80%;
+    opacity: 0.9;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
 }
 
 .nav-brand:hover {
@@ -219,23 +311,25 @@ html[data-theme="light"] body {
 }
 
 .nav-at-link {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  color: var(--blog-fg, #ffffff);
-  opacity: 0.85;
-  padding: 4px;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  text-decoration: none;
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: var(--blog-fg, #ffffff) !important;
+  opacity: 1 !important;
+  padding: 0 !important;
+  transition: opacity 0.2s ease, transform 0.2s ease !important;
+  text-decoration: none !important;
 }
 
 .nav-at-link:hover {
-  opacity: 1;
-  transform: scale(1.08);
+  opacity: 0.65 !important;
+  transform: scale(1.08) !important;
 }
 
 .nav-at-link:active {
-  transform: scale(0.92);
+  transform: scale(0.92) !important;
 }
 
 /* ── PROPER PAGE BODY TOP OFFSET (GENEROUS CLEARANCE BELOW FIXED NAVBAR) ── */
@@ -502,8 +596,39 @@ html[data-theme="light"] body {
     font-size: clamp(1.55rem, 6vw, 1.95rem) !important;
     line-height: 1.24 !important;
     letter-spacing: -0.025em !important;
-    margin: 0.6rem 0 1.6rem 0 !important;
+    margin: 0.6rem 0 1.2rem 0 !important;
   }
+}
+
+/* ── ARTICLE POSTING / EDITING METADATA DATES ── */
+.editorial-article-meta {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  font-size: 0.86rem !important;
+  color: var(--blog-fg-muted, #777777) !important;
+  letter-spacing: 0.03em !important;
+  margin-top: -0.9rem !important;
+  margin-bottom: 1.8rem !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+@media (max-width: 860px) {
+  .editorial-article-meta {
+    font-size: 0.82rem !important;
+    margin-top: -0.6rem !important;
+    margin-bottom: 1.4rem !important;
+  }
+}
+
+.editorial-article-date {
+  color: var(--blog-fg-muted, #777777) !important;
+}
+
+.editorial-article-updated {
+  color: var(--blog-fg-muted, #666666) !important;
+  font-style: italic !important;
+  opacity: 0.85 !important;
 }
 
 .editorial-left-photo-wrap {
@@ -715,20 +840,21 @@ html[data-theme="light"] body {
 }
 
 .nav-title {
-  font-size: 0.88rem !important;
+  font-size: 0.9rem !important;
   font-weight: 500 !important;
   color: var(--blog-fg, #ffffff) !important;
-  line-height: 1.25 !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  max-width: 100% !important;
+  line-height: 1.35 !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  max-width: 320px !important;
 }
 
 @media (max-width: 600px) {
   .nav-title {
-    font-size: 0.82rem !important;
-    max-width: 140px !important;
+    font-size: 0.84rem !important;
+    max-width: 220px !important;
+    white-space: normal !important;
   }
 }
 
@@ -1345,52 +1471,23 @@ html[data-theme="light"] .editorial-menu-overlay {
   }
 }
 
-.index-page-header {
+/* ── CENTERED INDEX STAGE (BALANCED VERTICALLY & HORIZONTALLY) ── */
+.index-center-stage {
+  flex: 1 !important;
   display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
   align-items: center !important;
-  justify-content: space-between !important;
   width: 100% !important;
-  padding-bottom: 1.4rem !important;
-  border-bottom: 1px solid var(--blog-border, rgba(255, 255, 255, 0.12)) !important;
-  margin-bottom: 0.5rem !important;
-}
-
-.index-back-btn {
-  cursor: pointer !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.45rem !important;
-  color: var(--blog-fg, #ffffff) !important;
-  font-size: 0.88rem !important;
-  opacity: 0.7 !important;
-  padding: 0.3rem 0 !important;
-  transition: opacity 0.2s ease, transform 0.2s ease !important;
-  background: transparent !important;
-  border: none !important;
-}
-
-.index-back-btn:hover {
-  opacity: 1 !important;
-  transform: translateX(-3px) !important;
-}
-
-.index-back-arrow {
-  font-size: 1rem !important;
-  line-height: 1 !important;
-}
-
-.index-page-title {
-  font-size: 0.92rem !important;
-  font-weight: 500 !important;
-  color: var(--blog-fg-muted, #666666) !important;
-  letter-spacing: 0.04em !important;
+  padding: 1.5rem 0 !important;
+  box-sizing: border-box !important;
 }
 
 .editorial-index-list {
   display: flex !important;
   flex-direction: column !important;
   width: 100% !important;
-  flex: 1 !important;
+  margin: 0 !important;
 }
 
 .editorial-index-item {
@@ -1403,6 +1500,10 @@ html[data-theme="light"] .editorial-menu-overlay {
   text-decoration: none !important;
   color: var(--blog-fg, #ffffff) !important;
   transition: opacity 0.2s ease, transform 0.2s ease !important;
+}
+
+.editorial-index-item:first-child {
+  border-top: 1px solid var(--blog-border, rgba(255, 255, 255, 0.12)) !important;
 }
 
 .editorial-index-item:hover {

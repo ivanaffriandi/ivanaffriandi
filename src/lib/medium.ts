@@ -3,6 +3,7 @@ export interface BlogPost {
   title: string;
   content: string;
   published: string;
+  updated?: string;
   url: string;
   labels?: string[];
   source?: "medium" | "blogger";
@@ -65,10 +66,20 @@ function parseMediumRssXml(xml: string): BlogPost[] {
       id = url.split("?")[0].split("-").pop() || url;
     }
 
-    // 4. Published Date
-    const pubDateMatch = itemXml.match(/<pubDate>([\s\S]*?)<\/pubDate>/i) || itemXml.match(/<atom:updated>([\s\S]*?)<\/atom:updated>/i);
-    const rawDate = pubDateMatch ? pubDateMatch[1].trim() : new Date().toISOString();
+    // 4. Published & Updated Date
+    const pubDateMatch = itemXml.match(/<pubDate>([\s\S]*?)<\/pubDate>/i);
+    const atomUpdatedMatch = itemXml.match(/<atom:updated>([\s\S]*?)<\/atom:updated>/i) || itemXml.match(/<updated>([\s\S]*?)<\/updated>/i);
+    const rawDate = pubDateMatch ? pubDateMatch[1].trim() : (atomUpdatedMatch ? atomUpdatedMatch[1].trim() : new Date().toISOString());
     const published = new Date(rawDate).toISOString();
+    let updated: string | undefined = undefined;
+    if (atomUpdatedMatch) {
+      try {
+        const u = new Date(atomUpdatedMatch[1].trim()).toISOString();
+        if (u !== published) {
+          updated = u;
+        }
+      } catch {}
+    }
 
     // 5. Content Encoded
     const contentMatch = itemXml.match(/<content:encoded>([\s\S]*?)<\/content:encoded>/i) || itemXml.match(/<description>([\s\S]*?)<\/description>/i);
@@ -89,6 +100,7 @@ function parseMediumRssXml(xml: string): BlogPost[] {
       title: rawTitle,
       content,
       published,
+      updated,
       url,
       labels,
       source: "medium",
@@ -155,6 +167,7 @@ async function fetchBloggerPosts(): Promise<BlogPost[]> {
           title: item.title,
           content: item.content,
           published: item.published,
+          updated: item.updated && item.updated !== item.published ? item.updated : undefined,
           url: item.url,
           labels: item.labels || [],
           source: "blogger" as const,
@@ -178,6 +191,7 @@ async function fetchBloggerPosts(): Promise<BlogPost[]> {
           title: item.title,
           content: item.content || "",
           published: item.published || new Date().toISOString(),
+          updated: item.updated && item.updated !== item.published ? item.updated : undefined,
           url: item.url || "#",
           labels: item.labels || [],
           source: "blogger" as const,
