@@ -470,15 +470,7 @@ export default function EditorialBlog({
           align-items: center;
           justify-content: space-between;
           width: 100%;
-        }
-
-        .menu-brand-wrap {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.85rem;
-          flex: 1;
-          max-width: min(600px, calc(100% - 90px));
-          transition: opacity 0.2s ease;
+          gap: 1.4rem;
         }
 
         .menu-brand-title {
@@ -488,6 +480,12 @@ export default function EditorialBlog({
           color: var(--blog-fg);
           white-space: nowrap;
           text-decoration: none;
+          flex-shrink: 0;
+          transition: opacity 0.2s ease;
+        }
+
+        .menu-brand-title:hover {
+          opacity: 0.7;
         }
 
         .menu-brand-line {
@@ -500,8 +498,10 @@ export default function EditorialBlog({
           transition: opacity 0.2s ease;
         }
 
-        .menu-brand-wrap:hover {
-          opacity: 0.7;
+        @media (max-width: 860px) {
+          .menu-top-bar {
+            gap: 1rem;
+          }
         }
 
         .menu-close-btn {
@@ -792,7 +792,7 @@ export default function EditorialBlog({
           display: inline-flex;
           align-items: center;
           position: relative;
-          width: clamp(50px, 9vw, 130px);
+          width: clamp(68px, 11vw, 145px);
           height: 1.5px;
           background-color: var(--blog-border);
           border-radius: 999px;
@@ -823,7 +823,7 @@ export default function EditorialBlog({
             gap: 0.45rem;
           }
           .brand-scroll-track {
-            width: clamp(32px, 10vw, 60px);
+            width: clamp(45px, 12vw, 75px);
           }
         }
 
@@ -1926,21 +1926,21 @@ export default function EditorialBlog({
             }}
           >
             <div className="menu-inner-container">
-              {/* Top Bar: Brand on Left, Close on Right */}
+              {/* Top Bar: Brand on Left, Center Line exactly between ivan and close, Close on Right */}
               <div className="menu-top-bar">
-                <div className="menu-brand-wrap">
-                  <Link
-                    href="/"
-                    className="menu-brand-title"
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      setShowIndex(false);
-                    }}
-                  >
-                    ivan
-                  </Link>
-                  <span className="menu-brand-line" aria-hidden="true" />
-                </div>
+                <Link
+                  href="/"
+                  className="menu-brand-title"
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    setShowIndex(false);
+                  }}
+                  aria-label="ivan homepage"
+                >
+                  ivan
+                </Link>
+
+                <span className="menu-brand-line" aria-hidden="true" />
 
                 <button
                   type="button"

@@ -210,7 +210,7 @@ html[data-theme="light"] body {
   display: inline-flex !important;
   align-items: center !important;
   position: relative !important;
-  width: clamp(50px, 9vw, 130px) !important;
+  width: clamp(68px, 11vw, 145px) !important;
   height: 1.5px !important;
   background-color: var(--blog-border, rgba(255, 255, 255, 0.15)) !important;
   border-radius: 999px !important;
@@ -299,7 +299,7 @@ html[data-theme="light"] .brand-scroll-track::after {
     gap: 0.45rem !important;
   }
   .brand-scroll-track {
-    width: clamp(32px, 10vw, 60px) !important;
+    width: clamp(45px, 12vw, 75px) !important;
   }
 }
 
@@ -1010,15 +1010,7 @@ html[data-theme="light"] .editorial-menu-overlay {
   align-items: center !important;
   justify-content: space-between !important;
   width: 100% !important;
-}
-
-.menu-brand-wrap {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.85rem !important;
-  flex: 1 !important;
-  max-width: min(600px, calc(100% - 90px)) !important;
-  transition: opacity 0.2s ease !important;
+  gap: 1.4rem !important;
 }
 
 .menu-brand-title {
@@ -1028,6 +1020,12 @@ html[data-theme="light"] .editorial-menu-overlay {
   color: var(--blog-fg, #ffffff) !important;
   white-space: nowrap !important;
   text-decoration: none !important;
+  flex-shrink: 0 !important;
+  transition: opacity 0.2s ease !important;
+}
+
+.menu-brand-title:hover {
+  opacity: 0.7 !important;
 }
 
 .menu-brand-line {
@@ -1040,8 +1038,10 @@ html[data-theme="light"] .editorial-menu-overlay {
   transition: opacity 0.2s ease !important;
 }
 
-.menu-brand-wrap:hover {
-  opacity: 0.7 !important;
+@media (max-width: 860px) {
+  .menu-top-bar {
+    gap: 1rem !important;
+  }
 }
 
 .menu-close-btn {
