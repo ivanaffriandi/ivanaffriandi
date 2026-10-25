@@ -1905,6 +1905,17 @@ export default function EditorialBlog({
               ease: [0.16, 1, 0.3, 1], // iOS fluid spring curve
             }}
             className="editorial-menu-overlay"
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              width: "100vw",
+              height: "100dvh",
+              zIndex: 999999,
+              backgroundColor: "var(--blog-bg, #000000)",
+            }}
           >
             <div className="menu-inner-container">
               {/* Top Bar: Brand on Left, Close on Right */}
@@ -2036,7 +2047,13 @@ export default function EditorialBlog({
       </AnimatePresence>
 
       {/* ── PAGE BODY: DIRECT PAGE RENDERING (NO MORPHING ANIMATION) ── */}
-      <div className="editorial-page-body">
+      <div
+        className="editorial-page-body"
+        style={{
+          display: isMenuOpen ? "none" : undefined,
+        }}
+        aria-hidden={isMenuOpen}
+      >
         {!activePost ? (
           /* ── HOMEPAGE: STAGE VIEWPORT (HERO & INDEX BOTH MOUNTED, ZERO BLANK FRAMES, 100% FLICKER-FREE) ── */
           <div className="editorial-stage-viewport">
