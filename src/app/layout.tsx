@@ -55,9 +55,10 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  colorScheme: "dark light",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#000000" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
   ],
 };
 
@@ -69,6 +70,10 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "Ivan A.",
+  },
+  other: {
+    "color-scheme": "dark light",
+    "apple-mobile-web-app-status-bar-style": "black-translucent",
   },
   openGraph: {
     title: "Hello, Ivan!",
@@ -105,6 +110,16 @@ export default function RootLayout({
                   var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                   var activeTheme = saved || (prefersDark ? 'dark' : 'light');
                   document.documentElement.setAttribute('data-theme', activeTheme);
+                  document.documentElement.style.colorScheme = activeTheme;
+                  var bg = activeTheme === 'dark' ? '#000000' : '#ffffff';
+                  document.documentElement.style.backgroundColor = bg;
+                  var metas = document.querySelectorAll('meta[name="theme-color"]');
+                  if (metas.length > 0) {
+                    metas.forEach(function(m) {
+                      m.removeAttribute('media');
+                      m.setAttribute('content', bg);
+                    });
+                  }
                 } catch (e) {}
               })();
             `,

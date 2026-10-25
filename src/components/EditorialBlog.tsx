@@ -221,6 +221,49 @@ export default function EditorialBlog({
     };
   }, [isMenuOpen]);
 
+  // Dynamic dark mode & iOS status bar synchronization
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const syncThemeToSystem = () => {
+      const isDark =
+        document.documentElement.getAttribute("data-theme") === "dark" ||
+        (!document.documentElement.getAttribute("data-theme") &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+      const color = isDark ? "#000000" : "#ffffff";
+      const scheme = isDark ? "dark" : "light";
+
+      document.documentElement.style.colorScheme = scheme;
+      document.body.style.colorScheme = scheme;
+      document.documentElement.style.backgroundColor = color;
+      document.body.style.backgroundColor = color;
+
+      const metas = document.querySelectorAll('meta[name="theme-color"]');
+      metas.forEach((m) => {
+        m.removeAttribute("media");
+        m.setAttribute("content", color);
+      });
+    };
+
+    syncThemeToSystem();
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const listener = () => syncThemeToSystem();
+    mediaQuery.addEventListener("change", listener);
+
+    const observer = new MutationObserver(() => syncThemeToSystem());
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+
+    return () => {
+      mediaQuery.removeEventListener("change", listener);
+      observer.disconnect();
+    };
+  }, []);
+
   // Extract photo ONLY if this post actually contains an image
   const postImage = useMemo(() => {
     if (!activePost?.content) return null;
@@ -249,6 +292,7 @@ export default function EditorialBlog({
       <style jsx global>{`
         /* ── DYNAMIC THEME SYSTEM: PURE WHITE IN LIGHT MODE, PURE BLACK IN DARK MODE ── */
         :root {
+          color-scheme: dark light;
           --blog-bg: #ffffff;
           --blog-fg: #000000;
           --blog-fg-secondary: #444444;
@@ -259,8 +303,15 @@ export default function EditorialBlog({
           --blog-hover: rgba(0, 0, 0, 0.04);
         }
 
+        :global(html),
+        :global(body) {
+          background-color: var(--blog-bg) !important;
+          color: var(--blog-fg) !important;
+        }
+
         @media (prefers-color-scheme: dark) {
           :root:not([data-theme="light"]) {
+            color-scheme: dark !important;
             --blog-bg: #000000;
             --blog-fg: #ffffff;
             --blog-fg-secondary: #a8a8a8;
@@ -270,9 +321,16 @@ export default function EditorialBlog({
             --blog-img-bg: #111111;
             --blog-hover: rgba(255, 255, 255, 0.08);
           }
+          :global(html:not([data-theme="light"])),
+          :global(body:not([data-theme="light"])) {
+            color-scheme: dark !important;
+            background-color: #000000 !important;
+            color: #ffffff !important;
+          }
         }
 
         [data-theme="dark"] {
+          color-scheme: dark !important;
           --blog-bg: #000000;
           --blog-fg: #ffffff;
           --blog-fg-secondary: #a8a8a8;
@@ -283,7 +341,15 @@ export default function EditorialBlog({
           --blog-hover: rgba(255, 255, 255, 0.08);
         }
 
+        :global(html[data-theme="dark"]),
+        :global(html[data-theme="dark"] body) {
+          color-scheme: dark !important;
+          background-color: #000000 !important;
+          color: #ffffff !important;
+        }
+
         [data-theme="light"] {
+          color-scheme: light !important;
           --blog-bg: #ffffff;
           --blog-fg: #000000;
           --blog-fg-secondary: #444444;
@@ -292,6 +358,13 @@ export default function EditorialBlog({
           --blog-line: #000000;
           --blog-img-bg: #f5f5f5;
           --blog-hover: rgba(0, 0, 0, 0.04);
+        }
+
+        :global(html[data-theme="light"]),
+        :global(html[data-theme="light"] body) {
+          color-scheme: light !important;
+          background-color: #ffffff !important;
+          color: #000000 !important;
         }
 
         /* ── COMPLETE SCROLLER SUPPRESSION ── */
