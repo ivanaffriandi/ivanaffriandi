@@ -472,11 +472,36 @@ export default function EditorialBlog({
           width: 100%;
         }
 
+        .menu-brand-wrap {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.85rem;
+          flex: 1;
+          max-width: min(600px, calc(100% - 90px));
+          transition: opacity 0.2s ease;
+        }
+
         .menu-brand-title {
           font-size: 0.92rem;
           font-weight: 500;
           letter-spacing: 0.04em;
           color: var(--blog-fg);
+          white-space: nowrap;
+          text-decoration: none;
+        }
+
+        .menu-brand-line {
+          display: block;
+          flex: 1;
+          height: 1.5px;
+          background-color: currentColor;
+          opacity: 0.28;
+          border-radius: 999px;
+          transition: opacity 0.2s ease;
+        }
+
+        .menu-brand-wrap:hover {
+          opacity: 0.7;
         }
 
         .menu-close-btn {
@@ -622,7 +647,7 @@ export default function EditorialBlog({
           margin-top: auto;
           padding-top: 0.9rem;
           padding-bottom: 1rem;
-          border-top: 1px solid var(--blog-border);
+          border-top: none;
         }
 
         @media (max-width: 860px) {
@@ -1735,7 +1760,7 @@ export default function EditorialBlog({
           margin-top: 2rem;
           padding-top: 0.9rem;
           padding-bottom: 1rem;
-          border-top: 1px solid var(--blog-border);
+          border-top: none;
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -1923,7 +1948,19 @@ export default function EditorialBlog({
             <div className="menu-inner-container">
               {/* Top Bar: Brand on Left, Close on Right */}
               <div className="menu-top-bar">
-                <span className="menu-brand-title">ivan affriandi</span>
+                <div className="menu-brand-wrap">
+                  <Link
+                    href="/"
+                    className="menu-brand-title"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      setShowIndex(false);
+                    }}
+                  >
+                    ivan
+                  </Link>
+                  <span className="menu-brand-line" aria-hidden="true" />
+                </div>
 
                 <button
                   type="button"
