@@ -596,27 +596,22 @@ export default function EditorialBlog({
           }
         }
 
-        /* Ethos statement inside sidebar */
+        /* Ethos statement inside sidebar: positioned at bottom right, no quote */
         .menu-ethos-section {
-          max-width: 520px;
-          border-left: 1.5px solid var(--blog-line);
-          padding-left: 1.4rem;
+          width: 100%;
           display: flex;
-          flex-direction: column;
-          gap: 0.6rem;
-        }
-
-        .menu-ethos-text {
-          font-size: 0.96rem;
-          line-height: 1.65;
-          color: var(--blog-fg-secondary);
-          margin: 0;
+          justify-content: flex-end;
+          align-items: center;
+          margin-top: auto;
+          margin-bottom: 0.5rem;
+          border-left: none;
+          padding-left: 0;
         }
 
         .menu-ethos-meta {
-          font-size: 0.82rem;
+          font-size: 0.88rem;
           color: var(--blog-fg-muted);
-          letter-spacing: 0.03em;
+          letter-spacing: 0.08em;
           display: inline-flex;
           align-items: center;
         }
@@ -939,27 +934,22 @@ export default function EditorialBlog({
           color: var(--blog-fg);
         }
 
-        /* ── HOMEPAGE: STAGE VIEWPORT & CROSSFADE (100% FLICKER-FREE, ULTRA-SMOOTH) ── */
+        /* ── HOMEPAGE: STAGE VIEWPORT (100% CLEAN, ZERO DUPLICATE FOOTER) ── */
         .editorial-stage-viewport {
           position: relative !important;
           width: 100% !important;
-          display: grid !important;
-          grid-template-columns: 100% !important;
-          align-items: start !important;
+          display: flex !important;
+          flex-direction: column !important;
           min-height: calc(100vh - 5.4rem - env(safe-area-inset-top, 0px)) !important;
         }
 
         .editorial-hero-view,
         .editorial-index-view {
-          grid-area: 1 / 1 / 2 / 2 !important;
           width: 100% !important;
+          flex: 1 !important;
           box-sizing: border-box !important;
           display: flex !important;
           flex-direction: column !important;
-          min-height: calc(100vh - 5.4rem - env(safe-area-inset-top, 0px)) !important;
-          transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1),
-                      transform 0.42s cubic-bezier(0.22, 1, 0.36, 1) !important;
-          will-change: opacity, transform !important;
         }
 
         .editorial-hero-view {
@@ -974,42 +964,14 @@ export default function EditorialBlog({
           padding: 1.25rem 2.5rem 0 2.5rem !important;
         }
 
-        .editorial-hero-view.stage-active {
-          opacity: 1 !important;
-          transform: translateY(0) scale(1) !important;
-          pointer-events: auto !important;
-          visibility: visible !important;
-          z-index: 2 !important;
-        }
-
-        .editorial-hero-view.stage-hidden {
-          opacity: 0 !important;
-          transform: translateY(-14px) scale(0.99) !important;
-          pointer-events: none !important;
-          visibility: hidden !important;
-          z-index: 1 !important;
-          transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                      visibility 0s 0.35s !important;
-        }
-
+        .editorial-hero-view.stage-active,
         .editorial-index-view.stage-active {
-          opacity: 1 !important;
-          transform: translateY(0) scale(1) !important;
-          pointer-events: auto !important;
-          visibility: visible !important;
-          z-index: 2 !important;
+          display: flex !important;
         }
 
+        .editorial-hero-view.stage-hidden,
         .editorial-index-view.stage-hidden {
-          opacity: 0 !important;
-          transform: translateY(16px) scale(0.99) !important;
-          pointer-events: none !important;
-          visibility: hidden !important;
-          z-index: 1 !important;
-          transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-                      visibility 0s 0.35s !important;
+          display: none !important;
         }
 
         @media (max-width: 860px) {
@@ -2005,20 +1967,12 @@ export default function EditorialBlog({
                   </Link>
                 </div>
 
-                {/* Personal Poetic Ethos (In English, Puitis & Metaforik) */}
+                {/* City Tag: ams ─── jkt in bottom right, without year */}
                 <div className="menu-ethos-section">
-                  <p className="menu-ethos-text">
-                    like water tracing across stone,<br />
-                    never rushed, yet always finding a way.<br />
-                    we tend to stillness in a restless world,<br />
-                    for what holds meaning grows with time.
-                  </p>
                   <span className="menu-ethos-meta">
                     <span>ams</span>
                     <span className="ethos-dash-line" aria-hidden="true" />
                     <span>jkt</span>
-                    <span className="ethos-dot" aria-hidden="true">·</span>
-                    <span>2023</span>
                   </span>
                 </div>
               </div>
@@ -2100,6 +2054,7 @@ export default function EditorialBlog({
             {/* ── STAGE 1: HERO VIEW (HORIZONTAL SCROLLABLE INSTAGRAM MOMENTS) ── */}
             <div
               className={`editorial-hero-view ${!showIndex ? "stage-active" : "stage-hidden"}`}
+              style={{ display: showIndex ? "none" : undefined }}
               aria-hidden={showIndex}
             >
               <div className="hero-center-stage">
@@ -2182,73 +2137,12 @@ export default function EditorialBlog({
                   </div>
                 </div>
               </div>
-
-              {/* Footnote / Footer: Snug right below without big gap */}
-              <footer className="editorial-footer">
-                <div className="footer-social-icons">
-                  <a
-                    href="https://instagram.com/ivanaffriandi"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="footer-icon-btn"
-                    aria-label="instagram"
-                    title="instagram"
-                  >
-                    <svg
-                      width="17"
-                      height="17"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                    </svg>
-                  </a>
-                  <a
-                    href="https://x.com/ivanaffriandi"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="footer-icon-btn"
-                    aria-label="x (twitter)"
-                    title="x (twitter)"
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                    </svg>
-                  </a>
-                  <a
-                    href="mailto:ivan@ivanaffriandi.com"
-                    className="footer-icon-btn"
-                    aria-label="email"
-                    title="email"
-                  >
-                    <svg
-                      width="17"
-                      height="17"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <rect x="2" y="4" width="20" height="16" rx="2" />
-                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                    </svg>
-                  </a>
-                </div>
-                <span className="footer-copyright">© 2026 ivan affriandi</span>
-              </footer>
             </div>
 
             {/* ── STAGE 2: IN-PAGE EMBEDDED INDEX VIEW ("NEMPEK DI PAGE", NO POPUP) ── */}
             <div
               className={`editorial-index-view ${showIndex ? "stage-active" : "stage-hidden"}`}
+              style={{ display: !showIndex ? "none" : undefined }}
               aria-hidden={!showIndex}
             >
               <div className="index-center-stage">
@@ -2275,69 +2169,69 @@ export default function EditorialBlog({
                   })}
                 </div>
               </div>
-
-              {/* Footnote / Footer: Snug right below without big gap */}
-              <footer className="editorial-footer">
-                <div className="footer-social-icons">
-                  <a
-                    href="https://instagram.com/ivanaffriandi"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="footer-icon-btn"
-                    aria-label="instagram"
-                    title="instagram"
-                  >
-                    <svg
-                      width="17"
-                      height="17"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                    </svg>
-                  </a>
-                  <a
-                    href="https://x.com/ivanaffriandi"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="footer-icon-btn"
-                    aria-label="x (twitter)"
-                    title="x (twitter)"
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                    </svg>
-                  </a>
-                  <a
-                    href="mailto:ivan@ivanaffriandi.com"
-                    className="footer-icon-btn"
-                    aria-label="email"
-                    title="email"
-                  >
-                    <svg
-                      width="17"
-                      height="17"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <rect x="2" y="4" width="20" height="16" rx="2" />
-                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                    </svg>
-                  </a>
-                </div>
-                <span className="footer-copyright">© 2026 ivan affriandi</span>
-              </footer>
             </div>
+
+            {/* ── SINGLE SHARED FOOTER FOR HOMEPAGE (CAN NEVER BE DUPLICATED) ── */}
+            <footer className="editorial-footer">
+              <div className="footer-social-icons">
+                <a
+                  href="https://instagram.com/ivanaffriandi"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="footer-icon-btn"
+                  aria-label="instagram"
+                  title="instagram"
+                >
+                  <svg
+                    width="17"
+                    height="17"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                  </svg>
+                </a>
+                <a
+                  href="https://x.com/ivanaffriandi"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="footer-icon-btn"
+                  aria-label="x (twitter)"
+                  title="x (twitter)"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </a>
+                <a
+                  href="mailto:ivan@ivanaffriandi.com"
+                  className="footer-icon-btn"
+                  aria-label="email"
+                  title="email"
+                >
+                  <svg
+                    width="17"
+                    height="17"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                  </svg>
+                </a>
+              </div>
+              <span className="footer-copyright">© 2026 ivan affriandi</span>
+            </footer>
           </div>
         ) : (
           /* ── VIEW 2: ARTICLE READER VIEW (DEDICATED INDIVIDUAL PAGE) ── */
