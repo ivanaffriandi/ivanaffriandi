@@ -614,7 +614,7 @@ export default function EditorialBlog({
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
           transition: background-color 0.3s ease;
-          border-bottom: 1px solid var(--blog-border);
+          border-bottom: none !important;
         }
 
         @media (max-width: 860px) {
