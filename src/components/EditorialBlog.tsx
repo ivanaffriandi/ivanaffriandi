@@ -17,6 +17,9 @@ export interface BlogPostItem {
 interface EditorialBlogProps {
   posts?: BlogPostItem[];
   initialPost?: BlogPostItem;
+  currentPost?: BlogPostItem;
+  prevPost?: BlogPostItem | null;
+  nextPost?: BlogPostItem | null;
   initialComments?: any[];
 }
 
@@ -103,9 +106,27 @@ function cleanChapterTitle(title: string): string {
   return title.replace(/^Chapter\s+\d+:\s*/i, "").trim();
 }
 
+function formatPostDate(dateStr?: string): string {
+  if (!dateStr) return "";
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return "";
+    const months = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+    const month = months[d.getMonth()];
+    const day = String(d.getDate()).padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day} ${month} ${year}`;
+  } catch {
+    return "";
+  }
+}
+
 export default function EditorialBlog({
   posts = [],
   initialPost,
+  currentPost: propCurrentPost,
+  prevPost: propPrevPost,
+  nextPost: propNextPost,
 }: EditorialBlogProps) {
   // Sort posts (newest first, reverse-chronological order)
   const sortedPosts = useMemo(() => {
@@ -116,15 +137,49 @@ export default function EditorialBlog({
     });
   }, [posts]);
 
-  // Active post: if initialPost is provided (e.g. /blog/[id]), open that post.
-  // On homepage (/), defaults to "" so visitor is immediately greeted with the Daftar Isi (Table of Contents).
-  const [activePostId, setActivePostId] = useState<string>(() => {
-    if (initialPost?.id) return initialPost.id;
-    return "";
-  });
+  // Active post: if initialPost or propCurrentPost is provided, we are viewing that specific post page.
+  // Otherwise, we are on the homepage / TOC. Each post is its own distinct page.
+  const activePost = propCurrentPost || initialPost || null;
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showIndex, setShowIndex] = useState(false);
+  const [typedCount, setTypedCount] = useState(0);
+  const [scrollPercent, setScrollPercent] = useState(0);
   const [instagramPhotos, setInstagramPhotos] = useState<InstagramPhoto[]>(ALL_MOMENTS_PHOTOS);
+  const fullMessage = "hi, i'm ivan.";
+
+  // Animated typing text for homepage hero: "hi, i'm ivan." (smooth, no blinking cursor)
+  useEffect(() => {
+    let count = 0;
+    setTypedCount(0);
+    const timer = setInterval(() => {
+      count++;
+      setTypedCount(count);
+      if (count >= fullMessage.length) {
+        clearInterval(timer);
+      }
+    }, 60);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Track scroll percentage for the navbar interactive loading line
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight > 0) {
+        const current = window.scrollY || document.documentElement.scrollTop || 0;
+        const pct = Math.min(100, Math.max(0, (current / scrollHeight) * 100));
+        setScrollPercent(pct);
+      } else {
+        setScrollPercent(0);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [activePost]);
 
   // Sync fresh photos from API if available
   useEffect(() => {
@@ -154,20 +209,6 @@ export default function EditorialBlog({
     };
   }, []);
 
-  // Sync if initialPost changes or URL has post ID
-  useEffect(() => {
-    if (initialPost?.id) {
-      setActivePostId(initialPost.id);
-    } else if (typeof window !== "undefined") {
-      const match = window.location.pathname.match(/\/blog\/([^/]+)/);
-      if (match && match[1]) {
-        setActivePostId(match[1]);
-      } else {
-        setActivePostId("");
-      }
-    }
-  }, [initialPost]);
-
   // Lock body scroll when menu overlay is open
   useEffect(() => {
     if (isMenuOpen) {
@@ -180,38 +221,19 @@ export default function EditorialBlog({
     };
   }, [isMenuOpen]);
 
-  // Listen to browser Back/Forward navigation
-  useEffect(() => {
-    const handlePopState = () => {
-      if (typeof window !== "undefined") {
-        const path = window.location.pathname;
-        const match = path.match(/\/blog\/([^/]+)/);
-        if (match && match[1]) {
-          setActivePostId(match[1]);
-        } else {
-          setActivePostId("");
-        }
-      }
-    };
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
-  const currentPost = useMemo(() => {
-    if (!activePostId) return null;
-    return sortedPosts.find((p) => p.id === activePostId) || null;
-  }, [sortedPosts, activePostId]);
-
   // Extract photo ONLY if this post actually contains an image
   const postImage = useMemo(() => {
-    if (!currentPost?.content) return null;
-    return extractFirstImage(currentPost.content);
-  }, [currentPost]);
+    if (!activePost?.content) return null;
+    return extractFirstImage(activePost.content);
+  }, [activePost]);
 
   // Find previous and next post for pagination in reader
   const { prevPost, nextPost } = useMemo(() => {
-    if (!currentPost) return { prevPost: null, nextPost: null };
-    const currentIndex = sortedPosts.findIndex((p) => p.id === currentPost.id);
+    if (!activePost) return { prevPost: null, nextPost: null };
+    if (propPrevPost !== undefined && propNextPost !== undefined) {
+      return { prevPost: propPrevPost, nextPost: propNextPost };
+    }
+    const currentIndex = sortedPosts.findIndex((p) => p.id === activePost.id);
     if (currentIndex === -1) return { prevPost: null, nextPost: null };
 
     // Previous = newer post in list (index - 1)
@@ -220,31 +242,7 @@ export default function EditorialBlog({
     const next = currentIndex < sortedPosts.length - 1 ? sortedPosts[currentIndex + 1] : null;
 
     return { prevPost: prev, nextPost: next };
-  }, [sortedPosts, currentPost]);
-
-  const handleSelectPost = (postId: string) => {
-    setActivePostId(postId);
-    setIsMenuOpen(false);
-    // Instant snap to top of the selected article
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    if (document.documentElement) document.documentElement.scrollTop = 0;
-    if (document.body) document.body.scrollTop = 0;
-    if (typeof window !== "undefined") {
-      window.history.pushState(null, "", `/blog/${postId}`);
-    }
-  };
-
-  const handleGoHome = (e?: React.MouseEvent) => {
-    if (e) e.preventDefault();
-    setActivePostId("");
-    setIsMenuOpen(false);
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-    if (document.documentElement) document.documentElement.scrollTop = 0;
-    if (document.body) document.body.scrollTop = 0;
-    if (typeof window !== "undefined") {
-      window.history.pushState(null, "", "/");
-    }
-  };
+  }, [sortedPosts, activePost, propPrevPost, propNextPost]);
 
   return (
     <div className="editorial-canvas">
@@ -379,7 +377,7 @@ export default function EditorialBlog({
           min-height: 100%;
           display: flex;
           flex-direction: column;
-          padding: 1.8rem 4rem;
+          padding: 1.8rem 4rem 0 4rem;
           box-sizing: border-box;
           max-width: 1000px;
           margin: 0 auto;
@@ -389,7 +387,7 @@ export default function EditorialBlog({
 
         @media (max-width: 860px) {
           .menu-inner-container {
-            padding: calc(1rem + env(safe-area-inset-top, 0px)) 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) 1.25rem;
+            padding: calc(1rem + env(safe-area-inset-top, 0px)) 1.5rem 0 1.5rem;
           }
         }
 
@@ -468,6 +466,18 @@ export default function EditorialBlog({
           transform: translateX(6px);
         }
 
+        .menu-hub-link.disabled {
+          pointer-events: none !important;
+          cursor: default !important;
+          user-select: none !important;
+          opacity: 0.35 !important;
+        }
+
+        .menu-hub-link.disabled:hover {
+          transform: none !important;
+          opacity: 0.35 !important;
+        }
+
         .menu-hub-link-title {
           font-size: clamp(1.8rem, 4.2vw, 2.6rem);
           font-weight: 500;
@@ -508,6 +518,26 @@ export default function EditorialBlog({
           font-size: 0.82rem;
           color: var(--blog-fg-muted);
           letter-spacing: 0.03em;
+          display: inline-flex;
+          align-items: center;
+        }
+
+        .ethos-dash-line {
+          display: inline-block;
+          width: 44px;
+          height: 1.5px;
+          background-color: currentColor;
+          opacity: 0.35;
+          vertical-align: middle;
+          margin: 0 0.55rem;
+          border-radius: 1px;
+        }
+
+        .ethos-dot {
+          display: inline-block;
+          margin: 0 0.45rem;
+          opacity: 0.35;
+          font-size: 0.85rem;
         }
 
         .menu-bottom-bar {
@@ -515,8 +545,17 @@ export default function EditorialBlog({
           align-items: center;
           justify-content: space-between;
           width: 100%;
-          padding-top: 1.2rem;
+          margin-top: auto;
+          padding-top: 0.9rem;
+          padding-bottom: 1rem;
           border-top: 1px solid var(--blog-border);
+        }
+
+        @media (max-width: 860px) {
+          .menu-bottom-bar {
+            padding-top: 0.85rem;
+            padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+          }
         }
 
         .menu-social-icons {
@@ -629,10 +668,11 @@ export default function EditorialBlog({
           transform: translateX(-2px);
         }
 
-        /* Center Brand: ivan affriandi (pure, clean, minimal typography) */
+        /* Center Brand: ivan ─── affriandi with scroll loading line */
         .nav-brand {
           display: inline-flex;
           align-items: center;
+          gap: 0.65rem;
           text-decoration: none;
           color: var(--blog-fg);
           font-size: 0.95rem;
@@ -643,6 +683,34 @@ export default function EditorialBlog({
           position: absolute;
           left: 50%;
           transform: translateX(-50%);
+          white-space: nowrap;
+        }
+
+        .brand-word {
+          color: var(--blog-fg);
+          font-weight: 500;
+        }
+
+        .brand-scroll-track {
+          display: inline-flex;
+          align-items: center;
+          position: relative;
+          width: clamp(50px, 9vw, 130px);
+          height: 1.5px;
+          background-color: var(--blog-border);
+          border-radius: 1px;
+          overflow: hidden;
+          vertical-align: middle;
+        }
+
+        .brand-scroll-fill {
+          position: absolute;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          background-color: var(--blog-fg);
+          border-radius: 1px;
+          transition: width 0.06s ease-out;
         }
 
         .nav-brand:hover {
@@ -651,7 +719,11 @@ export default function EditorialBlog({
 
         @media (max-width: 600px) {
           .nav-brand {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
+            gap: 0.45rem;
+          }
+          .brand-scroll-track {
+            width: clamp(32px, 10vw, 60px);
           }
         }
 
@@ -698,23 +770,459 @@ export default function EditorialBlog({
           }
         }
 
-        /* ── HOMEPAGE DAFTAR ISI (TABLE OF CONTENTS) ── */
+        /* ── HOMEPAGE: CENTERED HERO PHOTO (COMPACT, BLACK & WHITE) ── */
+        .editorial-home-wrap {
+          display: flex !important;
+          flex-direction: column !important;
+          flex: 1 !important;
+          min-height: calc(100vh - 5.4rem - env(safe-area-inset-top, 0px)) !important;
+          width: 100% !important;
+          max-width: 960px !important;
+          margin: 0 auto !important;
+          padding: 1.5rem 2rem 0 2rem !important;
+          box-sizing: border-box !important;
+        }
+
+        @media (max-width: 860px) {
+          .editorial-home-wrap {
+            min-height: calc(100vh - 5.2rem - env(safe-area-inset-top, 0px)) !important;
+            padding: 1rem 1.5rem 0 1.5rem !important;
+          }
+        }
+
+        .hero-center-stage {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          padding: 2.5rem 0;
+          box-sizing: border-box;
+        }
+
+        @media (max-width: 860px) {
+          .hero-center-stage {
+            padding: 1.8rem 0;
+          }
+        }
+
+        .hero-photo-frame {
+          position: relative;
+          display: inline-flex;
+          flex-direction: column;
+        }
+
+        .hero-typing-wrap {
+          position: absolute;
+          bottom: calc(100% + 0.6rem);
+          left: 0;
+          display: inline-flex;
+          align-items: baseline;
+          font-size: clamp(0.92rem, 1.3vw, 1.05rem);
+          font-weight: 400;
+          color: var(--blog-fg);
+          letter-spacing: -0.015em;
+          white-space: nowrap;
+          user-select: none;
+        }
+
+        .hero-typing-text {
+          color: var(--blog-fg);
+        }
+
+        .hero-name-bold {
+          font-weight: 700;
+          color: var(--blog-fg);
+        }
+
+        /* ── HOMEPAGE: STAGE VIEWPORT & CROSSFADE (100% FLICKER-FREE, ULTRA-SMOOTH) ── */
+        .editorial-stage-viewport {
+          position: relative !important;
+          width: 100% !important;
+          display: grid !important;
+          grid-template-columns: 100% !important;
+          align-items: start !important;
+          min-height: calc(100vh - 5.4rem - env(safe-area-inset-top, 0px)) !important;
+        }
+
+        .editorial-hero-view,
+        .editorial-index-view {
+          grid-area: 1 / 1 / 2 / 2 !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+          display: flex !important;
+          flex-direction: column !important;
+          min-height: calc(100vh - 5.4rem - env(safe-area-inset-top, 0px)) !important;
+          transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+                      transform 0.42s cubic-bezier(0.22, 1, 0.36, 1) !important;
+          will-change: opacity, transform !important;
+        }
+
+        .editorial-hero-view {
+          max-width: 960px !important;
+          margin: 0 auto !important;
+          padding: 1.5rem 2rem 0 2rem !important;
+        }
+
+        .editorial-index-view {
+          max-width: 780px !important;
+          margin: 0 auto !important;
+          padding: 1.25rem 2.5rem 0 2.5rem !important;
+        }
+
+        .editorial-hero-view.stage-active {
+          opacity: 1 !important;
+          transform: translateY(0) scale(1) !important;
+          pointer-events: auto !important;
+          visibility: visible !important;
+          z-index: 2 !important;
+        }
+
+        .editorial-hero-view.stage-hidden {
+          opacity: 0 !important;
+          transform: translateY(-14px) scale(0.99) !important;
+          pointer-events: none !important;
+          visibility: hidden !important;
+          z-index: 1 !important;
+          transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                      visibility 0s 0.35s !important;
+        }
+
+        .editorial-index-view.stage-active {
+          opacity: 1 !important;
+          transform: translateY(0) scale(1) !important;
+          pointer-events: auto !important;
+          visibility: visible !important;
+          z-index: 2 !important;
+        }
+
+        .editorial-index-view.stage-hidden {
+          opacity: 0 !important;
+          transform: translateY(16px) scale(0.99) !important;
+          pointer-events: none !important;
+          visibility: hidden !important;
+          z-index: 1 !important;
+          transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                      visibility 0s 0.35s !important;
+        }
+
+        @media (max-width: 860px) {
+          .editorial-stage-viewport {
+            min-height: calc(100vh - 5.2rem - env(safe-area-inset-top, 0px)) !important;
+          }
+          .editorial-hero-view {
+            min-height: calc(100vh - 5.2rem - env(safe-area-inset-top, 0px)) !important;
+            padding: 1rem 1.5rem 0 1.5rem !important;
+          }
+          .editorial-index-view {
+            min-height: calc(100vh - 5.2rem - env(safe-area-inset-top, 0px)) !important;
+            padding: 0.9rem 1.6rem 0 1.6rem !important;
+          }
+        }
+
+        /* ── HORIZONTAL SCROLLABLE INSTAGRAM MOMENTS CAROUSEL ── */
+        .hero-ig-stage {
+          position: relative !important;
+          width: 100% !important;
+          max-width: 680px !important;
+          margin: 0 auto !important;
+          display: flex !important;
+          flex-direction: column !important;
+          box-sizing: border-box !important;
+        }
+
+        .hero-typing-wrap {
+          align-self: flex-start !important;
+          margin-bottom: 0.7rem !important;
+          display: inline-flex !important;
+          align-items: baseline !important;
+          font-size: clamp(0.92rem, 1.3vw, 1.05rem) !important;
+          font-weight: 400 !important;
+          color: var(--blog-fg) !important;
+          letter-spacing: -0.015em !important;
+          white-space: nowrap !important;
+          user-select: none !important;
+        }
+
+        .hero-typing-text {
+          color: var(--blog-fg) !important;
+        }
+
+        .hero-name-bold {
+          font-weight: 700 !important;
+          color: var(--blog-fg) !important;
+        }
+
+        .hero-ig-carousel {
+          display: flex !important;
+          gap: 0.85rem !important;
+          overflow-x: auto !important;
+          scroll-snap-type: x mandatory !important;
+          -webkit-overflow-scrolling: touch !important;
+          padding: 0.35rem 0.15rem !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+          scrollbar-width: none !important;
+          -ms-overflow-style: none !important;
+        }
+
+        :global(.hero-ig-carousel) {
+          scrollbar-width: none !important;
+          -ms-overflow-style: none !important;
+        }
+
+        :global(.hero-ig-carousel::-webkit-scrollbar),
+        :global(.hero-ig-carousel::-webkit-scrollbar-thumb),
+        :global(.hero-ig-carousel::-webkit-scrollbar-track),
+        :global(.hero-ig-carousel::-webkit-scrollbar-corner) {
+          display: none !important;
+          width: 0px !important;
+          height: 0px !important;
+          max-height: 0px !important;
+          background: transparent !important;
+          opacity: 0 !important;
+          visibility: hidden !important;
+          -webkit-appearance: none !important;
+        }
+
+        .hero-ig-carousel::-webkit-scrollbar {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
+
+        .hero-ig-item {
+          position: relative !important;
+          flex: 0 0 clamp(160px, 20vw, 205px) !important;
+          aspect-ratio: 4 / 5 !important;
+          overflow: hidden !important;
+          border-radius: 2px !important;
+          background-color: var(--blog-img-bg) !important;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+          border: 1px solid var(--blog-border) !important;
+          scroll-snap-align: start !important;
+          user-select: none !important;
+          -webkit-user-select: none !important;
+          -webkit-touch-callout: none !important;
+          touch-action: pan-x !important;
+        }
+
+        .hero-ig-img {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover !important;
+          object-position: center !important;
+          display: block !important;
+          filter: grayscale(100%) contrast(108%) !important;
+          -webkit-filter: grayscale(100%) contrast(108%) !important;
+          pointer-events: none !important;
+          user-select: none !important;
+          -webkit-user-select: none !important;
+          -webkit-touch-callout: none !important;
+        }
+
+        .hero-photo-shield {
+          position: absolute !important;
+          inset: 0 !important;
+          z-index: 5 !important;
+          width: 100% !important;
+          height: 100% !important;
+          background: transparent !important;
+          user-select: none !important;
+          -webkit-user-select: none !important;
+          -webkit-touch-callout: none !important;
+          touch-action: pan-x !important;
+          pointer-events: auto !important;
+          cursor: grab !important;
+        }
+
+        .hero-index-wrap {
+          align-self: flex-end !important;
+          margin-top: 0.75rem !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: flex-end !important;
+        }
+
+        .hero-index-btn {
+          cursor: pointer !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          gap: 0.35rem !important;
+          color: var(--blog-fg) !important;
+          font-size: clamp(0.92rem, 1.3vw, 1.05rem) !important;
+          font-weight: 500 !important;
+          letter-spacing: -0.01em !important;
+          padding: 0.2rem 0 !important;
+          border-bottom: 1px solid transparent !important;
+          transition: opacity 0.2s ease, border-bottom-color 0.2s ease, transform 0.2s ease !important;
+          background: transparent !important;
+          border: none !important;
+        }
+
+        .hero-index-btn:hover {
+          opacity: 0.65 !important;
+          border-bottom-color: var(--blog-fg) !important;
+          transform: translateY(1px) !important;
+        }
+
+        .hero-index-label {
+          color: var(--blog-fg) !important;
+          font-weight: 500 !important;
+        }
+          }
+        }
+
+        .index-page-header {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          width: 100% !important;
+          padding-bottom: 1.4rem !important;
+          border-bottom: 1px solid var(--blog-border) !important;
+          margin-bottom: 0.5rem !important;
+        }
+
+        .index-back-btn {
+          cursor: pointer !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          gap: 0.45rem !important;
+          color: var(--blog-fg) !important;
+          font-size: 0.88rem !important;
+          opacity: 0.7 !important;
+          padding: 0.3rem 0 !important;
+          transition: opacity 0.2s ease, transform 0.2s ease !important;
+          background: transparent !important;
+          border: none !important;
+        }
+
+        .index-back-btn:hover {
+          opacity: 1 !important;
+          transform: translateX(-3px) !important;
+        }
+
+        .index-back-arrow {
+          font-size: 1rem !important;
+          line-height: 1 !important;
+        }
+
+        .index-page-title {
+          font-size: 0.92rem !important;
+          font-weight: 500 !important;
+          color: var(--blog-fg-muted) !important;
+          letter-spacing: 0.04em !important;
+        }
+
+        .editorial-index-list {
+          display: flex !important;
+          flex-direction: column !important;
+          width: 100% !important;
+          flex: 1 !important;
+        }
+
+        .editorial-index-item {
+          display: flex !important;
+          align-items: baseline !important;
+          justify-content: space-between !important;
+          gap: 1.5rem !important;
+          padding: 1.05rem 0 !important;
+          border-bottom: 1px solid var(--blog-border) !important;
+          text-decoration: none !important;
+          color: var(--blog-fg) !important;
+          transition: opacity 0.2s ease, transform 0.2s ease !important;
+        }
+
+        .editorial-index-item:hover {
+          opacity: 0.6 !important;
+          transform: translateX(3px) !important;
+        }
+
+        .index-item-left {
+          display: flex !important;
+          align-items: baseline !important;
+          gap: 1.1rem !important;
+          min-width: 0 !important;
+          flex: 1 !important;
+        }
+
+        .editorial-index-num {
+          font-size: 0.86rem !important;
+          color: var(--blog-fg-muted) !important;
+          font-variant-numeric: tabular-nums !important;
+          letter-spacing: 0.02em !important;
+          flex-shrink: 0 !important;
+          width: 2rem !important;
+        }
+
+        .editorial-index-title {
+          font-size: clamp(1.05rem, 2vw, 1.25rem) !important;
+          font-weight: 500 !important;
+          line-height: 1.35 !important;
+          color: var(--blog-fg) !important;
+          letter-spacing: -0.015em !important;
+        }
+
+        .editorial-index-date {
+          font-size: 0.8rem !important;
+          color: var(--blog-fg-muted) !important;
+          white-space: nowrap !important;
+          letter-spacing: 0.02em !important;
+          flex-shrink: 0 !important;
+        }
+
+        @media (max-width: 600px) {
+          .editorial-index-item {
+            padding: 0.9rem 0 !important;
+            gap: 0.75rem !important;
+          }
+          .editorial-index-title {
+            font-size: 0.98rem !important;
+            line-height: 1.35 !important;
+          }
+          .editorial-index-date {
+            font-size: 0.75rem !important;
+          }
+          .editorial-index-num {
+            font-size: 0.8rem !important;
+            width: 1.6rem !important;
+          }
+          .index-item-left {
+            gap: 0.75rem !important;
+          }
+        }
+
+        .editorial-index-page-wrap .editorial-footer {
+          margin-top: auto !important;
+          padding-top: 0.9rem !important;
+          padding-bottom: 1rem !important;
+        }
+
+        @media (max-width: 860px) {
+          .editorial-index-page-wrap .editorial-footer {
+            margin-top: auto !important;
+            padding-top: 0.85rem !important;
+            padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
+          }
+        }
         .editorial-toc-wrap {
           max-width: 780px;
           width: 100%;
           margin: 0 auto;
-          padding: 1rem 3rem calc(2.5rem + env(safe-area-inset-bottom, 0px)) 3rem;
+          padding: 1.25rem 3rem 0 3rem;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
           flex: 1;
-          min-height: calc(100vh - 5.2rem - env(safe-area-inset-top, 0px));
+          min-height: auto;
         }
 
         @media (max-width: 860px) {
           .editorial-toc-wrap {
-            padding: 1.25rem 1.85rem calc(3rem + env(safe-area-inset-bottom, 0px)) 1.85rem;
-            min-height: calc(100vh - 5.2rem - env(safe-area-inset-top, 0px));
+            padding: 1rem 1.85rem 0 1.85rem;
+            min-height: auto;
           }
         }
 
@@ -835,6 +1343,7 @@ export default function EditorialBlog({
           cursor: pointer;
           width: 100%;
           color: var(--blog-fg);
+          text-decoration: none;
           transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
         }
 
@@ -883,18 +1392,18 @@ export default function EditorialBlog({
           max-width: 980px;
           width: 100%;
           margin: 0 auto;
-          padding: 1.8rem 3.5rem calc(4rem + env(safe-area-inset-bottom, 0px)) 3.5rem;
+          padding: 1.5rem 3.5rem 0 3.5rem;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
           flex: 1;
-          min-height: calc(100vh - 5.2rem - env(safe-area-inset-top, 0px));
+          min-height: auto;
         }
 
         @media (max-width: 860px) {
           .editorial-content-wrap {
-            padding: 1.25rem 1.85rem calc(3.5rem + env(safe-area-inset-bottom, 0px)) 1.85rem;
-            min-height: calc(100vh - 5.2rem - env(safe-area-inset-top, 0px));
+            padding: 1.25rem 1.85rem 0 1.85rem;
+            min-height: auto;
           }
         }
 
@@ -990,20 +1499,24 @@ export default function EditorialBlog({
           box-sizing: border-box;
         }
 
-        /* Vertical line: subtle drop accent on desktop, hidden on mobile so it doesn't look like a stray bar */
+        /* Signature Editorial Vertical Line: visible on both desktop & mobile */
         .editorial-vertical-line {
           width: 1.5px;
-          height: 32px;
+          height: 52px;
           background-color: var(--blog-line);
-          margin-bottom: 1.6rem;
+          margin-bottom: 1.8rem;
           display: block;
           flex-shrink: 0;
-          opacity: 0.6;
+          opacity: 0.8;
         }
 
         @media (max-width: 860px) {
           .editorial-vertical-line {
-            display: none !important;
+            display: block !important;
+            height: 36px !important;
+            width: 1.5px !important;
+            margin: 0.25rem 0 1.6rem 0 !important;
+            opacity: 0.8 !important;
           }
         }
 
@@ -1100,6 +1613,7 @@ export default function EditorialBlog({
           transition: opacity 0.2s ease, transform 0.2s ease;
           max-width: 48%;
           text-align: left;
+          text-decoration: none;
         }
 
         .editorial-nav-btn.next-btn {
@@ -1163,11 +1677,11 @@ export default function EditorialBlog({
           }
         }
 
-        /* ── MINIMALIST FOOTNOTE / FOOTER: SPACIOUS & SNUG ── */
+        /* ── MINIMALIST FOOTNOTE / FOOTER: BALANCED WITH COMFORTABLE BOTTOM MARGIN ── */
         .editorial-footer {
-          margin-top: 2.2rem;
-          padding-top: 1.2rem;
-          padding-bottom: calc(0.8rem + env(safe-area-inset-bottom, 0px));
+          margin-top: 2rem;
+          padding-top: 0.9rem;
+          padding-bottom: 1rem;
           border-top: 1px solid var(--blog-border);
           display: flex;
           align-items: center;
@@ -1176,32 +1690,39 @@ export default function EditorialBlog({
           box-sizing: border-box;
         }
 
-        .editorial-toc-wrap .editorial-footer {
-          margin-top: auto !important;
-          padding-top: 2.5rem;
-          padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+        .editorial-toc-wrap .editorial-footer,
+        .editorial-home-wrap .editorial-footer,
+        .editorial-index-page-wrap .editorial-footer {
+          margin-top: auto;
+          padding-top: 0.9rem;
+          padding-bottom: 1rem;
         }
 
         .editorial-content-wrap .editorial-footer {
-          margin-top: 3.5rem;
-          padding-top: 1.5rem;
+          margin-top: 2.2rem;
+          padding-top: 0.9rem;
+          padding-bottom: 1.25rem;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 860px) {
           .editorial-footer {
-            margin-top: 1.8rem;
-            padding-top: 1rem;
-            padding-bottom: calc(0.8rem + env(safe-area-inset-bottom, 0px));
+            margin-top: 1.6rem;
+            padding-top: 0.85rem;
+            padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
           }
 
-          .editorial-toc-wrap .editorial-footer {
-            margin-top: auto !important;
-            padding-top: 2.8rem;
+          .editorial-toc-wrap .editorial-footer,
+          .editorial-home-wrap .editorial-footer,
+          .editorial-index-page-wrap .editorial-footer {
+            margin-top: auto;
+            padding-top: 0.85rem;
+            padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
           }
 
           .editorial-content-wrap .editorial-footer {
-            margin-top: 3.2rem;
-            padding-top: 1.4rem;
+            margin-top: 2rem;
+            padding-top: 0.85rem;
+            padding-bottom: calc(1.15rem + env(safe-area-inset-bottom, 0px));
           }
         }
 
@@ -1254,14 +1775,21 @@ export default function EditorialBlog({
           </span>
         </button>
 
-        {/* Center: brand ivan affriandi (Clicking takes user back to Daftar Isi) */}
+        {/* Center: brand ivan ─── affriandi with interactive scroll loading line */}
         <Link
           href="/"
-          onClick={handleGoHome}
           className="nav-brand"
           aria-label="ivan affriandi home"
+          onClick={() => setShowIndex(false)}
         >
-          ivan affriandi
+          <span className="brand-word">ivan</span>
+          <span className="brand-scroll-track" aria-hidden="true">
+            <span
+              className="brand-scroll-fill"
+              style={{ width: !activePost ? "100%" : `${scrollPercent}%` }}
+            />
+          </span>
+          <span className="brand-word">affriandi</span>
         </Link>
 
         {/* Right: Instagram @ */}
@@ -1331,29 +1859,17 @@ export default function EditorialBlog({
                 </button>
               </div>
 
-              {/* Center: Editorial Nav Hub (Primary Links & Personal Ethos) */}
+              {/* Center: Editorial Nav Hub (Primary Links: Works & Ask) */}
               <div className="menu-hub-content">
                 <div className="menu-primary-links">
-                  <Link
-                    href="/"
-                    className="menu-hub-link"
-                    onClick={(e) => {
-                      setIsMenuOpen(false);
-                      handleGoHome(e);
-                    }}
-                  >
-                    <span className="menu-hub-link-title">essays</span>
-                    <span className="menu-hub-link-desc">— personal journal &amp; observations</span>
-                  </Link>
-
-                  <Link
-                    href="/work"
-                    className="menu-hub-link"
-                    onClick={() => setIsMenuOpen(false)}
+                  <div
+                    className="menu-hub-link disabled"
+                    aria-disabled="true"
+                    tabIndex={-1}
                   >
                     <span className="menu-hub-link-title">works</span>
                     <span className="menu-hub-link-desc">— software architecture &amp; interface craft</span>
-                  </Link>
+                  </div>
 
                   <Link
                     href="/ask"
@@ -1363,23 +1879,23 @@ export default function EditorialBlog({
                     <span className="menu-hub-link-title">ask</span>
                     <span className="menu-hub-link-desc">— interactive anonymous q&amp;a</span>
                   </Link>
-
-                  <Link
-                    href="/about"
-                    className="menu-hub-link"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <span className="menu-hub-link-title">about</span>
-                    <span className="menu-hub-link-desc">— ethos &amp; background</span>
-                  </Link>
                 </div>
 
-                {/* Personal Ethos Note */}
+                {/* Personal Poetic Ethos (Puitis, Metaforik, Easy to Understand) */}
                 <div className="menu-ethos-section">
                   <p className="menu-ethos-text">
-                    a sustainable and modest ethos. designing software, studying typography, and observing quiet everyday moments.
+                    seperti air meniti batu karang,<br />
+                    tak pernah bergegas, namun selalu menemukan jalan.<br />
+                    kita merawat hening di tengah riuh dunia,<br />
+                    sebab yang bermakna tumbuh perlahan.
                   </p>
-                  <span className="menu-ethos-meta">amsterdam &amp; jakarta • 2026</span>
+                  <span className="menu-ethos-meta">
+                    <span>baku</span>
+                    <span className="ethos-dash-line" aria-hidden="true" />
+                    <span>jakarta</span>
+                    <span className="ethos-dot" aria-hidden="true">·</span>
+                    <span>2020</span>
+                  </span>
                 </div>
               </div>
 
@@ -1446,65 +1962,98 @@ export default function EditorialBlog({
         )}
       </AnimatePresence>
 
-      {/* ── PAGE BODY WITH FLUID ANIMATION BETWEEN DAFTAR ISI & ARTICLE ── */}
+      {/* ── PAGE BODY: DIRECT PAGE RENDERING (NO MORPHING ANIMATION) ── */}
       <div className="editorial-page-body">
-        <AnimatePresence mode="wait">
-          {/* ── VIEW 1: HOMEPAGE DAFTAR ISI (TABLE OF CONTENTS) ── */}
-          {!activePostId ? (
-            <motion.div
-              key="editorial-toc-view"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="editorial-toc-wrap"
+        {!activePost ? (
+          /* ── HOMEPAGE: STAGE VIEWPORT (HERO & INDEX BOTH MOUNTED, ZERO BLANK FRAMES, 100% FLICKER-FREE) ── */
+          <div className="editorial-stage-viewport">
+            {/* ── STAGE 1: HERO VIEW (HORIZONTAL SCROLLABLE INSTAGRAM MOMENTS) ── */}
+            <div
+              className={`editorial-hero-view ${!showIndex ? "stage-active" : "stage-hidden"}`}
+              aria-hidden={showIndex}
             >
-              {/* ── COMPACT INSTAGRAM FILMSTRIP (ALL 45 PHOTOS, HITAM PUTIH, SCROLLABLE) ── */}
-              {instagramPhotos.length > 0 && (
-                <div className="editorial-ig-strip-wrap">
-                  <div className="editorial-ig-strip">
-                    {instagramPhotos.map((photo, i) => (
-                      <a
-                        key={photo.id || i}
-                        href={photo.permalink || "https://instagram.com/ivanaffriandi"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="editorial-ig-card"
-                        aria-label="instagram photo"
-                        title="instagram @ivanaffriandi"
+              <div className="hero-center-stage">
+                <div className="hero-ig-stage">
+                  {/* Top-left of photos: Typing animation "hi, i'm ivan." with bold ivan */}
+                  <div className="hero-typing-wrap">
+                    <span className="hero-typing-text">
+                      {typedCount <= 8 ? (
+                        fullMessage.slice(0, typedCount)
+                      ) : (
+                        <>
+                          hi, i'm{" "}
+                          <strong className="hero-name-bold">
+                            {fullMessage.slice(8, Math.min(12, typedCount))}
+                          </strong>
+                          {typedCount >= 13 ? "." : ""}
+                        </>
+                      )}
+                    </span>
+                  </div>
+
+                  {/* Center: Horizontal Scrollable Instagram Photos (100% monochrome, protected from save/zoom/hold) */}
+                  <div
+                    className="hero-ig-carousel"
+                    tabIndex={0}
+                    role="region"
+                    aria-label="instagram photos"
+                    style={{
+                      scrollbarWidth: "none",
+                      msOverflowStyle: "none",
+                    }}
+                  >
+                    {instagramPhotos.map((photo, idx) => (
+                      <div
+                        key={photo.id || idx}
+                        className="hero-ig-item"
+                        onContextMenu={(e) => e.preventDefault()}
                       >
                         <img
                           src={photo.url}
-                          alt="instagram moment"
-                          className="editorial-ig-img"
-                          loading="lazy"
+                          alt="ivan affriandi moment"
+                          className="hero-ig-img"
+                          loading={idx < 4 ? "eager" : "lazy"}
+                          draggable={false}
+                          onContextMenu={(e) => e.preventDefault()}
+                          style={{
+                            filter: "grayscale(100%) contrast(108%)",
+                            WebkitFilter: "grayscale(100%) contrast(108%)",
+                            pointerEvents: "none",
+                            userSelect: "none",
+                            WebkitUserSelect: "none",
+                            WebkitTouchCallout: "none",
+                          }}
                         />
-                      </a>
+                        {/* Transparent overlay shield completely blocking zoom, hold/callout, and save while allowing horizontal pan */}
+                        <div
+                          className="hero-photo-shield"
+                          aria-hidden="true"
+                          onContextMenu={(e) => e.preventDefault()}
+                        />
+                      </div>
                     ))}
                   </div>
-                </div>
-              )}
 
-              {/* ── DAFTAR ISI LIST ── */}
-              <div className="editorial-toc-list">
-                {sortedPosts.map((post, idx) => {
-                  const formattedNum = String(idx + 1).padStart(2, "0");
-                  const cleanPostTitle = cleanChapterTitle(post.title);
-                  return (
+                  {/* Bottom-right of photos: Single English word for table of contents */}
+                  <div className="hero-index-wrap">
                     <button
-                      key={post.id}
                       type="button"
-                      className="editorial-toc-item"
-                      onClick={() => handleSelectPost(post.id)}
+                      className="hero-index-btn"
+                      onClick={() => {
+                        setShowIndex(true);
+                        if (typeof window !== "undefined" && window.scrollY > 40) {
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }
+                      }}
+                      aria-label="open index of writings"
                     >
-                      <span className="editorial-toc-num">{formattedNum}</span>
-                      <span className="editorial-toc-title">{cleanPostTitle}</span>
+                      <span className="hero-index-label">index</span>
                     </button>
-                  );
-                })}
+                  </div>
+                </div>
               </div>
 
-              {/* Footnote / Footer: Snug and "ngepas" directly below content */}
+              {/* Footnote / Footer: Snug right below without big gap */}
               <footer className="editorial-footer">
                 <div className="footer-social-icons">
                   <a
@@ -1565,149 +2114,247 @@ export default function EditorialBlog({
                 </div>
                 <span className="footer-copyright">© 2026 ivan affriandi</span>
               </footer>
-            </motion.div>
-          ) : (
-            /* ── VIEW 2: ARTICLE READER VIEW (FLUID ENTRANCE ANIMATION, COMFORTABLE TITLE SPACING) ── */
-            currentPost && (
-              <motion.article
-                key={`post-${currentPost.id}`}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.22, ease: "easeOut" }}
-                className="editorial-content-wrap"
-              >
-                <div className="editorial-main-grid">
-                  {/* LEFT COLUMN: TITLE + (PHOTO UNDER TITLE IF POST HAS ONE, B&W MINIMALIST) */}
-                  <div className="editorial-left-col">
-                    <h1 className="editorial-title">{cleanChapterTitle(currentPost.title)}</h1>
+            </div>
 
-                    {/* Photo placed under Title, Black & White Minimalist */}
-                    {postImage && (
-                      <div className="editorial-left-photo-wrap">
-                        <img
-                          src={postImage}
-                          alt={currentPost.title}
-                          className="editorial-bw-img"
-                          loading="lazy"
-                        />
+            {/* ── STAGE 2: IN-PAGE EMBEDDED INDEX VIEW ("NEMPEK DI PAGE", NO POPUP) ── */}
+            <div
+              className={`editorial-index-view ${showIndex ? "stage-active" : "stage-hidden"}`}
+              aria-hidden={!showIndex}
+            >
+              <div className="index-page-header">
+                <button
+                  type="button"
+                  className="index-back-btn"
+                  onClick={() => {
+                    setShowIndex(false);
+                    if (typeof window !== "undefined" && window.scrollY > 40) {
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }
+                  }}
+                  aria-label="back to home"
+                >
+                  <span className="index-back-arrow">←</span>
+                  <span>back</span>
+                </button>
+                <span className="index-page-title">index</span>
+              </div>
+
+              <div className="editorial-index-list">
+                {sortedPosts.map((post, idx) => {
+                  const formattedNum = String(idx + 1).padStart(2, "0");
+                  const cleanPostTitle = cleanChapterTitle(post.title);
+                  const postDate = formatPostDate(post.published);
+                  return (
+                    <Link
+                      key={post.id}
+                      href={`/blog/${post.id}`}
+                      className="editorial-index-item"
+                    >
+                      <div className="index-item-left">
+                        <span className="editorial-index-num">{formattedNum}</span>
+                        <span className="editorial-index-title">{cleanPostTitle}</span>
                       </div>
-                    )}
-                  </div>
-
-                  {/* RIGHT COLUMN: VERTICAL LINE + BODY PROSE */}
-                  <div className="editorial-right-col">
-                    {/* The signature vertical line */}
-                    <div className="editorial-vertical-line" />
-
-                    {/* Post Content */}
-                    <div
-                      className="editorial-body-prose"
-                      dangerouslySetInnerHTML={{ __html: cleanHtml(currentPost.content) }}
-                    />
-
-                    {/* Bottom Navigation: Previous & Next Blog */}
-                    <div className="editorial-bottom-nav">
-                      {prevPost ? (
-                        <button
-                          type="button"
-                          className="editorial-nav-btn prev-btn"
-                          onClick={() => handleSelectPost(prevPost.id)}
-                        >
-                          <span className="nav-arrow">←</span>
-                          <span className="nav-label">
-                            <span className="nav-dir">previous</span>
-                            <span className="nav-title">{cleanChapterTitle(prevPost.title)}</span>
-                          </span>
-                        </button>
-                      ) : (
-                        <div className="editorial-nav-placeholder" />
+                      {postDate && (
+                        <span className="editorial-index-date">{postDate}</span>
                       )}
+                    </Link>
+                  );
+                })}
+              </div>
 
-                      {nextPost ? (
-                        <button
-                          type="button"
-                          className="editorial-nav-btn next-btn"
-                          onClick={() => handleSelectPost(nextPost.id)}
-                        >
-                          <span className="nav-label text-right">
-                            <span className="nav-dir">next</span>
-                            <span className="nav-title">{cleanChapterTitle(nextPost.title)}</span>
-                          </span>
-                          <span className="nav-arrow">→</span>
-                        </button>
-                      ) : (
-                        <div className="editorial-nav-placeholder" />
-                      )}
-                    </div>
-
-                    {/* Footnote / Footer: Placed tightly right below nav without big gap */}
-                    <footer className="editorial-footer">
-                      <div className="footer-social-icons">
-                        <a
-                          href="https://instagram.com/ivanaffriandi"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="footer-icon-btn"
-                          aria-label="instagram"
-                          title="instagram"
-                        >
-                          <svg
-                            width="17"
-                            height="17"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.6"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                          </svg>
-                        </a>
-                        <a
-                          href="https://x.com/ivanaffriandi"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="footer-icon-btn"
-                          aria-label="x (twitter)"
-                          title="x (twitter)"
-                        >
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                          </svg>
-                        </a>
-                        <a
-                          href="mailto:ivan@ivanaffriandi.com"
-                          className="footer-icon-btn"
-                          aria-label="email"
-                          title="email"
-                        >
-                          <svg
-                            width="17"
-                            height="17"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.6"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <rect x="2" y="4" width="20" height="16" rx="2" />
-                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                          </svg>
-                        </a>
-                      </div>
-                      <span className="footer-copyright">© 2026 ivan affriandi</span>
-                    </footer>
-                  </div>
+              {/* Footnote / Footer: Snug right below without big gap */}
+              <footer className="editorial-footer">
+                <div className="footer-social-icons">
+                  <a
+                    href="https://instagram.com/ivanaffriandi"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="footer-icon-btn"
+                    aria-label="instagram"
+                    title="instagram"
+                  >
+                    <svg
+                      width="17"
+                      height="17"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                    </svg>
+                  </a>
+                  <a
+                    href="https://x.com/ivanaffriandi"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="footer-icon-btn"
+                    aria-label="x (twitter)"
+                    title="x (twitter)"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                  </a>
+                  <a
+                    href="mailto:ivan@ivanaffriandi.com"
+                    className="footer-icon-btn"
+                    aria-label="email"
+                    title="email"
+                  >
+                    <svg
+                      width="17"
+                      height="17"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect x="2" y="4" width="20" height="16" rx="2" />
+                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                    </svg>
+                  </a>
                 </div>
-              </motion.article>
-            )
-          )}
-        </AnimatePresence>
+                <span className="footer-copyright">© 2026 ivan affriandi</span>
+              </footer>
+            </div>
+          </div>
+        ) : (
+          /* ── VIEW 2: ARTICLE READER VIEW (DEDICATED INDIVIDUAL PAGE) ── */
+          <article className="editorial-content-wrap">
+            <div className="editorial-main-grid">
+              {/* LEFT COLUMN: TITLE + (PHOTO UNDER TITLE IF POST HAS ONE, B&W MINIMALIST) */}
+              <div className="editorial-left-col">
+                <h1 className="editorial-title">{cleanChapterTitle(activePost.title)}</h1>
+
+                {/* Photo placed under Title, Black & White Minimalist */}
+                {postImage && (
+                  <div className="editorial-left-photo-wrap">
+                    <img
+                      src={postImage}
+                      alt={activePost.title}
+                      className="editorial-bw-img"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* RIGHT COLUMN: VERTICAL LINE + BODY PROSE */}
+              <div className="editorial-right-col">
+                {/* The signature vertical line */}
+                <div className="editorial-vertical-line" />
+
+                {/* Post Content */}
+                <div
+                  className="editorial-body-prose"
+                  dangerouslySetInnerHTML={{ __html: cleanHtml(activePost.content) }}
+                />
+
+                {/* Bottom Navigation: Previous & Next Blog Pages */}
+                <div className="editorial-bottom-nav">
+                  {prevPost ? (
+                    <Link
+                      href={`/blog/${prevPost.id}`}
+                      className="editorial-nav-btn prev-btn"
+                    >
+                      <span className="nav-arrow">←</span>
+                      <span className="nav-label">
+                        <span className="nav-dir">previous</span>
+                        <span className="nav-title">{cleanChapterTitle(prevPost.title)}</span>
+                      </span>
+                    </Link>
+                  ) : (
+                    <div className="editorial-nav-placeholder" />
+                  )}
+
+                  {nextPost ? (
+                    <Link
+                      href={`/blog/${nextPost.id}`}
+                      className="editorial-nav-btn next-btn"
+                    >
+                      <span className="nav-label text-right">
+                        <span className="nav-dir">next</span>
+                        <span className="nav-title">{cleanChapterTitle(nextPost.title)}</span>
+                      </span>
+                      <span className="nav-arrow">→</span>
+                    </Link>
+                  ) : (
+                    <div className="editorial-nav-placeholder" />
+                  )}
+                </div>
+
+                {/* Footnote / Footer: Snug right below nav without big gap */}
+                <footer className="editorial-footer">
+                  <div className="footer-social-icons">
+                    <a
+                      href="https://instagram.com/ivanaffriandi"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-icon-btn"
+                      aria-label="instagram"
+                      title="instagram"
+                    >
+                      <svg
+                        width="17"
+                        height="17"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                      </svg>
+                    </a>
+                    <a
+                      href="https://x.com/ivanaffriandi"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="footer-icon-btn"
+                      aria-label="x (twitter)"
+                      title="x (twitter)"
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                      </svg>
+                    </a>
+                    <a
+                      href="mailto:ivan@ivanaffriandi.com"
+                      className="footer-icon-btn"
+                      aria-label="email"
+                      title="email"
+                    >
+                      <svg
+                        width="17"
+                        height="17"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect x="2" y="4" width="20" height="16" rx="2" />
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                      </svg>
+                    </a>
+                  </div>
+                  <span className="footer-copyright">© 2026 ivan affriandi</span>
+                </footer>
+              </div>
+            </div>
+          </article>
+        )}
       </div>
     </div>
   );
