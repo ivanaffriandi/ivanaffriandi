@@ -147,7 +147,8 @@ export default function EditorialBlog({
   const [typedCount, setTypedCount] = useState(0);
   const [instagramPhotos, setInstagramPhotos] = useState<InstagramPhoto[]>(ALL_MOMENTS_PHOTOS);
   const fullMessage = "hi, i'm ivan.";
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef1 = useRef<HTMLVideoElement>(null);
+  const videoRef2 = useRef<HTMLVideoElement>(null);
 
   // Check URL query parameters for ?index=true
   useEffect(() => {
@@ -159,75 +160,71 @@ export default function EditorialBlog({
     }
   }, []);
 
-  // Bulletproof auto-start & infinite non-stop playback controller
+  // Bulletproof auto-start & infinite non-stop playback controller for both highlight videos
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    const v1 = videoRef1.current;
+    const v2 = videoRef2.current;
+    const videos = [v1, v2].filter(Boolean) as HTMLVideoElement[];
+    if (videos.length === 0) return;
 
-    // Enforce DOM properties & HTML attributes for unconditional autoplay
-    video.muted = true;
-    video.defaultMuted = true;
-    video.playsInline = true;
-    video.loop = true;
-    video.setAttribute("muted", "");
-    video.setAttribute("playsinline", "");
-    video.setAttribute("webkit-playsinline", "");
-    video.setAttribute("autoplay", "");
-    video.setAttribute("loop", "");
+    videos.forEach((video) => {
+      video.muted = true;
+      video.defaultMuted = true;
+      video.playsInline = true;
+      video.loop = true;
+      video.setAttribute("muted", "");
+      video.setAttribute("playsinline", "");
+      video.setAttribute("webkit-playsinline", "");
+      video.setAttribute("autoplay", "");
+      video.setAttribute("loop", "");
+    });
 
-    const ensurePlay = () => {
-      if (video.paused) {
-        const promise = video.play();
-        if (promise !== undefined) {
-          promise.catch(() => {
-            // Browser blocked ungestured play; will trigger on gesture
-          });
+    const ensurePlayAll = () => {
+      videos.forEach((video) => {
+        if (video.paused) {
+          const promise = video.play();
+          if (promise !== undefined) {
+            promise.catch(() => {});
+          }
         }
-      }
+      });
     };
 
     // 1. Initial attempt
-    ensurePlay();
+    ensurePlayAll();
 
-    // 2. Play on lifecycle events
-    video.addEventListener("loadedmetadata", ensurePlay);
-    video.addEventListener("loadeddata", ensurePlay);
-    video.addEventListener("canplay", ensurePlay);
-    video.addEventListener("canplaythrough", ensurePlay);
+    // 2. Play on lifecycle events & ensure non-stop continuous loop
+    const cleanupFns: (() => void)[] = [];
+    videos.forEach((video) => {
+      const handlePlay = () => ensurePlayAll();
+      const events = ["loadedmetadata", "loadeddata", "canplay", "canplaythrough", "ended", "pause"];
+      events.forEach((evt) => {
+        video.addEventListener(evt, handlePlay);
+        cleanupFns.push(() => video.removeEventListener(evt, handlePlay));
+      });
+    });
 
-    // 3. Guarantee non-stop loop (restart if paused or ended)
-    const handlePauseOrEnd = () => {
-      ensurePlay();
-    };
-    video.addEventListener("ended", handlePauseOrEnd);
-    video.addEventListener("pause", handlePauseOrEnd);
-
-    // 4. Resume immediately when tab becomes visible or window gains focus
+    // 3. Resume immediately when tab becomes visible or window gains focus
     const handleVisibility = () => {
       if (document.visibilityState === "visible") {
-        ensurePlay();
+        ensurePlayAll();
       }
     };
     document.addEventListener("visibilitychange", handleVisibility);
-    window.addEventListener("focus", ensurePlay);
+    window.addEventListener("focus", ensurePlayAll);
 
-    // 5. Fallback triggers on initial touch/scroll to bypass strict Low Power Mode locks
+    // 4. Fallback triggers on initial touch/scroll to bypass strict Low Power Mode locks
     const handleGesture = () => {
-      ensurePlay();
+      ensurePlayAll();
     };
     window.addEventListener("touchstart", handleGesture, { passive: true });
     window.addEventListener("scroll", handleGesture, { passive: true });
     window.addEventListener("click", handleGesture, { passive: true });
 
     return () => {
-      video.removeEventListener("loadedmetadata", ensurePlay);
-      video.removeEventListener("loadeddata", ensurePlay);
-      video.removeEventListener("canplay", ensurePlay);
-      video.removeEventListener("canplaythrough", ensurePlay);
-      video.removeEventListener("ended", handlePauseOrEnd);
-      video.removeEventListener("pause", handlePauseOrEnd);
+      cleanupFns.forEach((fn) => fn());
       document.removeEventListener("visibilitychange", handleVisibility);
-      window.removeEventListener("focus", ensurePlay);
+      window.removeEventListener("focus", ensurePlayAll);
       window.removeEventListener("touchstart", handleGesture);
       window.removeEventListener("scroll", handleGesture);
       window.removeEventListener("click", handleGesture);
@@ -2326,7 +2323,7 @@ export default function EditorialBlog({
                         msOverflowStyle: "none",
                       }}
                     >
-                      {/* Video Highlight: Always First Item (Monochrome Web-Optimized Loop) */}
+                      {/* Video Highlight 1: Always First Item (Monochrome Web-Optimized Loop) */}
                       <div
                         className="hero-ig-item hero-ig-video-item"
                         onContextMenu={(e) => e.preventDefault()}
@@ -2342,7 +2339,7 @@ export default function EditorialBlog({
                                 if (p !== undefined) p.catch(() => {});
                               }
                             }
-                            videoRef.current = el;
+                            videoRef1.current = el;
                           }}
                           src="/videos/991b18694a3349c8b298812d6e1d94cb.mp4"
                           autoPlay
@@ -2353,7 +2350,7 @@ export default function EditorialBlog({
                           disablePictureInPicture
                           disableRemotePlayback
                           controls={false}
-                          aria-label="moment video highlight"
+                          aria-label="moment video highlight 1"
                           className="hero-ig-video"
                           onContextMenu={(e) => e.preventDefault()}
                           style={{
@@ -2370,6 +2367,59 @@ export default function EditorialBlog({
                           }}
                         >
                           <source src="/videos/991b18694a3349c8b298812d6e1d94cb.mp4" type="video/mp4" />
+                        </video>
+                        {/* Transparent overlay shield completely blocking zoom, hold/callout, and save while allowing horizontal pan */}
+                        <div
+                          className="hero-photo-shield"
+                          aria-hidden="true"
+                          onContextMenu={(e) => e.preventDefault()}
+                        />
+                      </div>
+
+                      {/* Video Highlight 2: Second Item (Monochrome Web-Optimized Loop) */}
+                      <div
+                        className="hero-ig-item hero-ig-video-item"
+                        onContextMenu={(e) => e.preventDefault()}
+                      >
+                        <video
+                          ref={(el) => {
+                            if (el) {
+                              el.defaultMuted = true;
+                              el.muted = true;
+                              el.playsInline = true;
+                              if (el.paused) {
+                                const p = el.play();
+                                if (p !== undefined) p.catch(() => {});
+                              }
+                            }
+                            videoRef2.current = el;
+                          }}
+                          src="/videos/IMG_9620.mp4"
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          preload="auto"
+                          disablePictureInPicture
+                          disableRemotePlayback
+                          controls={false}
+                          aria-label="moment video highlight 2"
+                          className="hero-ig-video"
+                          onContextMenu={(e) => e.preventDefault()}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            objectPosition: "center",
+                            filter: "grayscale(100%) contrast(108%)",
+                            WebkitFilter: "grayscale(100%) contrast(108%)",
+                            pointerEvents: "none",
+                            userSelect: "none",
+                            WebkitUserSelect: "none",
+                            WebkitTouchCallout: "none",
+                          }}
+                        >
+                          <source src="/videos/IMG_9620.mp4" type="video/mp4" />
                         </video>
                         {/* Transparent overlay shield completely blocking zoom, hold/callout, and save while allowing horizontal pan */}
                         <div
