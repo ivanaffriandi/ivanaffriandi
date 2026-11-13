@@ -30,8 +30,9 @@ interface InstagramPhoto {
   permalink?: string;
 }
 
-// All 45 authentic Instagram moments sorted by newest upload first
+// All authentic Instagram moments sorted by newest upload first (strictly photos only)
 const ALL_MOMENTS_PHOTOS: InstagramPhoto[] = [
+  { id: "491763832", url: "/images/moments/491763832_683473031073677_9046664387849007781_n.jpg", permalink: "https://instagram.com/ivanaffriandi" },
   { id: "627657157", url: "/images/moments/627657157_18090374564098563_1965153477745201663_n..webp", permalink: "https://instagram.com/ivanaffriandi" },
   { id: "623927781", url: "/images/moments/623927781_18089496431098563_7808236183056324880_n..webp", permalink: "https://instagram.com/ivanaffriandi" },
   { id: "612080824", url: "/images/moments/612080824_18087988394098563_4793774317004810121_n..webp", permalink: "https://instagram.com/ivanaffriandi" },
@@ -147,6 +148,16 @@ export default function EditorialBlog({
   const [typedCount, setTypedCount] = useState(0);
   const [instagramPhotos, setInstagramPhotos] = useState<InstagramPhoto[]>(ALL_MOMENTS_PHOTOS);
   const fullMessage = "hi, i'm ivan.";
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Ensure seamless autoplay on iOS Safari, Chrome, and desktop
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.defaultMuted = true;
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(() => {});
+    }
+  }, []);
 
   const scrollFillRef = useRef<HTMLSpanElement>(null);
   const targetProgressRef = useRef(0);
@@ -1154,7 +1165,8 @@ export default function EditorialBlog({
           touch-action: pan-x !important;
         }
 
-        .hero-ig-img {
+        .hero-ig-img,
+        .hero-ig-video {
           width: 100% !important;
           height: 100% !important;
           object-fit: cover !important;
@@ -2180,17 +2192,55 @@ export default function EditorialBlog({
                       </span>
                     </div>
 
-                    {/* Center: Horizontal Scrollable Instagram Photos (100% monochrome, protected from save/zoom/hold) */}
+                    {/* Center: Horizontal Scrollable Instagram Photos & Video Highlight (100% monochrome, protected from save/zoom/hold) */}
                     <div
                       className="hero-ig-carousel"
                       tabIndex={0}
                       role="region"
-                      aria-label="instagram photos"
+                      aria-label="instagram photos and video"
                       style={{
                         scrollbarWidth: "none",
                         msOverflowStyle: "none",
                       }}
                     >
+                      {/* Video Highlight: Always First Item (Monochrome Web-Optimized Loop) */}
+                      <div
+                        className="hero-ig-item hero-ig-video-item"
+                        onContextMenu={(e) => e.preventDefault()}
+                      >
+                        <video
+                          ref={videoRef}
+                          src="/videos/991b18694a3349c8b298812d6e1d94cb.mp4"
+                          poster="/videos/991b18694a3349c8b298812d6e1d94cb-poster.jpg"
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          preload="auto"
+                          aria-label="moment video highlight"
+                          className="hero-ig-video"
+                          onContextMenu={(e) => e.preventDefault()}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            objectPosition: "center",
+                            filter: "grayscale(100%) contrast(108%)",
+                            WebkitFilter: "grayscale(100%) contrast(108%)",
+                            pointerEvents: "none",
+                            userSelect: "none",
+                            WebkitUserSelect: "none",
+                            WebkitTouchCallout: "none",
+                          }}
+                        />
+                        {/* Transparent overlay shield completely blocking zoom, hold/callout, and save while allowing horizontal pan */}
+                        <div
+                          className="hero-photo-shield"
+                          aria-hidden="true"
+                          onContextMenu={(e) => e.preventDefault()}
+                        />
+                      </div>
+
                       {instagramPhotos.map((photo, idx) => (
                         <div
                           key={photo.id || idx}
