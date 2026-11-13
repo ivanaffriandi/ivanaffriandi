@@ -149,13 +149,89 @@ export default function EditorialBlog({
   const fullMessage = "hi, i'm ivan.";
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Ensure seamless autoplay on iOS Safari, Chrome, and desktop
+  // Check URL query parameters for ?index=true
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.defaultMuted = true;
-      videoRef.current.muted = true;
-      videoRef.current.play().catch(() => {});
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("index") === "true") {
+        setShowIndex(true);
+      }
     }
+  }, []);
+
+  // Bulletproof auto-start & infinite non-stop playback controller
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Enforce DOM properties & HTML attributes for unconditional autoplay
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.loop = true;
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+    video.setAttribute("autoplay", "");
+    video.setAttribute("loop", "");
+
+    const ensurePlay = () => {
+      if (video.paused) {
+        const promise = video.play();
+        if (promise !== undefined) {
+          promise.catch(() => {
+            // Browser blocked ungestured play; will trigger on gesture
+          });
+        }
+      }
+    };
+
+    // 1. Initial attempt
+    ensurePlay();
+
+    // 2. Play on lifecycle events
+    video.addEventListener("loadedmetadata", ensurePlay);
+    video.addEventListener("loadeddata", ensurePlay);
+    video.addEventListener("canplay", ensurePlay);
+    video.addEventListener("canplaythrough", ensurePlay);
+
+    // 3. Guarantee non-stop loop (restart if paused or ended)
+    const handlePauseOrEnd = () => {
+      ensurePlay();
+    };
+    video.addEventListener("ended", handlePauseOrEnd);
+    video.addEventListener("pause", handlePauseOrEnd);
+
+    // 4. Resume immediately when tab becomes visible or window gains focus
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        ensurePlay();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("focus", ensurePlay);
+
+    // 5. Fallback triggers on initial touch/scroll to bypass strict Low Power Mode locks
+    const handleGesture = () => {
+      ensurePlay();
+    };
+    window.addEventListener("touchstart", handleGesture, { passive: true });
+    window.addEventListener("scroll", handleGesture, { passive: true });
+    window.addEventListener("click", handleGesture, { passive: true });
+
+    return () => {
+      video.removeEventListener("loadedmetadata", ensurePlay);
+      video.removeEventListener("loadeddata", ensurePlay);
+      video.removeEventListener("canplay", ensurePlay);
+      video.removeEventListener("canplaythrough", ensurePlay);
+      video.removeEventListener("ended", handlePauseOrEnd);
+      video.removeEventListener("pause", handlePauseOrEnd);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("focus", ensurePlay);
+      window.removeEventListener("touchstart", handleGesture);
+      window.removeEventListener("scroll", handleGesture);
+      window.removeEventListener("click", handleGesture);
+    };
   }, []);
 
   const scrollFillRef = useRef<HTMLSpanElement>(null);
@@ -1202,6 +1278,17 @@ export default function EditorialBlog({
           justify-content: flex-end !important;
         }
 
+        .hero-profession-tag {
+          color: var(--blog-fg) !important;
+          font-size: clamp(0.92rem, 1.3vw, 1.05rem) !important;
+          font-weight: 400 !important;
+          letter-spacing: -0.015em !important;
+          user-select: none !important;
+          -webkit-user-select: none !important;
+          cursor: default !important;
+          opacity: 0.85 !important;
+        }
+
         .hero-index-btn {
           cursor: pointer !important;
           display: inline-flex !important;
@@ -2069,6 +2156,26 @@ export default function EditorialBlog({
                   </div>
 
                   <Link
+                    href="/?index=true"
+                    className="menu-hub-link"
+                    onClick={(e) => {
+                      if (!activePost) {
+                        e.preventDefault();
+                        setIsMenuOpen(false);
+                        setShowIndex(true);
+                        if (typeof window !== "undefined" && window.scrollY > 40) {
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }
+                      } else {
+                        setIsMenuOpen(false);
+                      }
+                    }}
+                  >
+                    <span className="menu-hub-link-title">writes</span>
+                    <span className="menu-hub-link-desc">— table of contents &amp; reflections</span>
+                  </Link>
+
+                  <Link
                     href="/ask"
                     className="menu-hub-link"
                     onClick={() => setIsMenuOpen(false)}
@@ -2216,6 +2323,9 @@ export default function EditorialBlog({
                           muted
                           playsInline
                           preload="auto"
+                          disablePictureInPicture
+                          disableRemotePlayback
+                          controls={false}
                           aria-label="moment video highlight"
                           className="hero-ig-video"
                           onContextMenu={(e) => e.preventDefault()}
@@ -2231,7 +2341,9 @@ export default function EditorialBlog({
                             WebkitUserSelect: "none",
                             WebkitTouchCallout: "none",
                           }}
-                        />
+                        >
+                          <source src="/videos/991b18694a3349c8b298812d6e1d94cb.mp4" type="video/mp4" />
+                        </video>
                         {/* Transparent overlay shield completely blocking zoom, hold/callout, and save while allowing horizontal pan */}
                         <div
                           className="hero-photo-shield"
@@ -2272,21 +2384,9 @@ export default function EditorialBlog({
                       ))}
                     </div>
 
-                    {/* Bottom-right of photos: Single English word for table of contents */}
+                    {/* Bottom-right of photos: Minimal editorial profession tagline */}
                     <div className="hero-index-wrap">
-                      <button
-                        type="button"
-                        className="hero-index-btn"
-                        onClick={() => {
-                          setShowIndex(true);
-                          if (typeof window !== "undefined" && window.scrollY > 40) {
-                            window.scrollTo({ top: 0, behavior: "smooth" });
-                          }
-                        }}
-                        aria-label="open index of writings"
-                      >
-                        <span className="hero-index-label">index</span>
-                      </button>
+                      <span className="hero-profession-tag">an ui/ux designer.</span>
                     </div>
                   </div>
                 </div>
