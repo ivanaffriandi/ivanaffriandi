@@ -149,6 +149,42 @@ export default function EditorialBlog({
   const fullMessage = "hi, i'm ivan.";
   const videoRef1 = useRef<HTMLVideoElement>(null);
   const videoRef2 = useRef<HTMLVideoElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Disable aggressive browser scroll restoration and ensure carousel always starts at initial position (video 1 & 2)
+  useEffect(() => {
+    if (typeof window !== "undefined" && "scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+
+    const resetScroll = () => {
+      const el = carouselRef.current;
+      if (el) {
+        el.scrollLeft = 0;
+        if (typeof el.scrollTo === "function") {
+          el.scrollTo({ left: 0, behavior: "instant" as ScrollBehavior });
+        }
+      }
+    };
+
+    resetScroll();
+    const rafId = requestAnimationFrame(resetScroll);
+    const t1 = setTimeout(resetScroll, 50);
+    const t2 = setTimeout(resetScroll, 150);
+    const t3 = setTimeout(resetScroll, 400);
+
+    window.addEventListener("pageshow", resetScroll);
+    window.addEventListener("load", resetScroll);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      window.removeEventListener("pageshow", resetScroll);
+      window.removeEventListener("load", resetScroll);
+    };
+  }, [showIndex, activePost]);
 
   // Check URL query parameters for ?index=true
   useEffect(() => {
@@ -2314,8 +2350,8 @@ export default function EditorialBlog({
 
                     {/* Center: Horizontal Scrollable Instagram Photos & Video Highlight (100% monochrome, protected from save/zoom/hold) */}
                     <div
+                      ref={carouselRef}
                       className="hero-ig-carousel"
-                      tabIndex={0}
                       role="region"
                       aria-label="instagram photos and video"
                       style={{
@@ -2394,7 +2430,7 @@ export default function EditorialBlog({
                             }
                             videoRef2.current = el;
                           }}
-                          src="/videos/IMG_9620.mp4"
+                          src="/videos/IMG_2555.mp4"
                           autoPlay
                           loop
                           muted
@@ -2419,7 +2455,7 @@ export default function EditorialBlog({
                             WebkitTouchCallout: "none",
                           }}
                         >
-                          <source src="/videos/IMG_9620.mp4" type="video/mp4" />
+                          <source src="/videos/IMG_2555.mp4" type="video/mp4" />
                         </video>
                         {/* Transparent overlay shield completely blocking zoom, hold/callout, and save while allowing horizontal pan */}
                         <div
