@@ -1450,6 +1450,23 @@ html[data-theme="light"] .editorial-menu-overlay {
   box-sizing: border-box !important;
 }
 
+.index-header-wrap {
+  width: 100% !important;
+  margin-bottom: 1.35rem !important;
+  display: flex !important;
+  align-items: baseline !important;
+}
+
+.index-title-heading {
+  font-size: clamp(1.4rem, 3.2vw, 2.1rem) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.03em !important;
+  color: var(--blog-fg, #ffffff) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.1 !important;
+}
+
 .editorial-index-list {
   display: flex !important;
   flex-direction: column !important;

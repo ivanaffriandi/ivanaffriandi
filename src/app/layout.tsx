@@ -125,6 +125,7 @@ export default function RootLayout({
             `,
           }}
         />
+        <link rel="preload" href="/videos/991b18694a3349c8b298812d6e1d94cb.mp4" as="video" type="video/mp4" fetchPriority="high" />
       </head>
       <body>
         <PerformanceProvider>

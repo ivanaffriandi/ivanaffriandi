@@ -1328,6 +1328,23 @@ export default function EditorialBlog({
           box-sizing: border-box !important;
         }
 
+        .index-header-wrap {
+          width: 100% !important;
+          margin-bottom: 1.35rem !important;
+          display: flex !important;
+          align-items: baseline !important;
+        }
+
+        .index-title-heading {
+          font-size: clamp(1.4rem, 3.2vw, 2.1rem) !important;
+          font-weight: 600 !important;
+          letter-spacing: -0.03em !important;
+          color: var(--blog-fg) !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          line-height: 1.1 !important;
+        }
+
         .editorial-index-list {
           display: flex !important;
           flex-direction: column !important;
@@ -2315,9 +2332,19 @@ export default function EditorialBlog({
                         onContextMenu={(e) => e.preventDefault()}
                       >
                         <video
-                          ref={videoRef}
+                          ref={(el) => {
+                            if (el) {
+                              el.defaultMuted = true;
+                              el.muted = true;
+                              el.playsInline = true;
+                              if (el.paused) {
+                                const p = el.play();
+                                if (p !== undefined) p.catch(() => {});
+                              }
+                            }
+                            videoRef.current = el;
+                          }}
                           src="/videos/991b18694a3349c8b298812d6e1d94cb.mp4"
-                          poster="/videos/991b18694a3349c8b298812d6e1d94cb-poster.jpg"
                           autoPlay
                           loop
                           muted
@@ -2386,7 +2413,9 @@ export default function EditorialBlog({
 
                     {/* Bottom-right of photos: Minimal editorial profession tagline */}
                     <div className="hero-index-wrap">
-                      <span className="hero-profession-tag">an ui/ux designer.</span>
+                      <span className="hero-profession-tag">
+                        an <strong className="hero-name-bold">ui/ux designer.</strong>
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -2465,6 +2494,9 @@ export default function EditorialBlog({
               /* ── STAGE 2: IN-PAGE EMBEDDED INDEX VIEW ("NEMPEK DI PAGE", NO POPUP) ── */
               <div className="editorial-index-view stage-active">
                 <div className="index-center-stage">
+                  <div className="index-header-wrap">
+                    <h2 className="index-title-heading">writes.</h2>
+                  </div>
                   <div className="editorial-index-list">
                     {sortedPosts.map((post, idx) => {
                       const formattedNum = String(idx + 1).padStart(2, "0");
