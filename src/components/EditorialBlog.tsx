@@ -2539,7 +2539,7 @@ export default function EditorialBlog({
                     {/* Bottom-right of photos: Minimal editorial profession tagline */}
                     <div className="hero-index-wrap">
                       <span className="hero-profession-tag">
-                        an <strong className="hero-name-bold">ui/ux designer.</strong>
+                        a <strong className="hero-name-bold">ui/ux designer.</strong>
                       </span>
                     </div>
                   </div>
