@@ -55,17 +55,7 @@ export async function GET() {
 
       const media = files
         .map((f) => {
-          // If latest downloaded moment, ensure it is ranked first
-          if (f.startsWith("491763832")) {
-            return {
-              id: f,
-              media_url: `/images/moments/${f}`,
-              thumbnail_url: `/images/moments/${f}`,
-              permalink: "https://instagram.com/ivanaffriandi",
-              order: 9999999999,
-            };
-          }
-          const match = f.match(/(\d+)/);
+          const match = f.match(/^(\d+)/);
           const num = match ? parseInt(match[1], 10) : 0;
           return {
             id: f,

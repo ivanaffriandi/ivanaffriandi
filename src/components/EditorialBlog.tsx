@@ -32,7 +32,6 @@ interface InstagramPhoto {
 
 // All authentic Instagram moments sorted by newest upload first (strictly photos only)
 const ALL_MOMENTS_PHOTOS: InstagramPhoto[] = [
-  { id: "491763832", url: "/images/moments/491763832_683473031073677_9046664387849007781_n.jpg", permalink: "https://instagram.com/ivanaffriandi" },
   { id: "627657157", url: "/images/moments/627657157_18090374564098563_1965153477745201663_n..webp", permalink: "https://instagram.com/ivanaffriandi" },
   { id: "623927781", url: "/images/moments/623927781_18089496431098563_7808236183056324880_n..webp", permalink: "https://instagram.com/ivanaffriandi" },
   { id: "612080824", url: "/images/moments/612080824_18087988394098563_4793774317004810121_n..webp", permalink: "https://instagram.com/ivanaffriandi" },
