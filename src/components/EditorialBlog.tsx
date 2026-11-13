@@ -198,49 +198,60 @@ export default function EditorialBlog({
 
   // Bulletproof auto-start & infinite non-stop playback controller for both highlight videos
   useEffect(() => {
-    const v1 = videoRef1.current;
-    const v2 = videoRef2.current;
-    const videos = [v1, v2].filter(Boolean) as HTMLVideoElement[];
-    if (videos.length === 0) return;
-
-    videos.forEach((video) => {
-      video.muted = true;
-      video.defaultMuted = true;
-      video.playsInline = true;
-      video.loop = true;
-      video.setAttribute("muted", "");
-      video.setAttribute("playsinline", "");
-      video.setAttribute("webkit-playsinline", "");
-      video.setAttribute("autoplay", "");
-      video.setAttribute("loop", "");
-    });
-
-    const ensurePlayAll = () => {
-      videos.forEach((video) => {
-        if (video.paused) {
-          const promise = video.play();
-          if (promise !== undefined) {
-            promise.catch(() => {});
-          }
-        }
-      });
+    const playVideo = (v: HTMLVideoElement | null) => {
+      if (!v) return;
+      v.muted = true;
+      v.defaultMuted = true;
+      v.playsInline = true;
+      v.loop = true;
+      v.setAttribute("muted", "");
+      v.setAttribute("playsinline", "");
+      v.setAttribute("webkit-playsinline", "");
+      v.setAttribute("autoplay", "");
+      v.setAttribute("loop", "");
+      if (v.paused) {
+        const p = v.play();
+        if (p !== undefined) p.catch(() => {});
+      }
     };
 
-    // 1. Initial attempt
+    const ensurePlayAll = () => {
+      playVideo(videoRef1.current);
+      playVideo(videoRef2.current);
+    };
+
+    // Immediately play on mount
     ensurePlayAll();
 
-    // 2. Play on lifecycle events & ensure non-stop continuous loop
-    const cleanupFns: (() => void)[] = [];
-    videos.forEach((video) => {
+    // Fast polling in first 4 seconds to guarantee play without ANY user scroll/touch
+    const intervalId = setInterval(() => {
+      const v1 = videoRef1.current;
+      const v2 = videoRef2.current;
+      if (v1 && v2 && !v1.paused && !v2.paused) {
+        return;
+      }
+      ensurePlayAll();
+    }, 40);
+
+    const safetyStop = setTimeout(() => {
+      clearInterval(intervalId);
+    }, 4000);
+
+    // Lifecycle events
+    const attachEvents = (video: HTMLVideoElement | null) => {
+      if (!video) return () => {};
       const handlePlay = () => ensurePlayAll();
       const events = ["loadedmetadata", "loadeddata", "canplay", "canplaythrough", "ended", "pause"];
-      events.forEach((evt) => {
-        video.addEventListener(evt, handlePlay);
-        cleanupFns.push(() => video.removeEventListener(evt, handlePlay));
-      });
-    });
+      events.forEach((evt) => video.addEventListener(evt, handlePlay));
+      return () => {
+        events.forEach((evt) => video.removeEventListener(evt, handlePlay));
+      };
+    };
 
-    // 3. Resume immediately when tab becomes visible or window gains focus
+    const cleanupV1 = attachEvents(videoRef1.current);
+    const cleanupV2 = attachEvents(videoRef2.current);
+
+    // Resume immediately when tab becomes visible or window gains focus
     const handleVisibility = () => {
       if (document.visibilityState === "visible") {
         ensurePlayAll();
@@ -249,7 +260,7 @@ export default function EditorialBlog({
     document.addEventListener("visibilitychange", handleVisibility);
     window.addEventListener("focus", ensurePlayAll);
 
-    // 4. Fallback triggers on initial touch/scroll to bypass strict Low Power Mode locks
+    // Fallback triggers on initial touch/scroll
     const handleGesture = () => {
       ensurePlayAll();
     };
@@ -258,14 +269,17 @@ export default function EditorialBlog({
     window.addEventListener("click", handleGesture, { passive: true });
 
     return () => {
-      cleanupFns.forEach((fn) => fn());
+      clearInterval(intervalId);
+      clearTimeout(safetyStop);
+      cleanupV1();
+      cleanupV2();
       document.removeEventListener("visibilitychange", handleVisibility);
       window.removeEventListener("focus", ensurePlayAll);
       window.removeEventListener("touchstart", handleGesture);
       window.removeEventListener("scroll", handleGesture);
       window.removeEventListener("click", handleGesture);
     };
-  }, []);
+  }, [showIndex, activePost]);
 
   const scrollFillRef = useRef<HTMLSpanElement>(null);
   const targetProgressRef = useRef(0);
@@ -2496,6 +2510,31 @@ export default function EditorialBlog({
                         </div>
                       ))}
                     </div>
+
+                    {/* Instant synchronous autoplay trigger */}
+                    <script
+                      dangerouslySetInnerHTML={{
+                        __html: `
+                          (function() {
+                            function startAll() {
+                              var vids = document.querySelectorAll('.hero-ig-video');
+                              for (var i = 0; i < vids.length; i++) {
+                                var v = vids[i];
+                                v.muted = true;
+                                v.defaultMuted = true;
+                                v.playsInline = true;
+                                var p = v.play();
+                                if (p !== undefined) p.catch(function(){});
+                              }
+                            }
+                            startAll();
+                            if (document.readyState === 'loading') {
+                              document.addEventListener('DOMContentLoaded', startAll);
+                            }
+                          })();
+                        `,
+                      }}
+                    />
 
                     {/* Bottom-right of photos: Minimal editorial profession tagline */}
                     <div className="hero-index-wrap">
