@@ -317,8 +317,8 @@ export default function EditorialBlog({
 
   // Track scroll percentage for the navbar interactive loading line with GPU-accelerated RAF lerp (buttery smooth)
   useEffect(() => {
-    // If viewing the compact index TOC view: lock to 100% full
-    if (showIndex) {
+    // If on homepage: immediately lock to 100% full
+    if (!activePost) {
       targetProgressRef.current = 1;
       currentProgressRef.current = 1;
       if (scrollFillRef.current) {
@@ -328,7 +328,7 @@ export default function EditorialBlog({
       return;
     }
 
-    // On scrollable homepage & article pages: compute scroll progress (0 at top, 1 at bottom)
+    // On article page: compute scroll progress (0 at top, 1 at bottom)
     const calculateProgress = () => {
       const scrollHeight =
         (document.documentElement.scrollHeight || document.body.scrollHeight || 0) -
@@ -394,7 +394,7 @@ export default function EditorialBlog({
         rafIdRef.current = null;
       }
     };
-  }, [activePost, showIndex]);
+  }, [activePost]);
 
   // Sync fresh photos from API if available
   useEffect(() => {
@@ -1174,33 +1174,20 @@ export default function EditorialBlog({
           box-sizing: border-box !important;
           display: flex !important;
           flex-direction: column !important;
+          justify-content: space-between !important;
           min-height: calc(100vh - 5.4rem - env(safe-area-inset-top, 0px)) !important;
         }
 
         .editorial-hero-view {
           max-width: 960px !important;
           margin: 0 auto !important;
-          padding: 1.25rem 2rem 4rem 2rem !important;
-          justify-content: flex-start !important;
-        }
-
-        .editorial-hero-view .hero-center-stage {
-          min-height: calc(100vh - 8.5rem - env(safe-area-inset-top, 0px)) !important;
-          display: flex !important;
-          flex-direction: column !important;
-          justify-content: center !important;
-          margin-bottom: 3.5rem !important;
-        }
-
-        .editorial-hero-view .editorial-footer {
-          margin-top: 5rem !important;
+          padding: 1.25rem 2rem 0 2rem !important;
         }
 
         .editorial-index-view {
           max-width: 780px !important;
           margin: 0 auto !important;
           padding: 1.25rem 2.5rem 0 2.5rem !important;
-          justify-content: space-between !important;
         }
 
         .editorial-hero-view.stage-active,
@@ -1219,143 +1206,11 @@ export default function EditorialBlog({
           }
           .editorial-hero-view {
             min-height: calc(100vh - 5.2rem - env(safe-area-inset-top, 0px)) !important;
-            padding: 1rem 1.4rem 3.5rem 1.4rem !important;
-          }
-          .editorial-hero-view .hero-center-stage {
-            min-height: calc(100vh - 7.5rem - env(safe-area-inset-top, 0px)) !important;
-            margin-bottom: 2rem !important;
+            padding: 1rem 1.5rem 0 1.5rem !important;
           }
           .editorial-index-view {
             min-height: calc(100vh - 5.2rem - env(safe-area-inset-top, 0px)) !important;
             padding: 0.9rem 1.6rem 0 1.6rem !important;
-          }
-        }
-
-        /* ── MINIMALIST EDITORIAL INTRODUCTION (SMOOTH & ZERO FLICKER) ── */
-        .editorial-intro-flow {
-          width: 100%;
-          margin-top: 1rem;
-          padding-top: 3.5rem;
-          border-top: 1px solid var(--blog-border);
-        }
-
-        .editorial-intro-section {
-          display: grid;
-          grid-template-columns: clamp(180px, 28vw, 250px) 1fr;
-          gap: clamp(2rem, 5vw, 4rem);
-          align-items: center;
-          max-width: 820px;
-          margin: 0 auto;
-        }
-
-        .editorial-intro-photo-wrap {
-          position: relative;
-          aspect-ratio: 4 / 5;
-          border-radius: 3px;
-          overflow: hidden;
-          background-color: var(--blog-img-bg);
-          border: 1px solid var(--blog-border);
-          box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
-          transform: translate3d(0, 0, 0);
-          backface-visibility: hidden;
-        }
-
-        .editorial-intro-photo {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          display: block;
-          filter: grayscale(100%) contrast(108%);
-          -webkit-filter: grayscale(100%) contrast(108%);
-          transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .editorial-intro-photo-wrap:hover .editorial-intro-photo {
-          transform: scale(1.02);
-        }
-
-        .editorial-intro-photo-caption {
-          position: absolute;
-          bottom: 0.75rem;
-          left: 0.75rem;
-          font-size: 0.68rem;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          background: rgba(0, 0, 0, 0.72);
-          color: #ffffff;
-          padding: 0.2rem 0.5rem;
-          border-radius: 2px;
-          backdrop-filter: blur(6px);
-          font-weight: 500;
-        }
-
-        .editorial-intro-bio-wrap {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          transform: translate3d(0, 0, 0);
-          backface-visibility: hidden;
-        }
-
-        .editorial-intro-eyebrow {
-          font-size: 0.74rem;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: var(--blog-fg-muted);
-          font-weight: 600;
-        }
-
-        .editorial-intro-headline {
-          font-family: var(--font-playfair), serif;
-          font-size: clamp(1.45rem, 2.8vw, 2.1rem);
-          font-weight: 700;
-          color: var(--blog-fg);
-          line-height: 1.25;
-          letter-spacing: -0.02em;
-          margin: 0;
-        }
-
-        .editorial-intro-paragraph {
-          font-family: var(--font-lora), serif;
-          font-size: clamp(0.96rem, 1.3vw, 1.08rem);
-          line-height: 1.7;
-          color: var(--blog-fg-secondary);
-          margin: 0;
-        }
-
-        .editorial-intro-socials {
-          display: flex;
-          gap: 1.25rem;
-          margin-top: 0.5rem;
-          flex-wrap: wrap;
-        }
-
-        .editorial-intro-link {
-          font-size: 0.84rem;
-          color: var(--blog-fg-muted);
-          text-decoration: none;
-          font-weight: 500;
-          letter-spacing: 0.02em;
-          transition: color 0.2s ease, transform 0.2s ease;
-          display: inline-flex;
-          align-items: center;
-        }
-
-        .editorial-intro-link:hover {
-          color: var(--blog-fg);
-          transform: translateY(-1px);
-        }
-
-        @media (max-width: 680px) {
-          .editorial-intro-section {
-            grid-template-columns: 1fr;
-            gap: 1.75rem;
-          }
-          .editorial-intro-photo-wrap {
-            max-width: 220px;
-          }
-          .editorial-intro-flow {
-            padding-top: 2.5rem;
           }
         }
 
@@ -2268,7 +2123,7 @@ export default function EditorialBlog({
               style={{
                 width: "100%",
                 transformOrigin: "left center",
-                transform: "scaleX(0)",
+                transform: !activePost ? "scaleX(1)" : "scaleX(0)",
                 opacity: 1,
               }}
             />
@@ -2713,79 +2568,6 @@ export default function EditorialBlog({
                       </span>
                     </div>
                   </div>
-                </div>
-
-                {/* ── MINIMALIST EDITORIAL INTRODUCTION (SMOOTH & ZERO FLICKER) ── */}
-                <div className="editorial-intro-flow">
-                  <section className="editorial-intro-section">
-                    {/* Left: Refined Monochrome Portrait Photo */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 30 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, margin: "-50px" }}
-                      transition={{
-                        duration: 0.9,
-                        ease: [0.16, 1, 0.3, 1],
-                      }}
-                      className="editorial-intro-photo-wrap"
-                      style={{ willChange: "transform, opacity" }}
-                    >
-                      <img
-                        src="/profile-bw.jpg"
-                        alt="ivan affriandi"
-                        className="editorial-intro-photo"
-                        loading="lazy"
-                        draggable={false}
-                      />
-                      <span className="editorial-intro-photo-caption">jakarta, id</span>
-                    </motion.div>
-
-                    {/* Right: Floating Smooth Typography */}
-                    <motion.div
-                      initial={{ opacity: 0, x: 28, y: 16 }}
-                      whileInView={{ opacity: 1, x: 0, y: 0 }}
-                      viewport={{ once: true, margin: "-50px" }}
-                      transition={{
-                        duration: 0.95,
-                        delay: 0.1,
-                        ease: [0.16, 1, 0.3, 1],
-                      }}
-                      className="editorial-intro-bio-wrap"
-                      style={{ willChange: "transform, opacity" }}
-                    >
-                      <span className="editorial-intro-eyebrow">about</span>
-                      <h2 className="editorial-intro-headline">
-                        hi, i design interfaces with quiet rhythm and physical weight.
-                      </h2>
-                      <p className="editorial-intro-paragraph">
-                        i’m ivan — a ui/ux designer and software crafter based in jakarta. i care deeply about the tactile feel of digital products: typography hierarchy, whitespace, and natural motion physics that respect human attention.
-                      </p>
-                      <div className="editorial-intro-socials">
-                        <a
-                          href="mailto:ivan@ivanaffriandi.com"
-                          className="editorial-intro-link"
-                        >
-                          email ↗
-                        </a>
-                        <a
-                          href="https://instagram.com/ivanaffriandi"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="editorial-intro-link"
-                        >
-                          instagram ↗
-                        </a>
-                        <a
-                          href="https://x.com/ivanaffriandi"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="editorial-intro-link"
-                        >
-                          x (twitter) ↗
-                        </a>
-                      </div>
-                    </motion.div>
-                  </section>
                 </div>
 
                 {/* Footnote / Footer: Snug at bottom of screen without duplicate */}
