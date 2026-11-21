@@ -1231,140 +1231,83 @@ export default function EditorialBlog({
           }
         }
 
-        /* ── APPLE-INSPIRED SCROLLABLE FLOW ── */
-        .apple-scroll-flow {
+        /* ── MINIMALIST EDITORIAL INTRODUCTION (SMOOTH & ZERO FLICKER) ── */
+        .editorial-intro-flow {
           width: 100%;
-          display: flex;
-          flex-direction: column;
-          gap: 6.5rem;
           margin-top: 1rem;
-        }
-
-        .apple-eyebrow {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-size: 0.74rem;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
-          color: var(--blog-fg-muted);
-          font-weight: 600;
-          margin-bottom: 1.2rem;
-          user-select: none;
-        }
-
-        .apple-eyebrow-sep {
-          opacity: 0.45;
-        }
-
-        /* Ethos section */
-        .apple-ethos-section {
-          padding: 3rem 0;
+          padding-top: 3.5rem;
           border-top: 1px solid var(--blog-border);
         }
 
-        .apple-statement-wrap {
-          max-width: 840px;
-        }
-
-        .apple-statement-title {
-          font-family: var(--font-playfair), serif;
-          font-size: clamp(2.2rem, 5.2vw, 3.6rem);
-          font-weight: 700;
-          line-height: 1.12;
-          color: var(--blog-fg);
-          margin: 0 0 0.35rem 0;
-          letter-spacing: -0.025em;
-        }
-
-        .apple-statement-accent {
-          font-family: var(--font-playfair), serif;
-          font-style: italic;
-          font-size: clamp(2rem, 4.6vw, 3.2rem);
-          font-weight: 400;
-          line-height: 1.15;
-          color: var(--blog-fg-secondary);
-          margin: 0 0 1.8rem 0;
-          letter-spacing: -0.015em;
-        }
-
-        .apple-statement-body {
-          font-family: var(--font-lora), serif;
-          font-size: clamp(1.05rem, 1.6vw, 1.28rem);
-          line-height: 1.7;
-          color: var(--blog-fg-muted);
-          max-width: 680px;
-          margin: 0;
-        }
-
-        /* Feature rows (Asymmetric Apple grid) */
-        .apple-feature-row {
+        .editorial-intro-section {
           display: grid;
-          grid-template-columns: 1.15fr 1fr;
-          gap: clamp(2.2rem, 5vw, 4.5rem);
+          grid-template-columns: clamp(180px, 28vw, 250px) 1fr;
+          gap: clamp(2rem, 5vw, 4rem);
           align-items: center;
-          padding: 1.5rem 0;
+          max-width: 820px;
+          margin: 0 auto;
         }
 
-        .apple-feature-right {
-          grid-template-columns: 1fr 1.15fr;
-        }
-
-        .apple-media-frame {
+        .editorial-intro-photo-wrap {
           position: relative;
-          aspect-ratio: 16 / 11;
-          border-radius: 4px;
+          aspect-ratio: 4 / 5;
+          border-radius: 3px;
           overflow: hidden;
-          background: var(--blog-img-bg);
+          background-color: var(--blog-img-bg);
           border: 1px solid var(--blog-border);
-          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+          box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
+          transform: translate3d(0, 0, 0);
+          backface-visibility: hidden;
         }
 
-        .apple-media-img {
+        .editorial-intro-photo {
           width: 100%;
           height: 100%;
           object-fit: cover;
           display: block;
-          filter: grayscale(100%) contrast(106%);
-          transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), filter 0.65s ease;
+          filter: grayscale(100%) contrast(108%);
+          -webkit-filter: grayscale(100%) contrast(108%);
+          transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .apple-media-frame:hover .apple-media-img {
-          transform: scale(1.03);
-          filter: grayscale(100%) contrast(114%);
+        .editorial-intro-photo-wrap:hover .editorial-intro-photo {
+          transform: scale(1.02);
         }
 
-        .apple-media-badge {
+        .editorial-intro-photo-caption {
           position: absolute;
-          bottom: 1rem;
-          left: 1rem;
+          bottom: 0.75rem;
+          left: 0.75rem;
           font-size: 0.68rem;
           letter-spacing: 0.08em;
           text-transform: uppercase;
           background: rgba(0, 0, 0, 0.72);
           color: #ffffff;
-          padding: 0.28rem 0.65rem;
+          padding: 0.2rem 0.5rem;
           border-radius: 2px;
-          backdrop-filter: blur(8px);
+          backdrop-filter: blur(6px);
           font-weight: 500;
         }
 
-        .apple-feature-text {
+        .editorial-intro-bio-wrap {
           display: flex;
           flex-direction: column;
-          gap: 0.85rem;
+          gap: 1rem;
+          transform: translate3d(0, 0, 0);
+          backface-visibility: hidden;
         }
 
-        .apple-feature-tag {
-          font-size: 0.72rem;
+        .editorial-intro-eyebrow {
+          font-size: 0.74rem;
           letter-spacing: 0.12em;
           text-transform: uppercase;
           color: var(--blog-fg-muted);
           font-weight: 600;
         }
 
-        .apple-feature-heading {
-          font-size: clamp(1.45rem, 2.6vw, 2rem);
+        .editorial-intro-headline {
+          font-family: var(--font-playfair), serif;
+          font-size: clamp(1.45rem, 2.8vw, 2.1rem);
           font-weight: 700;
           color: var(--blog-fg);
           line-height: 1.25;
@@ -1372,199 +1315,47 @@ export default function EditorialBlog({
           margin: 0;
         }
 
-        .apple-feature-desc {
-          font-size: 0.98rem;
-          line-height: 1.65;
+        .editorial-intro-paragraph {
+          font-family: var(--font-lora), serif;
+          font-size: clamp(0.96rem, 1.3vw, 1.08rem);
+          line-height: 1.7;
           color: var(--blog-fg-secondary);
           margin: 0;
         }
 
-        .apple-feature-meta {
+        .editorial-intro-socials {
           display: flex;
-          gap: 0.5rem;
+          gap: 1.25rem;
           margin-top: 0.5rem;
           flex-wrap: wrap;
         }
 
-        .apple-pill {
-          font-size: 0.7rem;
-          padding: 0.22rem 0.6rem;
-          border-radius: 999px;
-          border: 1px solid var(--blog-border);
+        .editorial-intro-link {
+          font-size: 0.84rem;
           color: var(--blog-fg-muted);
-          background: transparent;
-        }
-
-        /* Writings Section */
-        .apple-writings-section {
-          padding-top: 2.5rem;
-          border-top: 1px solid var(--blog-border);
-        }
-
-        .apple-writings-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-end;
-          margin-bottom: 2rem;
-        }
-
-        .apple-writings-title {
-          font-size: clamp(1.7rem, 3.2vw, 2.3rem);
-          font-weight: 700;
-          color: var(--blog-fg);
-          letter-spacing: -0.02em;
-          margin: 0;
-        }
-
-        .apple-view-all-btn {
-          background: none;
-          border: none;
-          color: var(--blog-fg-secondary);
-          font-size: 0.88rem;
-          font-weight: 500;
-          cursor: pointer;
-          padding: 0.4rem 0.6rem;
-          transition: color 0.2s ease, transform 0.2s ease;
-        }
-
-        .apple-view-all-btn:hover {
-          color: var(--blog-fg);
-          transform: translateX(3px);
-        }
-
-        .apple-writings-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 1.25rem;
-        }
-
-        .apple-writing-card {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          padding: 1.6rem;
-          min-height: 145px;
-          border-radius: 3px;
-          border: 1px solid var(--blog-border);
-          background: var(--blog-bg);
           text-decoration: none;
-          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-          position: relative;
-        }
-
-        .apple-writing-card:hover {
-          border-color: var(--blog-fg);
-          transform: translateY(-3px);
-          box-shadow: 0 10px 24px rgba(0, 0, 0, 0.05);
-        }
-
-        .apple-writing-card-top {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 0.75rem;
-          color: var(--blog-fg-muted);
-          margin-bottom: 0.8rem;
-        }
-
-        .apple-writing-num {
-          font-weight: 600;
-          letter-spacing: 0.05em;
-        }
-
-        .apple-writing-card-title {
-          font-size: 1.08rem;
-          font-weight: 600;
-          color: var(--blog-fg);
-          line-height: 1.35;
-          margin: 0;
-          letter-spacing: -0.015em;
-        }
-
-        .apple-writing-arrow {
-          position: absolute;
-          bottom: 1.3rem;
-          right: 1.3rem;
-          font-size: 1.15rem;
-          color: var(--blog-fg-muted);
-          opacity: 0;
-          transform: translateX(-5px);
-          transition: all 0.2s ease;
-        }
-
-        .apple-writing-card:hover .apple-writing-arrow {
-          opacity: 1;
-          transform: translateX(0);
-          color: var(--blog-fg);
-        }
-
-        /* Colophon / About */
-        .apple-colophon-section {
-          padding: 3.5rem 0 1.5rem 0;
-          border-top: 1px solid var(--blog-border);
-        }
-
-        .apple-colophon-headline {
-          font-size: clamp(1.35rem, 2.6vw, 1.85rem);
-          font-weight: 600;
-          color: var(--blog-fg);
-          line-height: 1.35;
-          letter-spacing: -0.02em;
-          max-width: 700px;
-          margin: 0 0 1rem 0;
-        }
-
-        .apple-colophon-bio {
-          font-size: 0.98rem;
-          line-height: 1.65;
-          color: var(--blog-fg-secondary);
-          max-width: 620px;
-          margin: 0 0 2rem 0;
-        }
-
-        .apple-colophon-links {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.75rem;
-        }
-
-        .apple-link-pill {
+          font-weight: 500;
+          letter-spacing: 0.02em;
+          transition: color 0.2s ease, transform 0.2s ease;
           display: inline-flex;
           align-items: center;
-          gap: 0.4rem;
-          padding: 0.45rem 0.95rem;
-          border-radius: 999px;
-          border: 1px solid var(--blog-border);
-          color: var(--blog-fg);
-          text-decoration: none;
-          font-size: 0.82rem;
-          font-weight: 500;
-          transition: all 0.2s ease;
         }
 
-        .apple-link-pill:hover {
-          background: var(--blog-hover);
-          border-color: var(--blog-fg);
+        .editorial-intro-link:hover {
+          color: var(--blog-fg);
           transform: translateY(-1px);
         }
 
-        @media (max-width: 860px) {
-          .apple-scroll-flow {
-            gap: 4.5rem;
-          }
-          .apple-feature-row,
-          .apple-feature-right {
+        @media (max-width: 680px) {
+          .editorial-intro-section {
             grid-template-columns: 1fr;
-            gap: 1.5rem;
+            gap: 1.75rem;
           }
-          .apple-feature-right .apple-feature-text {
-            order: 2;
+          .editorial-intro-photo-wrap {
+            max-width: 220px;
           }
-          .apple-feature-right .apple-media-frame {
-            order: 1;
-          }
-          .apple-writings-grid {
-            grid-template-columns: 1fr;
+          .editorial-intro-flow {
+            padding-top: 2.5rem;
           }
         }
 
@@ -2924,230 +2715,73 @@ export default function EditorialBlog({
                   </div>
                 </div>
 
-                {/* ── APPLE-STYLE SCROLLABLE HOMEPAGE SECTIONS ── */}
-                <div className="apple-scroll-flow">
-                  {/* Section 1: Kinetic Editorial Statement */}
-                  <section className="apple-ethos-section">
+                {/* ── MINIMALIST EDITORIAL INTRODUCTION (SMOOTH & ZERO FLICKER) ── */}
+                <div className="editorial-intro-flow">
+                  <section className="editorial-intro-section">
+                    {/* Left: Refined Monochrome Portrait Photo */}
                     <motion.div
                       initial={{ opacity: 0, y: 30 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: false, amount: 0.3 }}
-                      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                      className="apple-eyebrow"
-                    >
-                      <span>01</span>
-                      <span className="apple-eyebrow-sep">—</span>
-                      <span>ethos &amp; craft</span>
-                    </motion.div>
-
-                    <div className="apple-statement-wrap">
-                      <motion.h2
-                        initial={{ opacity: 0, x: -35, y: 15 }}
-                        whileInView={{ opacity: 1, x: 0, y: 0 }}
-                        viewport={{ once: false, amount: 0.25 }}
-                        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                        className="apple-statement-title"
-                      >
-                        tactile interfaces,
-                      </motion.h2>
-                      <motion.p
-                        initial={{ opacity: 0, x: 35, y: 15 }}
-                        whileInView={{ opacity: 1, x: 0, y: 0 }}
-                        viewport={{ once: false, amount: 0.25 }}
-                        transition={{ duration: 0.9, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-                        className="apple-statement-accent"
-                      >
-                        designed with restraint.
-                      </motion.p>
-                      <motion.p
-                        initial={{ opacity: 0, y: 25 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: false, amount: 0.3 }}
-                        transition={{ duration: 0.85, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                        className="apple-statement-body"
-                      >
-                        Software shouldn’t feel like noisy floating pixels. It should carry physical gravity, quiet rhythm, and deliberate typography that respects human attention.
-                      </motion.p>
-                    </div>
-                  </section>
-
-                  {/* Section 2: Kinetic Apple-Style Showcase 1 (Left Image + Right Floating Shift Text) */}
-                  <section className="apple-feature-row apple-feature-left">
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.94, y: 35 }}
-                      whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                      viewport={{ once: false, amount: 0.25 }}
-                      transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
-                      className="apple-media-frame"
+                      viewport={{ once: true, margin: "-50px" }}
+                      transition={{
+                        duration: 0.9,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                      className="editorial-intro-photo-wrap"
+                      style={{ willChange: "transform, opacity" }}
                     >
                       <img
-                        src="/images/defining_brand_mono.png"
-                        alt="Spatial design study by Ivan Affriandi"
-                        className="apple-media-img"
+                        src="/profile-bw.jpg"
+                        alt="ivan affriandi"
+                        className="editorial-intro-photo"
                         loading="lazy"
                         draggable={false}
                       />
-                      <div className="apple-media-badge">study 01 / spatial depth</div>
+                      <span className="editorial-intro-photo-caption">jakarta, id</span>
                     </motion.div>
 
+                    {/* Right: Floating Smooth Typography */}
                     <motion.div
-                      initial={{ opacity: 0, x: 45, y: 25 }}
+                      initial={{ opacity: 0, x: 28, y: 16 }}
                       whileInView={{ opacity: 1, x: 0, y: 0 }}
-                      viewport={{ once: false, amount: 0.25 }}
-                      transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                      className="apple-feature-text"
+                      viewport={{ once: true, margin: "-50px" }}
+                      transition={{
+                        duration: 0.95,
+                        delay: 0.1,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                      className="editorial-intro-bio-wrap"
+                      style={{ willChange: "transform, opacity" }}
                     >
-                      <span className="apple-feature-tag">interface architecture</span>
-                      <h3 className="apple-feature-heading">The physics of deceleration.</h3>
-                      <p className="apple-feature-desc">
-                        Every interactive element is calibrated to realistic physical momentum. Springs that settle softly, pages that preserve focus, and zero unnatural friction.
+                      <span className="editorial-intro-eyebrow">about</span>
+                      <h2 className="editorial-intro-headline">
+                        hi, i design interfaces with quiet rhythm and physical weight.
+                      </h2>
+                      <p className="editorial-intro-paragraph">
+                        i’m ivan — a ui/ux designer and software crafter based in jakarta. i care deeply about the tactile feel of digital products: typography hierarchy, whitespace, and natural motion physics that respect human attention.
                       </p>
-                      <div className="apple-feature-meta">
-                        <span className="apple-pill">fluid motion</span>
-                        <span className="apple-pill">haptic rhythm</span>
-                      </div>
-                    </motion.div>
-                  </section>
-
-                  {/* Section 3: Kinetic Apple-Style Showcase 2 (Right Image + Left Floating Shift Text) */}
-                  <section className="apple-feature-row apple-feature-right">
-                    <motion.div
-                      initial={{ opacity: 0, x: -45, y: 25 }}
-                      whileInView={{ opacity: 1, x: 0, y: 0 }}
-                      viewport={{ once: false, amount: 0.25 }}
-                      transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                      className="apple-feature-text"
-                    >
-                      <span className="apple-feature-tag">editorial minimalism</span>
-                      <h3 className="apple-feature-heading">Restraint as a design system.</h3>
-                      <p className="apple-feature-desc">
-                        Whitespace is not empty space; it is deliberate room to breathe. High-contrast typography paired with subtle monochrome surfaces creates effortless clarity.
-                      </p>
-                      <div className="apple-feature-meta">
-                        <span className="apple-pill">monochrome depth</span>
-                        <span className="apple-pill">typographic hierarchy</span>
-                      </div>
-                    </motion.div>
-
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.94, y: 35 }}
-                      whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                      viewport={{ once: false, amount: 0.25 }}
-                      transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
-                      className="apple-media-frame"
-                    >
-                      <img
-                        src="/images/ocean_hero_mono.png"
-                        alt="Editorial design study by Ivan Affriandi"
-                        className="apple-media-img"
-                        loading="lazy"
-                        draggable={false}
-                      />
-                      <div className="apple-media-badge">study 02 / visual quietness</div>
-                    </motion.div>
-                  </section>
-
-                  {/* Section 4: Curated Writings Section */}
-                  {sortedPosts.length > 0 && (
-                    <section className="apple-writings-section">
-                      <div className="apple-writings-header">
-                        <motion.div
-                          initial={{ opacity: 0, y: 25 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: false, amount: 0.3 }}
-                          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                      <div className="editorial-intro-socials">
+                        <a
+                          href="mailto:ivan@ivanaffriandi.com"
+                          className="editorial-intro-link"
                         >
-                          <span className="apple-eyebrow">
-                            <span>02</span>
-                            <span className="apple-eyebrow-sep">—</span>
-                            <span>dispatches &amp; thoughts</span>
-                          </span>
-                          <h3 className="apple-writings-title">selected writes.</h3>
-                        </motion.div>
-
-                        <motion.button
-                          type="button"
-                          onClick={() => {
-                            setShowIndex(true);
-                            if (typeof window !== "undefined") {
-                              window.scrollTo({ top: 0, behavior: "smooth" });
-                            }
-                          }}
-                          initial={{ opacity: 0 }}
-                          whileInView={{ opacity: 1 }}
-                          viewport={{ once: false, amount: 0.3 }}
-                          transition={{ duration: 0.8, delay: 0.2 }}
-                          className="apple-view-all-btn"
+                          email ↗
+                        </a>
+                        <a
+                          href="https://instagram.com/ivanaffriandi"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="editorial-intro-link"
                         >
-                          view all ({sortedPosts.length}) →
-                        </motion.button>
-                      </div>
-
-                      <div className="apple-writings-grid">
-                        {sortedPosts.slice(0, 4).map((post, idx) => {
-                          const formattedNum = String(idx + 1).padStart(2, "0");
-                          const cleanTitle = cleanChapterTitle(post.title);
-                          const postDate = formatPostDate(post.published);
-                          return (
-                            <motion.div
-                              key={post.id}
-                              initial={{ opacity: 0, y: 25 }}
-                              whileInView={{ opacity: 1, y: 0 }}
-                              viewport={{ once: false, amount: 0.2 }}
-                              transition={{
-                                duration: 0.7,
-                                delay: idx * 0.08,
-                                ease: [0.16, 1, 0.3, 1],
-                              }}
-                            >
-                              <Link href={`/blog/${post.id}`} className="apple-writing-card">
-                                <div className="apple-writing-card-top">
-                                  <span className="apple-writing-num">{formattedNum}</span>
-                                  {postDate && <span className="apple-writing-date">{postDate}</span>}
-                                </div>
-                                <h4 className="apple-writing-card-title">{cleanTitle}</h4>
-                                <span className="apple-writing-arrow" aria-hidden="true">→</span>
-                              </Link>
-                            </motion.div>
-                          );
-                        })}
-                      </div>
-                    </section>
-                  )}
-
-                  {/* Section 5: Colophon & About Reflection */}
-                  <section className="apple-colophon-section">
-                    <motion.div
-                      initial={{ opacity: 0, y: 30 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: false, amount: 0.3 }}
-                      transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-                      className="apple-colophon-content"
-                    >
-                      <span className="apple-eyebrow">
-                        <span>03</span>
-                        <span className="apple-eyebrow-sep">—</span>
-                        <span>ivan affriandi</span>
-                      </span>
-                      <h3 className="apple-colophon-headline">
-                        An independent UI/UX designer and software crafter creating tactile interfaces and quiet digital tools.
-                      </h3>
-                      <p className="apple-colophon-bio">
-                        Based in Jakarta, working globally. Focused on local-first tools, fluid interactions, typography, and personal computing craft.
-                      </p>
-
-                      <div className="apple-colophon-links">
-                        <a href="mailto:ivan@ivanaffriandi.com" className="apple-link-pill">
-                          <span>ivan@ivanaffriandi.com</span>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                          instagram ↗
                         </a>
-                        <a href="https://instagram.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" className="apple-link-pill">
-                          <span>instagram</span>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-                        </a>
-                        <a href="https://x.com/ivanaffriandi" target="_blank" rel="noopener noreferrer" className="apple-link-pill">
-                          <span>x (twitter)</span>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+                        <a
+                          href="https://x.com/ivanaffriandi"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="editorial-intro-link"
+                        >
+                          x (twitter) ↗
                         </a>
                       </div>
                     </motion.div>
