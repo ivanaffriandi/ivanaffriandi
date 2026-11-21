@@ -12,7 +12,7 @@ export interface BlogPostItem {
   updated?: string;
   url?: string;
   labels?: string[];
-  source?: "medium" | "blogger";
+  source?: "substack" | "medium" | "blogger";
 }
 
 interface EditorialBlogProps {
@@ -2144,12 +2144,18 @@ export default function EditorialBlog({
             title="substack @ivanaffriandi"
           >
             <svg
-              width="19"
-              height="19"
+              width="20"
+              height="20"
               viewBox="0 0 24 24"
-              fill="currentColor"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z" />
+              <rect x="3.5" y="3.5" width="17" height="2.8" rx="0.5" />
+              <rect x="3.5" y="8.8" width="17" height="2.8" rx="0.5" />
+              <path d="M3.5 14.1h17v7.2l-8.5-4-8.5 4z" />
             </svg>
           </a>
         </div>

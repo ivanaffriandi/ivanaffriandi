@@ -6,7 +6,7 @@ export interface BlogPost {
   updated?: string;
   url: string;
   labels?: string[];
-  source?: "medium" | "blogger";
+  source?: "substack" | "medium" | "blogger";
 }
 
 export interface BlogComment {
@@ -18,6 +18,10 @@ export interface BlogComment {
     image?: { url: string };
   };
 }
+
+const SUBSTACK_USERNAME = (process.env.SUBSTACK_USERNAME || "ivanaffriandi").replace(/^@/, "").trim();
+const SUBSTACK_PUBLICATION = (process.env.SUBSTACK_PUBLICATION || "ivanaffriandi").replace(/^@/, "").trim();
+const SUBSTACK_FEED_URL = process.env.SUBSTACK_FEED_URL?.trim();
 
 const MEDIUM_USERNAME = process.env.MEDIUM_USERNAME || "ivanaffriandi";
 const MEDIUM_FEED_URL = `https://medium.com/feed/@${MEDIUM_USERNAME.replace(/^@/, '')}`;
@@ -117,6 +121,175 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutM
   ]);
 }
 
+function parseSubstackRssXml(xml: string): BlogPost[] {
+  const items: BlogPost[] = [];
+  const itemMatches = xml.match(/<item[\s\S]*?<\/item>/gi) || [];
+
+  for (const itemXml of itemMatches) {
+    // 1. Title
+    const titleMatch = itemXml.match(/<title>([\s\S]*?)<\/title>/i);
+    const rawTitle = titleMatch ? parseCData(titleMatch[1]) : "Untitled";
+
+    // 2. Link
+    const linkMatch = itemXml.match(/<link>([\s\S]*?)<\/link>/i);
+    const url = linkMatch ? linkMatch[1].replace(/<!\[CDATA\[|\]\]>/g, "").trim() : "#";
+
+    // 3. Guid / ID
+    const guidMatch = itemXml.match(/<guid[^>]*>([\s\S]*?)<\/guid>/i);
+    const rawGuid = guidMatch ? guidMatch[1].replace(/<!\[CDATA\[|\]\]>/g, "").trim() : "";
+    let id = "";
+    if (url.includes("/p/")) {
+      id = url.split("/p/")[1].split("?")[0].replace(/\/$/, "");
+    } else if (rawGuid.includes("/p/")) {
+      id = rawGuid.split("/p/")[1].split("?")[0].replace(/\/$/, "");
+    } else if (rawGuid) {
+      id = rawGuid.split("?")[0].split("/").pop() || rawGuid;
+    } else {
+      id = `substack-${items.length}`;
+    }
+
+    // 4. Published & Updated Date
+    const pubDateMatch = itemXml.match(/<pubDate>([\s\S]*?)<\/pubDate>/i);
+    const atomUpdatedMatch = itemXml.match(/<atom:updated>([\s\S]*?)<\/atom:updated>/i) || itemXml.match(/<updated>([\s\S]*?)<\/updated>/i);
+    const rawDate = pubDateMatch ? pubDateMatch[1].trim() : (atomUpdatedMatch ? atomUpdatedMatch[1].trim() : new Date().toISOString());
+    let published = new Date().toISOString();
+    try {
+      published = new Date(rawDate).toISOString();
+    } catch {}
+
+    let updated: string | undefined = undefined;
+    if (atomUpdatedMatch) {
+      try {
+        const u = new Date(atomUpdatedMatch[1].trim()).toISOString();
+        if (u !== published) {
+          updated = u;
+        }
+      } catch {}
+    }
+
+    // 5. Content Encoded
+    const contentMatch = itemXml.match(/<content:encoded>([\s\S]*?)<\/content:encoded>/i) || itemXml.match(/<description>([\s\S]*?)<\/description>/i);
+    let content = contentMatch ? parseCData(contentMatch[1]) : "";
+
+    // Check enclosure image if not in content
+    const enclosureMatch = itemXml.match(/<enclosure[^>]*url=["']([^"']+)["'][^>]*>/i);
+    if (enclosureMatch && !content.includes(enclosureMatch[1])) {
+      content = `<img src="${enclosureMatch[1]}" alt="${rawTitle}" /><br/>` + content;
+    }
+
+    // Clean Substack specific subscribe/paywall noise
+    content = content
+      .replace(/<div class="subscription-widget-wrap"[\s\S]*?<\/div>/gi, "")
+      .replace(/<p class="button-wrapper"[\s\S]*?<\/p>/gi, "");
+
+    // 6. Categories / Labels
+    const categoryMatches = itemXml.match(/<category>([\s\S]*?)<\/category>/gi) || [];
+    const labels = categoryMatches.map((catXml) => {
+      const match = catXml.match(/<category>([\s\S]*?)<\/category>/i);
+      return match ? parseCData(match[1]) : "";
+    }).filter(Boolean);
+
+    items.push({
+      id: id || `substack-${items.length}`,
+      title: rawTitle,
+      content,
+      published,
+      updated,
+      url,
+      labels,
+      source: "substack",
+    });
+  }
+
+  return items;
+}
+
+async function fetchSubstackPosts(): Promise<BlogPost[]> {
+  const candidateUrls: string[] = [];
+
+  if (SUBSTACK_FEED_URL) {
+    candidateUrls.push(SUBSTACK_FEED_URL);
+  }
+
+  // Standard publication feed endpoints
+  const subdomains = Array.from(new Set([SUBSTACK_PUBLICATION, SUBSTACK_USERNAME, "ivanaffriandi", "ivanhuw"].filter(Boolean)));
+  for (const sub of subdomains) {
+    candidateUrls.push(`https://${sub}.substack.com/feed`);
+  }
+
+  // 1. Fetch Substack RSS feeds
+  for (const url of candidateUrls) {
+    try {
+      const res = await fetchWithTimeout(`${url}${url.includes('?') ? '&' : '?'}_t=${Date.now()}`, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          "Accept": "application/rss+xml, application/xml, text/xml, */*",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache",
+        },
+        cache: "no-store",
+      }, 7000);
+
+      if (res.ok) {
+        const text = await res.text();
+        if (text && text.includes("<rss") && text.includes("<item")) {
+          const parsed = parseSubstackRssXml(text);
+          if (parsed && parsed.length > 0) {
+            return parsed;
+          }
+        }
+      }
+    } catch (err) {
+      console.warn(`Substack fetch attempt failed for ${url}:`, (err as Error)?.message ?? err);
+    }
+  }
+
+  // 2. Also try Substack public archive / posts JSON API as fallback
+  for (const sub of subdomains) {
+    const apiUrls = [
+      `https://${sub}.substack.com/api/v1/posts?sort=new&limit=50&_t=${Date.now()}`,
+      `https://${sub}.substack.com/api/v1/archive?sort=new&limit=50&_t=${Date.now()}`
+    ];
+    for (const apiUrl of apiUrls) {
+      try {
+        const res = await fetchWithTimeout(apiUrl, {
+          headers: {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "application/json",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+          },
+          cache: "no-store",
+        }, 6000);
+
+        if (res.ok) {
+          const data = await res.json();
+          const rawItems = Array.isArray(data) ? data : (data.posts || []);
+          if (rawItems && rawItems.length > 0) {
+            const mapped: BlogPost[] = rawItems.map((item: any) => {
+              const coverImg = item.cover_image ? `<img src="${item.cover_image}" alt="${item.title || ''}" /><br/>` : "";
+              const body = item.body_html || item.description || "";
+              return {
+                id: item.slug || String(item.id),
+                title: item.title || "Untitled",
+                content: coverImg + body,
+                published: item.post_date ? new Date(item.post_date).toISOString() : new Date().toISOString(),
+                url: item.canonical_url || `https://${sub}.substack.com/p/${item.slug || item.id}`,
+                labels: (item.postTags || []).map((t: any) => t.name).filter(Boolean),
+                source: "substack" as const,
+              };
+            });
+            if (mapped.length > 0) {
+              return mapped;
+            }
+          }
+        }
+      } catch {}
+    }
+  }
+
+  return [];
+}
+
 async function fetchMediumPosts(): Promise<BlogPost[]> {
   const cleanUsername = MEDIUM_USERNAME.replace(/^@/, '');
   const feedUrls = [
@@ -206,15 +379,25 @@ async function fetchBloggerPosts(): Promise<BlogPost[]> {
 }
 
 export async function getPosts(): Promise<BlogPost[]> {
-  // Fetch both Medium (newest) and Blogger (historical archive) in parallel
-  const [mediumPosts, bloggerPosts] = await Promise.all([
+  // Fetch Substack (newest), Medium, and Blogger (historical archive) in parallel
+  const [substackPosts, mediumPosts, bloggerPosts] = await Promise.all([
+    fetchSubstackPosts(),
     fetchMediumPosts(),
     fetchBloggerPosts(),
   ]);
 
-  if (mediumPosts.length > 0 || bloggerPosts.length > 0) {
+  if (substackPosts.length > 0 || mediumPosts.length > 0 || bloggerPosts.length > 0) {
     const seenTitles = new Set<string>();
     const merged: BlogPost[] = [];
+
+    // Prioritize Substack posts (highest priority)
+    for (const post of substackPosts) {
+      const norm = post.title.toLowerCase().replace(/[^a-z0-9]/g, "");
+      if (!seenTitles.has(norm)) {
+        seenTitles.add(norm);
+        merged.push(post);
+      }
+    }
 
     // Prioritize Medium posts
     for (const post of mediumPosts) {
@@ -234,7 +417,7 @@ export async function getPosts(): Promise<BlogPost[]> {
       }
     }
 
-    // Sort chronologically descending: newest Medium posts first, seamlessly followed by Blogger archive
+    // Sort chronologically descending: newest posts first
     merged.sort((a, b) => new Date(b.published).getTime() - new Date(a.published).getTime());
 
     global._cachedHybridPosts = merged;
